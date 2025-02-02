@@ -225,19 +225,10 @@ function PitchCard({ title, content }: { title: string; content: string }) {
   );
 }
 
-/** Section showcasing the concept or "pitch" of Vramework. */
 function PitchSection() {
   return (
     <section className="py-12 container">
       <div className="max-w-screen-lg mx-auto text-center">
-        <Heading as="h2" className="text-4xl font-semibold ex-text-gray-800 mb-6">
-          The Pitch
-        </Heading>
-        <p className="px-6 text-2xl font-medium mb-8">
-          This isn&apos;t another server, but rather a normalization layer on top of the many
-          serverless and server frameworks available today. You define all your code as functions,
-          and can switch between running them on different environments with ease.
-        </p>
         <ul className="list-none px-8 grid gap-4 md:grid-cols-2 text-left text-lg font-medium">
           {pitches.map((pitch) => (
             <PitchCard key={pitch.title} title={pitch.title} content={pitch.content} />
@@ -329,27 +320,6 @@ function DeploymentOptionsSection() {
   );
 }
 
-/** Frequently asked questions section. */
-function FAQSection() {
-  return (
-    <section className="container py-8">
-      <div className="max-w-screen-lg mx-auto">
-        <Heading as="h2" className="text-4xl font-semibold ex-text-gray-800 mb-6 text-center">
-          Questions & Answers
-        </Heading>
-        <div className="px-6 space-y-6">
-          {faqs.map((faq) => (
-            <div key={faq.question} className="shadow p-6 rounded-lg">
-              <h3 className="text-xl font-semibold ex-text-gray-800 mb-2">{faq.question}</h3>
-              <p className="ex-text-gray-600">{faq.answer}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /** Closing CTA: encouraging users to get started, see docs, read blog, or contribute. */
 function CallToActionSection() {
   return (
@@ -396,7 +366,6 @@ export default function Home() {
         <PitchSection />
         <CodeExamplesSection />
         <DeploymentOptionsSection />
-        <FAQSection />
         <CallToActionSection />
       </main>
     </Layout>

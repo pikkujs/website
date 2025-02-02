@@ -116,6 +116,7 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/vramework.png',
+    respectPrefersColorScheme: true,
     navbar: {
       title: 'Vramework',
       logo: {
@@ -123,31 +124,21 @@ const config: Config = {
         src: 'img/vramework.png',
       },
       items: [
-        { 
-          to: '/getting-started', 
-          label: 'Getting Started', 
-          position: 'left' 
-        },
         {
           type: 'docSidebar',
           sidebarId: 'docs',
-          position: 'left',
+          position: 'right',
           label: 'Docs',
-        },
-        {
-          to: 'docs/api/',
-          activeBasePath: 'docs',
-          label: 'API',
-          position: 'left',
         },
         { 
           to: '/blog', 
           label: 'Blog', 
-          position: 'left' 
+          position: 'right' 
         },
         {
           href: 'https://github.com/vramework/vramework',
-          label: 'GitHub',
+          className: "header-github-link",
+          "aria-label": "GitHub repository",
           position: 'right',
         },
       ],
