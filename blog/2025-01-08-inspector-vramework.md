@@ -1,17 +1,17 @@
 ---
-title: Introducing Inspector Vramework
-description: Extracting vramework inspection into its own package
+title: Introducing Inspector Pikku
+description: Extracting pikku inspection into its own package
 ---
 
 Happy New Year everyone!
 
 This release is pretty small, and completely backward-compatible.
 
-## @vramework/inspector
+## @pikku/inspector
 
 The biggest change is that we extracted the code that inspects the codebase into a separate package. The goal of this package is to produce a JSON file from the codebase it inspects, which will make testing much more robust and open up new avenues for integration.
 
-This also lays the foundation for vramework’s upcoming dependency management system. Combined with ES6, it will provide a simple approach for loading/tree-shaking only the services needed for the subset of desired functions. Super excited about this (also the last large feature on the current roadmap!)
+This also lays the foundation for pikku’s upcoming dependency management system. Combined with ES6, it will provide a simple approach for loading/tree-shaking only the services needed for the subset of desired functions. Super excited about this (also the last large feature on the current roadmap!)
 
 ## Support for Duplicate Names
 

@@ -1,5 +1,5 @@
 {
-  "name": "vramework-io",
+  "name": "pikku-io",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -14,10 +14,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "3.5.2",
-    "@docusaurus/plugin-google-gtag": "^3.5.2",
-    "@docusaurus/preset-classic": "3.5.2",
-    "@docusaurus/remark-plugin-npm2yarn": "^3.5.2",
+    "@docusaurus/core": "latest",
+    "@docusaurus/plugin-google-gtag": "latest",
+    "@docusaurus/preset-classic": "latest",
+    "@docusaurus/remark-plugin-npm2yarn": "latest",
     "@mdx-js/react": "^3.0.0",
     "@saucelabs/theme-github-codeblock": "^0.3.0",
     "clsx": "^2.0.0",
@@ -29,9 +29,9 @@
     "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.5.2",
-    "@docusaurus/tsconfig": "3.5.2",
-    "@docusaurus/types": "3.5.2",
+    "@docusaurus/module-type-aliases": "latest",
+    "@docusaurus/tsconfig": "latest",
+    "@docusaurus/types": "latest",
     "autoprefixer": "^10.4.20",
     "docusaurus-plugin-typedoc": "^1.0.5",
     "postcss": "^8.4.45",

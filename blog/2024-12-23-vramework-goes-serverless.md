@@ -1,17 +1,17 @@
 ---
-title: "Vramework has gone serverless 🚀"  
+title: "Pikku has gone serverless 🚀"  
 description: Cloudflare and AWS support has been added
 ---
 
-# Vramework has just gone serverless 🚀
+# Pikku has just gone serverless 🚀
 
 _Just in time for Christmas!_
 
-I know, the day before Christmas isn’t exactly the best day for announcements, but I’m about to put away my keyboard until next year and wanted one final blog entry before taking a break. And I’m excited to share that Vramework now has **official support** for serverless on AWS and Cloudflare — complete with examples!
+I know, the day before Christmas isn’t exactly the best day for announcements, but I’m about to put away my keyboard until next year and wanted one final blog entry before taking a break. And I’m excited to share that Pikku now has **official support** for serverless on AWS and Cloudflare — complete with examples!
 
-This milestone has been really interesting. Different serverless solutions definitely don’t think alike, especially when it comes to websockets. My main goal was to prove Vramework can handle websockets (along with HTTP and scheduled tasks, which were a breeze) and do it all in a way that you can get up and running as quickly as possible.
+This milestone has been really interesting. Different serverless solutions definitely don’t think alike, especially when it comes to websockets. My main goal was to prove Pikku can handle websockets (along with HTTP and scheduled tasks, which were a breeze) and do it all in a way that you can get up and running as quickly as possible.
 
-After a few days of headbanging, we ended up with three new backends in the [workspace-starter](https://github.com/vramework/workspace-starter) repo, each offering a different serverless approach:
+After a few days of headbanging, we ended up with three new backends in the [workspace-starter](https://github.com/pikku/workspace-starter) repo, each offering a different serverless approach:
 
 ---
 

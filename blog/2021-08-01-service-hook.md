@@ -126,7 +126,7 @@ class EmployeeService extends EventEmitter3 {
         // employee is sent out with each update which usually isn't the case.
         real-time service.subscribe(`employee:${employeeId}`, employeeUpdated)
 
-        // This is the rest wrapper around fetch used in vramework to minimize boilerplate
+        // This is the rest wrapper around fetch used in pikku to minimize boilerplate
         get(`api/employee/${employeeId}`).then(employeeUpdated)
     }
 
@@ -160,7 +160,7 @@ The general gist is that everything is written in vanilla JS, and updated things
 ```typescript
 public async addEmployeeCalendarEvent (employeeId: string, event: CalendarEvent) {
     const employee = this.employees.get(employeeId)
-    // This is the rest wrapper around fetch used in vramework to minimize boilerplate
+    // This is the rest wrapper around fetch used in pikku to minimize boilerplate
     const events = patch<CalendarEvents>(`api/employee/${employeeId}/addEvent`, event)
     this.employees.set(employeeId, {
         ...employee,
@@ -192,7 +192,7 @@ export const useServiceHook = (service: EventEmitter, event: string, callback: (
 And you can use it by saying:
 
 ```typescript
-import { useServiceHook } from '@vramework/hooks/dist/use-service-hook'
+import { useServiceHook } from '@pikku/hooks/dist/use-service-hook'
 import { useState } from 'react'
 
 const useEmployee = (employeeId?: string): Employee | undefined => {
@@ -267,4 +267,4 @@ I am a bit lazy and just use singletons when possible. Saves me from having to u
 #### The end
 
 I hope this was an enjoyable read! This website is a work in the process alongside the projects that depend
-on vramework. I'm looking forward to sharing some of the libraries and thoughts there along the way.
+on pikku. I'm looking forward to sharing some of the libraries and thoughts there along the way.

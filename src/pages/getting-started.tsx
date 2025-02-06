@@ -10,7 +10,7 @@ import { Code } from '../components/Code';
 import {
   codeTypes,
   codeImplementations,
-  codeVrameworkConfig,
+  codePikkuConfig,
   codeExpress,
   codeUWS,
   codeCloudflareIndex,
@@ -18,33 +18,32 @@ import {
   codeServerless,
   codeScheduled,
 } from '../getting-started-code-snippets'; 
-import { CodeExamples } from '.';
 
 /** Example: Deployment configs referencing the external code snippets. */
 const deployments = {
   express: {
-    package: '@vramework/express-middleware',
+    package: '@pikku/express-middleware',
     code: codeExpress,
-    text: 'This app starts an Express server on port 3000. The vramework middleware processes routes.'
+    text: 'This app starts an Express server on port 3000. The pikku middleware processes routes.'
   },
   uws: {
-    package: '@vramework/uws-handler',
+    package: '@pikku/uws-handler',
     code: codeUWS,
     text: 'This starts a uWebSockets.js server on port 9001 for both HTTP and WebSocket routes.'
   },
   cloudflare: {
-    package: '@vramework/cloudflare',
+    package: '@pikku/cloudflare',
     code: codeCloudflareIndex,
     text: 'A Cloudflare Worker that handles both fetch requests and scheduled events.',
     config: codeCloudflareWrangler
   },
   serverless: {
-    package: '@vramework/lambda',
+    package: '@pikku/lambda',
     code: codeServerless,
     text: 'Exposes separate AWS Lambda handlers for scheduled tasks, CORS, and non-CORS requests.'
   },
   scheduled: {
-    package: '@vramework/schedule',
+    package: '@pikku/schedule',
     code: codeScheduled,
     text: 'Starts scheduled tasks for a server-based deployment scenario.'
   }
@@ -57,13 +56,13 @@ const Intro: React.FC = () => (
       Getting Started
     </Heading>
     <p className="text-lg mb-6">
-      <strong>Vramework</strong> is a minimal TypeScript framework for building function-based APIs 
+      <strong>Pikku</strong> is a minimal TypeScript framework for building function-based APIs 
       that run on serverless platforms or traditional servers with ease.
     </p>
 
     <Admonition type="info" title="Installation & Requirements">
       Requires <strong>Node 18+</strong>.<br />
-      Install via <code>npm install @vramework/core</code> or <code>yarn add @vramework/core</code>.
+      Install via <code>npm install @pikku/core</code> or <code>yarn add @pikku/core</code>.
     </Admonition>
 
     <p className="text-lg mt-6">
@@ -72,7 +71,7 @@ const Intro: React.FC = () => (
   </div>
 );
 
-/** Step One: Explanation of the fundamental Vramework types. */
+/** Step One: Explanation of the fundamental Pikku types. */
 const Types: React.FC = () => (
   <div className="px-6 max-w-screen-lg w-full mx-auto">
     <Heading as="h2" className="text-lg">Step One</Heading>
@@ -93,7 +92,7 @@ const Implementations: React.FC = () => (
       Type Implementations
     </Heading>
     <p className="text-lg mb-6">
-      Next, create the implementations of these types that the Vramework CLI uses.
+      Next, create the implementations of these types that the Pikku CLI uses.
     </p>
     <Code language="ts">{codeImplementations}</Code>
   </div>
@@ -107,23 +106,22 @@ const Functions: React.FC = () => (
     <p className="text-lg mb-6">
       With dependencies in place, define your logic functions. For instance:
     </p>
-    <CodeExamples />
   </div>
 );
 
-/** Step Four: Vramework CLI config file usage. */
-const VrameworkConfig: React.FC = () => (
+/** Step Four: Pikku CLI config file usage. */
+const PikkuConfig: React.FC = () => (
   <div className="px-6 max-w-screen-lg w-full mx-auto">
     <Heading as="h2" className="text-lg">Step Four</Heading>
-    <Heading as="h3" className="text-4xl font-bold ex-text-gray-800 mb-4">Vramework CLI</Heading>
+    <Heading as="h3" className="text-4xl font-bold ex-text-gray-800 mb-4">Pikku CLI</Heading>
     <p className="text-lg mb-6">
-      <em>vramework.config.json</em> instructs the CLI where to find routes and 
+      <em>pikku.config.json</em> instructs the CLI where to find routes and 
       generate additional types:
     </p>
-    <Code language="json">{codeVrameworkConfig}</Code>
+    <Code language="json">{codePikkuConfig}</Code>
 
     <Admonition type="info" title="Generate Necessary Files">
-      Then run <code>npx @vramework/cli</code> to generate all the necessary files.
+      Then run <code>npx @pikku/cli</code> to generate all the necessary files.
     </Admonition>
   </div>
 );
@@ -135,7 +133,7 @@ const Integrations: React.FC = () => (
     <Heading as="h3" className="text-4xl font-bold ex-text-gray-800 mb-4">
       Integration and Deployment
     </Heading>
-    <p className="text-lg mb-6">Vramework can integrate with various platforms:</p>
+    <p className="text-lg mb-6">Pikku can integrate with various platforms:</p>
 
     <Admonition type="info" title="WebSocket Examples">
       Examples with WebSockets are not yet included in this section.
@@ -196,7 +194,7 @@ const NextSteps: React.FC = () => (
       Where to Go from Here
     </Heading>
     <p className="text-lg mb-6">
-      You now have a working understanding of Vramework. Explore advanced topics like authentication, 
+      You now have a working understanding of Pikku. Explore advanced topics like authentication, 
       real-time messaging, or connect with the community on GitHub!
     </p>
     <Admonition type="tip" title="Happy Coding!">
@@ -208,13 +206,13 @@ const NextSteps: React.FC = () => (
 /** The main page component tying all steps together. */
 export default function GettingStarted() {
   return (
-    <Layout title="Getting Started" description="How to get started with Vramework">
+    <Layout title="Getting Started" description="How to get started with Pikku">
       <main className="py-8 flex flex-col space-y-4">
         <Intro />
         <Types />
         <Implementations />
         <Functions />
-        <VrameworkConfig />
+        <PikkuConfig />
         <Integrations />
         <NextSteps />
       </main>

@@ -6,7 +6,7 @@ image: nestjs.svg
 
 Before I begin, today is 20220222 as an ISO date. I had to blog something!
 
-This article aims to explain why I went with writing Vramework instead of using nestJS. It's mostly for my sanity; since I just took a few months off of development and after returning wondered why I decided to create my own solution 😅.
+This article aims to explain why I went with writing Pikku instead of using nestJS. It's mostly for my sanity; since I just took a few months off of development and after returning wondered why I decided to create my own solution 😅.
 
 <!-- truncate -->
 
@@ -86,9 +86,9 @@ import { CatsService } from './cats/cats.service';
 export class AppModule {}
 ```
 
-I find it a little easier to do [this](https://vramework.io/code/):
+I find it a little easier to do [this](https://pikku.io/code/):
 
-#### Vramework
+#### Pikku
 
 ```typescript
 // Service
@@ -142,7 +142,7 @@ Okay, so in the examples above, we can see the recommended way in which nestJS l
 
 And that makes a ton of sense; you want to try and keep your HTTP behaviour as far as you can from your domain logic. Because maybe you'll move to WebSockets at some point, or HTTP5 will come out and redefine the world (insert tron code editing gif here). Or, more likely, you want to introduce a breaking HTTP API change and don't want to put the backwards compatibility into your domain layer.
 
-It's pretty hard to argue with the above. In many ways, you can say nestJS is more potent than Vramework because it allows you to directly interact with HTTP requests within the controller. But I guess that's where I wanted to draw my line. I tried to push all the HTTP logic entirely out of the codebase and only specify the REST type and route for each HTTP API to get the data passed on.  
+It's pretty hard to argue with the above. In many ways, you can say nestJS is more potent than Pikku because it allows you to directly interact with HTTP requests within the controller. But I guess that's where I wanted to draw my line. I tried to push all the HTTP logic entirely out of the codebase and only specify the REST type and route for each HTTP API to get the data passed on.  
 
 And why did I do that? Mostly because I never really had exposure to any API that required different behaviour over the last few years. Some APIs are XML, others are in text, some use a binary protocol, and most are JSON. But at the end of the day, almost any function pretty much follows the following rules:
 
@@ -173,12 +173,12 @@ Currently, there is a rule of precedence, which means it overwrites the values w
 
 Errors following a similar thought pattern. In nestJS, it has a concept of a [HttpException](https://docs.nestjs.com/exception-filters), which means if something goes wrong in your controller, you end up throwing an exception which is either HTTP based or extends an HTTP error. So if something happens in your HTTP agnostic service layer, you throw a standard JS error, which is then caught in your controller and translated to something HTTP based.
 
-In Vramework, we again limit the flexibility of what an error can do. If you throw an Error, you usually want to provide a status code, a message, and a potential payload.
+In Pikku, we again limit the flexibility of what an error can do. If you throw an Error, you usually want to provide a status code, a message, and a potential payload.
 
 So it would look something like this:
 
 ```typescript
-import { addErrors, EError } from '@vramework/backend-common/src/errors'
+import { addErrors, EError } from '@pikku/backend-common/src/errors'
 class CatNotFoundError extends EError {
     // This payload will be forwarded to the client if set
     public payload: Record<string, any> = {}
@@ -193,11 +193,11 @@ Is it significantly different? Not really. But it's less documentation and verbo
 
 #### Typescript
 
-Vramework is tightly bound to typescript. It automatically creates JSON validation schemas from your data types. If you're using Postgres or MySQL, it can even directly link to your data schemas to enforce the data model. So there are no DTOs, which means you also lost some of the extra functionality it provides (like default values).
+Pikku is tightly bound to typescript. It automatically creates JSON validation schemas from your data types. If you're using Postgres or MySQL, it can even directly link to your data schemas to enforce the data model. So there are no DTOs, which means you also lost some of the extra functionality it provides (like default values).
 
 #### Request Scoped Services
 
-Honestly don't know if this is a thing you can do in nestJS or not. But in Vramework, you can lazy load services for each HTTP request.
+Honestly don't know if this is a thing you can do in nestJS or not. But in Pikku, you can lazy load services for each HTTP request.
 
 A couple of example benefits in my projects:
 
@@ -210,17 +210,17 @@ A couple of example benefits in my projects:
 
 So I want to re-acknowledge that nestJS is a really powerful framework. If I didn't have a lot of time to kill during the first lockdown, plus wanting to understand the HTTP stack I'm working with (previously, I only ever used sockets, all the way back to long polling in IE6 😅). 
 
-Things that nestJS does that Vramework doesn't / is lacking:
+Things that nestJS does that Pikku doesn't / is lacking:
 
 1) Documentation, conferences, community, almost 300 contributors
 2) Lots of tests
 3) Ability to tree shake depending on what services you inject
 4) Documentation (This needs a second mention!)
-5) The whole ecosystem of express and fastify (can be used in Vramework, but less likely on the developers' end).
+5) The whole ecosystem of express and fastify (can be used in Pikku, but less likely on the developers' end).
 
 ## Summary
 
-So yeah, I guess I convinced myself to keep using vramework and seeing how it goes 😅😁. If anyone reading this is interested, let me know. Happy to invest the time into writing better docs and example repos. It takes quite a bit of time, so I would instead focus on some of my projects in the meantime!
+So yeah, I guess I convinced myself to keep using pikku and seeing how it goes 😅😁. If anyone reading this is interested, let me know. Happy to invest the time into writing better docs and example repos. It takes quite a bit of time, so I would instead focus on some of my projects in the meantime!
 
 ## Shameless Plug 
 

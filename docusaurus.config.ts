@@ -4,20 +4,20 @@ import type * as Preset from '@docusaurus/preset-classic';
 import tailwindPlugin from "./plugins/tailwind-config.cjs";
 
 const config: Config = {
-  title: 'Vramework',
+  title: 'Pikku',
   tagline: 'The Typescript Function Backend',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://vramework.dev',
+  url: 'https://pikku.dev',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'vramework', // Usually your GitHub org/user name.
-  projectName: 'vramework-website', // Usually your repo name.
+  organizationName: 'pikku', // Usually your GitHub org/user name.
+  projectName: 'pikku-website', // Usually your repo name.
 
   // onBrokenLinks: 'ignore',
   onBrokenMarkdownLinks: 'warn',
@@ -31,32 +31,6 @@ const config: Config = {
   },
 
   plugins: [
-    [
-      'docusaurus-plugin-typedoc',
-      {
-        readme: "none",
-        useCodeBlocks: true,
-        categorizeByGroup: false,
-        cleanOutputDir: true, 
-        tsconfig: "vramework/tsconfig.json",
-        "entryPoints": [
-          "vramework/**/index.ts",
-        ],
-        "entryPointStrategy": "expand",
-        "skipErrorChecking": true,
-        "compilerOptions": {
-          "skipLibCheck": true,
-          "noImplicitAny": false,
-          "resolveJsonModule": true
-        },
-        "exclude": [
-          "**/node_modules/**/*",
-          "**/dist/**/*",
-          "**/*.spec.ts",
-          "**/*.d.ts"
-        ],
-      },
-    ],
     tailwindPlugin
   ],
 
@@ -115,13 +89,13 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/vramework.png',
+    image: 'img/pikku.png',
     respectPrefersColorScheme: true,
     navbar: {
-      title: 'Vramework',
+      title: 'Pikku',
       logo: {
-        alt: 'Vramework',
-        src: 'img/vramework.png',
+        alt: 'Pikku',
+        src: 'img/pikku.png',
       },
       items: [
         {
@@ -136,7 +110,7 @@ const config: Config = {
           position: 'right' 
         },
         {
-          href: 'https://github.com/vramework/vramework',
+          href: 'https://github.com/pikkujs/pikku',
           className: "header-github-link",
           "aria-label": "GitHub repository",
           position: 'right',
@@ -145,40 +119,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Learn',
-          items: [
-            {
-              label: 'Introduction',
-              to: '/docs/intro',
-            },
-          ],
-        },
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/vramework',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
-              label: 'GitHub',
-              href: 'https://github.com/vramework/vramework',
-            },
-          ],
-        },
-      ],
-      copyright: `Copyright © ${new Date().getFullYear()} Vramework, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Pikku, Inc. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

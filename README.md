@@ -30,4 +30,4 @@ This is done automatically by CI.
 
 ### Submodules
 
-Typescript documentation / API docs are generated directly from vramework code and is a submodule within this repo.
+Typescript documentation / API docs are generated directly from pikku code and is a submodule within this repo.

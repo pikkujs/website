@@ -6,15 +6,15 @@ export const hero = {
 export const highlights = [{
     "title": "Functions",
     "description": "Write your code via functions and services, without having to learn a whole library or about HTTP concepts.",
-    "icon": require("@site/static/img/vramework.svg").default
+    "icon": require("@site/static/img/pikku.svg").default
 }, {
     "title": "Server agnostic",
     "description": "You can run your code via serverless, express or bundle it into a binary.",
-    "icon": require("@site/static/img/vramework.svg").default
+    "icon": require("@site/static/img/pikku.svg").default
 }, {
     "title": "Compile free",
     "description": "You don't need to compile or use a bundler to run your code.",
-    "icon": require("@site/static/img/vramework.svg").default
+    "icon": require("@site/static/img/pikku.svg").default
 }]
 
 export const features = {

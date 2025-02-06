@@ -1,10 +1,10 @@
 ---
 title: Service Lookup
-description: How and why vramework uses services
+description: How and why pikku uses services
 image: service.svg
 ---
 
-Quick intro, Vramework is a thin wrapper ontop of express / serverless / any request-response mechanism that hides away all the boiler plate. The goal is for a user to be able to be able to add an endpoint, with schemas, permissions and session management without actually having to do any boiler plate.
+Quick intro, Pikku is a thin wrapper ontop of express / serverless / any request-response mechanism that hides away all the boiler plate. The goal is for a user to be able to be able to add an endpoint, with schemas, permissions and session management without actually having to do any boiler plate.
 
 <!-- truncate -->
 
@@ -12,11 +12,11 @@ But as much as pure/immutable functional programming is amazing (give something 
 
 And there's also the issue around testing, cloud development and local development. Sometimes it's just easier to use interfaces with quick API access.
 
-This is where vrameworks service management comes into play.
+This is where pikkus service management comes into play.
 
 ### Examples
 
-So a function in vramework has three inputs and one output:
+So a function in pikku has three inputs and one output:
 
 For example, the simplest examples don't really need state:
 
@@ -75,7 +75,7 @@ All service management is done in a single setup services class:
 
 ```typescript
 export const setupServices = async (config: Config): Promise<Services> => {
-    // The sessionService is the only service really needed for vramework to work. This is just 
+    // The sessionService is the only service really needed for pikku to work. This is just 
     // a placeholder for cleaner code
     const sessionService = new SessionService()
 
@@ -106,7 +106,7 @@ That method does two important things:
 2) It creates the `SessionServices` (named `Services` for short). These are what are actually provided to the API functions and are scoped to the current session of the API call. It's worth making sure these are lazy loaded! If they aren't needed for the session it isn't worth doing the initial work. For example with a database, don't get the connection until your first query. This is useful for things like:
 
     - Putting all database queries in a transaction automatically, with the userId set on the database session which allows audit logs to magically work.
-    - Abstracting header details from the APIFunctions (vramework hides away all HTTP concepts so the code is deployment library agnostic)
+    - Abstracting header details from the APIFunctions (pikku hides away all HTTP concepts so the code is deployment library agnostic)
 
 ### There are two ways you can do dependency injection
 

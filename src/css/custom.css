@@ -8,29 +8,28 @@
  * work well for content-centric websites.
  */
 
-/* You can override the default Infima variables here. */
-:root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+ :root {
+  --ifm-color-primary: #a863ee; /* Deepest Electric Purple */
+  --ifm-color-primary-dark: #5E20B8; /* Even Darker Purple */
+  --ifm-color-primary-darker: #6D25D0; /* Darker Purple */
+  --ifm-color-primary-darkest: #7D2AE8; /* Original Primary */
+  --ifm-color-primary-light: #8748E0; /* Softer but Deep Purple */
+  --ifm-color-primary-lighter: #955AF0; /* Light Lavender */
+  --ifm-color-primary-lightest: #A56FFF; /* Softest Glow */
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(78, 26, 159, 0.1); /* Deep Purple Highlight */
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* Keeping the same primary color for dark mode */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #a863ee; /* Deepest Electric Purple (Same as Light Mode) */
+  --ifm-color-primary-dark: #5E20B8;
+  --ifm-color-primary-darker: #6D25D0;
+  --ifm-color-primary-darkest: #7D2AE8;
+  --ifm-color-primary-light: #8748E0;
+  --ifm-color-primary-lighter: #955AF0;
+  --ifm-color-primary-lightest: #A56FFF;
+  --docusaurus-highlighted-code-line-bg: rgba(78, 26, 159, 0.3); /* Soft Glow for Dark Mode */
 }
 
 .header-github-link:hover {

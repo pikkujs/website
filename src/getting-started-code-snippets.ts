@@ -3,7 +3,7 @@ export const codeTypes = `import {
     CoreServices,
     CoreSingletonServices,
     CoreUserSession,
-  } from '@vramework/core'
+  } from '@pikku/core'
   
   // This contains all the configuration for the application, created once on start.
   export interface Config extends CoreConfig {}
@@ -40,7 +40,7 @@ export const codeTypes = `import {
     const variablesService = new LocalVariablesService()
     const logger = new ConsoleLogger()
     const jwt = new JoseJWTService<UserSession>(keys, logger)
-    const httpSessionService = new VrameworkHTTPSessionService<UserSession>(jwt, {})
+    const httpSessionService = new PikkuHTTPSessionService<UserSession>(jwt, {})
   
     return {
       config,
@@ -63,21 +63,21 @@ export const codeTypes = `import {
   }
   `;
   
-  // 2) Snippet for Vramework CLI config
-  export const codeVrameworkConfig = `{
-    "$schema": "https://raw.githubusercontent.com/vramework/vramework/refs/heads/master/packages/cli/cli.schema.json",
+  // 2) Snippet for Pikku CLI config
+  export const codePikkuConfig = `{
+    "$schema": "https://raw.githubusercontent.com/pikku/pikku/refs/heads/master/packages/cli/cli.schema.json",
     "tsconfig": "./tsconfig.json",
     "routeDirectories": ["src"],
-    "outDir": ".vramework"
+    "outDir": ".pikku"
   }
   `;
   
   // 3) Integration Snippets
   export const codeExpress = `import express from 'express'
-  import { vrameworkMiddleware } from '@vramework/express-middleware'
+  import { pikkuMiddleware } from '@pikku/express-middleware'
   import { createSessionServices } from '../src/services.js'
   
-  import '../.vramework/vramework-bootstrap'
+  import '../.pikku/pikku-bootstrap'
   
   const start = async () => {
     const app = express()
@@ -87,7 +87,7 @@ export const codeTypes = `import {
     const singletonServices = await createSingletonServices(config)
   
     app.use(
-      vrameworkMiddleware(singletonServices, createSessionServices, {
+      pikkuMiddleware(singletonServices, createSessionServices, {
         respondWith404: false,
       })
     )
@@ -102,12 +102,12 @@ export const codeTypes = `import {
   
   export const codeUWS = `import * as uWS from 'uWebSockets.js'
   import {
-    vrameworkHTTPHandler,
-    vrameworkWebsocketHandler,
-  } from '@vramework/uws-handler'
+    pikkuHTTPHandler,
+    pikkuWebsocketHandler,
+  } from '@pikku/uws-handler'
   
   import { createSessionServices } from './services.js'
-  import '../.vramework/vramework-bootstrap'
+  import '../.pikku/pikku-bootstrap'
   
   const port = 9001
   
@@ -119,7 +119,7 @@ export const codeTypes = `import {
     
     app.any(
       '/*',
-      vrameworkHTTPHandler({
+      pikkuHTTPHandler({
         logRoutes: true,
         singletonServices,
         createSessionServices,
@@ -128,7 +128,7 @@ export const codeTypes = `import {
     
     app.ws(
       '/*',
-      vrameworkWebsocketHandler({
+      pikkuWebsocketHandler({
         logRoutes: true,
         singletonServices,
         createSessionServices,
@@ -149,13 +149,13 @@ export const codeTypes = `import {
   
   export const codeCloudflareIndex = `// index.tsx
   import { ExportedHandler, Response } from '@cloudflare/workers-types';
-  import { runFetch, runScheduled } from '@vramework/cloudflare';
-  import { LocalVariablesService, LocalSecretService } from '@vramework/core/services';
+  import { runFetch, runScheduled } from '@pikku/cloudflare';
+  import { LocalVariablesService, LocalSecretService } from '@pikku/core/services';
   
   import { createConfig } from './config';
   import { createSingletonServices, createSessionServices } from './services';
   
-  import './.vramework/vramework-bootstrap';
+  import './.pikku/pikku-bootstrap';
   
   const setupServices = async (env: Record<string, string | undefined>) => {
     const localVariables = new LocalVariablesService(env)
@@ -178,7 +178,7 @@ export const codeTypes = `import {
   `;
   
   export const codeCloudflareWrangler = `#:schema node_modules/wrangler/config-schema.json
-  name = "vramework-workspace-starter"
+  name = "pikku-workspace-starter"
   main = "src/index.ts"
   compatibility_date = "2024-12-18"
   compatibility_flags = ["nodejs_compat_v2"]
@@ -203,12 +203,12 @@ export const codeTypes = `import {
   
   export const codeServerless = `import { createConfig } from './config'
   import { createSingletonServices } from './services'
-  import { AWSSecrets } from '@vramework/aws-services'
+  import { AWSSecrets } from '@pikku/aws-services'
   import {
     corsHTTP,
     corslessHTTP,
-  } from '@vramework/lambda/http'
-  import './.vramework/vramework-bootstrap';
+  } from '@pikku/lambda/http'
+  import './.pikku/pikku-bootstrap';
   
   let config: Config
   let singletonServices: SingletonServices
@@ -250,15 +250,15 @@ export const codeTypes = `import {
     createSingletonServices,
     createSessionServices,
   } from './services'
-  import { VrameworkTaskScheduler } from '@vramework/schedule'
-  import { ScheduledTaskNames } from './.vramework/vramework-schedules'
+  import { PikkuTaskScheduler } from '@pikku/schedule'
+  import { ScheduledTaskNames } from './.pikku/pikku-schedules'
   
-  import './.vramework/vramework-bootstrap'
+  import './.pikku/pikku-bootstrap'
   
   async function main(): Promise<void> {
     const config = await createConfig()
     const singletonServices = await createSingletonServices(config)
-    const scheduler = new VrameworkTaskScheduler<ScheduledTaskNames>(
+    const scheduler = new PikkuTaskScheduler<ScheduledTaskNames>(
       singletonServices
     )
     scheduler.startAll()

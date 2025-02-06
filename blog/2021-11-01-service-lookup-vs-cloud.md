@@ -22,7 +22,7 @@ Then came the real-time node server [deepstream.io](https://deepstream.io/). Dee
 
 Finally came deepstreamHub, the enterprise version of deepstream.io. deepstreamHub required us to allow things to run locally for enterprise machines and use AWS services for the cloud offering. We managed to get the entire thing running on Kubernetes and via local services in less than a day using service lookups.
 
-### Vramework
+### Pikku
 
 I started working on personal projects after deepstreamHub, and I was doing so while travelling due to the failed startup misery recovery process. So my main requirement was that everything should work offline. I didn't want to deal with flaky connections, and to be honest, I was coding for fun, so constantly deploying wasn't the top of my requirements!
 
