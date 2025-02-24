@@ -1,48 +1,165 @@
-export const hero = {
-    title: 'A different type of HTTP server',
-    description: 'A (very) light framework for building pure HTTP servers in Node.js',
-}
 
-export const highlights = [{
-    "title": "Functions",
-    "description": "Write your code via functions and services, without having to learn a whole library or about HTTP concepts.",
-    "icon": require("@site/static/img/pikku.svg").default
-}, {
-    "title": "Server agnostic",
-    "description": "You can run your code via serverless, express or bundle it into a binary.",
-    "icon": require("@site/static/img/pikku.svg").default
-}, {
-    "title": "Compile free",
-    "description": "You don't need to compile or use a bundler to run your code.",
-    "icon": require("@site/static/img/pikku.svg").default
-}]
-
-export const features = {
-    title: 'Minimal features',
-    description: 'The essential tools you need to get the job done',
-    features: [{
-        "title": "Type Safety",
-        "description": "Everything is vanilla typescript with common types, potentially starting from your database and ending with the client.",
-        "icon": require("@site/static/img/typescript.svg").default
-    }, {
-        "title": "Minimal APIs",
-        "description": "Spend less time learning libraries and more time writing code. A few core concepts can take you almost all the way.",
-        "icon": require("@site/static/img/ideas.svg").default
-    }, {
-        "title": "Session aware",
-        "description": "Provide the user session to each function invocation for context. Cookies, API keys or JWT out of the box (if you want).",
-        "icon": require("@site/static/img/network.svg").default
-    }, {
-        "title": "Permissions",
-        "description": "Check each function invocation against a group of permissions before they even run.",
-        "icon": require("@site/static/img/permissions.svg").default
-    }, {
-        "title": "Service Lookups",
-        "description": "Each function call gets provided with both global services, as well as session services created for each call.",
-        "icon": require("@site/static/img/framework.svg").default
-    }, {
-        "title": "Validate schemas",
-        "description": "Validate all API calls via automatically generated schemas from typescript. No more manual validation required.",
-        "icon": require("@site/static/img/schema.svg").default
-    }],
-}
+export const features = [
+    {
+      "title": "Vanilla TypeScript",
+      "content": "Write functions and services using vanilla TypeScript — just user logic and types.",
+      "icon": "🍦"
+    },
+    {
+      "title": "Transport Agnostic",
+      "content": "Wire functions to HTTP, WebSockets, Cron jobs and more. Pikku adapts to any event-driven architecture.",
+      "icon": "🚦"
+    },
+    {
+      "title": "Batteries Included",
+      "content": "Auth, validation, and services built-in — everything you need without extra dependencies.",
+      "icon": "🔋"
+    },
+    {
+      "title": "Deploy Anywhere",
+      "content": "Works on cloud, server, edge, or serverless with minimal config—no runtime lock-in.",
+      "icon": "🌍"
+    }
+  ];
+  
+  export const developerFeatures = [
+    {
+      "title": "OpenAPI & Typed Clients",
+      "content": "Automatcai generates OpenAPI documentation and tiny fully-typed Fetch/WebSocket clients automatically.",
+      "icon": "📖"
+    },
+    {
+      "title": "Generated Type Safety & Validation",
+      "content": "Pikku generates schemas from your function types, ensuring full type safety and runtime validation without additional code.",
+      "icon": "✅"
+    },
+    {
+      "title": "Built-In Auth & Session Management",
+      "content": "Secure APIs with built-in authentication, permissions, and user session management—no middleware required.",
+      "icon": "🔒"
+    },
+    {
+      "title": "Singleton & Session-Based Services",
+      "content": "Define services that persist across function calls, whether singleton instances or session-scoped state.",
+      "icon": "⚙️"
+    }
+  ];
+  
+  export const runtimes = {
+    "cloud": [
+      {
+        "name": "AWS",
+        "docs": "/docs/runtimes/aws-lambda",
+        "supported": true,
+        "img": {
+          dark: "aws-dark.png",
+          light: "aws-light.png"
+        } 
+      },
+      // {
+      //   "name": "Azure",
+      //   "docs": "/docs/runtimes/azure-functions",
+      //   "supported": true,
+      //   "img": "logos/azure-light.svg"
+      // },
+      // {
+      //   "name": "Vercel",
+      //   "docs": "/docs/runtimes/vercel",
+      //   "supported": true,
+      //   "img": "logos/vercel-light.svg"
+      // },
+      {
+        "name": "Cloudflare",
+        "docs": "/docs/runtimes/cloudflare-functions",
+        "supported": true,
+        "img": {
+          dark: "cloudflare-dark.svg",
+          light: "cloudflare-light.svg"
+        }
+      },
+      // {
+      //   "name": "Google Cloud",
+      //   "docs": "/docs/runtimes/google-cloud",
+      //   "supported": false,
+      //   "img": "logos/google-cloud-light.svg"
+      // },
+      // {
+      //   "name": "Deno Deploy",
+      //   "docs": "/docs/runtimes/deno-deploy",
+      //   "supported": false,
+      //   "img": "logos/deno.svg"
+      // }
+    ],
+    "middleware": [
+      {
+        "name": "Express",
+        "docs": "/docs/runtimes/express-middleware",
+        "supported": true,
+        "img": {
+          dark: "express-dark.svg",
+          light: "express-light.svg"
+        }
+      },
+      {
+        "name": "Fastify",
+        "docs": "/docs/runtimes/fastify-plugin",
+        "supported": true,
+        "img": {
+          dark: "fastify-dark.svg",
+          light: "fastify-light.svg"
+        }
+      },
+      {
+        "name": "uWS",
+        "docs": "/docs/runtimes/uws-handler",
+        "supported": true,
+       "img": {
+          dark: "uws-dark.svg",
+          light: "uws-light.svg"
+        }
+      },
+      {
+        "name": "ws",
+        "docs": "/docs/runtimes/ws-handler",
+        "supported": true,
+       "img": {
+          dark: "websocket-dark.svg",
+          light: "websocket-light.svg"
+        }
+      },
+      {
+        "name": "nextJS",
+        "docs": "/docs/runtimes/nextjs-app",
+        "supported": true,
+        "img": {
+          dark: "nextjs-dark.svg",
+          light: "nextjs-light.png"
+        }
+      },
+      // {
+      //   "name": "Koa",
+      //   "docs": "/docs/runtimes/koa",
+      //   "supported": true,
+      //   "img": "logos/koda.svg"
+      // },
+      // {
+      //   "name": "Hono",
+      //   "docs": "/docs/runtimes/hono",
+      //   "supported": true
+      // },
+      // {
+      //   "name": "Bun",
+      //   "docs": "/docs/runtimes/bun",
+      //   "supported": false
+      // }
+    ],
+    "custom": {
+      "name": "Custom",
+      "docs": "/docs/runtimes/custom",
+      "img": {
+        dark: "custom-dark.svg",
+        light: "custom-light.svg"
+      }
+    }
+  };
+  

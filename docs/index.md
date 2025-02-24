@@ -23,8 +23,8 @@ addRoute({ method: 'get', route: '/', func: helloWorld })
 
 ## Quick Start
 
-```bash
-npm create pikku@latest
+```bash npm2yarn
+npm create pikku
 ```
 
 ---

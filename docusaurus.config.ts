@@ -3,6 +3,15 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import tailwindPlugin from "./plugins/tailwind-config.cjs";
 
+const npm2YarnConfig = {
+  sync: true,
+  converters: [
+    'yarn',
+    'pnpm',
+    'bun'
+  ],
+}
+
 const config: Config = {
   title: 'Pikku',
   tagline: 'The Typescript Function Backend',
@@ -51,13 +60,17 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-            remarkPlugins: [
-              [require('@docusaurus/remark-plugin-npm2yarn'), {sync: true}],
-            ],
+            'https://github.com/pikkujs/website/tree/master/',
+          remarkPlugins: [[
+            require('@docusaurus/remark-plugin-npm2yarn'),
+            npm2YarnConfig
+          ]],
         },
         pages: {
-          remarkPlugins: [require('@docusaurus/remark-plugin-npm2yarn')],
+          remarkPlugins: [[
+            require('@docusaurus/remark-plugin-npm2yarn'),
+            npm2YarnConfig
+          ]],
         },
         blog: {
           showReadingTime: true,
@@ -76,7 +89,7 @@ const config: Config = {
           remarkPlugins: [
             [
               require('@docusaurus/remark-plugin-npm2yarn'),
-              {converters: ['pnpm']},
+              npm2YarnConfig
             ],
           ],
         },
@@ -104,10 +117,10 @@ const config: Config = {
           position: 'right',
           label: 'Docs',
         },
-        { 
-          to: '/blog', 
-          label: 'Blog', 
-          position: 'right' 
+        {
+          to: '/blog',
+          label: 'Blog',
+          position: 'right'
         },
         {
           href: 'https://github.com/pikkujs/pikku',
@@ -119,7 +132,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      copyright: `Copyright © ${new Date().getFullYear()} Pikku, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Vlandor, Inc.`,
     },
     prism: {
       theme: prismThemes.github,

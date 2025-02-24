@@ -3,140 +3,7 @@ import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import Image from '@theme/ThemedImage';
-
-const features = [
-  {
-    "title": "Vanilla TypeScript",
-    "content": "Write functions and services using vanilla TypeScript — just user logic and types.",
-    "icon": "🍦"
-  },
-  {
-    "title": "Transport Agnostic",
-    "content": "Wire functions to HTTP, WebSockets, Cron jobs and more. Pikku adapts to any event-driven architecture.",
-    "icon": "🚦"
-  },
-  {
-    "title": "Batteries Included",
-    "content": "Auth, validation, and services built-in — everything you need without extra dependencies.",
-    "icon": "🔋"
-  },
-  {
-    "title": "Deploy Anywhere",
-    "content": "Works on cloud, server, edge, or serverless with minimal config—no runtime lock-in.",
-    "icon": "🌍"
-  }
-];
-
-const developerFeatures = [
-  {
-    "title": "OpenAPI & Typed Clients",
-    "content": "Automatcai generates OpenAPI documentation and tiny fully-typed Fetch/WebSocket clients automatically.",
-    "icon": "📖"
-  },
-  {
-    "title": "Generated Type Safety & Validation",
-    "content": "Pikku generates schemas from your function types, ensuring full type safety and runtime validation without additional code.",
-    "icon": "✅"
-  },
-  {
-    "title": "Built-In Auth & Session Management",
-    "content": "Secure APIs with built-in authentication, permissions, and user session management—no middleware required.",
-    "icon": "🔒"
-  },
-  {
-    "title": "Singleton & Session-Based Services",
-    "content": "Define services that persist across function calls, whether singleton instances or session-scoped state.",
-    "icon": "⚙️"
-  }
-];
-
-const runtimes = {
-  "cloud": [
-    {
-      "name": "AWS",
-      "docs": "/docs/runtimes/aws",
-      "supported": true,
-      "img": "aws.svg"
-    },
-    // {
-    //   "name": "Azure",
-    //   "docs": "/docs/runtimes/azure",
-    //   "supported": true,
-    //   "img": "azure.svg"
-    // },
-    // {
-    //   "name": "Vercel",
-    //   "docs": "/docs/runtimes/vercel",
-    //   "supported": true,
-    //   "img": "vercel.svg"
-    // },
-    {
-      "name": "Cloudflare",
-      "docs": "/docs/runtimes/cloudflare",
-      "supported": true,
-      "img": "cloudflare.svg"
-    },
-    // {
-    //   "name": "Google Cloud",
-    //   "docs": "/docs/runtimes/google-cloud",
-    //   "supported": false,
-    //   "img": "google-cloud.svg"
-    // },
-    // {
-    //   "name": "Deno Deploy",
-    //   "docs": "/docs/runtimes/deno-deploy",
-    //   "supported": false,
-    //   "img": "deno.svg"
-    // }
-  ],
-  "middleware": [
-    {
-      "name": "Express",
-      "docs": "/docs/runtimes/express",
-      "supported": true,
-      "img": "express.svg"
-    },
-    {
-      "name": "Fastify",
-      "docs": "/docs/runtimes/fastify",
-      "supported": true,
-      "img": "fastify.svg"
-    },
-    {
-      "name": "uWS",
-      "docs": "/docs/runtimes/uws",
-      "supported": true,
-      "img": "uws.png"
-    },
-    {
-      "name": "nextJS",
-      "docs": "/docs/runtimes/nextJS",
-      "supported": true,
-      "img": "nextjs.png"
-    },
-    // {
-    //   "name": "Koa",
-    //   "docs": "/docs/runtimes/koa",
-    //   "supported": true,
-    //   "img": "koda.svg"
-    // },
-    // {
-    //   "name": "Hono",
-    //   "docs": "/docs/runtimes/hono",
-    //   "supported": true
-    // },
-    // {
-    //   "name": "Bun",
-    //   "docs": "/docs/runtimes/bun",
-    //   "supported": false
-    // }
-  ],
-  "custom": {
-    "name": "Custom",
-    "docs": "/docs/runtimes/custom",
-    "img": "custom-deployment.svg"
-  }
-};
+import { features, developerFeatures, runtimes } from '@site/data/homepage';
 
 /** Renders a heading, tagline, and CTA buttons at the top of the homepage. */
 function Hero() {
@@ -171,7 +38,7 @@ function Hero() {
 function PitchCard({ title, content, icon }: { title: string; content: string, icon: string }) {
   return (
     <li className="shadow p-4 rounded-lg shadow-lg">
-      <div className='px-2 py-4 text-3xl'>{icon}</div>
+      <div className='px-2 py-4 text-4xl'>{icon}</div>
       <h3 className="font-semibold mb-2">{title}</h3>
       <p className="text-sm">{content}</p>
     </li>
@@ -218,10 +85,10 @@ function RuntimeOptionsSection() {
         <p className="text-center max-w-screen-md mx-auto text-xl">
           Use Pikku as middleware in existing projects or deploy standalone. Adapters for major runtimes are provided, and writing your own is simple.
         </p>
-        <ul className='pl-0 list-none grid grid-cols-4 md:grid-cols-7 gap-4'>
+        <ul className='pl-0 list-none grid grid-cols-2 md:grid-cols-4 gap-4'>
           {[...runtimes.cloud, ...runtimes.middleware, runtimes.custom].map(deployment => <li>
             <Link className="py-2 gap-y-4 transform hover:scale-110" href={deployment.docs} title={deployment.name}>
-              <Image width={60} sources={{ light: `img/${deployment.img}`, dark:  `img/${deployment.img}` }} />
+              <Image width={120} className='m-auto' sources={{ light: `img/logos/${deployment.img.light}`, dark:  `img/logos/${deployment.img.dark}` }} />
             </Link>
           </li>)}
         </ul>
