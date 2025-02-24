@@ -7,6 +7,8 @@ Happy New Year everyone!
 
 This release is pretty small, and completely backward-compatible.
 
+<!-- truncate -->
+
 ## @pikku/inspector
 
 The biggest change is that we extracted the code that inspects the codebase into a separate package. The goal of this package is to produce a JSON file from the codebase it inspects, which will make testing much more robust and open up new avenues for integration.

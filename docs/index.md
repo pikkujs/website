@@ -31,7 +31,7 @@ npm create pikku
 
 ## Features
 
-* **Tiny** 🔎 - The Pikku runtime is xKB. It relies on two small dependencies [cookie](...) and [path-to-regex](...).
+* **Tiny** 🔎 - The Pikku runtime is xKB. It relies on two small dependencies [cookie](https://www.npmjs.com/package/cookie) and [path-to-regex](https://www.npmjs.com/package/path-to-regex).
 * **Deploy Anywhere** 🌍 - Run your functions anywhere, as long as it's event based. Currently supporting HTTP, WebSockets and Scheduled Tasks with more coming soon.
 * **Batteries Included** 🔋 - Services, session management, auth, docs, it's all here..
 * **Zero Boilerplate** 🪶 - Only write business logic in Typescript, Pikku automatically optimizes, validates and generates everything needed in a powerful framework.
