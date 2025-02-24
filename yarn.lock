@@ -9666,6 +9666,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pikku-io@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "pikku-io@workspace:."
+  dependencies:
+    "@docusaurus/core": latest
+    "@docusaurus/module-type-aliases": latest
+    "@docusaurus/plugin-google-gtag": latest
+    "@docusaurus/preset-classic": latest
+    "@docusaurus/remark-plugin-npm2yarn": latest
+    "@docusaurus/tsconfig": latest
+    "@docusaurus/types": latest
+    "@mdx-js/react": ^3.0.0
+    "@saucelabs/theme-github-codeblock": ^0.3.0
+    autoprefixer: ^10.4.20
+    clsx: ^2.0.0
+    docusaurus-plugin-typedoc: ^1.0.5
+    postcss: ^8.4.45
+    prism-react-renderer: ^2.4.1
+    react: ^18.0.0
+    react-dom: ^18.0.0
+    react-github-buttons: ^0.5.0
+    react-syntax-highlighter: ^15.6.1
+    tailwindcss: ^3.4.10
+    typedoc: ^0.26.10
+    typedoc-plugin-markdown: ^4.2.9
+    typescript: ~5.5.2
+    usehooks-ts: ^3.1.0
+  languageName: unknown
+  linkType: soft
+
 "pirates@npm:^4.0.1":
   version: 4.0.6
   resolution: "pirates@npm:4.0.6"
@@ -12896,36 +12926,6 @@ __metadata:
   checksum: 152b6729be1af70df723efb65c1a1170fd483d41086557da3651eea69a1dd1f0c22ea4344834d56d30734b9185bcab63e22edc81d3f0e9bed8aa4660d61080af
   languageName: node
   linkType: hard
-
-"pikku-io@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "pikku-io@workspace:."
-  dependencies:
-    "@docusaurus/core": latest
-    "@docusaurus/module-type-aliases": latest
-    "@docusaurus/plugin-google-gtag": latest
-    "@docusaurus/preset-classic": latest
-    "@docusaurus/remark-plugin-npm2yarn": latest
-    "@docusaurus/tsconfig": latest
-    "@docusaurus/types": latest
-    "@mdx-js/react": ^3.0.0
-    "@saucelabs/theme-github-codeblock": ^0.3.0
-    autoprefixer: ^10.4.20
-    clsx: ^2.0.0
-    docusaurus-plugin-typedoc: ^1.0.5
-    postcss: ^8.4.45
-    prism-react-renderer: ^2.4.1
-    react: ^18.0.0
-    react-dom: ^18.0.0
-    react-github-buttons: ^0.5.0
-    react-syntax-highlighter: ^15.6.1
-    tailwindcss: ^3.4.10
-    typedoc: ^0.26.10
-    typedoc-plugin-markdown: ^4.2.9
-    typescript: ~5.5.2
-    usehooks-ts: ^3.1.0
-  languageName: unknown
-  linkType: soft
 
 "watchpack@npm:^2.4.1":
   version: 2.4.2

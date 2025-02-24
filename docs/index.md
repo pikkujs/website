@@ -23,8 +23,8 @@ addRoute({ method: 'get', route: '/', func: helloWorld })
 
 ## Quick Start
 
-```bash npm2yarn
-npm create Pikku@latest
+```bash
+npm create pikku@latest
 ```
 
 ---
@@ -96,4 +96,4 @@ What this resulted in was an automated process that depended almost entirely on 
 
 As infrastructure choices multiply, understanding their environmental impact becomes more important. Pikku’s flexibility makes it easier to experiment with different runtimes, servers, and deployment options—be it on VMs, containers, or serverless. By observing how these choices affect **CPU cycles and memory consumption**, you can get a clearer picture of the carbon footprint associated with your application’s workload.
 
-We’re excited about the idea of using Pikku as a platform to help companies make environmentally informed decisions. Imagine comparing resource usage and emissions across deployments and automatically suggesting lower-impact configurations. While this is still in the concept stage, it’s a direction we’re exploring to align performance optimization with environmental responsibility.
+We’re excited about the idea of using Pikku as a platform to help companies make environmentally informed decisions. Imagine comparing resource usage and emissions across runtimes and automatically suggesting lower-impact configurations. While this is still in the concept stage, it’s a direction we’re exploring to align performance optimization with environmental responsibility.

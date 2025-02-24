@@ -20,7 +20,7 @@ import {
 } from '../getting-started-code-snippets'; 
 
 /** Example: Deployment configs referencing the external code snippets. */
-const deployments = {
+const runtimes = {
   express: {
     package: '@pikku/express-middleware',
     code: codeExpress,
@@ -141,45 +141,45 @@ const Integrations: React.FC = () => (
     
     <Tabs>
       <TabItem value="express" label="Express" default>
-        <p>Required: <em className="font-bold">{deployments.express.package}</em></p>
-        <Code language="ts">{deployments.express.code}</Code>
+        <p>Required: <em className="font-bold">{runtimes.express.package}</em></p>
+        <Code language="ts">{runtimes.express.code}</Code>
         <Admonition type="info" title="Express Deployment">
-          {deployments.express.text}
+          {runtimes.express.text}
         </Admonition>
       </TabItem>
 
       <TabItem value="uws" label="uWebSockets.js">
-        <p>Required: <em className="font-bold">{deployments.uws.package}</em></p>
-        <Code language="ts">{deployments.uws.code}</Code>
+        <p>Required: <em className="font-bold">{runtimes.uws.package}</em></p>
+        <Code language="ts">{runtimes.uws.code}</Code>
         <Admonition type="info" title="uWebSockets Deployment">
-          {deployments.uws.text}
+          {runtimes.uws.text}
         </Admonition>
       </TabItem>
 
       <TabItem value="aws" label="AWS">
-        <p>Required: <em className="font-bold">{deployments.serverless.package}</em></p>
-        <Code language="ts">{deployments.serverless.code}</Code>
+        <p>Required: <em className="font-bold">{runtimes.serverless.package}</em></p>
+        <Code language="ts">{runtimes.serverless.code}</Code>
         <Admonition type="info" title="AWS Serverless Deployment">
-          {deployments.serverless.text}
+          {runtimes.serverless.text}
         </Admonition>
       </TabItem>
 
       <TabItem value="cloudflare" label="Cloudflare">
-        <p>Required: <em className="font-bold">{deployments.cloudflare.package}</em></p>
-        <Code language="ts">{deployments.cloudflare.code}</Code>
+        <p>Required: <em className="font-bold">{runtimes.cloudflare.package}</em></p>
+        <Code language="ts">{runtimes.cloudflare.code}</Code>
         <Admonition type="info" title="Cloudflare Deployment">
-          {deployments.cloudflare.text}
+          {runtimes.cloudflare.text}
         </Admonition>
 
         <Heading as="h4" className="text-lg mt-4 mb-2">Wrangler Config</Heading>
-        <Code language="toml">{deployments.cloudflare.config}</Code>
+        <Code language="toml">{runtimes.cloudflare.config}</Code>
       </TabItem>
 
       <TabItem value="scheduled" label="Scheduled Tasks">
-        <p>Required: <em className="font-bold">{deployments.scheduled.package}</em></p>
-        <Code language="ts">{deployments.scheduled.code}</Code>
+        <p>Required: <em className="font-bold">{runtimes.scheduled.package}</em></p>
+        <Code language="ts">{runtimes.scheduled.code}</Code>
         <Admonition type="info" title="Scheduled Tasks">
-          {deployments.scheduled.text}
+          {runtimes.scheduled.text}
         </Admonition>
       </TabItem>
     </Tabs>

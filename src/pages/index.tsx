@@ -50,41 +50,41 @@ const developerFeatures = [
   }
 ];
 
-const deployments = {
+const runtimes = {
   "cloud": [
     {
       "name": "AWS",
-      "docs": "/docs/deployments/aws",
+      "docs": "/docs/runtimes/aws",
       "supported": true,
       "img": "aws.svg"
     },
     // {
     //   "name": "Azure",
-    //   "docs": "/docs/deployments/azure",
+    //   "docs": "/docs/runtimes/azure",
     //   "supported": true,
     //   "img": "azure.svg"
     // },
     // {
     //   "name": "Vercel",
-    //   "docs": "/docs/deployments/vercel",
+    //   "docs": "/docs/runtimes/vercel",
     //   "supported": true,
     //   "img": "vercel.svg"
     // },
     {
       "name": "Cloudflare",
-      "docs": "/docs/deployments/cloudflare",
+      "docs": "/docs/runtimes/cloudflare",
       "supported": true,
       "img": "cloudflare.svg"
     },
     // {
     //   "name": "Google Cloud",
-    //   "docs": "/docs/deployments/google-cloud",
+    //   "docs": "/docs/runtimes/google-cloud",
     //   "supported": false,
     //   "img": "google-cloud.svg"
     // },
     // {
     //   "name": "Deno Deploy",
-    //   "docs": "/docs/deployments/deno-deploy",
+    //   "docs": "/docs/runtimes/deno-deploy",
     //   "supported": false,
     //   "img": "deno.svg"
     // }
@@ -92,48 +92,48 @@ const deployments = {
   "middleware": [
     {
       "name": "Express",
-      "docs": "/docs/deployments/express",
+      "docs": "/docs/runtimes/express",
       "supported": true,
       "img": "express.svg"
     },
     {
       "name": "Fastify",
-      "docs": "/docs/deployments/fastify",
+      "docs": "/docs/runtimes/fastify",
       "supported": true,
       "img": "fastify.svg"
     },
     {
       "name": "uWS",
-      "docs": "/docs/deployments/uws",
+      "docs": "/docs/runtimes/uws",
       "supported": true,
       "img": "uws.png"
     },
     {
       "name": "nextJS",
-      "docs": "/docs/deployments/nextJS",
+      "docs": "/docs/runtimes/nextJS",
       "supported": true,
       "img": "nextjs.png"
     },
     // {
     //   "name": "Koa",
-    //   "docs": "/docs/deployments/koa",
+    //   "docs": "/docs/runtimes/koa",
     //   "supported": true,
     //   "img": "koda.svg"
     // },
     // {
     //   "name": "Hono",
-    //   "docs": "/docs/deployments/hono",
+    //   "docs": "/docs/runtimes/hono",
     //   "supported": true
     // },
     // {
     //   "name": "Bun",
-    //   "docs": "/docs/deployments/bun",
+    //   "docs": "/docs/runtimes/bun",
     //   "supported": false
     // }
   ],
   "custom": {
     "name": "Custom",
-    "docs": "/docs/deployments/custom",
+    "docs": "/docs/runtimes/custom",
     "img": "custom-deployment.svg"
   }
 };
@@ -209,7 +209,7 @@ function DeveloperSection() {
 }
 
 /** Displays a table of supported deployment options. */
-function DeploymentOptionsSection() {
+function RuntimeOptionsSection() {
   return (
     <section className="max-w-screen-lg mx-auto text-center space-y-12 mb-12 px-4 md:px-0">
         <Heading as="h2" className="text-4xl font-semibold mb-6">
@@ -219,7 +219,7 @@ function DeploymentOptionsSection() {
           Use Pikku as middleware in existing projects or deploy standalone. Adapters for major runtimes are provided, and writing your own is simple.
         </p>
         <ul className='pl-0 list-none grid grid-cols-4 md:grid-cols-7 gap-4'>
-          {[...deployments.cloud, ...deployments.middleware, deployments.custom].map(deployment => <li>
+          {[...runtimes.cloud, ...runtimes.middleware, runtimes.custom].map(deployment => <li>
             <Link className="py-2 gap-y-4 transform hover:scale-110" href={deployment.docs} title={deployment.name}>
               <Image width={60} sources={{ light: `img/${deployment.img}`, dark:  `img/${deployment.img}` }} />
             </Link>
@@ -240,7 +240,7 @@ export default function Home() {
       <main>
         <FeatureSection />
         <DeveloperSection />
-        <DeploymentOptionsSection />
+        <RuntimeOptionsSection />
       </main>
     </Layout>
   );
