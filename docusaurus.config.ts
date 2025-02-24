@@ -29,8 +29,17 @@ const config: Config = {
   projectName: 'pikku-website', // Usually your repo name.
 
   // onBrokenLinks: 'ignore',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenMarkdownLinks: 'throw',
 
+  markdown: {
+    mermaid: true,
+  },
+
+  themes: [
+    '@saucelabs/theme-github-codeblock',
+    '@docusaurus/theme-mermaid'
+  ],
+  
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
@@ -41,10 +50,6 @@ const config: Config = {
 
   plugins: [
     tailwindPlugin
-  ],
-
-  themes: [
-    '@saucelabs/theme-github-codeblock'
   ],
 
   presets: [
@@ -104,6 +109,9 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/pikku.png',
     respectPrefersColorScheme: true,
+    mermaid: {
+      theme: { light: 'neutral', dark: 'dark' },
+    },
     navbar: {
       title: 'Pikku',
       logo: {
