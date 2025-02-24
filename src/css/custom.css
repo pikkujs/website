@@ -61,3 +61,12 @@
     background-image: none;
   }
 }
+
+.button {
+  padding: 0.6rem 0.8rem;
+  font-size: 1.05rem;
+}
+
+[data-theme='dark'] .button--primary {
+  color: white;
+}

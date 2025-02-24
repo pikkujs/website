@@ -40,7 +40,7 @@ function PitchCard({ title, content, icon }: { title: string; content: string, i
     <li className="shadow p-4 rounded-lg shadow-lg">
       <div className='px-2 py-4 text-4xl'>{icon}</div>
       <h3 className="font-semibold mb-2">{title}</h3>
-      <p className="text-sm">{content}</p>
+      <p>{content}</p>
     </li>
   );
 }
