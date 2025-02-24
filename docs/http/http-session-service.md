@@ -7,10 +7,10 @@ description: Validating sessions
 The session service in Pikku follows a simple structure. It may evolve to handle more data from requests, like the origin, but currently, the session creation responsibility remains inside of the userland login/session related functions.
 
 ```typescript reference title="Session Service Interface"
-https://raw.githubusercontent.com/pikku/pikku/blob/master/packages/core/src/services/session-service.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/core/src/services/user-session-service.ts
 ```
 
-If a session service is registered within the singleton services, Pikku will automatically use it to validate the user session.
+If a http session service is registered within the singleton services, Pikku will automatically use it to validate the user session.
 
 ### Default Session Service
 

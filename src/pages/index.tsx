@@ -29,6 +29,7 @@ function Hero() {
         </div>
       </div>
       <div className="hidden md:block w-1/2">
+        <Image sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }} />
       </div>
     </header>
   );

@@ -9,6 +9,8 @@
  */
 
  :root {
+  --ifm-navbar-height: 4rem;
+
   --ifm-color-primary: #a863ee; /* Deepest Electric Purple */
   --ifm-color-primary-dark: #5E20B8; /* Even Darker Purple */
   --ifm-color-primary-darker: #6D25D0; /* Darker Purple */
@@ -69,4 +71,8 @@
 
 [data-theme='dark'] .button--primary {
   color: white;
+}
+
+.navbar__logo {
+  height: 3rem;
 }

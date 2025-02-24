@@ -6,13 +6,17 @@ description: A brief overview of Pikku's capabilities
 
 Pikku is almost driven entirely by **Types**. This ensures type safety across the application, reducing errors and improving maintainability.
 
-In this example project, without a database connection, all types are defined from scratch. Here's an example:
+The easiest way to use types is by specifying them within a `PikkuFunction`
 
-```typescript reference title="Book Types"
-https://raw.githubusercontent.com/pikku/express-middleware-starter/blob/master/types/books.types.d.ts
+```typescript
+type Input = { sortBy: 'age' | 'name' }
+type Response = { users: Array<{ name: string, age: number }> }
+const myFunction: APIFuction<Input, Output> = (services, filter, userSession) => {
+    return await services.users.getUsers(filter)
+}
 ```
 
-By referencing these types in the APIs, it’s clear what data to expect. This ensures consistency and reduces the risk of runtime errors.
+The pikku CLI will then extract those types to generate all the revelevant information needed to run the functions, as well as generate typed sdks, documentation and schemas to validate the input against, all from the types defined.
 
 ## JSON Schema Validation
 

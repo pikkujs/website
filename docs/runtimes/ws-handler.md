@@ -15,5 +15,5 @@ to running channels.
 :::
 
 ```typescript reference title="WS start"
-https://raw.githubusercontent.com/pikku/workspace-starter/blob/master/backends/ws/bin/start.ts
+https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/backends/ws/bin/start.ts
 ```

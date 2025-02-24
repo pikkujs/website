@@ -22,5 +22,5 @@ const run = async (singletonServices: SingletonServices, name: string) => {
 The rest of it is code to get it work on a cron timer:
 
 ```typescript reference title="PikkuTaskScheduler"
-https://raw.githubusercontent.com/pikku/pikku/blob/master/packages/schedule/src/pikku-task-scheduler.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/schedule/src/pikku-task-scheduler.ts
 ```

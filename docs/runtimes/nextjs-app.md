@@ -28,7 +28,7 @@ In order to do so you can run `npx @pikku/cli nextjs` and will need to have a `p
 For example:
 
 ```json reference title="pikku.config.json"
-https://raw.githubusercontent.com/pikku/workspace-starter/blob/master/apps/next-pages/pikku.config.json
+https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/apps/next-pages/pikku.config.json
 ```
 
 For additional functionality or feature requests, please submit an issue on the [Pikku repository](https://github.com/pikku/pikku).

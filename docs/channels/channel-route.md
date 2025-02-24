@@ -18,5 +18,5 @@ API routes in Pikku serve as the entry points for handling Channels (as of now t
 An channel route is a configuration object that defines the behavior for a specific channel request. Here is an example that demonstrates setting up routes for fetching and updating a book:
 
 ```typescript reference title="events.channel.ts"
-https://raw.githubusercontent.com/pikku/workspace-starter/blob/master/packages/functions/src/functions/events/events.channel.ts
+https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/packages/functions/src/functions/events/events.channel.ts
 ```

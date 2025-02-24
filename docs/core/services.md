@@ -8,14 +8,29 @@ Services in Pikku are a fundamental way for functions to interact with any form 
 
 Most services are simple in nature, only requiring optional initialization and cleanup steps. Let's look at an example.
 
-### Example: Book Management Service
+### Example: A game score service
 
-Here's an example service that manages a collection of books. Notice that it doesn't depend on any pikku features other than the Error, making it straightforward and easy to use.
+Here's an example service that manages a scoring system. Notice that it doesn't depend on any pikku features other than `PikkuError`, making it straightforward and easy to use. There's no extra code or decorators, this is the service in it's entirety.
 
-It also demonstrates how to handle errors using `NotFoundError`. This error type is recognized by Pikku and automatically mapped to an appropriate message.
+It also demonstrates how to handle errors using pikku. This error type is recognized by Pikku and automatically mapped to an appropriate message.
 
-```typescript reference title="Book Server"
-https://raw.githubusercontent.com/pikku/express-middleware-starter/blob/master/src/book.service.ts
+```typescript title="Game Score Seervice"
+export class NotEnoughPointsError extends EError {}
+addError(NotEnoughPointsError, { status: 400, message: 'Not enough points!' })
+
+interface GameScoreService {
+  deductPoints(points: number): string;
+}
+
+class LocalGameScoreService implements GameScoreService {
+    private score = 100; // Starting score
+
+    deductPoints(points: number) {
+        if (points > this.score) throw new NotEnoughPointsError()
+        this.score -= points
+        return `Score: ${this.score}`
+    }
+}
 ```
 
 ## Types of Services
@@ -59,14 +74,14 @@ First you'll need your application types. These are types that extend the pikku 
 Note how this uses a declaration file `.d.ts`. This enforces us to avoid putting anything concrete in this file.
 :::
 
-```typescript reference title="Application Types"
-https://raw.githubusercontent.com/pikku/express-middleware-starter/blob/master/types/application-types.d.ts
+```typescript reference title="application-types.gen.d.ts"
+https://raw.githubusercontent.com/pikkujs/express-middleware-starter/blob/master/types/application-types.d.ts
 ```
 
 Now, let's create the services:
 
-```typescript reference title="Application Types"
-https://raw.githubusercontent.com/pikku/express-middleware-starter/blob/master/src/services.ts
+```typescript reference title="services.ts"
+https://raw.githubusercontent.com/pikkujs/express-middleware-starter/blob/master/src/services.ts
 ```
 
 ## Dependency Lookup vs. Dependency Injection

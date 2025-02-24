@@ -14,7 +14,7 @@ We'll use express here as the example request/response as it's most popular.
 This wraps the request object provided into a pikku handler
 
 ```typescript reference title="Pikku Express Request"
-https://raw.githubusercontent.com/pikku/pikku/blob/master/packages/servers/express/express-middleware/src/pikku-express-request.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/servers/express/express-middleware/src/pikku-express-request.ts
 ```
 
 ### Create a class to extend PikkuResponse
@@ -22,7 +22,7 @@ https://raw.githubusercontent.com/pikku/pikku/blob/master/packages/servers/expre
 This wraps the response object provided into a pikku handler
 
 ```typescript reference title="Pikku Express Response"
-https://raw.githubusercontent.com/pikku/pikku/blob/master/packages/servers/express/express-middleware/src/pikku-express-response.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/servers/express/express-middleware/src/pikku-express-response.ts
 ```
 
 ### Call runHTTPRoute with the correct request and response object

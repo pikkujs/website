@@ -1,15 +1,18 @@
 ---
 sidebar_position: 2
-title: HTTP Permission Service
-description: Creating a HTTP permission Service
+title: HTTP Enforce Access
+description: Creating an access guard
 ---
 
 Pikku also offers a **enforceHTTPAccess** method application-wide HTTP permission checks. These are useful for enforcing higher-order permission rules, similar to route guards in NestJS or Express.
 
 ## HTTP Permission Service
 
-```typescript reference title="HTTP Permission Service Interface"
-https://raw.githubusercontent.com/pikku/pikku/blob/master/packages/core/src/http/http-permission-service.ts
+```typescript title="HTTP Permission Guard Interface"
+export type enforceHTTPAccess = (
+  route: CoreHTTPFunctionRoute<unknown, unknown, any>,
+  session?: CoreUserSession
+) => Promise<void> | void
 ```
 
 ### Example Implementation
@@ -17,12 +20,10 @@ https://raw.githubusercontent.com/pikku/pikku/blob/master/packages/core/src/http
 The following example demonstrates a permission service that restricts access to all routes containing `/admin` to users with admin privileges:
 
 ```typescript
-class AdminPermissionService implements HTTPPermissionService {
-  public verifyRouteAccess(apiRoute, session) {
-    if (apiRoute.route.includes('/admin')) {
-      if (session.isAdmin !== true) {
-        throw new ForbiddenError();
-      }
+const enforceHTTPAccess = (apiRoute, session) => {
+  if (apiRoute.route.includes('/admin')) {
+    if (session.isAdmin !== true) {
+      throw new ForbiddenError();
     }
   }
 }
