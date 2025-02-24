@@ -47,7 +47,7 @@ In this case, the permission is based on the number of books a user has checked 
 
 ## Route based permissions
 
-You can also add route based permissions via the [http-permission-service](../http//http-permission-service.md) and the [channel-permission-service](../channels/channel-permission-service.md).
+You can also add route based permissions via the [http-enforce-access](../http/http-enforce-access.md) and the [channel-enforce-access](../channels/channel-enforce-access.md).
 
 ## Summary
 
