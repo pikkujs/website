@@ -25,7 +25,7 @@ export const features = [
   export const developerFeatures = [
     {
       "title": "OpenAPI & Typed Clients",
-      "content": "Automatcai generates OpenAPI documentation and tiny fully-typed Fetch/WebSocket clients automatically.",
+      "content": "Automatcically generates OpenAPI documentation and tiny fully-typed Fetch/WebSocket clients automatically.",
       "icon": "📖"
     },
     {

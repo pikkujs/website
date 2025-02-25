@@ -131,10 +131,38 @@ const config: Config = {
           position: 'right'
         },
         {
+          to: 'https://github.com/orgs/pikkujs/discussions',
+          label: 'Discussions',
+          position: 'right',
+          className: "discussions-link"
+        },
+        {
+          type: 'html',
+          position: 'right',
+          value: '<span>|</span>',
+        },
+        {
           href: 'https://github.com/pikkujs/pikku',
-          className: "header-github-link",
+          className: "header-link header-github-link",
           "aria-label": "GitHub repository",
           position: 'right',
+        },
+        {
+          href: 'https://x.com/pikkujs',
+          className: "header-link header-x-link",
+          "aria-label": "X (Twitter) account",
+          position: 'right',
+        },
+        {
+          href: 'https://discord.gg/StEhrZkD',
+          className: "header-link header-discord-link",
+          "aria-label": "Discord",
+          position: 'right',
+        },
+        {
+          type: 'html',
+          position: 'right',
+          value: '<span>|</span>',
         },
       ],
     },
