@@ -126,6 +126,12 @@ const config: Config = {
           label: 'Docs',
         },
         {
+          type: 'docSidebar',
+          sidebarId: 'guides',
+          position: 'right',
+          label: 'Guides',
+        },
+        {
           to: '/blog',
           label: 'Blog',
           position: 'right'
