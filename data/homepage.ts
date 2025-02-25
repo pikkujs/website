@@ -155,7 +155,7 @@ export const features = [
     ],
     "custom": {
       "name": "Custom",
-      "docs": "/docs/runtimes/custom",
+      "docs": "/docs/custom-runtimes/custom-http-runtime",
       "img": {
         dark: "custom-dark.svg",
         light: "custom-light.svg"

@@ -1,8 +1,7 @@
 ---
-sidebar_position: 40
-title: Custom Channel Runtime
-image: /img/logos/custom-light.svg
-hide_title: true
+title: Custom Channel Runtime  
+image: /img/logos/custom-light.svg  
+hide_title: true  
 ---
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
@@ -11,139 +10,126 @@ hide_title: true
 This is still a work in progress as websockets have a few different aspects in order to work in a distributed fashion.
 :::
 
-There are two different ways we can deal with channels, both local and serverless. The implementation is slightly different, since running them locally (like with uWebsockets or ws) means we can skip alot of serverless state management and is more performant, but doesn't scale the same way or provide the benefits of serverless deployments.
+There are two different ways we can deal with channels, both local and serverless. The implementation is slightly different, since running them locally (like with uWebSockets or ws) means we can skip a lot of serverless state management and achieve better performance, but it doesn’t scale the same way or offer the benefits of serverless deployments.
 
-## Interfaces used
+## Interfaces Used
 
 Creating a websocket handler requires us to understand a few concepts:
 
-1) EventHubStore
-2) ChannelStore
+1. **EventHubStore**
+2. **ChannelStore**
+
+---
 
 ## Local Channels
 
-As a high level overview, it ties to the normal websocket lifecycle events:
+For local channels, the lifecycle events mirror the typical WebSocket flow:
 
-1) `onUpgrade` 
+### 1) `onUpgrade`
 
-On upgrade we get a channelHandler, which is our interface to the Pikku framework
+When a connection is upgraded, we obtain a channel handler which is our interface to the Pikku framework:
 
 ```typescript
 const request = new PikkuUWSRequest(req, res)
 const response = new PikkuUWSResponse(res)
 
 const channelHandler = await runLocalChannel({
-    channelId: crypto.randomUUID().toString(),
-    request,
-    response,
-    singletonServices: singletonServicesWithEventHub,
-    createSessionServices,
-    route: req.getUrl() as string,
+  channelId: crypto.randomUUID().toString(),
+  request,
+  response,
+  singletonServices: singletonServicesWithEventHub,
+  createSessionServices,
+  route: req.getUrl() as string,
 })
 ```
 
-2) `onOpen`
+### 2) `onOpen`
 
-On Open we:
+Upon opening the connection, we:
 
-- register the send method
-- we call onChannel opened on our eventHub
-- we call open on the channel handler
+- Register the send method on the WebSocket.
+- Notify the EventHub that the channel has been opened.
+- Invoke the channel handler’s open logic.
 
 :::info
-We do both these things since we want to allow Pikku to be as minimal as possible and not need to wrap the websocket objects.
+We perform both these actions so that Pikku remains minimal and does not need to wrap the underlying WebSocket objects.
 :::
 
 ```typescript
 open: (ws) => {
-    const { channelHandler } = ws.getUserData()
-    channelHandler.registerOnSend((data) => {
+  const { channelHandler } = ws.getUserData()
+  channelHandler.registerOnSend((data) => {
     if (isSerializable(data)) {
-        ws.send(JSON.stringify(data))
+      ws.send(JSON.stringify(data))
     } else {
-        ws.send(data as any)
-        }
-    })
-    eventHub.onChannelOpened(channelHandler.channelId, ws)
-    channelHandler.open()
+      ws.send(data as any)
+    }
+  })
+  eventHub.onChannelOpened(channelHandler.channelId, ws)
+  channelHandler.open()
 }
 ```
 
-3) `onMessage`
+### 3) `onMessage`
 
-When we recieve a message we decode it and provide it to the channel handler. Vramework allows direct responses to messages (which means we can wire up non-stream based functions to methods), so we need to send results back if provided. This is also in sync with how AWS lambda websockets can work.
+Incoming messages are decoded and passed to the channel handler. If a response is generated (supporting direct responses similar to AWS Lambda WebSocket functions), it is sent back to the client:
 
 ```typescript
- message: async (ws, message, isBinary) => {
-    const { channelHandler } = ws.getUserData()
-    const data = isBinary ? message : decoder.decode(message)
-    const result = await channelHandler.message(data)
-    if (result) {
-        // TODO: This doesn't deal with binary results
-        ws.send(JSON.stringify(result))
-    }
+message: async (ws, message, isBinary) => {
+  const { channelHandler } = ws.getUserData()
+  const data = isBinary ? message : decoder.decode(message)
+  const result = await channelHandler.message(data)
+  if (result) {
+    // TODO: Handle binary responses as needed
+    ws.send(JSON.stringify(result))
+  }
 }
 ```
 
-4) `onClose`
+### 4) `onClose`
 
-This cleans up the channel
+When the connection closes, we clean up by notifying the EventHub and closing the channel handler:
 
 ```typescript
 close: (ws) => {
-    const { channelHandler } = ws.getUserData()
-    eventHub.onChannelClosed(channelHandler.channelId)
-    channelHandler.close()
+  const { channelHandler } = ws.getUserData()
+  eventHub.onChannelClosed(channelHandler.channelId)
+  channelHandler.close()
 }
 ```
+
+---
 
 ## Serverless Integration
 
-Serverless websockets usually means that a function is invoked without the state necessarily being on the machine that owns the websocket connection.
+Serverless WebSocket setups typically invoke functions on-demand without retaining state on the same machine that handles the WebSocket connection. Imagine a load balancer accepting WebSocket connections and distributing events across multiple processes. To emulate a local-like experience, we must store both EventHub connections and channel state in a distributed memory.
 
-Think of it as if you have a loadbalancer that accepts websocket connections, which then fans out events to different processes.
+### 1) `onOpen` – Establishing the Connection
 
-As such, we now need to find a way to distribute state so that  user code can continue working as if it's local.
+When a new WebSocket connection is initiated via AWS Lambda, the connection details are processed through a dedicated function. This function sets up the channel by storing its state in distributed memory and wiring it up to the framework.
 
-What this means in Pikku is:
-
-1) The EventHubConnections need to be stored in some form of distributed memory
-2) The Channels need to be stored in some form of distributed memory
-
-Looking at aws lambda websockets:
-
-1) `onOpen`
-
-```typescript
-export const connectWebsocket = async <
-  SingletonServices extends CoreSingletonServices,
-  Services extends CoreServices<SingletonServices>,
-  UserSession extends CoreUserSession,
->(
-  event: APIGatewayEvent,
-  {
-    singletonServices,
-    createSessionServices,
-    channelStore,
-  }: WebsocketParams<SingletonServices, Services, UserSession>
-): Promise<APIGatewayProxyResult> => {
-  const runnerParams = getServerlessDependencies(
-    singletonServices.logger,
-    channelStore,
-    event
-  )
-  const request = new PikkuAPIGatewayLambdaRequest(event)
-  const response = new PikkuAPIGatewayLambdaResponse()
-  await runChannelConnect({
-    ...runnerParams,
-    request,
-    response,
-    singletonServices: singletonServices as any,
-    createSessionServices: createSessionServices as any,
-    route: event.path || '/',
-  })
-  return response.getLambdaResponse()
-}
+```typescript reference title="websocket-disconnect.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/refs/heads/master/packages/runtimes/aws-lambda/src/websocket/websocket-connect.ts
 ```
 
-2) `onOpen`
+### 2) `onMessage` – Handling Incoming Messages
+
+For serverless environments, incoming messages are processed by a separate function. This function decodes the incoming data and dispatches it to the appropriate channel handler, returning any responses generated by user code.
+
+```typescript reference title="websocket-disconnect.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/refs/heads/master/packages/runtimes/aws-lambda/src/websocket/websocket-message.ts
+```
+
+### 3) `onClose` – Cleaning Up the Connection
+
+When a client disconnects, a dedicated function handles the cleanup. It removes the channel’s state from distributed memory and notifies the EventHub that the connection has been closed.
+
+```typescript reference title="websocket-disconnect.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/refs/heads/master/packages/runtimes/aws-lambda/src/websocket/websocket-disconnect.ts
+```
+
+---
+
+*This section completes the overview of custom channel runtime in Pikku. For local channels, state is managed directly via WebSocket lifecycle events, while in serverless environments, the framework leverages distributed memory to maintain state and ensure that user code interacts with channels as if they were local.*
+
+Feel free to explore and provide feedback as we continue to refine these integrations!
