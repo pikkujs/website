@@ -1,9 +1,11 @@
 ---
 title: WebSocket
 description: Using Pikku with WS
+hide_title: true
+image: /img/logos/ws-light.svg
 ---
 
-# Using WS Handler
+<DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
 You can allow WS to start handling websockets by using the **pikkuWebsocketHandler**
 

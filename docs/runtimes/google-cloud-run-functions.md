@@ -1,7 +1,11 @@
 ---
 title: Google Cloud Run Functions
 draft: true
+hide_title: true
+image: /img/logos/google-cloud-light.svg
 ---
+
+<DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
 Deploying via Cloud Run Functions has not yet been implemented.
 

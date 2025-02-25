@@ -52,8 +52,8 @@ export const features = [
         "docs": "/docs/runtimes/aws-lambda",
         "supported": true,
         "img": {
-          dark: "aws-dark.png",
-          light: "aws-light.png"
+          dark: "aws-dark.svg",
+          light: "aws-light.svg"
         } 
       },
       // {

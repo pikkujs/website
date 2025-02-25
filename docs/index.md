@@ -6,8 +6,6 @@ description: Introducting Pikku
 
 Pikku - meaning tiny 🔎 in Finnish - is a minimalistic batteries included framework built around simple functions. It works with any event driven design (currently http, websockets and scheduled tasks) and can be run on any Javascript runtime, currently Cloudflare Workers, Fastify, Bun, AWS Lambda, Express, uWS, WS and others.
 
-And by minimal we really mean minimal!
-
 ```typescript
 const helloWorld: APIFunction<{ language: 'en' | 'es' }, string> = async (
   services, data, session
@@ -16,6 +14,7 @@ const helloWorld: APIFunction<{ language: 'en' | 'es' }, string> = async (
   return `${language === 'en' ? 'Hey' : 'Ola' } ${session.username}!`
 }
 
+// Register it as a HTTP Route
 addRoute({ method: 'get', route: '/', func: helloWorld })
 ```
 

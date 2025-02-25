@@ -1,9 +1,13 @@
 ---
 title: uWebSockets
 description: Using Pikku with uWS
+hide_title: true
+image: /img/logos/uws-light.svg
 ---
 
-# Using uWS Handler
+<DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
+
+## Using PikkuUWSHandler
 
 Pikku can be / is best used within uws as a handler.
 
@@ -34,7 +38,7 @@ this.app.any(
 )
 ```
 
-# Using PikkuUWSServer
+## Using PikkuUWSServer
 
 :::note
 The setup process for Express, uWS, and Fastify servers are identical, except for using different constructors.

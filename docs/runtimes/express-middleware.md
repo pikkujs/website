@@ -1,11 +1,15 @@
 ---
 title: Express
 description: Using Pikku with Express
+hide_title: true
+image: /img/logos/express-light.svg
 ---
+
+<DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
 Pikku can be added to an express server via `middleware`, or you can just use the `PikkuExpressServer` if everything is using pikku.
 
-# Using Express Middleware
+## Using Express Middleware
 
 Pikku can be / is best used within express as a middleware function.
 

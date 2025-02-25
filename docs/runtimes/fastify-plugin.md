@@ -1,9 +1,10 @@
 ---
 title: Fastify
 description: Using Pikku with Fastify
+image: /img/logos/fastify-light.svg
 ---
 
-# Using Fastify Plugin
+<DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
 Pikku can be / is best used within fastify as a plugin.
 
@@ -26,7 +27,7 @@ app.register(pikkuFastifyPlugin, {
 })
 ```
 
-# Using PikkuFastifyServer
+## Using PikkuFastifyServer
 
 :::note
 The setup process for Express, uWS, and Fastify servers are identical, except for using different constructors.
