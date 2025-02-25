@@ -17,11 +17,11 @@ Since permissions are checked in parallel, only the first error thrown will be u
 A simple permission check might involve verifying the user’s session to determine their role:
 
 ```typescript
-const isUser: APIPermission<unknown> = (_, _, session) => {
+const isUser: APIPermission<unknown> = (_services, _data, session) => {
   return session.isUser;
 }
 
-const isAdmin: APIPermission<unknown> = (_, _, session) => {
+const isAdmin: APIPermission<unknown> = (_services, _data, session) => {
   return session.isAdmin;
 }
 ```

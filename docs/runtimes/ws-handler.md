@@ -2,7 +2,7 @@
 title: WebSocket
 description: Using Pikku with WS
 hide_title: true
-image: /img/logos/ws-light.svg
+image: /img/logos/websocket-light.svg
 ---
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />

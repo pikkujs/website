@@ -1,6 +1,6 @@
 ---
 sidebar_position: 30
-title: Channel AccessControl
+title: Channel Access Control
 description: Using channel enforcement
 ---
 

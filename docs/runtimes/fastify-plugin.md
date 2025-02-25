@@ -1,6 +1,7 @@
 ---
 title: Fastify
 description: Using Pikku with Fastify
+hide_title: true
 image: /img/logos/fastify-light.svg
 ---
 

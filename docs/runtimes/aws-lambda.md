@@ -14,3 +14,5 @@ The documentation hasn't yet been updated. For now please refer to the starter-r
 Join the discussion for it here [WIP](https://github.com/pikku/pikku.io/issues/2)
  🚧
 :::
+
+## Deploying via Serverless

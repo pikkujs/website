@@ -18,7 +18,9 @@ Begin by installing the starter project using **npm create**:
 npm create pikku
 ```
 
-This will then ... (ask for details) ...
+Which will then guide you through starting a project:
+
+<AsciinemaPlayer type="installing" autoPlay />
 
 #### Core Files
 

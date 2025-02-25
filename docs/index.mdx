@@ -6,17 +6,106 @@ description: Introducting Pikku
 
 Pikku - meaning tiny 🔎 in Finnish - is a minimalistic batteries included framework built around simple functions. It works with any event driven design (currently http, websockets and scheduled tasks) and can be run on any Javascript runtime, currently Cloudflare Workers, Fastify, Bun, AWS Lambda, Express, uWS, WS and others.
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+  <TabItem value="HTTP" label="HTTP" default>
 ```typescript
-const helloWorld: APIFunction<{ language: 'en' | 'es' }, string> = async (
+const helloWorld: APIFunction<
+  { language: 'en' | 'es' }, 
+  string
+> = async (
   services, data, session
 ) => {
-  services.logger.info(`${session.username} said hello!`)
-  return `${language === 'en' ? 'Hey' : 'Ola' } ${session.username}!`
+  if (language === 'en') {
+    return `Hey ${session.username}!`
+  } else {
+    return `Ola ${session.username}!`
+  }
 }
 
 // Register it as a HTTP Route
-addRoute({ method: 'get', route: '/', func: helloWorld })
+addRoute({ 
+  method: 'get', 
+  route: '/', 
+  func: helloWorld 
+})
 ```
+  </TabItem>
+  <TabItem value="scheduledTask" label="Scheduled Task">
+    <div className="sm:hidden">
+```typescript
+const cronJob: APIFunctionSessionless = async (
+  services
+) => {
+  services.logger.info(`Crob job ran!`)
+}
+
+// Register it as a Scheduled Task
+addScheduledTask({
+  name: 'helloWorld',
+  schedule: '* * * * 1',
+  func: cronJob,
+})
+```
+</div>
+<div className="hidden sm:block">
+```typescript
+const cronJob: APIFunctionSessionless = async (services) => {
+  services.logger.info(
+    `Crob job ran!`
+  )
+}
+
+// Register it as a Scheduled Tasks
+addScheduledTask({
+  name: 'helloWorld',
+  schedule: '* * * * 1',
+  func: cronJob,
+})
+```
+</div>
+  </TabItem>
+  <TabItem value="channel" label="Channel">
+<div className="sm:hidden">
+```typescript
+const onMessage: ChannelMessage<
+  'hello', 'hey'
+> = async (
+  services, channel
+) => {
+  services.logger.info(
+    `Hello from ${channel.id}`
+  )
+  channel.send('hey')
+}
+
+// Register it as a channel 
+addChannel({ 
+  name: 'events', 
+  onMessage 
+})
+```
+</div>
+<div className="hidden sm:block">
+```typescript
+export const onMessage: ChannelMessage<'hello', 'hey'> = async (
+  services, channel
+) => {
+  services.logger.info(`Hello from ${channel.id}`)
+  channel.send('hey')
+}
+
+// Register it as a channel 
+addChannel({ 
+  name: 'events', 
+  onMessage 
+})
+```
+</div>
+  </TabItem>
+</Tabs>
 
 ---
 
