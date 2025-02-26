@@ -1,5 +1,5 @@
 ---
-title: OpenAPI V3
+title: OpenAPI
 ---
 
 The OpenAPI documentation generation is currently a work in progress, but can be used currently to do most things.
@@ -35,7 +35,4 @@ To generate an `openAPI.yml` spec file, specify it in the `pikku.config.json` an
 }
 ```
 
-Each function can be provided a summary and description that will be used in the API generation:
-
-```
-```
+Each function can be provided a summary and description that will be used in the API generation.

@@ -45,6 +45,16 @@ const belowLimit: APIPermission<unknown> = async (services, _, session) => {
 
 In this case, the permission is based on the number of books a user has checked out. This check requires interaction with a database, making it more dynamic.
 
+## Permission Runner
+
+```typescript
+permissions: {
+  isTodoCreator: [isTodoCreator, withinAPILimits],
+  isAdmin
+}
+```
+
+
 ## Route based permissions
 
 You can also add route based permissions via the [http-enforce-access](../http/http-enforce-access.md) and the [channel-enforce-access](../channels/channel-enforce-access.md).

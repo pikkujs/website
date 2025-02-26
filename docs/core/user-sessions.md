@@ -11,4 +11,4 @@ When needed, Pikku provides the entry points to providing session services.
 
 Currently this is supported by the [http session service](../http/http-session-service.md) which is used by HTTP and Websockets.
 
-Websockets also allow you to change the user session anytime during the session. You can see how this is done [here](../channels/channel-route.md).
+Channels also allow you to change the user session anytime during their lifetime. You can see how this is done via [setSession](../channels/channel-functions.md.

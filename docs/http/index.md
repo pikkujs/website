@@ -4,31 +4,89 @@ title: HTTP Routes
 description: Mapping HTTP calls to functions  
 ---
 
-HTTP API routes in Pikku serve as the entry points for handling HTTP requests. When a request is made, an HTTP API route listens on the specified path and processes the request by calling a function. The process involves:
+HTTP API routes in Pikku serve as the entry points for handling HTTP requests. When a request is made, an HTTP API route is registered on a specified path and processes the request.
 
-- **Validating the session (if required)**
-- **Extracting and validating request data**
-- **Handling permissions**
-- **Returning a success response or an error code**
-
-// TODO: Image to define process
-
-## Defining API Routes
+## Binding a HTTP Route
 
 An API route is a configuration object that defines the behavior for a specific HTTP request. Here is an example that demonstrates setting up routes for fetching and updating a book:
 
-```typescript reference title="book.function.ts"
-https://raw.githubusercontent.com/pikkujs/express-middleware-starter/blob/master/src/books.function.ts
+```typescript
+addRoute({
+  // The method type
+  method: 'patch',
+  // The method route
+  route: '/todo/:todoId',
+  // The function to call
+  func: updateTodo,
+  // The permissions to check before calling the function (supports both and/ors)
+  permissions: {
+    isTodoCreator: [isTodoCreator, withinAPILimits],
+    isAdmin
+  },
+  // Whether the route needs a session
+  auth: true,
+  // Info to use when generating OpenAPI docs
+  docs: {
+    errors: [NotFoundError],
+    description: 'Updates a todo',
+    tags: ['todos']
+  }
+})
 ```
 
+## How HTTP Routes work
 
-## Validation
+<details>
+ <summary>The HTTP flow diagram</summary>
+```mermaid
+flowchart TB
+  Event([HTTP Request])
+  Match[Match Route]
+  Auth[Auth / Session]
+  Data[Data Extraction]
+  Permissions[Permissions]
+  Validation[Payload Validation]
+  Function[Function]
+  Error[Map to correct error code]
+  Response([HTTP Response])
 
-Pikku automatically ensures that any parameters used in the paths are inside of the data object. If they are missing it would throw an error.
+  Event --> Match --> Auth --> Data --> Permissions --> Validation --> Function 
 
-It also automatically extracts the input type and creates a schema to validate against. This will be run using `ajv` whenever the route is called.
+  Match -- not found --> Response
+  Auth -- invalid/missing session --> Response
+  Permissions -- denied --> Response
+  Validation -- invalid --> Response
+  Function -- error --> Error
+  Error --> Response
+  Function -- success --> Response
+```
+</details>
 
-## Data Handling
+#### **Finding the route**
+
+Check if the route is registered.
+
+#### **Validating the session (if required)**
+
+If the route doesn't have `auth: false` it will then try to retrieve the user session via the [SessionService](../api/session-service.md).
+
+#### **Extracting and validating request data**
+
+<details>
+<summary>Handling Data Conflicts</summary>
+
+Pikku takes a strict approach to prevent conflicts between different data sources. Below are three common approaches to handling data conflicts:
+
+| **Approach**                         | **Pros**                                                                 | **Cons**                                                                    |
+|--------------------------------------|--------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| **1. Explicit Source Selection**     | - Clear and unambiguous.                                                 | - Requires more code to handle data from each source explicitly.            |
+|                                      | - Reduces accidental conflicts.                                          | - Tedious when sharing many parameters across different sources.            |
+|                                      | - Ideal for generating documentation.                                    |                                                                             |
+| **2. Establish Priority Rules**      | - Allows flexibility without needing explicit handling for each source.  | - Implicit rules can lead to unexpected behavior.                           |
+|                                      | - Convenient for simple cases.                                           | - Debugging becomes harder in the event of priority conflicts.              |
+| **3. Fail Fast for Conflicting Data**| - Enforces consistency upfront.                                          | - Introduces additional error-handling logic.                               |
+|                                      | - Flags ambiguous situations early, ensuring data integrity.             | - Users must provide consistent values across all sources.                  |
+</details>
 
 Pikku automatically merges request data from query parameters, path parameters, and the request body. If conflicting data is found (e.g., `bookId` in the path and body don't match), an error is thrown to ensure consistency. 
 
@@ -46,29 +104,23 @@ httpPost(`/v1/book/abc?bookId=abc`, {
 
 If all sources match, the request proceeds. If there are discrepancies, an error is generated.
 
-### Handling Data Conflicts
+#### **Handling permissions**
 
-Pikku takes a strict approach to prevent conflicts between different data sources. Below are three common approaches to handling data conflicts:
+You can see how permissions work in depth [here](../core/permission-guards.md).
 
-| **Approach**                         | **Pros**                                                                 | **Cons**                                                                    |
-|--------------------------------------|--------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| **1. Explicit Source Selection**     | - Clear and unambiguous.                                                 | - Requires more code to handle data from each source explicitly.            |
-|                                      | - Reduces accidental conflicts.                                          | - Tedious when sharing many parameters across different sources.            |
-|                                      | - Ideal for generating documentation.                                    |                                                                             |
-| **2. Establish Priority Rules**      | - Allows flexibility without needing explicit handling for each source.  | - Implicit rules can lead to unexpected behavior.                           |
-|                                      | - Convenient for simple cases.                                           | - Debugging becomes harder in the event of priority conflicts.              |
-| **3. Fail Fast for Conflicting Data**| - Enforces consistency upfront.                                          | - Introduces additional error-handling logic.                               |
-|                                      | - Flags ambiguous situations early, ensuring data integrity.             | - Users must provide consistent values across all sources.                  |
+#### **Validating Payload**
 
-## API Documentation Generation
+Pikku automatically ensures that any parameters used in the paths are inside of the data object. If they are missing it would throw an error.
 
-One of Pikku’s goals is to support automatic generation of API documentation, such as Swagger files. Although this is a work in progress, contributions to the project are encouraged. Any suggestions can be submitted via [GitHub](https://github.com/pikku/pikku).
+It also automatically extracts the input type during compile time which creates a json schema to validate against.
 
-## Scalability and Verbosity
+You can see more about it [here](../concepts/types-and-schemas.md).
 
-While the current approach may seem verbose, it has proven effective for managing strict TypeScript validation across all layers. Each API route ensures that data is validated at both compile time and runtime. Though scalability remains a concern, future improvements may streamline the definition of routes by leveraging TypeScript’s features.
+#### **Returning a success response or an error code**
 
-For example, a request without a session cannot invoke an `APIFunction` that requires one. This is enforced by the type system, preventing issues at compile time.
+The final stage is taking the result of the pipeline, whether it's an error message from any of the stages or the response from the function, and sending it back via a response.
+
+If an error was thrown, it would use the [error](../core/errors.md) mechanism to map it to the correct message and status code.
 
 ## Summary
 

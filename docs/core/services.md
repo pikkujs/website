@@ -91,7 +91,9 @@ Pikku supports **dependency lookup** for service management.
 The reasoning behind this is primarily to keep things simple. By having a single entry point to create our services we can manage how they are created.
 
 :::info
-The disadvantage to this approach is that it's harder for to tree shake our dependencies when selecting routes. This is something that requires more investigation, and may mean we ultimately go down the route of dependency injection.
+The disadvantage to this approach is that it's harder for to tree shake our dependencies when selecting routes. 
+
+There is a solution to this using more typescript inspection, but has not yet been implemented.
 :::
 
 | **Aspect**               | **Dependency Lookup**                                             | **Dependency Injection**                                         |

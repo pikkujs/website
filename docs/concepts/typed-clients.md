@@ -1,5 +1,5 @@
 ---
-sidebar_position: 0
+sidebar_position: 40
 title: Pikku Clients
 description: The clients provided by Pikku
 ---
@@ -7,6 +7,8 @@ description: The clients provided by Pikku
 ## Pikku Clients
 
 Pikku offers lightweight, TypeScript-focused clients that seamlessly integrate with web fetch and WebSocket transports and protocols.
+
+![Pikku Client](/img/fetch.gif)
 
 ### Designed for Type Safety and Efficiency
 

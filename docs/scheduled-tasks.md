@@ -8,10 +8,16 @@ Scheduled tasks (also known as **cron jobs**) are tasks that are run on a specif
 
 The triggering mechanism can either be provided by the runtime (like via an azure timer request) or by using the `@pikku/scheduler` package.
 
+```mermaid
+stateDiagram-v2
+  [*] --> Function: Timed Event
+  Function --> [*]
+```
+
 The main steps remain the same:
 
 1. Create a `APIFunction` that you wish to trigger. Since this is triggered by time, it doesn't get given any actual data nor does it expect anything in return.
-2. Register the function with `@pikku/core/schedular`
+2. Register the function via `addScheduledTask`
 3. Run the tasks when needed
 
 ### Creating and registering the function

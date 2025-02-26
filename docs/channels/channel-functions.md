@@ -1,7 +1,7 @@
 ---
 sidebar_position: 10 
-title: Channels Methods
-description: The different methods used within channels
+title: Channels Functions
+description: The different functions used within channels
 ---
 
 ### `PikkuChannel` Interface

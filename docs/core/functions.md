@@ -15,7 +15,7 @@ Functions in Pikku serve as a core interface for the application. They manage lo
 
 In Pikku, functions often act as a service layer, interacting with databases or caches. Since they are independent of HTTP, the core logic is typically placed directly within the functions.
 
-Here’s an example of a simple function that retrieves a book:
+Here’s an example of a simple function that retrieves a book using [kysely](https://kysely.dev/):
 
 ```typescript
 const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
@@ -23,13 +23,24 @@ const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
     .selectFrom('book')
     .selectAll()
     .where('bookId', '=', data.bookId)
-    .executeTakeFirstOrThrow();
+    .executeTakeFirstOrThrow(() => new NotFoundError());
 };
 ```
 
 ## Service-Oriented Approach
 
-The `express-starter` examples use a service-driven approach, similar to frameworks like NestJS. In this case, functions interact directly with services to perform specific actions.
+You can also use a service-driven approach, similar to frameworks like NestJS. In this case, functions interact directly with services to perform specific actions.
+
+```typescript
+const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
+  return await services.books.getBook(data.id);
+};
+```
+
+:::info
+If you follow this approach, it could make sense to embed the function directly in the binding to reduce functions.
+:::
+
 
 ```typescript
 const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
@@ -39,7 +50,7 @@ const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
 
 ## Error Handling
 
-A more detailed explanation of error handling will be covered [here](./errors). For now, it's important to note that errors can be structured to map to specific error codes.
+A more detailed explanation of error handling will be covered [here](./errors). It's worth noting that errors are thrown as they are in a normal javascript project. Pikku then maps it to the correct response depending on the protocol.
 
 ## HTTP Access in Functions
 
