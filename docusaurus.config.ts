@@ -57,7 +57,7 @@ const config: Config = {
       'classic',
       {
         gtag: {
-          trackingID: 'G-5W0GS8T059',
+          trackingID: 'GTM-M58XBVMC',
           anonymizeIP: true,
         },
         docs: {
