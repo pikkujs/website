@@ -1,58 +1,61 @@
 ---
-sidebar_position: 10
+sidebar_position: 10  
 title: Vision
 ---
 
+Pikku is a combination of multiple different visions combined, which together lead the way to how it works.
+
 ## The Function-First Vision
 
-At the heart of Pikku is the concept of defining all your logic as **typed functions**. These functions can be mapped to various use cases, including:
+At the heart of Pikku is the idea that all your logic is defined as **typed functions**. These functions can handle a variety of use cases, such as:
 
 - HTTP routes
 - WebSockets
 - Cron jobs and scheduled tasks
 - Queues
-- Other event based interactions
+- Other event-driven interactions
 
-This design ensures your codebase is completely flexible, allowing it to seamlessly support both traditional servers and serverless platforms. It eliminates the pain points typically encountered when switching between these paradigms or attempting to use them simultaneously within a single codebase.
+This approach delivers complete flexibility, allowing your codebase to support both traditional servers and serverless platforms without the typical pain points that arise when trying to mix paradigms. 
 
-What it can't do (at least yet) is:
+*Current limitations (for now):*
 
-- Upload files
-- Deal with content types other than `application/json`
-
---- 
-
-## The Deploy anywhere vision
-
-With Pikku, you can deploy your functionality using:
-
-- Traditional servers like **[Express](https://expressjs.com)**, **[Fastify](https://www.fastify.io)**, and **[uWS (µWebSockets)](https://github.com/uNetworking/uWebSockets.js)**
-- Serverless platforms like **[AWS Lambda](https://aws.amazon.com/lambda)**, **[Azure Functions](https://azure.microsoft.com/en-us/products/functions/)**, and **[Cloudflare Workers](https://workers.cloudflare.com)**
-- Use it directly in Full-Stack frameworks like **[Next.js](https://nextjs.org)**
-
-Its flexibility allows you to choose the best runtime for your project without being locked into a specific framework.
+- File uploads
+- Handling content types other than `application/json`
 
 ---
 
-## The happy developer experience vision
+## The Deploy Anywhere Vision
 
-Pikku was born out of the mind of someone you can almost say is allergic to boilerplate code, whilst also a devout believer that a framework is needed to keep complexity at bay.
+Pikku empowers you to deploy your functionality on any platform:
 
-Your function(s) are given services (both singleton and session based), data and the user session. They return data (send updates if using a stream) or throw an Error. There's not much else to it.
+- **Traditional Servers:** Use with frameworks like [Express](https://expressjs.com), [Fastify](https://www.fastify.io), or [uWS (µWebSockets)](https://github.com/uNetworking/uWebSockets.js).
+- **Serverless Platforms:** Deploy on [AWS Lambda](https://aws.amazon.com/lambda), [Azure Functions](https://azure.microsoft.com/en-us/products/functions/), or [Cloudflare Workers](https://workers.cloudflare.com).
+- **Full-Stack Frameworks:** Integrate directly with frameworks like [Next.js](https://nextjs.org).
 
-What this resulted in was an automated process that depended almost entirely on **types** that:
-
-- **Provide Runtime Validation** - turn your function inputs to json schemas to validate against during runtime. No need to any external library.
-- **Smart service management** - inspect which services are used to dynamically tree-shake your dependencies (this is next on the road map).
-- **Generate Fetch APIs** - extracts all your function inputs and outputs to types that can be fed into a *tiny* fetch client.
-- **Generate WebSocket APIs** - extracts all your websockets interactions to give you a fully typed WebSocket client out of the box.
-- **Generate OpenAPI Docs** - automatically generates OpenAPI documentation out of all your HTTP routes
-- **more** - typed nextJS wrappers, error handling, session management, granual permissions
+This versatility lets you choose the best runtime for your project without being tied to a single framework.
 
 ---
 
-## The Greener Future vision
+## The Happy Developer Experience Vision
 
-As infrastructure choices multiply, understanding their environmental impact becomes more important. Pikku’s flexibility makes it easier to experiment with different runtimes, servers, and deployment options—be it on VMs, containers, or serverless. By observing how these choices affect **CPU cycles and memory consumption**, you can get a clearer picture of the carbon footprint associated with your application’s workload.
+Pikku was created for developers who desire to avoid boilerplate and believe in keeping complexity under control. In Pikku:
 
-We’re excited about the idea of using Pikku as a platform to help companies make environmentally informed decisions. Imagine comparing resource usage and emissions across runtimes and automatically suggesting lower-impact configurations. While this is still in the concept stage, it’s a direction we’re exploring to align performance optimization with environmental responsibility.
+- **Function Input:** Your functions receive services (both singleton and session-based), data, and user sessions.
+- **Function Output:** They return data (or stream updates) or throw errors—nothing more.
+
+This simplicity is achieved through an automated process driven almost entirely by **types**, which allows Pikku to:
+
+- **Provide Runtime Validation:** Automatically convert function inputs into JSON schemas for runtime validation—no extra libraries needed.
+- **Smart Service Management:** Inspect used services and dynamically tree-shake dependencies (a future enhancement on our roadmap).
+- **Generate Fetch APIs:** Extract function inputs and outputs into types for a lightweight, type-safe fetch client.
+- **Generate WebSocket APIs:** Offer fully typed WebSocket clients by extracting your real-time interactions.
+- **Generate OpenAPI Docs:** Automatically produce API documentation for all your HTTP routes.
+- **Additional Features:** Include typed Next.js wrappers, error handling, session management, granular permissions, and more.
+
+---
+
+## The Greener Future Vision
+
+As the variety of infrastructure options grows, understanding their environmental impact becomes crucial. Pikku’s flexibility lets you experiment with different runtimes—whether on VMs, containers, or serverless—while monitoring how these choices affect **CPU cycles** and **memory consumption**. 
+
+Imagine a future where Pikku not only optimizes performance but also helps companies make environmentally informed decisions by comparing resource usage and carbon emissions across different configurations. Although this vision is still in the concept stage, we’re excited about aligning performance optimization with environmental responsibility.

@@ -25,7 +25,7 @@ One of the key benefits of using types is that JSON schemas can be automatically
 The schemas are automatically created when running the default pikku command. However you can also specifically only update the schemas by running:
 
 ```bash npm2yarn
-npx @pikku/cli schema
+npx @pikku/cli schemas
 ```
 
 ## Advanced Approach: Database-Driven Types
