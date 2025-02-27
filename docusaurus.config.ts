@@ -99,7 +99,7 @@ const config: Config = {
           ],
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: ['./src/css/custom.css', 'node_modules/react-lite-youtube-embed/dist/LiteYouTubeEmbed.css'],
         },
       } satisfies Preset.Options,
     ],

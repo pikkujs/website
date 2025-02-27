@@ -10735,6 +10735,7 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
     react-github-buttons: ^0.5.0
+    react-lite-youtube-embed: ^2.4.0
     react-syntax-highlighter: ^15.6.1
     tailwindcss: ^3.4.10
     typedoc: ^0.26.10
@@ -11990,6 +11991,16 @@ __metadata:
   peerDependencies:
     react: ^16.13.1 || ^17.0.0 || ^18.0.0
   checksum: e298621f6437ee06545bdb9e11265d92a60a6394ca8ea40bf12b50422a62f7a485998bf96d0b8b7cb95658d0122dbc900a814a572ddaaf59053657a27ccc7f33
+  languageName: node
+  linkType: hard
+
+"react-lite-youtube-embed@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "react-lite-youtube-embed@npm:2.4.0"
+  peerDependencies:
+    react: ">=18.2.0"
+    react-dom: ">=18.2.0"
+  checksum: fbed710f22926f8dabefcbc7dcaf817bf9281c07c612eebcd52c36694084ba154eb3dccb5de6049f84b905a3a850b1a6dde90396da353ac5cc2231eea18ff1f7
   languageName: node
   linkType: hard
 
