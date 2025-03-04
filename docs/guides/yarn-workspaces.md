@@ -11,7 +11,7 @@ Separating components into packages within a repo can offer several advantages, 
 To simplify the process, this documentation focuses on working with the [workspace starter](https://github.com/pikku/workspace-starter). The workspace name is *todos*.
 
 ```bash
-git clone git@github.com:pikku/workspace-starter.git
+git clone git@github.com:pikku/yarn-workspace-starter.git
 ```
 
 Upon cloning, the following folder structure will be present:
@@ -28,8 +28,6 @@ backends/
         ...
 apps/
     next-app/
-        ...
-    next-page/
         ...
 packages/
     functions/

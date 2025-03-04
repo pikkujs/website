@@ -7,8 +7,6 @@ image: /img/logos/uws-light.svg
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
-## Using PikkuUWSHandler
-
 Pikku can be / is best used within uws as a handler.
 
 ```typescript title="uWS Handler"

@@ -17,7 +17,7 @@ function Hero() {
           Function API Framework
         </Heading>
         <p className="text-2xl font-medium leading-snug">
-          TypeScript functions with minimal boilerplate. Support multiple transports and deploy to any javascript runtime.
+          TypeScript functions with minimal boilerplate. Support multiple transports and deploy to any javascript runtime, serverless or server.
         </p>
         <div className="flex flex-row gap-4 mt-6">
           <Link to="/docs" className="button button--primary">
