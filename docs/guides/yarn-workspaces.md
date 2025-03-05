@@ -82,7 +82,7 @@ There are various types of databases, and a single database can use different sy
 
 [Kysely](https://kysely.dev/) is a highly recommended TypeScript-enabled API that allows SQL queries to be built with type-checking directly against the database.
 
-*Note*: While Kysely may not be suitable for everyone, the documentation will proceed accordingly. Requests for new databases or contributions can be made [here](https://github.com/pikku/pikku-website/issues/1).
+*Note*: While Kysely may not be suitable for everyone, the documentation will proceed accordingly. Requests for new databases or contributions can be made [here](https://github.com/pikkujs/pikku-website/issues/1).
 
 ### Database Migration
 
@@ -223,4 +223,4 @@ await services.kysely
 
 The SDK directory would normally contain all types, routes, and the necessary HTTP calls to interact with the server.
 
-Although it is not yet auto-generated (see [issue](https://github.com/pikku/pikku/issues/7)) like in [tRPC](https://trpc.io/), the current setup has the advantage of not relying on a third-party library.
+Although it is not yet auto-generated (see [issue](https://github.com/pikkujs/pikku/issues/7)) like in [tRPC](https://trpc.io/), the current setup has the advantage of not relying on a third-party library.

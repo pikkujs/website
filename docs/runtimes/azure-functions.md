@@ -9,4 +9,4 @@ image: /img/logos/azure-light.svg
 
 Deploying via Azure Functions has not yet been implemented.
 
-You can show interest or participate in the discussion for it [here](https://github.com/pikku/pikku/issues/49).
+You can show interest or participate in the discussion for it [here](https://github.com/pikkujs/pikku/issues/49).

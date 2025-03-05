@@ -29,4 +29,4 @@ https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/apps/cli
 ```
 
 
-For additional functionality or feature requests, please submit an issue on the [Pikku repository](https://github.com/pikku/pikku).
+For additional functionality or feature requests, please submit an issue on the [Pikku repository](https://github.com/pikkujs/pikku).

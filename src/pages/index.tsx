@@ -23,7 +23,7 @@ function Hero() {
           <Link to="/docs" className="button button--primary">
             Get Started
           </Link>
-          <Link className="button button--secondary" to="https://github.com/pikku/pikku">
+          <Link className="button button--secondary" to="https://github.com/pikkujs/pikku">
             View on GitHub
           </Link>
         </div>

@@ -31,7 +31,7 @@ For example:
 https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/apps/next-app/pikku.config.json
 ```
 
-For additional functionality or feature requests, please submit an issue on the [Pikku repository](https://github.com/pikku/pikku).
+For additional functionality or feature requests, please submit an issue on the [Pikku repository](https://github.com/pikkujs/pikku).
 
 ### Server-side Actions
 
