@@ -7,6 +7,8 @@ Hello again!
 
 I'm excited to announce that our rebrand is officially here – welcome to Pikku! This isn’t just a facelift; it’s a complete rethink of how we can make developers' lives easier. Inspired by awesome projects like [Hono](https://hono.dev) and fueled by genuine feedback from our NodeJS meetup, we've revamped most things to be more streamlined.
 
+<!-- truncate -->
+
 I'm still sharpening my branding skills, but with the help of friends and a touch of MIT-inspired magic, we now have a look and feel that's as simple as the code we write.
 
 ## What’s New?
