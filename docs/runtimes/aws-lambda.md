@@ -96,8 +96,8 @@ This initializes singleton services and configurations the first time a function
 
 ### 2. Entry Point
 
-```typescript reference title="start.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/aws-lambda/src/start.ts
+```typescript reference title="main.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/aws-lambda/src/main.ts
 ```
 
 This file acts as the Lambda entry point and routes requests to the Pikku runtime.
