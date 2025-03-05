@@ -6,7 +6,7 @@ description: Pikku Fetch
 
 You can interact with pikku using a thin wrapper around fetch that does type validation.
 
-![Pikku Client](/img/fetch.gif)
+![Pikku Client](/img/pikku-fetch.gif)
 
 ### Creating the client
 

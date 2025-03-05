@@ -15,7 +15,7 @@ Ensure that [Node.js](https://nodejs.org) (version >= 18) is installed on the op
 Begin by installing the starter project using **npm create**:
 
 ```bash npm2yarn
-npm create pikku
+npm create pikku@latest
 ```
 
 Which will then guide you through starting a project:

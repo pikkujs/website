@@ -12,6 +12,8 @@ It has no client side dependencies, and is driven by a typescript type decalarti
 
 In order to do so you can run `npx @pikku/cli websocket` and will need to have a `websocketFile` within the `pikku.config.json` file  set.
 
+![Pikku Websocket Client](/img/pikku-websocket.gif)
+
 ## Example Websocket Client
 
 ```typescript reference title="websocket.ts"

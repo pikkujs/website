@@ -23,7 +23,7 @@ Deploying Pikku with NextJS allows for code separation benefits without running 
 
 The pikku CLI can generate a `pikku-next.ts` file which would allow you to directly interact with your functions.
 
-In order to do so you can run `npx @pikku/cli nextjs` and will need to have a `nextJSfile` property set within your `pikku config`.
+In order to do so you can run `npx @pikku/cli all` or target it specifically with `npx @pikku/cli next`  and will need to have a `nextJSfile` property set within your `pikku config`.
 
 For example:
 
@@ -40,11 +40,8 @@ Invoke server-side actions by calling the Pikku action request with the method, 
 ```typescript
 async function addTodo(text: string) {
   'use server'
-  await pikku().actionRequest(
-    {
-      method: 'post',
-      route: '/todo',
-    },
+  await pikku().post(
+    '/todo',
     { text }
   )
 }
@@ -56,12 +53,9 @@ Load data directly via the API within pages by referencing it in the function:
 
 ```typescript
 export default async function TodoPage() {
-  const todos: Todos = await pikku().actionRequest(
-    {
-      method: 'get',
-      route: '/todos',
-    },
-    {}
+  const todos: Todos = await pikku().get(
+    '/todos'
+    null
   )
   return <TodosCard todos={todos} addTodo={addTodo} toggleTodo={toggleTodo} />
 }
@@ -69,16 +63,13 @@ export default async function TodoPage() {
 
 ### Static SSR Loading
 
-For when your server side rendering isn't based on the user session (for example during build-time), you can use `staticActionRequest`.
+For when your server side rendering isn't based on the user session (for example during build-time), you can use `staticGet`. This skips accessing the `headers`.
 
 ```typescript
 export default async function TodoPage() {
-  const todos: Todos = await pikku().staticActionRequest(
-    {
-      method: 'get',
-      route: '/todos',
-    },
-    {}
+  const todos: Todos = await pikku().staticGet(
+    '/todos',
+    null
   )
   return <TodosCard todos={todos} addTodo={addTodo} toggleTodo={toggleTodo} />
 }
