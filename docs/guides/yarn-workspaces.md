@@ -2,6 +2,10 @@
 title: Yarn Workspaces  
 ---
 
+:::info
+This is currently a bit out of date as you can now create it via `npm create pikku@latest`
+:::
+
 Separating components into packages within a repo can offer several advantages, such as:
 
 1. Clear seperation of concerns
