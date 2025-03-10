@@ -54,11 +54,6 @@ permissions: {
 }
 ```
 
-
-## Route based permissions
-
-You can also add route based permissions via the [http-enforce-access](../http/http-enforce-access.md) and the [channel-enforce-access](../channels/channel-enforce-access.md).
-
 ## Summary
 
 Pikku's permission system provides flexibility, allowing permissions to be checked at both the function and route levels. By combining simple and advanced checks, it ensures that only authorized users can access sensitive parts of an application.
