@@ -25,7 +25,7 @@ Below is a **side-by-side comparison** to help you decide which one fits your us
 | **Transport Support**     | HTTP only                              | HTTP, WebSockets, and more (queues coming soon) |
 | **Function Architecture** | Functions are tied to HTTP routes      | Functions are **transport-agnostic** (can be HTTP, WebSockets, etc.) |
 | **Performance**           | Ultrafast, optimized for edge & serverless | Fast, with slight overhead for built-in features |
-| **Authentication**        | Requires external middleware           | Built-in session & role-based auth |
+| **Authentication**        | Using middleware           | Using middleware + built-in session management |
 | **Permissions**           | External libraries needed              | First-class permission system |
 | **Schema Validation**     | External libraries (`zod`, etc.)       | **Automatic schema validation from TypeScript types** |
 | **Testing**               | Requires HTTP request mocking   | **Per-function testing, independent of transport** |

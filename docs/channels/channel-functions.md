@@ -9,16 +9,9 @@ description: The different functions used within channels
 The `PikkuChannel` interface defines the essential components of a channel. It is **not created directly** by the user; instead, it is provided as part of the `ChannelConnection`, `ChannelDisconnection`, and `ChannelMessage` methods.
 
 ```typescript
-export interface PikkuChannel<Session, OpeningData, Out> {
+export interface PikkuChannel<OpeningData, Out> {
   // The channel ID
   channelId: string;
-
-  // The user session, if available
-  session?: Session;
-
-  // Update the user session, useful if dealing with authentication
-  // on the stream side
-  setSession: (session: Session) => void;
 
   // The data the channel was created with, such as query parameters
   // or data in the URL

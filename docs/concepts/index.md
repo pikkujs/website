@@ -78,7 +78,8 @@ flowchart LR
   Services --> Functions --> Bindings
 ```
 
-  - **Services:** Provide foundational utilities such as data access, authentication, and logging.  
+  - **Middleware:** Used to run custom user logic before and/or after Functions. 
+  - **Services:** Provide foundational utilities such as data access and logging.  
   - **Function Logic:** Contains the core business logic of your application.  
   - **Bindings:** Expose functions to various triggers like HTTP routes, scheduled tasks, and channels.
 
@@ -121,7 +122,7 @@ flowchart LR
 ```
 
    - Provides the libraries that handle the different transport types.
-   - Ties together authentication, permissioning and validation.
+   - Ties together middleware, permissioning and data validation.
    - Maps error to their correct responses if provided.
 
 ### **Deployment Layer** 

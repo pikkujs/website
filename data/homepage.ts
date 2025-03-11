@@ -35,7 +35,7 @@ export const features = [
     },
     {
       "title": "Built-In Auth & Session Management",
-      "content": "Secure APIs with built-in authentication, permissions, and user session management—no middleware required.",
+      "content": "Secure APIs with via authentication, permissions, and user session management.",
       "icon": "🔒"
     },
     {

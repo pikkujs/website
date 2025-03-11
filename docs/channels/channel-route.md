@@ -25,14 +25,15 @@ stateDiagram-v2
   [*] --> Match: Match
   Match --> Create: create / upgrade / onopen*
   Match --> [*]: Not Found
-  Create --> Auth
+  Create --> Middleware
+  Middleware -> Auth
   Auth --> Permissions
   Permissions --> Function
 
   Function --> [*]
 ```
 
-In the channel open flow, the process begins by matching an incoming connection with the defined channel route; if a match is found, a new channel instance is created and immediately passes through authentication and permissions checks before executing the designated function, ensuring secure channel initialization.
+In the channel open flow, the process begins by matching an incoming connection with the defined channel route; if a match is found, a new channel instance is created and immediately passes through middleware, authentication and permissions checks before executing the designated function, ensuring secure channel initialization.
 
 ### Channel Close
 
