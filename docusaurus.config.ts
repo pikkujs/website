@@ -174,7 +174,7 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      copyright: `Copyright © ${new Date().getFullYear()} Vlandor, Inc.`,
+      copyright: `MIT License\nCopyright © 2020-${new Date().getFullYear()} Yasser Fadl & Pikku Contributors.`,
     },
     prism: {
       theme: prismThemes.github,
