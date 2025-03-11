@@ -1,5 +1,5 @@
 ---
-title: Service Lookup
+title: Service Lookup Continued
 description: A bit more detail as to why we use service lookups
 image: cloud-service
 ---

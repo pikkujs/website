@@ -78,6 +78,7 @@ const config: Config = {
           ]],
         },
         blog: {
+          blogSidebarCount: 'ALL',
           showReadingTime: true,
           feedOptions: {
             type: ['rss', 'atom'],
