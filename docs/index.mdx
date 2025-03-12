@@ -83,7 +83,8 @@ const onMessage: ChannelMessage<
 
 // Register it as a channel 
 addChannel({ 
-  name: 'events', 
+  name: 'events',
+  route: '/', 
   onMessage 
 })
 ```
@@ -100,6 +101,7 @@ export const onMessage: ChannelMessage<'hello', 'hey'> = async (
 // Register it as a channel 
 addChannel({ 
   name: 'events', 
+  route: '/', 
   onMessage 
 })
 ```
