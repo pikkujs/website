@@ -2,7 +2,7 @@
 title: NextJS
 description: Using Pikku with NextJS App Router
 hide_title: true
-image: /img/logos/nextjs-light.svg
+image: /img/logos/nextjs-light.png
 ---
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
