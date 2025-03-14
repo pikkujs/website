@@ -161,7 +161,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://discord.gg/StEhrZkD',
+          href: 'https://discord.gg/z7r4rhwJ',
           className: "header-link header-discord-link",
           "aria-label": "Discord",
           position: 'right',
