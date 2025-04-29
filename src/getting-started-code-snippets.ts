@@ -74,7 +74,7 @@ export const codeTypes = `import {
   
   // 3) Integration Snippets
   export const codeExpress = `import express from 'express'
-  import { pikkuMiddleware } from '@pikku/express-middleware'
+  import { pikkuExpressMiddleware } from '@pikku/express-middleware'
   import { createSessionServices } from '../src/services.js'
   
   import '../.pikku/pikku-bootstrap'
@@ -87,7 +87,7 @@ export const codeTypes = `import {
     const singletonServices = await createSingletonServices(config)
   
     app.use(
-      pikkuMiddleware(singletonServices, createSessionServices, {
+      pikkuExpressMiddleware(singletonServices, createSessionServices, {
         respondWith404: false,
       })
     )

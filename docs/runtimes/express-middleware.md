@@ -14,14 +14,14 @@ Pikku can be added to an express server via `middleware`, or you can just use th
 Pikku can be / is best used within express as a middleware function.
 
 ```typescript title="Express middleware"
-import { pikkuMiddleware } from '@pikku/express-middleware'
+import { pikkuExpressMiddleware } from '@pikku/express-middleware'
 
 import { createSingletonServices, createSessionServices } from 'path/to/pikku-bootstrap.ts'
 
 // The express server setup goes here...
 
 const singletonServices = await createSingletonServices()
-app.use(pikkuMiddleware(
+app.use(pikkuExpressMiddleware(
    singletonServices, 
    createSessionServices, 
    {

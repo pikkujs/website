@@ -23,7 +23,7 @@ Deploying Pikku with NextJS allows for code separation benefits without running 
 
 The pikku CLI can generate a `pikku-next.ts` file which would allow you to directly interact with your functions.
 
-In order to do so you can run `npx @pikku/cli all` or target it specifically with `npx @pikku/cli next`  and will need to have a `nextJSfile` property set within your `pikku config`.
+In order to do so you can run `npx @pikku/cli all` or target it specifically with `npx @pikku/cli next`  and will need to have a `nextBackendFile` property set within your `pikku config`.
 
 For example:
 

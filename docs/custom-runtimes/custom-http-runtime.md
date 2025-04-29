@@ -11,7 +11,7 @@ You can integrate Pikku into most javascript HTTP servers in three steps.
 
 1) Create a bridge for the `request`
 2) Create a bridge for the `response`
-3) Call `runHTTPRoute` from your runtimes event
+3) Call `fetch` from your runtimes event
 
 :::info
 We'll use express here as the example request/response as it's most popular.
@@ -33,12 +33,12 @@ This wraps the response object provided into a pikku response object.
 https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/runtimes/express-middleware/src/pikku-express-response.ts
 ```
 
-### Call runHTTPRoute with the correct request and response object
+### Call fetch with the correct request and response object
 
 The `runRoute` method will find the correct route to run, and check permissions / authentication, validate data against the schema and map any errors to their errors.
 
 ```typescript title="Pikku Middleware"
-await runHTTPRoute(
+await fetch(
     new PikkuExpressRequest(req),
     new PikkuExpressResponse(res),
     singletonServices,
