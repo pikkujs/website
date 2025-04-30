@@ -1,7 +1,6 @@
 ---
 title: Pikku Now Uses Fetch!
 description: Simplifying Server Support with Native Request/Response APIs
-draft: true
 ---
 
 We're excited to announce that **Pikku now uses `fetch` directly** within its APIs—taking inspiration from frameworks like Hono and pushing even closer to modern web standards.
