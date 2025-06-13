@@ -56,18 +56,31 @@ https://raw.githubusercontent.com/pikkujs/express-middleware-starter/blob/master
 
 #### Generated Files
 
-The two files we use within our code are `pikku-bootstrap.gen.ts` and `pikku-types.gen.d.ts`. The rest are generated in order to create types to improve your developer experience, as well as documentation and schemas to validate input against. 
+The two files we use within our code are `pikku-bootstrap.gen.ts` and `pikku-types.gen.ts`. The rest are generated in order to create types to improve your developer experience, as well as documentation and schemas to validate input against.
 
-<details>
- <summary>The generated files, not needed for quick start.</summary>
+##### Core Files
 
 | **File**                    | **Description**                                                                                             |
 |-----------------------------|-------------------------------------------------------------------------------------------------------------|
-| `pikku-schemas/`                   | The directory that contains all the schemas we'll validate calls against                                                                                     |
-| `pikku-schemas/register.ts`                 | Imports all the schemas and adds them to pikku                                                              |
-| `pikku-bootstrap.ts`               | Imports the required files into our runtime                                                 |
-| `pikku-routes.ts` | Imports all the files with routes in them                                                          |
-| `pikku-types.d.ts`  | Provides types to be used in the application                                                       |
+| `pikku-schemas/`                   | Directory containing all validation schemas                                                                                     |
+| `pikku-bootstrap.gen.ts`               | Main bootstrap file that imports all required files                                                 |
+| `pikku-types.gen.ts`  | TypeScript type definitions for the application                                                       |
+| `pikku-functions.gen.ts` | Generated function definitions |
+| `pikku-functions-meta.gen.ts` | Metadata for all functions |
+| `pikku-rpc-meta.gen.ts` | RPC metadata |
+| `pikku-rpc-map.gen.ts` | RPC mapping definitions |
+| `pikku-bootstrap-*.gen.ts` | Event-specific bootstrap files |
 
-</details>
+##### Transport Files
+
+| **File**                    | **Description**                                                                                             |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------|
+| `pikku-http-routes.gen.ts` | HTTP route definitions |
+| `pikku-http-routes-meta.gen.ts` | HTTP route metadata |
+| `pikku-http-routes-map.gen.d.ts` | TypeScript declarations for HTTP route mapping |
+| `pikku-channels.gen.ts` | WebSocket channel definitions |
+| `pikku-channels-meta.gen.ts` | Channel metadata |
+| `pikku-channels-map.gen.d.ts` | TypeScript declarations for channel mapping |
+| `pikku-schedules.gen.ts` | Scheduled task definitions |
+| `pikku-schedules-meta.gen.ts` | Scheduled task metadata |
 
