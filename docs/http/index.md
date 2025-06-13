@@ -11,7 +11,7 @@ HTTP API routes in Pikku serve as the entry points for handling HTTP requests. W
 An API route is a configuration object that defines the behavior for a specific HTTP request. Here is an example that demonstrates setting up routes for fetching and updating a book:
 
 ```typescript
-addRoute({
+addHTTPRoute({
   // The method type
   method: 'patch',
   // The method route

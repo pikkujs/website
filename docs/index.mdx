@@ -12,21 +12,21 @@ import TabItem from '@theme/TabItem';
 <Tabs>
   <TabItem value="HTTP" label="HTTP" default>
 ```typescript
+import { pikkuFunc, addHTTPRoute } from '#pikku/pikku-types.gen.js'
+
 const helloWorld = pikkuFunc<
   { language: 'en' | 'es' }, 
   string
 >(async (
-  services, data, session
+  { logger }, data, session
 ) => {
-  if (data.language === 'en') {
-    return `Hey ${session.username}!`
-  } else {
-    return `Ola ${session.username}!`
-  }
+  const greeting = data.language === 'en' ? 'Hey' : 'Ola'
+  logger.info(`Greeting user: ${session?.username}`)
+  return `${greeting} ${session?.username || 'guest'}!`
 })
 
 // Register it as a HTTP Route
-addRoute({ 
+addHTTPRoute({ 
   method: 'get', 
   route: '/', 
   func: helloWorld 
@@ -36,32 +36,36 @@ addRoute({
   <TabItem value="scheduledTask" label="Scheduled Task">
     <div className="sm:hidden">
 ```typescript
+import { pikkuVoidFunc, addScheduledTask } from '#pikku/pikku-types.gen.js'
+
 const cronJob = pikkuVoidFunc(async (
-  services
+  { logger, todos }
 ) => {
-  services.logger.info(`Crob job ran!`)
+  logger.info('Cleaning up completed todos')
+  await todos.deleteCompleted()
 })
 
 // Register it as a Scheduled Task
 addScheduledTask({
-  name: 'helloWorld',
-  schedule: '* * * * 1',
+  name: 'cleanupTodos',
+  schedule: '0 2 * * *', // Daily at 2 AM
   func: cronJob,
 })
 ```
 </div>
 <div className="hidden sm:block">
 ```typescript
-const cronJob = pikkuVoidFunc(async (services) => {
-  services.logger.info(
-    `Crob job ran!`
-  )
+import { pikkuVoidFunc, addScheduledTask } from '#pikku/pikku-types.gen.js'
+
+const cronJob = pikkuVoidFunc(async ({ logger, todos }) => {
+  logger.info('Cleaning up completed todos')
+  await todos.deleteCompleted()
 })
 
 // Register it as a Scheduled Task
 addScheduledTask({
-  name: 'helloWorld',
-  schedule: '* * * * 1',
+  name: 'cleanupTodos',
+  schedule: '0 2 * * *', // Daily at 2 AM
   func: cronJob,
 })
 ```
@@ -70,16 +74,16 @@ addScheduledTask({
   <TabItem value="channel" label="Channel">
 <div className="sm:hidden">
 ```typescript
-const onMessage: ChannelMessage<
-  'hello', 'hey'
-> = async (
-  services, channel
+import { pikkuChannelFunc, addChannel } from '#pikku/pikku-types.gen.js'
+
+const onMessage = pikkuChannelFunc<'hello', 'hey'>(async (
+  { logger }, channel
 ) => {
-  services.logger.info(
+  logger.info(
     `Hello from ${channel.id}`
   )
   channel.send('hey')
-}
+})
 
 // Register it as a channel 
 addChannel({ 
@@ -91,12 +95,14 @@ addChannel({
 </div>
 <div className="hidden sm:block">
 ```typescript
-export const onMessage: ChannelMessage<'hello', 'hey'> = async (
-  services, channel
+import { pikkuChannelFunc, addChannel } from '#pikku/pikku-types.gen.js'
+
+export const onMessage = pikkuChannelFunc<'hello', 'hey'>(async (
+  { logger }, channel
 ) => {
-  services.logger.info(`Hello from ${channel.id}`)
+  logger.info(`Hello from ${channel.id}`)
   channel.send('hey')
-}
+})
 
 // Register it as a channel 
 addChannel({ 
@@ -108,6 +114,42 @@ addChannel({
 </div>
   </TabItem>
 </Tabs>
+
+---
+
+## Realistic Example
+
+Here's a more complete example showing authentication and service usage:
+
+```typescript
+import { pikkuFunc, addHTTPRoute } from '#pikku/pikku-types.gen.js'
+
+const createTodo = pikkuFunc<
+  { title: string; description?: string },
+  { todoId: string; success: boolean }
+>(async (
+  { todos, logger }, data, session
+) => {
+  // Create todo using todo service
+  const todo = await todos.create({
+    title: data.title,
+    description: data.description,
+    createdBy: session.userId
+  })
+  
+  logger.info(`Todo created: ${todo.todoId}`)
+  
+  return { todoId: todo.todoId, success: true }
+})
+
+// Register it as a HTTP Route
+addHTTPRoute({
+  method: 'post',
+  route: '/todo',
+  func: createTodo,
+  auth: true
+})
+```
 
 ---
 
