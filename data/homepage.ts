@@ -1,46 +1,45 @@
-
 export const features = [
     {
-      "title": "Vanilla TypeScript",
-      "content": "Write functions and services using vanilla TypeScript — just user logic and types.",
-      "icon": "🍦"
+      "title": "Just TypeScript",
+      "content": "Write functions with types. No decorators or magic.",
+      "icon": "🎯"
     },
     {
-      "title": "Transport Agnostic",
-      "content": "Wire functions to HTTP, WebSockets, Cron jobs and more. Pikku adapts to any event-driven architecture.",
-      "icon": "🚦"
+      "title": "Any Protocol", 
+      "content": "HTTP, WebSockets, scheduled tasks, and RPCs from the same code.",
+      "icon": "🔗"
     },
     {
-      "title": "Batteries Included",
-      "content": "Auth, validation, and services built-in — everything you need without extra dependencies.",
-      "icon": "🔋"
+      "title": "Auto-Generated",
+      "content": "Clients, docs, validation, and auth generated from your functions.", 
+      "icon": "⚡"
     },
     {
       "title": "Deploy Anywhere",
-      "content": "Works on cloud, server, edge, or serverless with minimal config—no runtime lock-in.",
+      "content": "Express, Lambda, Cloudflare, Next.js, or any runtime.",
       "icon": "🌍"
     }
   ];
   
   export const developerFeatures = [
     {
-      "title": "OpenAPI & Typed Clients",
-      "content": "Automatcically generates OpenAPI documentation and tiny fully-typed Fetch/WebSocket clients automatically.",
+      "title": "Type-Safe Clients",
+      "content": "Auto-generated TypeScript clients with full intellisense.",
       "icon": "📖"
     },
     {
-      "title": "Generated Type Safety & Validation",
-      "content": "Pikku generates schemas from your function types, ensuring full type safety and runtime validation without additional code.",
+      "title": "Runtime Validation",
+      "content": "Schemas generated from your types ensure runtime safety.",
       "icon": "✅"
     },
     {
-      "title": "Built-In Auth & Session Management",
-      "content": "Secure APIs with via authentication, permissions, and user session management.",
+      "title": "Built-In Auth",
+      "content": "Authentication and sessions with zero configuration.",
       "icon": "🔒"
     },
     {
-      "title": "Singleton & Session-Based Services",
-      "content": "Define services that persist across function calls, whether singleton instances or session-scoped state.",
+      "title": "Service Layer",
+      "content": "Dependency injection for databases, logging, and more.",
       "icon": "⚙️"
     }
   ];
