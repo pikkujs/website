@@ -67,7 +67,7 @@ export const codeTypes = `import {
   export const codePikkuConfig = `{
     "$schema": "https://raw.githubusercontent.com/pikkujs/pikku/refs/heads/master/packages/cli/cli.schema.json",
     "tsconfig": "./tsconfig.json",
-    "routeDirectories": ["src"],
+    "srcDirectories": ["src"],
     "outDir": ".pikku"
   }
   `;

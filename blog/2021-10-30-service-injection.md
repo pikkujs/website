@@ -21,15 +21,15 @@ So a function in pikku has three inputs and one output:
 For example, the simplest examples don't really need state:
 
 ```typescript
-const helloWorld: APIFunctionSessionless<{ name: string }> = async (services, data) => {
+const helloWorld = pikkuSessionlessFunc<{ name: string }, string>(async (services, data) => {
     return `Hey there ${data.name}!`
-}
+})
 ```
 
 But let's say you now have a user session and want to get the user:
 
 ```typescript
-const helloWorld: APIFunction<void> = async (services, data, session) => {
+const helloWorld = pikkuFunc<void, string>(async (services, data, session) => {
     // Option one is your username is encoded in the session.. 
     // but that isn't really a great choice
     if (session.name) {
@@ -39,7 +39,7 @@ const helloWorld: APIFunction<void> = async (services, data, session) => {
     // This is using the postgres-typed library
     const user = await services.database.crudGet('user', ['name'], { userId: session.userId }, new NotFoundError())
     return `Hey there ${user.name}!`   
-}
+})
 ```
 
 Let's break down what just happened. Our services contains a database driver and we ran a query using it, which gave us the name of the user.
@@ -47,7 +47,7 @@ Let's break down what just happened. Our services contains a database driver and
 But lets say we have now have a whole bunch of reactions:
 
 ```typescript
-const helloWorldNoisy: APIFunction<void> = async (services, data, session) => {
+const helloWorldNoisy = pikkuFunc<void, string>(async (services, data, session) => {
     const user = await services.database.crudGet('user', ['name', 'email'], { userId: session.userId }, new NotFoundError())
 
     // You could use an email service
@@ -58,7 +58,7 @@ const helloWorldNoisy: APIFunction<void> = async (services, data, session) => {
     await services.slack.sendHelloMessage(session.userId, `Hey there ${user.name}!`)
 
     return `Hey there ${user.name}!`   
-}
+})
 ```
 
 Makes it easier to read right?
@@ -106,7 +106,7 @@ That method does two important things:
 2) It creates the `SessionServices` (named `Services` for short). These are what are actually provided to the API functions and are scoped to the current session of the API call. It's worth making sure these are lazy loaded! If they aren't needed for the session it isn't worth doing the initial work. For example with a database, don't get the connection until your first query. This is useful for things like:
 
     - Putting all database queries in a transaction automatically, with the userId set on the database session which allows audit logs to magically work.
-    - Abstracting header details from the APIFunctions (pikku hides away all HTTP concepts so the code is deployment library agnostic)
+    - Abstracting header details from the pikkuFuncs (pikku hides away all HTTP concepts so the code is deployment library agnostic)
 
 ### There are two ways you can do dependency injection
 

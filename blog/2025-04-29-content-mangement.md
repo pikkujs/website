@@ -105,26 +105,26 @@ This mirrors how most services in Pikku work: run locally for fast iteration, th
 Uploading and signing files through Pikku requires simple endpoints:
 
 ```typescript
-export const getSignedUploadUrl: APIFunction<{
+export const getSignedUploadUrl = pikkuFunc<{
   name?: string;
   contentType: string;
 }, {
   uploadUrl: string;
   assetKey: string;
-}> = async ({ content }, { name, contentType }, session) => {
+}>(async ({ content }, { name, contentType }, session) => {
   if (!name || name === 'uuid') {
     name = crypto.randomUUID();
   }
   const contentTypeSuffix = contentType.split('/').pop();
   const key = `${session.userId}/checkin/${name}.${contentTypeSuffix}`;
   return await content.getUploadURL(key, contentType);
-};
+});
 
-export const getSignedContentUrls: APIFunctionSessionless<{ assetKeys: string[] }, string[]> = async ({ content }, data) => {
+export const getSignedContentUrls = pikkuSessionlessFunc<{ assetKeys: string[] }, string[]>(async ({ content }, data) => {
   return Promise.all(data.assetKeys.map(assetKey =>
     content.signContentKey(assetKey, new Date())
   ));
-};
+});
 
 addRoute({
   method: 'post',
@@ -176,7 +176,7 @@ Client ->> Cloud Storage: PUT file with Signed URL
 Pikku's `ContentService` also makes it simple to integrate file streams directly into external APIs within functions:
 
 ```typescript
-const transcribeAudioFile: APIFunction<{ audioSrc: string }, { transcription: string }> = async ({ content, openai }, { audioSrc }) => {
+const transcribeAudioFile = pikkuFunc<{ audioSrc: string }, { transcription: string }>(async ({ content, openai }, { audioSrc }) => {
   const audioFileStream = await content.readFile(audioSrc);
   const transcription = await openai.audio.transcriptions.create({
     file: audioFileStream,
@@ -184,7 +184,7 @@ const transcribeAudioFile: APIFunction<{ audioSrc: string }, { transcription: st
     response_format: 'text',
   });
   return { transcription };
-};
+});
 ```
 
 ```mermaid

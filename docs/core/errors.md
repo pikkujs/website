@@ -36,12 +36,12 @@ Pikku uses the `PikkuError` class to handle JavaScript inheritance issues with t
 Here’s an example of how these custom errors might be used in a function:
 
 ```typescript
-const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
+const getBook = pikkuFunc<JustBookId, Book>(async (services, data) => {
   return await services.database.selectFrom('books')
     .selectAll()
     .where('id', '=', data.id)
     .executeTakeFirst(() => throw NotFoundError());
-};
+});
 ```
 
 In this example, if the book is not found, a `NotFoundError` is thrown, which will result in a 404 response.

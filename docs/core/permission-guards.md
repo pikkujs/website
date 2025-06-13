@@ -6,7 +6,7 @@ description: Creating permission guards
 
 Permissions in Pikku are evaluated before each function execution, similar to guards in NestJS. These permissions ensure that only authorized users can access certain functionality within the system.
 
-A permission function operates much like an `APIFunction`, but it returns a boolean to indicate whether the user has access. If an error is thrown, the process results in an error code other than 403. 
+A permission function operates much like a `pikkuFunc`, but it returns a boolean to indicate whether the user has access. If an error is thrown, the process results in an error code other than 403. 
 
 :::info
 Since permissions are checked in parallel, only the first error thrown will be used to block access.

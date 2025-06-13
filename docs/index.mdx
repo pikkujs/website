@@ -12,18 +12,18 @@ import TabItem from '@theme/TabItem';
 <Tabs>
   <TabItem value="HTTP" label="HTTP" default>
 ```typescript
-const helloWorld: APIFunction<
+const helloWorld = pikkuFunc<
   { language: 'en' | 'es' }, 
   string
-> = async (
+>(async (
   services, data, session
 ) => {
-  if (language === 'en') {
+  if (data.language === 'en') {
     return `Hey ${session.username}!`
   } else {
     return `Ola ${session.username}!`
   }
-}
+})
 
 // Register it as a HTTP Route
 addRoute({ 
@@ -36,11 +36,11 @@ addRoute({
   <TabItem value="scheduledTask" label="Scheduled Task">
     <div className="sm:hidden">
 ```typescript
-const cronJob: APIFunctionSessionless = async (
+const cronJob = pikkuVoidFunc(async (
   services
 ) => {
   services.logger.info(`Crob job ran!`)
-}
+})
 
 // Register it as a Scheduled Task
 addScheduledTask({
@@ -52,11 +52,11 @@ addScheduledTask({
 </div>
 <div className="hidden sm:block">
 ```typescript
-const cronJob: APIFunctionSessionless = async (services) => {
+const cronJob = pikkuVoidFunc(async (services) => {
   services.logger.info(
     `Crob job ran!`
   )
-}
+})
 
 // Register it as a Scheduled Task
 addScheduledTask({

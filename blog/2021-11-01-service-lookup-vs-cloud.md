@@ -127,14 +127,14 @@ public async getUploadURL(Key: string, ContentType: string) {
 And in any API, I can now do:
 
 ```typescript
-const getSignedUrl: APIFunction<SignFileUpload, SignFileUploadResult> = async ({ content }, data, session) => {
+const getSignedUrl = pikkuFunc<SignFileUpload, SignFileUploadResult>(async ({ content }, data, session) => {
   const { key, contentType } = generateKey(session.userId, data)
   const { uploadUrl, assetKey } = await content.getUploadURL(key, contentType)
   return {
     uploadUrl,
     assetKey,
   }
-}
+})
 ```
 
 If running locally, it would then live in a `.upload` directory on my dist. If running vs AWS, it would then live in the bucket. Same paths and everything. It can even go as far as to check if the content is `private access` or not for complete testing.

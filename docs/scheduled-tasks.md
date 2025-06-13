@@ -16,21 +16,21 @@ stateDiagram-v2
 
 The main steps remain the same:
 
-1. Create a `APIFunction` that you wish to trigger. Since this is triggered by time, it doesn't get given any actual data nor does it expect anything in return.
+1. Create a `pikkuVoidFunc` that you wish to trigger. Since this is triggered by time, it doesn't get given any actual data nor does it expect anything in return.
 2. Register the function via `addScheduledTask`
 3. Run the tasks when needed
 
 ### Creating and registering the function
 
 ```typescript
-import { APIFunctionSessionless } from '@pikku-workspace-starter/functions/.pikku/pikku-types.js'
+import { pikkuVoidFunc } from '@pikku-workspace-starter/functions/.pikku/pikku-types.js'
 import { addScheduledTask } from '@pikku/core/scheduler'
 
-export const myScheduledTask: APIFunctionSessionless<void, void> = async (
+export const myScheduledTask = pikkuVoidFunc(async (
   services, _, session
 ) => {
   // do something
-}
+})
 
 addScheduledTask({
   name: 'myScheduledTask',
@@ -39,7 +39,7 @@ addScheduledTask({
 })
 ```
 
-The reason we use **APIFunctionSessionless** instead of a special **ScheduledTask** type is simply to minimize types, as well as also allowing our scheduled task to also be called via a HTTP endpoint if we want to trigger it manually.
+The reason we use **pikkuVoidFunc** instead of a special **ScheduledTask** type is simply to minimize types, as well as also allowing our scheduled task to also be called via a HTTP endpoint if we want to trigger it manually.
 
 ### Adding it via the @pikku/scheduler
 

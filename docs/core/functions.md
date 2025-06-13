@@ -18,13 +18,13 @@ In Pikku, functions often act as a service layer, interacting with databases or 
 Here’s an example of a simple function that retrieves a book using [kysely](https://kysely.dev/):
 
 ```typescript
-const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
+const getBook = pikkuFunc<JustBookId, Book>(async (services, data) => {
   return await services.database
     .selectFrom('book')
     .selectAll()
     .where('bookId', '=', data.bookId)
     .executeTakeFirstOrThrow(() => new NotFoundError());
-};
+});
 ```
 
 ## Service-Oriented Approach
@@ -32,9 +32,9 @@ const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
 You can also use a service-driven approach, similar to frameworks like NestJS. In this case, functions interact directly with services to perform specific actions.
 
 ```typescript
-const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
+const getBook = pikkuFunc<JustBookId, Book>(async (services, data) => {
   return await services.books.getBook(data.id);
-};
+});
 ```
 
 :::info
@@ -43,9 +43,9 @@ If you follow this approach, it could make sense to embed the function directly 
 
 
 ```typescript
-const getBook: APIFunction<JustBookId, Book> = async (services, data) => {
+const getBook = pikkuFunc<JustBookId, Book>(async (services, data) => {
   return await services.books.getBook(data.id);
-};
+});
 ```
 
 ## Error Handling
