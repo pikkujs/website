@@ -1,46 +1,56 @@
 export const features = [
     {
-      "title": "Just TypeScript",
-      "content": "Write functions with types. No decorators or magic.",
+      "title": "Fully Typed Runtime",
+      "content": "Think tRPC but purely using types and interfaces.",
       "icon": "🎯"
     },
     {
-      "title": "Any Protocol", 
-      "content": "HTTP, WebSockets, scheduled tasks, and RPCs from the same code.",
-      "icon": "🔗"
+      "title": "Session & Middleware", 
+      "content": "Think Express but simpler permissions and auth.",
+      "icon": "🔐"
     },
     {
-      "title": "Auto-Generated",
-      "content": "Clients, docs, validation, and auth generated from your functions.", 
-      "icon": "⚡"
+      "title": "Service Injection",
+      "content": "Think NestJS without decorators or magic.", 
+      "icon": "⚙️"
     },
     {
       "title": "Deploy Anywhere",
-      "content": "Express, Lambda, Cloudflare, Next.js, or any runtime.",
+      "content": "Think Hono but much more powerful.",
       "icon": "🌍"
     }
   ];
   
   export const developerFeatures = [
     {
-      "title": "Type-Safe Clients",
-      "content": "Auto-generated TypeScript clients with full intellisense.",
-      "icon": "📖"
+      "title": "HTTP",
+      "content": "Handle REST APIs and HTTP requests with full type safety.",
+      "icon": "📡"
     },
     {
-      "title": "Runtime Validation",
-      "content": "Schemas generated from your types ensure runtime safety.",
-      "icon": "✅"
+      "title": "WebSocket",
+      "content": "Real-time bidirectional communication with typed messages.",
+      "icon": "🔌"
     },
     {
-      "title": "Built-In Auth",
-      "content": "Authentication and sessions with zero configuration.",
-      "icon": "🔒"
+      "title": "Server-Side Events",
+      "content": "Stream data to clients with automatic reconnection.",
+      "icon": "📺"
     },
     {
-      "title": "Service Layer",
-      "content": "Dependency injection for databases, logging, and more.",
-      "icon": "⚙️"
+      "title": "Scheduled Tasks",
+      "content": "Cron-like scheduling that works anywhere you deploy.",
+      "icon": "⏰"
+    },
+    {
+      "title": "Queues",
+      "content": "Background job processing with reliable message delivery.",
+      "icon": "📦"
+    },
+    {
+      "title": "RPC",
+      "content": "Call server functions like local functions with complete type safety.",
+      "icon": "🎯"
     }
   ];
   
