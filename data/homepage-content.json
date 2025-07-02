@@ -1,0 +1,210 @@
+{
+  "hero": {
+    "title": "Pikku",
+    "subtitle": "One Function, Every Protocol",
+    "description": "Write TypeScript functions once, handle HTTP, WebSocket, cron jobs, queues, and RPC automatically",
+    "features": [
+      "Same functions handle HTTP, WebSocket, cron jobs, and queues",
+      "Auto-generated TypeScript clients with complete type safety",
+      "Deploy anywhere - Express, Lambda, Cloudflare, Next.js"
+    ],
+    "primaryCta": "Build Your First API",
+    "secondaryCta": "View on GitHub"
+  },
+  "typeSafety": {
+    "title": "Full Type Safety from Server to Client",
+    "description": "Write once, get TypeScript autocomplete everywhere",
+    "comingSoon": "🎬 Coming Soon: Interactive demo showing:",
+    "serverSide": {
+      "title": "📝 Server Side",
+      "features": [
+        "Write pikkuFunc with types",
+        "Export function",
+        "Run CLI command"
+      ]
+    },
+    "clientSide": {
+      "title": "✨ Client Side",
+      "features": [
+        "Full TypeScript autocomplete",
+        "Automatic type checking",
+        "Runtime validation"
+      ]
+    },
+    "benefits": [
+      {
+        "icon": "⚡",
+        "title": "Instant Feedback",
+        "description": "See type errors as you type"
+      },
+      {
+        "icon": "🔄",
+        "title": "Always in Sync",
+        "description": "Client types update automatically"
+      },
+      {
+        "icon": "🛡️",
+        "title": "Runtime Safe",
+        "description": "Validation matches your types"
+      }
+    ],
+    "demoNote": "Demo GIF will show live TypeScript intellisense flowing from server function definitions to client usage"
+  },
+  "transports": {
+    "http": {
+      "title": "HTTP APIs",
+      "description": "Build REST APIs and handle HTTP requests with full type safety and automatic OpenAPI generation.",
+      "supportedRuntimes": ["AWS", "Cloudflare", "Express", "Fastify", "nextJS"],
+      "specialFeatures": [
+        "Automatic OpenAPI documentation",
+        "Built-in CORS support",
+        "Request/response validation",
+        "Progressive enhancement support"
+      ],
+      "codeSnippet": "export const getTodos = pikkuSessionlessFunc<\n  void, \n  Array<Todo & { upvotes: number }>\n>(async ({ kysely }) => {\n  return await kysely\n    .selectFrom('todo')\n    .selectAll()\n    .execute()\n})\n\naddHTTPRoute({\n  method: 'get',\n  route: '/todos',\n  func: getTodos,\n  auth: false,\n  docs: {\n    description: 'Get all todos',\n    tags: ['todos'],\n  },\n})"
+    },
+    "websocket": {
+      "title": "WebSocket & Real-time",
+      "description": "Build real-time applications with typed WebSocket connections and pub/sub messaging.",
+      "supportedRuntimes": ["AWS", "Cloudflare", "uWS", "ws", "Express"],
+      "specialFeatures": [
+        "Hibernation API support",
+        "Auto-reconnection",
+        "Pub/sub messaging",
+        "Typed message handling"
+      ],
+      "codeSnippet": "export const onConnect = pikkuChannelConnectionFunc<'hello!'>(\n  async ({ logger, channel }) => {\n    logger.info('Client connected to channel')\n    channel.send('hello!')\n  }\n)\n\nexport const broadcastMessage = pikkuChannelFunc<\n  { message: string },\n  { timestamp: string; from: string }\n>(async ({ channel, eventHub }, data, session) => {\n  await eventHub?.publish('messages', channel.channelId, {\n    timestamp: new Date().toISOString(),\n    from: session?.userId ?? 'anonymous',\n    ...data\n  })\n})\n\naddChannel({\n  name: 'chat',\n  route: '/chat',\n  onConnect,\n  auth: true,\n  onMessageRoute: {\n    action: {\n      broadcast: broadcastMessage,\n    },\n  },\n})"
+    },
+    "sse": {
+      "title": "Server-Sent Events",
+      "description": "Stream real-time data to clients with automatic reconnection and progressive enhancement.",
+      "supportedRuntimes": ["Express", "Fastify", "uWS", "nextJS"],
+      "specialFeatures": [
+        "Automatic reconnection",
+        "Progressive enhancement",
+        "Typed streaming data",
+        "Backpressure handling"
+      ],
+      "codeSnippet": "export const streamUpdates = pikkuSessionlessFunc<\n  void,\n  AsyncGenerator<{ timestamp: string; data: any }>\n>(async function* ({ logger }) {\n  let count = 0\n  \n  while (true) {\n    yield {\n      timestamp: new Date().toISOString(),\n      data: { count: ++count, message: 'Live update' }\n    }\n    \n    await new Promise(resolve => setTimeout(resolve, 1000))\n  }\n})\n\naddHTTPRoute({\n  method: 'get',\n  route: '/stream',\n  func: streamUpdates,\n  auth: false,\n  responseType: 'stream',\n})"
+    },
+    "cron": {
+      "title": "Scheduled Tasks",
+      "description": "Run cron jobs and scheduled tasks that work across all deployment environments.",
+      "supportedRuntimes": ["AWS", "Cloudflare", "Custom"],
+      "specialFeatures": [
+        "Cron expression support",
+        "Timezone handling",
+        "Error retry logic",
+        "Serverless friendly"
+      ],
+      "codeSnippet": "export const cleanupExpiredTodos = pikkuVoidFunc(\n  async ({ logger, kysely }) => {\n    const deleted = await kysely\n      .deleteFrom('todo')\n      .where('expiresAt', '<', new Date())\n      .executeTakeFirst()\n    \n    logger.info(`Cleaned up ${deleted.numDeletedRows} expired todos`)\n  }\n)\n\naddScheduledTask({\n  name: 'cleanupExpiredTodos',\n  schedule: '0 2 * * *', // Daily at 2 AM\n  func: cleanupExpiredTodos,\n  docs: {\n    description: 'Clean up expired todos',\n    tags: ['maintenance'],\n  },\n})"
+    },
+    "mcp": {
+      "title": "MCP Server",
+      "description": "Build Model Context Protocol servers for AI applications with full type safety.",
+      "supportedRuntimes": ["Express", "Fastify", "AWS", "Custom"],
+      "specialFeatures": [
+        "Tool definition support",
+        "Resource management",
+        "Prompt templates",
+        "Streaming responses"
+      ],
+      "codeSnippet": "export const analyzeCode = pikkuSessionlessFunc<\n  { code: string; language: string },\n  { complexity: number; suggestions: string[] }\n>(async ({ logger }, { code, language }) => {\n  logger.info(`Analyzing ${language} code`)\n  \n  // Your analysis logic here\n  return {\n    complexity: calculateComplexity(code),\n    suggestions: generateSuggestions(code, language)\n  }\n})\n\naddMCPTool({\n  name: 'analyze_code',\n  description: 'Analyze code complexity and provide suggestions',\n  func: analyzeCode,\n  inputSchema: {\n    type: 'object',\n    properties: {\n      code: { type: 'string' },\n      language: { type: 'string' }\n    }\n  }\n})"
+    },
+    "queues": {
+      "title": "Background Queues",
+      "description": "Process background jobs with reliable message delivery and retry logic.",
+      "supportedRuntimes": ["AWS", "Express", "Fastify", "Custom"],
+      "specialFeatures": [
+        "Dead letter queues",
+        "Retry with backoff",
+        "Concurrency control",
+        "Priority queues"
+      ],
+      "codeSnippet": "export const processEmailQueue = pikkuSessionlessFunc<\n  { to: string; subject: string; body: string },\n  { messageId: string; status: 'sent' | 'failed' }\n>(async ({ logger, emailService }, data) => {\n  try {\n    const messageId = await emailService.send(data)\n    logger.info(`Email sent successfully: ${messageId}`)\n    \n    return { messageId, status: 'sent' }\n  } catch (error) {\n    logger.error('Failed to send email:', error)\n    throw error // Will trigger retry logic\n  }\n})\n\naddQueueProcessor({\n  name: 'email-queue',\n  func: processEmailQueue,\n  concurrency: 5,\n  retryOptions: {\n    attempts: 3,\n    backoff: 'exponential',\n  },\n})"
+    },
+    "cli": {
+      "title": "Command Line Tools",
+      "description": "Build powerful CLI applications with the same functions you use for web APIs.",
+      "supportedRuntimes": ["Custom"],
+      "specialFeatures": [
+        "Argument parsing",
+        "Interactive prompts",
+        "Progress indicators",
+        "Config file support"
+      ],
+      "codeSnippet": "export const generateReport = pikkuSessionlessFunc<\n  { format: 'json' | 'csv'; dateRange: string },\n  { fileName: string; recordCount: number }\n>(async ({ logger, kysely }, { format, dateRange }) => {\n  const data = await kysely\n    .selectFrom('analytics')\n    .selectAll()\n    .where('createdAt', '>=', dateRange)\n    .execute()\n  \n  const fileName = `report-${Date.now()}.${format}`\n  await writeReport(fileName, data, format)\n  \n  return { fileName, recordCount: data.length }\n})\n\naddCLICommand({\n  name: 'generate-report',\n  description: 'Generate analytics report',\n  func: generateReport,\n  options: {\n    format: {\n      type: 'string',\n      choices: ['json', 'csv'],\n      default: 'json'\n    },\n    dateRange: {\n      type: 'string',\n      required: true\n    }\n  }\n})"
+    }
+  },
+  "coreFeatures": {
+    "title": "Built for Developers",
+    "description": "Pikku provides everything you need to build robust, type-safe applications with minimal setup.",
+    "features": [
+      {
+        "icon": "🎯",
+        "title": "Fully Typed",
+        "description": "Complete type safety from server to client with automatic type generation"
+      },
+      {
+        "icon": "🔐",
+        "title": "Auth & Permissions",
+        "description": "Built-in authentication, sessions, and granular permission system"
+      },
+      {
+        "icon": "⚡",
+        "title": "Middleware",
+        "description": "Powerful middleware system for cross-cutting concerns"
+      },
+      {
+        "icon": "⚙️",
+        "title": "Service Injection",
+        "description": "Clean dependency injection without decorators or magic"
+      }
+    ]
+  },
+  "runAnywhere": {
+    "title": "Deploy Anywhere, Scale Everywhere",
+    "description": "From serverless functions to traditional servers, from SQS Lambda queues to serverless WebSockets - your Pikku code runs everywhere without modification.",
+    "deploymentTypes": [
+      {
+        "icon": "☁️",
+        "title": "Serverless First",
+        "description": "AWS Lambda, Cloudflare Workers, Vercel Functions - deploy with zero configuration",
+        "features": [
+          "SQS Lambda Queues",
+          "Serverless WebSockets",
+          "Scheduled Functions"
+        ]
+      },
+      {
+        "icon": "🖥️",
+        "title": "Traditional Servers",
+        "description": "Express, Fastify, Next.js - integrate with existing applications seamlessly",
+        "features": [
+          "Middleware Integration",
+          "Docker Deployment",
+          "Kubernetes Ready"
+        ]
+      },
+      {
+        "icon": "🔧",
+        "title": "Custom Runtimes",
+        "description": "Build your own runtime adapter for any environment or platform",
+        "features": [
+          "Custom HTTP Handlers",
+          "WebSocket Adapters",
+          "Scheduler Handlers"
+        ]
+      }
+    ],
+    "finalMessage": {
+      "icon": "🚀",
+      "title": "Write once, deploy everywhere",
+      "description": "The same function code works across all platforms and protocols"
+    }
+  },
+  "common": {
+    "runsOn": "Runs on:",
+    "specialFeatures": "Special Features:"
+  }
+}
