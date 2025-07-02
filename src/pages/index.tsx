@@ -9,7 +9,6 @@ import { t, tArray, tObject } from '../i18n';
 
 /** Renders a heading, tagline, and CTA buttons at the top of the homepage. */
 function Hero() {
-  const heroContent = tObject('hero');
   const features = tArray('hero.features') as string[];
 
   return (
@@ -56,7 +55,9 @@ function TransportSection({
   specialFeatures, 
   supportedRuntimes, 
   bgColor = "bg-white dark:bg-gray-800",
-  id 
+  id,
+  docsLink,
+  readMoreText
 }: { 
   title: string; 
   description: string; 
@@ -65,10 +66,26 @@ function TransportSection({
   supportedRuntimes: string[];
   bgColor?: string;
   id: string;
-}) {
+  docsLink?: string;
+  readMoreText?: string;
+})
+ {
   const getRuntimeInfo = (name: string) => {
-    const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom];
+    const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom] as Array<any>;
     return allRuntimes.find(r => r.name.toLowerCase() === name.toLowerCase());
+  };
+
+  const getTransportIcon = (transportType: string) => {
+    const icons = {
+      http: '📡',
+      websocket: '🔌',
+      sse: '📺',
+      cron: '⏰',
+      mcp: '🤖',
+      queues: '📦',
+      cli: '💻'
+    };
+    return icons[transportType] || '⚙️';
   };
 
   return (
@@ -90,16 +107,32 @@ function TransportSection({
                 {supportedRuntimes.map(runtime => {
                   const runtimeInfo = getRuntimeInfo(runtime);
                   return runtimeInfo ? (
-                    <div key={runtime} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
-                      <Image 
-                        width={24} 
-                        height={24}
-                        sources={{ 
-                          light: `img/logos/${runtimeInfo.img.light}`, 
-                          dark: `img/logos/${runtimeInfo.img.dark}` 
-                        }} 
-                      />
-                      <span className="text-sm font-medium">{runtimeInfo.name}</span>
+                    <div key={runtime} className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Image 
+                          width={20} 
+                          height={20}
+                          sources={{ 
+                            light: `img/logos/${runtimeInfo.img.light}`, 
+                            dark: `img/logos/${runtimeInfo.img.dark}` 
+                          }} 
+                        />
+                        <span className="text-sm font-medium">{runtimeInfo.name}</span>
+                      </div>
+                      {runtimeInfo.supportedTransports && Array.isArray(runtimeInfo.supportedTransports) && (
+                        <div className="flex gap-1 flex-wrap">
+                          {runtimeInfo.supportedTransports.map((transport: string) => (
+                            <span 
+                              key={transport}
+                              className="text-xs bg-white dark:bg-gray-600 px-2 py-1 rounded flex items-center gap-1"
+                              title={transport.charAt(0).toUpperCase() + transport.slice(1)}
+                            >
+                              <span className="text-xs">{getTransportIcon(transport)}</span>
+                              {transport === id && <span className="font-semibold">✓</span>}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div key={runtime} className="bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
@@ -112,7 +145,7 @@ function TransportSection({
 
             {/* Special Features */}
             {specialFeatures && specialFeatures.length > 0 && (
-              <div>
+              <div className="mb-8">
                 <h4 className="text-lg font-semibold mb-3">{t('common.specialFeatures')}</h4>
                 <ul className="space-y-2">
                   {specialFeatures.map((feature, idx) => (
@@ -122,6 +155,18 @@ function TransportSection({
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {/* Read More Link */}
+            {docsLink && readMoreText && (
+              <div>
+                <Link 
+                  to={docsLink} 
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  {readMoreText} →
+                </Link>
               </div>
             )}
           </div>
@@ -139,7 +184,6 @@ function TransportSection({
 
 /** Shows TypeScript magic between server and client */
 function TypeSafetyDemo() {
-  const typeSafetyContent = tObject('typeSafety');
   const serverFeatures = tArray('typeSafety.serverSide.features') as string[];
   const clientFeatures = tArray('typeSafety.clientSide.features') as string[];
   const benefits = tArray('typeSafety.benefits') as Array<{icon: string, title: string, description: string}>;
@@ -202,7 +246,6 @@ function TypeSafetyDemo() {
 
 /** Core features section */
 function CoreFeaturesSection() {
-  const coreFeaturesContent = tObject('coreFeatures');
   const features = tArray('coreFeatures.features') as Array<{icon: string, title: string, description: string}>;
 
   return (
@@ -231,7 +274,6 @@ function CoreFeaturesSection() {
 
 /** Final section emphasizing universal deployment */
 function RunAnywhereSection() {
-  const runAnywhereContent = tObject('runAnywhere');
   const deploymentTypes = tArray('runAnywhere.deploymentTypes') as Array<{icon: string, title: string, description: string, features: string[]}>;
   const finalMessage = tObject('runAnywhere.finalMessage') as {icon: string, title: string, description: string};
 
@@ -327,6 +369,8 @@ export default function Home() {
             codeSnippet: string;
             supportedRuntimes: string[];
             specialFeatures: string[];
+            docsLink: string;
+            readMoreText: string;
           };
           
           return (
@@ -339,6 +383,8 @@ export default function Home() {
               supportedRuntimes={transport.supportedRuntimes}
               specialFeatures={transport.specialFeatures}
               bgColor={bgColor}
+              docsLink={transport.docsLink}
+              readMoreText={transport.readMoreText}
             />
           );
         })}

@@ -63,7 +63,8 @@ export const features = [
         "img": {
           dark: "aws-dark.svg",
           light: "aws-light.svg"
-        } 
+        },
+        "supportedTransports": ["http", "websocket", "cron", "queues"]
       },
       // {
       //   "name": "Azure",
@@ -84,7 +85,8 @@ export const features = [
         "img": {
           dark: "cloudflare-dark.svg",
           light: "cloudflare-light.svg"
-        }
+        },
+        "supportedTransports": ["http", "websocket", "cron"]
       },
       // {
       //   "name": "Google Cloud",
@@ -107,7 +109,8 @@ export const features = [
         "img": {
           dark: "express-dark.svg",
           light: "express-light.svg"
-        }
+        },
+        "supportedTransports": ["http", "websocket", "sse", "queues", "mcp"]
       },
       {
         "name": "Fastify",
@@ -116,7 +119,8 @@ export const features = [
         "img": {
           dark: "fastify-dark.svg",
           light: "fastify-light.svg"
-        }
+        },
+        "supportedTransports": ["http", "websocket", "sse", "queues", "mcp"]
       },
       {
         "name": "uWS",
@@ -125,7 +129,8 @@ export const features = [
        "img": {
           dark: "uws-dark.svg",
           light: "uws-light.svg"
-        }
+        },
+        "supportedTransports": ["http", "websocket", "sse"]
       },
       {
         "name": "ws",
@@ -134,7 +139,8 @@ export const features = [
        "img": {
           dark: "websocket-dark.svg",
           light: "websocket-light.svg"
-        }
+        },
+        "supportedTransports": ["http", "websocket"]
       },
       {
         "name": "nextJS",
@@ -143,7 +149,8 @@ export const features = [
         "img": {
           dark: "nextjs-dark.svg",
           light: "nextjs-light.png"
-        }
+        },
+        "supportedTransports": ["http", "sse"]
       },
       // {
       //   "name": "Koa",
@@ -168,7 +175,8 @@ export const features = [
       "img": {
         dark: "custom-dark.svg",
         light: "custom-light.svg"
-      }
+      },
+      "supportedTransports": ["http", "websocket", "sse", "cron", "mcp", "queues", "cli"]
     }
   };
   

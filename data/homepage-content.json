@@ -61,7 +61,9 @@
         "Request/response validation",
         "Progressive enhancement support"
       ],
-      "codeSnippet": "export const getTodos = pikkuSessionlessFunc<\n  void, \n  Array<Todo & { upvotes: number }>\n>(async ({ kysely }) => {\n  return await kysely\n    .selectFrom('todo')\n    .selectAll()\n    .execute()\n})\n\naddHTTPRoute({\n  method: 'get',\n  route: '/todos',\n  func: getTodos,\n  auth: false,\n  docs: {\n    description: 'Get all todos',\n    tags: ['todos'],\n  },\n})"
+      "codeSnippet": "export const getTodos = pikkuSessionlessFunc<\n  void, \n  Array<Todo & { upvotes: number }>\n>(async ({ kysely }) => {\n  return await kysely\n    .selectFrom('todo')\n    .selectAll()\n    .execute()\n})\n\naddHTTPRoute({\n  method: 'get',\n  route: '/todos',\n  func: getTodos,\n  auth: false,\n  docs: {\n    description: 'Get all todos',\n    tags: ['todos'],\n  },\n})",
+      "docsLink": "/docs/http",
+      "readMoreText": "Learn more about HTTP APIs"
     },
     "websocket": {
       "title": "WebSocket & Real-time",
@@ -73,7 +75,9 @@
         "Pub/sub messaging",
         "Typed message handling"
       ],
-      "codeSnippet": "export const onConnect = pikkuChannelConnectionFunc<'hello!'>(\n  async ({ logger, channel }) => {\n    logger.info('Client connected to channel')\n    channel.send('hello!')\n  }\n)\n\nexport const broadcastMessage = pikkuChannelFunc<\n  { message: string },\n  { timestamp: string; from: string }\n>(async ({ channel, eventHub }, data, session) => {\n  await eventHub?.publish('messages', channel.channelId, {\n    timestamp: new Date().toISOString(),\n    from: session?.userId ?? 'anonymous',\n    ...data\n  })\n})\n\naddChannel({\n  name: 'chat',\n  route: '/chat',\n  onConnect,\n  auth: true,\n  onMessageRoute: {\n    action: {\n      broadcast: broadcastMessage,\n    },\n  },\n})"
+      "codeSnippet": "export const onConnect = pikkuChannelConnectionFunc<'hello!'>(\n  async ({ logger, channel }) => {\n    logger.info('Client connected to channel')\n    channel.send('hello!')\n  }\n)\n\nexport const broadcastMessage = pikkuChannelFunc<\n  { message: string },\n  { timestamp: string; from: string }\n>(async ({ channel, eventHub }, data, session) => {\n  await eventHub?.publish('messages', channel.channelId, {\n    timestamp: new Date().toISOString(),\n    from: session?.userId ?? 'anonymous',\n    ...data\n  })\n})\n\naddChannel({\n  name: 'chat',\n  route: '/chat',\n  onConnect,\n  auth: true,\n  onMessageRoute: {\n    action: {\n      broadcast: broadcastMessage,\n    },\n  },\n})",
+      "docsLink": "/docs/channels",
+      "readMoreText": "Learn more about WebSocket & Channels"
     },
     "sse": {
       "title": "Server-Sent Events",
@@ -85,7 +89,9 @@
         "Typed streaming data",
         "Backpressure handling"
       ],
-      "codeSnippet": "export const streamUpdates = pikkuSessionlessFunc<\n  void,\n  AsyncGenerator<{ timestamp: string; data: any }>\n>(async function* ({ logger }) {\n  let count = 0\n  \n  while (true) {\n    yield {\n      timestamp: new Date().toISOString(),\n      data: { count: ++count, message: 'Live update' }\n    }\n    \n    await new Promise(resolve => setTimeout(resolve, 1000))\n  }\n})\n\naddHTTPRoute({\n  method: 'get',\n  route: '/stream',\n  func: streamUpdates,\n  auth: false,\n  responseType: 'stream',\n})"
+      "codeSnippet": "export const streamUpdates = pikkuSessionlessFunc<\n  void,\n  AsyncGenerator<{ timestamp: string; data: any }>\n>(async function* ({ logger }) {\n  let count = 0\n  \n  while (true) {\n    yield {\n      timestamp: new Date().toISOString(),\n      data: { count: ++count, message: 'Live update' }\n    }\n    \n    await new Promise(resolve => setTimeout(resolve, 1000))\n  }\n})\n\naddHTTPRoute({\n  method: 'get',\n  route: '/stream',\n  func: streamUpdates,\n  auth: false,\n  responseType: 'stream',\n})",
+      "docsLink": "/docs/runtimes/server-sent-events",
+      "readMoreText": "Learn more about Server-Sent Events"
     },
     "cron": {
       "title": "Scheduled Tasks",
@@ -97,7 +103,9 @@
         "Error retry logic",
         "Serverless friendly"
       ],
-      "codeSnippet": "export const cleanupExpiredTodos = pikkuVoidFunc(\n  async ({ logger, kysely }) => {\n    const deleted = await kysely\n      .deleteFrom('todo')\n      .where('expiresAt', '<', new Date())\n      .executeTakeFirst()\n    \n    logger.info(`Cleaned up ${deleted.numDeletedRows} expired todos`)\n  }\n)\n\naddScheduledTask({\n  name: 'cleanupExpiredTodos',\n  schedule: '0 2 * * *', // Daily at 2 AM\n  func: cleanupExpiredTodos,\n  docs: {\n    description: 'Clean up expired todos',\n    tags: ['maintenance'],\n  },\n})"
+      "codeSnippet": "export const cleanupExpiredTodos = pikkuVoidFunc(\n  async ({ logger, kysely }) => {\n    const deleted = await kysely\n      .deleteFrom('todo')\n      .where('expiresAt', '<', new Date())\n      .executeTakeFirst()\n    \n    logger.info(`Cleaned up ${deleted.numDeletedRows} expired todos`)\n  }\n)\n\naddScheduledTask({\n  name: 'cleanupExpiredTodos',\n  schedule: '0 2 * * *', // Daily at 2 AM\n  func: cleanupExpiredTodos,\n  docs: {\n    description: 'Clean up expired todos',\n    tags: ['maintenance'],\n  },\n})",
+      "docsLink": "/docs/scheduled-tasks",
+      "readMoreText": "Learn more about Scheduled Tasks"
     },
     "mcp": {
       "title": "MCP Server",
@@ -109,7 +117,9 @@
         "Prompt templates",
         "Streaming responses"
       ],
-      "codeSnippet": "export const analyzeCode = pikkuSessionlessFunc<\n  { code: string; language: string },\n  { complexity: number; suggestions: string[] }\n>(async ({ logger }, { code, language }) => {\n  logger.info(`Analyzing ${language} code`)\n  \n  // Your analysis logic here\n  return {\n    complexity: calculateComplexity(code),\n    suggestions: generateSuggestions(code, language)\n  }\n})\n\naddMCPTool({\n  name: 'analyze_code',\n  description: 'Analyze code complexity and provide suggestions',\n  func: analyzeCode,\n  inputSchema: {\n    type: 'object',\n    properties: {\n      code: { type: 'string' },\n      language: { type: 'string' }\n    }\n  }\n})"
+      "codeSnippet": "export const analyzeCode = pikkuSessionlessFunc<\n  { code: string; language: string },\n  { complexity: number; suggestions: string[] }\n>(async ({ logger }, { code, language }) => {\n  logger.info(`Analyzing ${language} code`)\n  \n  // Your analysis logic here\n  return {\n    complexity: calculateComplexity(code),\n    suggestions: generateSuggestions(code, language)\n  }\n})\n\naddMCPTool({\n  name: 'analyze_code',\n  description: 'Analyze code complexity and provide suggestions',\n  func: analyzeCode,\n  inputSchema: {\n    type: 'object',\n    properties: {\n      code: { type: 'string' },\n      language: { type: 'string' }\n    }\n  }\n})",
+      "docsLink": "/docs/runtimes/mcp-server",
+      "readMoreText": "Learn more about MCP Servers"
     },
     "queues": {
       "title": "Background Queues",
@@ -121,7 +131,9 @@
         "Concurrency control",
         "Priority queues"
       ],
-      "codeSnippet": "export const processEmailQueue = pikkuSessionlessFunc<\n  { to: string; subject: string; body: string },\n  { messageId: string; status: 'sent' | 'failed' }\n>(async ({ logger, emailService }, data) => {\n  try {\n    const messageId = await emailService.send(data)\n    logger.info(`Email sent successfully: ${messageId}`)\n    \n    return { messageId, status: 'sent' }\n  } catch (error) {\n    logger.error('Failed to send email:', error)\n    throw error // Will trigger retry logic\n  }\n})\n\naddQueueProcessor({\n  name: 'email-queue',\n  func: processEmailQueue,\n  concurrency: 5,\n  retryOptions: {\n    attempts: 3,\n    backoff: 'exponential',\n  },\n})"
+      "codeSnippet": "export const processEmailQueue = pikkuSessionlessFunc<\n  { to: string; subject: string; body: string },\n  { messageId: string; status: 'sent' | 'failed' }\n>(async ({ logger, emailService }, data) => {\n  try {\n    const messageId = await emailService.send(data)\n    logger.info(`Email sent successfully: ${messageId}`)\n    \n    return { messageId, status: 'sent' }\n  } catch (error) {\n    logger.error('Failed to send email:', error)\n    throw error // Will trigger retry logic\n  }\n})\n\naddQueueProcessor({\n  name: 'email-queue',\n  func: processEmailQueue,\n  concurrency: 5,\n  retryOptions: {\n    attempts: 3,\n    backoff: 'exponential',\n  },\n})",
+      "docsLink": "/docs/runtimes/background-queues",
+      "readMoreText": "Learn more about Background Queues"
     },
     "cli": {
       "title": "Command Line Tools",
@@ -133,7 +145,9 @@
         "Progress indicators",
         "Config file support"
       ],
-      "codeSnippet": "export const generateReport = pikkuSessionlessFunc<\n  { format: 'json' | 'csv'; dateRange: string },\n  { fileName: string; recordCount: number }\n>(async ({ logger, kysely }, { format, dateRange }) => {\n  const data = await kysely\n    .selectFrom('analytics')\n    .selectAll()\n    .where('createdAt', '>=', dateRange)\n    .execute()\n  \n  const fileName = `report-${Date.now()}.${format}`\n  await writeReport(fileName, data, format)\n  \n  return { fileName, recordCount: data.length }\n})\n\naddCLICommand({\n  name: 'generate-report',\n  description: 'Generate analytics report',\n  func: generateReport,\n  options: {\n    format: {\n      type: 'string',\n      choices: ['json', 'csv'],\n      default: 'json'\n    },\n    dateRange: {\n      type: 'string',\n      required: true\n    }\n  }\n})"
+      "codeSnippet": "export const generateReport = pikkuSessionlessFunc<\n  { format: 'json' | 'csv'; dateRange: string },\n  { fileName: string; recordCount: number }\n>(async ({ logger, kysely }, { format, dateRange }) => {\n  const data = await kysely\n    .selectFrom('analytics')\n    .selectAll()\n    .where('createdAt', '>=', dateRange)\n    .execute()\n  \n  const fileName = `report-${Date.now()}.${format}`\n  await writeReport(fileName, data, format)\n  \n  return { fileName, recordCount: data.length }\n})\n\naddCLICommand({\n  name: 'generate-report',\n  description: 'Generate analytics report',\n  func: generateReport,\n  options: {\n    format: {\n      type: 'string',\n      choices: ['json', 'csv'],\n      default: 'json'\n    },\n    dateRange: {\n      type: 'string',\n      required: true\n    }\n  }\n})",
+      "docsLink": "/docs/runtimes/cli-tools",
+      "readMoreText": "Learn more about CLI Tools"
     }
   },
   "coreFeatures": {

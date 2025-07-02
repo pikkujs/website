@@ -1,0 +1,98 @@
+/* Transport type icons in sidebar */
+.menu__link[data-transport-icons]::after {
+  content: '';
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+  align-items: center;
+}
+
+/* HTTP Icon */
+.menu__link[data-transport-icons*="http"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/transport-icons/http.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+/* WebSocket Icon */
+.menu__link[data-transport-icons*="websocket"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/transport-icons/websocket.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* SSE Icon */
+.menu__link[data-transport-icons*="sse"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/transport-icons/sse.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* Cron Icon */
+.menu__link[data-transport-icons*="cron"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/transport-icons/cron.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* MCP Icon */
+.menu__link[data-transport-icons*="mcp"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/transport-icons/mcp.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* Queue Icon */
+.menu__link[data-transport-icons*="queue"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/transport-icons/queue.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* CLI Icon */
+.menu__link[data-transport-icons*="cli"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/transport-icons/cli.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+/* Ensure the sidebar link has space for the icons */
+.menu__link[data-transport-icons] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
