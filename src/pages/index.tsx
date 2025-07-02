@@ -6,6 +6,8 @@ import Image from '@theme/ThemedImage';
 import CodeBlock from '@theme/CodeBlock';
 import { runtimes } from '@site/data/homepage';
 import { t, tArray, tObject } from '../i18n';
+import { TransportIcon } from '../components/TransportIcons';
+import { TabComponent } from '../components/TabComponent';
 
 /** Renders a heading, tagline, and CTA buttons at the top of the homepage. */
 function Hero() {
@@ -52,6 +54,8 @@ function TransportSection({
   title, 
   description, 
   codeSnippet, 
+  serverCode,
+  clientCode,
   specialFeatures, 
   supportedRuntimes, 
   bgColor = "bg-white dark:bg-gray-800",
@@ -61,7 +65,9 @@ function TransportSection({
 }: { 
   title: string; 
   description: string; 
-  codeSnippet: string; 
+  codeSnippet?: string; 
+  serverCode?: string;
+  clientCode?: string;
   specialFeatures?: string[];
   supportedRuntimes: string[];
   bgColor?: string;
@@ -75,18 +81,6 @@ function TransportSection({
     return allRuntimes.find(r => r.name.toLowerCase() === name.toLowerCase());
   };
 
-  const getTransportIcon = (transportType: string) => {
-    const icons = {
-      http: '📡',
-      websocket: '🔌',
-      sse: '📺',
-      cron: '⏰',
-      mcp: '🤖',
-      queues: '📦',
-      cli: '💻'
-    };
-    return icons[transportType] || '⚙️';
-  };
 
   return (
     <section id={id} className={`py-16 ${bgColor}`}>
@@ -119,20 +113,6 @@ function TransportSection({
                         />
                         <span className="text-sm font-medium">{runtimeInfo.name}</span>
                       </div>
-                      {runtimeInfo.supportedTransports && Array.isArray(runtimeInfo.supportedTransports) && (
-                        <div className="flex gap-1 flex-wrap">
-                          {runtimeInfo.supportedTransports.map((transport: string) => (
-                            <span 
-                              key={transport}
-                              className="text-xs bg-white dark:bg-gray-600 px-2 py-1 rounded flex items-center gap-1"
-                              title={transport.charAt(0).toUpperCase() + transport.slice(1)}
-                            >
-                              <span className="text-xs">{getTransportIcon(transport)}</span>
-                              {transport === id && <span className="font-semibold">✓</span>}
-                            </span>
-                          ))}
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <div key={runtime} className="bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
@@ -172,10 +152,92 @@ function TransportSection({
           </div>
           
           <div>
-            <CodeBlock language="typescript" title="example.ts">
-              {codeSnippet}
-            </CodeBlock>
+            {/* Check if this transport has server/client tabs (RPC) */}
+            {serverCode && clientCode ? (
+              <TabComponent
+                tabs={[
+                  {
+                    id: 'server',
+                    label: 'Server',
+                    content: (
+                      <CodeBlock language="typescript" title="server.ts">
+                        {serverCode}
+                      </CodeBlock>
+                    )
+                  },
+                  {
+                    id: 'client',
+                    label: 'Client',
+                    content: (
+                      <CodeBlock language="typescript" title="client.ts">
+                        {clientCode}
+                      </CodeBlock>
+                    )
+                  }
+                ]}
+                defaultTab="server"
+              />
+            ) : (
+              <CodeBlock language="typescript" title="example.ts">
+                {codeSnippet}
+              </CodeBlock>
+            )}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Shows all transport types available in Pikku */
+function PlatformToolsSection() {
+  const platformTools = tObject('platformTools') as {
+    title: string;
+    description: string;
+    transports: Array<{
+      id: string;
+      name: string;
+      description: string;
+    }>;
+  };
+
+  const scrollToSection = (transportId: string) => {
+    const element = document.getElementById(transportId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <section className="py-16 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
+      <div className="max-w-screen-xl mx-auto px-4 text-center">
+        <Heading as="h2" className="text-4xl font-bold mb-6">
+          {platformTools.title}
+        </Heading>
+        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
+          {platformTools.description}
+        </p>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {platformTools.transports.map((transport) => (
+            <button
+              key={transport.id}
+              onClick={() => scrollToSection(transport.id)}
+              className="group bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              <div className="flex flex-col items-center">
+                <div className="mb-4 group-hover:scale-110 transition-transform duration-200">
+                  <TransportIcon transportId={transport.id} size={32} />
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  {transport.name}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+                  {transport.description}
+                </p>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
     </section>
@@ -349,6 +411,7 @@ export default function Home() {
     { key: 'cron', bgColor: 'bg-orange-50 dark:bg-orange-900/10' },
     { key: 'mcp', bgColor: 'bg-teal-50 dark:bg-teal-900/10' },
     { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/10' },
+    { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/10' },
     { key: 'cli', bgColor: 'bg-gray-50 dark:bg-gray-900/10' }
   ];
 
@@ -360,13 +423,16 @@ export default function Home() {
       <Hero />
       <main>
         <TypeSafetyDemo />
+        <PlatformToolsSection />
         
         {/* Transport Sections */}
         {transportSections.map(({ key, bgColor }) => {
           const transport = tObject(`transports.${key}`) as {
             title: string;
             description: string;
-            codeSnippet: string;
+            codeSnippet?: string;
+            serverCode?: string;
+            clientCode?: string;
             supportedRuntimes: string[];
             specialFeatures: string[];
             docsLink: string;
@@ -380,6 +446,8 @@ export default function Home() {
               title={transport.title}
               description={transport.description}
               codeSnippet={transport.codeSnippet}
+              serverCode={transport.serverCode}
+              clientCode={transport.clientCode}
               supportedRuntimes={transport.supportedRuntimes}
               specialFeatures={transport.specialFeatures}
               bgColor={bgColor}

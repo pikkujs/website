@@ -50,6 +50,52 @@
     ],
     "demoNote": "Demo GIF will show live TypeScript intellisense flowing from server function definitions to client usage"
   },
+  "platformTools": {
+    "title": "All the tools needed for scaleable backend platforms",
+    "description": "Build comprehensive backend services with every communication protocol you need",
+    "transports": [
+      {
+        "id": "http",
+        "name": "HTTP APIs",
+        "description": "REST endpoints with automatic OpenAPI documentation"
+      },
+      {
+        "id": "websocket", 
+        "name": "WebSocket",
+        "description": "Real-time bidirectional communication"
+      },
+      {
+        "id": "sse",
+        "name": "Server-Sent Events", 
+        "description": "Streaming data to clients"
+      },
+      {
+        "id": "cron",
+        "name": "Scheduled Tasks",
+        "description": "Cron jobs and background processing"
+      },
+      {
+        "id": "mcp",
+        "name": "MCP Server",
+        "description": "AI tool integration and context protocol"
+      },
+      {
+        "id": "queues",
+        "name": "Background Queues",
+        "description": "Reliable message processing"
+      },
+      {
+        "id": "rpc",
+        "name": "RPC Services",
+        "description": "Type-safe service-to-service communication"
+      },
+      {
+        "id": "cli",
+        "name": "CLI Tools", 
+        "description": "Command line applications"
+      }
+    ]
+  },
   "transports": {
     "http": {
       "title": "HTTP APIs",
@@ -148,6 +194,21 @@
       "codeSnippet": "export const generateReport = pikkuSessionlessFunc<\n  { format: 'json' | 'csv'; dateRange: string },\n  { fileName: string; recordCount: number }\n>(async ({ logger, kysely }, { format, dateRange }) => {\n  const data = await kysely\n    .selectFrom('analytics')\n    .selectAll()\n    .where('createdAt', '>=', dateRange)\n    .execute()\n  \n  const fileName = `report-${Date.now()}.${format}`\n  await writeReport(fileName, data, format)\n  \n  return { fileName, recordCount: data.length }\n})\n\naddCLICommand({\n  name: 'generate-report',\n  description: 'Generate analytics report',\n  func: generateReport,\n  options: {\n    format: {\n      type: 'string',\n      choices: ['json', 'csv'],\n      default: 'json'\n    },\n    dateRange: {\n      type: 'string',\n      required: true\n    }\n  }\n})",
       "docsLink": "/docs/runtimes/cli-tools",
       "readMoreText": "Learn more about CLI Tools"
+    },
+    "rpc": {
+      "title": "RPC & Services",
+      "description": "Build type-safe RPC services with automatic client generation and service discovery.",
+      "supportedRuntimes": ["Express", "Fastify", "AWS", "Custom"],
+      "specialFeatures": [
+        "Automatic client generation",
+        "Service discovery",
+        "Type-safe service calls",
+        "Request/response validation"
+      ],
+      "serverCode": "export const getUserProfile = pikkuSessionFunc<\n  { userId: string },\n  { id: string; name: string; email: string }\n>(async ({ kysely }, { userId }, session) => {\n  const user = await kysely\n    .selectFrom('users')\n    .select(['id', 'name', 'email'])\n    .where('id', '=', userId)\n    .where('organizationId', '=', session.organizationId)\n    .executeTakeFirst()\n  \n  if (!user) {\n    throw new Error('User not found')\n  }\n  \n  return user\n})\n\naddRPCService({\n  name: 'user-service',\n  version: '1.0.0',\n  methods: {\n    getUserProfile,\n    updateUserProfile,\n    deleteUser\n  },\n  auth: true\n})",
+      "clientCode": "import { createRPCClient } from '@pikku/client-rpc'\n\nconst userService = createRPCClient({\n  service: 'user-service',\n  version: '1.0.0',\n  baseUrl: process.env.API_BASE_URL\n})\n\n// Type-safe service calls\nconst handleGetUser = async (userId: string) => {\n  try {\n    // Full TypeScript intellisense and validation\n    const user = await userService.getUserProfile({ \n      userId \n    })\n    \n    console.log(`User: ${user.name} (${user.email})`)\n    return user\n  } catch (error) {\n    console.error('Failed to get user:', error)\n    throw error\n  }\n}\n\n// Service discovery and load balancing\nconst services = await userService.discover()\nconsole.log('Available services:', services)",
+      "docsLink": "/docs/core/rpcs",
+      "readMoreText": "Learn more about RPC Services"
     }
   },
   "coreFeatures": {
