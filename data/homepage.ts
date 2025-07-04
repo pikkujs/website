@@ -110,7 +110,7 @@ export const features = [
           dark: "express-dark.svg",
           light: "express-light.svg"
         },
-        "supportedTransports": ["http", "websocket", "sse", "queues", "mcp"]
+        "supportedTransports": ["http", "websocket", "sse", "queues"]
       },
       {
         "name": "Fastify",
@@ -120,7 +120,7 @@ export const features = [
           dark: "fastify-dark.svg",
           light: "fastify-light.svg"
         },
-        "supportedTransports": ["http", "websocket", "sse", "queues", "mcp"]
+        "supportedTransports": ["http", "websocket", "sse", "queues"]
       },
       {
         "name": "uWS",
@@ -176,7 +176,7 @@ export const features = [
         dark: "custom-dark.svg",
         light: "custom-light.svg"
       },
-      "supportedTransports": ["http", "websocket", "sse", "cron", "mcp", "queues", "cli"]
+      "supportedTransports": ["http", "websocket", "sse", "cron", "queues"]
     }
   };
   

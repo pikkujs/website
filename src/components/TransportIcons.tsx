@@ -36,14 +36,6 @@ export const CronIcon: React.FC<TransportIconProps> = ({ className = "", size = 
   </svg>
 );
 
-export const MCPIcon: React.FC<TransportIconProps> = ({ className = "", size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" className={`text-transport-mcp-light dark:text-transport-mcp-dark ${className}`}>
-    <path d="M8 1.5L13.5 5v6L8 14.5 2.5 11V5L8 1.5z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-    <circle cx="6" cy="6" r="1" fill="currentColor"/>
-    <circle cx="10" cy="6" r="1" fill="currentColor"/>
-    <path d="M5.5 9.5c0 1.5 1 2.5 2.5 2.5s2.5-1 2.5-2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-  </svg>
-);
 
 export const QueueIcon: React.FC<TransportIconProps> = ({ className = "", size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 16 16" className={`text-transport-queue-light dark:text-transport-queue-dark ${className}`}>
@@ -53,13 +45,6 @@ export const QueueIcon: React.FC<TransportIconProps> = ({ className = "", size =
   </svg>
 );
 
-export const CLIIcon: React.FC<TransportIconProps> = ({ className = "", size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" className={`text-transport-cli-light dark:text-transport-cli-dark ${className}`}>
-    <rect x="1.5" y="2.5" width="13" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-    <path d="M1.5 5.5h13" stroke="currentColor" strokeWidth="1"/>
-    <path d="M4 8l2 1.5L4 11M7 11h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
 export const RPCIcon: React.FC<TransportIconProps> = ({ className = "", size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 16 16" className={`text-transport-rpc-light dark:text-transport-rpc-dark ${className}`}>
@@ -82,10 +67,8 @@ export const TransportIcon: React.FC<TransportIconComponentProps> = ({ transport
     websocket: WebSocketIcon,
     sse: SSEIcon,
     cron: CronIcon,
-    mcp: MCPIcon,
     queue: QueueIcon,
     queues: QueueIcon, // alias
-    cli: CLIIcon,
     rpc: RPCIcon,
   };
 

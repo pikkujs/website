@@ -46,7 +46,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/express-middleware',
         label: 'Express Middleware',
         customProps: {
-          transports: ['http', 'websocket', 'sse', 'mcp', 'queue']
+          transports: ['http', 'websocket', 'sse', 'queue']
         }
       },
       {
@@ -54,7 +54,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/fastify-plugin',
         label: 'Fastify Plugin',
         customProps: {
-          transports: ['http', 'websocket', 'sse', 'mcp', 'queue']
+          transports: ['http', 'websocket', 'sse', 'queue']
         }
       },
       {
@@ -86,7 +86,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/azure-functions',
         label: 'Azure Functions',
         customProps: {
-          transports: ['http', 'cron', 'mcp', 'queue', 'cli']
+          transports: ['http', 'cron', 'queue']
         }
       },
       {
@@ -94,39 +94,15 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/google-cloud-run-functions',
         label: 'Google Cloud Functions',
         customProps: {
-          transports: ['http', 'cron', 'mcp', 'queue', 'cli']
+          transports: ['http', 'cron', 'queue']
         }
       },
       {
         type: 'doc',
-        id: 'runtimes/server-sent-events',
-        label: 'Server-Sent Events',
-        customProps: {
-          transports: ['sse']
-        }
-      },
-      {
-        type: 'doc',
-        id: 'runtimes/mcp-server',
-        label: 'MCP Server',
-        customProps: {
-          transports: ['mcp']
-        }
-      },
-      {
-        type: 'doc',
-        id: 'runtimes/background-queues',
-        label: 'Background Queues',
+        id: 'runtimes/bullmq',
+        label: 'BullMQ',
         customProps: {
           transports: ['queue']
-        }
-      },
-      {
-        type: 'doc',
-        id: 'runtimes/cli-tools',
-        label: 'CLI Tools',
-        customProps: {
-          transports: ['cli']
         }
       }
     ]

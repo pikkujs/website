@@ -90,33 +90,34 @@ function TransportSection({
             <Heading as="h2" className="text-4xl font-bold mb-6">
               {title}
             </Heading>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
               {description}
             </p>
             
             {/* Supported Runtimes */}
-            <div className="mb-8">
-              <h4 className="text-lg font-semibold mb-4">{t('common.runsOn')}</h4>
-              <div className="flex flex-wrap gap-4">
+            <div className="mb-4">
+              <div className="flex items-center gap-3 flex-wrap">
+                <h4 className="text-lg font-semibold my-auto">{t('common.runsOn')}</h4>
                 {supportedRuntimes.map(runtime => {
                   const runtimeInfo = getRuntimeInfo(runtime);
                   return runtimeInfo ? (
-                    <div key={runtime} className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Image 
-                          width={20} 
-                          height={20}
-                          sources={{ 
-                            light: `img/logos/${runtimeInfo.img.light}`, 
-                            dark: `img/logos/${runtimeInfo.img.dark}` 
-                          }} 
-                        />
-                        <span className="text-sm font-medium">{runtimeInfo.name}</span>
-                      </div>
-                    </div>
+                    <Image 
+                      key={runtime}
+                      width={24} 
+                      height={24}
+                      sources={{ 
+                        light: `img/logos/${runtimeInfo.img.light}`, 
+                        dark: `img/logos/${runtimeInfo.img.dark}` 
+                      }} 
+                      title={runtimeInfo.name}
+                    />
                   ) : (
-                    <div key={runtime} className="bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
-                      <span className="text-sm font-medium">{runtime}</span>
+                    <div 
+                      key={runtime}
+                      className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center"
+                      title={runtime}
+                    >
+                      <span className="text-xs text-gray-600 dark:text-gray-300">?</span>
                     </div>
                   );
                 })}
@@ -160,7 +161,7 @@ function TransportSection({
                     id: 'server',
                     label: 'Server',
                     content: (
-                      <CodeBlock language="typescript" title="server.ts">
+                      <CodeBlock language="typescript" title="server.ts" className='max-w-full'>
                         {serverCode}
                       </CodeBlock>
                     )
@@ -169,7 +170,7 @@ function TransportSection({
                     id: 'client',
                     label: 'Client',
                     content: (
-                      <CodeBlock language="typescript" title="client.ts">
+                      <CodeBlock language="typescript" title="client.ts" className='max-w-full'>
                         {clientCode}
                       </CodeBlock>
                     )
@@ -178,7 +179,7 @@ function TransportSection({
                 defaultTab="server"
               />
             ) : (
-              <CodeBlock language="typescript" title="example.ts">
+              <CodeBlock language="typescript" title="example.ts" className='max-w-full'>
                 {codeSnippet}
               </CodeBlock>
             )}
@@ -198,8 +199,10 @@ function PlatformToolsSection() {
       id: string;
       name: string;
       description: string;
+      supportedRuntimes: string[];
     }>;
   };
+
 
   const scrollToSection = (transportId: string) => {
     const element = document.getElementById(transportId);
@@ -209,7 +212,7 @@ function PlatformToolsSection() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
+    <section className="py-16">
       <div className="max-w-screen-xl mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           {platformTools.title}
@@ -218,87 +221,25 @@ function PlatformToolsSection() {
           {platformTools.description}
         </p>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {platformTools.transports.map((transport) => (
             <button
               key={transport.id}
               onClick={() => scrollToSection(transport.id)}
-              className="group bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer"
+              className="border-0 group bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-105 cursor-pointer"
             >
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center text-center">
                 <div className="mb-4 group-hover:scale-110 transition-transform duration-200">
                   <TransportIcon transportId={transport.id} size={32} />
                 </div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
                   {transport.name}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   {transport.description}
                 </p>
               </div>
             </button>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Shows TypeScript magic between server and client */
-function TypeSafetyDemo() {
-  const serverFeatures = tArray('typeSafety.serverSide.features') as string[];
-  const clientFeatures = tArray('typeSafety.clientSide.features') as string[];
-  const benefits = tArray('typeSafety.benefits') as Array<{icon: string, title: string, description: string}>;
-
-  return (
-    <section className="py-12 px-4 md:px-0 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-screen-lg mx-auto">
-        <div className="text-center mb-8">
-          <Heading as="h2" className="text-3xl font-bold mb-4">
-            {t('typeSafety.title')}
-          </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            {t('typeSafety.description')}
-          </p>
-        </div>
-        
-        {/* Placeholder for GIF - Replace with actual recording */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
-          <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-12 mb-6">
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-              {t('typeSafety.comingSoon')}
-            </p>
-            <div className="grid md:grid-cols-2 gap-8 text-left">
-              <div>
-                <h4 className="font-semibold mb-2">{t('typeSafety.serverSide.title')}</h4>
-                <ul className="text-sm space-y-1">
-                  {serverFeatures.map((feature, idx) => (
-                    <li key={idx}>• {feature}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">{t('typeSafety.clientSide.title')}</h4>
-                <ul className="text-sm space-y-1">
-                  {clientFeatures.map((feature, idx) => (
-                    <li key={idx}>• {feature}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-          <p className="text-sm text-gray-500">
-            {t('typeSafety.demoNote')}
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-4 mt-8">
-          {benefits.map((benefit, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow text-center">
-              <div className="text-2xl mb-2">{benefit.icon}</div>
-              <h4 className="font-semibold">{benefit.title}</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{benefit.description}</p>
-            </div>
           ))}
         </div>
       </div>
@@ -311,7 +252,7 @@ function CoreFeaturesSection() {
   const features = tArray('coreFeatures.features') as Array<{icon: string, title: string, description: string}>;
 
   return (
-    <section className="py-16 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
+    <section className="py-16">
       <div className="max-w-screen-xl mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           {t('coreFeatures.title')}
@@ -340,7 +281,7 @@ function RunAnywhereSection() {
   const finalMessage = tObject('runAnywhere.finalMessage') as {icon: string, title: string, description: string};
 
   return (
-    <section className="py-16 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20">
+    <section className="py-16">
       <div className="max-w-screen-xl mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           {t('runAnywhere.title')}
@@ -409,10 +350,9 @@ export default function Home() {
     { key: 'websocket', bgColor: 'bg-green-50 dark:bg-green-900/10' },
     { key: 'sse', bgColor: 'bg-purple-50 dark:bg-purple-900/10' },
     { key: 'cron', bgColor: 'bg-orange-50 dark:bg-orange-900/10' },
-    { key: 'mcp', bgColor: 'bg-teal-50 dark:bg-teal-900/10' },
     { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/10' },
     { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/10' },
-    { key: 'cli', bgColor: 'bg-gray-50 dark:bg-gray-900/10' }
+    // { key: 'cli', bgColor: 'bg-gray-50 dark:bg-gray-900/10' }
   ];
 
   return (
@@ -422,9 +362,11 @@ export default function Home() {
     >
       <Hero />
       <main>
-        <TypeSafetyDemo />
+        {/* <TypeSafetyDemo /> */}
         <PlatformToolsSection />
         
+        <CoreFeaturesSection />
+
         {/* Transport Sections */}
         {transportSections.map(({ key, bgColor }) => {
           const transport = tObject(`transports.${key}`) as {
@@ -458,9 +400,7 @@ export default function Home() {
         })}
 
 
-        
-        <CoreFeaturesSection />
-        <RunAnywhereSection />
+              <RunAnywhereSection />
       </main>
     </Layout>
   );
