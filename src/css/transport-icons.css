@@ -67,6 +67,18 @@
   margin-left: 4px;
 }
 
+/* MCP Icon */
+.menu__link[data-transport-icons*="mcp"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/transport-icons/mcp.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: 4px;
+}
+
 
 /* Ensure the sidebar link has space for the icons */
 .menu__link[data-transport-icons] {

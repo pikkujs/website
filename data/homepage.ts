@@ -51,6 +51,11 @@ export const features = [
       "title": "RPC",
       "content": "Call server functions like local functions with complete type safety.",
       "icon": "🎯"
+    },
+    {
+      "title": "MCP Server",
+      "content": "Expose your functions as Model Control Protocol tools for AI models.",
+      "icon": "🤖"
     }
   ];
   
@@ -151,6 +156,16 @@ export const features = [
           light: "nextjs-light.png"
         },
         "supportedTransports": ["http", "sse"]
+      },
+      {
+        "name": "MCP Server",
+        "docs": "/docs/runtimes/mcp-server",
+        "supported": true,
+        "img": {
+          dark: "custom-dark.svg",
+          light: "custom-light.svg"
+        },
+        "supportedTransports": ["mcp"]
       },
       // {
       //   "name": "Koa",

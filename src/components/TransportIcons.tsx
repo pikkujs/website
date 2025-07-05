@@ -55,6 +55,19 @@ export const RPCIcon: React.FC<TransportIconProps> = ({ className = "", size = 1
   </svg>
 );
 
+export const MCPIcon: React.FC<TransportIconProps> = ({ className = "", size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 16 16" className={`text-pink-600 dark:text-pink-400 ${className}`}>
+    <rect x="4" y="4" width="8" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+    <circle cx="6.5" cy="7" r="1" fill="currentColor"/>
+    <circle cx="9.5" cy="7" r="1" fill="currentColor"/>
+    <path d="M6 9.5h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    <path d="M6 4V2.5M10 4V2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <circle cx="6" cy="2.5" r="0.5" fill="currentColor"/>
+    <circle cx="10" cy="2.5" r="0.5" fill="currentColor"/>
+    <path d="M4 8h-1.5M12 8h1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
 interface TransportIconComponentProps {
   transportId: string;
   className?: string;
@@ -70,6 +83,7 @@ export const TransportIcon: React.FC<TransportIconComponentProps> = ({ transport
     queue: QueueIcon,
     queues: QueueIcon, // alias
     rpc: RPCIcon,
+    mcp: MCPIcon,
   };
 
   const IconComponent = iconComponents[transportId];

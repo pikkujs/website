@@ -89,6 +89,12 @@
         "name": "RPC Services",
         "description": "Type-safe service-to-service communication",
         "supportedRuntimes": ["Express", "Fastify", "AWS Lambda"]
+      },
+      {
+        "id": "mcp",
+        "name": "MCP Server",
+        "description": "Expose functions as Model Control Protocol tools for AI models",
+        "supportedRuntimes": ["MCP Server"]
       }
     ]
   },
@@ -177,6 +183,20 @@
       "clientCode": "import { createRPCClient } from '@pikku/client-rpc'\n\nconst userService = createRPCClient({\n  service: 'user-service',\n  version: '1.0.0',\n  baseUrl: process.env.API_BASE_URL,\n  token: userToken // Authentication token\n})\n\n// Type-safe service calls\nconst handleUserOperations = async (userId: string) => {\n  try {\n    // Get user profile with full type safety\n    const user = await userService.getUserProfile({ \n      userId \n    })\n    \n    console.log(`User: ${user.name} (${user.email})`)\n    console.log(`Organization: ${user.organizationId}`)\n    \n    // Update user profile\n    const updateResult = await userService.updateUserProfile({\n      userId,\n      name: 'New Name',\n      email: 'new@example.com'\n    })\n    \n    console.log(`Update successful: ${updateResult.success}`)\n    console.log(`Updated at: ${updateResult.updatedAt}`)\n    \n    return user\n  } catch (error) {\n    console.error('User operation failed:', error)\n    throw error\n  }\n}",
       "docsLink": "/docs/core/rpcs",
       "readMoreText": "Learn more about RPC Services"
+    },
+    "mcp": {
+      "title": "MCP Server",
+      "description": "Expose your Pikku functions as Model Control Protocol tools, enabling AI models to interact with your backend services directly.",
+      "supportedRuntimes": ["MCP Server"],
+      "specialFeatures": [
+        "AI model integration",
+        "Tool and resource exposure",
+        "Type-safe AI interactions",
+        "Multiple transport support"
+      ],
+      "codeSnippet": "export const getUserData = pikkuFunc<\n  { userId: string },\n  { id: string; name: string; email: string }\n>(async ({ userService }, { userId }) => {\n  const user = await userService.findById(userId)\n  \n  return {\n    id: user.id,\n    name: user.name,\n    email: user.email\n  }\n})\n\nexport const searchUsers = pikkuFunc<\n  { query: string; limit?: number },\n  { users: Array<{ id: string; name: string }> }\n>(async ({ userService }, { query, limit = 10 }) => {\n  const users = await userService.search(query, limit)\n  \n  return {\n    users: users.map(u => ({ id: u.id, name: u.name }))\n  }\n})\n\n// Expose functions as MCP tools\ncreateMcpServer({\n  name: 'user-management-server',\n  version: '1.0.0',\n  functions: {\n    getUserData,\n    searchUsers\n  },\n  resources: {\n    'user-profiles': {\n      description: 'User profile data',\n      handler: async (resourceId) => {\n        return await getUserData({ userId: resourceId })\n      }\n    }\n  }\n})",
+      "docsLink": "/docs/mcp",
+      "readMoreText": "Learn more about MCP Server"
     }
   },
   "coreFeatures": {

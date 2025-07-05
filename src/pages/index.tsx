@@ -352,6 +352,7 @@ export default function Home() {
     { key: 'cron', bgColor: 'bg-orange-50 dark:bg-orange-900/10' },
     { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/10' },
     { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/10' },
+    { key: 'mcp', bgColor: 'bg-pink-50 dark:bg-pink-900/10' },
     // { key: 'cli', bgColor: 'bg-gray-50 dark:bg-gray-900/10' }
   ];
 
