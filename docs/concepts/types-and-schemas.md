@@ -11,9 +11,9 @@ The easiest way to use types is by specifying them within a `PikkuFunction`
 ```typescript
 type Input = { sortBy: 'age' | 'name' }
 type Response = { users: Array<{ name: string, age: number }> }
-const myFunction: APIFuction<Input, Output> = (services, filter, userSession) => {
-    return await services.users.getUsers(filter)
-}
+const myFunction: pikkuFunc<Input, Output>((services, data, session) => {
+  return await services.users.getUsers(data)
+})
 ```
 
 The pikku CLI will then extract those types to generate all the revelevant information needed to run the functions, as well as generate typed sdks, documentation and schemas to validate the input against, all from the types defined.

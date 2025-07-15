@@ -14,8 +14,8 @@ Here's an example service that manages a scoring system. Notice that it doesn't 
 
 It also demonstrates how to handle errors using pikku. This error type is recognized by Pikku and automatically mapped to an appropriate message.
 
-```typescript title="Game Score Seervice"
-export class NotEnoughPointsError extends EError {}
+```typescript title="Game Score Service"
+export class NotEnoughPointsError extends PikkuError {}
 addError(NotEnoughPointsError, { status: 400, message: 'Not enough points!' })
 
 interface GameScoreService {
@@ -74,14 +74,14 @@ First you'll need your application types. These are types that extend the pikku 
 Note how this uses a declaration file `.d.ts`. This enforces us to avoid putting anything concrete in this file.
 :::
 
-```typescript reference title="application-types.gen.d.ts"
-https://raw.githubusercontent.com/pikkujs/express-middleware-starter/blob/master/types/application-types.d.ts
+```typescript reference title="application-types.d.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/functions/types/application-types.d.ts
 ```
 
 Now, let's create the services:
 
 ```typescript reference title="services.ts"
-https://raw.githubusercontent.com/pikkujs/express-middleware-starter/blob/master/src/services.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/functions/src/services.ts
 ```
 
 ## Dependency Lookup vs. Dependency Injection

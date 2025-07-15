@@ -26,7 +26,7 @@ stateDiagram-v2
   Match --> Create: create / upgrade / onopen*
   Match --> [*]: Not Found
   Create --> Middleware
-  Middleware -> Auth
+  Middleware --> Auth
   Auth --> Permissions
   Permissions --> Function
 

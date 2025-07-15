@@ -116,9 +116,11 @@ flowchart LR
 
   Event --> HTTP
   Event --> Channel
+  Event --> MCP
+  Event --> Queue
+  Event --> ScheduledTasks
   Channel --> Local
   Channel --> Distributed
-  Event --> ScheduledTasks
 ```
 
    - Provides the libraries that handle the different transport types.

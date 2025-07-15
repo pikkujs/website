@@ -37,9 +37,14 @@ There are three main method types used for handling channels. In each of these m
 The `ChannelConnection` method is triggered when a connection is first created. It allows you to perform initialization tasks or send a message immediately upon connection.
 
 ```typescript
-const onConnect: ChannelConnection<'hello!'> = async (services, channel) => {
-    channel.send('hello!');
-}
+export const onConnect = pikkuChannelConnectionFunc<'hello!'>(
+  async ({ logger, channel }) => {
+    logger.info(
+      `Connected to event channel with opening data ${JSON.stringify(channel.openingData)}`
+    )
+    channel.send('hello!')
+  }
+)
 ```
 
 - **Generic Argument**: `<Output>` specifies the types of data the method can send (e.g., `'hello!'` in this example).
@@ -52,9 +57,13 @@ const onConnect: ChannelConnection<'hello!'> = async (services, channel) => {
 The `ChannelDisconnection` method is triggered when a connection is closed. It is useful for cleanup tasks or logging. Sending data from this method is not allowed and will result in a TypeScript error.
 
 ```typescript
-export const onDisconnect: ChannelDisconnection = async (services, channel) => {
-    services.logger.info('Disconnected from the channel');
-}
+export const onDisconnect = pikkuChannelDisconnectionFunc(
+  async ({ logger, channel }) => {
+    logger.info(
+      `Disconnected from event channel with data ${JSON.stringify(channel.openingData)}`
+    )
+  }
+)
 ```
 
 - **Behavior**: Once this method is called, the channel is closed, and no further messages can be sent.
@@ -67,13 +76,14 @@ export const onDisconnect: ChannelDisconnection = async (services, channel) => {
 The `ChannelMessage` method is triggered whenever data is received through the channel. It allows you to handle incoming data and send responses.
 
 ```typescript
-export const onMessage: ChannelMessage<'hi!' | 'hey', 'hello' | 'ola'> = async (services, channel, data) => {
-  if (data === 'hi!') {
-    channel.send('hello');
-  } else {
-    channel.send('ola');
+export const onMessage = pikkuChannelFunc<'hello', 'hey'>(
+  async ({ logger, channel }) => {
+    logger.info(
+      `Got a generic hello message with data ${JSON.stringify(channel.openingData)}`
+    )
+    channel.send('hey')
   }
-}
+)
 ```
 
 - **Generic Arguments**:

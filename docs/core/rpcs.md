@@ -37,7 +37,7 @@ export const calculateTax = pikkuSessionlessFunc<
   return { tax, total }
 })
 
-// This function can also be called as an RPC
+// Session based RPC functions can also be called as an RPC
 export const validateUser = pikkuFunc<
   { userId: string },
   { isValid: boolean; user?: { name: string; email: string } }
@@ -68,7 +68,7 @@ export const processOrder = pikkuFunc<
   logger.info(`Processing order for user: ${userId}`)
   
   // First, validate the user (RPC call)
-  const userValidation = await rpc?.invoke('validateUser', { userId })
+  const userValidation = await rpc.invoke('validateUser', { userId })
   
   if (!userValidation?.isValid) {
     throw new Error('Invalid user')
@@ -78,7 +78,7 @@ export const processOrder = pikkuFunc<
   const subtotal = items.reduce((sum, item) => sum + item.price, 0)
   
   // Calculate tax (RPC call)
-  const taxResult = await rpc?.invoke('calculateTax', {
+  const taxResult = await rpc.invoke('calculateTax', {
     amount: subtotal,
     rate: 0.08
   })
@@ -113,7 +113,7 @@ export const recursiveFunction = pikkuSessionlessFunc<
   
   if (count > 0) {
     // Recursive RPC call
-    const result = await rpc?.invoke('recursiveFunction', { 
+    const result = await rpc.invoke('recursiveFunction', { 
       count: count - 1 
     })
     return { result: result?.result || 0 }
@@ -133,7 +133,7 @@ export const safeRPCCall = pikkuSessionlessFunc<
   { success: boolean; error?: string }
 >(async ({ rpc, logger }, { userId }) => {
   try {
-    const result = await rpc?.invoke('validateUser', { userId })
+    const result = await rpc.invoke('validateUser', { userId })
     
     if (result?.isValid) {
       return { success: true }
@@ -141,130 +141,15 @@ export const safeRPCCall = pikkuSessionlessFunc<
       return { success: false, error: 'User validation failed' }
     }
   } catch (error) {
-    logger.error('RPC call failed:', error)
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }
+    // You can either handle the error or bubble it up
+    throw error
   }
-})
-```
-
-### Conditional RPC Calls
-
-You can conditionally call RPCs based on business logic:
-
-```typescript
-export const smartProcessor = pikkuFunc<
-  { data: any; useAdvanced: boolean },
-  { result: any }
->(async ({ rpc, logger }, { data, useAdvanced }, session) => {
-  if (useAdvanced) {
-    // Call advanced processing function
-    const result = await rpc?.invoke('advancedProcessor', { data })
-    return { result }
-  } else {
-    // Call simple processing function  
-    const result = await rpc?.invoke('simpleProcessor', { data })
-    return { result }
-  }
-})
-```
-
-## RPC Service Injection
-
-The `rpc` service is automatically injected into functions that need it. Make sure to destructure it in your function parameters:
-
-```typescript
-// ✅ Correct: Destructure rpc from services
-export const myFunction = pikkuSessionlessFunc(async ({ rpc, logger }) => {
-  const result = await rpc?.invoke('otherFunction', {})
-  return result
-})
-
-// ❌ Incorrect: Don't use services.rpc
-export const myFunction = pikkuSessionlessFunc(async (services) => {
-  const result = await services.rpc?.invoke('otherFunction', {})
-  return result
-})
-```
-
-## Best Practices
-
-### 1. Use Optional Chaining
-
-Always use optional chaining when calling `rpc?.invoke()` since the RPC service might not be available in all contexts:
-
-```typescript
-const result = await rpc?.invoke('functionName', data)
-```
-
-### 2. Handle RPC Failures Gracefully
-
-RPC calls can fail, so always handle potential errors:
-
-```typescript
-try {
-  const result = await rpc?.invoke('functionName', data)
-  // Handle success
-} catch (error) {
-  // Handle failure
-  logger.error('RPC call failed:', error)
-}
-```
-
-### 3. Keep RPC Functions Pure
-
-Design RPC functions to be pure and reusable:
-
-```typescript
-// ✅ Good: Pure, reusable function
-export const calculateDiscount = pikkuSessionlessFunc<
-  { amount: number; discountRate: number },
-  { discount: number; finalAmount: number }
->(async ({ logger }, { amount, discountRate }) => {
-  const discount = amount * discountRate
-  return { discount, finalAmount: amount - discount }
-})
-
-// ❌ Avoid: Functions with side effects that are hard to reuse
-export const processPaymentAndSendEmail = pikkuFunc<...>(async ({ rpc, email }, data, session) => {
-  // This does too many things and is hard to test/reuse
-})
-```
-
-### 4. Use Type Safety
-
-Always specify input and output types for your RPC functions:
-
-```typescript
-// ✅ Good: Fully typed
-export const typedFunction = pikkuSessionlessFunc<
-  { input: string },
-  { output: number }
->(async ({ logger }, { input }) => {
-  return { output: input.length }
 })
 ```
 
 ## Common Use Cases
 
-### 1. Data Validation
-
-```typescript
-export const validateAndProcess = pikkuFunc<...>(async ({ rpc }, data, session) => {
-  // Validate input data
-  const validation = await rpc?.invoke('validateInput', data)
-  if (!validation?.isValid) {
-    throw new Error('Invalid input')
-  }
-  
-  // Process the validated data
-  return await rpc?.invoke('processData', validation.cleanedData)
-})
-```
-
-### 2. Code Reuse Across Routes
+### 1. Code Reuse Across Routes
 
 ```typescript
 // Shared business logic
@@ -274,34 +159,34 @@ export const getUserProfile = pikkuFunc<...>(async ({ todos }, { userId }) => {
 
 // Multiple HTTP routes can use the same logic
 export const publicProfile = pikkuSessionlessFunc(async ({ rpc }, { userId }) => {
-  return await rpc?.invoke('getUserProfile', { userId })
+  return await rpc.invoke('getUserProfile', { userId })
 })
 
 export const privateProfile = pikkuFunc(async ({ rpc }, { userId }, session) => {
   // Add session-specific logic
-  const profile = await rpc?.invoke('getUserProfile', { userId })
+  const profile = await rpc.invoke('getUserProfile', { userId })
   return { ...profile, isOwner: profile.userId === session.userId }
 })
 ```
 
-### 3. Complex Workflows
+### 2. Complex Workflows
 
 ```typescript
 export const completeOrderWorkflow = pikkuFunc<...>(async ({ rpc }, orderData, session) => {
   // Step 1: Validate order
-  await rpc?.invoke('validateOrder', orderData)
+  await rpc.invoke('validateOrder', orderData)
   
   // Step 2: Calculate totals
-  const totals = await rpc?.invoke('calculateOrderTotals', orderData)
+  const totals = await rpc.invoke('calculateOrderTotals', orderData)
   
   // Step 3: Process payment
-  const payment = await rpc?.invoke('processPayment', { 
+  const payment = await rpc.invoke('processPayment', { 
     amount: totals.total,
     userId: session.userId 
   })
   
   // Step 4: Create order record
-  return await rpc?.invoke('createOrderRecord', { 
+  return await rpc.invoke('createOrderRecord', { 
     ...orderData, 
     ...totals, 
     paymentId: payment.id 

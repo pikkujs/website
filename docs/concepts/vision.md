@@ -13,6 +13,7 @@ At the heart of Pikku is the idea that all your logic is defined as **typed func
 - WebSockets
 - Cron jobs and scheduled tasks
 - Queues
+- MCP Servers
 - Other event-driven interactions
 
 This approach delivers complete flexibility, allowing your codebase to support both traditional servers and serverless platforms without the typical pain points that arise when trying to mix paradigms. 
@@ -30,6 +31,7 @@ Pikku empowers you to deploy your functionality on any platform:
 
 - **Traditional Servers:** Use with frameworks like [Express](https://expressjs.com), [Fastify](https://www.fastify.io), or [uWS (µWebSockets)](https://github.com/uNetworking/uWebSockets.js).
 - **Serverless Platforms:** Deploy on [AWS Lambda](https://aws.amazon.com/lambda), [Azure Functions](https://azure.microsoft.com/en-us/products/functions/), or [Cloudflare Workers](https://workers.cloudflare.com).
+- **AI Agents:** Use claudes [MCP](https://modelcontextprotocol.io/docs/concepts/resources) to directly call into your functions.
 - **Full-Stack Frameworks:** Integrate directly with frameworks like [Next.js](https://nextjs.org).
 
 This versatility lets you choose the best runtime for your project without being tied to a single framework.

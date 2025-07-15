@@ -14,6 +14,6 @@ Over the years I have also always ended up using services. I found that developi
 
 Then about a year ago, new work projects emerged that required a solution flexible enough to work both serverless and on traditional servers—for HTTP, cron jobs, and more. That’s when I evolved Pikku into Pikku—a minimal, function-first framework that strips away the fluff so you can focus on your business logic and deploy anywhere. 
 
-Pikku’s focus is on delivering a seamless, simple, type-safe development experience regardless of what and how you deploy. Whether it's Websockets, HTTP or Scheduled Tasks (with more in the making), Pikku empowers you to build scalable, cost-efficient applications with minimal overhead.
+Pikku’s focus is on delivering a seamless, simple, type-safe development experience regardless of what and how you deploy. Whether it's Websockets, HTTP, Queues, MCP commands or Scheduled Tasks, Pikku empowers you to build scalable, cost-efficient applications with minimal overhead.
 
 In short, Pikku is my answer to modern development complexities—a tool designed to let you spend more time coding your specific logic and less time trying to figure out how to deploy it or integrate different tooling for the common tasks.
