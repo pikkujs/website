@@ -51,14 +51,6 @@ The main server that processes jobs:
 https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/bullmq/src/start.ts
 ```
 
-### Dependencies Configuration
-
-Required packages for BullMQ:
-
-```json reference title="package.json"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/bullmq/package.json
-```
-
 ## How It Works
 
 1. **Define Workers**: Create functions that process specific job types

@@ -50,22 +50,25 @@ function Hero() {
 }
 
 /** Transport section with code snippet and supported runtimes */
-function TransportSection({ 
-  title, 
-  description, 
-  codeSnippet, 
-  serverCode,
-  clientCode,
-  specialFeatures, 
-  supportedRuntimes, 
+function TransportSection({
+  title,
+  description,
+  functions,
+  wiring,
+  client,
+  specialFeatures,
+  supportedRuntimes,
   bgColor = "bg-white dark:bg-gray-800",
   id,
   docsLink,
   readMoreText
-}: { 
-  title: string; 
-  description: string; 
-  codeSnippet?: string; 
+}: {
+  title: string;
+  description: string;
+  codeSnippet?: string;
+  functions?: string;
+  wiring?: string;
+  client?: string;
   serverCode?: string;
   clientCode?: string;
   specialFeatures?: string[];
@@ -74,8 +77,7 @@ function TransportSection({
   id: string;
   docsLink?: string;
   readMoreText?: string;
-})
- {
+}) {
   const getRuntimeInfo = (name: string) => {
     const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom] as Array<any>;
     return allRuntimes.find(r => r.name.toLowerCase() === name.toLowerCase());
@@ -93,7 +95,7 @@ function TransportSection({
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
               {description}
             </p>
-            
+
             {/* Supported Runtimes */}
             <div className="mb-4">
               <div className="flex items-center gap-3 flex-wrap">
@@ -101,18 +103,18 @@ function TransportSection({
                 {supportedRuntimes.map(runtime => {
                   const runtimeInfo = getRuntimeInfo(runtime);
                   return runtimeInfo ? (
-                    <Image 
+                    <Image
                       key={runtime}
-                      width={24} 
+                      width={24}
                       height={24}
-                      sources={{ 
-                        light: `img/logos/${runtimeInfo.img.light}`, 
-                        dark: `img/logos/${runtimeInfo.img.dark}` 
-                      }} 
+                      sources={{
+                        light: `img/logos/${runtimeInfo.img.light}`,
+                        dark: `img/logos/${runtimeInfo.img.dark}`
+                      }}
                       title={runtimeInfo.name}
                     />
                   ) : (
-                    <div 
+                    <div
                       key={runtime}
                       className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center"
                       title={runtime}
@@ -142,8 +144,8 @@ function TransportSection({
             {/* Read More Link */}
             {docsLink && readMoreText && (
               <div>
-                <Link 
-                  to={docsLink} 
+                <Link
+                  to={docsLink}
                   className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
                 >
                   {readMoreText} →
@@ -151,38 +153,40 @@ function TransportSection({
               </div>
             )}
           </div>
-          
-          <div>
-            {/* Check if this transport has server/client tabs (RPC) */}
-            {serverCode && clientCode ? (
+
+          <div className='hidden md:flex'>
               <TabComponent
                 tabs={[
                   {
-                    id: 'server',
-                    label: 'Server',
+                    id: 'functions',
+                    label: 'Functions',
                     content: (
-                      <CodeBlock language="typescript" title="server.ts" className='max-w-full'>
-                        {serverCode}
+                      <CodeBlock language="typescript" title="functions.ts" className='max-w-full'>
+                        {functions}
                       </CodeBlock>
                     )
                   },
-                  {
+                  ...(wiring ? [{
+                    id: 'wiring',
+                    label: 'Wiring',
+                    content: (
+                      <CodeBlock language="typescript" title="routes.ts" className='max-w-full'>
+                        {wiring}
+                      </CodeBlock>
+                    )
+                  }] : []),
+                  ...(client ? [{
                     id: 'client',
                     label: 'Client',
                     content: (
                       <CodeBlock language="typescript" title="client.ts" className='max-w-full'>
-                        {clientCode}
+                        {client}
                       </CodeBlock>
                     )
-                  }
+                  }] : [])
                 ]}
-                defaultTab="server"
+                defaultTab="functions"
               />
-            ) : (
-              <CodeBlock language="typescript" title="example.ts" className='max-w-full'>
-                {codeSnippet}
-              </CodeBlock>
-            )}
           </div>
         </div>
       </div>
@@ -220,7 +224,7 @@ function PlatformToolsSection() {
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
           {platformTools.description}
         </p>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {platformTools.transports.map((transport) => (
             <button
@@ -249,7 +253,7 @@ function PlatformToolsSection() {
 
 /** Core features section */
 function CoreFeaturesSection() {
-  const features = tArray('coreFeatures.features') as Array<{icon: string, title: string, description: string}>;
+  const features = tArray('coreFeatures.features') as Array<{ icon: string, title: string, description: string }>;
 
   return (
     <section className="py-16">
@@ -260,7 +264,7 @@ function CoreFeaturesSection() {
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
           {t('coreFeatures.description')}
         </p>
-        
+
         <div className="grid md:grid-cols-4 gap-8">
           {features.map((feature, idx) => (
             <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
@@ -277,8 +281,8 @@ function CoreFeaturesSection() {
 
 /** Final section emphasizing universal deployment */
 function RunAnywhereSection() {
-  const deploymentTypes = tArray('runAnywhere.deploymentTypes') as Array<{icon: string, title: string, description: string, features: string[]}>;
-  const finalMessage = tObject('runAnywhere.finalMessage') as {icon: string, title: string, description: string};
+  const deploymentTypes = tArray('runAnywhere.deploymentTypes') as Array<{ icon: string, title: string, description: string, features: string[] }>;
+  const finalMessage = tObject('runAnywhere.finalMessage') as { icon: string, title: string, description: string };
 
   return (
     <section className="py-16">
@@ -289,7 +293,7 @@ function RunAnywhereSection() {
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
           {t('runAnywhere.description')}
         </p>
-        
+
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {deploymentTypes.map((deployment, idx) => (
             <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
@@ -306,23 +310,23 @@ function RunAnywhereSection() {
             </div>
           ))}
         </div>
-        
+
         <div className='grid grid-cols-3 md:grid-cols-8 gap-4 items-center justify-items-center mb-8'>
           {[...runtimes.cloud, ...runtimes.middleware, runtimes.custom].map(deployment => (
-            <Link 
+            <Link
               key={deployment.name}
-              className="p-3 rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-110" 
-              href={deployment.docs} 
+              className="p-3 rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-110"
+              href={deployment.docs}
               title={`Deploy to ${deployment.name}`}
             >
-              <Image 
-                width={60} 
+              <Image
+                width={60}
                 height={60}
-                className='mx-auto' 
-                sources={{ 
-                  light: `img/logos/${deployment.img.light}`, 
-                  dark: `img/logos/${deployment.img.dark}` 
-                }} 
+                className='mx-auto'
+                sources={{
+                  light: `img/logos/${deployment.img.light}`,
+                  dark: `img/logos/${deployment.img.dark}`
+                }}
               />
             </Link>
           ))}
@@ -346,13 +350,13 @@ function RunAnywhereSection() {
 /** The main Home component that ties everything together. */
 export default function Home() {
   const transportSections = [
-    { key: 'http', bgColor: 'bg-blue-50 dark:bg-blue-900/10' },
-    { key: 'websocket', bgColor: 'bg-green-50 dark:bg-green-900/10' },
-    { key: 'sse', bgColor: 'bg-purple-50 dark:bg-purple-900/10' },
-    { key: 'cron', bgColor: 'bg-orange-50 dark:bg-orange-900/10' },
-    { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/10' },
-    { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/10' },
-    { key: 'mcp', bgColor: 'bg-pink-50 dark:bg-pink-900/10' },
+    { key: 'http', bgColor: 'bg-blue-50 dark:bg-blue-900/30' },
+    { key: 'websocket', bgColor: 'bg-green-50 dark:bg-green-900/30' },
+    { key: 'sse', bgColor: 'bg-purple-50 dark:bg-purple-900/30' },
+    { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/30' },
+    { key: 'cron', bgColor: 'bg-orange-50 dark:bg-orange-900/30' },
+    { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/30' },
+    { key: 'mcp', bgColor: 'bg-pink-50 dark:bg-pink-900/30' },
     // { key: 'cli', bgColor: 'bg-gray-50 dark:bg-gray-900/10' }
   ];
 
@@ -365,7 +369,7 @@ export default function Home() {
       <main>
         {/* <TypeSafetyDemo /> */}
         <PlatformToolsSection />
-        
+
         <CoreFeaturesSection />
 
         {/* Transport Sections */}
@@ -374,6 +378,9 @@ export default function Home() {
             title: string;
             description: string;
             codeSnippet?: string;
+            functions?: string;
+            wiring?: string;
+            client?: string;
             serverCode?: string;
             clientCode?: string;
             supportedRuntimes: string[];
@@ -381,7 +388,7 @@ export default function Home() {
             docsLink: string;
             readMoreText: string;
           };
-          
+
           return (
             <TransportSection
               key={key}
@@ -389,6 +396,9 @@ export default function Home() {
               title={transport.title}
               description={transport.description}
               codeSnippet={transport.codeSnippet}
+              functions={transport.functions}
+              wiring={transport.wiring}
+              client={transport.client}
               serverCode={transport.serverCode}
               clientCode={transport.clientCode}
               supportedRuntimes={transport.supportedRuntimes}
@@ -401,7 +411,7 @@ export default function Home() {
         })}
 
 
-              <RunAnywhereSection />
+        <RunAnywhereSection />
       </main>
     </Layout>
   );
