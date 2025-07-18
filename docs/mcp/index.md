@@ -2,6 +2,10 @@
 
 The Model Control Protocol (MCP) integration allows you to expose your Pikku functions as tools and resources that AI models can interact with directly.
 
+:::info
+The MCP integration is still experimental. We support the basics (prompts, tools and resources) but haven't yet exposed or implemented the entire protocol.
+:::
+
 ## Getting Started
 
 - [Introduction](./introduction.md) - Overview and quick start guide

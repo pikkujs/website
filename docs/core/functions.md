@@ -1,7 +1,7 @@
 ---
 sidebar_position: 10
 title: Functions  
-description: How functions work  
+description: How functions work
 ---
 
 Functions in Pikku serve as a core interface for the application. They manage logic, interact with services, and handle data processing. Functions are highly flexible and can:

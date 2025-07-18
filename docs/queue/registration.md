@@ -4,9 +4,15 @@ title: Queue Registration
 description: Learn how to wire queue functions to workers
 ---
 
+<AIDisclaimer />
+
 # Queue Registration
 
 Queue registration is the process of connecting your queue functions to specific queue names and configuring how they should be processed. This is done using the `addQueueWorker` function in your routes files.
+
+:::info
+Different queues allow different configuration options. These are logged on start to inform the user what is/isn't supported. While it's a different approach, the ideal is that the developer/architect can provide different options depending on the system. For example, SQS and Postgres poll, while redis a pull notification system.
+:::
 
 ## Basic Registration
 
@@ -236,168 +242,6 @@ addQueueWorker({
     concurrency: 1,
     allowDelayed: true,      // Enable delayed job processing
     maxDelayTime: 86400000   // Max 24 hour delay
-  }
-})
-```
-
-## Environment-Specific Configuration
-
-Configure workers differently per environment:
-
-```typescript
-const isDevelopment = process.env.NODE_ENV === 'development'
-
-addQueueWorker({
-  queueName: 'email-queue',
-  func: sendEmail,
-  config: {
-    concurrency: isDevelopment ? 1 : 5,
-    retries: isDevelopment ? 1 : 3,
-    pollingInterval: isDevelopment ? 10000 : 5000
-  }
-})
-```
-
-## Worker Groups
-
-Organize related workers:
-
-```typescript
-// Group 1: User operations
-addQueueWorker({
-  queueName: 'user-registration',
-  func: processUserRegistration,
-  config: { concurrency: 3, group: 'user-ops' }
-})
-
-addQueueWorker({
-  queueName: 'user-deletion',
-  func: processUserDeletion,
-  config: { concurrency: 1, group: 'user-ops' }
-})
-
-// Group 2: Payment operations
-addQueueWorker({
-  queueName: 'payment-processing',
-  func: processPayment,
-  config: { concurrency: 2, group: 'payment-ops' }
-})
-
-addQueueWorker({
-  queueName: 'refund-processing',
-  func: processRefund,
-  config: { concurrency: 1, group: 'payment-ops' }
-})
-```
-
-## Health Checks
-
-Configure health monitoring for workers:
-
-```typescript
-addQueueWorker({
-  queueName: 'critical-service',
-  func: processCriticalTask,
-  config: {
-    healthCheck: {
-      enabled: true,
-      interval: 30000,      // Check every 30 seconds
-      maxFailures: 3,       // Alert after 3 consecutive failures
-      onUnhealthy: 'alert'  // Send alert when unhealthy
-    }
-  }
-})
-```
-
-## Testing Worker Configuration
-
-Test your worker configuration:
-
-```typescript
-// worker-config.test.ts
-import { test } from 'node:test'
-import { addQueueWorker } from '@pikku/core'
-import { processTestJob } from './test-worker.functions'
-
-test('worker registration with correct config', async () => {
-  const config = {
-    concurrency: 5,
-    retries: 3,
-    timeout: 30000
-  }
-  
-  // This should not throw
-  addQueueWorker({
-    queueName: 'test-queue',
-    func: processTestJob,
-    config
-  })
-})
-```
-
-## Best Practices
-
-### 1. Use Descriptive Queue Names
-
-```typescript
-// ✅ Good - clear purpose
-addQueueWorker({
-  queueName: 'user-welcome-emails',
-  func: sendWelcomeEmail
-})
-
-addQueueWorker({
-  queueName: 'order-payment-processing',
-  func: processPayment
-})
-
-// ❌ Avoid - vague names
-addQueueWorker({
-  queueName: 'queue1',
-  func: someFunction
-})
-```
-
-### 2. Match Concurrency to Resources
-
-```typescript
-// CPU-intensive tasks
-addQueueWorker({
-  queueName: 'image-processing',
-  func: processImage,
-  config: {
-    concurrency: 2  // Limit to avoid overwhelming CPU
-  }
-})
-
-// I/O-bound tasks
-addQueueWorker({
-  queueName: 'api-calls',
-  func: callExternalAPI,
-  config: {
-    concurrency: 10  // Higher concurrency for I/O
-  }
-})
-```
-
-### 3. Configure Appropriate Timeouts
-
-```typescript
-// Quick operations
-addQueueWorker({
-  queueName: 'cache-updates',
-  func: updateCache,
-  config: {
-    timeout: 10000  // 10 second timeout
-  }
-})
-
-// Long-running operations
-addQueueWorker({
-  queueName: 'data-exports',
-  func: exportData,
-  config: {
-    timeout: 1800000  // 30 minute timeout
   }
 })
 ```

@@ -1,8 +1,14 @@
 ---
-sidebar_position: 12
-title: Background Queues
+sidebar_position: 0
+title: Introduction
 description: Process background jobs with reliable message delivery
 ---
+
+<AIDisclaimer />
+
+:::info
+Pikku Queues is a new feature with a small feature set, we'll be expanding on it but need to ensure that changes exposed from underlying queue systems are supported by most.
+:::
 
 # Background Queues
 
