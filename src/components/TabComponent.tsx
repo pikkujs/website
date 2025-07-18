@@ -23,7 +23,7 @@ export const TabComponent: React.FC<TabComponentProps> = ({
   const activeTabContent = tabs.find(tab => tab.id === activeTab)?.content;
 
   return (
-    <div className={className}>
+    <div className={`${className} w-full min-w-0`}>
       {/* Tab Headers */}
       <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700 mb-6">
         {tabs.map((tab) => (
@@ -43,8 +43,10 @@ export const TabComponent: React.FC<TabComponentProps> = ({
       </div>
 
       {/* Tab Content */}
-      <div className="tab-content">
-        {activeTabContent}
+      <div className="tab-content w-full min-w-0">
+        <div className="overflow-x-auto">
+          {activeTabContent}
+        </div>
       </div>
     </div>
   );

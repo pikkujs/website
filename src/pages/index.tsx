@@ -154,8 +154,9 @@ function TransportSection({
             )}
           </div>
 
-          <div className='hidden md:flex'>
+          <div className='hidden md:flex w-full min-w-0'>
               <TabComponent
+                className="w-full min-w-0"
                 tabs={[
                   {
                     id: 'functions',
@@ -266,6 +267,34 @@ function CoreFeaturesSection() {
         </p>
 
         <div className="grid md:grid-cols-4 gap-8">
+          {features.map((feature, idx) => (
+            <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+              <div className="text-4xl mb-4">{feature.icon}</div>
+              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+              <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Architecture flexibility section */
+function ArchitectureFlexibilitySection() {
+  const features = tArray('architectureFlexibility.features') as Array<{ icon: string, title: string, description: string }>;
+
+  return (
+    <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-screen-xl mx-auto px-4 text-center">
+        <Heading as="h2" className="text-4xl font-bold mb-6">
+          {t('architectureFlexibility.title')}
+        </Heading>
+        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
+          {t('architectureFlexibility.description')}
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, idx) => (
             <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
               <div className="text-4xl mb-4">{feature.icon}</div>
@@ -410,6 +439,7 @@ export default function Home() {
           );
         })}
 
+        <ArchitectureFlexibilitySection />
 
         <RunAnywhereSection />
       </main>

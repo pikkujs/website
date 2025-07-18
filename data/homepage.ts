@@ -162,8 +162,8 @@ export const features = [
         "docs": "/docs/runtimes/mcp-server",
         "supported": true,
         "img": {
-          dark: "custom-dark.svg",
-          light: "custom-light.svg"
+          dark: "mcp-dark.svg",
+          light: "mcp-light.svg"
         },
         "supportedTransports": ["mcp"]
       },

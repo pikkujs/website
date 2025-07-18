@@ -2,10 +2,10 @@
   "hero": {
     "title": "Pikku",
     "subtitle": "One Function, Every Protocol",
-    "description": "Write TypeScript functions once, trigger them with HTTP, WebSocket, cron jobs, queues, and more. Pikku is the swiss knife for building scalable applications with full type safety.",
+    "description": "Write TypeScript functions once, trigger them via HTTP, WebSocket, cron jobs, queues, and more. Pikku is the swiss knife for building scalable applications with full type safety.",
     "features": [
-      "Same function can handle RPC, HTTP, SSE, WebSocket, CronJobs, and Queues",
-      "Auto-generated mini TypeScript SDKs for all transform with complete type safety",
+      "Same function can handle RPC, HTTP, SSE, WebSocket, CronJobs, Queues, and MCP",
+      "Auto-generated mini TypeScript SDKs with complete type safety",
       "Deploy anywhere - Express, Lambda, Cloudflare, Next.js, Azure and more"
     ],
     "primaryCta": "Build Your First API",
@@ -133,7 +133,7 @@
     "sse": {
       "title": "Server-Sent Events",
       "description": "Stream real-time data to clients with automatic reconnection and progressive enhancement.",
-      "supportedRuntimes": ["Express", "Fastify", "uWS", "nextJS"],
+      "supportedRuntimes": ["Express", "Fastify"],
       "specialFeatures": [
         "Simple streaming API",
         "Provide realtime updates",
@@ -156,7 +156,7 @@
         "Error retry logic",
         "Serverless friendly"
       ],
-      "functions": "export const myScheduledTask = pikkuSessionlessFunc<void, void>(\n  async ({ logger }) => {\n    logger.info(\n      `This is a scheduled task that runs every minute, running now at ${new Date().getTime()}`\n    )\n  }\n)",
+      "functions": "export const myScheduledTask = pikkuSessionlessFunc<void, void>(\n  async ({ logger }) => {\n    logger.info(\n      `This is a scheduled task that runs every minute,\n\trunning now at ${new Date().getTime()}`\n    )\n  }\n)",
       "wiring": "addScheduledTask({\n  name: 'myScheduledTask',\n  schedule: '*/1 * * * *',\n  func: myScheduledTask,\n  tags: ['hello'],\n})",
       "docsLink": "/docs/scheduled-tasks",
       "readMoreText": "Learn more about Scheduled Tasks"
@@ -164,7 +164,7 @@
     "queues": {
       "title": "Background Queues",
       "description": "Process background jobs with reliable message delivery and retry logic.",
-      "supportedRuntimes": ["BullMQ", "AWS SQS"],
+      "supportedRuntimes": ["BullMQ", "AWS", "PGBoss"],
       "specialFeatures": [
         "Switch out different queue providers, unlocking scaling opportunities",
         "Supports different queue providers, without locking you in with code."
@@ -227,6 +227,27 @@
         "icon": "⚙️",
         "title": "Service Injection",
         "description": "Simple dependency injection without decorators or magic"
+      }
+    ]
+  },
+  "architectureFlexibility": {
+    "title": "Monoliths, Services, Functions, you can have it all",
+    "description": "Build your application architecture your way with Pikku's flexible approach to deployment and bundling.",
+    "features": [
+      {
+        "icon": "📦",
+        "title": "Minimal Bundle Generation",
+        "description": "Tree-shake all the services your code doesn't need for optimal bundle sizes"
+      },
+      {
+        "icon": "🎯", 
+        "title": "Service Filtering",
+        "description": "Pick and choose which services you want to deploy by filtering via tag, files or transport type"
+      },
+      {
+        "icon": "⚡",
+        "title": "Functionless Optimised",
+        "description": "Select a single function to deploy via Lambda/Cloudflare and let Pikku pluck out the core dependencies"
       }
     ]
   },
