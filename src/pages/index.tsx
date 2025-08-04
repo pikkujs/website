@@ -3,42 +3,80 @@ import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import Image from '@theme/ThemedImage';
-import CodeBlock from '@theme/CodeBlock';
 import { runtimes } from '@site/data/homepage';
-import { t, tArray, tObject } from '../i18n';
-import { TransportIcon } from '../components/TransportIcons';
-import { TabComponent } from '../components/TabComponent';
 
-/** Renders a heading, tagline, and CTA buttons at the top of the homepage. */
+/** Reusable component for Pikku logo surrounded by icons */
+function PikkuCircularLayout({ 
+  items, 
+  renderItem, 
+  logoSize = 180, 
+  radius = 180 
+}: {
+  items: any[];
+  renderItem: (item: any, index: number) => React.ReactNode;
+  logoSize?: number;
+  radius?: number;
+}) {
+  return (
+    <div className="relative flex items-center justify-center min-h-[400px]">
+      <div className="relative z-10">
+        <Image 
+          sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }} 
+          width={logoSize}
+          height={logoSize}
+          className="mx-auto"
+        />
+      </div>
+      
+      {/* Items arranged in a circle around Pikku */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative" style={{ width: '100%', height: '100%' }}>
+          {items.map((item, index) => {
+            const total = items.length;
+            const angle = (index * 360) / total;
+            const x = Math.cos((angle - 90) * Math.PI / 180) * radius;
+            const y = Math.sin((angle - 90) * Math.PI / 180) * radius;
+            
+            return (
+              <div
+                key={index}
+                className="absolute"
+                style={{
+                  left: `calc(50% + ${x}px - 32px)`,
+                  top: `calc(50% + ${y}px - 32px)`,
+                }}
+              >
+                {renderItem(item, index)}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Hero Section: Identity & Hook */
 function Hero() {
-  const features = tArray('hero.features') as string[];
-
   return (
     <header className="flex w-full max-w-screen-lg pt-16 pb-12 px-4 self-center">
       <div className="md:w-1/2">
         <Heading as="h1" className="text-5xl font-bold mb-4 text-primary">
-          {t('hero.title')}
+          Pikku. The Typescript Backend That Adapts.
         </Heading>
-        <Heading as="h2" className="text-5xl font-bold mb-4">
-          {t('hero.subtitle')}
+        <Heading as="h2" className="text-3xl font-bold mb-6 text-gray-600 dark:text-gray-300">
+          Define once. Run anywhere.
         </Heading>
-        <p className="text-2xl font-medium leading-snug mb-4">
-          {t('hero.description')}
+        <p className="text-xl font-medium leading-relaxed mb-8 text-gray-700 dark:text-gray-300">
+          Like a chameleon adapts to its environment, Pikku adapts your backend logic 
+          to any protocol, runtime, or deployment target.
         </p>
-        <div className="text-lg mb-6 space-y-2">
-          {features.map((feature, idx) => (
-            <div key={idx} className="flex items-center">
-              <span className="text-green-500 mr-2">✓</span>
-              {feature}
-            </div>
-          ))}
-        </div>
         <div className="flex flex-row gap-4 mt-6">
-          <Link to="/docs" className="button button--primary">
-            {t('hero.primaryCta')}
+          <Link to="#how-it-works" className="button button--primary">
+            How It Works
           </Link>
-          <Link className="button button--secondary" to="https://github.com/pikkujs/pikku">
-            {t('hero.secondaryCta')}
+          <Link to="/docs" className="button button--secondary">
+            Try Pikku
           </Link>
         </div>
       </div>
@@ -49,145 +87,38 @@ function Hero() {
   );
 }
 
-/** Transport section with code snippet and supported runtimes */
-function TransportSection({
-  title,
-  description,
-  functions,
-  wiring,
-  client,
-  specialFeatures,
-  supportedRuntimes,
-  bgColor = "bg-white dark:bg-gray-800",
-  id,
-  docsLink,
-  readMoreText
-}: {
-  title: string;
-  description: string;
-  codeSnippet?: string;
-  functions?: string;
-  wiring?: string;
-  client?: string;
-  serverCode?: string;
-  clientCode?: string;
-  specialFeatures?: string[];
-  supportedRuntimes: string[];
-  bgColor?: string;
-  id: string;
-  docsLink?: string;
-  readMoreText?: string;
-}) {
-  const getRuntimeInfo = (name: string) => {
-    const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom] as Array<any>;
-    return allRuntimes.find(r => r.name.toLowerCase() === name.toLowerCase());
-  };
-
-
+/** The Problem: Fragmented Backends */
+function ProblemSection() {
   return (
-    <section id={id} className={`py-16 ${bgColor}`}>
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <div>
-            <Heading as="h2" className="text-4xl font-bold mb-6">
-              {title}
-            </Heading>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
-              {description}
+    <section className="py-16">
+      <div className="max-w-screen-lg mx-auto px-4">
+        <Heading as="h2" className="text-4xl font-bold mb-6 text-center">
+          Typed Backends Break
+        </Heading>
+        
+        <div className="grid md:grid-cols-2 md:gap-16 md:items-center mt-12">
+          <div className="text-left">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+              In Node, type safety usually stops at the HTTP boundary. Add WebSockets, queues, cron jobs, or AI agents and there's no shared contract—validation and shapes get re-implemented and drift.
             </p>
-
-            {/* Supported Runtimes */}
-            <div className="mb-4">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h4 className="text-lg font-semibold my-auto">{t('common.runsOn')}</h4>
-                {supportedRuntimes.map(runtime => {
-                  const runtimeInfo = getRuntimeInfo(runtime);
-                  return runtimeInfo ? (
-                    <Image
-                      key={runtime}
-                      width={24}
-                      height={24}
-                      sources={{
-                        light: `img/logos/${runtimeInfo.img.light}`,
-                        dark: `img/logos/${runtimeInfo.img.dark}`
-                      }}
-                      title={runtimeInfo.name}
-                    />
-                  ) : (
-                    <div
-                      key={runtime}
-                      className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center"
-                      title={runtime}
-                    >
-                      <span className="text-xs text-gray-600 dark:text-gray-300">?</span>
-                    </div>
-                  );
-                })}
-              </div>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+              And "deploy anywhere" mostly ends at routes: moving the rest of the backend to serverless, edge, Bun/Deno, or containers means more adapters, more glue, more risk.
+            </p>
+            
+            <div className="space-y-4">
+              <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Each new protocol fragments your code.</p>
+              <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Types diverge. Logic drifts.</p>
+              <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Confidence erodes.</p>
             </div>
-
-            {/* Special Features */}
-            {specialFeatures && specialFeatures.length > 0 && (
-              <div className="mb-8">
-                <h4 className="text-lg font-semibold mb-3">{t('common.specialFeatures')}</h4>
-                <ul className="space-y-2">
-                  {specialFeatures.map((feature, idx) => (
-                    <li key={idx} className="flex items-center">
-                      <span className="text-green-500 mr-2">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Read More Link */}
-            {docsLink && readMoreText && (
-              <div>
-                <Link
-                  to={docsLink}
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-                >
-                  {readMoreText} →
-                </Link>
-              </div>
-            )}
           </div>
-
-          <div className='hidden md:flex w-full min-w-0'>
-              <TabComponent
-                className="w-full min-w-0"
-                tabs={[
-                  {
-                    id: 'functions',
-                    label: 'Functions',
-                    content: (
-                      <CodeBlock language="typescript" title="functions.ts" className='max-w-full'>
-                        {functions}
-                      </CodeBlock>
-                    )
-                  },
-                  ...(wiring ? [{
-                    id: 'wiring',
-                    label: 'Wiring',
-                    content: (
-                      <CodeBlock language="typescript" title="routes.ts" className='max-w-full'>
-                        {wiring}
-                      </CodeBlock>
-                    )
-                  }] : []),
-                  ...(client ? [{
-                    id: 'client',
-                    label: 'Client',
-                    content: (
-                      <CodeBlock language="typescript" title="client.ts" className='max-w-full'>
-                        {client}
-                      </CodeBlock>
-                    )
-                  }] : [])
-                ]}
-                defaultTab="functions"
-              />
+          
+          <div className="flex items-center justify-center">
+            <Image 
+              sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }} 
+              width={350}
+              height={350}
+              className="mx-auto"
+            />
           </div>
         </div>
       </div>
@@ -195,111 +126,151 @@ function TransportSection({
   );
 }
 
-/** Shows all transport types available in Pikku */
-function PlatformToolsSection() {
-  const platformTools = tObject('platformTools') as {
-    title: string;
-    description: string;
-    transports: Array<{
-      id: string;
-      name: string;
-      description: string;
-      supportedRuntimes: string[];
-    }>;
-  };
-
-
-  const scrollToSection = (transportId: string) => {
-    const element = document.getElementById(transportId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+/** The Chameleon Approach */
+function ChameleonSection() {
+  const protocols = [
+    { icon: '🔁', name: 'HTTP Routes', desc: 'with OpenAPI' },
+    { icon: '📡', name: 'WebSocket channels', desc: 'real-time communication' },
+    { icon: '🧠', name: 'AI agents', desc: 'intelligent automation' },
+    { icon: '⚡', name: 'Queue & cron jobs', desc: 'background processing' },
+    { icon: '🧬', name: 'RPC and type-safe SDKs', desc: 'seamless integration' }
+  ];
 
   return (
-    <section className="py-16">
-      <div className="max-w-screen-xl mx-auto px-4 text-center">
+    <section id="how-it-works" className="py-16">
+      <div className="max-w-screen-lg mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
-          {platformTools.title}
+          One Format. Many Protocols.
         </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
-          {platformTools.description}
-        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {platformTools.transports.map((transport) => (
-            <button
-              key={transport.id}
-              onClick={() => scrollToSection(transport.id)}
-              className="border-0 group bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-105 cursor-pointer"
-            >
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4 group-hover:scale-110 transition-transform duration-200">
-                  <TransportIcon transportId={transport.id} size={32} />
+        <div className="grid md:grid-cols-2 md:gap-12 md:items-center">
+          {/* Left side - Chameleon description */}
+          <div className="text-left">
+            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
+              Pikku lets you define backend logic once and wire it to most protocols.
+            </p>
+            
+              <p className="text-lg font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
+                Like a chameleon adapts to its environment while keeping its core intact,
+                Pikku adapts your logic to every protocol while preserving type safety and business rules.
+              </p>
+          </div>
+          
+          {/* Right side - Pikku logo surrounded by protocol icons */}
+          <PikkuCircularLayout
+            items={protocols}
+            renderItem={(protocol) => (
+              <div className="flex flex-col items-center hover:scale-110 transition-all duration-200">
+                <div className="text-5xl mb-3">{protocol.icon}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400 text-center font-medium">
+                  {protocol.name.replace(' Routes', '').replace(' channels', '').replace(' agents', '').replace(' & cron jobs', '').replace(' and type-safe SDKs', '')}
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  {transport.name}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  {transport.description}
-                </p>
               </div>
-            </button>
-          ))}
+            )}
+            logoSize={160}
+            radius={120}
+          />
         </div>
       </div>
     </section>
   );
 }
 
-/** Core features section */
-function CoreFeaturesSection() {
-  const features = tArray('coreFeatures.features') as Array<{ icon: string, title: string, description: string }>;
-
+/** Deploy Anywhere */
+function DeployAnywhereSection() {
   return (
     <section className="py-16">
-      <div className="max-w-screen-xl mx-auto px-4 text-center">
+      <div className="max-w-screen-lg mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
-          {t('coreFeatures.title')}
+          Deploy Anywhere. Blend In Everywhere.
         </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-          {t('coreFeatures.description')}
-        </p>
-
-        <div className="grid md:grid-cols-4 gap-8">
-          {features.map((feature, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-            </div>
-          ))}
+        
+        <div className="grid md:grid-cols-2 md:gap-12 md:items-center">
+          {/* Left side - Description */}
+          <div className="text-left">
+            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+              Pikku works with Node, Bun, Deno, serverless, edge runtimes, and containers.
+            </p>
+            <p className="text-lg text-gray-500 dark:text-gray-400">
+              No lock-in. No framework rules. Just JavaScript.
+            </p>
+          </div>
+          
+          {/* Right side - Circular logo layout */}
+          <PikkuCircularLayout
+            items={[...runtimes.cloud, ...runtimes.middleware, runtimes.custom]}
+            renderItem={(deployment) => (
+              <Link
+                className="transition-all duration-200 hover:scale-110"
+                href={deployment.docs}
+                title={`Deploy to ${deployment.name}`}
+              >
+                <Image
+                  width={64}
+                  height={64}
+                  className='mx-auto'
+                  sources={{
+                    light: `img/logos/${deployment.img.light}`,
+                    dark: `img/logos/${deployment.img.dark}`
+                  }}
+                />
+              </Link>
+            )}
+            logoSize={160}
+            radius={140}
+          />
         </div>
       </div>
     </section>
   );
 }
 
-/** Architecture flexibility section */
-function ArchitectureFlexibilitySection() {
-  const features = tArray('architectureFlexibility.features') as Array<{ icon: string, title: string, description: string }>;
-
+/** Try it now */
+function TryItNowSection() {
   return (
     <section className="py-16 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-screen-xl mx-auto px-4 text-center">
+      <div className="max-w-screen-lg mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
-          {t('architectureFlexibility.title')}
+          Try it now
+        </Heading>
+        <div className="bg-black dark:bg-gray-800 text-green-400 p-6 rounded-lg font-mono text-lg max-w-md mx-auto">
+          npm create pikku@latest
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Tiny but Powerful */
+function TinyButPowerfulSection() {
+  const features = [
+    { title: 'Auth', desc: 'Built-in authentication filters', icon: '🔐' },
+    { title: 'Permissions', desc: 'Fine-grained access control', icon: '🛡️' },
+    { title: 'Services', desc: 'Singleton and per-request services', icon: '⚙️' },
+    { title: 'Function Filtering', desc: 'Filter by tags or filters to optimize deployment sizes', icon: '📦' },
+    { title: 'Type-safe client sdks', desc: 'Auto-generated from your function definitions', icon: '🔗' },
+    { title: 'Schema Validation', desc: 'Optional runtime validation with TypeScript or Zod', icon: '✅' },
+    { title: 'Tiny runtime', desc: 'Minimal overhead, maximum performance', icon: '🪶' }
+  ];
+
+  return (
+    <section className="py-16">
+      <div className="max-w-screen-lg mx-auto px-4 text-center">
+        <Heading as="h2" className="text-4xl font-bold mb-6">
+          Tiny. But Not Basic.
         </Heading>
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-          {t('architectureFlexibility.description')}
+          Pikku includes everything you need for production backends:
         </p>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {features.map((feature, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+            <div key={idx} className="flex items-start p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <span className="text-2xl mr-4 mt-1">{feature.icon}</span>
+              <div className="text-left">
+                <div className="text-lg font-semibold mb-2">{feature.title}</div>
+                <div className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{feature.desc}</div>
+              </div>
             </div>
           ))}
         </div>
@@ -308,67 +279,26 @@ function ArchitectureFlexibilitySection() {
   );
 }
 
-/** Final section emphasizing universal deployment */
-function RunAnywhereSection() {
-  const deploymentTypes = tArray('runAnywhere.deploymentTypes') as Array<{ icon: string, title: string, description: string, features: string[] }>;
-  const finalMessage = tObject('runAnywhere.finalMessage') as { icon: string, title: string, description: string };
-
+/** Call to Action */
+function CallToActionSection() {
   return (
-    <section className="py-16">
-      <div className="max-w-screen-xl mx-auto px-4 text-center">
-        <Heading as="h2" className="text-4xl font-bold mb-6">
-          {t('runAnywhere.title')}
-        </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
-          {t('runAnywhere.description')}
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {deploymentTypes.map((deployment, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <div className="text-4xl mb-4">{deployment.icon}</div>
-              <h3 className="text-xl font-semibold mb-3">{deployment.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                {deployment.description}
-              </p>
-              <div className="text-sm text-gray-500">
-                {deployment.features.map((feature, featureIdx) => (
-                  <div key={featureIdx}>✓ {feature}<br /></div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className='grid grid-cols-3 md:grid-cols-8 gap-4 items-center justify-items-center mb-8'>
-          {[...runtimes.cloud, ...runtimes.middleware, runtimes.custom].map(deployment => (
-            <Link
-              key={deployment.name}
-              className="p-3 rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-110"
-              href={deployment.docs}
-              title={`Deploy to ${deployment.name}`}
-            >
-              <Image
-                width={60}
-                height={60}
-                className='mx-auto'
-                sources={{
-                  light: `img/logos/${deployment.img.light}`,
-                  dark: `img/logos/${deployment.img.dark}`
-                }}
-              />
-            </Link>
-          ))}
-        </div>
-
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-6 rounded-xl inline-block">
-          <div className="flex items-center justify-center mb-2">
-            <span className="mr-2">{finalMessage.icon}</span>
-            <strong>{finalMessage.title}</strong>
-          </div>
-          <p className="text-blue-100">
-            {finalMessage.description}
+    <section className="py-16 bg-gray-900 dark:bg-gray-800">
+      <div className="max-w-screen-lg mx-auto px-4 text-center">
+        <div className="text-white">
+          <Heading as="h2" className="text-4xl font-bold mb-6 text-white">
+            Ready to Adapt?
+          </Heading>
+          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+            Start using Pikku's chameleon approach to get full power over your types and deployments.
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/docs" className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
+              Try Pikku
+            </Link>
+            <Link to="/docs" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
+              See Architecture
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -378,70 +308,19 @@ function RunAnywhereSection() {
 
 /** The main Home component that ties everything together. */
 export default function Home() {
-  const transportSections = [
-    { key: 'http', bgColor: 'bg-blue-50 dark:bg-blue-900/30' },
-    { key: 'websocket', bgColor: 'bg-green-50 dark:bg-green-900/30' },
-    { key: 'sse', bgColor: 'bg-purple-50 dark:bg-purple-900/30' },
-    { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/30' },
-    { key: 'cron', bgColor: 'bg-orange-50 dark:bg-orange-900/30' },
-    { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/30' },
-    { key: 'mcp', bgColor: 'bg-pink-50 dark:bg-pink-900/30' },
-    // { key: 'cli', bgColor: 'bg-gray-50 dark:bg-gray-900/10' }
-  ];
-
   return (
     <Layout
-      title={`${t('hero.title')} - ${t('hero.subtitle')}`}
-      description={t('hero.description')}
+      title="Pikku - The Backend That Adapts"
+      description="Define once. Run anywhere. Like a chameleon adapts to its environment, Pikku adapts your backend logic to any protocol, runtime, or deployment target."
     >
       <Hero />
       <main>
-        {/* <TypeSafetyDemo /> */}
-        <PlatformToolsSection />
-
-        <CoreFeaturesSection />
-
-        {/* Transport Sections */}
-        {transportSections.map(({ key, bgColor }) => {
-          const transport = tObject(`transports.${key}`) as {
-            title: string;
-            description: string;
-            codeSnippet?: string;
-            functions?: string;
-            wiring?: string;
-            client?: string;
-            serverCode?: string;
-            clientCode?: string;
-            supportedRuntimes: string[];
-            specialFeatures: string[];
-            docsLink: string;
-            readMoreText: string;
-          };
-
-          return (
-            <TransportSection
-              key={key}
-              id={key}
-              title={transport.title}
-              description={transport.description}
-              codeSnippet={transport.codeSnippet}
-              functions={transport.functions}
-              wiring={transport.wiring}
-              client={transport.client}
-              serverCode={transport.serverCode}
-              clientCode={transport.clientCode}
-              supportedRuntimes={transport.supportedRuntimes}
-              specialFeatures={transport.specialFeatures}
-              bgColor={bgColor}
-              docsLink={transport.docsLink}
-              readMoreText={transport.readMoreText}
-            />
-          );
-        })}
-
-        <ArchitectureFlexibilitySection />
-
-        <RunAnywhereSection />
+        <ProblemSection />
+        <ChameleonSection />
+        <DeployAnywhereSection />
+        <TryItNowSection />
+        <TinyButPowerfulSection />
+        <CallToActionSection />
       </main>
     </Layout>
   );
