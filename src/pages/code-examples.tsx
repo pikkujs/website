@@ -1,447 +1,392 @@
 import React from 'react';
-import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
-import Image from '@theme/ThemedImage';
 import CodeBlock from '@theme/CodeBlock';
-import { runtimes } from '@site/data/homepage';
-import { t, tArray, tObject } from '../i18n';
+import { tObject } from '../i18n';
 import { TransportIcon } from '../components/TransportIcons';
 import { TabComponent } from '../components/TabComponent';
 
-/** Renders a heading, tagline, and CTA buttons at the top of the homepage. */
-function Hero() {
-  const features = tArray('hero.features') as string[];
-
+/** Enhanced header for the code examples page */
+function EnhancedHeader() {
   return (
-    <header className="flex w-full max-w-screen-lg pt-16 pb-12 px-4 self-center">
-      <div className="md:w-1/2">
-        <Heading as="h1" className="text-5xl font-bold mb-4 text-primary">
-          {t('hero.title')}
-        </Heading>
-        <Heading as="h2" className="text-5xl font-bold mb-4">
-          {t('hero.subtitle')}
-        </Heading>
-        <p className="text-2xl font-medium leading-snug mb-4">
-          {t('hero.description')}
-        </p>
-        <div className="text-lg mb-6 space-y-2">
-          {features.map((feature, idx) => (
-            <div key={idx} className="flex items-center">
-              <span className="text-green-500 mr-2">✓</span>
-              {feature}
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-row gap-4 mt-6">
-          <Link to="/docs" className="button button--primary">
-            {t('hero.primaryCta')}
-          </Link>
-          <Link className="button button--secondary" to="https://github.com/pikkujs/pikku">
-            {t('hero.secondaryCta')}
-          </Link>
-        </div>
+    <header className="relative bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900 py-24 text-center overflow-hidden">
+      {/* Background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-grid-pattern"></div>
       </div>
-      <div className="hidden md:block w-1/2">
-        <Image sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }} />
+      
+      <div className="relative max-w-screen-lg mx-auto px-4">
+        <div className="flex justify-center mb-8">
+          <div className="relative">
+            <img
+              src="/img/pikku-gradient.svg"
+              alt="Pikku Logo"
+              className="h-20 w-20 drop-shadow-lg"
+            />
+            <div className="absolute -inset-2 bg-white/20 rounded-full blur-xl"></div>
+          </div>
+        </div>
+        
+        <Heading as="h1" className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Transport Examples
+        </Heading>
+        
+        <p className="text-xl text-gray-700 dark:text-gray-200 max-w-3xl mx-auto leading-relaxed">
+          See how the same business logic adapts seamlessly across HTTP, WebSockets, scheduled tasks, and more
+        </p>
+        
+        <div className="mt-8 flex justify-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 rounded-full text-sm text-gray-600 dark:text-gray-300 backdrop-blur-sm">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            One function, every protocol
+          </div>
+        </div>
       </div>
     </header>
   );
 }
 
-/** Transport section with code snippet and supported runtimes */
-function TransportSection({
+/** Sticky navigation bar */
+function StickyNav() {
+  const navItems = [
+    { id: 'functions', label: 'Functions', color: 'bg-blue-50 dark:bg-blue-900/20' },
+    { id: 'http', label: 'HTTP', color: 'bg-green-50 dark:bg-green-900/20' },
+    { id: 'websocket', label: 'WebSocket', color: 'bg-purple-50 dark:bg-purple-900/20' },
+    { id: 'sse', label: 'SSE', color: 'bg-orange-50 dark:bg-orange-900/20' },
+    { id: 'queues', label: 'Queues', color: 'bg-red-50 dark:bg-red-900/20' },
+    { id: 'cron', label: 'Cron', color: 'bg-yellow-50 dark:bg-yellow-900/20' },
+    { id: 'rpc', label: 'RPC', color: 'bg-indigo-50 dark:bg-indigo-900/20' },
+    { id: 'mcp', label: 'MCP', color: 'bg-pink-50 dark:bg-pink-900/20' }
+  ];
+
+  return (
+    <nav className="sticky top-[4rem] z-[100] bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 shadow-sm">
+      <div className="max-w-screen-xl max-w-screen mx-auto px-4">
+        <div className="flex flex-wrap items-center gap-2 justify-center py-3">
+            {navItems.map((item) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition-all hover:scale-105 whitespace-nowrap ${item.color} text-gray-700 dark:text-gray-200 hover:shadow-sm`}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+      </div>
+    </nav>
+  );
+}
+
+/** Pikku function definitions section */
+function PikkuFunctionsSection() {
+  const pikkuFunctionCode = `// Generated imports from Pikku CLI
+import { 
+  pikkuFunc, 
+  pikkuSessionlessFunc, 
+  pikkuChannelFunc,
+  addHTTPRoute,
+  addChannel,
+  APIPermission
+} from '../.pikku/pikku-types.gen.js'
+
+// Type definitions
+import type { Board, Card, OverdueCard } from '../types/kanban.js'
+
+// Permission functions
+const canAccessBoard: APIPermission<{ boardId: string }> = async (
+  { boardService }, 
+  { boardId }, 
+  session
+) => {
+  return await boardService.userHasAccess(boardId, session.userId)
+}
+
+const canCreateCard: APIPermission = async (
+  { }, 
+  data, 
+  session
+) => {
+  return session?.role === 'member' || session?.role === 'admin'
+}
+
+// Business logic functions
+
+/** Retrieve a kanban board with all lists and cards */
+export const getBoard = pikkuFunc({
+  func: async (
+    { boardService, logger },
+    { boardId }: { boardId: string },
+    { userId }
+  ): Promise<Board> => {
+    logger.info(\`Fetching board \${boardId} for user \${userId}\`)
+    
+    return await boardService.getBoard(boardId, userId)
+  },
+  permissions: {
+    canAccessBoard
+  }
+})
+
+/** Create a new card and broadcast the update to subscribers */
+export const createCard = pikkuFunc({
+  func: async (
+    { boardService, eventHub, logger, channel },
+    { listId, title, description }: { listId: string, title: string, description?: string },
+    { userId }
+  ): Promise<{ cardId: string }> => {
+    logger.info(\`User \${userId} creating card: \${title}\`)
+    
+    const card = await boardService.createCard(listId, title, description, userId)
+
+    // Broadcast card creation to board subscribers
+    await eventHub?.publish(\`board:\${card.boardId}\`, {
+      type: 'cardCreated',
+      boardId: card.boardId,
+      cardId: card.cardId,
+      listId: card.listId
+    }, channel?.channelId)
+    
+    return { cardId: card.cardId }
+  },
+  permissions: {
+    canCreateCard
+  }
+})
+
+/** Find overdue cards and send email notifications to users */
+export const sendOverdueNotifications = pikkuSessionlessFunc<void, void>(
+  async ({ boardService, emailService, logger }) => {
+    logger.info(\`Checking for overdue cards at \${new Date().toISOString()}\`)
+    
+    const overdueCards = await boardService.getOverdueCards()
+    
+    await Promise.all(
+      overdueCards.map(card => 
+        emailService.sendOverdueNotification({
+          to: card.userEmail,
+          cardTitle: card.title,
+          boardTitle: card.boardTitle,
+          dueDate: card.dueDate
+        })
+      )
+    )
+    
+    logger.info(\`Sent notifications for \${overdueCards.length} overdue cards\`)
+  }
+)
+
+/** Subscribe to real-time updates for a specific board */
+export const subscribeToBoardUpdates = pikkuChannelFunc<
+  { boardId: string }, 
+  void
+>(async (
+  { eventHub, channel, logger },
+  { boardId }
+) => {
+  logger.info(\`Subscribing to updates for board \${boardId}\`)
+  
+  await eventHub?.subscribe(\`board:\${boardId}\`, channel.channelId)
+})
+
+/** Generate a PDF report of board status and notify when complete */
+export const generateBoardReport = pikkuSessionlessFunc<
+  { boardId: string },
+  void
+>(async (
+  { boardService, pdfService, eventHub, logger },
+  { boardId }
+) => {
+  logger.info(\`Generating PDF report for board \${boardId}\`)
+  
+  // Get board data with full details
+  const boardData = await boardService.getBoardWithStats(boardId)
+  
+  // Generate PDF report
+  const pdfPath = await pdfService.generateBoardReport(boardData)
+  
+  // Notify completion
+  await eventHub?.publish(\`board:\${boardId}\`, {
+    type: 'reportGenerated',
+    boardId,
+    pdfPath,
+    timestamp: Date.now()
+  })
+  
+  logger.info(\`PDF report generated: \${pdfPath}\`)
+})`;
+
+  return (
+    <section className="py-16 bg-blue-50 dark:bg-blue-900/20">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-center mb-8">
+          <Heading as="h2" className="text-3xl font-bold mb-4">
+            Pikku Function Definitions
+          </Heading>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Define your business logic once: Kanban boards, card management, notifications, and real-time collaboration
+          </p>
+        </div>
+        
+        <CodeBlock language="typescript" title="functions.ts">
+          {pikkuFunctionCode}
+        </CodeBlock>
+      </div>
+    </section>
+  );
+}
+
+
+/** Simplified transport code example section */
+function TransportCodeSection({
   title,
   description,
   functions,
   wiring,
   client,
-  specialFeatures,
-  supportedRuntimes,
-  bgColor = "bg-white dark:bg-gray-800",
   id,
-  docsLink,
-  readMoreText
+  bgColor
 }: {
   title: string;
   description: string;
-  codeSnippet?: string;
   functions?: string;
   wiring?: string;
   client?: string;
-  serverCode?: string;
-  clientCode?: string;
-  specialFeatures?: string[];
-  supportedRuntimes: string[];
-  bgColor?: string;
   id: string;
-  docsLink?: string;
-  readMoreText?: string;
+  bgColor: string;
 }) {
-  const getRuntimeInfo = (name: string) => {
-    const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom] as Array<any>;
-    return allRuntimes.find(r => r.name.toLowerCase() === name.toLowerCase());
-  };
-
-
   return (
     <section id={id} className={`py-16 ${bgColor}`}>
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <div>
-            <Heading as="h2" className="text-4xl font-bold mb-6">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center mb-4">
+            <TransportIcon transportId={id} size={40} />
+            <Heading as="h2" className="text-3xl font-bold ml-4">
               {title}
             </Heading>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
-              {description}
-            </p>
-
-            {/* Supported Runtimes */}
-            <div className="mb-4">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h4 className="text-lg font-semibold my-auto">{t('common.runsOn')}</h4>
-                {supportedRuntimes.map(runtime => {
-                  const runtimeInfo = getRuntimeInfo(runtime);
-                  return runtimeInfo ? (
-                    <Image
-                      key={runtime}
-                      width={24}
-                      height={24}
-                      sources={{
-                        light: `img/logos/${runtimeInfo.img.light}`,
-                        dark: `img/logos/${runtimeInfo.img.dark}`
-                      }}
-                      title={runtimeInfo.name}
-                    />
-                  ) : (
-                    <div
-                      key={runtime}
-                      className="w-4 h-4 bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center"
-                      title={runtime}
-                    >
-                      <span className="text-xs text-gray-600 dark:text-gray-300">?</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Special Features */}
-            {specialFeatures && specialFeatures.length > 0 && (
-              <div className="mb-8">
-                <h4 className="text-lg font-semibold mb-3">{t('common.specialFeatures')}</h4>
-                <ul className="space-y-2">
-                  {specialFeatures.map((feature, idx) => (
-                    <li key={idx} className="flex items-center">
-                      <span className="text-green-500 mr-2">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Read More Link */}
-            {docsLink && readMoreText && (
-              <div>
-                <Link
-                  to={docsLink}
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-                >
-                  {readMoreText} →
-                </Link>
-              </div>
-            )}
           </div>
-
-          <div className='hidden md:flex w-full min-w-0'>
-              <TabComponent
-                className="w-full min-w-0"
-                tabs={[
-                  {
-                    id: 'functions',
-                    label: 'Functions',
-                    content: (
-                      <CodeBlock language="typescript" title="functions.ts" className='max-w-full'>
-                        {functions}
-                      </CodeBlock>
-                    )
-                  },
-                  ...(wiring ? [{
-                    id: 'wiring',
-                    label: 'Wiring',
-                    content: (
-                      <CodeBlock language="typescript" title="routes.ts" className='max-w-full'>
-                        {wiring}
-                      </CodeBlock>
-                    )
-                  }] : []),
-                  ...(client ? [{
-                    id: 'client',
-                    label: 'Client',
-                    content: (
-                      <CodeBlock language="typescript" title="client.ts" className='max-w-full'>
-                        {client}
-                      </CodeBlock>
-                    )
-                  }] : [])
-                ]}
-                defaultTab="functions"
-              />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Shows all transport types available in Pikku */
-function PlatformToolsSection() {
-  const platformTools = tObject('platformTools') as {
-    title: string;
-    description: string;
-    transports: Array<{
-      id: string;
-      name: string;
-      description: string;
-      supportedRuntimes: string[];
-    }>;
-  };
-
-
-  const scrollToSection = (transportId: string) => {
-    const element = document.getElementById(transportId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  return (
-    <section className="py-16">
-      <div className="max-w-screen-xl mx-auto px-4 text-center">
-        <Heading as="h2" className="text-4xl font-bold mb-6">
-          {platformTools.title}
-        </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
-          {platformTools.description}
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {platformTools.transports.map((transport) => (
-            <button
-              key={transport.id}
-              onClick={() => scrollToSection(transport.id)}
-              className="border-0 group bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 active:scale-105 cursor-pointer"
-            >
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-4 group-hover:scale-110 transition-transform duration-200">
-                  <TransportIcon transportId={transport.id} size={32} />
-                </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  {transport.name}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  {transport.description}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Core features section */
-function CoreFeaturesSection() {
-  const features = tArray('coreFeatures.features') as Array<{ icon: string, title: string, description: string }>;
-
-  return (
-    <section className="py-16">
-      <div className="max-w-screen-xl mx-auto px-4 text-center">
-        <Heading as="h2" className="text-4xl font-bold mb-6">
-          {t('coreFeatures.title')}
-        </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-          {t('coreFeatures.description')}
-        </p>
-
-        <div className="grid md:grid-cols-4 gap-8">
-          {features.map((feature, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Architecture flexibility section */
-function ArchitectureFlexibilitySection() {
-  const features = tArray('architectureFlexibility.features') as Array<{ icon: string, title: string, description: string }>;
-
-  return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-screen-xl mx-auto px-4 text-center">
-        <Heading as="h2" className="text-4xl font-bold mb-6">
-          {t('architectureFlexibility.title')}
-        </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-          {t('architectureFlexibility.description')}
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <div className="text-4xl mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Final section emphasizing universal deployment */
-function RunAnywhereSection() {
-  const deploymentTypes = tArray('runAnywhere.deploymentTypes') as Array<{ icon: string, title: string, description: string, features: string[] }>;
-  const finalMessage = tObject('runAnywhere.finalMessage') as { icon: string, title: string, description: string };
-
-  return (
-    <section className="py-16">
-      <div className="max-w-screen-xl mx-auto px-4 text-center">
-        <Heading as="h2" className="text-4xl font-bold mb-6">
-          {t('runAnywhere.title')}
-        </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
-          {t('runAnywhere.description')}
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {deploymentTypes.map((deployment, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <div className="text-4xl mb-4">{deployment.icon}</div>
-              <h3 className="text-xl font-semibold mb-3">{deployment.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                {deployment.description}
-              </p>
-              <div className="text-sm text-gray-500">
-                {deployment.features.map((feature, featureIdx) => (
-                  <div key={featureIdx}>✓ {feature}<br /></div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className='grid grid-cols-3 md:grid-cols-8 gap-4 items-center justify-items-center mb-8'>
-          {[...runtimes.cloud, ...runtimes.middleware, runtimes.custom].map(deployment => (
-            <Link
-              key={deployment.name}
-              className="p-3 rounded-lg hover:shadow-lg transition-all duration-200 hover:scale-110"
-              href={deployment.docs}
-              title={`Deploy to ${deployment.name}`}
-            >
-              <Image
-                width={60}
-                height={60}
-                className='mx-auto'
-                sources={{
-                  light: `img/logos/${deployment.img.light}`,
-                  dark: `img/logos/${deployment.img.dark}`
-                }}
-              />
-            </Link>
-          ))}
-        </div>
-
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-6 rounded-xl inline-block">
-          <div className="flex items-center justify-center mb-2">
-            <span className="mr-2">{finalMessage.icon}</span>
-            <strong>{finalMessage.title}</strong>
-          </div>
-          <p className="text-blue-100">
-            {finalMessage.description}
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            {description}
           </p>
         </div>
+
+        {/* Mobile Layout - Stacked */}
+        <div className="block md:hidden w-full">
+          <TabComponent
+            className="w-full"
+            tabs={[
+              ...(wiring ? [{
+                id: 'wiring',
+                label: 'Wiring',
+                content: (
+                  <CodeBlock language="typescript" title={`${id}.wiring.ts`}>
+                    {wiring}
+                  </CodeBlock>
+                )
+              }] : []),
+              ...(client ? [{
+                id: 'client',
+                label: 'Client',
+                content: (
+                  <CodeBlock language="typescript" title={`${id}.client.ts`}>
+                    {client}
+                  </CodeBlock>
+                )
+              }] : []),
+              ...(functions ? [{
+                id: 'functions',
+                label: 'Functions',
+                content: (
+                  <CodeBlock language="typescript" title={`${id}.functions.ts`}>
+                    {functions}
+                  </CodeBlock>
+                )
+              }] : [])
+            ]}
+            defaultTab="wiring"
+          />
+        </div>
+
+        {/* Desktop Layout - Stacked */}
+        <div className="hidden md:block w-full space-y-8">
+          {wiring && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Wiring</h3>
+              <CodeBlock language="typescript" title={`${id}.wiring.ts`}>
+                {wiring}
+              </CodeBlock>
+            </div>
+          )}
+          
+          {client && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Client</h3>
+              <CodeBlock language="typescript" title={`${id}.client.ts`}>
+                {client}
+              </CodeBlock>
+            </div>
+          )}
+          
+          {functions && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Functions</h3>
+              <CodeBlock language="typescript" title={`${id}.functions.ts`}>
+                {functions}
+              </CodeBlock>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
 }
 
-
-/** The main Home component that ties everything together. */
-export default function Home() {
+/** Main Code Examples page component */
+export default function CodeExamples() {
   const transportSections = [
-    { key: 'http', bgColor: 'bg-blue-50 dark:bg-blue-900/30' },
-    { key: 'websocket', bgColor: 'bg-green-50 dark:bg-green-900/30' },
-    { key: 'sse', bgColor: 'bg-purple-50 dark:bg-purple-900/30' },
-    { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/30' },
-    { key: 'cron', bgColor: 'bg-orange-50 dark:bg-orange-900/30' },
-    { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/30' },
-    { key: 'mcp', bgColor: 'bg-pink-50 dark:bg-pink-900/30' },
-    // { key: 'cli', bgColor: 'bg-gray-50 dark:bg-gray-900/10' }
+    { key: 'http', bgColor: 'bg-green-50 dark:bg-green-900/20' },
+    { key: 'websocket', bgColor: 'bg-purple-50 dark:bg-purple-900/20' },
+    { key: 'sse', bgColor: 'bg-orange-50 dark:bg-orange-900/20' },
+    { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/20' },
+    { key: 'cron', bgColor: 'bg-yellow-50 dark:bg-yellow-900/20' },
+    { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/20' },
+    { key: 'mcp', bgColor: 'bg-pink-50 dark:bg-pink-900/20' }
   ];
 
   return (
     <Layout
-      title={`${t('hero.title')} - ${t('hero.subtitle')}`}
-      description={t('hero.description')}
+      title="Transport Examples"
+      description="See how the same business logic adapts seamlessly across HTTP, WebSockets, scheduled tasks, and more"
     >
-      <Hero />
+      <EnhancedHeader />
+      <StickyNav />
       <main>
-        {/* <TypeSafetyDemo /> */}
-        <PlatformToolsSection />
-
-        <CoreFeaturesSection />
-
-        {/* Transport Sections */}
+        <div id="functions">
+          <PikkuFunctionsSection />
+        </div>
+        
         {transportSections.map(({ key, bgColor }) => {
           const transport = tObject(`transports.${key}`) as {
             title: string;
             description: string;
-            codeSnippet?: string;
             functions?: string;
             wiring?: string;
             client?: string;
-            serverCode?: string;
-            clientCode?: string;
-            supportedRuntimes: string[];
-            specialFeatures: string[];
-            docsLink: string;
-            readMoreText: string;
           };
 
           return (
-            <TransportSection
+            <TransportCodeSection
               key={key}
               id={key}
               title={transport.title}
               description={transport.description}
-              codeSnippet={transport.codeSnippet}
               functions={transport.functions}
               wiring={transport.wiring}
               client={transport.client}
-              serverCode={transport.serverCode}
-              clientCode={transport.clientCode}
-              supportedRuntimes={transport.supportedRuntimes}
-              specialFeatures={transport.specialFeatures}
               bgColor={bgColor}
-              docsLink={transport.docsLink}
-              readMoreText={transport.readMoreText}
             />
           );
         })}
-
-        <ArchitectureFlexibilitySection />
-
-        <RunAnywhereSection />
       </main>
     </Layout>
   );
