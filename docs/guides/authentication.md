@@ -16,7 +16,7 @@ Middleware authentication runs automatically before your functions execute, extr
 #### API Key Authentication
 
 ```typescript
-import { authAPIKey, addMiddleware } from "@pikku/core"
+import { authAPIKey, wireMiddleware } from "@pikku/core"
 
 export const apiKeyMiddleware = () => {
   return authAPIKey<any, any>({
@@ -32,13 +32,13 @@ export const apiKeyMiddleware = () => {
 }
 
 // Apply middleware globally
-addMiddleware([apiKeyMiddleware()])
+wireMiddleware([apiKeyMiddleware()])
 ```
 
 #### Cookie Authentication with JWT
 
 ```typescript
-import { authCookie, addMiddleware } from "@pikku/core"
+import { authCookie, wireMiddleware } from "@pikku/core"
 
 export const cookieMiddleware = () => {
   return authCookie({
@@ -49,13 +49,13 @@ export const cookieMiddleware = () => {
   })
 }
 
-addMiddleware([cookieMiddleware()])
+wireMiddleware([cookieMiddleware()])
 ```
 
 #### Bearer Token Authentication
 
 ```typescript
-import { authBearer, addMiddleware } from "@pikku/core"
+import { authBearer, wireMiddleware } from "@pikku/core"
 
 export const bearerMiddleware = () => {
   return authBearer({
@@ -67,7 +67,7 @@ export const bearerMiddleware = () => {
   })
 }
 
-addMiddleware([bearerMiddleware()])
+wireMiddleware([bearerMiddleware()])
 ```
 
 ### 2. Function-Based Authentication (Manual)
@@ -124,10 +124,10 @@ export const logoutUser = pikkuSessionlessFunc<void, void>(async (
 ### Route Configuration
 
 ```typescript
-import { addHTTPRoute } from "@pikku/core"
+import { wireHTTP } from '../.pikku/pikku-types.gen.js'
 
 // Public route (no authentication)
-addHTTPRoute({
+wireHTTP({
   method: 'post',
   route: '/login',
   func: loginUser,
@@ -135,7 +135,7 @@ addHTTPRoute({
 })
 
 // Protected route (requires authentication)
-addHTTPRoute({
+wireHTTP({
   method: 'post',
   route: '/logout',
   func: logoutUser,
@@ -143,7 +143,7 @@ addHTTPRoute({
 })
 
 // Route with permissions
-addHTTPRoute({
+wireHTTP({
   method: 'patch',
   route: '/user/:userId',
   func: updateUser,
@@ -157,9 +157,9 @@ addHTTPRoute({
 ### Permission System
 
 ```typescript
-import { APIPermission } from "@pikku/core"
+import { PikkuPermission } from '../.pikku/pikku-types.gen.js'
 
-export const isUserUpdatingSelf: APIPermission<Pick<DB.User, 'userId'>> = async (
+export const isUserUpdatingSelf: PikkuPermission<Pick<DB.User, 'userId'>> = async (
   _services,
   data,
   session
@@ -167,7 +167,7 @@ export const isUserUpdatingSelf: APIPermission<Pick<DB.User, 'userId'>> = async 
   return session?.userId === data.userId
 }
 
-export const isTodoCreator: APIPermission<Pick<DB.Todo, 'todoId'>> = async (
+export const isTodoCreator: PikkuPermission<Pick<DB.Todo, 'todoId'>> = async (
   services,
   { todoId },
   session
@@ -187,16 +187,16 @@ export const isTodoCreator: APIPermission<Pick<DB.Todo, 'todoId'>> = async (
 ### Channel Configuration
 
 ```typescript
-import { addChannel } from "@pikku/core"
+import { wireChannel } from '../.pikku/pikku-types.gen.js'
 
-addChannel({
+wireChannel({
   name: 'events',
   route: '/',
   onConnect,
   onDisconnect,
   auth: true, // Global auth requirement for the channel
   onMessage,
-  onMessageRoute: {
+  onMessageWiring: {
     action: {
       // Authentication function (overrides global auth)
       auth: {

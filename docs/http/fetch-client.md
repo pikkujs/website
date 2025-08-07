@@ -19,13 +19,13 @@ In order to do so you can run `npx @pikku/cli fetch` and will need to have a `pi
 For example:
 
 ```json reference title="pikku.config.json"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/apps/cli/pikku.config.json
+https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/apps/cli/pikku.config.json
 ```
 
 The example code seen above can be viewed here:
 
 ```typescript reference title="fetch.ts"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/apps/cli/bin/fetch.ts
+https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/apps/cli/bin/fetch.ts
 ```
 
 

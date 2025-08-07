@@ -22,7 +22,7 @@ We'll use express here as the example request/response as it's most popular.
 This wraps the request object provided into a pikku request object.
 
 ```typescript reference title="Pikku Express Request"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/runtimes/express-middleware/src/pikku-express-request.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/pikku-express-request.ts
 ```
 
 ### Create a class to extend PikkuResponse
@@ -30,7 +30,7 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/runtimes/ex
 This wraps the response object provided into a pikku response object.
 
 ```typescript reference title="Pikku Express Response"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/runtimes/express-middleware/src/pikku-express-response.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/pikku-express-response.ts
 ```
 
 ### Call fetch with the correct request and response object
@@ -63,5 +63,5 @@ await fetch(
 To get an idea how this all ties together, let's now look at the express middleware plugin.
 
 ```typescript reference title="Pikku Express Middleware"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/runtimes/express-middleware/src/pikku-express-middleware.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/pikku-express-middleware.ts
 ```

@@ -1,9 +1,9 @@
-name: Master
+name: Main
 run-name: Publish to github pages
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   build:
     name: Build

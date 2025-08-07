@@ -17,11 +17,11 @@ Since permissions are checked in parallel, only the first error thrown will be u
 A simple permission check might involve verifying the user’s session to determine their role:
 
 ```typescript
-const isUser: APIPermission<unknown> = (_services, _data, session) => {
+const isUser: PikkuPermission<unknown> = (_services, _data, session) => {
   return session.isUser;
 }
 
-const isAdmin: APIPermission<unknown> = (_services, _data, session) => {
+const isAdmin: PikkuPermission<unknown> = (_services, _data, session) => {
   return session.isAdmin;
 }
 ```
@@ -33,7 +33,7 @@ In this case, the `isUser` permission checks if the session belongs to a user, w
 For more complex permissions, asynchronous logic involving external services can be introduced. For example, permission checks may require querying a database:
 
 ```typescript
-const belowLimit: APIPermission<unknown> = async (services, _, session) => {
+const belowLimit: PikkuPermission<unknown> = async (services, _, session) => {
   const booksTaken = await services.kysely
     .selectFrom('user')
     .join('books')

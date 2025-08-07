@@ -86,7 +86,7 @@ Pikku requires two key files for Cloudflare integration:
 ### 1. Setup services
 
 ```typescript reference title="setup-services.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/cloudflare-workers/src/setup-services.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/cloudflare-workers/src/setup-services.ts
 ```
 
 This is a wrapper around the users `createSingletonServices`, but adds the LocalVariablesService to allow access to environment variables.
@@ -98,7 +98,7 @@ We want to make parts of the framework like this visible to the end user so they
 ### 2. Entry Point
 
 ```typescript reference title="index.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/cloudflare-workers/src/index.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/cloudflare-workers/src/index.ts
 ```
 
 This file acts as the entry point and routes requests to the Pikku runtime.

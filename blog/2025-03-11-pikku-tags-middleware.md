@@ -33,12 +33,12 @@ You can add middleware globally or per route:
 
 - **Global Middleware:**  
   ```typescript
-  addMiddleware('/admin/*', [adminMiddleware]);
+  wireMiddleware('/admin/*', [adminMiddleware]);
   ```
 - **Route-Specific Middleware:**  
 
   ```typescript
-  addRoute({
+  wireHTTP({
       route: '/admin',
       method: 'get',
       func: yourFunction,

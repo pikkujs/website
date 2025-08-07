@@ -99,17 +99,17 @@ Register your tools in the routes file:
 
 ```typescript
 // mcp.routes.ts
-import { addMCPTool } from '../.pikku/pikku-types.gen.js'
+import { wireMCPTool } from '../.pikku/pikku-types.gen.js'
 import { sayHello, calculate, disableTool } from './mcp.functions.js'
 
-addMCPTool({
+wireMCPTool({
   name: 'sayHello',
   description: 'Greet someone with a friendly hello message',
   func: sayHello,
   tags: ['greeting', 'hello', 'demo'],
 })
 
-addMCPTool({
+wireMCPTool({
   name: 'calculate',
   description:
     'Perform basic mathematical operations (add, subtract, multiply, divide)',
@@ -117,7 +117,7 @@ addMCPTool({
   tags: ['math', 'calculator', 'arithmetic'],
 })
 
-addMCPTool({
+wireMCPTool({
   name: 'disableTool',
   description: 'Disable a tool by name',
   func: disableTool,

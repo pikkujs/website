@@ -44,12 +44,12 @@ export const timeSinceOpened = pikkuChannelFunc<
 
 ## Registering SSE Routes
 
-Register SSE endpoints using `addHTTPRoute` with `responseType: 'stream'`:
+Register SSE endpoints using `wireHTTP` with `responseType: 'stream'`:
 
 ```typescript
-import { addHTTPRoute } from '@pikku/core/http'
+import { wireHTTP } from '../.pikku/pikku-types.gen.js'
 
-addHTTPRoute({
+wireHTTP({
   method: 'get',
   route: '/stream/updates',
   func: streamUpdates,

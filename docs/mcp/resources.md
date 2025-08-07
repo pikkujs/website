@@ -70,17 +70,17 @@ Register your resources in the routes file:
 
 ```typescript
 // mcp.routes.ts
-import { addMCPResource } from '../.pikku/pikku-types.gen.js'
+import { wireMCPResource } from '../.pikku/pikku-types.gen.js'
 import { getStaticResource, getUserInfo } from './mcp.functions.js'
 
-addMCPResource({
+wireMCPResource({
   uri: 'getStaticResource',
   title: 'Static Resource',
   description: 'Gets a static resource with predefined data',
   func: getStaticResource,
 })
 
-addMCPResource({
+wireMCPResource({
   uri: 'getUserInfo/{userId}',
   title: 'User Information',
   description: 'Retrieve user information by user ID',

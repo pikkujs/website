@@ -53,11 +53,11 @@ export const processEmail = pikkuSessionlessFunc<
 Wire your function to a queue name:
 
 ```typescript
-// queue-worker.routes.ts
-import { addQueueWorker } from '@pikku/core'
-import { processEmail } from './queue-worker.functions'
+// queue-worker.wiring.ts
+import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { processEmail } from './queue-worker.functions.js'
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'email-queue',
   func: processEmail,
   config: {

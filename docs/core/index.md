@@ -51,7 +51,7 @@ For more info you can checkout the CLI documentation.
 :::
 
 ```json reference 
-https://raw.githubusercontent.com/pikkujs/yarn-workspace-starter/blob/master/pikku.config.json
+https://raw.githubusercontent.com/pikkujs/yarn-workspace-starter/blob/main/pikku.config.json
 ```
 
 #### Generated Files

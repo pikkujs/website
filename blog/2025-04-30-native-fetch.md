@@ -47,7 +47,7 @@ This means:
 When calling Pikku routes internally, you now use a standard `Request` object and the native `fetch` function:
 
 ```typescript
-import { fetch, RunRouteOptions } from '@pikku/core/http';
+import { fetch, RunHTTPWiringOptions } from '@pikku/core/http';
 
 const response = await fetch(new Request('https://example.com/api/hello', {
   method: 'GET',

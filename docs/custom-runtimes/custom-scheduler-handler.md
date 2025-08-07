@@ -32,5 +32,5 @@ In the case of serverless, this is all that's actually needed, since the runtime
 The rest of it is integrating it with your prefered cron library. The following is the implementation of the `PikkuTaskScheduler` provided for non-serverless invocation.
 
 ```typescript reference title="PikkuTaskScheduler"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/packages/schedule/src/pikku-task-scheduler.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/schedule/src/pikku-task-scheduler.ts
 ```

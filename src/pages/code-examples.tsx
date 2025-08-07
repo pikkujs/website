@@ -85,16 +85,16 @@ import {
   pikkuFunc, 
   pikkuSessionlessFunc, 
   pikkuChannelFunc,
-  addHTTPRoute,
-  addChannel,
-  APIPermission
+  wireHTTP,
+  wireChannel,
+  PikkuPermission
 } from '../.pikku/pikku-types.gen.js'
 
 // Type definitions
 import type { Board, Card, OverdueCard } from '../types/kanban.js'
 
 // Permission functions
-const canAccessBoard: APIPermission<{ boardId: string }> = async (
+const canAccessBoard: PikkuPermission<{ boardId: string }> = async (
   { boardService }, 
   { boardId }, 
   session
@@ -102,7 +102,7 @@ const canAccessBoard: APIPermission<{ boardId: string }> = async (
   return await boardService.userHasAccess(boardId, session.userId)
 }
 
-const canCreateCard: APIPermission = async (
+const canCreateCard: PikkuPermission = async (
   { }, 
   data, 
   session

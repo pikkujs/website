@@ -63,11 +63,11 @@ export const sendEmail = pikkuSessionlessFunc<EmailJob, EmailResult>(
 ### Worker Registration
 
 ```typescript
-// email-worker.routes.ts
-import { addQueueWorker } from '@pikku/core'
-import { sendEmail } from './email-worker.functions'
+// email-worker.wiring.ts
+import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { sendEmail } from './email-worker.functions.js'
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'email-queue',
   func: sendEmail,
   config: {
@@ -191,11 +191,11 @@ export const processImage = pikkuSessionlessFunc<ImageJob, ImageResult>(
 ### Worker Registration
 
 ```typescript
-// image-worker.routes.ts
-import { addQueueWorker } from '@pikku/core'
-import { processImage } from './image-worker.functions'
+// image-worker.wiring.ts
+import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { processImage } from './image-worker.functions.js'
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'image-processing',
   func: processImage,
   config: {
@@ -320,11 +320,11 @@ export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
 ### Worker Registration
 
 ```typescript
-// export-worker.routes.ts
-import { addQueueWorker } from '@pikku/core'
-import { exportData } from './export-worker.functions'
+// export-worker.wiring.ts
+import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { exportData } from './export-worker.functions.js'
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'data-export',
   func: exportData,
   config: {
@@ -469,12 +469,12 @@ export const sendNotification = pikkuSessionlessFunc<
 ### Worker Registration
 
 ```typescript
-// notification-worker.routes.ts
-import { addQueueWorker } from '@pikku/core'
-import { sendNotification } from './notification-worker.functions'
+// notification-worker.wiring.ts
+import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { sendNotification } from './notification-worker.functions.js'
 
 // High priority notifications
-addQueueWorker({
+wireQueueWorker({
   queueName: 'notifications-urgent',
   func: sendNotification,
   config: {
@@ -486,7 +486,7 @@ addQueueWorker({
 })
 
 // Normal priority notifications
-addQueueWorker({
+wireQueueWorker({
   queueName: 'notifications-normal',
   func: sendNotification,
   config: {
@@ -498,7 +498,7 @@ addQueueWorker({
 })
 
 // Low priority notifications
-addQueueWorker({
+wireQueueWorker({
   queueName: 'notifications-low',
   func: sendNotification,
   config: {
@@ -656,11 +656,11 @@ export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
 ### Worker Registration
 
 ```typescript
-// cleanup-worker.routes.ts
-import { addQueueWorker } from '@pikku/core'
-import { runCleanup } from './cleanup-worker.functions'
+// cleanup-worker.wiring.ts
+import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { runCleanup } from './cleanup-worker.functions.js'
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'cleanup-tasks',
   func: runCleanup,
   config: {

@@ -8,7 +8,7 @@ description: Learn how to wire queue functions to workers
 
 # Queue Registration
 
-Queue registration is the process of connecting your queue functions to specific queue names and configuring how they should be processed. This is done using the `addQueueWorker` function in your routes files.
+Queue registration is the process of connecting your queue functions to specific queue names and configuring how they should be processed. This is done using the `wireQueueWorker` function in your wiring files.
 
 :::info
 Different queues allow different configuration options. These are logged on start to inform the user what is/isn't supported. While it's a different approach, the ideal is that the developer/architect can provide different options depending on the system. For example, SQS and Postgres poll, while redis a pull notification system.
@@ -19,11 +19,11 @@ Different queues allow different configuration options. These are logged on star
 The simplest way to register a queue worker:
 
 ```typescript
-// email-worker.routes.ts
-import { addQueueWorker } from '@pikku/core'
-import { sendWelcomeEmail } from './email-worker.functions'
+// email-worker.wiring.ts
+import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { sendWelcomeEmail } from './email-worker.functions.js'
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'welcome-emails',
   func: sendWelcomeEmail
 })
@@ -34,10 +34,10 @@ addQueueWorker({
 You can configure worker behavior using the `config` parameter:
 
 ```typescript
-import { addQueueWorker } from '@pikku/core'
-import { processOrder } from './order-worker.functions'
+import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { processOrder } from './order-worker.functions.js'
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'order-processing',
   func: processOrder,
   config: {
@@ -57,7 +57,7 @@ addQueueWorker({
 Controls how many jobs can be processed simultaneously:
 
 ```typescript
-addQueueWorker({
+wireQueueWorker({
   queueName: 'high-throughput-queue',
   func: processHighThroughput,
   config: {
@@ -65,7 +65,7 @@ addQueueWorker({
   }
 })
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'resource-intensive-queue',
   func: processResourceIntensive,
   config: {
@@ -79,7 +79,7 @@ addQueueWorker({
 Configure how failed jobs are retried:
 
 ```typescript
-addQueueWorker({
+wireQueueWorker({
   queueName: 'critical-jobs',
   func: processCriticalJob,
   config: {
@@ -89,7 +89,7 @@ addQueueWorker({
   }
 })
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'simple-jobs',
   func: processSimpleJob,
   config: {
@@ -105,7 +105,7 @@ addQueueWorker({
 Set job execution timeouts:
 
 ```typescript
-addQueueWorker({
+wireQueueWorker({
   queueName: 'quick-jobs',
   func: processQuickJob,
   config: {
@@ -113,7 +113,7 @@ addQueueWorker({
   }
 })
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'long-running-jobs',
   func: processLongRunningJob,
   config: {
@@ -127,7 +127,7 @@ addQueueWorker({
 Control how often the worker polls for new jobs:
 
 ```typescript
-addQueueWorker({
+wireQueueWorker({
   queueName: 'real-time-queue',
   func: processRealTime,
   config: {
@@ -135,7 +135,7 @@ addQueueWorker({
   }
 })
 
-addQueueWorker({
+wireQueueWorker({
   queueName: 'batch-queue',
   func: processBatch,
   config: {
@@ -150,7 +150,7 @@ You can register multiple workers for the same queue with different configuratio
 
 ```typescript
 // High-priority worker
-addQueueWorker({
+wireQueueWorker({
   queueName: 'notifications',
   func: processNotification,
   config: {
@@ -161,7 +161,7 @@ addQueueWorker({
 })
 
 // Low-priority worker for overflow
-addQueueWorker({
+wireQueueWorker({
   queueName: 'notifications',
   func: processNotification,
   config: {
@@ -177,7 +177,7 @@ addQueueWorker({
 Configure how failed jobs are handled:
 
 ```typescript
-addQueueWorker({
+wireQueueWorker({
   queueName: 'payment-processing',
   func: processPayment,
   config: {
@@ -188,7 +188,7 @@ addQueueWorker({
 })
 
 // Worker for processing failed payments
-addQueueWorker({
+wireQueueWorker({
   queueName: 'failed-payments',
   func: handleFailedPayment,
   config: {
@@ -220,7 +220,7 @@ await queueService.add('email-queue',
 Set up priority-based processing:
 
 ```typescript
-addQueueWorker({
+wireQueueWorker({
   queueName: 'mixed-priority-queue',
   func: processJob,
   config: {
@@ -235,7 +235,7 @@ addQueueWorker({
 Register workers for scheduled/delayed jobs:
 
 ```typescript
-addQueueWorker({
+wireQueueWorker({
   queueName: 'scheduled-tasks',
   func: processScheduledTask,
   config: {

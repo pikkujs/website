@@ -35,9 +35,9 @@ Register your functions as MCP endpoints:
 ```typescript
 // mcp.routes.ts
 import {
-  addMCPTool,
-  addMCPResource,
-  addMCPPrompt,
+  wireMCPTool,
+  wireMCPResource,
+  wireMCPrompt,
 } from '../.pikku/pikku-types.gen.js'
 
 // Register your functions...

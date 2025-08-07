@@ -17,5 +17,5 @@ In order to do so you can run `npx @pikku/cli websocket` and will need to have a
 ## Example Websocket Client
 
 ```typescript reference title="websocket.ts"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/apps/cli/bin/websocket.ts
+https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/apps/cli/bin/websocket.ts
 ```

@@ -62,7 +62,7 @@ WebSockets no longer have to be a black box of state management hacks or provide
 
 # Bridging the Gap: Real-Time WebSocket Channels with Pikku
 
-Real-time applications—from live chats and collaborative tools to gaming and IoT dashboards—rely on persistent, two-way communication. WebSockets provide this vital connection, yet building and scaling WebSocket channels across serverless environments (like AWS or Cloudflare) and traditional servers can be challenging. **Pikku** bridges this gap with its hybrid architecture and a powerful API set: **onConnect**, **onMessage**, **onDisconnect**, and **addChannel**.
+Real-time applications—from live chats and collaborative tools to gaming and IoT dashboards—rely on persistent, two-way communication. WebSockets provide this vital connection, yet building and scaling WebSocket channels across serverless environments (like AWS or Cloudflare) and traditional servers can be challenging. **Pikku** bridges this gap with its hybrid architecture and a powerful API set: **onConnect**, **onMessage**, **onDisconnect**, and **wireChannel**.
 
 One of Pikku’s standout features is its built-in sync/async **channelstore interface**. This flexible interface isn’t tied to any specific datastore—it can be implemented against any desired backend (be it a SQL database, NoSQL store, or even Cloudflare Durable Objects). This means that whether you’re working in a serverless environment or on a traditional server, you have a consistent way to persist connection states and user sessions without being locked into one storage solution. 
 
@@ -74,7 +74,7 @@ WebSockets keep the conversation open. Unlike HTTP’s strict request–response
 - **onMessage**: Fires when a message is received, letting you process and route the data.
 - **onDisconnect**: Called when the connection closes, ensuring resources are properly cleaned up.
 
-Pikku bridges these events inside its **addChannel** API, making it easy to deploy the same logic anywhere—from a local server using `ws` or `uWebSockets.js` to serverless setups on AWS and Cloudflare.
+Pikku bridges these events inside its **wireChannel** API, making it easy to deploy the same logic anywhere—from a local server using `ws` or `uWebSockets.js` to serverless setups on AWS and Cloudflare.
 
 ### WebSocket Lifecycle Diagram
 
@@ -99,7 +99,7 @@ Consider this simplified backend snippet:
 ```javascript
 import { onConnect, onMessage, ... } from './events.functions.js'
 
-addChannel({
+wireChannel({
   name: 'events',
   route: '/',
   // Called on Open
@@ -125,7 +125,7 @@ addChannel({
 
 **What’s happening here?**
 
-- **addChannel** registers the channel and bundles your lifecycle functions.
+- **wireChannel** registers the channel and bundles your lifecycle functions.
 - **onConnect/onDisconnect/onMessage** manage the core connection events.
 - **onMessageRoute**—inspired by AWS’s routing mechanism—lets you define specific handlers (like `auth`, `subscribe`, etc.) for different actions. This modular approach makes your code clean, secure, and highly scalable.
 
@@ -227,7 +227,7 @@ Pikku isn’t just another WebSocket library—it’s a comprehensive framework 
 - **AWS-Inspired onMessageRoute**: Modeled after AWS’s native WebSocket routing, this feature offers a modular, structured approach to handling various message actions.
 - **Built-In Channelstore Interface**: Its channelstore isn’t hardwired to one solution. You can implement it against any desired datastore, making it incredibly flexible for any backend.
 - **Robust TypeScript Support & Auto-Generated Client**: Enjoy static type checking and an auto-generated client that minimizes bugs and streamlines development.
-- **Intuitive APIs**: With well-defined **onConnect**, **onMessage**, **onDisconnect**, and **addChannel** APIs, Pikku abstracts away the complexities of state management and connection handling, letting you focus on building engaging real-time features.
+- **Intuitive APIs**: With well-defined **onConnect**, **onMessage**, **onDisconnect**, and **wireChannel** APIs, Pikku abstracts away the complexities of state management and connection handling, letting you focus on building engaging real-time features.
 
 ---
 

@@ -75,13 +75,13 @@ Note how this uses a declaration file `.d.ts`. This enforces us to avoid putting
 :::
 
 ```typescript reference title="application-types.d.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/functions/types/application-types.d.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/types/application-types.d.ts
 ```
 
 Now, let's create the services:
 
 ```typescript reference title="services.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/functions/src/services.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/services.ts
 ```
 
 ## Dependency Lookup vs. Dependency Injection

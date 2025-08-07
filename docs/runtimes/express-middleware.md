@@ -41,7 +41,7 @@ The setup process for Express, uWS, and Fastify servers are identical, except fo
 PikkuExpressServer is a quick way to get an express server started with pikku if you don't need to put in any custom configuration. 
 
 ```typescript reference title="Express start"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/backends/express/bin/start.ts
+https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/backends/express/bin/start.ts
 ```
 
 This script does the following:

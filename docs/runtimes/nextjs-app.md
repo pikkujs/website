@@ -28,7 +28,7 @@ In order to do so you can run `npx @pikku/cli all` or target it specifically wit
 For example:
 
 ```json reference title="pikku.config.json"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/master/apps/next-app/pikku.config.json
+https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/apps/next-app/pikku.config.json
 ```
 
 For additional functionality or feature requests, please submit an issue on the [Pikku repository](https://github.com/pikkujs/pikku).

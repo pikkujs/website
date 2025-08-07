@@ -89,7 +89,7 @@ Pikku requires two key files for AWS Lambda integration:
 ### 1. Cold Start
 
 ```typescript reference title="cold-start.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/aws-lambda/src/cold-start.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/aws-lambda/src/cold-start.ts
 ```
 
 This initializes singleton services and configurations the first time a function is invoked.
@@ -97,7 +97,7 @@ This initializes singleton services and configurations the first time a function
 ### 2. Entry Point
 
 ```typescript reference title="main.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/master/templates/aws-lambda/src/main.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/aws-lambda/src/main.ts
 ```
 
 This file acts as the Lambda entry point and routes requests to the Pikku runtime.

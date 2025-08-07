@@ -72,8 +72,8 @@ function Hero() {
           to any protocol, runtime, or deployment target.
         </p>
         <div className="flex flex-row gap-4 mt-6">
-          <Link to="#how-it-works" className="button button--primary">
-            How It Works
+          <Link to="/code-examples" className="button button--primary">
+            Code Examples
           </Link>
           <Link to="/docs" className="button button--secondary">
             Try Pikku
@@ -260,7 +260,7 @@ function TinyButPowerfulSection() {
           Tiny. But Not Basic.
         </Heading>
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-          Pikku includes everything you need for production backends:
+          Pikku includes everything you need for production backends
         </p>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">

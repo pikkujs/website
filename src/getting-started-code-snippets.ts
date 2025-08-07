@@ -65,7 +65,7 @@ export const codeTypes = `import {
   
   // 2) Snippet for Pikku CLI config
   export const codePikkuConfig = `{
-    "$schema": "https://raw.githubusercontent.com/pikkujs/pikku/refs/heads/master/packages/cli/cli.schema.json",
+    "$schema": "https://raw.githubusercontent.com/pikkujs/pikku/refs/heads/main/packages/cli/cli.schema.json",
     "tsconfig": "./tsconfig.json",
     "srcDirectories": ["src"],
     "outDir": ".pikku"
