@@ -39,7 +39,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/aws-lambda',
         label: 'AWS Lambda',
         customProps: {
-          transports: ['http', 'websocket', 'cron', 'queue']
+          wirings: ['http', 'websocket', 'cron', 'queue']
         }
       },
       {
@@ -47,7 +47,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/cloudflare-functions',
         label: 'Cloudflare Workers',
         customProps: {
-          transports: ['http', 'websocket', 'cron']
+          wirings: ['http', 'websocket', 'cron']
         }
       },
       {
@@ -55,7 +55,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/express-middleware',
         label: 'Express Middleware',
         customProps: {
-          transports: ['http', 'websocket', 'sse', 'queue']
+          wirings: ['http', 'websocket', 'sse', 'queue']
         }
       },
       {
@@ -63,7 +63,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/fastify-plugin',
         label: 'Fastify Plugin',
         customProps: {
-          transports: ['http', 'websocket', 'sse', 'queue']
+          wirings: ['http', 'websocket', 'sse', 'queue']
         }
       },
       {
@@ -71,7 +71,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/nextjs-app',
         label: 'Next.js App',
         customProps: {
-          transports: ['http', 'sse']
+          wirings: ['http', 'sse']
         }
       },
       {
@@ -79,7 +79,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/uws-handler',
         label: 'uWS Handler',
         customProps: {
-          transports: ['http', 'websocket', 'sse']
+          wirings: ['http', 'websocket', 'sse']
         }
       },
       {
@@ -87,7 +87,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/ws-handler',
         label: 'WS Handler',
         customProps: {
-          transports: ['http', 'websocket']
+          wirings: ['http', 'websocket']
         }
       },
       {
@@ -95,7 +95,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/azure-functions',
         label: 'Azure Functions',
         customProps: {
-          transports: ['http', 'cron', 'queue']
+          wirings: ['http', 'cron', 'queue']
         }
       },
       {
@@ -103,7 +103,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/google-cloud-run-functions',
         label: 'Google Cloud Functions',
         customProps: {
-          transports: ['http', 'cron', 'queue']
+          wirings: ['http', 'cron', 'queue']
         }
       },
       {
@@ -111,7 +111,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/bullmq',
         label: 'BullMQ',
         customProps: {
-          transports: ['queue']
+          wirings: ['queue']
         }
       },
       {
@@ -119,7 +119,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/pg-boss',
         label: 'PG Boss',
         customProps: {
-          transports: ['queue']
+          wirings: ['queue']
         }
       },
       {
@@ -127,7 +127,7 @@ const sidebars: SidebarsConfig = {
         id: 'runtimes/mcp-server',
         label: 'MCP Server',
         customProps: {
-          transports: ['mcp']
+          wirings: ['mcp']
         }
       }
     ]
@@ -140,7 +140,7 @@ const sidebars: SidebarsConfig = {
         id: 'custom-runtimes/custom-http-runtime',
         label: 'Custom HTTP Runtime',
         customProps: {
-          transports: ['http']
+          wirings: ['http']
         }
       },
       {
@@ -148,7 +148,7 @@ const sidebars: SidebarsConfig = {
         id: 'custom-runtimes/custom-websocket-handler',
         label: 'Custom WebSocket Handler',
         customProps: {
-          transports: ['websocket']
+          wirings: ['websocket']
         }
       },
       {
@@ -156,7 +156,7 @@ const sidebars: SidebarsConfig = {
         id: 'custom-runtimes/custom-scheduler-handler',
         label: 'Custom Scheduler Handler',
         customProps: {
-          transports: ['cron']
+          wirings: ['cron']
         }
       },
       {
@@ -164,7 +164,7 @@ const sidebars: SidebarsConfig = {
         id: 'custom-runtimes/custom-queue-runtime',
         label: 'Custom Queue Runtime',
         customProps: {
-          transports: ['queue']
+          wirings: ['queue']
         }
       },
       {
@@ -172,7 +172,7 @@ const sidebars: SidebarsConfig = {
         id: 'custom-runtimes/custom-mcp-server',
         label: 'Custom MCP Server',
         customProps: {
-          transports: ['mcp']
+          wirings: ['mcp']
         }
       }
     ]

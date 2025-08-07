@@ -1,11 +1,11 @@
-@import './transport-icons.css';
+@import './wiring-icons.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Fallback CSS for transport icons if React component doesn't work */
-.menu__link[data-transports]:not([data-transports=""]):after {
+/* Fallback CSS for wiring icons if React component doesn't work */
+.menu__link[data-wirings]:not([data-wirings=""]):after {
   content: '';
   display: flex;
   gap: 4px;

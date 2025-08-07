@@ -3,42 +3,30 @@ import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import CodeBlock from '@theme/CodeBlock';
 import { tObject } from '../i18n';
-import { TransportIcon } from '../components/TransportIcons';
+import { WiringIcon } from '../components/WiringIcons';
 import { TabComponent } from '../components/TabComponent';
 
-/** Enhanced header for the code examples page */
-function EnhancedHeader() {
+/** Hero section for the code examples page */
+function Hero() {
   return (
-    <header className="relative bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900 py-24 text-center overflow-hidden">
-      {/* Background pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 bg-grid-pattern"></div>
-      </div>
-      
-      <div className="relative max-w-screen-lg mx-auto px-4">
-        <div className="flex justify-center mb-8">
-          <div className="relative">
-            <img
-              src="/img/pikku-gradient.svg"
-              alt="Pikku Logo"
-              className="h-20 w-20 drop-shadow-lg"
-            />
-            <div className="absolute -inset-2 bg-white/20 rounded-full blur-xl"></div>
-          </div>
-        </div>
-        
-        <Heading as="h1" className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          Transport Examples
-        </Heading>
-        
-        <p className="text-xl text-gray-700 dark:text-gray-200 max-w-3xl mx-auto leading-relaxed">
-          See how the same business logic adapts seamlessly across HTTP, WebSockets, scheduled tasks, and more
-        </p>
-        
-        <div className="mt-8 flex justify-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 rounded-full text-sm text-gray-600 dark:text-gray-300 backdrop-blur-sm">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            One function, every protocol
+    <header className="w-full bg-primary py-16">
+      <div className="max-w-screen-lg mx-auto px-4">
+        <div className="flex flex-col md:flex-row items-center md:justify-between">
+          {/* Left side - Pikku logo */}
+          <img
+            src="/img/pikku.png"
+            alt="Pikku Logo"
+            className="h-20 w-20 md:h-40 md:w-40 mr-4 md:mr-6"
+          />
+          
+          {/* Right side - Main content */}
+          <div className="flex-1 md:ml-12 text-white text-center md:text-left">
+            <Heading as="h1" className="text-3xl md:text-4xl font-bold mb-4 text-white">
+              One function, every protocol
+            </Heading>
+            <p className="text-lg md:text-xl leading-relaxed opacity-90 max-w-2xl">
+              See how the same business logic adapts seamlessly across HTTP, WebSockets, scheduled tasks, and more
+            </p>
           </div>
         </div>
       </div>
@@ -60,14 +48,14 @@ function StickyNav() {
   ];
 
   return (
-    <nav className="sticky top-[4rem] z-[100] bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <nav className="sticky top-[4rem] z-[100] bg-primary/95 backdrop-blur-sm border-b border-primary-dark shadow-sm">
       <div className="max-w-screen-xl max-w-screen mx-auto px-4">
         <div className="flex flex-wrap items-center gap-2 justify-center py-3">
             {navItems.map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition-all hover:scale-105 whitespace-nowrap ${item.color} text-gray-700 dark:text-gray-200 hover:shadow-sm`}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition-all hover:scale-105 whitespace-nowrap bg-white/20 text-white hover:bg-white/30 hover:shadow-sm`}
               >
                 {item.label}
               </a>
@@ -244,8 +232,7 @@ function TransportCodeSection({
   functions,
   wiring,
   client,
-  id,
-  bgColor
+  id
 }: {
   title: string;
   description: string;
@@ -253,14 +240,13 @@ function TransportCodeSection({
   wiring?: string;
   client?: string;
   id: string;
-  bgColor: string;
 }) {
   return (
-    <section id={id} className={`py-16 ${bgColor}`}>
+    <section id={id} className="py-16 odd:bg-white odd:dark:bg-gray-800 even:bg-gray-50 even:dark:bg-gray-900">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <TransportIcon transportId={id} size={40} />
+            <WiringIcon wiringId={id} size={40} />
             <Heading as="h2" className="text-3xl font-bold ml-4">
               {title}
             </Heading>
@@ -344,13 +330,13 @@ function TransportCodeSection({
 /** Main Code Examples page component */
 export default function CodeExamples() {
   const transportSections = [
-    { key: 'http', bgColor: 'bg-green-50 dark:bg-green-900/20' },
-    { key: 'websocket', bgColor: 'bg-purple-50 dark:bg-purple-900/20' },
-    { key: 'sse', bgColor: 'bg-orange-50 dark:bg-orange-900/20' },
-    { key: 'queues', bgColor: 'bg-red-50 dark:bg-red-900/20' },
-    { key: 'cron', bgColor: 'bg-yellow-50 dark:bg-yellow-900/20' },
-    { key: 'rpc', bgColor: 'bg-indigo-50 dark:bg-indigo-900/20' },
-    { key: 'mcp', bgColor: 'bg-pink-50 dark:bg-pink-900/20' }
+    { key: 'http' },
+    { key: 'websocket' },
+    { key: 'sse' },
+    { key: 'queues' },
+    { key: 'cron' },
+    { key: 'rpc' },
+    { key: 'mcp' }
   ];
 
   return (
@@ -358,14 +344,14 @@ export default function CodeExamples() {
       title="Transport Examples"
       description="See how the same business logic adapts seamlessly across HTTP, WebSockets, scheduled tasks, and more"
     >
-      <EnhancedHeader />
+      <Hero />
       <StickyNav />
       <main>
         <div id="functions">
           <PikkuFunctionsSection />
         </div>
         
-        {transportSections.map(({ key, bgColor }) => {
+        {transportSections.map(({ key }, index) => {
           const transport = tObject(`transports.${key}`) as {
             title: string;
             description: string;
@@ -383,7 +369,6 @@ export default function CodeExamples() {
               functions={transport.functions}
               wiring={transport.wiring}
               client={transport.client}
-              bgColor={bgColor}
             />
           );
         })}

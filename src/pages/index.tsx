@@ -4,6 +4,7 @@ import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import Image from '@theme/ThemedImage';
 import { runtimes } from '@site/data/homepage';
+import { WiringIcon } from '../components/WiringIcons';
 
 /** Reusable component for Pikku logo surrounded by icons */
 function PikkuCircularLayout({ 
@@ -129,11 +130,11 @@ function ProblemSection() {
 /** The Chameleon Approach */
 function ChameleonSection() {
   const protocols = [
-    { icon: '🔁', name: 'HTTP Routes', desc: 'with OpenAPI' },
-    { icon: '📡', name: 'WebSocket channels', desc: 'real-time communication' },
-    { icon: '🧠', name: 'AI agents', desc: 'intelligent automation' },
-    { icon: '⚡', name: 'Queue & cron jobs', desc: 'background processing' },
-    { icon: '🧬', name: 'RPC and type-safe SDKs', desc: 'seamless integration' }
+    { wiringId: 'http', name: 'HTTP Routes', desc: 'with OpenAPI' },
+    { wiringId: 'websocket', name: 'WebSocket channels', desc: 'real-time communication' },
+    { wiringId: 'mcp', name: 'AI agents', desc: 'intelligent automation' },
+    { wiringId: 'queue', name: 'Queue & cron jobs', desc: 'background processing' },
+    { wiringId: 'rpc', name: 'RPC and type-safe SDKs', desc: 'seamless integration' }
   ];
 
   return (
@@ -161,14 +162,16 @@ function ChameleonSection() {
             items={protocols}
             renderItem={(protocol) => (
               <div className="flex flex-col items-center hover:scale-110 transition-all duration-200">
-                <div className="text-5xl mb-3">{protocol.icon}</div>
+                <div className="bg-white/20 dark:bg-gray-800/50 rounded-lg">
+                  <WiringIcon wiringId={protocol.wiringId} size={64} />
+                </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 text-center font-medium">
                   {protocol.name.replace(' Routes', '').replace(' channels', '').replace(' agents', '').replace(' & cron jobs', '').replace(' and type-safe SDKs', '')}
                 </div>
               </div>
             )}
             logoSize={160}
-            radius={120}
+            radius={140}
           />
         </div>
       </div>
@@ -227,14 +230,27 @@ function DeployAnywhereSection() {
 
 /** Try it now */
 function TryItNowSection() {
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText('npm create pikku@latest');
+  };
+
   return (
     <section className="py-16 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-screen-lg mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Try it now
         </Heading>
-        <div className="bg-black dark:bg-gray-800 text-green-400 p-6 rounded-lg font-mono text-lg max-w-md mx-auto">
+        <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark transition-colors" onClick={copyToClipboard}>
           npm create pikku@latest
+          <button 
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/20 hover:bg-white/30 rounded-md p-2 backdrop-blur-sm"
+            onClick={copyToClipboard}
+            title="Copy to clipboard"
+          >
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </button>
         </div>
       </div>
     </section>

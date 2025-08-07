@@ -141,6 +141,11 @@ const config: Config = {
           label: 'Guides',
         },
         {
+          to: '/code-examples',
+          label: 'Code Examples',
+          position: 'right'
+        },
+        {
           to: '/blog',
           label: 'Blog',
           position: 'right'

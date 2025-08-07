@@ -5,30 +5,30 @@ import {isActiveSidebarItem} from '@docusaurus/plugin-content-docs/client';
 import Link from '@docusaurus/Link';
 import isInternalUrl from '@docusaurus/isInternalUrl';
 import IconExternalLink from '@theme/Icon/ExternalLink';
-import { TransportIcon } from '@site/src/components/TransportIcons';
+import { WiringIcon } from '@site/src/components/WiringIcons';
 import type {Props} from '@theme/DocSidebarItem/Link';
 
 // Extended props type to include customProps
 interface ExtendedProps extends Props {
   item: Props['item'] & {
     customProps?: {
-      transports?: string[];
+      wirings?: string[];
     };
   };
 }
 
 import styles from './styles.module.css';
 
-// Transport Icons Component
-function SidebarTransportIcons({transports}: {transports?: string[]}) {
-  if (!transports || transports.length === 0) {
+// Wiring Icons Component
+function SidebarWiringIcons({wirings}: {wirings?: string[]}) {
+  if (!wirings || wirings.length === 0) {
     return null;
   }
 
   return (
     <span className="ml-auto flex items-center gap-1">
-      {transports.map((transport) => (
-        <TransportIcon key={transport} transportId={transport} size={12} className="ml-1" />
+      {wirings.map((wiring) => (
+        <WiringIcon key={wiring} wiringId={wiring} size={12} className="ml-1" />
       ))}
     </span>
   );
@@ -71,9 +71,9 @@ export default function DocSidebarItemLink({
         })}
         {...props}
         style={{display: 'flex', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between'}}
-        data-transports={item.customProps?.transports?.join(',') || ''}>
+        data-wirings={item.customProps?.wirings?.join(',') || ''}>
         <span className='flex-1'>{label}</span>
-        <SidebarTransportIcons transports={item.customProps?.transports} />
+        <SidebarWiringIcons wirings={item.customProps?.wirings} />
         {!isInternalLink && <IconExternalLink />}
       </Link>
     </li>

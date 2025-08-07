@@ -1,5 +1,9 @@
-/* Transport type icons in sidebar */
-.menu__link[data-transport-icons]::after {
+/* Wiring type icons in sidebar - Now handled by React components */
+/* 
+NOTE: These CSS-based icons are commented out since we now use React components
+for better consistency and color theming.
+
+.menu__link[data-wirings]::after {
   content: '';
   display: inline-flex;
   gap: 4px;
@@ -7,82 +11,81 @@
   align-items: center;
 }
 
-/* HTTP Icon */
-.menu__link[data-transport-icons*="http"]::after {
+HTTP Icon
+.menu__link[data-wirings*="http"]::after {
   content: '';
   width: 16px;
   height: 16px;
-  background-image: url('/img/transport-icons/http.svg');
+  background-image: url('/img/wiring-icons/http.svg');
   background-size: contain;
   background-repeat: no-repeat;
   display: inline-block;
 }
 
-/* WebSocket Icon */
-.menu__link[data-transport-icons*="websocket"]::after {
+WebSocket Icon
+.menu__link[data-wirings*="websocket"]::after {
   content: '';
   width: 16px;
   height: 16px;
-  background-image: url('/img/transport-icons/websocket.svg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  display: inline-block;
-  margin-left: 4px;
-}
-
-/* SSE Icon */
-.menu__link[data-transport-icons*="sse"]::after {
-  content: '';
-  width: 16px;
-  height: 16px;
-  background-image: url('/img/transport-icons/sse.svg');
+  background-image: url('/img/wiring-icons/websocket.svg');
   background-size: contain;
   background-repeat: no-repeat;
   display: inline-block;
   margin-left: 4px;
 }
 
-/* Cron Icon */
-.menu__link[data-transport-icons*="cron"]::after {
+SSE Icon
+.menu__link[data-wirings*="sse"]::after {
   content: '';
   width: 16px;
   height: 16px;
-  background-image: url('/img/transport-icons/cron.svg');
+  background-image: url('/img/wiring-icons/sse.svg');
   background-size: contain;
   background-repeat: no-repeat;
   display: inline-block;
   margin-left: 4px;
 }
 
-
-/* Queue Icon */
-.menu__link[data-transport-icons*="queue"]::after {
+Cron Icon
+.menu__link[data-wirings*="cron"]::after {
   content: '';
   width: 16px;
   height: 16px;
-  background-image: url('/img/transport-icons/queue.svg');
+  background-image: url('/img/wiring-icons/cron.svg');
   background-size: contain;
   background-repeat: no-repeat;
   display: inline-block;
   margin-left: 4px;
 }
 
-/* MCP Icon */
-.menu__link[data-transport-icons*="mcp"]::after {
+Queue Icon
+.menu__link[data-wirings*="queue"]::after {
   content: '';
   width: 16px;
   height: 16px;
-  background-image: url('/img/transport-icons/mcp.svg');
+  background-image: url('/img/wiring-icons/queue.svg');
   background-size: contain;
   background-repeat: no-repeat;
   display: inline-block;
   margin-left: 4px;
 }
 
+MCP Icon
+.menu__link[data-wirings*="mcp"]::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url('/img/wiring-icons/mcp.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin-left: 4px;
+}
 
-/* Ensure the sidebar link has space for the icons */
-.menu__link[data-transport-icons] {
+Ensure the sidebar link has space for the icons
+.menu__link[data-wirings] {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+*/
