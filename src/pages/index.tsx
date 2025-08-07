@@ -161,14 +161,17 @@ function ChameleonSection() {
           <PikkuCircularLayout
             items={protocols}
             renderItem={(protocol) => (
-              <div className="flex flex-col items-center hover:scale-110 transition-all duration-200">
-                <div className="bg-white/20 dark:bg-gray-800/50 rounded-lg">
+              <Link 
+                to={`/code-examples#${protocol.wiringId}`}
+                className="flex flex-col items-center hover:scale-110 hover:opacity-80 transition-all duration-200 cursor-pointer text-decoration-none"
+              >
+                <div>
                   <WiringIcon wiringId={protocol.wiringId} size={64} />
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 text-center font-medium">
                   {protocol.name.replace(' Routes', '').replace(' channels', '').replace(' agents', '').replace(' & cron jobs', '').replace(' and type-safe SDKs', '')}
                 </div>
-              </div>
+              </Link>
             )}
             logoSize={160}
             radius={140}
@@ -203,21 +206,22 @@ function DeployAnywhereSection() {
           <PikkuCircularLayout
             items={[...runtimes.cloud, ...runtimes.middleware, runtimes.custom]}
             renderItem={(deployment) => (
-              <Link
-                className="transition-all duration-200 hover:scale-110"
-                href={deployment.docs}
-                title={`Deploy to ${deployment.name}`}
-              >
-                <Image
-                  width={64}
-                  height={64}
-                  className='mx-auto'
-                  sources={{
-                    light: `img/logos/${deployment.img.light}`,
-                    dark: `img/logos/${deployment.img.dark}`
-                  }}
-                />
-              </Link>
+              <div className="flex flex-col items-center hover:scale-110 transition-all duration-200">
+                <Link
+                  href={deployment.docs}
+                  title={`Deploy to ${deployment.name}`}
+                >
+                  <Image
+                    width={64}
+                    height={64}
+                    className='mx-auto'
+                    sources={{
+                      light: `img/logos/${deployment.img.light}`,
+                      dark: `img/logos/${deployment.img.dark}`
+                    }}
+                  />
+                </Link>
+              </div>
             )}
             logoSize={160}
             radius={140}
