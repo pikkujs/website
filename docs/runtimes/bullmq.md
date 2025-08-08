@@ -1,6 +1,19 @@
-# BullMQ Runtime
+---
+title: BullMQ
+description: Using BullMQ with Pikku
+hide_title: true
+image: /img/logos/bullmq-light.svg
+---
+
+<DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
 The BullMQ runtime allows you to process background jobs using Redis-backed queues with robust job processing capabilities.
+
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-bullmq" initialFiles={['src/start.ts']} />
 
 ## Overview
 

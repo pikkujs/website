@@ -9,6 +9,12 @@ image: /img/logos/express-light.svg
 
 Pikku can be added to an express server via `middleware`, or you can just use the `PikkuExpressServer` if everything is using pikku.
 
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-express-middleware" initialFiles={['src/start.ts', 'src/services.ts']} />
+
 ## Using Express Middleware
 
 Pikku can be / is best used within express as a middleware function.

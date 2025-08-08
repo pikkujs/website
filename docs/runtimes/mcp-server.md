@@ -1,6 +1,19 @@
-# MCP Server Runtime
+---
+title: MCP Server
+description: Using MCP Server with Pikku
+hide_title: true
+image: /img/logos/mcp-light.svg
+---
+
+<DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
 The MCP server runtime allows you to expose your Pikku functions as MCP tools, resources, and prompts, enabling AI models to interact with your backend services directly through the Model Context Protocol.
+
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-mcp-server" initialFiles={['src/start.ts']} />
 
 ## Overview
 

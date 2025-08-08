@@ -15,6 +15,12 @@ There are multiple ways to deploy a function on Cloudflare. If you prefer an inf
 
 This guide assumes you are using Wrangler for deployment, as it provides a seamless development experience, but the core principles apply regardless of method.
 
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-cloudflare-workers" initialFiles={['src/index.ts']} />
+
 ## Getting Started
 
 ### 1. Setup

@@ -9,6 +9,12 @@ image: /img/logos/websocket-light.svg
 
 You can allow WS to start handling websockets by using the **pikkuWebsocketHandler**
 
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-ws" initialFiles={['src/start.ts']} />
+
 :::note
 You need to pass in the HTTP server seperately in order
 to allow upgrades to correctly work. We can alter this in

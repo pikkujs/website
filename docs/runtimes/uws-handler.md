@@ -9,32 +9,11 @@ image: /img/logos/uws-light.svg
 
 Pikku can be / is best used within uws as a handler.
 
-```typescript title="uWS Handler"
-import { pikkuHTTPHandler, pikkuWebsocketHandler } from '@pikku/uws-handler'
+## Live Example
 
-import { createSingletonServices, createSessionServices } from 'path/to/pikku-bootstrap.ts'
+import { Stackblitz } from '@site/src/components/Stackblitz';
 
-// The uws server setup goes here...
-
-const singletonServices = await createSingletonServices()
-this.app.any(
-   '/*',
-   pikkuHTTPHandler({
-      logRoutes: true,
-      singletonServices: this.singletonServices,
-      createSessionServices: this.createSessionServices,
-   })
-   )
-
-   this.app.ws(
-   '/*',
-   pikkuWebsocketHandler({
-      logRoutes: true,
-      singletonServices: this.singletonServices,
-      createSessionServices: this.createSessionServices,
-   })
-)
-```
+<Stackblitz repo="template-uws-handler" initialFiles={['src/start.ts']} />
 
 ## Using PikkuUWSServer
 

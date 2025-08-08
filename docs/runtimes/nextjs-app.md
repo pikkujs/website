@@ -17,7 +17,11 @@ We can add support to version 14 if there's enough interest.
 
 Deploying Pikku with NextJS allows for code separation benefits without running a separate server, while also leveraging NextJS Server-Side Rendering (SSR) capabilities.
 
-![NextJS Coding](/img/nextjs-coding.gif)
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-nextjs" initialFiles={['src/http.functions.ts', 'app/page.tsx']} />
 
 ### Setting up Pikku
 

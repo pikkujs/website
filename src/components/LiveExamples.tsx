@@ -270,7 +270,7 @@ function InteractiveExamplesSection() {
 /** Main Code Examples page component */
 export default function LiveExamples() {
   return (
-    <section className="hidden md:flex py-16 bg-gray-50 dark:bg-gray-900">
+    <section id="code-examples" className="hidden md:flex py-16 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-[1600px] w-full mx-auto px-4 text-center">
             <InteractiveExamplesSection />
           </div>

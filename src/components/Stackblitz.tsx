@@ -12,10 +12,10 @@ export const Stackblitz: React.FunctionComponent<{ repo: string, initialFiles: s
           containerRef.current,
           `pikkujs/${repo}`, {
           height: 800,
-          openFile: openFile.filter(f => !f.startsWith('client/')),
+          openFile, //:openFile.filter(f => !f.startsWith('client/')),
           view: 'editor',
           showSidebar: false,
-          clickToLoad: true
+          clickToLoad: false
         });
       } catch {
         console.log('Error')

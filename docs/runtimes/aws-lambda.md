@@ -17,6 +17,12 @@ Alternatively, [Serverless Framework](https://www.serverless.com/) can be used, 
 
 This guide assumes you are using Serverless Framework due to its robust offline development experience, but the core principles apply to any deployment method.
 
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-aws-lambda" initialFiles={['src/main.ts', 'src/cold-start.ts']} />
+
 ## Getting Started
 
 ### 1. Setup

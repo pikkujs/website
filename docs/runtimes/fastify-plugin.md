@@ -9,6 +9,12 @@ image: /img/logos/fastify-light.svg
 
 Pikku can be / is best used within fastify as a plugin.
 
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-fastify-plugin" initialFiles={['src/start.ts']} />
+
 ```typescript title="Fastify plugin"
 import pikkuFastifyPlugin from '@pikku/fastify-plugin'
 

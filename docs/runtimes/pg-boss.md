@@ -1,6 +1,19 @@
-# pg-boss Runtime
+---
+title: PG Boss
+description: Using PG Boss with Pikku
+hide_title: true
+image: /img/logos/pg-boss-light.svg
+---
+
+<DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
 The pg-boss runtime provides PostgreSQL-based job queue processing with robust persistence, transactions, and reliability features.
+
+## Live Example
+
+import { Stackblitz } from '@site/src/components/Stackblitz';
+
+<Stackblitz repo="template-pg-boss" initialFiles={['src/start.ts']} />
 
 ## Overview
 

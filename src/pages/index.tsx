@@ -101,26 +101,64 @@ function ProblemSection() {
         <div className="grid md:grid-cols-2 md:gap-16 md:items-center mt-12">
           <div className="text-left">
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-              In Node, type safety usually stops at the HTTP boundary. Add WebSockets, queues, cron jobs, or AI agents and there's no shared contract—validation and shapes get re-implemented and drift.
+              Most type-safe solutions in Node focus on HTTP. But real backends span multiple protocols—WebSockets, queues, schedulers, AI agents—each with their own contracts, validation, and data shapes. Without a shared source of truth, types drift and logic fragments.
             </p>
             <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-              And "deploy anywhere" mostly ends at routes: moving the rest of the backend to serverless, edge, Bun/Deno, or containers means more adapters, more glue, more risk.
+              And while some frameworks promise “deploy anywhere,” most either lock you into their platform or limit portability to HTTP routes. The rest of your backend still needs custom adapters, glue code, and compromises.
             </p>
             
             <div className="space-y-4">
               <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Each new protocol fragments your code.</p>
               <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Types diverge. Logic drifts.</p>
-              <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Confidence erodes.</p>
+              <p className="text-lg font-semibold text-gray-700 dark:text-gray-300">Code locks you into specific runtimes.</p>
             </div>
           </div>
           
           <div className="flex items-center justify-center">
             <Image 
-              sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }} 
-              width={350}
-              height={350}
+              sources={{ light: 'img/broken-state.png', dark: 'img/broken-state.png' }} 
+              width={400}
+              height={400}
               className="mx-auto"
             />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Our Solution */
+function SolutionSection() {
+  return (
+    <section className="relative py-12">
+      {/* Arrow-shaped background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <svg viewBox="0 0 100 20" className="w-full h-full" preserveAspectRatio="none">
+          <path 
+            d="M0,0 L100,0 L100,10 L50,20 L0,10 Z" 
+            fill="rgb(249 250 251)" 
+            className="dark:fill-gray-900"
+          />
+        </svg>
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 max-w-screen-lg mx-auto px-6 text-center h-full flex items-center justify-center pt-8 pb-12">
+        <div className="flex flex-col items-center space-y-4">
+          <Image 
+            sources={{ light: 'img/pikku-superhero.png', dark: 'img/pikku-superhero.png' }} 
+            width={120}
+            height={120}
+            className="mx-auto"
+          />
+          <div>
+            <Heading as="h2" className="text-4xl font-bold mb-2 text-primary">
+              Meet Pikku
+            </Heading>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              The chameleon that loves glueing Systems and Types together
+            </p>
           </div>
         </div>
       </div>
@@ -162,17 +200,14 @@ function ChameleonSection() {
           <PikkuCircularLayout
             items={protocols}
             renderItem={(protocol) => (
-              <Link 
-                to={`/code-examples#${protocol.wiringId}`}
-                className="flex flex-col items-center hover:scale-110 hover:opacity-80 transition-all duration-200 cursor-pointer text-decoration-none"
-              >
+              <>
                 <div>
                   <WiringIcon wiringId={protocol.wiringId} size={64} />
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 text-center font-medium">
                   {protocol.name}
                 </div>
-              </Link>
+              </>
             )}
             logoSize={160}
             radius={140}
@@ -337,6 +372,7 @@ export default function Home() {
       <Hero />
       <main>
         <ProblemSection />
+        <SolutionSection />
         <ChameleonSection />
         <DeployAnywhereSection />
         <TryItNowSection />
