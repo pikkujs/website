@@ -5,6 +5,7 @@ import Heading from '@theme/Heading';
 import Image from '@theme/ThemedImage';
 import { runtimes } from '@site/data/homepage';
 import { WiringIcon } from '../components/WiringIcons';
+import LiveExamples from '../components/LiveExamples';
 
 /** Reusable component for Pikku logo surrounded by icons */
 function PikkuCircularLayout({ 
@@ -73,7 +74,7 @@ function Hero() {
           to any protocol, runtime, or deployment target.
         </p>
         <div className="flex flex-row gap-4 mt-6">
-          <Link to="/code-examples" className="button button--primary">
+          <Link to="#code-examples" className="button button--primary">
             Code Examples
           </Link>
           <Link to="/docs" className="button button--secondary">
@@ -130,11 +131,11 @@ function ProblemSection() {
 /** The Chameleon Approach */
 function ChameleonSection() {
   const protocols = [
-    { wiringId: 'http', name: 'HTTP Routes', desc: 'with OpenAPI' },
-    { wiringId: 'websocket', name: 'WebSocket channels', desc: 'real-time communication' },
-    { wiringId: 'mcp', name: 'AI agents', desc: 'intelligent automation' },
-    { wiringId: 'queue', name: 'Queue & cron jobs', desc: 'background processing' },
-    { wiringId: 'rpc', name: 'RPC and type-safe SDKs', desc: 'seamless integration' }
+    { wiringId: 'http', name: 'HTTP', desc: 'with OpenAPI' },
+    { wiringId: 'websocket', name: 'Channels', desc: 'real-time communication' },
+    { wiringId: 'mcp', name: 'MCP', desc: 'intelligent automation' },
+    { wiringId: 'queue', name: 'Queues', desc: 'background processing' },
+    { wiringId: 'rpc', name: 'RPC', desc: 'seamless integration' }
   ];
 
   return (
@@ -169,7 +170,7 @@ function ChameleonSection() {
                   <WiringIcon wiringId={protocol.wiringId} size={64} />
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 text-center font-medium">
-                  {protocol.name.replace(' Routes', '').replace(' channels', '').replace(' agents', '').replace(' & cron jobs', '').replace(' and type-safe SDKs', '')}
+                  {protocol.name}
                 </div>
               </Link>
             )}
@@ -198,7 +199,7 @@ function DeployAnywhereSection() {
               Pikku works with Node, Bun, Deno, serverless, edge runtimes, and containers.
             </p>
             <p className="text-lg text-gray-500 dark:text-gray-400">
-              No lock-in. No framework rules. Just JavaScript.
+              No lock-in. No framework rules. Just Typescript.
             </p>
           </div>
           
@@ -315,7 +316,7 @@ function CallToActionSection() {
             <Link to="/docs" className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
               Try Pikku
             </Link>
-            <Link to="/docs" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
+            <Link to="/docs/concepts/architecture" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
               See Architecture
             </Link>
           </div>
@@ -340,6 +341,7 @@ export default function Home() {
         <DeployAnywhereSection />
         <TryItNowSection />
         <TinyButPowerfulSection />
+        <LiveExamples />
         <CallToActionSection />
       </main>
     </Layout>

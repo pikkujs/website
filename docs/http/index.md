@@ -68,7 +68,7 @@ Check if the route is registered.
 
 #### **Validating the session (if required)**
 
-If the route doesn't have `auth: false` it will then try to retrieve the user session via the [SessionService](../api/session-service.md).
+If the route doesn't have `auth: false` it will then try to retrieve the user session via the [UserSessionService](../api/user-session-service.md).
 
 #### **Extracting and validating request data**
 

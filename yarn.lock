@@ -3113,6 +3113,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stackblitz/sdk@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@stackblitz/sdk@npm:1.11.0"
+  checksum: 10/351647b818f2e40135ff92d3de61f94a925635acb769862014f4a0eb252011f1c42ede2c6952ab4848ed7512777f3f6d3944914f5750499f35069b54231d6cb2
+  languageName: node
+  linkType: hard
+
 "@svgr/babel-plugin-add-jsx-attribute@npm:8.0.0":
   version: 8.0.0
   resolution: "@svgr/babel-plugin-add-jsx-attribute@npm:8.0.0"
@@ -10579,6 +10586,7 @@ __metadata:
     "@docusaurus/types": "npm:^3.8.1"
     "@mdx-js/react": "npm:^3.0.0"
     "@saucelabs/theme-github-codeblock": "npm:^0.3.0"
+    "@stackblitz/sdk": "npm:^1.11.0"
     asciinema-player: "npm:^3.9.0"
     autoprefixer: "npm:^10.4.20"
     clsx: "npm:^2.0.0"

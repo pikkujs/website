@@ -1,7 +1,0 @@
----
-title: SessionService
----
-
-:::note
-WIP
-:::

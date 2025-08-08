@@ -74,14 +74,14 @@ Pikku organizes your application into five key layers that work together to simp
 flowchart LR
   Services(Services)
   Functions(Functions)
-  Bindings(Event Bindings)
-  Services --> Functions --> Bindings
+  Wirings(Wirings)
+  Services --> Functions --> Wirings
 ```
 
   - **Middleware:** Used to run custom user logic before and/or after Functions. 
   - **Services:** Provide foundational utilities such as data access and logging.  
   - **Function Logic:** Contains the core business logic of your application.  
-  - **Bindings:** Expose functions to various triggers like HTTP routes, scheduled tasks, and channels.
+  - **Wirings:** Wire functions to various triggers like HTTP routes, scheduled tasks, and channels.
 
 ### **CLI Layer (Pikku CLI & Inspector)**  
 

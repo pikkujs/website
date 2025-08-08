@@ -1,7 +1,6 @@
 import React from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 
-
 export function DocHeaderHero({ image, title }) {
   const { colorMode } = useColorMode();
 
