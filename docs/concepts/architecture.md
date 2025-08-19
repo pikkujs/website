@@ -13,8 +13,7 @@ At its core, Pikku treats all application logic as pure, testable functions. Whe
 const getUserProfile = pikkuFunc<
   { userId: string },
   { name: string; email: string }
->()
-.func(async (services, data, session) => {
+>(async (services, data, session) => {
   const user = await services.database.getUser(data.userId)
   return { name: user.name, email: user.email }
 })

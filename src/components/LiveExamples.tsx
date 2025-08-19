@@ -13,11 +13,11 @@ const FUNCTION_TABS = {
     description: 'REST API endpoints',
     defaultDeployment: 'express',
     deployments: {
-      express: { name: 'Express', repo: 'template-express-middleware' },
-      fastify: { name: 'Fastify', repo: 'template-fastify-plugin' },
-      nextjs: { name: 'Next.js', repo: 'template-nextjs' },
-      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda' },
-      cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare-workers' }
+      express: { name: 'Express', repo: 'template-express-middleware', runtimeFiles: ['src/start.ts'] },
+      fastify: { name: 'Fastify', repo: 'template-fastify-plugin', runtimeFiles: ['src/start.ts'] },
+      nextjs: { name: 'Next.js', repo: 'template-nextjs', runtimeFiles: ['app/api/[...route]/route.ts'] },
+      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda', runtimeFiles: ['src/main.ts', 'serverless.yml'] },
+      cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare-workers', runtimeFiles: ['src/index.ts', 'wrangler.toml'] }
     },
     files: ['src/http.functions.ts', 'src/http.wiring.ts', 'client/http.ts']
   },
@@ -27,10 +27,10 @@ const FUNCTION_TABS = {
     description: 'Real-time communication',
     defaultDeployment: 'ws',
     deployments: {
-      ws: { name: 'WS', repo: 'template-ws' },
-      uws: { name: 'μWS', repo: 'template-uws' },
-      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda-websocket' },
-      cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare-websocket' }
+      ws: { name: 'WS', repo: 'template-ws', runtimeFiles: ['src/start.ts'] },
+      uws: { name: 'μWS', repo: 'template-uws', runtimeFiles: ['src/start.ts'] },
+      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda-websocket', runtimeFiles: ['src/start.ts'] },
+      cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare-websocket', runtimeFiles: ['src/start.ts'] }
     },
     files: ['src/channel.functions.ts', 'src/channel.wiring.ts', 'client/websocket.ts']
   },
@@ -40,8 +40,8 @@ const FUNCTION_TABS = {
     description: 'Streaming updates',
     defaultDeployment: 'express',
     deployments: {
-      express: { name: 'Express', repo: 'template-express-middleware' },
-      fastify: { name: 'Fastify', repo: 'template-fastify-plugin' }
+      express: { name: 'Express', repo: 'template-express-middleware', runtimeFiles: ['src/start.ts'] },
+      fastify: { name: 'Fastify', repo: 'template-fastify-plugin', runtimeFiles: ['src/start.ts'] }
     },
     files: ['src/http-sse.functions.ts', 'src/http-sse.wiring.ts', 'client/sse.ts']
   },
@@ -51,11 +51,11 @@ const FUNCTION_TABS = {
     description: 'Cron jobs',
     defaultDeployment: 'express',
     deployments: {
-      express: { name: 'Express', repo: 'template-express-middleware' },
-      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda' },
-      cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare-workers' }
+      express: { name: 'Express', repo: 'template-express-middleware', runtimeFiles: ['src/start.ts'] },
+      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda', runtimeFiles: ['src/main.ts', 'serverless.yml'] },
+      cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare-workers', runtimeFiles: ['src/index.ts', 'wrangler.toml'] }
     },
-    files: ['src/scheduled-task.functions.ts', 'src/scheduled-task.wiring.ts', 'client/scheduled-task.ts']
+    files: ['src/scheduled-task.functions.ts', 'src/scheduled-task.wiring.ts']
   },
   queue: {
     name: 'Queues',
@@ -63,8 +63,9 @@ const FUNCTION_TABS = {
     description: 'Background jobs',
     defaultDeployment: 'bullmq',
     deployments: {
-      bullmq: { name: 'BullMQ', repo: 'template-bullmq' },
-      pgboss: { name: 'PG Boss', repo: 'template-pg-boss' }
+      bullmq: { name: 'BullMQ', repo: 'template-bullmq', runtimeFiles: ['src/start.ts'] },
+      pgboss: { name: 'PG Boss', repo: 'template-pg-boss', runtimeFiles: ['src/start.ts'] },
+      sqs: { name: 'AWS SQS', repo: 'template-aws-lambda', runtimeFiles: ['src/main.ts', 'serverless.yml'] },
     },
     files: ['src/queue-worker.functions.ts', 'src/queue-worker.wiring.ts', 'client/queue-worker.ts']
   },
@@ -74,10 +75,10 @@ const FUNCTION_TABS = {
     description: 'Type-safe calls',
     defaultDeployment: 'express',
     deployments: {
-      express: { name: 'Express', repo: 'template-express-middleware' },
-      fastify: { name: 'Fastify', repo: 'template-fastify-plugin' },
-      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda' },
-      cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare' }
+      express: { name: 'Express', repo: 'template-express-middleware', runtimeFiles: ['src/start.ts'] },
+      fastify: { name: 'Fastify', repo: 'template-fastify-plugin', runtimeFiles: ['src/start.ts'] },
+      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda', runtimeFiles: ['src/main.ts', 'serverless.yml'] },
+      cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare', runtimeFiles: ['src/index.ts', 'wranger.toml'] }
     },
     files: ['src/rpc.functions.ts', 'src/rpc.wiring.ts', 'client/rpc.ts']
   },
@@ -87,7 +88,7 @@ const FUNCTION_TABS = {
     description: 'AI integrations',
     defaultDeployment: 'mcp',
     deployments: {
-      mcp: { name: 'MCP Server', repo: 'template-mcp-server' }
+      mcp: { name: 'MCP Server', repo: 'template-mcp-server', runtimeFiles: ['src/start.ts'] }
     },
     files: ['src/mcp.functions.ts', 'src/mcp.wiring.ts', 'client/mcp.ts']
   }
@@ -133,28 +134,31 @@ function DeploymentSelector({
 
 /** Tab content component for each function type */
 function TabContent({ tabKey }: { tabKey: FunctionType }) {
-  const [activeDeployment, setActiveDeployment] = useState<string>(
-    FUNCTION_TABS[tabKey].defaultDeployment
-  );
+  const [activeDeployment, setActiveDeployment] = useState<{ type: 'code' | 'deployment'; runtime: string }>({
+    type: 'code',
+    runtime: FUNCTION_TABS[tabKey].defaultDeployment
+  });
 
   const currentTab = FUNCTION_TABS[tabKey];
-  const currentDeployment = currentTab.deployments[activeDeployment];
+  const currentDeployment = currentTab.deployments[activeDeployment.runtime];
+
+  console.log(currentDeployment, currentTab, activeDeployment.type === 'code' ? currentTab.files : currentDeployment.runtimeFiles)
 
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <Stackblitz 
-            key={`${tabKey}-${activeDeployment}`}
+            key={`${tabKey}-${activeDeployment.runtime}`}
             repo={currentDeployment.repo}
-            initialFiles={currentTab.files}
+            initialFiles={activeDeployment.type === 'code' ? currentTab.files : currentDeployment.runtimeFiles}
           />
       </div>
 
       <div className="flex justify-center">
         <DeploymentSelector
-          activeDeployment={activeDeployment}
+          activeDeployment={activeDeployment.runtime}
           deployments={currentTab.deployments}
-          onDeploymentChange={setActiveDeployment}
+          onDeploymentChange={runtime => setActiveDeployment({ type: 'deployment', runtime })}
         />
       </div>
     </div>

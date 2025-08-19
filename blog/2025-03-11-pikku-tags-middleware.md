@@ -20,7 +20,7 @@ Taking cues from frameworks like **Express**, **Koa**, and **Hono**, we've built
 A middleware function is simply a function that intercepts a request before it reaches your route handler. For example:
 
 ```typescript
-const middleware: APIMiddleware = async (services, { http }, next) => {
+const middleware: PikkuMiddleware = async (services, { http }, next) => {
     // Example: Check for a valid API key and set a user session
     if (http?.request?.getHeader('x-api-key') === 'my-token') {
         await services.userSession.set({ /* session data */ });
