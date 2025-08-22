@@ -29,7 +29,7 @@ const FUNCTION_TABS = {
     deployments: {
       ws: { name: 'WS', repo: 'template-ws', runtimeFiles: ['src/start.ts'] },
       uws: { name: 'μWS', repo: 'template-uws', runtimeFiles: ['src/start.ts'] },
-      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda-websocket', runtimeFiles: ['src/start.ts'] },
+      lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda-websocket', runtimeFiles: ['src/websockt.ts'] },
       cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare-websocket', runtimeFiles: ['src/start.ts'] }
     },
     files: ['src/channel.functions.ts', 'src/channel.wiring.ts', 'client/websocket.ts']

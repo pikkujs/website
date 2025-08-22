@@ -303,6 +303,7 @@ function TinyButPowerfulSection() {
     { title: 'Auth', desc: 'Built-in authentication filters', icon: '🔐' },
     { title: 'Permissions', desc: 'Fine-grained access control', icon: '🛡️' },
     { title: 'Services', desc: 'Singleton and per-request services', icon: '⚙️' },
+    { title: 'Middleware', desc: 'Invoked before and after function calls', icon: '🪆' },
     { title: 'Function Filtering', desc: 'Filter by tags or filters to optimize deployment sizes', icon: '📦' },
     { title: 'Type-safe client sdks', desc: 'Auto-generated from your function definitions', icon: '🔗' },
     { title: 'Schema Validation', desc: 'Optional runtime validation with TypeScript or Zod', icon: '✅' },
