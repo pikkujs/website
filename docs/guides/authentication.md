@@ -157,17 +157,17 @@ wireHTTP({
 ### Permission System
 
 ```typescript
-import { PikkuPermission } from '../.pikku/pikku-types.gen.js'
+import { pikkuPermission } from '@pikku/core'
 
-export const isUserUpdatingSelf: PikkuPermission<Pick<DB.User, 'userId'>> = async (
+export const isUserUpdatingSelf = pikkuPermission<Pick<DB.User, 'userId'>>(async (
   _services,
   data,
   session
 ) => {
   return session?.userId === data.userId
-}
+})
 
-export const isTodoCreator: PikkuPermission<Pick<DB.Todo, 'todoId'>> = async (
+export const isTodoCreator = pikkuPermission<Pick<DB.Todo, 'todoId'>>(async (
   services,
   { todoId },
   session
@@ -179,7 +179,7 @@ export const isTodoCreator: PikkuPermission<Pick<DB.Todo, 'todoId'>> = async (
     .executeTakeFirstOrThrow()
 
   return session?.userId === createdBy
-}
+})
 ```
 
 ## WebSocket Authentication

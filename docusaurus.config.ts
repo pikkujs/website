@@ -113,7 +113,7 @@ const config: Config = {
     announcementBar: {
       id: 'pikku-0.8',
       content:
-        '🚀 <strong>Pikku 0.8 is here!</strong> — Our biggest release yet with RPCs, queue workers, and MCP server integration. <a target="_blank" rel="noopener noreferrer" href="/blog/2025/07/18/pikku-0.8">Read more →</a>',
+        '🚀 <strong>Pikku 0.9 is here!</strong> — cleaner naming, tag‑driven cross‑cutting, RPC exposure. <a target="_blank" rel="noopener noreferrer" href="/blog/2025/08/23/pikku-0.9">Read more →</a>',
       backgroundColor: '#4F46E5',
       textColor: '#FFFFFF',
       isCloseable: true,
