@@ -19,7 +19,7 @@ const FUNCTION_TABS = {
       lambda: { name: 'AWS Lambda', repo: 'template-aws-lambda', runtimeFiles: ['src/main.ts', 'serverless.yml'] },
       cloudflare: { name: 'Cloudflare', repo: 'template-cloudflare-workers', runtimeFiles: ['src/index.ts', 'wrangler.toml'] }
     },
-    files: ['src/http.functions.ts', 'src/http.wiring.ts', 'client/http.ts']
+    files: ['src/http.functions.ts', 'src/http.wiring.ts', 'client/http-fetch.ts']
   },
   websocket: {
     name: 'WebSocket',
@@ -43,7 +43,7 @@ const FUNCTION_TABS = {
       express: { name: 'Express', repo: 'template-express-middleware', runtimeFiles: ['src/start.ts'] },
       fastify: { name: 'Fastify', repo: 'template-fastify-plugin', runtimeFiles: ['src/start.ts'] }
     },
-    files: ['src/http-sse.functions.ts', 'src/http-sse.wiring.ts', 'client/sse.ts']
+    files: ['src/http-sse.functions.ts', 'src/http-sse.wiring.ts', 'client/http-sse.ts']
   },
   scheduled: {
     name: 'Scheduled Tasks',
