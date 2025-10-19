@@ -88,6 +88,8 @@ function Hero() {
 
 /** The "Aha!" Moment: One Function, Many Protocols */
 function AhaMomentSection() {
+  const [activeProtocol, setActiveProtocol] = React.useState<number | null>(null);
+
   const functionCode = `export const getCard = pikkuFunc<
   { cardId: string },
   { id: string; title: string; status: string }
@@ -235,22 +237,36 @@ const card = await rpc.invoke(
               </Heading>
             </div>
             <div className="grid md:grid-cols-4 gap-4">
-              {wiringExamples.map((example, idx) => (
-                <div key={idx} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 shadow-md hover:shadow-xl transition-all relative">
-                  {/* Top connection point */}
-                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-primary rounded-full shadow-md"></div>
+              {wiringExamples.map((example, idx) => {
+                const isActive = activeProtocol === idx;
+                return (
+                  <div
+                    key={idx}
+                    className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 shadow-md hover:shadow-xl transition-all relative cursor-pointer"
+                    onClick={() => setActiveProtocol(isActive ? null : idx)}
+                    onMouseEnter={() => setActiveProtocol(idx)}
+                    onMouseLeave={() => setActiveProtocol(null)}
+                  >
+                    {/* Top connection point */}
+                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-primary rounded-full shadow-md"></div>
 
-                  <div className="flex flex-col items-center mb-3">
-                    <WiringIcon wiringId={example.icon} size={32} />
-                    <span className="mt-2 font-semibold text-center text-gray-900 dark:text-gray-100">
-                      {example.title}
-                    </span>
+                    <div className="flex flex-col items-center">
+                      <WiringIcon wiringId={example.icon} size={isActive ? 32 : 40} />
+                      <span className={`mt-2 font-semibold text-center text-gray-900 dark:text-gray-100 ${isActive ? 'text-sm' : 'text-base'}`}>
+                        {example.title}
+                      </span>
+                    </div>
+
+                    {isActive && (
+                      <div className="mt-4 animate-in fade-in duration-200">
+                        <CodeBlock language="typescript">
+                          {example.code}
+                        </CodeBlock>
+                      </div>
+                    )}
                   </div>
-                  <CodeBlock language="typescript">
-                    {example.code}
-                  </CodeBlock>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
