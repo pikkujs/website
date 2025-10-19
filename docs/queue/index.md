@@ -84,6 +84,12 @@ export const processPayment = pikkuFuncSessionless<
 })
 ```
 
+:::warning Auth and Permissions for Queue Workers
+Queue workers are **internal background jobs** without user sessions or incoming requests. They should almost always use `pikkuFuncSessionless` with `auth: false`.
+
+**If a function has `auth: true` or `permissions`, it's likely wrong for queue usage.** Queue jobs can't authenticate or have permissions checked - they run in the background without a user context.
+:::
+
 :::info Return Values
 Whether your function can return values depends on the queue provider:
 - **BullMQ** and **pg-boss** support return values

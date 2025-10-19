@@ -3,12 +3,12 @@
 ## Error Message
 
 ```
-Inline middleware cannot be used with addMiddleware/addHTTPMiddleware.
+Inline middleware cannot be used with addHTTPMiddleware/addSchedulerMiddleware.
 ```
 
 ## What This Means
 
-You're trying to use inline (anonymous) middleware with `addMiddleware()` or `addHTTPMiddleware()`, but these functions require named, exported middleware for tree-shaking optimization.
+You're trying to use inline (anonymous) middleware with `addHTTPMiddleware()` or `addSchedulerMiddleware()`, but these functions require named, exported middleware for tree-shaking optimization.
 
 ## Why This Restriction Exists
 
@@ -18,12 +18,10 @@ Pikku generates middleware imports at compile-time to enable optimal tree-shakin
 
 ```typescript
 // This will cause an error
-addMiddleware('auth', [
-  pikkuMiddleware(async ({ userSession }, interaction, next) => {
+addHTTPMiddleware('/api/*', [
+  pikkuMiddleware(async ({ logger }, interaction, next) => {
     // Inline middleware - no export!
-    if (!userSession.get('authenticated')) {
-      throw new Error('Unauthorized')
-    }
+    logger.info('Request received')
     await next()
   })
 ])
@@ -31,9 +29,9 @@ addMiddleware('auth', [
 
 ```typescript
 // This will also cause an error
-addHTTPMiddleware('/api/*', [
+addSchedulerMiddleware([
   pikkuMiddleware(async ({ logger }, interaction, next) => {
-    logger.info('Request received')
+    logger.info('Task started')
     await next()
   })
 ])
@@ -44,20 +42,18 @@ addHTTPMiddleware('/api/*', [
 **Option 1: Export the middleware function**
 
 ```typescript
-// middleware/auth.ts
-export const authMiddleware = pikkuMiddleware(
-  async ({ userSession }, interaction, next) => {
-    if (!userSession.get('authenticated')) {
-      throw new Error('Unauthorized')
-    }
+// middleware/logging.ts
+export const loggingMiddleware = pikkuMiddleware(
+  async ({ logger }, interaction, next) => {
+    logger.info('Request received')
     await next()
   }
 )
 
-// wirings.ts
-import { authMiddleware } from './middleware/auth.js'
+// http.wiring.ts
+import { loggingMiddleware } from './middleware/logging.js'
 
-addMiddleware('auth', [authMiddleware])
+addHTTPMiddleware([loggingMiddleware])
 ```
 
 **Option 2: Use inline middleware directly in wirings**
@@ -84,13 +80,14 @@ wireHTTP({
 Inline middleware can be used:
 - ✅ Directly in `wireHTTP({ middleware: [...] })`
 - ✅ Directly in `wireChannel({ middleware: [...] })`
+- ✅ Directly in `wireQueueWorker({ middleware: [...] })`
+- ✅ Directly in `wireScheduler({ middleware: [...] })`
 - ✅ Directly in `pikkuFunc({ middleware: [...] })`
-- ✅ Directly in other wire* functions
 
 Inline middleware cannot be used:
-- ❌ In `addMiddleware('tag', [...])`
 - ❌ In `addHTTPMiddleware([...])`
 - ❌ In `addHTTPMiddleware('/pattern', [...])`
+- ❌ In `addSchedulerMiddleware([...])`
 
 ## Best Practice
 

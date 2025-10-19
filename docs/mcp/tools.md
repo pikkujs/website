@@ -2,6 +2,18 @@
 
 Tools let AI agents perform actions in your application. They can create records, modify state, trigger operations, or orchestrate complex workflows.
 
+:::warning Always Specify Output Types
+MCP functions must **always specify the output type explicitly**. TypeScript's type inference doesn't work reliably for MCP responses, so you need to be explicit:
+
+```typescript
+// ✅ Correct - explicit type
+pikkuMCPToolFunc<InputType, MCPToolResponse>
+
+// ❌ Wrong - will cause type issues
+pikkuMCPToolFunc<InputType>
+```
+:::
+
 **Recommended Pattern**: Keep your MCP tools thin. Use RPC to invoke your existing domain functions, then format the response for MCP. This keeps your business logic reusable and your codebase clean.
 
 ## Your First Tool

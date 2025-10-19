@@ -2,6 +2,18 @@
 
 Resources are data sources for AI agents. They provide queryable information - documentation, user data, search results, or any content your AI agents need to access.
 
+:::warning Always Specify Output Types
+MCP functions must **always specify the output type explicitly**. TypeScript's type inference doesn't work reliably for MCP responses, so you need to be explicit:
+
+```typescript
+// ✅ Correct - explicit type
+pikkuMCPResourceFunc<InputType, MCPResourceResponse>
+
+// ❌ Wrong - will cause type issues
+pikkuMCPResourceFunc<InputType>
+```
+:::
+
 **Recommended Pattern**: Keep your MCP resources thin. Use RPC to invoke your existing domain functions, then format the response for MCP. This keeps your business logic reusable and your codebase clean.
 
 ## Your First Resource
