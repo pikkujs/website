@@ -173,7 +173,8 @@ function ChameleonSection() {
     { wiringId: 'websocket', name: 'Channels', desc: 'real-time communication' },
     { wiringId: 'mcp', name: 'MCP', desc: 'intelligent automation' },
     { wiringId: 'queue', name: 'Queues', desc: 'background processing' },
-    { wiringId: 'rpc', name: 'RPC', desc: 'seamless integration' }
+    { wiringId: 'rpc', name: 'RPC', desc: 'seamless integration' },
+    { wiringId: 'cron', name: 'Cron Jobs', desc: 'scheduled tasks' }
   ];
 
   return (
