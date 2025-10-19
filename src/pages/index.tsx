@@ -262,21 +262,26 @@ wireMCPPrompt({
                 2. Wire to Any Protocol
               </Heading>
             </div>
-            <div className="grid md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-4 md:grid-cols-4 gap-2 md:gap-4">
               {wiringExamples.map((example, idx) => {
                 const isActive = activeProtocol === idx;
                 return (
                   <div
                     key={idx}
-                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-4 shadow-md hover:shadow-xl transition-all cursor-pointer ${
+                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-xl transition-all cursor-pointer ${
                       isActive ? 'ring-2 ring-primary' : ''
                     }`}
                     onClick={() => setActiveProtocol(idx)}
                     onMouseEnter={() => setActiveProtocol(idx)}
                   >
                     <div className="flex flex-col items-center">
-                      <WiringIcon wiringId={example.icon} size={40} />
-                      <span className="mt-2 font-semibold text-center text-gray-900 dark:text-gray-100">
+                      <div className="hidden md:block">
+                        <WiringIcon wiringId={example.icon} size={40} />
+                      </div>
+                      <div className="md:hidden">
+                        <WiringIcon wiringId={example.icon} size={28} />
+                      </div>
+                      <span className="mt-1 md:mt-2 font-semibold text-center text-gray-900 dark:text-gray-100 text-xs md:text-base">
                         {example.title}
                       </span>
                     </div>
