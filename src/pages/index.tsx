@@ -121,6 +121,8 @@ function AhaMomentSection() {
       icon: 'websocket',
       code: `wireChannel({
   name: 'cards',
+  onConnect: onCardConnect,
+  onDisconnect: onCardDisconnect,
   onMessageWiring: {
     action: { getCard }
   }
@@ -139,9 +141,21 @@ function AhaMomentSection() {
     {
       title: 'Queue Worker',
       icon: 'queue',
-      code: `wireQueueWorker({
+      code: `// Basic queue
+wireQueueWorker({
   queue: 'fetch-card',
   func: getCard
+})
+
+// With options
+wireQueueWorker({
+  queue: 'fetch-card',
+  func: getCard,
+  concurrency: 5,
+  rateLimiter: {
+    max: 10,
+    duration: 1000
+  }
 })`
     },
     {
@@ -162,24 +176,46 @@ const card = await rpc.invoke(
 )`
     },
     {
-      title: 'MCP Tool',
+      title: 'MCP',
       icon: 'mcp',
-      code: `wireMCPTool({
+      code: `// Resource
+wireMCPResource({
   name: 'getCard',
-  description: 'Fetch card',
+  func: getCard
+})
+
+// Tool
+wireMCPTool({
+  name: 'getCard',
+  func: getCard
+})
+
+// Prompt
+wireMCPPrompt({
+  name: 'getCard',
   func: getCard
 })`
     },
     {
-      title: 'CLI Command',
+      title: 'CLI',
       icon: 'cli',
       code: `wireCLI({
   program: 'cards',
   commands: {
+    // Command
     get: pikkuCLICommand({
       parameters: '<cardId>',
       func: getCard
-    })
+    }),
+    // Subcommands
+    manage: {
+      subcommands: {
+        get: pikkuCLICommand({
+          parameters: '<cardId>',
+          func: getCard
+        })
+      }
+    }
   }
 })`
     }
