@@ -1,309 +1,425 @@
 ---
 sidebar_position: 50
 title: Permission Guards
-description: Creating permission guards
+description: Authorization and access control
 ---
 
-Permissions in Pikku are evaluated before each function execution, similar to guards in NestJS. These permissions ensure that only authorized users can access certain functionality within the system.
+# Permission Guards
 
-A permission function operates much like a `pikkuFunc`, but it returns a boolean to indicate whether the user has access. If an error is thrown, the process results in an error code other than 403. 
+Permissions in Pikku run before your function executes. They're boolean checks that determine whether a request should proceed - if any permission returns `false`, the request is rejected with a 403 Forbidden.
 
-:::info
-Since permissions are checked in parallel, only the first error thrown will be used to block access.
-:::
+Permissions run in parallel, so they should be independent checks that don't depend on execution order.
 
-## Basic Permission Check
+## Your First Permission
 
-A simple permission check might involve verifying the user’s session to determine their role:
+A permission is a function that returns a boolean:
 
 ```typescript
-import { pikkuPermission } from '@pikku/core'
+import { pikkuPermission } from '#pikku/pikku-types.gen.js'
 
-const isUser = pikkuPermission((_services, _data, session) => {
-  return session.isUser;
+export const requireAuth = pikkuPermission(async (_services, _data, session) => {
+  return session?.userId != null
 })
 
-const isAdmin = pikkuPermission((_services, _data, session) => {
-  return session.isAdmin;
+export const requireAdmin = pikkuPermission(async (_services, _data, session) => {
+  return session?.role === 'admin'
 })
 ```
 
-In this case, the `isUser` permission checks if the session belongs to a user, while `isAdmin` checks if the session belongs to an admin.
-
-## Advanced Permission Check
-
-For more complex permissions, asynchronous logic involving external services can be introduced. For example, permission checks may require querying a database:
+Use them in your function:
 
 ```typescript
-const belowLimit = pikkuPermission(async ({ kysely }, _data, session) => {
-  const booksTaken = await kysely
-    .selectFrom('user')
-    .join('books', 'books.userId', 'user.userId')
-    .select('books.id')
-    .where('user.userId', '=', session.userId)
-    .where('books.returnedAt', 'is', null)
-    .execute()
-  
-  return booksTaken.length < 5; // User can have max 5 books
+import { pikkuFunc } from '#pikku/pikku-types.gen.js'
+
+export const deleteUser = pikkuFunc<{ userId: string }, void>({
+  func: async ({ database }, data) => {
+    await database.delete('users', { where: { id: data.userId } })
+  },
+  permissions: {
+    auth: requireAuth,
+    admin: requireAdmin
+  },
+  docs: {
+    summary: 'Delete a user',
+    tags: ['users']
+  }
 })
 ```
 
-In this case, the permission is based on the number of books a user has checked out. This check requires interaction with a database, making it more dynamic.
+Both permissions must pass for the function to execute. If either returns `false`, the request is rejected.
 
-## Permission Runner
-
-```typescript
-permissions: {
-  isTodoCreator: [isTodoCreator, withinAPILimits],
-  isAdmin
-}
-```
-
-## addPermission API
-
-Adds global permissions for a specific tag that applies to any wiring type (HTTP, Channel, Queue, Scheduler, MCP) that includes the matching tag.
-
-### Syntax
+## Permission Signature
 
 ```typescript
-import { addPermission, type PikkuPermission, type CorePermissionGroup } from '@pikku/core'
-
-addPermission(
-  tag: string,
-  permissions: CorePermissionGroup | PikkuPermission[]
+pikkuPermission<DataType>(
+  async (services, data, session) => boolean
 )
 ```
 
-### Parameters
+Parameters:
+- **services** - Your application services (destructure what you need)
+- **data** - The input data (typed with `DataType`)
+- **session** - The current user session (from `userSession.get()`)
 
-- **tag** (`string`) - The tag that the permissions should apply to
-- **permissions** (`CorePermissionGroup | PikkuPermission[]`) - Permission group or array of permission functions to apply for the specified tag
+Return `true` to allow access, `false` to deny with 403.
 
-### Usage
+## Data-Based Permissions
 
-#### Basic Tag-Based Permissions
+Permissions can inspect the request data:
 
 ```typescript
-import { addPermission, pikkuPermission } from '@pikku/core'
+export const requireOwnership = pikkuPermission<{ resourceId: string }>(
+  async ({ database }, data, session) => {
+    if (!session?.userId) return false
 
-const adminPermission = pikkuPermission((_services, _data, session) => {
+    const resource = await database.query('resources', {
+      where: { id: data.resourceId }
+    })
+
+    return resource?.ownerId === session.userId
+  }
+)
+```
+
+Use it in a function with matching data type:
+
+```typescript
+export const updateResource = pikkuFunc<
+  { resourceId: string; content: string },
+  Resource
+>({
+  func: async ({ database }, data) => {
+    return await database.update('resources', {
+      where: { id: data.resourceId },
+      data: { content: data.content }
+    })
+  },
+  permissions: {
+    auth: requireAuth,
+    owner: requireOwnership  // Uses resourceId from data
+  },
+  docs: {
+    summary: 'Update a resource',
+    tags: ['resources']
+  }
+})
+```
+
+## Permission Groups
+
+You can compose multiple permissions:
+
+```typescript
+export const requirePremium = pikkuPermission(async ({ database }, _data, session) => {
+  if (!session?.userId) return false
+
+  const user = await database.query('users', {
+    where: { id: session.userId }
+  })
+
+  return user?.isPremium === true
+})
+
+// Use multiple permissions together
+export const getPremiumContent = pikkuFunc<{ contentId: string }, Content>({
+  func: async ({ database }, data) => {
+    return await database.query('premium_content', {
+      where: { id: data.contentId }
+    })
+  },
+  permissions: {
+    auth: requireAuth,
+    premium: requirePremium
+  },
+  docs: {
+    summary: 'Get premium content',
+    tags: ['content']
+  }
+})
+```
+
+## Complex Permissions
+
+Permissions can perform complex queries:
+
+```typescript
+export const withinQuota = pikkuPermission(async ({ database }, _data, session) => {
+  if (!session?.userId) return false
+
+  const usage = await database.query('api_usage', {
+    where: {
+      userId: session.userId,
+      date: new Date().toISOString().split('T')[0]
+    }
+  })
+
+  return (usage?.requestCount || 0) < 1000  // Daily limit
+})
+
+export const activeSubscription = pikkuPermission(
+  async ({ database }, _data, session) => {
+    if (!session?.userId) return false
+
+    const sub = await database.query('subscriptions', {
+      where: { userId: session.userId }
+    })
+
+    if (!sub) return false
+
+    return new Date(sub.expiresAt) > new Date()
+  }
+)
+```
+
+## HTTP-Specific Permissions
+
+For HTTP routes, you can apply permissions at the route level or globally:
+
+```typescript
+import { wireHTTP } from '#pikku/pikku-types.gen.js'
+
+// Route-level permissions
+wireHTTP({
+  method: 'delete',
+  route: '/users/:userId',
+  func: deleteUser,
+  permissions: {
+    auth: requireAuth,
+    admin: requireAdmin
+  }
+})
+```
+
+Or apply to all routes with a prefix:
+
+```typescript
+import { addHTTPPermission } from '#pikku/pikku-types.gen.js'
+
+// All /admin routes require authentication and admin role
+addHTTPPermission('/admin', {
+  auth: requireAuth,
+  admin: requireAdmin
+})
+
+// All routes require authentication
+addHTTPPermission('*', {
+  auth: requireAuth
+})
+```
+
+See [HTTP Router](../http/router.md) for more on `addHTTPPermission`.
+
+## Error Handling
+
+If a permission throws an error, it's treated as a server error (500), not unauthorized (403):
+
+```typescript
+// ✅ Good - returns false for unauthorized
+export const requireOwnership = pikkuPermission(async ({ database }, data, session) => {
+  if (!session?.userId) return false
+
+  try {
+    const resource = await database.query('resources', {
+      where: { id: data.resourceId }
+    })
+    return resource?.ownerId === session.userId
+  } catch (error) {
+    // Database error - let it throw (500)
+    throw error
+  }
+})
+
+// ❌ Bad - throws for unauthorized
+export const requireOwnership = pikkuPermission(async ({ database }, data, session) => {
+  if (!session?.userId) {
+    throw new Error('Not authenticated')  // This returns 500, not 403!
+  }
+  // ...
+})
+```
+
+Use `return false` for authorization failures. Only throw for actual errors.
+
+## Parallel Execution
+
+All permissions run in parallel. The first one to return `false` or throw an error will stop the request:
+
+```typescript
+permissions: {
+  auth: requireAuth,        // Runs in parallel
+  admin: requireAdmin,      // Runs in parallel
+  quota: withinQuota,       // Runs in parallel
+}
+```
+
+Don't depend on execution order - each permission should be an independent check.
+
+## Auth vs Permissions
+
+**auth** flag controls whether a session is required:
+
+```typescript
+// Requires session to exist (default)
+export const getProfile = pikkuFunc({
+  func: async ({ database }, _data, session) => {
+    // session is guaranteed to exist
+    return await database.query('users', { where: { id: session.userId } })
+  },
+  auth: true,  // Default
+  docs: {
+    summary: 'Get user profile',
+    tags: ['users']
+  }
+})
+
+// No session required
+export const getPublicContent = pikkuFunc({
+  func: async ({ database }, data) => {
+    return await database.query('content', { where: { id: data.id } })
+  },
+  auth: false,
+  docs: {
+    summary: 'Get public content',
+    tags: ['content']
+  }
+})
+```
+
+**permissions** run additional checks after auth:
+
+```typescript
+export const deleteAccount = pikkuFunc({
+  func: async ({ database }, _data, session) => {
+    await database.delete('users', { where: { id: session.userId } })
+  },
+  auth: true,  // Session required
+  permissions: {
+    verified: requireEmailVerified,  // Additional check
+    notBanned: requireNotBanned      // Additional check
+  },
+  docs: {
+    summary: 'Delete account',
+    tags: ['users']
+  }
+})
+```
+
+## Reusable Permissions
+
+Define permissions once, reuse everywhere:
+
+```typescript
+// permissions.ts
+export const requireAuth = pikkuPermission(async (_services, _data, session) => {
+  return session?.userId != null
+})
+
+export const requireAdmin = pikkuPermission(async (_services, _data, session) => {
   return session?.role === 'admin'
 })
 
-const authenticatedPermission = pikkuPermission((_services, _data, session) => {
-  return !!session?.userId
+export const requireOwnership = pikkuPermission<{ resourceId: string }>(
+  async ({ database }, data, session) => {
+    if (!session?.userId) return false
+    const resource = await database.query('resources', {
+      where: { id: data.resourceId }
+    })
+    return resource?.ownerId === session.userId
+  }
+)
+```
+
+Then import and use:
+
+```typescript
+import { requireAuth, requireAdmin, requireOwnership } from './permissions.js'
+
+export const updateResource = pikkuFunc({
+  func: async ({ database }, data) => { /* ... */ },
+  permissions: {
+    auth: requireAuth,
+    owner: requireOwnership
+  },
+  docs: {
+    summary: 'Update resource',
+    tags: ['resources']
+  }
 })
 
-const premiumUserPermission = pikkuPermission(async ({ kysely }, _data, session) => {
+export const deleteUser = pikkuFunc({
+  func: async ({ database }, data) => { /* ... */ },
+  permissions: {
+    auth: requireAuth,
+    admin: requireAdmin
+  },
+  docs: {
+    summary: 'Delete user',
+    tags: ['users']
+  }
+})
+```
+
+## Best Practices
+
+**Keep permissions focused** - One check per permission:
+
+```typescript
+// ✅ Good - single responsibility
+export const requireAuth = pikkuPermission(...)
+export const requireAdmin = pikkuPermission(...)
+export const requireVerified = pikkuPermission(...)
+
+permissions: {
+  auth: requireAuth,
+  admin: requireAdmin,
+  verified: requireVerified
+}
+
+// ❌ Bad - doing too much
+export const requireEverything = pikkuPermission(async (services, data, session) => {
   if (!session?.userId) return false
-  
-  const user = await kysely
-    .selectFrom('user')
-    .select('subscriptionType')
-    .where('userId', '=', session.userId)
-    .executeTakeFirst()
-  
-  return user?.subscriptionType === 'premium'
-})
-
-// Add admin permission for admin endpoints
-addPermission('admin', [adminPermission])
-
-// Add authentication requirement for protected endpoints
-addPermission('protected', [authenticatedPermission])
-
-// Add premium user check for premium features
-addPermission('premium', [premiumUserPermission])
-```
-
-#### Permission Groups
-
-You can define more complex permission logic using permission groups:
-
-```typescript
-import { type CorePermissionGroup } from '@pikku/core'
-
-const moderatorPermission: PikkuPermission = async (services, data, session) => {
-  return session?.role === 'moderator'
-}
-
-const contentOwnerPermission: PikkuPermission = async (services, data, session) => {
-  const content = await services.kysely
-    .selectFrom('content')
-    .select('ownerId')
-    .where('contentId', '=', data.contentId)
-    .executeTakeFirst()
-  
-  return content?.ownerId === session?.userId
-}
-
-// Either admin OR (moderator AND content owner) can edit content
-const contentEditPermissions: CorePermissionGroup = {
-  adminAccess: adminPermission,
-  moderatorAccess: [moderatorPermission, contentOwnerPermission]
-}
-
-addPermission('content-edit', contentEditPermissions)
-```
-
-#### Cross-Wiring Type Permissions
-
-The same tag-based permissions apply across all wiring types:
-
-```typescript
-// This permission will apply to HTTP routes, WebSocket channels, 
-// queue workers, scheduled tasks, and MCP tools that have the 'premium' tag
-const premiumPermission: PikkuPermission = async (services, data, session) => {
-  if (!session?.userId) return false
-  
-  const user = await services.kysely
-    .selectFrom('user')
-    .select('subscriptionType')
-    .where('userId', '=', session.userId)
-    .executeTakeFirst()
-  
-  return user?.subscriptionType === 'premium'
-}
-
-addPermission('premium', [premiumPermission])
-```
-
-### Using Tags in Wirings
-
-#### HTTP Routes
-
-```typescript
-import { wireHTTP } from '@pikku/core'
-
-// This route will require both 'api' and 'admin' permissions
-wireHTTP({
-  method: 'DELETE',
-  route: '/admin/users/:userId',
-  func: deleteUser,
-  tags: ['api', 'admin'] // Permissions for both tags will be checked
+  if (session.role !== 'admin') return false
+  if (!session.emailVerified) return false
+  // Too many concerns
 })
 ```
 
-#### WebSocket Channels
+**Optimize expensive checks** - Cache when possible:
 
 ```typescript
-import { wireChannel } from '@pikku/core'
+// ✅ Good - caches subscription check
+export const requireSubscription = pikkuPermission(
+  async ({ cache, database }, _data, session) => {
+    if (!session?.userId) return false
 
-// This channel will require 'premium' permissions
-wireChannel({
-  name: 'premium-notifications',
-  func: handlePremiumNotification,
-  tags: ['premium'] // Only 'premium' permissions will be checked
-})
+    const cacheKey = `sub:${session.userId}`
+    const cached = await cache.get(cacheKey)
+    if (cached !== null) return cached === 'true'
+
+    const sub = await database.query('subscriptions', {
+      where: { userId: session.userId }
+    })
+
+    const isActive = sub && new Date(sub.expiresAt) > new Date()
+    await cache.set(cacheKey, isActive ? 'true' : 'false', { ttl: 300 })
+
+    return isActive
+  }
+)
 ```
 
-#### Queue Workers
+**Return false, don't throw** - For authorization failures:
 
 ```typescript
-import { wireQueueWorker } from '@pikku/core'
+// ✅ Good
+if (!session?.userId) return false
 
-// This queue worker will require 'api' and 'background' permissions
-wireQueueWorker({
-  queue: 'user-data-processing',
-  func: processUserData,
-  tags: ['api', 'background']
-})
+// ❌ Bad
+if (!session?.userId) throw new Error('Unauthorized')  // Returns 500, not 403
 ```
 
-#### Scheduled Tasks
+## Next Steps
 
-```typescript
-import { wireScheduler } from '@pikku/core'
-
-// This scheduled task will require 'admin' permissions
-wireScheduler({
-  cron: '0 2 * * *',
-  func: cleanupExpiredData,
-  tags: ['admin']
-})
-```
-
-### Permission Execution Order
-
-Tag-based permissions are checked as part of the overall permission validation in this order:
-
-1. **Wiring-level tag permissions** (from wiring's `tags` property) - at least one must pass if any exist
-2. **Wiring-level permissions** (from wiring's `permissions` property) - must pass if defined
-3. **Function-level tag permissions** (from function config's `tags` property) - at least one must pass if any exist
-4. **Function-level permissions** (from function config's `permissions` property) - must pass if defined
-
-### Advanced Examples
-
-#### Resource-Based Permissions
-
-```typescript
-const resourceOwnerPermission: PikkuPermission = async (services, data, session) => {
-  if (!session?.userId) return false
-  
-  const resource = await services.kysely
-    .selectFrom('resource')
-    .select('ownerId')
-    .where('resourceId', '=', data.resourceId)
-    .executeTakeFirst()
-  
-  return resource?.ownerId === session.userId
-}
-
-const resourceCollaboratorPermission: PikkuPermission = async (services, data, session) => {
-  if (!session?.userId) return false
-  
-  const collaboration = await services.kysely
-    .selectFrom('resourceCollaborator')
-    .select('userId')
-    .where('resourceId', '=', data.resourceId)
-    .where('userId', '=', session.userId)
-    .executeTakeFirst()
-  
-  return !!collaboration
-}
-
-// Either owner OR collaborator can access resource
-const resourceAccessPermissions: CorePermissionGroup = {
-  ownerAccess: resourceOwnerPermission,
-  collaboratorAccess: resourceCollaboratorPermission
-}
-
-addPermission('resource-access', resourceAccessPermissions)
-```
-
-#### Time-Based Permissions
-
-```typescript
-const businessHoursPermission: PikkuPermission = async (services, data, session) => {
-  const now = new Date()
-  const hour = now.getHours()
-  const dayOfWeek = now.getDay()
-  
-  // Monday-Friday, 9 AM - 5 PM
-  return dayOfWeek >= 1 && dayOfWeek <= 5 && hour >= 9 && hour < 17
-}
-
-addPermission('business-hours', [businessHoursPermission])
-```
-
-### Error Handling
-
-If permissions for a tag already exist, an error will be thrown:
-
-```typescript
-addPermission('api', [permission1])
-
-// This will throw an error
-addPermission('api', [permission2]) 
-// Error: Permissions for tag 'api' already exist. Use a different tag or remove the existing permissions first.
-```
-
-When permissions fail, a `ForbiddenError` is thrown with a descriptive message indicating which level failed:
-- "Permission denied - wiring tag permissions"
-- "Permission denied - wiring permissions"  
-- "Permission denied - function tag permissions"
-- "Permission denied - function permissions"
-
-## Summary
-
-Pikku's permission system provides flexibility, allowing permissions to be checked at both the function and route levels. By combining simple and advanced checks, and supporting tag-based global permissions, it ensures that only authorized users can access sensitive parts of an application.
+- [Functions](./functions.md) - Understanding Pikku functions
+- [HTTP Router](../http/router.md) - HTTP-specific permissions with `addHTTPPermission`
+- [Middleware](./middleware.md) - Request/response transformation
