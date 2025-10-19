@@ -242,32 +242,42 @@ const card = await rpc.invoke(
                 return (
                   <div
                     key={idx}
-                    className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 shadow-md hover:shadow-xl transition-all relative cursor-pointer"
-                    onClick={() => setActiveProtocol(isActive ? null : idx)}
+                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-4 shadow-md hover:shadow-xl transition-all relative cursor-pointer ${
+                      isActive ? 'ring-2 ring-primary' : ''
+                    }`}
+                    onClick={() => setActiveProtocol(idx)}
                     onMouseEnter={() => setActiveProtocol(idx)}
-                    onMouseLeave={() => setActiveProtocol(null)}
                   >
                     {/* Top connection point */}
                     <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-primary rounded-full shadow-md"></div>
 
                     <div className="flex flex-col items-center">
-                      <WiringIcon wiringId={example.icon} size={isActive ? 32 : 40} />
-                      <span className={`mt-2 font-semibold text-center text-gray-900 dark:text-gray-100 ${isActive ? 'text-sm' : 'text-base'}`}>
+                      <WiringIcon wiringId={example.icon} size={40} />
+                      <span className="mt-2 font-semibold text-center text-gray-900 dark:text-gray-100">
                         {example.title}
                       </span>
                     </div>
-
-                    {isActive && (
-                      <div className="mt-4 animate-in fade-in duration-200">
-                        <CodeBlock language="typescript">
-                          {example.code}
-                        </CodeBlock>
-                      </div>
-                    )}
                   </div>
                 );
               })}
             </div>
+
+            {/* Code display section below */}
+            {activeProtocol !== null && (
+              <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-primary">
+                  <div className="flex items-center mb-4">
+                    <WiringIcon wiringId={wiringExamples[activeProtocol].icon} size={24} />
+                    <span className="ml-3 text-xl font-bold text-gray-900 dark:text-gray-100">
+                      {wiringExamples[activeProtocol].title}
+                    </span>
+                  </div>
+                  <CodeBlock language="typescript">
+                    {wiringExamples[activeProtocol].code}
+                  </CodeBlock>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
