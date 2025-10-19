@@ -5,6 +5,7 @@ import Heading from '@theme/Heading';
 import Image from '@theme/ThemedImage';
 import CodeBlock from '@theme/CodeBlock';
 import { runtimes } from '@site/data/homepage';
+import { protocolDeployments, protocolToDeploymentKey } from '@site/data/deployments';
 import { WiringIcon } from '../components/WiringIcons';
 import LiveExamples from '../components/LiveExamples';
 
@@ -89,7 +90,6 @@ function Hero() {
 /** The "Aha!" Moment: One Function, Many Protocols */
 function AhaMomentSection() {
   const [activeProtocol, setActiveProtocol] = React.useState<number | null>(0); // Default to HTTP
-  const [activeDeployment, setActiveDeployment] = React.useState<string>('express');
 
   const functionCode = `export const getCard = pikkuFunc<
   { cardId: string },
@@ -114,75 +114,13 @@ function AhaMomentSection() {
   }
 })`;
 
-  const deploymentOptions: Record<number, Record<string, { name: string; code: string; img: { light: string; dark: string } }>> = {
-    0: { // HTTP
-      express: {
-        name: 'Express',
-        img: { light: 'express-light.svg', dark: 'express-dark.svg' },
-        code: `import express from 'express'
-import { createPikkuExpressMiddleware } from '@pikku/express'
+  // Map protocol index to deployment options
+  const getDeploymentOptionsForProtocol = (protocolIndex: number) => {
+    const protocol = wiringExamples[protocolIndex];
+    if (!protocol) return null;
 
-const app = express()
-app.use(createPikkuExpressMiddleware())
-app.listen(3000)`
-      },
-      fastify: {
-        name: 'Fastify',
-        img: { light: 'fastify-light.svg', dark: 'fastify-dark.svg' },
-        code: `import Fastify from 'fastify'
-import { pikkuFastifyPlugin } from '@pikku/fastify'
-
-const fastify = Fastify()
-await fastify.register(pikkuFastifyPlugin)
-await fastify.listen({ port: 3000 })`
-      },
-      nextjs: {
-        name: 'Next.js',
-        img: { light: 'nextjs-light.png', dark: 'nextjs-dark.svg' },
-        code: `// app/api/[...route]/route.ts
-import { createPikkuNextHandler } from '@pikku/nextjs'
-
-const handler = createPikkuNextHandler()
-
-export { handler as GET, handler as POST }`
-      },
-      lambda: {
-        name: 'AWS Lambda',
-        img: { light: 'aws-light.svg', dark: 'aws-dark.svg' },
-        code: `import { createPikkuLambdaHandler } from '@pikku/aws-lambda'
-
-export const handler = createPikkuLambdaHandler()`
-      },
-      cloudflare: {
-        name: 'Cloudflare Workers',
-        img: { light: 'cloudflare-light.svg', dark: 'cloudflare-dark.svg' },
-        code: `import { createPikkuCloudflareHandler } from '@pikku/cloudflare'
-
-export default createPikkuCloudflareHandler()`
-      }
-    },
-    1: { // WebSocket
-      ws: {
-        name: 'ws',
-        img: { light: 'websocket-light.svg', dark: 'websocket-dark.svg' },
-        code: `import { WebSocketServer } from 'ws'
-import { createPikkuWSHandler } from '@pikku/ws'
-
-const wss = new WebSocketServer({ port: 3000 })
-wss.on('connection', createPikkuWSHandler())`
-      },
-      uws: {
-        name: 'μWebSockets',
-        img: { light: 'uws-light.svg', dark: 'uws-dark.svg' },
-        code: `import uWS from 'uWebSockets.js'
-import { createPikkuUWSHandler } from '@pikku/uws'
-
-uWS.App()
-  .ws('/*', createPikkuUWSHandler())
-  .listen(3000, () => {})`
-      }
-    },
-    // Add more deployment options for other protocols as needed
+    const deploymentKey = protocolToDeploymentKey[protocol.icon];
+    return protocolDeployments[deploymentKey] || null;
   };
 
   const wiringExamples = [
@@ -301,7 +239,7 @@ wireMCPPrompt({
   ];
 
   return (
-    <section className="py-16 bg-white dark:bg-gray-800">
+    <section className="py-16 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-gray-800 dark:via-gray-900/50 dark:to-gray-800">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -340,18 +278,19 @@ wireMCPPrompt({
                 return (
                   <div
                     key={idx}
-                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-xl transition-all cursor-pointer ${
-                      isActive ? 'ring-2 ring-primary' : ''
-                    }`}
-                    onClick={() => {
-                      setActiveProtocol(idx);
-                      // Reset deployment to first option when protocol changes
-                      if (deploymentOptions[idx]) {
-                        setActiveDeployment(Object.keys(deploymentOptions[idx])[0]);
-                      }
-                    }}
-                    onMouseEnter={() => setActiveProtocol(idx)}
+                    className="bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-xl transition-all cursor-pointer relative"
+                    onClick={() => setActiveProtocol(idx)}
                   >
+                    {isActive && (
+                      <div className="absolute -top-3 -right-3 w-8 h-8 md:w-12 md:h-12">
+                        <Image
+                          sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }}
+                          width={48}
+                          height={48}
+                          className="drop-shadow-lg"
+                        />
+                      </div>
+                    )}
                     <div className="flex flex-col items-center">
                       <div className="hidden md:block">
                         <WiringIcon wiringId={example.icon} size={40} />
@@ -387,24 +326,23 @@ wireMCPPrompt({
           </div>
 
           {/* Deploy Anywhere - Third Section */}
-          {activeProtocol !== null && deploymentOptions[activeProtocol] && (
-            <div className="mt-12">
-              <div className="flex items-center justify-center mb-6">
-                <Heading as="h3" className="text-2xl font-bold">
-                  3. Deploy Anywhere
-                </Heading>
-              </div>
+          {activeProtocol !== null && (() => {
+            const deployments = getDeploymentOptionsForProtocol(activeProtocol);
+            return deployments && (
+              <div className="mt-12">
+                <div className="flex items-center justify-center mb-6">
+                  <Heading as="h3" className="text-2xl font-bold">
+                    3. Deploy Anywhere
+                  </Heading>
+                </div>
 
-              {/* Deployment selector with icons */}
-              {deploymentOptions[activeProtocol] && (
-                <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6 max-w-3xl mx-auto">
-                  {Object.entries(deploymentOptions[activeProtocol]).map(([key, deployment]) => (
+                {/* Deployment selector with icons */}
+                <div className="flex justify-center">
+                  <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6 max-w-3xl">
+                  {Object.entries(deployments).map(([key, deployment]) => (
                     <div
                       key={key}
-                      onClick={() => setActiveDeployment(key)}
-                      className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-3 shadow-md hover:shadow-xl transition-all cursor-pointer ${
-                        activeDeployment === key ? 'ring-2 ring-primary' : ''
-                      }`}
+                      className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 shadow-md transition-all relative"
                     >
                       <div className="flex flex-col items-center">
                         <Image
@@ -422,24 +360,11 @@ wireMCPPrompt({
                       </div>
                     </div>
                   ))}
-                </div>
-              )}
-
-              {/* Deployment code */}
-              {deploymentOptions[activeProtocol] && deploymentOptions[activeProtocol][activeDeployment] && (
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-primary">
-                  <div className="flex items-center mb-4">
-                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                      {deploymentOptions[activeProtocol][activeDeployment].name}
-                    </span>
                   </div>
-                  <CodeBlock language="typescript">
-                    {deploymentOptions[activeProtocol][activeDeployment].code}
-                  </CodeBlock>
                 </div>
-              )}
-            </div>
-          )}
+              </div>
+            );
+          })()}
         </div>
 
         <div className="mt-12 text-center">
@@ -452,92 +377,79 @@ wireMCPPrompt({
   );
 }
 
-/** Before/After Problem-Solution */
+/** Bundle Only What You Deploy */
 function ProblemSolutionSection() {
-  const beforeCode = `// ❌ Before: Duplicate logic everywhere
-app.get('/cards/:id', async (req, res) => {
-  const card = await db.cards.find(req.params.id)
-  if (!isOwner(req.user, card)) return res.status(403)
-  res.json(card)
-})
-
-wss.on('connection', (ws) => {
-  ws.on('message', async (msg) => {
-    if (msg.action === 'getCard') {
-      const card = await db.cards.find(msg.cardId)
-      if (!isOwner(ws.user, card)) return ws.close()
-      ws.send(JSON.stringify(card))
+  const architectures = [
+    {
+      name: 'Monolith',
+      icon: '🏢',
+      description: 'Run everything in one process',
+      command: 'pikku',
+      bundleSize: '~2.8MB',
+      includes: 'All functions, all protocols'
+    },
+    {
+      name: 'Microservices',
+      icon: '📦',
+      description: 'Split by domain or feature',
+      command: 'pikku --http-routes=/admin',
+      altCommand: 'pikku --tags=admin',
+      bundleSize: '~180KB',
+      includes: 'Only admin routes + dependencies'
+    },
+    {
+      name: 'Functions',
+      icon: 'λ',
+      description: 'One function per deployment',
+      command: 'pikku --http-routes=/users/:id --types=http',
+      bundleSize: '~50KB',
+      includes: 'Single endpoint + minimal runtime'
     }
-  })
-})
-
-queue.process('fetch-card', async (job) => {
-  const card = await db.cards.find(job.data.cardId)
-  // Wait, do we need auth here?
-  return card
-})`;
-
-  const afterCode = `// ✅ With Pikku: Define once
-export const getCard = pikkuFunc<CardInput, Card>({
-  func: async ({ database }, { cardId }) => {
-    return await database.query('cards', {
-      where: { id: cardId }
-    })
-  },
-  permissions: { owner: requireOwner },
-  docs: { summary: 'Fetch a card by ID' }
-})
-
-// Wire to protocols:
-wireHTTP({ method: 'get', route: '/cards/:cardId', func: getCard })
-wireChannel({ name: 'cards', onMessageWiring: { action: { getCard } } })
-wireQueueWorker({ queue: 'fetch-card', func: getCard })`;
+  ];
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
+    <section className="py-16 bg-gradient-to-br from-primary/5 via-white to-primary/10 dark:from-gray-900 dark:via-gray-900 dark:to-primary/10">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
-            Stop Duplicating Logic Across Protocols
+            Bundle Only What You Deploy
           </Heading>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Most backends reimplement the same logic for each protocol. Pikku eliminates the duplication.
+            Run your codebase as a monolith, as microservices, or as functions. Pikku creates the smallest bundle for your use case.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
-            <div className="mb-4 flex items-center">
-              <span className="text-3xl mr-3">❌</span>
-              <Heading as="h3" className="text-2xl font-bold">
-                Without Pikku
-              </Heading>
-            </div>
-            <CodeBlock language="typescript" title="Traditional approach">
-              {beforeCode}
-            </CodeBlock>
-            <ul className="mt-4 space-y-2 text-gray-600 dark:text-gray-400">
-              <li>✗ Logic duplicated 3+ times</li>
-              <li>✗ Auth/validation inconsistent</li>
-              <li>✗ Hard to maintain and test</li>
-            </ul>
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            {architectures.map((arch, idx) => (
+              <div key={idx} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg text-center">
+                <div className="text-6xl mb-3">{arch.icon}</div>
+                <Heading as="h3" className="text-xl font-bold mb-2">
+                  {arch.name}
+                </Heading>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {arch.description}
+                </p>
+                <div className="text-xs font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2">
+                  {arch.command}
+                </div>
+                {arch.altCommand && (
+                  <div className="text-xs font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2">
+                    {arch.altCommand}
+                  </div>
+                )}
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="text-sm font-semibold text-primary mb-1">{arch.bundleSize}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">{arch.includes}</div>
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div>
-            <div className="mb-4 flex items-center">
-              <span className="text-3xl mr-3">✅</span>
-              <Heading as="h3" className="text-2xl font-bold">
-                With Pikku
-              </Heading>
-            </div>
-            <CodeBlock language="typescript" title="Pikku approach">
-              {afterCode}
-            </CodeBlock>
-            <ul className="mt-4 space-y-2 text-gray-700 dark:text-gray-300 font-medium">
-              <li>✓ Write logic once</li>
-              <li>✓ Consistent auth everywhere</li>
-              <li>✓ Easy to test and maintain</li>
-            </ul>
+          <div className="mt-8 text-center">
+            <Link to="/docs/concepts/tree-shaking" className="text-primary hover:underline font-medium text-lg">
+              Learn more about filtering and tree-shaking →
+            </Link>
           </div>
         </div>
       </div>
@@ -633,6 +545,74 @@ function ProtocolSupportSection() {
   );
 }
 
+/** Used By Section */
+function UsedBySection() {
+  const companies = [
+    {
+      name: 'AgreeWe',
+      logo: { light: 'agreewe-light.png', dark: 'agreewe-dark.png' },
+      url: 'https://www.agreewe.com'
+    },
+    {
+      name: 'HeyGermany',
+      logo: { light: 'heygermany-light.svg', dark: 'heygermany-dark.svg' },
+      url: 'https://hey-germany.com'
+    },
+    {
+      name: 'marta',
+      logo: { light: 'marta-light.svg', dark: 'marta-light.svg' },
+      url: 'https://marta.de'
+    },
+    {
+      name: 'BambooRose',
+      logo: { light: 'bamboorose-light.png', dark: 'bamboorose-dark.png' },
+      url: 'https://bamboorose.com'
+    },
+    {
+      name: 'Calligraphy Cut',
+      logo: { light: 'calligraphycut-light.svg', dark: 'calligraphycut-dark.svg' },
+      url: 'https://calligraphy-cut.com'
+    }
+  ];
+
+  return (
+    <section className="py-16 bg-gradient-to-br from-primary/5 to-white dark:from-primary/10 dark:to-gray-800">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <Heading as="h2" className="text-4xl font-bold mb-4">
+            Used By
+          </Heading>
+          <p className="text-xl text-gray-600 dark:text-gray-300">
+            Trusted by innovative companies building production systems
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center">
+          {companies.map((company, idx) => (
+            <Link
+              key={idx}
+              href={company.url}
+              className="flex items-center justify-center p-6 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-all hover:scale-110"
+              title={company.name}
+            >
+              <Image
+                sources={{
+                  light: `img/logos/${company.logo.light}`,
+                  dark: `img/logos/${company.logo.dark}`
+                }}
+                alt={company.name}
+                width={120}
+                height={60}
+                className="object-contain"
+              />
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** Deploy Anywhere */
 function DeployAnywhereSection() {
   return (
@@ -710,9 +690,9 @@ function ProductionFeaturesSection() {
     },
     {
       title: 'Schema Validation',
-      desc: 'Optional runtime validation',
+      desc: 'Auto-validate against TypeScript input schemas',
       icon: '✅',
-      detail: 'TypeScript or Zod—catch errors before they hit your functions'
+      detail: 'Runtime validation catches errors before they hit your functions'
     },
     {
       title: 'Zero Lock-In',
@@ -749,68 +729,6 @@ function ProductionFeaturesSection() {
   );
 }
 
-/** Real Use Cases */
-function UseCasesSection() {
-  const useCases = [
-    {
-      title: 'Chat Application',
-      desc: 'One function for sending messages, wired to HTTP (REST API) and WebSocket (real-time)',
-      protocols: ['http', 'websocket']
-    },
-    {
-      title: 'Scheduled Reports',
-      desc: 'Generate reports on a schedule or manually trigger via API',
-      protocols: ['cron', 'http']
-    },
-    {
-      title: 'Email Queue',
-      desc: 'Send emails via background queue with automatic retries',
-      protocols: ['queue', 'http']
-    },
-    {
-      title: 'AI Agent Tools',
-      desc: 'Expose functions to Claude/GPT via MCP with HTTP fallback',
-      protocols: ['mcp', 'http']
-    }
-  ];
-
-  return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-screen-lg mx-auto px-4">
-        <div className="text-center mb-12">
-          <Heading as="h2" className="text-4xl font-bold mb-4">
-            What You Can Build
-          </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            Real-world examples of Pikku in action
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {useCases.map((useCase, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-              <Heading as="h3" className="text-xl font-bold mb-3">
-                {useCase.title}
-              </Heading>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {useCase.desc}
-              </p>
-              <div className="flex gap-3">
-                {useCase.protocols.map(protocol => (
-                  <div key={protocol} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-1.5 rounded">
-                    <WiringIcon wiringId={protocol} size={16} />
-                    <span className="text-sm font-medium capitalize">{protocol}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /** Try it now */
 function TryItNowSection() {
   const copyToClipboard = () => {
@@ -818,7 +736,7 @@ function TryItNowSection() {
   };
 
   return (
-    <section className="py-16 bg-white dark:bg-gray-800">
+    <section className="py-16 bg-gradient-to-br from-white via-primary/5 to-white dark:from-gray-800 dark:via-primary/10 dark:to-gray-800">
       <div className="max-w-screen-lg mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Try it now
@@ -877,13 +795,12 @@ export default function Home() {
       <Hero />
       <main>
         <AhaMomentSection />
-        <ProblemSolutionSection />
-        <ProtocolSupportSection />
-        <DeployAnywhereSection />
+        <UsedBySection />
         <ProductionFeaturesSection />
-        <UseCasesSection />
+        <ProblemSolutionSection />
         <TryItNowSection />
         <LiveExamples />
+        <DeployAnywhereSection />
         <CallToActionSection />
       </main>
     </Layout>
