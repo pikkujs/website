@@ -247,9 +247,9 @@ export const transportAware = pikkuMiddleware(async (services, interaction, next
     const attempt = interaction.queue.attempt
   }
 
-  if (interaction.scheduler) {
+  if (interaction.scheduledTask) {
     // Scheduler-specific: cron, lastRun, nextRun
-    const cron = interaction.scheduler.cron
+    const cron = interaction.scheduledTask.cron
   }
 
   await next()

@@ -14,7 +14,7 @@ This page shows practical examples of using Pikku queues for common use cases. E
 
 ```typescript
 // email-worker.functions.ts
-import { pikkuSessionlessFunc } from '@pikku/core'
+import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
 
 interface EmailJob {
   to: string
@@ -30,7 +30,7 @@ interface EmailResult {
   provider: string
 }
 
-export const sendEmail = pikkuSessionlessFunc<EmailJob, EmailResult>(
+export const sendEmail = pikkuFuncSessionless<EmailJob, EmailResult>(
   async (context, jobData) => {
     const { logger, services } = context
     
@@ -68,7 +68,7 @@ import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
 import { sendEmail } from './email-worker.functions.js'
 
 wireQueueWorker({
-  queueName: 'email-queue',
+  queue: 'email-queue',
   func: sendEmail,
   config: {
     concurrency: 5,
@@ -121,7 +121,7 @@ async function sendPasswordReset(userEmail: string, resetToken: string) {
 
 ```typescript
 // image-worker.functions.ts
-import { pikkuSessionlessFunc } from '@pikku/core'
+import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
 
 interface ImageJob {
   imageUrl: string
@@ -139,7 +139,7 @@ interface ImageResult {
   fileSize: number
 }
 
-export const processImage = pikkuSessionlessFunc<ImageJob, ImageResult>(
+export const processImage = pikkuFuncSessionless<ImageJob, ImageResult>(
   async (context, jobData) => {
     const { logger, services } = context
     
@@ -196,7 +196,7 @@ import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
 import { processImage } from './image-worker.functions.js'
 
 wireQueueWorker({
-  queueName: 'image-processing',
+  queue: 'image-processing',
   func: processImage,
   config: {
     concurrency: 2,     // CPU-intensive, limit concurrency
@@ -246,7 +246,7 @@ async function processUserImage(userId: string, imageUrl: string) {
 
 ```typescript
 // export-worker.functions.ts
-import { pikkuSessionlessFunc } from '@pikku/core'
+import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
 
 interface ExportJob {
   userId: string
@@ -267,7 +267,7 @@ interface ExportResult {
   exportedAt: Date
 }
 
-export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
+export const exportData = pikkuFuncSessionless<ExportJob, ExportResult>(
   async (context, jobData) => {
     const { logger, services } = context
     
@@ -325,7 +325,7 @@ import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
 import { exportData } from './export-worker.functions.js'
 
 wireQueueWorker({
-  queueName: 'data-export',
+  queue: 'data-export',
   func: exportData,
   config: {
     concurrency: 1,      // Sequential processing for large exports
@@ -377,7 +377,7 @@ async function checkExportStatus(jobId: string) {
 
 ```typescript
 // notification-worker.functions.ts
-import { pikkuSessionlessFunc } from '@pikku/core'
+import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
 
 interface NotificationJob {
   userId: string
@@ -396,7 +396,7 @@ interface NotificationResult {
   metadata?: Record<string, any>
 }
 
-export const sendNotification = pikkuSessionlessFunc<
+export const sendNotification = pikkuFuncSessionless<
   NotificationJob,
   NotificationResult[]
 >(
@@ -475,7 +475,7 @@ import { sendNotification } from './notification-worker.functions.js'
 
 // High priority notifications
 wireQueueWorker({
-  queueName: 'notifications-urgent',
+  queue: 'notifications-urgent',
   func: sendNotification,
   config: {
     concurrency: 10,
@@ -487,7 +487,7 @@ wireQueueWorker({
 
 // Normal priority notifications
 wireQueueWorker({
-  queueName: 'notifications-normal',
+  queue: 'notifications-normal',
   func: sendNotification,
   config: {
     concurrency: 5,
@@ -499,7 +499,7 @@ wireQueueWorker({
 
 // Low priority notifications
 wireQueueWorker({
-  queueName: 'notifications-low',
+  queue: 'notifications-low',
   func: sendNotification,
   config: {
     concurrency: 2,
@@ -561,7 +561,7 @@ async function sendBatchNotifications(notifications: NotificationJob[]) {
 
 ```typescript
 // cleanup-worker.functions.ts
-import { pikkuSessionlessFunc } from '@pikku/core'
+import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
 
 interface CleanupJob {
   type: 'files' | 'logs' | 'cache' | 'database'
@@ -576,7 +576,7 @@ interface CleanupResult {
   duration: number // milliseconds
 }
 
-export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
+export const runCleanup = pikkuFuncSessionless<CleanupJob, CleanupResult>(
   async (context, jobData) => {
     const { logger, services } = context
     const startTime = Date.now()
@@ -661,7 +661,7 @@ import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
 import { runCleanup } from './cleanup-worker.functions.js'
 
 wireQueueWorker({
-  queueName: 'cleanup-tasks',
+  queue: 'cleanup-tasks',
   func: runCleanup,
   config: {
     concurrency: 1,      // Sequential cleanup to avoid conflicts

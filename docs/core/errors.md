@@ -4,22 +4,28 @@ title: Errors
 description: Associating errors with HTTP codes
 ---
 
-In Pikku, errors are associated with specific HTTP status codes and messages. This ensures that errors are handled gracefully and the correct response is sent back to the client. Errors are registered using the `addError` or `addErrors` functions, which map them to HTTP status codes.
+In Pikku, errors are associated with specific HTTP status codes and messages. This ensures that errors are handled gracefully and the correct response is sent back to the client. Errors are registered using the `addError` function, which maps them to HTTP status codes.
 
 ## Registering Errors
 
-To map custom errors to HTTP codes, use the `addErrors` function:
+To map custom errors to HTTP codes, use the `addError` function:
 
 ```typescript
-import { addErrors, PikkuError } from '@pikku/core';
+import { PikkuError } from '@pikku/core/errors'
+import { addError } from '#pikku/pikku-types.gen.js'
 
-export class NotFoundError extends PikkuError { }
-export class BookLimitExceeded extends PikkuError { }
+export class NotFoundError extends PikkuError {}
+export class BookLimitExceeded extends PikkuError {}
 
-addErrors([
-  [NotFoundError, { status: 404, message: 'Resource not found' }],
-  [BookLimitExceeded, { status: 400, message: 'Book limit exceeded' }],
-]);
+addError(NotFoundError, {
+  status: 404,
+  message: 'Resource not found'
+})
+
+addError(BookLimitExceeded, {
+  status: 400,
+  message: 'Book limit exceeded'
+})
 ```
 
 In this example:
