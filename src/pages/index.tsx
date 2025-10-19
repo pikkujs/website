@@ -207,9 +207,11 @@ const card = await rpc.invoke(
                       {example.title}
                     </span>
                   </div>
-                  <CodeBlock language="typescript">
-                    {example.code}
-                  </CodeBlock>
+                  <pre className="bg-gray-800 dark:bg-gray-950 rounded p-3 overflow-x-auto">
+                    <code className="text-xs text-gray-100 font-mono">
+                      {example.code}
+                    </code>
+                  </pre>
                 </div>
               ))}
             </div>
