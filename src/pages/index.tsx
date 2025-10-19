@@ -125,6 +125,50 @@ function AhaMomentSection() {
 })`
     },
     {
+      title: 'Server-Sent Events',
+      icon: 'sse',
+      code: `wireHTTP({
+  method: 'get',
+  route: '/cards/:cardId',
+  func: getCard,
+  sse: true
+})`
+    },
+    {
+      title: 'Queue Worker',
+      icon: 'queue',
+      code: `wireQueueWorker({
+  queue: 'fetch-card',
+  func: getCard
+})`
+    },
+    {
+      title: 'Scheduled Task',
+      icon: 'cron',
+      code: `wireScheduler({
+  cron: '0 * * * *',
+  func: getCard
+})`
+    },
+    {
+      title: 'RPC Call',
+      icon: 'rpc',
+      code: `// From another function:
+const card = await rpc.invoke(
+  'getCard',
+  { cardId: '123' }
+)`
+    },
+    {
+      title: 'MCP Tool',
+      icon: 'mcp',
+      code: `wireMCPTool({
+  name: 'getCard',
+  description: 'Fetch card',
+  func: getCard
+})`
+    },
+    {
       title: 'CLI Command',
       icon: 'cli',
       code: `wireCLI({
@@ -136,15 +180,6 @@ function AhaMomentSection() {
     })
   }
 })`
-    },
-    {
-      title: 'RPC Call',
-      icon: 'rpc',
-      code: `// From another function:
-const card = await rpc.invoke(
-  'getCard',
-  { cardId: '123' }
-)`
     }
   ];
 
@@ -180,11 +215,15 @@ const card = await rpc.invoke(
           {/* Connection Lines */}
           <div className="hidden md:block relative h-16 mb-4">
             <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
-              {/* Lines from center to each card */}
+              {/* Lines from center to each card - 8 cards in 2 rows */}
               <line x1="50%" y1="0" x2="12.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
+              <line x1="50%" y1="0" x2="25%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
               <line x1="50%" y1="0" x2="37.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
+              <line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
               <line x1="50%" y1="0" x2="62.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
+              <line x1="50%" y1="0" x2="75%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
               <line x1="50%" y1="0" x2="87.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
+              <line x1="50%" y1="0" x2="100%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
             </svg>
           </div>
 
@@ -207,11 +246,9 @@ const card = await rpc.invoke(
                       {example.title}
                     </span>
                   </div>
-                  <pre className="bg-gray-800 dark:bg-gray-950 rounded p-3 overflow-x-auto">
-                    <code className="text-xs text-gray-100 font-mono">
-                      {example.code}
-                    </code>
-                  </pre>
+                  <CodeBlock language="typescript">
+                    {example.code}
+                  </CodeBlock>
                 </div>
               ))}
             </div>
