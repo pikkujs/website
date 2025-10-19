@@ -209,24 +209,7 @@ const card = await rpc.invoke(
               <CodeBlock language="typescript" title="src/functions/cards.function.ts">
                 {functionCode}
               </CodeBlock>
-              {/* Center connection point */}
-              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-primary rounded-full z-10 shadow-lg"></div>
             </div>
-          </div>
-
-          {/* Connection Lines */}
-          <div className="hidden md:block relative h-16 mb-4">
-            <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
-              {/* Lines from center to each card - 8 cards in 2 rows */}
-              <line x1="50%" y1="0" x2="12.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
-              <line x1="50%" y1="0" x2="25%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
-              <line x1="50%" y1="0" x2="37.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
-              <line x1="50%" y1="0" x2="50%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
-              <line x1="50%" y1="0" x2="62.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
-              <line x1="50%" y1="0" x2="75%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
-              <line x1="50%" y1="0" x2="87.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
-              <line x1="50%" y1="0" x2="100%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
-            </svg>
           </div>
 
           {/* Wiring Examples - Bottom Row */}
@@ -242,15 +225,12 @@ const card = await rpc.invoke(
                 return (
                   <div
                     key={idx}
-                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-4 shadow-md hover:shadow-xl transition-all relative cursor-pointer ${
+                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-4 shadow-md hover:shadow-xl transition-all cursor-pointer ${
                       isActive ? 'ring-2 ring-primary' : ''
                     }`}
                     onClick={() => setActiveProtocol(idx)}
                     onMouseEnter={() => setActiveProtocol(idx)}
                   >
-                    {/* Top connection point */}
-                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-primary rounded-full shadow-md"></div>
-
                     <div className="flex flex-col items-center">
                       <WiringIcon wiringId={example.icon} size={40} />
                       <span className="mt-2 font-semibold text-center text-gray-900 dark:text-gray-100">
