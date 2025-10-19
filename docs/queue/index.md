@@ -247,5 +247,4 @@ Pikku supports multiple queue backends:
 
 ## Next Steps
 
-- [Queue Registration](./registration.md) - Detailed configuration options
 - [Queue Client](./client.md) - Adding and monitoring jobs with type safety

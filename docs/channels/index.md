@@ -433,5 +433,4 @@ Use `eventHub` to handle pub/sub in stateless environments - it offloads subscri
 ## Next Steps
 
 - [Wiring Channels](./channel-route.md)
-- [Channel Functions](./channel-functions.md)
 - [WebSocket Client](./websocket-client.md) - Type-safe client generation

@@ -344,5 +344,5 @@ export const monthlyProcessing = pikkuVoidFunc({
 ## Next Steps
 
 - [Middleware](./core/middleware.md) - Adding observability to scheduled tasks
-- [RPC](./core/rpcs.md) - Orchestrating complex workflows
+- [RPC](./core/rpcs/index.md) - Orchestrating complex workflows
 - [Errors](./core/errors.md) - Error handling patterns

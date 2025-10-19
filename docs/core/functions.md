@@ -247,7 +247,7 @@ RPC calls are great for orchestrating complex workflows while maintaining securi
 <!-- TODO: Document bailout mechanism for skipping auth/permissions in trusted contexts -->
 :::
 
-See [RPC (Remote Procedure Calls)](./rpcs.md) for more details on when and how to use RPC.
+See [RPC (Remote Procedure Calls)](./rpcs/index.md) for more details on when and how to use RPC.
 
 ## Error Handling
 

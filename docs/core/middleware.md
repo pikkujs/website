@@ -339,6 +339,6 @@ pikkuMiddleware((services, interaction, next) => { ... })
 
 ## Next Steps
 
-- [Permissions](./permissions.md) - Authorization and guards
+- [Permissions](./permission-guards.md) - Authorization and permissions
 - [Functions](./functions.md) - Understanding Pikku functions
 - [HTTP Wiring](../http/index.md) - Wire functions to HTTP routes
