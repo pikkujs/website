@@ -396,44 +396,48 @@ wireMCPPrompt({
               </div>
 
               {/* Deployment selector with icons */}
-              <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6 max-w-3xl mx-auto">
-                {Object.entries(deploymentOptions[activeProtocol]).map(([key, deployment]) => (
-                  <div
-                    key={key}
-                    onClick={() => setActiveDeployment(key)}
-                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-3 shadow-md hover:shadow-xl transition-all cursor-pointer ${
-                      activeDeployment === key ? 'ring-2 ring-primary' : ''
-                    }`}
-                  >
-                    <div className="flex flex-col items-center">
-                      <Image
-                        sources={{
-                          light: `img/logos/${deployment.img.light}`,
-                          dark: `img/logos/${deployment.img.dark}`
-                        }}
-                        width={40}
-                        height={40}
-                        className="mb-2"
-                      />
-                      <span className="text-xs font-semibold text-center text-gray-900 dark:text-gray-100">
-                        {deployment.name}
-                      </span>
+              {deploymentOptions[activeProtocol] && (
+                <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6 max-w-3xl mx-auto">
+                  {Object.entries(deploymentOptions[activeProtocol]).map(([key, deployment]) => (
+                    <div
+                      key={key}
+                      onClick={() => setActiveDeployment(key)}
+                      className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-3 shadow-md hover:shadow-xl transition-all cursor-pointer ${
+                        activeDeployment === key ? 'ring-2 ring-primary' : ''
+                      }`}
+                    >
+                      <div className="flex flex-col items-center">
+                        <Image
+                          sources={{
+                            light: `img/logos/${deployment.img.light}`,
+                            dark: `img/logos/${deployment.img.dark}`
+                          }}
+                          width={40}
+                          height={40}
+                          className="mb-2"
+                        />
+                        <span className="text-xs font-semibold text-center text-gray-900 dark:text-gray-100">
+                          {deployment.name}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
               {/* Deployment code */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-primary">
-                <div className="flex items-center mb-4">
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                    {deploymentOptions[activeProtocol][activeDeployment].name}
-                  </span>
+              {deploymentOptions[activeProtocol] && deploymentOptions[activeProtocol][activeDeployment] && (
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-primary">
+                  <div className="flex items-center mb-4">
+                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                      {deploymentOptions[activeProtocol][activeDeployment].name}
+                    </span>
+                  </div>
+                  <CodeBlock language="typescript">
+                    {deploymentOptions[activeProtocol][activeDeployment].code}
+                  </CodeBlock>
                 </div>
-                <CodeBlock language="typescript">
-                  {deploymentOptions[activeProtocol][activeDeployment].code}
-                </CodeBlock>
-              </div>
+              )}
             </div>
           )}
         </div>
