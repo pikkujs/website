@@ -1,127 +1,342 @@
 ---
-sidebar_position: 0 
+sidebar_position: 0
 title: HTTP Routes
-description: Mapping HTTP calls to functions  
+description: Connecting functions to HTTP endpoints
 ---
 
-HTTP API routes in Pikku serve as the entry points for handling HTTP requests. When a request is made, an HTTP API route is registered on a specified path and processes the request.
+# HTTP Routes
 
-## Binding a HTTP Route
+HTTP routes are how you connect your Pikku functions to the web. Once you've written your domain functions, you wire them to HTTP endpoints - turning them into REST APIs that can be called from browsers, mobile apps, or any HTTP client.
 
-An API route is a configuration object that defines the behavior for a specific HTTP request. Here is an example that demonstrates setting up routes for fetching and updating a book:
+Your functions don't need to know they're being called via HTTP (but you can access the HTTP object if you like). They just receive data, do their work, and return results. Pikku handles all the HTTP-specific details like status codes, headers, request parsing, and error responses.
+
+## Your First HTTP Route
+
+Let's wire a function to an HTTP endpoint:
 
 ```typescript
-wireHTTP({
-  // The method type
-  method: 'patch',
-  // The method route
-  route: '/todo/:todoId',
-  // The function to call
-  func: updateTodo,
-  // The permissions to check before calling the function (supports both and/ors)
-  permissions: {
-    isTodoCreator: [isTodoCreator, withinAPILimits],
-    isAdmin
+// books.function.ts
+import { pikkuFunc } from '#pikku/pikku-types.gen.js'
+
+export const getBook = pikkuFunc<{ bookId: string }, Book>({
+  func: async ({ database }, data) => {
+    try {
+      return await database.query('book', { bookId: data.bookId })
+    } catch (e) {
+      throw new NotFoundError()
+    }
   },
-  // Whether the route needs a session
-  auth: true,
-  // Info to use when generating OpenAPI docs
   docs: {
-    errors: [NotFoundError],
-    description: 'Updates a todo',
-    tags: ['todos']
+    summary: 'Fetch a book by ID',
+    tags: ['books'],
+    errors: ['NotFoundError']
   }
 })
 ```
 
-## How HTTP Routes work
+```typescript
+// get-book.http.ts
+import { wireHTTP } from './pikku-types.gen.js'
+import { getBook } from './functions/books.function.js'
 
-<details>
- <summary>The HTTP flow diagram</summary>
-```mermaid
-flowchart TB
-  Event([HTTP Request])
-  Match[Match Route]
-  Auth[Auth / Session]
-  Data[Data Extraction]
-  Permissions[Permissions]
-  Validation[Payload Validation]
-  Function[Function]
-  Error[Map to correct error code]
-  Response([HTTP Response])
-
-  Event --> Match --> Auth --> Data --> Permissions --> Validation --> Function 
-
-  Match -- not found --> Response
-  Auth -- invalid/missing session --> Response
-  Permissions -- denied --> Response
-  Validation -- invalid --> Response
-  Function -- error --> Error
-  Error --> Response
-  Function -- success --> Response
+wireHTTP({
+  method: 'get',
+  route: '/books/:bookId',
+  func: getBook
+})
 ```
-</details>
 
-#### **Finding the route**
+That's it! Your function is now available at `GET /books/:bookId`. Pikku automatically:
+- Extracts `:bookId` from the URL path
+- Merges it with any query parameters
+- Validates the data against your function's input type
+- Calls your function with the clean, typed data
+- Converts the result to a JSON response
+- Maps any errors to appropriate HTTP status codes
 
-Check if the route is registered.
+## Wiring Configuration
 
-#### **Validating the session (if required)**
-
-If the route doesn't have `auth: false` it will then try to retrieve the user session via the [UserSessionService](../api/user-session-service.md).
-
-#### **Extracting and validating request data**
-
-<details>
-<summary>Handling Data Conflicts</summary>
-
-Pikku takes a strict approach to prevent conflicts between different data sources. Below are three common approaches to handling data conflicts:
-
-| **Approach**                         | **Pros**                                                                 | **Cons**                                                                    |
-|--------------------------------------|--------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| **1. Explicit Source Selection**     | - Clear and unambiguous.                                                 | - Requires more code to handle data from each source explicitly.            |
-|                                      | - Reduces accidental conflicts.                                          | - Tedious when sharing many parameters across different sources.            |
-|                                      | - Ideal for generating documentation.                                    |                                                                             |
-| **2. Establish Priority Rules**      | - Allows flexibility without needing explicit handling for each source.  | - Implicit rules can lead to unexpected behavior.                           |
-|                                      | - Convenient for simple cases.                                           | - Debugging becomes harder in the event of priority conflicts.              |
-| **3. Fail Fast for Conflicting Data**| - Enforces consistency upfront.                                          | - Introduces additional error-handling logic.                               |
-|                                      | - Flags ambiguous situations early, ensuring data integrity.             | - Users must provide consistent values across all sources.                  |
-</details>
-
-Pikku automatically merges request data from query parameters, path parameters, and the request body. If conflicting data is found (e.g., `bookId` in the path and body don't match), an error is thrown to ensure consistency. 
-
-For instance, given the following route and request:
+The `wireHTTP` function accepts a configuration object with all routing options:
 
 ```typescript
-/v1/book/:bookId
+import { wireHTTP } from './pikku-types.gen.js'
+import { deleteBook } from './functions/books.function.js'
+import { requireBookOwner, requireAdmin } from './permissions.js'
+import { auditMiddleware, setCookieMiddleware } from './middleware.js'
+
+wireHTTP({
+  // Required
+  method: 'delete',
+  route: '/books/:bookId',
+  func: deleteBook,
+
+  // Optional - Authentication
+  auth: true,  // Requires user session (default: true)
+
+  // Optional - Permissions
+  permissions: {
+    owner: requireBookOwner,
+    admin: requireAdmin
+  },
+
+  // Optional - Middleware
+  middleware: [auditMiddleware, setCookieMiddleware],
+
+  // Optional - Server-Sent Events
+  sse: false,  // Enable SSE for GET routes (default: false)
+
+  // Optional - Documentation
+  docs: {
+    description: 'Delete a book from the library',
+    tags: ['books'],
+    errors: ['NotFoundError', 'UnauthorizedError']
+  }
+})
 ```
+
+Let's break down each option:
+
+### Method
 
 ```typescript
-httpPost(`/v1/book/abc?bookId=abc`, {
-    bookId: 'abc'
-});
+method: 'get' | 'post' | 'put' | 'patch' | 'delete'
 ```
 
-If all sources match, the request proceeds. If there are discrepancies, an error is generated.
+The HTTP method for this route.
 
-#### **Handling permissions**
+### Route
 
-You can see how permissions work in depth [here](../core/permission-guards.md).
+Route patterns use path parameters with `:` syntax:
 
-#### **Validating Payload**
+```typescript
+wireHTTP({
+  method: 'get',
+  route: '/books/:bookId',        // Single parameter
+  func: getBook
+})
 
-Pikku automatically ensures that any parameters used in the paths are inside of the data object. If they are missing it would throw an error.
+wireHTTP({
+  method: 'get',
+  route: '/authors/:authorId/books/:bookId',  // Multiple parameters
+  func: getAuthorBook
+})
+```
 
-It also automatically extracts the input type during compile time which creates a json schema to validate against.
+### Func
 
-You can see more about it [here](../concepts/types-and-schemas.md).
+The Pikku function to call when this route is matched. Import from your `*.function.ts` files.
 
-#### **Returning a success response or an error code**
+### Auth
 
-The final stage is taking the result of the pipeline, whether it's an error message from any of the stages or the response from the function, and sending it back via a response.
+Override the function's default authentication requirement:
 
-If an error was thrown, it would use the [error](../core/errors.md) mechanism to map it to the correct message and status code.
+```typescript
+// Public endpoint - no auth required
+wireHTTP({
+  method: 'get',
+  route: '/books',
+  func: listBooks,
+  auth: false
+})
+```
 
-## Summary
+By default, functions require authentication (`auth: true`).
 
-API routes in Pikku map HTTP requests to functions, providing a structured, consistent approach to request handling. This method guarantees data validation, error handling, and session management, ensuring that requests are handled securely and efficiently. In future iterations, improvements to scalability, schema inference, and documentation generation will be explored.
+### Permissions
+
+Add transport-specific permissions for this HTTP route:
+
+```typescript
+wireHTTP({
+  method: 'delete',
+  route: '/books/:bookId',
+  func: deleteBook,
+  permissions: {
+    owner: requireBookOwner,
+    admin: requireAdmin
+  }
+})
+```
+
+These permissions **add to** the permissions defined on the function itself.
+
+You can also apply permissions globally or to route prefixes:
+
+```typescript
+import { addHTTPPermission } from './pikku-types.gen.js'
+import { requireAuth, requireAdmin } from './permissions.js'
+
+// Global permissions - applies to all HTTP routes
+addHTTPPermission('*', {
+  auth: requireAuth
+})
+
+// Prefix permissions - applies to routes starting with /admin
+addHTTPPermission('/admin', {
+  admin: requireAdmin
+})
+```
+
+See [Permission Guards](../core/permission-guards.md) for more details.
+
+### Middleware
+
+Attach middleware that runs specifically for this wire:
+
+```typescript
+import { setCookieMiddleware, auditMiddleware } from './middleware.js'
+
+wireHTTP({
+  method: 'post',
+  route: '/login',
+  func: login,
+  middleware: [setCookieMiddleware, auditMiddleware]
+})
+```
+
+You can also apply middleware globally or to route prefixes:
+
+```typescript
+import { addHTTPMiddleware } from './pikku-types.gen.js'
+import { corsMiddleware, loggingMiddleware, adminAuthMiddleware } from './middleware.js'
+
+// Global - applies to all HTTP routes
+addHTTPMiddleware([corsMiddleware, loggingMiddleware])
+
+// Prefix - applies to routes starting with /admin
+addHTTPMiddleware('/admin', [adminAuthMiddleware])
+```
+
+Middleware runs in this order:
+1. Global HTTP middleware
+2. Prefix-based middleware (`/admin/*`)
+3. Tag-based middleware
+4. Wire-specific middleware (defined in `wireHTTP`)
+5. Function-level middleware
+
+See [Middleware](../core/middleware.md) for more details.
+
+### SSE (Server-Sent Events)
+
+Enable Server-Sent Events for GET routes:
+
+```typescript
+wireHTTP({
+  method: 'get',
+  route: '/jobs/:jobId/progress',
+  func: streamProgress,
+  sse: true  // Enables SSE
+})
+```
+
+Your function can then send incremental updates through the `channel` service. See [Server-Sent Events](./server-sent-events.md) for more details.
+
+### Docs
+
+Documentation for OpenAPI generation:
+
+```typescript
+docs: {
+  description: 'Detailed description of what this endpoint does',
+  tags: ['category'],
+  errors: ['NotFoundError', 'BadRequestError']
+}
+```
+
+Combined with the `docs` on your function, this generates complete OpenAPI documentation. See [OpenAPI](./openapi.md) for more details.
+
+## How Data Flows
+
+Pikku automatically merges data from multiple sources into a single, typed input for your function:
+
+```typescript
+// GET /books/123?includeAuthor=true
+wireHTTP({
+  method: 'get',
+  route: '/books/:bookId',
+  func: getBook
+})
+
+// Your function receives:
+// { bookId: '123', includeAuthor: true }
+```
+
+For POST/PUT/PATCH requests, body data is also merged:
+
+```typescript
+// POST /books with body: { title: 'My Book', author: 'Jane' }
+wireHTTP({
+  method: 'post',
+  route: '/books',
+  func: createBook
+})
+
+// Your function receives:
+// { title: 'My Book', author: 'Jane' }
+```
+
+If the same parameter appears in multiple places (path, query, body), they must all have the same value - otherwise Pikku throws a validation error to prevent ambiguity.
+
+:::note
+This means data sent as an array in a body will be passed in as `data.data`, since the query keys will live on the top-most object. The same applies to ArrayBuffers.
+:::
+
+## Error Handling
+
+Pikku automatically maps errors to HTTP status codes. You can use built-in errors or create custom ones:
+
+```typescript
+// errors.ts
+import { PikkuError } from '@pikku/core/errors'
+import { addError } from '#pikku/pikku-types.gen.js'
+
+export class BookNotAvailableError extends PikkuError {
+}
+
+// Register the error with HTTP status code
+addError(BookNotAvailableError, {
+  status: 409,  // Conflict
+  message: 'Book is currently unavailable'
+})
+```
+
+Now use your custom error in functions:
+
+```typescript
+import { NotFoundError, BadRequestError } from '@pikku/core/errors'
+import { BookNotAvailableError } from './errors.js'
+
+export const borrowBook = pikkuFunc<{ bookId: string }, BorrowResult>({
+  func: async ({ database }, data) => {
+    const book = await database.query('book', { bookId: data.bookId })
+
+    if (!book) {
+      throw new NotFoundError('Book not found')  // → 404
+    }
+
+    if (book.status === 'borrowed') {
+      throw new BookNotAvailableError('This book is already borrowed')  // → 409
+    }
+
+    return await database.update('book', {
+      where: { bookId: data.bookId },
+      set: { status: 'borrowed' }
+    })
+  },
+  docs: {
+    summary: 'Borrow a book',
+    tags: ['books'],
+    errors: ['NotFoundError', 'BookNotAvailableError']
+  }
+})
+```
+
+See [Errors](../core/errors.md) for more on error handling.
+
+## Next Steps
+
+- [Global HTTP Middleware and Permissions](./router.md)
+- [Server-Sent Events](./server-sent-events.md)
+- [OpenAPI Documentation](./openapi.md)
+- [CORS Configuration](./cors.md)
+- [Fetch Client](./fetch-client.md) - Type-safe HTTP client generation

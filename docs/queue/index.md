@@ -1,113 +1,245 @@
 ---
 sidebar_position: 0
 title: Introduction
-description: Process background jobs with reliable message delivery
+description: Background job processing with queues
 ---
-
-<AIDisclaimer />
-
-:::info
-Pikku Queues is a new feature with a small feature set, we'll be expanding on it but need to ensure that changes exposed from underlying queue systems are supported by most.
-:::
 
 # Background Queues
 
-Background queues allow you to process jobs asynchronously, providing reliable message delivery, retry logic, and concurrency control. This is essential for tasks that don't need immediate responses or require heavy processing.
+Queues let you process work in the background - sending emails, processing payments, generating reports, or any task that doesn't need an immediate response. Your functions work the same whether you're using Redis (BullMQ), PostgreSQL (pg-boss), or cloud queues (AWS SQS).
 
-## Overview
+Your domain functions don't need to know they're being called from a queue. They just receive typed job data, do their work, and optionally return results. Pikku handles all the queue-specific details like retries, concurrency, and error handling.
 
-Pikku's queue system provides a unified interface for background job processing across different queue providers. Whether you're using Redis, PostgreSQL, or cloud-based queues, Pikku abstracts the complexity while maintaining type safety and performance.
+## Your First Queue Worker
 
-### Key Features
-
-- **Type-safe job processing** - Full TypeScript support for job data and results
-- **Multiple queue providers** - Support for BullMQ, pg-boss, and AWS SQS
-- **Automatic retries** - Configurable retry logic with exponential backoff
-- **Job scheduling** - Delayed and scheduled job execution
-- **Concurrency control** - Control how many jobs run simultaneously
-- **Job monitoring** - Track job progress and results
-- **Dead letter queues** - Handle failed jobs gracefully
-
-## Quick Start
-
-### 1. Declare a Queue Function
-
-Queue functions are regular Pikku functions that process background jobs:
+Let's process welcome emails in the background:
 
 ```typescript
-// queue-worker.functions.ts
-import { pikkuSessionlessFunc } from '@pikku/core'
+// email.function.ts
+import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
 
-export const processEmail = pikkuSessionlessFunc<
-  { to: string; subject: string; body: string },
-  { messageId: string }
->(async (context, data) => {
-  // Process the email
-  const messageId = await sendEmail(data.to, data.subject, data.body)
-  return { messageId }
-})
-```
+export const sendWelcomeEmail = pikkuFuncSessionless<
+  { userId: string; email: string; name: string },
+  void
+>({
+  func: async ({ emailService, logger }, data) => {
+    logger.info('Sending welcome email', { userId: data.userId })
 
-### 2. Register the Queue Worker
+    await emailService.send({
+      to: data.email,
+      subject: `Welcome ${data.name}!`,
+      template: 'welcome',
+      data: { name: data.name }
+    })
 
-Wire your function to a queue name:
-
-```typescript
-// queue-worker.wiring.ts
-import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
-import { processEmail } from './queue-worker.functions.js'
-
-wireQueueWorker({
-  queueName: 'email-queue',
-  func: processEmail,
-  config: {
-    concurrency: 5,
-    retries: 3
+    logger.info('Welcome email sent', { userId: data.userId })
+  },
+  auth: false,  // Queue jobs don't have user sessions
+  docs: {
+    summary: 'Send welcome email to new users',
+    tags: ['email']
   }
 })
 ```
 
-### 3. Use the Queue Client
-
-Add jobs to the queue from your application:
-
 ```typescript
-// In your application code
-import { PikkuQueue } from './.pikku/pikku-queue.gen'
+// email.queue.ts
+import { wireQueueWorker } from './pikku-types.gen.js'
+import { sendWelcomeEmail } from './functions/email.function.js'
 
-const queueService = new PikkuQueue(queueProvider)
-
-// Add a job to the queue
-const jobId = await queueService.add('email-queue', {
-  to: 'user@example.com',
-  subject: 'Welcome!',
-  body: 'Thanks for signing up!'
+wireQueueWorker({
+  queue: 'email',
+  func: sendWelcomeEmail
 })
-
-// Get job status
-const job = await queueService.getJob('email-queue', jobId)
-const result = await job.waitForCompletion?.()
 ```
 
-## Core Concepts
+## Queue Functions
 
-### Queue Functions
+Queue functions use `pikkuFuncSessionless` since background jobs don't have user sessions:
 
-Queue functions are standard Pikku functions that process individual jobs. They receive:
-- **Context**: Standard Pikku context (services, logger, etc.)
-- **Data**: Type-safe job payload
+```typescript
+export const processPayment = pikkuFuncSessionless<
+  { orderId: string; amount: number; currency: string },
+  { transactionId: string }
+>({
+  func: async ({ database, paymentService }, data) => {
+    const transaction = await paymentService.charge({
+      amount: data.amount,
+      currency: data.currency
+    })
 
-### Queue Workers
+    await database.update('orders', {
+      where: { orderId: data.orderId },
+      set: { transactionId: transaction.id, status: 'paid' }
+    })
 
-Workers are the bridge between your functions and the queue system. They:
-- Poll for new jobs
-- Execute your function for each job
-- Handle retries and error recovery
-- Report job completion status
+    return { transactionId: transaction.id }
+  },
+  auth: false,
+  docs: {
+    summary: 'Process payment for an order',
+    tags: ['payments'],
+    errors: ['PaymentFailedError']
+  }
+})
+```
 
-### Queue Providers
+:::info Return Values
+Whether your function can return values depends on the queue provider:
+- **BullMQ** and **pg-boss** support return values
+- **AWS SQS** does not
+
+If you need portability, use `void` as the output type.
+:::
+
+## Wiring Configuration
+
+Configure how your queue worker processes jobs:
+
+```typescript
+import { wireQueueWorker } from './pikku-types.gen.js'
+import { processPayment } from './functions/payment.function.js'
+
+wireQueueWorker({
+  // Required
+  queue: 'payments',
+  func: processPayment,
+
+  // Optional configuration
+  config: {
+    // Processing
+    batchSize: 3,              // Messages to process in batch/parallel
+    prefetch: 10,              // Messages to prefetch for efficiency
+    pollInterval: 5000,        // Polling interval for pull-based queues (ms)
+
+    // Timeouts
+    visibilityTimeout: 300,    // Message visibility timeout (seconds)
+    lockDuration: 30000,       // Job lock duration (ms)
+    drainDelay: 5,             // Wait time when queue is empty (seconds)
+
+    // Job Management
+    removeOnComplete: 100,     // Keep N completed jobs
+    removeOnFail: 50,          // Keep N failed jobs
+    maxStalledCount: 3,        // Max job recovery attempts
+
+    // Other
+    name: 'payment-worker',    // Worker name for monitoring
+    autorun: true,             // Auto-start processor
+  },
+
+  // Optional middleware
+  middleware: [auditMiddleware],
+
+  // Optional tags
+  tags: ['payments', 'critical']
+})
+```
+
+:::note Configuration Availability
+Different queue providers support different options. Pikku logs which options aren't supported during runtime, allowing you to configure optimally for each queue type while keeping your function code portable.
+
+For example:
+- **SQS** and **pg-boss** use polling (`pollInterval`)
+- **BullMQ** (Redis) uses push notifications
+- Not all queues support all timeout/retry options
+:::
+
+## Adding Jobs to Queues
+
+Pikku provides a type-safe queue client for adding and monitoring jobs. The client can be used from any codebase (Pikku or non-Pikku) and provides full type safety based on your queue function definitions.
+
+See [Queue Client](./client.md) for details on adding jobs, monitoring progress, and working with job results.
+
+## Error Handling
+
+Queue functions should throw errors for failures - Pikku handles the retry logic:
+
+```typescript
+export const processPayment = pikkuFuncSessionless<PaymentInput, void>({
+  func: async ({ paymentService, logger }, data) => {
+    try {
+      await paymentService.charge(data)
+      logger.info('Payment processed', { orderId: data.orderId })
+    } catch (error) {
+      logger.error('Payment failed', {
+        orderId: data.orderId,
+        error: error.message
+      })
+
+      // Throw to trigger retry
+      throw new PaymentFailedError(error.message)
+    }
+  },
+  auth: false,
+  docs: {
+    summary: 'Process payment',
+    tags: ['payments'],
+    errors: ['PaymentFailedError']
+  }
+})
+```
+
+The queue system will automatically:
+1. Retry the job based on your retry configuration
+2. Use exponential backoff between retries (if supported)
+3. Move to dead letter queue after max retries (if configured)
+
+## Monitoring Job Progress
+
+For long-running jobs, you can report progress using the `interaction.queue` object:
+
+```typescript
+export const generateReport = pikkuFuncSessionless<
+  { reportId: string },
+  void
+>({
+  func: async ({ database, interaction }, data) => {
+    // Update progress if queue supports it
+    if (interaction.queue?.updateProgress) {
+      await interaction.queue.updateProgress(0)
+    }
+
+    const data1 = await database.query('...')
+    await interaction.queue?.updateProgress(33)
+
+    const data2 = await database.query('...')
+    await interaction.queue?.updateProgress(66)
+
+    await generateReportFile(data1, data2)
+    await interaction.queue?.updateProgress(100)
+  },
+  auth: false
+})
+```
+
+The `interaction.queue` object also provides:
+- `fail(reason)` - Mark the job as failed with a reason
+- `discard()` - Discard the job (won't retry)
+- `queueName` - The name of the queue
+- `jobId` - The unique job identifier
+
+## Queue Providers
 
 Pikku supports multiple queue backends:
-- **BullMQ** - Redis-based queues with advanced features
-- **pg-boss** - PostgreSQL-based queues with ACID guarantees
-- **AWS SQS** - Cloud-native queues with serverless scaling
+
+### BullMQ (Redis)
+- Push-based (no polling needed)
+- Advanced features (priority, delayed jobs, job events)
+- Great for high-throughput systems
+- See [BullMQ Runtime](../runtimes/bullmq.md)
+
+### pg-boss (PostgreSQL)
+- Poll-based
+- ACID guarantees
+- No additional infrastructure if you already use PostgreSQL
+- See [PG Boss Runtime](../runtimes/pg-boss.md)
+
+### AWS SQS
+- Cloud-native serverless queues
+- Auto-scaling
+- Pay per message
+
+## Next Steps
+
+- [Queue Registration](./registration.md) - Detailed configuration options
+- [Queue Client](./client.md) - Adding and monitoring jobs with type safety

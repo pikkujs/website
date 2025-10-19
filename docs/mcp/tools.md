@@ -1,143 +1,233 @@
 # MCP Tools
 
-MCP tools are functions that AI models can call to perform actions. They receive typed parameters and return structured content.
+Tools let AI agents perform actions in your application. They can create records, modify state, trigger operations, or orchestrate complex workflows.
 
-## Creating Tools
+**Recommended Pattern**: Keep your MCP tools thin. Use RPC to invoke your existing domain functions, then format the response for MCP. This keeps your business logic reusable and your codebase clean.
 
-Use `pikkuMCPToolFunc` to create MCP tools:
+## Your First Tool
+
+Let's create a tool that creates issues. Both the domain function and MCP adapter live in the same file:
 
 ```typescript
-import { pikkuMCPToolFunc } from '../.pikku/pikku-types.gen.js'
+// issues.function.ts
+import { pikkuFunc, pikkuMCPToolFunc } from '#pikku/pikku-types.gen.js'
+import type { MCPToolResponse } from '#pikku/pikku-types.gen.js'
 
-export const sayHello = pikkuMCPToolFunc<{ name?: string }>(
-  async (services, { name = 'World' }) => {
-    services.logger.info(`Saying hello to: ${name}`)
+// Domain function - reusable across all transports
+export const createIssue = pikkuFunc<
+  { title: string; description: string; priority: 'low' | 'medium' | 'high' },
+  { id: string; title: string; status: string }
+>({
+  func: async ({ database, logger }, data) => {
+    logger.info('Creating issue', { title: data.title })
+
+    const issue = await database.insert('issues', {
+      title: data.title,
+      description: data.description,
+      priority: data.priority,
+      status: 'open',
+      createdAt: Date.now()
+    })
+
+    return issue
+  },
+  docs: {
+    summary: 'Create a new issue',
+    tags: ['issues'],
+    errors: ['BadRequestError']
+  }
+})
+
+// MCP adapter - just formats the response for AI agents
+export const createIssueMCP = pikkuMCPToolFunc<
+  { title: string; description: string; priority: 'low' | 'medium' | 'high' },
+  MCPToolResponse
+>({
+  func: async ({ rpc }, data) => {
+    const issue = await rpc.invoke('createIssue', data)
 
     return [
       {
         type: 'text',
-        text: `Hello, ${name}! This is a Pikku MCP tool.`,
-      },
-    ]
-  }
-)
-```
-
-## Tool with Complex Parameters
-
-Tools can have complex typed parameters with validation:
-
-```typescript
-export const calculate = pikkuMCPToolFunc<{
-  operation: 'add' | 'subtract' | 'multiply' | 'divide'
-  a: number
-  b: number
-}>(async ({ logger }, { operation, a, b }) => {
-  logger.info(`Calculating: ${a} ${operation} ${b}`)
-
-  let result: number
-
-  switch (operation) {
-    case 'add':
-      result = a + b
-      break
-    case 'subtract':
-      result = a - b
-      break
-    case 'multiply':
-      result = a * b
-      break
-    case 'divide':
-      if (b === 0) {
-        throw new Error('Division by zero is not allowed')
+        text: `Created issue #${issue.id}: ${issue.title} (${issue.status})`
       }
-      result = a / b
-      break
-    default:
-      throw new Error(`Unknown operation: ${operation}`)
+    ]
+  },
+  docs: {
+    summary: 'Create a new issue (MCP adapter)',
+    tags: ['mcp', 'issues']
   }
-
-  return [
-    {
-      type: 'text',
-      text: `The result of ${a} ${operation} ${b} is ${result}.`,
-    },
-  ]
 })
 ```
 
-## Tool Management
+```typescript
+// issues.mcp.ts
+import { wireMCPTool } from './pikku-types.gen.js'
+import { createIssueMCP } from './functions/issues.function.js'
 
-Tools can manage other tools dynamically:
+wireMCPTool({
+  name: 'createIssue',
+  description: 'Create a new issue in the tracker',
+  func: createIssueMCP,
+  tags: ['issues', 'write']
+})
+```
+
+Now your business logic in `createIssue` can be used from HTTP, WebSocket, queues, or MCP - and `createIssueMCP` just makes it MCP-compatible.
+
+## Complex Operations
+
+For complex workflows, invoke multiple functions via RPC:
 
 ```typescript
-export const disableTool = pikkuMCPToolFunc<{ name: string }>(
-  async (services, { name }) => {
-    const changed = await services.mcp.enableTools({ [name]: false })
-    if (changed) {
-      return [
-        {
-          type: 'text',
-          text: `Tool '${name}' has been disabled.`,
-        },
-      ]
-    } else {
-      return [
-        {
-          type: 'text',
-          text: `Tool '${name}' is not enabled or does not exist.`,
-        },
-      ]
+// Domain function
+export const processOrder = pikkuFunc<
+  { orderId: string },
+  { orderId: string; invoiceId: string; paymentId: string; status: string }
+>({
+  func: async ({ database, rpc, logger }, data) => {
+    logger.info('Processing order', { orderId: data.orderId })
+
+    const invoice = await rpc.invoke('generateInvoice', {
+      orderId: data.orderId
+    })
+
+    const payment = await rpc.invoke('processPayment', {
+      invoiceId: invoice.id
+    })
+
+    await rpc.invoke('sendConfirmationEmail', {
+      orderId: data.orderId,
+      paymentId: payment.id
+    })
+
+    const order = await database.update('orders', {
+      where: { id: data.orderId },
+      set: { status: 'completed', completedAt: Date.now() }
+    })
+
+    return {
+      orderId: order.id,
+      invoiceId: invoice.id,
+      paymentId: payment.id,
+      status: order.status
     }
+  },
+  docs: {
+    summary: 'Process an order end-to-end',
+    tags: ['orders']
   }
-)
+})
 ```
-
-## Registering Tools
-
-Register your tools in the routes file:
 
 ```typescript
-// mcp.routes.ts
-import { wireMCPTool } from '../.pikku/pikku-types.gen.js'
-import { sayHello, calculate, disableTool } from './mcp.functions.js'
+// MCP adapter
+export const processOrderMCP = pikkuMCPToolFunc<
+  { orderId: string },
+  MCPToolResponse
+>({
+  func: async ({ rpc }, data) => {
+    const result = await rpc.invoke('processOrder', data)
 
-wireMCPTool({
-  name: 'sayHello',
-  description: 'Greet someone with a friendly hello message',
-  func: sayHello,
-  tags: ['greeting', 'hello', 'demo'],
-})
-
-wireMCPTool({
-  name: 'calculate',
-  description:
-    'Perform basic mathematical operations (add, subtract, multiply, divide)',
-  func: calculate,
-  tags: ['math', 'calculator', 'arithmetic'],
-})
-
-wireMCPTool({
-  name: 'disableTool',
-  description: 'Disable a tool by name',
-  func: disableTool,
-  tags: [],
+    return [
+      {
+        type: 'text',
+        text: `Processed order ${result.orderId}\nInvoice: #${result.invoiceId}\nPayment: #${result.paymentId}\nStatus: ${result.status}`
+      }
+    ]
+  },
+  docs: {
+    summary: 'Process an order (MCP adapter)',
+    tags: ['mcp', 'orders']
+  }
 })
 ```
 
-## Return Types
+## Response Format
 
-Tools return an array of content blocks. Each block has a `type` and corresponding content:
+Tools must return an array of content blocks:
 
-- `text`: Plain text content
-- `image`: Image content (if supported)
-- `resource`: Reference to a resource
+```typescript
+type MCPToolResponse = Array<
+  | { type: 'text'; text: string }
+  | { type: 'image'; data: string }
+>
+```
+
+Most tools return text responses:
 
 ```typescript
 return [
   {
     type: 'text',
-    text: 'This is the response text',
-  },
+    text: 'Operation completed successfully'
+  }
 ]
 ```
+
+For operations with visual output, you can return images (base64-encoded):
+
+```typescript
+export const generateChartMCP = pikkuMCPToolFunc<
+  { datasetId: string },
+  MCPToolResponse
+>({
+  func: async ({ rpc }, data) => {
+    const chartData = await rpc.invoke('generateChart', data)
+
+    return [
+      {
+        type: 'text',
+        text: 'Generated chart:'
+      },
+      {
+        type: 'image',
+        data: chartData.base64Image
+      }
+    ]
+  },
+  docs: {
+    summary: 'Generate chart (MCP adapter)',
+    tags: ['mcp', 'charts']
+  }
+})
+```
+
+## Wiring Configuration
+
+Wire your tool functions with these options:
+
+```typescript
+import { wireMCPTool } from './pikku-types.gen.js'
+import { processOrderMCP } from './functions/orders.mcp-function.js'
+import { requireAdmin } from './permissions.js'
+import { auditMiddleware } from './middleware.js'
+
+wireMCPTool({
+  // Required
+  name: 'processOrder',
+  description: 'Process an order end-to-end',
+  func: processOrderMCP,
+
+  // Optional
+  middleware: [auditMiddleware],
+  permissions: { admin: requireAdmin },
+  tags: ['orders', 'admin']
+})
+```
+
+## Why This Pattern?
+
+Keeping MCP tools as thin adapters has several benefits:
+
+1. **Reusability**: Your domain functions work across all transports (HTTP, WebSocket, queues, CLI, MCP)
+2. **Testability**: Test business logic separately from MCP formatting
+3. **Consistency**: Same validation, auth, and permission logic everywhere
+4. **Maintainability**: Changes to business logic don't require updating MCP adapters
+
+The MCP function's only job is to format the response for AI agents. All the real work happens in your reusable domain functions.
+
+## Next Steps
+
+- [MCP Resources](./resources.md) - Provide data sources for AI agents
+- [MCP Prompts](./prompts.md) - Generate structured conversation templates

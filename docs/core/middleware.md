@@ -1,14 +1,12 @@
 ---
 sidebar_position: 10
-title: Middleware  
-description: How middleware works 
+title: Middleware
+description: How middleware works
 ---
 
-In Pikku we have the main `Functions` that are run.
+# Middleware
 
-Each middleware is called in order before the main function, and then called in reverse once the function is completed.
-
-This is similar to the onion approach used by Koa and Hono.
+Middleware in Pikku follows an onion model - each middleware wraps around the next, running before and after your function executes. This is the same pattern used by Koa and Hono.
 
 ```mermaid
 graph LR
@@ -28,191 +26,319 @@ graph LR
     M1 -->|Response| B(Response)
 ```
 
-A few examples:
+## Your First Middleware
 
-## Response Time
+Let's write middleware that tracks response time:
 
 ```typescript
-const responseTimeMiddlware = async (services, { http }, next) => {
+import { pikkuMiddleware } from '#pikku/pikku-types.gen.js'
+
+export const responseTime = pikkuMiddleware(async ({ logger }, interaction, next) => {
   const start = Date.now()
-  // This will wait until all next middleware and function run
+
+  // Call next middleware/function
   await next()
-  const end = Date.now()
-  http?.response.setHeader('X-Response-Time', `${end - start}`)
-}
-```
 
-## Authentication
-
-This is an example on how you can set the user session by simply grabbing it off an `X-user-id` header.
-
-```typescript
-const userIdFromHeaderMiddleware = async (services, { http }, next) => {
-  await services.userSessionService.set({
-    userId: http.request.getHeader('X-user-id')
-  })
-  // Run next middleware, but nothing else needed
-  await next()
-}
-```
-
-## addMiddleware API
-
-Adds global middleware for a specific tag that applies to any wiring type (HTTP, Channel, Queue, Scheduler, MCP) that includes the matching tag.
-
-### Syntax
-
-```typescript
-import { addMiddleware, pikkuMiddleware } from '@pikku/core'
-
-addMiddleware('tagName', [
-  pikkuMiddleware(({ logger }, interaction, next) => {
-    // Your middleware logic here
-    await next()
-  })
-])
-```
-
-### Parameters
-
-- **tag** (`string`) - The tag that the middleware should apply to
-- **middleware** - Array of middleware functions created with `pikkuMiddleware()`
-
-### Usage
-
-#### Basic Tag-Based Middleware
-
-```typescript
-import { addMiddleware, pikkuMiddleware } from '@pikku/core'
-
-const adminMiddleware = pikkuMiddleware(async ({ userSession }, _interaction, next) => {
-  // Check if user is admin before proceeding
-  const session = await userSession.get()
-  if (session?.role !== 'admin') {
-    throw new Error('Admin access required')
-  }
-  await next()
-})
-
-const loggingMiddleware = pikkuMiddleware(({ logger }, _interaction, next) => {
-  const start = Date.now()
-  logger.info('Request started')
-  
-  await next()
-  
+  // After function completes
   const duration = Date.now() - start
   logger.info(`Request completed in ${duration}ms`)
+
+  // For HTTP, you can set headers
+  if (interaction.http) {
+    interaction.http.response.setHeader('X-Response-Time', `${duration}ms`)
+  }
 })
-
-// Add admin middleware for admin endpoints
-addMiddleware('admin', [adminMiddleware])
-
-// Add logging middleware for all API endpoints
-addMiddleware('api', [loggingMiddleware])
 ```
 
-#### Cross-Wiring Type Middleware
+The middleware:
+- Destructures `logger` from services (tree-shaking benefit)
+- Has access to the `interaction` object (http, channel, queue, etc.)
+- Calls `next()` to continue the chain
+- Can run code before and after the function
 
-The same tag-based middleware will apply across all wiring types:
+## Authentication Middleware
+
+A common use case is extracting authentication info:
 
 ```typescript
-// This middleware will apply to HTTP routes, WebSocket channels, 
-// queue workers, scheduled tasks, and MCP tools that have the 'auth' tag
-const authMiddleware = pikkuMiddleware(async ({ authService, userSession }, interaction, next) => {
-  // Different ways to get auth info depending on the interaction type
+export const authMiddleware = pikkuMiddleware(async ({ jwt, userSession }, interaction, next) => {
   let token = null
-  
+
+  // Extract token based on transport
   if (interaction.http) {
-    token = interaction.http.request.getHeader('Authorization')
-  } else if (interaction.queue) {
-    token = interaction.queue.payload.token
+    token = interaction.http.request.getHeader('Authorization')?.replace('Bearer ', '')
+  } else if (interaction.channel) {
+    // For channels, auth is typically handled during connection
+    token = interaction.channel.channelData?.token
   }
-  // For channels, auth is typically handled during connection setup
-  
-  if (token && await authService.validate(token)) {
-    const session = await authService.getSessionFromToken(token)
-    await userSession.set(session)
+
+  if (token) {
+    try {
+      const payload = await jwt.verify(token)
+      await userSession.set({
+        userId: payload.userId,
+        role: payload.role
+      })
+    } catch (e) {
+      // Invalid token - continue without session
+    }
   }
-  
+
   await next()
 })
-
-addMiddleware('auth', [authMiddleware])
 ```
 
-### Using Tags in Wirings
+## Middleware Scopes
 
-#### HTTP Routes
+Pikku lets you apply middleware at different scopes. Understanding these scopes helps you find the right balance - too broad and you pay a performance cost, too narrow and you end up repeating yourself.
+
+### Function-Level Middleware
+
+Applied directly in your function definition:
 
 ```typescript
-import { wireHTTP } from '@pikku/core'
+export const createOrder = pikkuFunc<OrderInput, Order>({
+  func: async ({ database }, data) => {
+    return await database.insert('orders', data)
+  },
+  middleware: [validateOrder, checkInventory],
+  docs: {
+    summary: 'Create a new order',
+    tags: ['orders']
+  }
+})
+```
 
-// This route will run the 'api' and 'admin' middleware
+Use function-level middleware for:
+- Function-specific validation
+- Business logic guards
+- Operations that only make sense for this specific function
+
+### Wire-Specific Middleware
+
+Applied when wiring a function to a transport:
+
+```typescript
 wireHTTP({
-  method: 'POST',
-  route: '/admin/users',
-  func: createUser,
-  tags: ['api', 'admin'] // Middleware for both tags will be applied
+  method: 'post',
+  route: '/orders',
+  func: createOrder,
+  middleware: [rateLimit, auditLog]
 })
 ```
 
-#### WebSocket Channels
+Use wire-specific middleware for:
+- Transport-specific concerns (rate limiting for HTTP)
+- Route-specific logging or auditing
+- Overriding behavior for a specific endpoint
+
+### HTTP Transport Middleware
+
+For HTTP routes specifically, you can apply middleware globally or per-prefix:
 
 ```typescript
-import { wireChannel } from '@pikku/core'
+import { addHTTPMiddleware } from '#pikku/pikku-types.gen.js'
 
-// This channel will run the 'api' middleware
-wireChannel({
-  name: 'user-notifications',
-  func: handleUserNotification,
-  tags: ['api'] // Only 'api' middleware will be applied
+// All HTTP routes will run this middleware
+addHTTPMiddleware([corsHeaders, securityHeaders])
+
+// All routes starting with /admin will run this middleware
+addHTTPMiddleware('/admin', [requireAuth, requireAdmin])
+
+// All routes starting with /api/v1 will run this middleware
+addHTTPMiddleware('/api/v1', [apiKeyValidation])
+```
+
+Use HTTP transport middleware for:
+- CORS headers for all HTTP routes
+- Security headers for all HTTP responses
+- Admin section protection
+- API versioning concerns
+- Different auth strategies per route prefix
+
+### Scheduler Transport Middleware
+
+For scheduled tasks, you can apply middleware globally:
+
+```typescript
+import { addSchedulerMiddleware } from '#pikku/pikku-types.gen.js'
+
+// All scheduled tasks will run this middleware
+addSchedulerMiddleware([withSchedulerMetrics, withRetry])
+```
+
+Use scheduler transport middleware for:
+- Performance monitoring across all scheduled tasks
+- Retry logic for failed tasks
+- Alerting on task failures
+
+## Execution Order
+
+Middleware executes from the broadest scope inward to the most specific. Think of it like layers of an onion - the outer layers run first:
+
+1. **Transport-specific middleware** - All HTTP (`addHTTPMiddleware([...])`) or all Schedulers (`addSchedulerMiddleware([...])`)
+2. **Prefix-based middleware** - HTTP routes matching prefix (`addHTTPMiddleware('/prefix', [...])`)
+3. **Wire-specific middleware** - Defined in `wireHTTP`/`wireChannel`/etc.
+4. **Function-level middleware** - Defined in function config
+
+After the function completes, they run in reverse order (onion model).
+
+Example showing all scopes:
+
+```typescript
+// Transport-specific - all HTTP routes
+addHTTPMiddleware([corsHeaders])
+
+// Prefix-based - matches /api/v1
+addHTTPMiddleware('/api/v1', [apiKeyValidation])
+
+// Function definition
+export const updateSettings = pikkuFunc<SettingsInput, Settings>({
+  func: async ({ database }, data) => {
+    return await database.update('settings', data)
+  },
+  middleware: [validateSettings],  // Function-level
+  docs: {
+    summary: 'Update system settings',
+    tags: ['settings']
+  }
+})
+
+// Wiring
+wireHTTP({
+  method: 'patch',
+  route: '/api/v1/settings',
+  func: updateSettings,
+  middleware: [auditLog]  // Wire-specific
 })
 ```
 
-#### Queue Workers
+For this request, middleware runs in this order:
+1. `corsHeaders` (transport-specific - all HTTP)
+2. `apiKeyValidation` (prefix-based - matches '/api/v1')
+3. `auditLog` (wire-specific)
+4. `validateSettings` (function-level)
+5. **Your function runs**
+6. `validateSettings` (after)
+7. `auditLog` (after)
+8. `apiKeyValidation` (after)
+9. `corsHeaders` (after)
+
+## Interaction Object
+
+Middleware receives an `interaction` object that varies by transport:
 
 ```typescript
-import { wireQueueWorker } from '@pikku/core'
+export const transportAware = pikkuMiddleware(async (services, interaction, next) => {
+  if (interaction.http) {
+    // HTTP-specific: request, response
+    const userAgent = interaction.http.request.getHeader('User-Agent')
+    interaction.http.response.setHeader('X-Custom', 'value')
+  }
 
-// This queue worker will run the 'api' and 'background' middleware
-wireQueueWorker({
-  queue: 'email-processing',
-  func: processEmailQueue,
-  tags: ['api', 'background']
+  if (interaction.channel) {
+    // Channel-specific: connectionId, channelData, userId
+    const connectionId = interaction.channel.connectionId
+    const customData = interaction.channel.channelData
+  }
+
+  if (interaction.queue) {
+    // Queue-specific: queue name, payload, attempt
+    const attempt = interaction.queue.attempt
+  }
+
+  if (interaction.scheduler) {
+    // Scheduler-specific: cron, lastRun, nextRun
+    const cron = interaction.scheduler.cron
+  }
+
+  await next()
 })
 ```
 
-#### Scheduled Tasks
+## Error Handling
+
+Middleware can catch and transform errors:
 
 ```typescript
-import { wireScheduler } from '@pikku/core'
+export const errorHandler = pikkuMiddleware(async ({ logger }, interaction, next) => {
+  try {
+    await next()
+  } catch (error) {
+    logger.error('Request failed', {
+      error: error.message,
+      stack: error.stack
+    })
 
-// This scheduled task will run the 'background' middleware
-wireScheduler({
-  cron: '0 0 * * *',
-  func: dailyCleanup,
-  tags: ['background']
+    // For HTTP, you can set custom error responses
+    if (interaction.http) {
+      interaction.http.response.setStatus(500)
+      interaction.http.response.setHeader('X-Error-Id', generateErrorId())
+    }
+
+    // Re-throw to let Pikku handle it
+    throw error
+  }
 })
 ```
 
-### Middleware Execution Order
+## Conditional Middleware
 
-Tag-based middleware is executed as part of the overall middleware chain in this order:
-
-1. **Wiring-level tag middleware** (from wiring's `tags` property)
-2. **Wiring-level middleware** (from wiring's `middleware` property)
-3. **Function-level middleware** (from function config's `middleware` property)
-4. **Function-level tag middleware** (from function config's `tags` property)
-
-### Error Handling
-
-If middleware for a tag already exists, an error will be thrown:
+Sometimes you only want middleware to run in certain conditions:
 
 ```typescript
-addMiddleware('api', [middleware1])
+export const conditionalCache = pikkuMiddleware(async ({ cache }, interaction, next) => {
+  // Only cache GET requests
+  if (interaction.http?.request.method !== 'GET') {
+    return await next()
+  }
 
-// This will throw an error
-addMiddleware('api', [middleware2]) 
-// Error: Middleware for tag 'api' already exists. Use a different tag or remove the existing middleware first.
+  const cacheKey = interaction.http.request.path
+  const cached = await cache.get(cacheKey)
+
+  if (cached) {
+    // Short-circuit - don't call next()
+    interaction.http.response.body = cached
+    return
+  }
+
+  await next()
+
+  // Cache the response after function completes
+  await cache.set(cacheKey, interaction.http.response.body)
+})
 ```
 
+## Automatic Schema Validation
+
+Pikku automatically generates and validates schemas based on your TypeScript types. No middleware needed for input validation - it happens before your function runs.
+
+If validation fails, Pikku throws a `ValidationError` with details about which fields failed.
+
+## Best Practices
+
+**Destructure services** - Helps Pikku tree-shake unused services:
+```typescript
+// ✅ Good - only bundles logger
+pikkuMiddleware(({ logger }, interaction, next) => { ... })
+
+// ❌ Bad - bundles all services
+pikkuMiddleware((services, interaction, next) => { ... })
+```
+
+**Find the right scope** - Too broad and you pay a performance cost, too narrow and you repeat yourself. Start specific and broaden only when needed.
+
+**Keep middleware focused** - Each middleware should do one thing well:
+```typescript
+// ✅ Good - separate concerns
+[authMiddleware, loggingMiddleware, metricsMiddleware]
+
+// ❌ Bad - doing too much
+[authLoggingMetricsMiddleware]
+```
+
+## Next Steps
+
+- [Permissions](./permissions.md) - Authorization and guards
+- [Functions](./functions.md) - Understanding Pikku functions
+- [HTTP Wiring](../http/index.md) - Wire functions to HTTP routes
