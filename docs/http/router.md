@@ -6,188 +6,235 @@ description: Global HTTP middleware and permissions for routes
 
 # HTTP Router APIs
 
-The HTTP router APIs allow you to register global middleware and permissions that apply to HTTP routes based on path patterns. These are useful for cross-cutting concerns like authentication, logging, rate limiting, and access control.
+The HTTP router APIs let you register middleware and permissions that apply across multiple HTTP routes. Use these for cross-cutting concerns like authentication, logging, and access control.
+
+For route-specific middleware and permissions, see [wireHTTP](./index.md) configuration options.
 
 ## addHTTPMiddleware
 
-Registers middleware that runs specifically for HTTP requests, either globally or for specific route patterns.
-
-### Syntax
+Applies middleware globally or to routes matching a prefix.
 
 ```typescript
-import { addHTTPMiddleware, pikkuMiddleware } from '@pikku/core'
+import { addHTTPMiddleware } from '#pikku/pikku-types.gen.js'
+import { corsMiddleware, responseTime } from './middleware.js'
 
-// Global middleware for all HTTP routes
-addHTTPMiddleware([
-  pikkuMiddleware(({ logger }, { http }, next) => {
-    // Your middleware logic here
-    await next()
-  })
-])
+// All HTTP routes
+addHTTPMiddleware([corsMiddleware, responseTime])
 
-// Route-specific middleware
-addHTTPMiddleware('/route/pattern', [
-  pikkuMiddleware(({ logger }, { http }, next) => {
-    // Your middleware logic here
-    await next()
-  })
-])
+// Routes starting with /admin
+addHTTPMiddleware('/admin', [requireAuth, auditLog])
 ```
 
 ### Parameters
 
-- **middleware** - Array of middleware functions created with `pikkuMiddleware()`
-- **route** (`string`) - Route pattern to apply middleware to (when used with second parameter)
-- **middleware** - Array of middleware functions to apply to the specific route
+- **middleware** - Array of middleware functions when used globally
+- **route** (`string`) - Route prefix pattern (first parameter)
+- **middleware** - Array of middleware for the prefix (second parameter)
 
-### Examples
-
-#### Global HTTP Middleware
+### Global HTTP Middleware
 
 ```typescript
-import { addHTTPMiddleware, pikkuMiddleware } from '@pikku/core'
+import { addHTTPMiddleware, pikkuMiddleware } from '#pikku/pikku-types.gen.js'
 
-const corsMiddleware = pikkuMiddleware((_services, { http }, next) => {
-  http?.response.setHeader('Access-Control-Allow-Origin', '*')
-  http?.response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+const cors = pikkuMiddleware(async (_services, interaction, next) => {
+  if (interaction.http) {
+    interaction.http.response.setHeader('Access-Control-Allow-Origin', '*')
+    interaction.http.response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+  }
   await next()
 })
 
-const responseTimeMiddleware = pikkuMiddleware((_services, { http }, next) => {
+const responseTime = pikkuMiddleware(async (_services, interaction, next) => {
   const start = Date.now()
   await next()
-  const end = Date.now()
-  http?.response.setHeader('X-Response-Time', `${end - start}ms`)
+
+  if (interaction.http) {
+    const duration = Date.now() - start
+    interaction.http.response.setHeader('X-Response-Time', `${duration}ms`)
+  }
 })
 
 // Apply to all HTTP routes
-addHTTPMiddleware([corsMiddleware, responseTimeMiddleware])
+addHTTPMiddleware([cors, responseTime])
 ```
 
-#### Route-Specific Middleware
+### Prefix-Based Middleware
 
 ```typescript
-const adminAuthMiddleware = pikkuMiddleware((_services, { http }, next) => {
-  const token = http?.request.getHeader('Authorization')
-  if (!token || !isValidAdminToken(token)) {
-    http?.response.setStatus(401).json({ error: 'Unauthorized' })
+const adminAuth = pikkuMiddleware(async ({ jwt, userSession }, interaction, next) => {
+  if (!interaction.http) return await next()
+
+  const token = interaction.http.request.getHeader('Authorization')
+  if (!token) {
+    interaction.http.response.setStatus(401).json({ error: 'Unauthorized' })
     return
   }
+
+  try {
+    const payload = await jwt.verify(token.replace('Bearer ', ''))
+    await userSession.set(payload)
+    await next()
+  } catch (e) {
+    interaction.http.response.setStatus(401).json({ error: 'Invalid token' })
+  }
+})
+
+const rateLimit = pikkuMiddleware(async ({ cache }, interaction, next) => {
+  if (!interaction.http) return await next()
+
+  const ip = interaction.http.request.getHeader('x-forwarded-for') || 'unknown'
+  const key = `ratelimit:${ip}`
+  const count = (await cache.get(key)) || 0
+
+  if (count > 100) {
+    interaction.http.response.setStatus(429).json({ error: 'Too many requests' })
+    return
+  }
+
+  await cache.set(key, count + 1, { ttl: 60 })
   await next()
 })
 
-const rateLimitMiddleware = pikkuMiddleware(async (_services, { http }, next) => {
-  const ip = http?.request.getHeader('x-forwarded-for') || 'unknown'
-  if (await isRateLimited(ip)) {
-    http?.response.setStatus(429).json({ error: 'Too many requests' })
-    return
-  }
-  await next()
-})
+// Admin routes need authentication
+addHTTPMiddleware('/admin', [adminAuth])
 
-// Apply middleware for admin routes only
-addHTTPMiddleware('/admin/*', [adminAuthMiddleware])
-
-// Add rate limiting to API routes
-addHTTPMiddleware('/api/*', [rateLimitMiddleware])
+// API routes are rate limited
+addHTTPMiddleware('/api', [rateLimit])
 ```
 
 ## addHTTPPermission
 
-:::info
-This API doesn't exist yet but would follow the same pattern as `addHTTPMiddleware` for permissions.
-:::
-
-Would register permissions that apply to HTTP routes based on path patterns:
+Applies permissions globally or to routes matching a prefix.
 
 ```typescript
-// This would be the expected API
-import { addHTTPPermission, pikkuPermission } from '@pikku/core'
+import { addHTTPPermission } from '#pikku/pikku-types.gen.js'
+import { requireAuth, requireAdmin } from './permissions.js'
 
-const adminPermission = pikkuPermission((_services, _data, session) => {
+// Routes starting with /admin require auth + admin
+addHTTPPermission('/admin', {
+  auth: requireAuth,
+  admin: requireAdmin,
+})
+
+// All HTTP routes require authentication
+addHTTPPermission('*', {
+  auth: requireAuth,
+})
+```
+
+### Parameters
+
+- **route** (`string`) - Route prefix pattern, or `'*'` for global
+- **permissions** (`Record<string, PikkuPermission>`) - Named permissions to apply
+
+### Example with Multiple Permissions
+
+```typescript
+import { pikkuPermission } from '#pikku/pikku-types.gen.js'
+
+const requireAuth = pikkuPermission(async (_services, _data, session) => {
+  return session?.userId != null
+})
+
+const requireAdmin = pikkuPermission(async (_services, _data, session) => {
   return session?.role === 'admin'
 })
 
-const ownerPermission = pikkuPermission<{ resourceId: string }>(async ({ kysely }, { resourceId }, session) => {
+const requirePremium = pikkuPermission(async ({ database }, _data, session) => {
   if (!session?.userId) return false
-  
-  const resource = await kysely
-    .selectFrom('resource')
-    .select('ownerId')
-    .where('resourceId', '=', resourceId)
-    .executeTakeFirst()
-  
-  return resource?.ownerId === session.userId
+
+  const user = await database.query('users', {
+    where: { id: session.userId }
+  })
+
+  return user?.isPremium === true
 })
 
-// Apply admin permission to admin routes
-addHTTPPermission('/admin/*', [adminPermission])
+// Admin routes need both auth and admin role
+addHTTPPermission('/admin', {
+  auth: requireAuth,
+  admin: requireAdmin,
+})
 
-// Apply owner permission to resource routes
-addHTTPPermission('/api/resources/*', [ownerPermission])
+// Premium features need auth and premium subscription
+addHTTPPermission('/api/premium', {
+  auth: requireAuth,
+  premium: requirePremium,
+})
 ```
 
 ## Route Pattern Matching
 
-Route patterns use [path-to-regexp](https://github.com/pillarjs/path-to-regexp) syntax:
+Prefix patterns match routes that start with the given path:
 
 | Pattern | Matches | Examples |
 |---------|---------|----------|
-| `/admin/*` | All routes starting with `/admin/` | `/admin/users`, `/admin/settings` |
-| `/api/users/:id` | User routes with ID parameter | `/api/users/123`, `/api/users/abc` |
-| `/:category/:id` | Any two-segment path | `/books/123`, `/users/456` |
+| `/admin` | All routes starting with `/admin` | `/admin/users`, `/admin/settings` |
+| `/api/v1` | All routes starting with `/api/v1` | `/api/v1/users`, `/api/v1/posts` |
 | `*` | All routes (global) | Any HTTP route |
+
+Note: These are prefix matches, not glob patterns. `/admin` matches `/admin/users` and `/admin/settings/profile`.
 
 ## Middleware Execution Order
 
-HTTP middleware runs in this specific order:
+See [Middleware](../core/middleware.md#execution-order) for the complete execution order across all scopes.
 
-1. **Global HTTP middleware** (added with `addHTTPMiddleware([middleware])`)
-2. **Route-specific HTTP middleware** (added with `addHTTPMiddleware(route, [middleware])`) 
-3. **Tag-based middleware** (added with `addMiddleware(tag, [middleware])`)
-4. **Route-level middleware** (defined in `wireHTTP`)
-5. **Function-level middleware** (defined in function config)
+For HTTP routes, middleware runs in this order:
+1. **Global HTTP middleware** - `addHTTPMiddleware([...])`
+2. **Prefix HTTP middleware** - `addHTTPMiddleware('/prefix', [...])`
+3. **Wire-specific middleware** - `wireHTTP({ middleware: [...] })`
+4. **Function-level middleware** - `pikkuFunc({ middleware: [...] })`
 
-## Common Use Cases
+## Common Patterns
 
 ### Authentication Middleware
 
-```typescript
-import { pikkuMiddleware } from '@pikku/core'
+Extract JWT tokens and set user session:
 
-const jwtAuthMiddleware = pikkuMiddleware(async ({ jwtService, userSessionService }, { http }, next) => {
-  const token = http?.request.getHeader('Authorization')?.replace('Bearer ', '')
-  
+```typescript
+const jwtAuth = pikkuMiddleware(async ({ jwt, userSession }, interaction, next) => {
+  if (!interaction.http) return await next()
+
+  const token = interaction.http.request.getHeader('Authorization')?.replace('Bearer ', '')
+
   if (token) {
     try {
-      const payload = await jwtService.verify(token)
-      await userSessionService.set(payload)
+      const payload = await jwt.verify(token)
+      await userSession.set({
+        userId: payload.userId,
+        role: payload.role
+      })
     } catch (error) {
-      // Invalid token - let function-level auth handle this
+      // Invalid token - continue without session
+      // Let function-level auth/permissions handle it
     }
   }
-  
+
   await next()
 })
 
 // Apply to all protected routes
-addHTTPMiddleware('/api/protected/*', [jwtAuthMiddleware])
+addHTTPMiddleware('/api', [jwtAuth])
 ```
 
 ### Request Logging
 
+Log all requests with timing:
+
 ```typescript
-const requestLogger = pikkuMiddleware(({ logger }, { http }, next) => {
+const requestLogger = pikkuMiddleware(async ({ logger }, interaction, next) => {
+  if (!interaction.http) return await next()
+
   const start = Date.now()
-  const method = http?.request.method
-  const url = http?.request.url
-  
+  const method = interaction.http.request.method
+  const url = interaction.http.request.url
+
   logger.info(`${method} ${url} - Started`)
-  
+
   await next()
-  
+
   const duration = Date.now() - start
-  const status = http?.response.status || 200
+  const status = interaction.http.response.status || 200
   logger.info(`${method} ${url} - ${status} (${duration}ms)`)
 })
 
@@ -195,44 +242,28 @@ const requestLogger = pikkuMiddleware(({ logger }, { http }, next) => {
 addHTTPMiddleware([requestLogger])
 ```
 
-### Content Type Validation
-
-```typescript
-const jsonOnlyMiddleware = pikkuMiddleware((_services, { http }, next) => {
-  const contentType = http?.request.getHeader('Content-Type')
-  
-  if (http?.request.method === 'POST' && !contentType?.includes('application/json')) {
-    http?.response.setStatus(415).json({ 
-      error: 'Content-Type must be application/json' 
-    })
-    return
-  }
-  
-  await next()
-})
-
-// Apply to API endpoints that expect JSON
-addHTTPMiddleware('/api/*', [jsonOnlyMiddleware])
-```
-
 ### Security Headers
 
+Add security headers to all responses:
+
 ```typescript
-const securityHeadersMiddleware = pikkuMiddleware((_services, { http }, next) => {
-  http?.response.setHeader('X-Content-Type-Options', 'nosniff')
-  http?.response.setHeader('X-Frame-Options', 'DENY')
-  http?.response.setHeader('X-XSS-Protection', '1; mode=block')
+const securityHeaders = pikkuMiddleware(async (_services, interaction, next) => {
   await next()
+
+  if (interaction.http) {
+    interaction.http.response.setHeader('X-Content-Type-Options', 'nosniff')
+    interaction.http.response.setHeader('X-Frame-Options', 'DENY')
+    interaction.http.response.setHeader('X-XSS-Protection', '1; mode=block')
+    interaction.http.response.setHeader('Strict-Transport-Security', 'max-age=31536000')
+  }
 })
 
-// Apply security headers to all routes
-addHTTPMiddleware([securityHeadersMiddleware])
+// Apply to all routes
+addHTTPMiddleware([securityHeaders])
 ```
 
-<!-- ## Related
+## Next Steps
 
-- [addMiddleware](../api/add-middleware.md) - Add tag-based middleware for any wiring type
-- [addPermission](../api/add-permission.md) - Add tag-based permissions for any wiring type  
-- [wireHTTP](./index.md) - Configure individual HTTP routes with middleware and permissions
-- [Middleware Guide](../core/middleware.md) - Understanding middleware concepts
-- [Permission Guards](../core/permission-guards.md) - Understanding permission concepts -->
+- [Middleware](../core/middleware.md) - Understanding middleware concepts
+- [Permission Guards](../core/permission-guards.md) - Understanding permissions
+- [wireHTTP](./index.md) - Route-specific configuration
