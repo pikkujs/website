@@ -49,8 +49,8 @@ Pikku functions use an object configuration with a `func` property that contains
 
 ```typescript
 const myFunction = pikkuFunc<InputType, OutputType>({
-  func: async (services, data, session) => {
-    // Your logic here
+  func: async ({ database, logger }, data, session) => {
+    // Your logic here - destructure only the services you need
     return result
   },
   // Optional configuration
@@ -64,7 +64,7 @@ const myFunction = pikkuFunc<InputType, OutputType>({
 
 **1. Services** - Your application's singleton services (database, cache, logger, etc.)
 
-We highly recommend destructuring services directly in the parameter list - this allows Pikku to tree-shake unused services:
+**Always destructure services** directly in the parameter list - this is critical for Pikku to tree-shake unused services and optimize your bundle:
 
 ```typescript
 func: async ({ database, logger }, data) => {
@@ -115,7 +115,7 @@ export const createBook = pikkuFunc<CreateBookInput, Book>({
 **3. Session** - The authenticated user's session (if `auth: true`)
 
 ```typescript
-func: async (services, data, session) => {
+func: async ({ database }, data, session) => {
   const userId = session?.userId
   // session is available if auth is enabled
 }

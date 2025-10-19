@@ -31,4 +31,4 @@ The MCP integration is still experimental. We support the basics (prompts, tools
 
 - `wireMCPTool()` - Register a tool endpoint
 - `wireMCPResource()` - Register a resource endpoint  
-- `wireMCPrompt()` - Register a prompt endpoint
+- `wireMCPPrompt()` - Register a prompt endpoint

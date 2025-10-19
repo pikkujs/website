@@ -79,16 +79,16 @@ Register your prompts in the routes file:
 
 ```typescript
 // mcp.routes.ts
-import { wireMCPrompt } from '../.pikku/pikku-types.gen.js'
+import { wireMCPPrompt } from '../.pikku/pikku-types.gen.js'
 import { staticPromptGenerator, dynamicPromptGenerator } from './mcp.functions.js'
 
-wireMCPrompt({
+wireMCPPrompt({
   name: 'getStaticResource',
   description: 'A static prompt that returns a predefined message',
   func: staticPromptGenerator,
 })
 
-wireMCPrompt({
+wireMCPPrompt({
   name: 'dynamicPromptGenerator',
   description:
     'Generate educational content with progressive complexity and optional examples',
