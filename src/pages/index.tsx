@@ -88,7 +88,8 @@ function Hero() {
 
 /** The "Aha!" Moment: One Function, Many Protocols */
 function AhaMomentSection() {
-  const [activeProtocol, setActiveProtocol] = React.useState<number | null>(null);
+  const [activeProtocol, setActiveProtocol] = React.useState<number | null>(0); // Default to HTTP
+  const [activeDeployment, setActiveDeployment] = React.useState<string>('express');
 
   const functionCode = `export const getCard = pikkuFunc<
   { cardId: string },
@@ -112,6 +113,77 @@ function AhaMomentSection() {
     tags: ['cards']
   }
 })`;
+
+  const deploymentOptions: Record<number, Record<string, { name: string; code: string; img: { light: string; dark: string } }>> = {
+    0: { // HTTP
+      express: {
+        name: 'Express',
+        img: { light: 'express-light.svg', dark: 'express-dark.svg' },
+        code: `import express from 'express'
+import { createPikkuExpressMiddleware } from '@pikku/express'
+
+const app = express()
+app.use(createPikkuExpressMiddleware())
+app.listen(3000)`
+      },
+      fastify: {
+        name: 'Fastify',
+        img: { light: 'fastify-light.svg', dark: 'fastify-dark.svg' },
+        code: `import Fastify from 'fastify'
+import { pikkuFastifyPlugin } from '@pikku/fastify'
+
+const fastify = Fastify()
+await fastify.register(pikkuFastifyPlugin)
+await fastify.listen({ port: 3000 })`
+      },
+      nextjs: {
+        name: 'Next.js',
+        img: { light: 'nextjs-light.png', dark: 'nextjs-dark.svg' },
+        code: `// app/api/[...route]/route.ts
+import { createPikkuNextHandler } from '@pikku/nextjs'
+
+const handler = createPikkuNextHandler()
+
+export { handler as GET, handler as POST }`
+      },
+      lambda: {
+        name: 'AWS Lambda',
+        img: { light: 'aws-light.svg', dark: 'aws-dark.svg' },
+        code: `import { createPikkuLambdaHandler } from '@pikku/aws-lambda'
+
+export const handler = createPikkuLambdaHandler()`
+      },
+      cloudflare: {
+        name: 'Cloudflare Workers',
+        img: { light: 'cloudflare-light.svg', dark: 'cloudflare-dark.svg' },
+        code: `import { createPikkuCloudflareHandler } from '@pikku/cloudflare'
+
+export default createPikkuCloudflareHandler()`
+      }
+    },
+    1: { // WebSocket
+      ws: {
+        name: 'ws',
+        img: { light: 'websocket-light.svg', dark: 'websocket-dark.svg' },
+        code: `import { WebSocketServer } from 'ws'
+import { createPikkuWSHandler } from '@pikku/ws'
+
+const wss = new WebSocketServer({ port: 3000 })
+wss.on('connection', createPikkuWSHandler())`
+      },
+      uws: {
+        name: 'μWebSockets',
+        img: { light: 'uws-light.svg', dark: 'uws-dark.svg' },
+        code: `import uWS from 'uWebSockets.js'
+import { createPikkuUWSHandler } from '@pikku/uws'
+
+uWS.App()
+  .ws('/*', createPikkuUWSHandler())
+  .listen(3000, () => {})`
+      }
+    },
+    // Add more deployment options for other protocols as needed
+  };
 
   const wiringExamples = [
     {
@@ -271,7 +343,13 @@ wireMCPPrompt({
                     className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-xl transition-all cursor-pointer ${
                       isActive ? 'ring-2 ring-primary' : ''
                     }`}
-                    onClick={() => setActiveProtocol(idx)}
+                    onClick={() => {
+                      setActiveProtocol(idx);
+                      // Reset deployment to first option when protocol changes
+                      if (deploymentOptions[idx]) {
+                        setActiveDeployment(Object.keys(deploymentOptions[idx])[0]);
+                      }
+                    }}
                     onMouseEnter={() => setActiveProtocol(idx)}
                   >
                     <div className="flex flex-col items-center">
@@ -307,6 +385,57 @@ wireMCPPrompt({
               </div>
             )}
           </div>
+
+          {/* Deploy Anywhere - Third Section */}
+          {activeProtocol !== null && deploymentOptions[activeProtocol] && (
+            <div className="mt-12">
+              <div className="flex items-center justify-center mb-6">
+                <Heading as="h3" className="text-2xl font-bold">
+                  3. Deploy Anywhere
+                </Heading>
+              </div>
+
+              {/* Deployment selector with icons */}
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6 max-w-3xl mx-auto">
+                {Object.entries(deploymentOptions[activeProtocol]).map(([key, deployment]) => (
+                  <div
+                    key={key}
+                    onClick={() => setActiveDeployment(key)}
+                    className={`bg-gray-50 dark:bg-gray-900 rounded-lg p-3 shadow-md hover:shadow-xl transition-all cursor-pointer ${
+                      activeDeployment === key ? 'ring-2 ring-primary' : ''
+                    }`}
+                  >
+                    <div className="flex flex-col items-center">
+                      <Image
+                        sources={{
+                          light: `img/logos/${deployment.img.light}`,
+                          dark: `img/logos/${deployment.img.dark}`
+                        }}
+                        width={40}
+                        height={40}
+                        className="mb-2"
+                      />
+                      <span className="text-xs font-semibold text-center text-gray-900 dark:text-gray-100">
+                        {deployment.name}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Deployment code */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-primary">
+                <div className="flex items-center mb-4">
+                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                    {deploymentOptions[activeProtocol][activeDeployment].name}
+                  </span>
+                </div>
+                <CodeBlock language="typescript">
+                  {deploymentOptions[activeProtocol][activeDeployment].code}
+                </CodeBlock>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-12 text-center">
