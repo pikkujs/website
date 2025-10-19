@@ -160,32 +160,50 @@ const card = await rpc.invoke(
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-start">
-          {/* Left: Function Definition */}
-          <div>
-            <div className="flex items-center mb-4">
+        {/* Function Definition - Top Row */}
+        <div className="relative max-w-4xl mx-auto">
+          <div className="mb-8">
+            <div className="flex items-center justify-center mb-4">
               <Heading as="h3" className="text-2xl font-bold">
                 1. Define Your Function
               </Heading>
             </div>
-            <CodeBlock language="typescript" title="src/functions/cards.function.ts">
-              {functionCode}
-            </CodeBlock>
+            <div className="relative">
+              <CodeBlock language="typescript" title="src/functions/cards.function.ts">
+                {functionCode}
+              </CodeBlock>
+              {/* Center connection point */}
+              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-primary rounded-full z-10 shadow-lg"></div>
+            </div>
           </div>
 
-          {/* Right: Wiring Examples */}
+          {/* Connection Lines */}
+          <div className="hidden md:block relative h-16 mb-4">
+            <svg className="absolute inset-0 w-full h-full" style={{ overflow: 'visible' }}>
+              {/* Lines from center to each card */}
+              <line x1="50%" y1="0" x2="12.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
+              <line x1="50%" y1="0" x2="37.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
+              <line x1="50%" y1="0" x2="62.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
+              <line x1="50%" y1="0" x2="87.5%" y2="100%" stroke="currentColor" strokeWidth="2" className="text-primary opacity-30" strokeDasharray="4 4"/>
+            </svg>
+          </div>
+
+          {/* Wiring Examples - Bottom Row */}
           <div>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center justify-center mb-6">
               <Heading as="h3" className="text-2xl font-bold">
                 2. Wire to Any Protocol
               </Heading>
             </div>
-            <div className="space-y-4">
+            <div className="grid md:grid-cols-4 gap-4">
               {wiringExamples.map((example, idx) => (
-                <div key={idx} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-                  <div className="flex items-center mb-2">
-                    <WiringIcon wiringId={example.icon} size={20} />
-                    <span className="ml-2 font-semibold text-gray-900 dark:text-gray-100">
+                <div key={idx} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 shadow-md hover:shadow-xl transition-all relative">
+                  {/* Top connection point */}
+                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-primary rounded-full shadow-md"></div>
+
+                  <div className="flex flex-col items-center mb-3">
+                    <WiringIcon wiringId={example.icon} size={32} />
+                    <span className="mt-2 font-semibold text-center text-gray-900 dark:text-gray-100">
                       {example.title}
                     </span>
                   </div>

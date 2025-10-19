@@ -77,6 +77,15 @@ export const MCPIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }
   </div>
 );
 
+export const CLIIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
+  <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-cyan-600 dark:text-cyan-400" fill="none">
+      <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="2"/>
+      <path d="M7 10l3 3-3 3M12 16h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  </div>
+);
+
 interface WiringIconComponentProps {
   wiringId: string;
   className?: string;
@@ -93,6 +102,7 @@ export const WiringIcon: React.FC<WiringIconComponentProps> = ({ wiringId, class
     queues: QueueIcon, // alias
     rpc: RPCIcon,
     mcp: MCPIcon,
+    cli: CLIIcon,
   };
 
   const IconComponent = iconComponents[wiringId];
