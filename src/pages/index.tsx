@@ -94,10 +94,17 @@ function AhaMomentSection() {
   { cardId: string },
   { id: string; title: string; status: string }
 >({
-  func: async ({ database }, { cardId }) => {
-    return await database.query('cards', {
+  func: async ({ database, channel }, { cardId }) => {
+    const card = await database.query('cards', {
       where: { id: cardId }
     })
+
+    // Works with WebSocket channels too!
+    if (channel) {
+      await channel.send({ type: 'card-fetched', card })
+    }
+
+    return card
   },
   permissions: { owner: requireOwner },
   docs: {
