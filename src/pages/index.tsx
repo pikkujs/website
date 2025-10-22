@@ -726,8 +726,11 @@ function ProductionFeaturesSection() {
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Ship Faster, Maintain Less
         </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-600 dark:text-gray-300 mb-4 max-w-2xl mx-auto">
           Production-ready features that reduce development time and lower long-term maintenance costs
+        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+          Tiny runtime with minimal overhead. Bundles as small as 50KB for single-function deployments.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -824,9 +827,12 @@ function TryItNowSection() {
   return (
     <section className="py-16 bg-gradient-to-br from-white via-primary/5 to-white dark:from-gray-800 dark:via-primary/10 dark:to-gray-800">
       <div className="max-w-screen-lg mx-auto px-4 text-center">
-        <Heading as="h2" className="text-4xl font-bold mb-6">
-          Try it now
+        <Heading as="h2" className="text-4xl font-bold mb-4">
+          Get Started in Minutes
         </Heading>
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+          Create your first Pikku app with one command. You'll have a function running across HTTP, WebSockets, and more in under 5 minutes.
+        </p>
         <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark transition-colors" onClick={copyToClipboard}>
           npm create pikku@latest
           <button
