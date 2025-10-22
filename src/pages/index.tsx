@@ -68,9 +68,27 @@ function Hero() {
         <Heading as="h1" className="text-5xl font-bold mb-4 text-primary">
           Write Backend Logic Once. Run It Everywhere.
         </Heading>
-        <p className="text-xl font-medium leading-relaxed mb-8 text-gray-700 dark:text-gray-300">
-          Pikku adapts your TypeScript functions to any protocol and runtime—HTTP, WebSockets, queues, cron jobs, AI agents, and more.
+        <p className="text-xl font-medium leading-relaxed mb-4 text-gray-700 dark:text-gray-300">
+          Write your backend logic once. Pikku automatically adapts it to work with any protocol—HTTP APIs, WebSockets, queues, scheduled tasks, and more. No duplicate code, no vendor lock-in.
         </p>
+        <ul className="text-base mb-8 space-y-2 text-gray-700 dark:text-gray-300">
+          <li className="flex items-start">
+            <span className="text-green-500 mr-2 mt-0.5">✓</span>
+            <span>Unified backend logic across all protocols</span>
+          </li>
+          <li className="flex items-start">
+            <span className="text-green-500 mr-2 mt-0.5">✓</span>
+            <span>Deploy to any platform without code changes</span>
+          </li>
+          <li className="flex items-start">
+            <span className="text-green-500 mr-2 mt-0.5">✓</span>
+            <span>Full TypeScript type safety end-to-end</span>
+          </li>
+          <li className="flex items-start">
+            <span className="text-green-500 mr-2 mt-0.5">✓</span>
+            <span>Production-ready with sessions, auth, and middleware</span>
+          </li>
+        </ul>
         <div className="flex flex-row gap-4 mt-6">
           <Link to="#code-examples" className="button button--primary">
             See Examples
@@ -246,7 +264,7 @@ wireMCPPrompt({
             One Function. Every Protocol. Zero Duplication.
           </Heading>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Define your domain logic once. Wire it to HTTP, WebSockets, queues, scheduled tasks, CLI, or AI agents. Same logic. Different protocols.
+            Write your logic once. Wire it to HTTP, WebSockets, queues, scheduled tasks, CLI, or AI agents. Same logic. Different protocols.
           </p>
         </div>
 
@@ -272,7 +290,7 @@ wireMCPPrompt({
                 2. Wire to Any Protocol
               </Heading>
             </div>
-            <div className="grid grid-cols-4 md:grid-cols-4 gap-2 md:gap-4">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
               {wiringExamples.map((example, idx) => {
                 const isActive = activeProtocol === idx;
                 return (
@@ -469,8 +487,8 @@ function ProtocolSupportSection() {
     {
       wiringId: 'websocket',
       name: 'WebSocket',
-      desc: 'Real-time channels',
-      detail: 'Bidirectional communication with pub/sub'
+      desc: 'Real-time communication',
+      detail: 'Bidirectional messaging with channels and pub/sub'
     },
     {
       wiringId: 'sse',
@@ -498,9 +516,9 @@ function ProtocolSupportSection() {
     },
     {
       wiringId: 'mcp',
-      name: 'MCP',
+      name: 'Model Context Protocol',
       desc: 'AI agent integrations',
-      detail: 'Expose functions to Claude, GPT, and more'
+      detail: 'Expose functions to Claude, GPT, and other AI tools'
     },
     {
       wiringId: 'cli',
@@ -518,11 +536,11 @@ function ProtocolSupportSection() {
             Every Way Your Backend Communicates
           </Heading>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Pikku supports all the protocols modern backends need. Same function, different transport.
+            Pikku supports all the protocols modern backends need. Same function, different protocol.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
           {protocols.map((protocol, idx) => (
             <div key={idx} className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg hover:shadow-lg transition-shadow">
               <div className="flex justify-center mb-4">
@@ -684,7 +702,7 @@ function ProductionFeaturesSection() {
     },
     {
       title: 'Middleware',
-      desc: 'Before/after hooks across transports',
+      desc: 'Before/after hooks across all protocols',
       icon: '🪆',
       detail: 'Logging, metrics, tracing—work everywhere'
     },
@@ -706,10 +724,10 @@ function ProductionFeaturesSection() {
     <section className="py-16 bg-white dark:bg-gray-800">
       <div className="max-w-screen-lg mx-auto px-4 text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
-          Built for Production
+          Ship Faster, Maintain Less
         </Heading>
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
-          Pikku includes everything you need for production backends
+          Production-ready features that reduce development time and lower long-term maintenance costs
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -720,6 +738,74 @@ function ProductionFeaturesSection() {
                 <div className="text-xl font-bold mb-2">{feature.title}</div>
                 <div className="text-gray-600 dark:text-gray-400 text-sm mb-2">{feature.desc}</div>
                 <div className="text-gray-500 dark:text-gray-500 text-xs">{feature.detail}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** How Teams Use Pikku */
+function HowTeamsUseItSection() {
+  const useCases = [
+    {
+      title: 'Real-Time Dashboard',
+      problem: 'Building a monitoring dashboard that shows live metrics',
+      solution: 'Write one getMetrics function. Serve initial page load via HTTP, then stream updates via Server-Sent Events. Same data source, same validation, same permissions.',
+      benefits: ['No duplicate API logic', 'Progressive enhancement over HTTP', 'Works with existing HTTP clients']
+    },
+    {
+      title: 'Order Processing',
+      problem: 'E-commerce orders need HTTP checkout, live status updates, and background payment processing',
+      solution: 'Write one processOrder function. Wire it to HTTP (checkout API), WebSocket (live order tracking), and queue (async payment processing). Same business logic everywhere.',
+      benefits: ['Write order logic once', 'Real-time updates without duplication', 'Reliable async payment handling']
+    },
+    {
+      title: 'Admin Tools',
+      problem: 'Operations team needs both API access and CLI tools',
+      solution: 'Write your admin functions once. Expose them via HTTP API for your web dashboard and CLI for ops scripts. Same permissions, same audit logging.',
+      benefits: ['No CLI-specific code needed', 'API and CLI stay in sync', 'Shared authentication and logging']
+    }
+  ];
+
+  return (
+    <section className="py-16 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <Heading as="h2" className="text-4xl font-bold mb-4">
+            How Teams Use Pikku
+          </Heading>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Real-world scenarios where one function serves multiple use cases
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {useCases.map((useCase, idx) => (
+            <div key={idx} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
+              <Heading as="h3" className="text-xl font-bold mb-3 text-primary">
+                {useCase.title}
+              </Heading>
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">The Challenge:</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">{useCase.problem}</p>
+              </div>
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">With Pikku:</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">{useCase.solution}</p>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">Benefits:</p>
+                <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                  {useCase.benefits.map((benefit, bidx) => (
+                    <li key={bidx} className="flex items-start">
+                      <span className="text-green-500 mr-2">✓</span>
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           ))}
@@ -768,7 +854,7 @@ function CallToActionSection() {
             Ready to Simplify Your Backend?
           </Heading>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Stop duplicating logic. Start using Pikku's transport-agnostic approach.
+            Stop duplicating logic. Write once, deploy anywhere with Pikku.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/docs" className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
@@ -797,6 +883,7 @@ export default function Home() {
         <AhaMomentSection />
         <UsedBySection />
         <ProductionFeaturesSection />
+        <HowTeamsUseItSection />
         <ProblemSolutionSection />
         <TryItNowSection />
         <LiveExamples />
