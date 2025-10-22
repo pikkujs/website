@@ -14,8 +14,7 @@ New to Pikku? Start here:
 
 1. **[Introduction](/docs/concepts)** - Understand what Pikku is and why it exists
 2. **[Getting Started](/docs/core)** - Install and run your first Pikku app
-3. **[Tutorial](/docs/guides/tutorial)** - Build a books API from scratch
-4. **[Functions](/docs/core/functions)** - Learn the core abstraction
+3. **[Functions](/docs/core/functions)** - Learn the core abstraction
 
 ## Learning Path
 
@@ -44,13 +43,7 @@ New to Pikku? Start here:
 
 ### Configuration & Deployment
 
-- [CLI Configuration](/docs/guides/pikku-cli) - Configure code generation
-
-### Guides
-
-- [Tutorial](/docs/guides/tutorial) - Build a books API
-- [Authentication](/docs/guides/authentication) - Add auth to your app
-- [Yarn Workspaces](/docs/guides/yarn-workspaces) - Monorepo setup
+- [CLI Configuration](/docs/core/pikku-cli) - Configure code generation
 
 ## I Want To...
 
@@ -58,14 +51,14 @@ New to Pikku? Start here:
 
 1. [Create functions](/docs/core/functions)
 2. [Wire HTTP routes](/docs/http)
-3. [Add authentication](/docs/guides/authentication)
-4. [Generate OpenAPI spec](/docs/guides/pikku-cli#openapi-generation)
+3. [Add user sessions](/docs/core/user-sessions)
+4. [Generate OpenAPI spec](/docs/core/pikku-cli#openapi-generation)
 
 ### Add Real-Time Features
 
 1. [Understand channels](/docs/channels)
 2. [Wire WebSocket handlers](/docs/channels)
-3. [Generate WebSocket client](/docs/guides/pikku-cli#client-generation)
+3. [Generate WebSocket client](/docs/core/pikku-cli#client-generation)
 
 ### Deploy to Production
 
@@ -75,8 +68,8 @@ New to Pikku? Start here:
 
 ### Work in a Monorepo
 
-1. [Configure package mappings](/docs/guides/pikku-cli#monorepo-support)
-2. [Generate shared clients](/docs/guides/pikku-cli#client-generation)
+1. [Configure package mappings](/docs/core/pikku-cli#monorepo-support)
+2. [Generate shared clients](/docs/core/pikku-cli#client-generation)
 3. [See monorepo example](https://github.com/pikkujs/yarn-workspace-starter)
 
 ### Migrate from Another Framework / Integrate Pikku with Another Framework
