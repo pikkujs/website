@@ -1,63 +1,85 @@
 ---
-sidebar_position: 10  
+sidebar_position: 10
 title: Vision
 ---
 
-Pikku is a combination of multiple different visions combined, which together lead the way to how it works.
+Pikku is built on three core visions that shape how you build backends. Like a chameleon adapting to its environment, Pikku keeps your logic intact while flexing to fit wherever you need to run.
 
-## The Function-First Vision
+## Function-First: Write Once, Call Anywhere
 
-At the heart of Pikku is the idea that all your logic is defined as **typed functions**. These functions can handle a variety of use cases, such as:
+Your business logic shouldn't care how it's invoked. Write it once as a **typed function**. Call it from anywhere:
 
-- HTTP routes
-- WebSockets
-- Cron jobs and scheduled tasks
-- Queues
-- MCP Servers
-- Other event-driven interactions
+- **HTTP** - REST APIs with OpenAPI
+- **WebSocket** - Real-time bidirectional communication
+- **Server-Sent Events** - Progressive enhancement, stream updates
+- **Queue** - Background jobs and async processing
+- **Cron** - Scheduled tasks
+- **RPC** - Internal function-to-function calls
+- **MCP** - AI agent tools (Claude, GPT, and more)
+- **CLI** - Command-line interfaces
 
-This approach delivers complete flexibility, allowing your codebase to support both traditional servers and serverless platforms without the typical pain points that arise when trying to mix paradigms. 
+No code duplication. No logic fragmentation. **Just functions.**
 
-*Current limitations (for now):*
+This flexibility means you can build for traditional servers and serverless platforms using the same codebase - without the headaches of mixing paradigms.
 
-- File uploads
-- Handling content types other than `application/json`
-
----
-
-## The Deploy Anywhere Vision
-
-Pikku empowers you to deploy your functionality on any platform:
-
-- **Traditional Servers:** Use with frameworks like [Express](https://expressjs.com), [Fastify](https://www.fastify.io), or [uWS (µWebSockets)](https://github.com/uNetworking/uWebSockets.js).
-- **Serverless Platforms:** Deploy on [AWS Lambda](https://aws.amazon.com/lambda), [Azure Functions](https://azure.microsoft.com/en-us/products/functions/), or [Cloudflare Workers](https://workers.cloudflare.com).
-- **AI Agents:** Use claudes [MCP](https://modelcontextprotocol.io/docs/concepts/resources) to directly call into your functions.
-- **Full-Stack Frameworks:** Integrate directly with frameworks like [Next.js](https://nextjs.org).
-
-This versatility lets you choose the best runtime for your project without being tied to a single framework.
+**Current limitations:** File uploads and non-JSON content types aren't supported yet.
 
 ---
 
-## The Happy Developer Experience Vision
+## Deploy Anywhere: Zero Lock-In
 
-Pikku was created for developers who desire to avoid boilerplate and believe in keeping complexity under control. In Pikku:
+Pick your runtime. Change it tomorrow. Your code stays the same.
 
-- **Function Input:** Your functions receive services (both singleton and session-based), data, and user sessions.
-- **Function Output:** They return data (or stream updates) or throw errors—nothing more.
+- **Traditional Servers** - [Express](https://expressjs.com), [Fastify](https://www.fastify.io), [uWS](https://github.com/uNetworking/uWebSockets.js)
+- **Serverless** - [AWS Lambda](https://aws.amazon.com/lambda), [Azure Functions](https://azure.microsoft.com/en-us/products/functions/), [Cloudflare Workers](https://workers.cloudflare.com)
+- **AI Agents** - [MCP](https://modelcontextprotocol.io/docs/concepts/resources) for Claude, GPT, and other models
+- **Full-Stack Frameworks** - [Next.js](https://nextjs.org) with App or Pages Router
 
-This simplicity is achieved through an automated process driven almost entirely by **types**, which allows Pikku to:
+**Start with a monolith. Scale to microservices. Optimize individual functions.** All without rewriting a single line of business logic.
 
-- **Provide Runtime Validation:** Automatically convert function inputs into JSON schemas for runtime validation—no extra libraries needed.
-- **Smart Service Management:** Inspect used services and dynamically tree-shake dependencies (a future enhancement on our roadmap).
-- **Generate Fetch APIs:** Extract function inputs and outputs into types for a lightweight, type-safe fetch client.
-- **Generate WebSocket APIs:** Offer fully typed WebSocket clients by extracting your real-time interactions.
-- **Generate OpenAPI Docs:** Automatically produce API documentation for all your HTTP routes.
-- **Additional Features:** Include typed Next.js wrappers, error handling, session management, granular permissions, and more.
+No framework lock-in. No vendor lock-in. **Just adaptability.**
 
 ---
 
-## The Greener Future Vision
+## Developer Experience: Less Boilerplate, More Building
 
-As the variety of infrastructure options grows, understanding their environmental impact becomes crucial. Pikku’s flexibility lets you experiment with different runtimes—whether on VMs, containers, or serverless—while monitoring how these choices affect **CPU cycles** and **memory consumption**. 
+Pikku is for developers who hate boilerplate and love simplicity.
 
-Imagine a future where Pikku not only optimizes performance but also helps companies make environmentally informed decisions by comparing resource usage and carbon emissions across different configurations. Although this vision is still in the concept stage, we’re excited about aligning performance optimization with environmental responsibility.
+**Your functions receive:**
+- Services (database, cache, logger)
+- Data (validated automatically)
+- User sessions
+
+**They return:**
+- Data (or streaming updates)
+- Errors
+
+**That's it.** No HTTP headers. No status codes. No protocol details. No decorators. **Just pure TypeScript.**
+
+### TypeScript Does the Heavy Lifting
+
+Pikku uses your types to automate everything:
+
+- **Runtime Validation** - JSON schemas generated from TypeScript types (no extra libraries)
+- **Type-Safe Clients** - Auto-generated HTTP fetch, WebSocket, and RPC clients
+- **OpenAPI Docs** - Complete API documentation from your functions
+- **Smart Tree-Shaking** - Bundle only what you deploy (coming soon: service-level tree-shaking)
+- **Next.js Integration** - Typed wrappers for seamless full-stack development
+- **Session Management** - Built-in auth and permissions across all protocols
+
+**You write functions. Pikku handles the rest.** No decorators, no runtime reflection, no magic—just static analysis of plain TypeScript.
+
+---
+
+## The Greener Future: Optimize for the Planet
+
+Infrastructure choices have environmental consequences. Pikku's flexibility lets you experiment with different runtimes and measure their impact.
+
+**VMs? Containers? Serverless?** Test them all with the same codebase. Compare:
+- CPU cycles
+- Memory consumption
+- Carbon footprint
+
+Imagine a future where Pikku helps you optimize not just for performance and cost, but for **environmental impact** too. Choose the runtime that's best for your users *and* the planet.
+
+This vision is still in the concept stage, but we're committed to making performance optimization and environmental responsibility go hand in hand.
