@@ -38,13 +38,16 @@ for dir in */; do
     echo "Processing ${dir}SKILL.md -> ${dir}index.md"
     mv "${dir}SKILL.md" "${dir}index.md"
 
-    # Fix MDX issue: escape angle brackets in inline code and type parameters
-    # This prevents MDX from treating <Type> as HTML tags
+    # Fix MDX and Docusaurus issues
     perl -i -pe '
-      # Escape < and > inside backticks
+      # 1. Fix skill cross-links: /skills/pikku-* -> /docs/skills/pikku-*
+      s|(\[.*?\]\()/skills/pikku-|$1/docs/skills/pikku-|g;
+
+      # 2. Escape < and > inside backticks
       s/(`[^`]*)<([^`]*`)/$1\&lt;$2/g;
       s/(`[^`]*)>([^`]*`)/$1\&gt;$2/g;
-      # Escape type parameters like <void, void> or <In, Out> in plain text
+
+      # 3. Escape type parameters like <void, void> or <In, Out> in plain text
       s/(\w+)<([\w\s,]+)>/$1\&lt;$2\&gt;/g;
     ' "${dir}index.md"
   fi

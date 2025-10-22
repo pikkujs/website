@@ -46,5 +46,3 @@ export type UpdateBook = JustBookId & RequireAtLeastOne<CreateBook>;
 ```
 
 This method reduces manual overhead and ensures that both the database and application types are always in sync.
-
-For more details, refer to the advanced [workspace guide](/docs/guides/yarn-workspaces.md) documentation.
