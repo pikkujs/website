@@ -6,7 +6,9 @@ description: How middleware works
 
 # Middleware
 
-Middleware in Pikku follows an onion model - each middleware wraps around the next, running before and after your function executes. This is the same pattern used by Koa and Hono.
+Middleware in Pikku follows an **onion model** - each middleware wraps around the next, running before and after your function executes. This is the same pattern used by Koa and Hono.
+
+Think of it like layers wrapping a core: the request passes through each outer layer to reach the function at the center, then unwinds back out through the same layers to send the response.
 
 ```mermaid
 graph LR
@@ -326,7 +328,28 @@ pikkuMiddleware(({ logger }, interaction, next) => { ... })
 pikkuMiddleware((services, interaction, next) => { ... })
 ```
 
-**Find the right scope** - Too broad and you pay a performance cost, too narrow and you repeat yourself. Start specific and broaden only when needed.
+:::tip Transport-Agnostic vs Transport-Specific Middleware
+**Prefer function-level middleware for transport-agnostic logic** - Logging, metrics, validation, etc. should work regardless of whether your function is called via HTTP, WebSocket, or queue.
+
+**Use transport-specific middleware (like `addHTTPMiddleware`) for HTTP-only concerns** - Things like cookie parsing, CORS headers, or security headers that only make sense for HTTP. These middleware should throw `InvalidMiddlewareInteractionError` if used on non-HTTP transports to fail fast:
+
+```typescript
+import { InvalidMiddlewareInteractionError } from '@pikku/core/errors'
+
+export const cookieParser = pikkuMiddleware(async (services, interaction, next) => {
+  if (!interaction.http) {
+    throw new InvalidMiddlewareInteractionError()
+  }
+  // Parse cookies from HTTP request
+  await next()
+})
+
+// Apply only to HTTP routes
+addHTTPMiddleware([cookieParser, corsHeaders])
+```
+
+This ensures your middleware fails fast if accidentally used on the wrong transport, rather than silently doing nothing or causing subtle bugs.
+:::
 
 **Keep middleware focused** - Each middleware should do one thing well:
 ```typescript

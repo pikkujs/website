@@ -1,165 +1,213 @@
 ---
-sidebar_position: 0  
+sidebar_position: 0
 title: Introduction
 ---
 
 # Introduction to Pikku
 
-**Pikku** redefines modern application development by uniting the best ideas from the Node.js ecosystem. It introduces **Typed Functions**—modular, type-safe functions that are easy to test, deploy, and integrate. By leveraging the TypeScript compiler, Pikku eliminates boilerplate while enforcing strict type-safety across your stack.
+**Pikku is a TypeScript backend that adapts.** Like a chameleon that keeps its core intact while adapting to its environment, Pikku lets you write your backend logic once and run it anywhere – HTTP, WebSockets, queues, scheduled tasks, CLI, or AI agent tools.
 
-Most modern Node.js approaches are split between serverless and server-based models. Each offers benefits, yet they often suffer from issues like high costs, vendor lock-in, and complexity.
+Define once. Run anywhere. No lock-in. Just TypeScript.
 
-# Common Pain Points
+## The Problem
 
-Many teams struggle with:
-- **High Costs & Lock-In:** Overpriced services and vendor dependence.
-- **Underutilized Infrastructure:** Wasted resources.
-- **Platform Limitations:** Difficulties integrating with on-premise or enterprise systems.
-- **Complexity:** Over-complicated client-server interactions and excessive boilerplate.
-- **Deployment & Performance:** Challenges with serverless WebSockets and slow function startups.
+Traditional backend frameworks lock you into choices:
 
----
+- **Express/Fastify** → Great for servers, terrible for serverless (you bundle the entire framework)
+- **AWS Lambda** → Great for functions, forces you to fragment your code across services
+- **NestJS** → Heavy runtime that can't tree-shake effectively, forcing architectural decisions upfront
 
-# The Pikku Solution: Typed Functions
+You're forced to choose your architecture before writing code. Want to switch from a monolith to microservices? **Rewrite everything.** Want to optimize a hot path with serverless? **Good luck extracting that logic.**
 
-Pikku turns your application into a repository of isolated, testable functions that are:
+Types drift. Logic fragments. Vendor lock-in creeps in.
 
-- 🧩 **Modular:**  Each function is independent.
-- 💼 **Portable:**  Run seamlessly on AWS, Cloudflare, Express, and more.
-- ☁ **Serverless by Design:**  Enjoy serverless benefits without sacrificing performance.
-- 🧘🏽 **Type-Safe:** Built on TypeScript for reliability and fewer runtime errors.
+## The Pikku Solution
 
----
+Pikku flips the script: **architecture becomes a deployment decision, not a coding decision.**
 
-# Key Features
+Write your function once:
 
-- **Protocol Agnostic:** Can be extended to supper any event based system. Currently supporting HTTP, scheduled tasks, and WebSockets.
-- **Built-in Services & Auth:** Ready-to-use backend services.
-- **Type Safety & Validation:** End-to-end type checking and runtime schema validation.
-- **Comprehensive Documentation:** Auto-generated OpenAPI docs and typed plugins.
-- **Minimal Overhead:** Eliminates boilerplate via TypeScript integration.
+```typescript
+export const sendWelcomeEmail = pikkuFunc({
+  func: async ({ email }, data) => {
+    await email.send({
+      to: data.userEmail,
+      subject: 'Welcome!',
+      body: `Hello ${data.userName}!`
+    })
+    return { sent: true }
+  }
+})
+```
 
----
+Wire it to different protocols:
 
-# Under the Hood
+```typescript
+// Call via HTTP after user signup
+wireHTTP({ method: 'post', route: '/users', func: createUser })
+  .then(() => rpc.invoke('sendWelcomeEmail', { ... }))
 
-Pikku uses the TypeScript compiler to automatically generate helpers and wiring for multiple protocols.
+// Process from background queue
+wireQueueWorker({ queue: 'emails', func: sendWelcomeEmail })
+
+// Trigger on schedule
+wireScheduler({ schedule: '0 9 * * *', func: sendDailyDigest })
+```
+
+Same business logic. Different entry points. Zero duplication.
+
+## How It Works
+
+Pikku uses static analysis to understand your code:
+
+1. **Scan** - The CLI analyzes your functions and wirings
+2. **Filter** - Generate entry points based on what you deploy (`pikku --http-routes=/admin`)
+3. **Tree-shake** - Only bundle the functions and services you actually use
+4. **Deploy** - Run as a monolith, microservices, or individual functions
+
+This means you can:
+- Start as a **multi-MB monolith** for rapid development
+- Split into **~100KB microservices** when you need independent scaling
+- Optimize to **&lt;50KB functions** for cost efficiency (depending on services needed)
+
+**Same codebase. Different deployment command. No refactoring.**
+
+See [Tree-Shaking](/docs/concepts/tree-shaking) for details on how this works.
+
+## Key Features
+
+### Transport-Agnostic Functions
+
+Your business logic doesn't know or care how it's called:
+
+- 🌐 **HTTP** - REST APIs, webhooks
+- 🔌 **WebSocket** - Real-time bidirectional communication
+- ⏰ **Scheduled Tasks** - Cron jobs, background processing
+- 📬 **Queues** - Async work queues (BullMQ, SQS, PG Boss)
+- 🤖 **MCP** - AI agent tools, resources, and prompts
+- 💻 **CLI** - Command-line interfaces
+- 📡 **RPC** - Internal function-to-function calls
+
+### Built-in Production Features
+
+No stitching libraries together:
+
+- ✅ **Authentication** - Session management across all protocols
+- ✅ **Permissions** - Fine-grained authorization
+- ✅ **Validation** - Automatic schema validation from TypeScript types
+- ✅ **Error Handling** - HTTP status codes, WebSocket errors, MCP codes
+- ✅ **Middleware** - Request/response transformation
+- ✅ **OpenAPI** - Auto-generated API documentation
+
+### Type Safety End-to-End
+
+- TypeScript types → JSON schemas (automatic validation)
+- Type-safe clients generated from your functions
+- Compile-time errors instead of runtime surprises
+
+### Deploy Anywhere
+
+Run on any JavaScript runtime:
+
+- **Servers**: Express, Fastify, Bun, uWebSockets
+- **Serverless**: AWS Lambda, Cloudflare Workers
+- **Frameworks**: Next.js (App Router, Pages Router)
+- **Any event-driven system** - Bring your own adapter
+
+## Under the Hood
+
+Pikku has four layers:
 
 ```mermaid
 flowchart LR
-  User(User Functions)
+  User(Your Code)
 
   subgraph Pikku
     direction LR
-    CLILayer([Pikku Compiler]) --> Runtime(Runtime) --> Deployment(Deployment)
+    CLI([Pikku CLI]) --> Runtime(Runtime) --> Deployment(Deployment)
   end
 
-  DeveloperTools(Developer Tooling)
+  Tools(Generated Code)
 
   User --> Pikku
-  CLILayer --> DeveloperTools
+  CLI --> Tools
 ```
 
-*This diagram shows how the layer in pikku are arranged.*
+### User Layer
+
+You write:
+- **Functions** - Pure business logic
+- **Services** - Database, cache, logger (plain TypeScript classes)
+- **Wirings** - Connect functions to protocols
+- **Middleware** - Cross-cutting concerns
+
+### CLI Layer
+
+The Pikku CLI scans your code and generates:
+- Type definitions for your entire API
+- JSON schemas for validation
+- OpenAPI documentation
+- Type-safe clients
+- Filtered entry points based on deployment flags
+
+### Runtime Layer
+
+The runtime handles:
+- Routing requests to functions
+- Running middleware and permissions
+- Validating input data
+- Handling errors
+- Managing sessions
+
+### Deployment Layer
+
+Thin adapters for each platform:
+- Express middleware
+- Lambda handlers
+- Cloudflare Workers
+- Next.js API routes
+
+## What Makes Pikku Different
+
+| **Aspect** | **Pikku** | **Other Frameworks** |
+|------------|-----------|---------------------|
+| **Architecture** | Deployment decision | Coding decision |
+| **Protocols** | 8+ protocols, one codebase | Pick one, duplicate for others |
+| **Tree-shaking** | Filtered entry points | Bundle everything |
+| **Serverless** | &lt;50KB functions | 2MB+ per function |
+| **Type Safety** | End-to-end (server + client) | Server only |
+| **Lock-in** | None - plain TypeScript | Framework-specific patterns |
+
+## Limitations
+
+Pikku is pragmatic, not perfect:
+
+- **Not a standalone server** - Integrates with existing runtimes (Express, Lambda, etc.)
+- **JSON only** - Input/output limited to JSON and primitives ([file uploads not yet supported](https://pikku.dev/content))
+- **Early stage** - Version 0.x means features may evolve
+- **Node/Bun only** - JavaScript runtime required
+
+## Getting Started
+
+Ready to try Pikku?
+
+```bash
+npm create pikku@latest
+```
+
+Then continue to [Getting Started](/docs/core) to build your first function.
+
+## Philosophy
+
+Pikku believes:
+
+- **Business logic should be portable** - Not tied to Express, Lambda, or any framework
+- **Architecture should evolve** - Start simple, optimize later, without rewriting
+- **Type safety should be automatic** - Let TypeScript do the work
+- **Frameworks should be thin** - Pikku is < 3MB with 2 dependencies
+
+**Write once. Deploy anywhere. That's the Pikku way.**
 
 ---
 
-## Workflow Overview
-
-Pikku organizes your application into five key layers that work together to simplify development:
-
-### **User Layer**  
-
-```mermaid
-flowchart LR
-  Services(Services)
-  Functions(Functions)
-  Wirings(Wirings)
-  Services --> Functions --> Wirings
-```
-
-  - **Middleware:** Used to run custom user logic before and/or after Functions. 
-  - **Services:** Provide foundational utilities such as data access and logging.  
-  - **Function Logic:** Contains the core business logic of your application.  
-  - **Wirings:** Wire functions to various triggers like HTTP routes, scheduled tasks, and channels.
-
-### **CLI Layer (Pikku CLI & Inspector)**  
-
-```mermaid
-flowchart LR
-      CLIConfig[Configuration Files]
-      Inspector([Pikku CLI & Inspector])
-      JSONSchemas[JSON Schemas]
-      OpenAPI[OpenAPI Documentation]
-      FetchClients[Typed Fetch]
-      NextJS[NextJS Wrapper]
-    CLIConfig --> Inspector
-    Inspector --> JSONSchemas
-    Inspector --> OpenAPI
-    Inspector --> FetchClients
-    Inspector --> NextJS
-```
-
-   - **Configuration Files:** Define project settings and function locations.  
-   - **Pikku CLI & Inspector:** Scans your project to generate necessary artifacts.  
-   - **JSON Schemas & OpenAPI:** Ensure type safety and generate standard API documentation.  
-   - **Typed Fetch & NextJS Wrapper:** Create type-safe client code and integrate with NextJS.
-
-
-### **Runtime Layer**  
-
-```mermaid
-flowchart LR
-  HTTP
-  Channel
-  ScheduledTasks
-
-  Event --> HTTP
-  Event --> Channel
-  Event --> MCP
-  Event --> Queue
-  Event --> ScheduledTasks
-  Channel --> Local
-  Channel --> Distributed
-```
-
-   - Provides the libraries that handle the different transport types.
-   - Ties together middleware, permissioning and data validation.
-   - Maps error to their correct responses if provided.
-
-### **Deployment Layer** 
-
-```mermaid
-flowchart LR
-  Event([Event]) --> Deployment(Server/Serverless Adapter) --> Runtime(Runtime)
-
-```
-
-   - Consists of thin wrappers that allow various deployment frameworks (e.g., Express, AWS, Cloudflare) to interact seamlessly with the runtime layer.
-
----
-
-# Limitations & Caveats
-
-- **Not a Standalone Server:** Pikku is a function repository meant to integrate with your existing infrastructure.
-- **Input/Output:** Currently limited to JSON and primitive types.
-- **Early Stage:** The framework is in 0.x; features may evolve.
-
----
-
-# In Summary
-
-**Pikku = Typed Functions + Minimal Overhead**
-
-- **TypeScript-Powered:** Reduces boilerplate and enhances reliability.
-- **Versatile:** Supports HTTP, cron jobs, and WebSockets.
-- **Portable:** Deploy across various environments.
-- **Developer-Centric:** Offers a streamlined CLI and auto-generated helpers.
-
-Pikku unifies serverless, full-stack, and traditional architectures to empower developers in building scalable, cost-efficient applications.
-
----
-
-# Questions & Next Steps
-
-Learn more or see Pikku in action at the [Pikku website](https://pikku.dev) and join the conversation on GitHub. Your feedback and contributions can shape the future of this exciting project!
+Questions? Join the conversation on [GitHub](https://github.com/pikkujs/pikku).

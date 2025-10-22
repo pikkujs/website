@@ -240,16 +240,39 @@ export const requireOwnership = pikkuPermission(async ({ database }, data, sessi
 
 Use `return false` for authorization failures. Only throw for actual errors.
 
-## Parallel Execution
+## Permission Logic and Execution
 
-All permissions run in parallel. The first one to return `false` or throw an error will stop the request:
+:::warning Important: Permissions Run in Parallel
+All permissions execute concurrently, not sequentially. This means:
+- **Don't rely on execution order** - Permissions may run in any order
+- **Avoid side effects** - Don't modify shared state or depend on other permissions running first
+- **Keep them independent** - Each permission should be a self-contained check
+:::
+
+### OR Logic (Default)
+
+When you list multiple permissions as object keys, **any one can pass** (OR logic):
 
 ```typescript
 permissions: {
-  auth: requireAuth,        // Runs in parallel
-  admin: requireAdmin,      // Runs in parallel
-  quota: withinQuota,       // Runs in parallel
+  admin: requireAdmin,      // Can pass if admin
+  owner: requireOwner,      // OR can pass if owner
+  moderator: requireModerator  // OR can pass if moderator
 }
+// Request proceeds if ANY permission returns true
+```
+
+This is useful when multiple roles or conditions should grant access. For example, both admins and resource owners should be able to edit a resource.
+
+### AND Logic (Arrays)
+
+To require multiple permissions to pass simultaneously, use arrays:
+
+```typescript
+permissions: {
+  authAndVerified: [requireAuth, requireEmailVerified]  // Both must pass
+}
+// Request proceeds only if ALL permissions in the array return true
 ```
 
 Don't depend on execution order - each permission should be an independent check.

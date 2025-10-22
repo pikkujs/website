@@ -43,6 +43,10 @@ This function can now be wired to:
 
 All without changing a single line of the function code.
 
+:::tip The Pikku Mental Model
+Think of Pikku functions like serverless functions (Lambda, Cloudflare Workers) but **without the lock-in**. You write pure business logic that's completely decoupled from the runtime. The difference? You can call the same function from HTTP, WebSocket, a queue, or anything else – and deploy it to any platform. One function, infinite entry points.
+:::
+
 ## The Function Signature
 
 Pikku functions use an object configuration with a `func` property that contains your logic:
@@ -323,6 +327,15 @@ packages/functions/src/
 ```
 
 Functions live in `*.function.ts` files and only export Pikku functions. Services are plain TypeScript classes that don't depend on Pikku - this keeps your business logic portable and easy to test.
+
+:::tip Why This Matters: Portability & Testability
+By keeping your services as plain TypeScript (no Pikku dependencies), you can:
+- **Test functions in isolation** - Just call `myFunction.func(mockServices, mockData, mockSession)`
+- **Reuse logic elsewhere** - Your database service can be used in scripts, migrations, or other tools
+- **Avoid lock-in** - If you ever move away from Pikku, your core logic stays intact
+
+This is intentional: Pikku is just the glue between your logic and the outside world. Your actual business logic should be framework-independent.
+:::
 
 :::info
 This structure isn't required - you can organize your code however you want. This is just what's most tested and tree-shakable.

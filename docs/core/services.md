@@ -1,126 +1,336 @@
 ---
 sidebar_position: 20
-title: Services  
-description: How services work  
+title: Services
+description: How services work
 ---
 
-Services in Pikku are a fundamental way for functions to interact with any form of external state.
+# Services
 
-Most services are simple in nature, only requiring optional initialization and cleanup steps. Let's look at an example.
+Services in Pikku are how your functions interact with external state – databases, caches, email providers, logging, and more. They're just plain TypeScript classes or objects, with no framework magic required.
 
-### Example: A game score service
+Think of services as your application's **toolbox**. Each function can pick which tools it needs by destructuring them from the first parameter.
 
-Here's an example service that manages a scoring system. Notice that it doesn't depend on any pikku features other than `PikkuError`, making it straightforward and easy to use. There's no extra code or decorators, this is the service in it's entirety.
+## A Simple Service
 
-It also demonstrates how to handle errors using pikku. This error type is recognized by Pikku and automatically mapped to an appropriate message.
+Here's a minimal example – a service that manages a book collection:
 
-```typescript title="Game Score Service"
-export class NotEnoughPointsError extends PikkuError {}
-addError(NotEnoughPointsError, { status: 400, message: 'Not enough points!' })
-
-interface GameScoreService {
-  deductPoints(points: number): string;
+```typescript
+interface BookService {
+  getBook(id: string): Book | undefined
+  createBook(book: Book): void
 }
 
-class LocalGameScoreService implements GameScoreService {
-    private score = 100; // Starting score
+class LocalBookService implements BookService {
+  private books = new Map<string, Book>()
 
-    deductPoints(points: number) {
-        if (points > this.score) throw new NotEnoughPointsError()
-        this.score -= points
-        return `Score: ${this.score}`
-    }
+  getBook(id: string) {
+    return this.books.get(id)
+  }
+
+  createBook(book: Book) {
+    this.books.set(book.id, book)
+  }
 }
 ```
 
+That's it! No decorators, no base classes, no framework coupling. Just a regular TypeScript class.
+
+## Using Services in Functions
+
+Services are available to your functions via the first parameter. **Always destructure only the services you need**:
+
+```typescript
+export const getBook = pikkuFunc<{ bookId: string }, Book>({
+  func: async ({ books }, data) => {
+    // Only books service is included in the bundle for this function
+    const book = books.getBook(data.bookId)
+    if (!book) {
+      throw new NotFoundError('Book not found')
+    }
+    return book
+  },
+  docs: {
+    summary: 'Get a book by ID',
+    tags: ['books']
+  }
+})
+```
+
+:::tip Tree-Shaking
+Destructuring services directly in the parameter list is critical. This tells Pikku which services each function actually uses, enabling proper tree-shaking when you deploy filtered subsets of your application.
+:::
+
 ## Types of Services
 
-Pikku offers two main types of services:
+Pikku supports two types of services:
 
 ### Singleton Services
 
-These services are created once when the server starts and remain active until the server shuts down. Singleton services are ideal for managing global resources, like:
+Created once when the server starts and shared across all function calls. Use these for:
 
-- **Session Management**: Retrieves and validates user sessions.
-- **Book Service**: The book service we just saw earlier.
-- **Database Connection**: Manages database connections, such as a Pool.
-- **Email Provider**: Sends emails.
+- **Database connections** – Connection pools
+- **Cache clients** – Redis, Memcached
+- **External APIs** – Third-party service clients
+- **Logger** – Application-wide logging
+- **Configuration** – App config loaded at startup
+- **JWT** – Token signing and verification
 
-:::info
-Different function calls can use the same instance, so ***do not*** save any state specific to the function call. That's where session services come in handy!
+```typescript
+// This database pool is created once and shared
+const database = new DatabasePool({ ... })
+```
+
+:::warning Don't Store Request State
+Since singleton services are shared across all function calls, **never** store request-specific data in them (like user IDs or session data). That's what session services are for.
 :::
 
 ### Session Services
 
-These are created for each API call and exist only for the duration of that call. They can interact with user sessions, request and response objects, and more.
+Created fresh for each function call and exist only for that call's duration. Use these for:
 
-The core services are:
+- **Request/Response** – HTTP headers, cookies, response modification
+- **Database transactions** – Per-request transaction scope
+- **User sessions** – Current user's session data
+- **Temporary resources** – Auto-cleanup after the request
 
-- **PikkuRequest**: Access request data (like headers)
-- **PikkuResponse**: Modify the response (like setting cookies)
+Session services can depend on singleton services and have access to the current `interaction` and `session`.
 
-Custom examples include:
+## Creating Services
 
-- **Database Client**: If the singleton service is a pool, the session service could be a client, which can provide benefits such as running everything in a single transaction if desired or automatically auditing tables.
-- **TemporaryFileService**: Manages temporary files that are automatically deleted when the session ends
+Services are defined in two files: type definitions and implementations.
 
-## How to Create Services
+### 1. Define Your Service Types
 
-Creating services in Pikku is a straightforward process, relying on basic functions to return services, along with a factory to generate session services.
-
-First you'll need your application types. These are types that extend the pikku ones and are passed as parameters to your functions.
-
-:::info
-Note how this uses a declaration file `.d.ts`. This enforces us to avoid putting anything concrete in this file.
-:::
-
-```typescript reference title="application-types.d.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/types/application-types.d.ts
-```
-
-Now, let's create the services:
-
-```typescript reference title="services.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/services.ts
-```
-
-## Dependency Lookup vs. Dependency Injection
-
-Pikku supports **dependency lookup** for service management.
-
-The reasoning behind this is primarily to keep things simple. By having a single entry point to create our services we can manage how they are created.
-
-:::info
-The disadvantage to this approach is that it's harder for to tree shake our dependencies when selecting routes. 
-
-There is a solution to this using more typescript inspection, but has not yet been implemented.
-:::
-
-| **Aspect**               | **Dependency Lookup**                                             | **Dependency Injection**                                         |
-|--------------------------|------------------------------------------------------------------|------------------------------------------------------------------|
-| **Dependency Acquisition**| Object retrieves dependencies as needed.                        | Dependencies are provided when the object is created.            |
-| **Responsibility**        | The object manages its own dependencies.                        | The system provides dependencies.                                |
-| **Flexibility**           | Flexible, since dependencies are acquired on demand.            | Less flexible but reduces runtime decision-making.               |
-| **Coupling**              | Tighter coupling, as the object knows how to get its dependencies. | Looser coupling, making the system more modular.                 |
-| **Testability**           | Requires mocking during testing.                                | Easily testable since dependencies are injected.                 |
-| **Best Use Case**         | When runtime flexibility is important.                          | When system decoupling and easy testing are priorities.          |
-
-## Advanced Use: Switching Between Local and Cloud Services
-
-Pikku allows you to switch between local and cloud services easily, which is especially helpful for development environments. Here's an example:
+First, extend Pikku's type system with your services:
 
 ```typescript
-const isProduction = process.env.NODE_ENV === 'production';
-let content: S3Content | LocalContent;
-if (isProduction) {
-  const keypairId = await secrets.getSecret(config.secrets.cloudfrontContentId);
-  const privateKeyString = await secrets.getSecret(config.secrets.cloudfrontContentPrivateKey);
-  content = new S3Content(config.content, logger, { keypairId, privateKeyString });
-} else {
-  content = new LocalContent(config, logger);
+// types/application-types.d.ts
+import type { CoreConfig, CoreSingletonServices, CoreServices } from '@pikku/core'
+
+// Define your app configuration
+export interface Config extends CoreConfig {
+  logLevel: string
+  database: {
+    host: string
+    port: number
+  }
+}
+
+// Add your singleton services
+export interface SingletonServices extends CoreSingletonServices<Config> {
+  jwt: JWTService
+  books: BookService
+  database: DatabasePool
+}
+
+// Main services type (combines singleton and session services)
+export interface Services extends CoreServices<SingletonServices> {
+  // Session-specific services are added here
+  userSession: UserSessionService
+  dbTransaction: DatabaseTransaction
 }
 ```
 
-For unit tests, you can use a `createServicesStubs` file to mock services using tools like SinonJS or Jest.
+:::info Why a .d.ts file?
+Using a declaration file enforces that you only define types here, not implementations. This keeps your type definitions clean and separate from business logic.
+:::
 
-By understanding and mastering how services work in Pikku, you'll be able to efficiently manage both session-based and global resources, making your applications more scalable and maintainable.
+### 2. Implement Service Factories
+
+Then implement the factories that create your services:
+
+```typescript
+// services.ts
+import type { CreateSingletonServices, CreateSessionServices } from '@pikku/core'
+
+export const createSingletonServices: CreateSingletonServices<
+  Config,
+  SingletonServices
+> = async (config: Config): Promise<SingletonServices> => {
+  const logger = new ConsoleLogger()
+
+  if (config.logLevel) {
+    logger.setLevel(config.logLevel)
+  }
+
+  const jwt = new JoseJWTService(
+    async () => [
+      {
+        id: 'my-key',
+        value: process.env.JWT_SECRET || 'dev-secret',
+      },
+    ],
+    logger
+  )
+
+  const database = new DatabasePool(config.database)
+  await database.connect()
+
+  const books = new BookService()
+
+  return {
+    config,
+    logger,
+    jwt,
+    database,
+    books,
+  }
+}
+
+export const createSessionServices: CreateSessionServices<
+  SingletonServices,
+  Services,
+  UserSession
+> = async (singletonServices, interaction, session) => {
+  // Return only the session-specific services
+  // Pikku automatically merges these with singletonServices
+  return {
+    userSession: createUserSessionService(interaction),
+    dbTransaction: new DatabaseTransaction(singletonServices.database),
+  }
+}
+```
+
+Key points:
+
+- **`createSingletonServices`** receives `config` as the first parameter and returns singleton services
+- **`createSessionServices`** receives `(singletonServices, interaction, session)` and returns **only** the session-specific services
+- Pikku automatically merges session services with singleton services, so your functions have access to both
+- Don't spread `...singletonServices` – Pikku handles that for you
+
+:::tip
+See the [full services.ts example on GitHub](https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/services.ts) for a complete reference implementation.
+:::
+
+## Service Management Philosophy
+
+Pikku uses **dependency lookup** rather than dependency injection. This means:
+
+- ✅ **Single source of truth** – Service factories manage all service creation
+- ✅ **Explicit dependencies** – Functions declare exactly what they need
+- ✅ **Simple mental model** – No decorators, no reflection, no magic
+- ✅ **Runtime flexibility** – Easy to swap implementations based on environment
+- ✅ **Better tree-shaking** – Pikku analyzes which services each function uses
+
+Unlike frameworks like NestJS that use decorators and automatic dependency injection:
+
+```typescript
+// NestJS approach (NOT Pikku)
+@Injectable()
+class MyService {
+  constructor(
+    @Inject('DATABASE') private db: Database,
+    @Inject('LOGGER') private logger: Logger
+  ) {}
+}
+```
+
+Pikku keeps it simple:
+
+```typescript
+// Pikku approach
+export const myFunction = pikkuFunc({
+  func: async ({ database, logger }, data) => {
+    // Just destructure what you need
+  }
+})
+```
+
+| **Aspect** | **Pikku (Dependency Lookup)** | **NestJS (Dependency Injection)** |
+|------------|-------------------------------|-----------------------------------|
+| **Setup** | Define in factory functions | Decorators on every service |
+| **Runtime** | No reflection overhead | Reflection at startup |
+| **Tree-shaking** | Excellent (Pikku analyzes usage) | Limited (all services bundled) |
+| **Mental model** | Explicit and simple | "Magical" but familiar to some |
+| **Testing** | Mock the factories | Mock via DI container |
+
+The trade-off: Pikku requires you to explicitly create your services in factory functions, but in exchange you get better tree-shaking, faster cold starts, and a simpler mental model.
+
+## Error Handling in Services
+
+Services can throw Pikku errors that are automatically mapped to HTTP status codes:
+
+```typescript
+import { PikkuError, addError } from '@pikku/core'
+
+export class NotEnoughPointsError extends PikkuError {}
+addError(NotEnoughPointsError, { status: 400, message: 'Not enough points!' })
+
+class GameScoreService {
+  private score = 100
+
+  deductPoints(points: number) {
+    if (points > this.score) {
+      throw new NotEnoughPointsError()
+    }
+    this.score -= points
+    return this.score
+  }
+}
+```
+
+When this error is thrown from a function called via HTTP, Pikku automatically sends a 400 response. See [Errors](/docs/core/errors) for more details.
+
+## Environment-Based Service Switching
+
+Services make it easy to swap implementations based on environment:
+
+```typescript
+export const createSingletonServices: CreateSingletonServices<
+  Config,
+  SingletonServices
+> = async (config: Config): Promise<SingletonServices> => {
+  const isProduction = process.env.NODE_ENV === 'production'
+
+  let storage: Storage
+  if (isProduction) {
+    // Use S3 in production
+    storage = new S3Storage(config.aws)
+  } else {
+    // Use local filesystem in development
+    storage = new LocalStorage('./tmp')
+  }
+
+  return {
+    config,
+    storage,
+    // ... other services
+  }
+}
+```
+
+For tests, create a separate factory that returns mocked services:
+
+```typescript
+// services.test.ts
+export const createTestServices = async (
+  config: Config
+): Promise<SingletonServices> => {
+  return {
+    config,
+    logger: new NoOpLogger(),
+    database: new MockDatabase(),
+    storage: new InMemoryStorage(),
+    // ... other mocks
+  }
+}
+```
+
+## Summary
+
+Pikku services are:
+
+- **Plain TypeScript** – No decorators or framework coupling
+- **Explicitly managed** – Factory functions control creation
+- **Tree-shakeable** – Only bundled when actually used by functions
+- **Flexible** – Easy to swap based on environment or testing needs
+- **Two types** – Singletons for global resources, session services for per-request state
+- **Automatically merged** – Pikku combines singleton and session services for you
+
+The key insight: **your services don't know about Pikku**. They're just classes that your functions happen to use via the services parameter. This keeps your business logic portable and easy to test.
+
+## Next Steps
+
+- [Middleware](/docs/core/middleware) – Add cross-cutting concerns like logging and authentication
+- [Errors](/docs/core/errors) – Map custom errors to HTTP status codes
+- [Functions](/docs/core/functions) – Understand how functions use services
