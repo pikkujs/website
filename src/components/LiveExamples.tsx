@@ -113,7 +113,7 @@ function DeploymentSelector({
   return (
     <div className="flex items-center space-x-2">
       <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">Deploy to:</span>
-      <div className="shadow-sm inline-flex bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+      <div className="shadow-sm inline-flex bg-white dark:bg-neutral-700 rounded-lg border border-gray-200 dark:border-gray-600">
         {Object.entries(deployments).map(([key, deployment]) => (
           <div
             key={key}
@@ -274,7 +274,7 @@ function InteractiveExamplesSection() {
 /** Main Code Examples page component */
 export default function LiveExamples() {
   return (
-    <section id="code-examples" className="hidden md:flex py-16 bg-gray-50 dark:bg-gray-900">
+    <section id="code-examples" className="hidden md:flex py-16 bg-gray-50 dark:bg-neutral-900">
           <div className="max-w-[1600px] w-full mx-auto px-4 text-center">
             <InteractiveExamplesSection />
           </div>

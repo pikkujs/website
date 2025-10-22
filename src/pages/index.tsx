@@ -257,13 +257,13 @@ wireMCPPrompt({
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-gray-800 dark:via-gray-900/50 dark:to-gray-800">
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-left md:text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             One Function. Every Protocol. Zero Duplication.
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
             Write your logic once. Wire it to HTTP, WebSockets, queues, scheduled tasks, CLI, or AI agents. Same logic. Different protocols.
           </p>
         </div>
@@ -296,7 +296,7 @@ wireMCPPrompt({
                 return (
                   <div
                     key={idx}
-                    className="bg-gray-50 dark:bg-gray-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-xl transition-all cursor-pointer relative"
+                    className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-xl transition-all cursor-pointer relative"
                     onClick={() => setActiveProtocol(idx)}
                   >
                     {isActive && (
@@ -328,7 +328,7 @@ wireMCPPrompt({
             {/* Code display section below */}
             {activeProtocol !== null && (
               <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border-2 border-primary">
+                <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-lg border-2 border-primary">
                   <div className="flex items-center mb-4">
                     <WiringIcon wiringId={wiringExamples[activeProtocol].icon} size={24} />
                     <span className="ml-3 text-xl font-bold text-gray-900 dark:text-gray-100">
@@ -360,7 +360,7 @@ wireMCPPrompt({
                   {Object.entries(deployments).map(([key, deployment]) => (
                     <div
                       key={key}
-                      className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 shadow-md transition-all relative"
+                      className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3 shadow-md transition-all relative"
                     >
                       <div className="flex flex-col items-center">
                         <Image
@@ -426,13 +426,13 @@ function ProblemSolutionSection() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-primary/5 via-white to-primary/10 dark:from-gray-900 dark:via-gray-900 dark:to-primary/10">
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-left md:text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             Bundle Only What You Deploy
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
             Run your codebase as a monolith, as microservices, or as functions. Pikku creates the smallest bundle for your use case.
           </p>
         </div>
@@ -440,7 +440,7 @@ function ProblemSolutionSection() {
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {architectures.map((arch, idx) => (
-              <div key={idx} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg text-center">
+              <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-lg text-center">
                 <div className="text-6xl mb-3">{arch.icon}</div>
                 <Heading as="h3" className="text-xl font-bold mb-2">
                   {arch.name}
@@ -448,15 +448,15 @@ function ProblemSolutionSection() {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   {arch.description}
                 </p>
-                <div className="text-xs font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2">
+                <div className="text-xs font-mono bg-neutral-100 dark:bg-neutral-900 p-2 rounded mb-2">
                   {arch.command}
                 </div>
                 {arch.altCommand && (
-                  <div className="text-xs font-mono bg-gray-100 dark:bg-gray-900 p-2 rounded mb-2">
+                  <div className="text-xs font-mono bg-neutral-100 dark:bg-neutral-900 p-2 rounded mb-2">
                     {arch.altCommand}
                   </div>
                 )}
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
                   <div className="text-sm font-semibold text-primary mb-1">{arch.bundleSize}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">{arch.includes}</div>
                 </div>
@@ -529,20 +529,20 @@ function ProtocolSupportSection() {
   ];
 
   return (
-    <section className="py-16 bg-white dark:bg-gray-800">
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-left md:text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-6">
             Every Way Your Backend Communicates
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
             Pikku supports all the protocols modern backends need. Same function, different protocol.
           </p>
         </div>
 
         <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
           {protocols.map((protocol, idx) => (
-            <div key={idx} className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg hover:shadow-lg transition-shadow">
+            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg hover:shadow-lg transition-shadow">
               <div className="flex justify-center mb-4">
                 <WiringIcon wiringId={protocol.wiringId} size={48} />
               </div>
@@ -594,23 +594,26 @@ function UsedBySection() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-br from-primary/5 to-white dark:from-primary/10 dark:to-gray-800">
+    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <Heading as="h2" className="text-4xl font-bold mb-4">
-            Used By
+        <div className="text-left md:text-center mb-6">
+          <Heading as="h2" className="text-5xl font-bold mb-4">
+            Built with Pikku
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            Trusted by innovative companies building production systems
+          <p className="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-3">
+            Already powering production systems across startups and platforms.
+          </p>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            From open-source frameworks to live platforms, Pikku adapts to diverse real-world projects.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center justify-items-center">
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 items-center justify-items-center mt-12">
           {companies.map((company, idx) => (
             <Link
               key={idx}
               href={company.url}
-              className="flex items-center justify-center p-6 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900 transition-all hover:scale-110"
+              className="flex items-center justify-center p-6 rounded-lg hover:bg-white/50 dark:hover:bg-neutral-900/50 transition-all hover:scale-105"
               title={company.name}
             >
               <Image
@@ -619,8 +622,8 @@ function UsedBySection() {
                   dark: `img/logos/${company.logo.dark}`
                 }}
                 alt={company.name}
-                width={120}
-                height={60}
+                width={160}
+                height={80}
                 className="object-contain"
               />
             </Link>
@@ -634,8 +637,8 @@ function UsedBySection() {
 /** Deploy Anywhere */
 function DeployAnywhereSection() {
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-screen-lg mx-auto px-4 text-center">
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Deploy Anywhere. Blend In Everywhere.
         </Heading>
@@ -721,21 +724,21 @@ function ProductionFeaturesSection() {
   ];
 
   return (
-    <section className="py-16 bg-white dark:bg-gray-800">
-      <div className="max-w-screen-lg mx-auto px-4 text-center">
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Ship Faster, Maintain Less
         </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-4 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-600 dark:text-gray-300 mb-4 md:max-w-2xl md:mx-auto">
           Production-ready features that reduce development time and lower long-term maintenance costs
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-12 max-w-2xl mx-auto">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-12 md:max-w-2xl md:mx-auto">
           Tiny runtime with minimal overhead. Bundles as small as 50KB for single-function deployments.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
           {features.map((feature, idx) => (
-            <div key={idx} className="flex flex-col items-start p-6 bg-gray-50 dark:bg-gray-900 rounded-lg hover:shadow-md transition-shadow">
+            <div key={idx} className="flex flex-col items-start p-6 bg-neutral-50 dark:bg-neutral-900 rounded-lg hover:shadow-md transition-shadow">
               <span className="text-4xl mb-4">{feature.icon}</span>
               <div className="text-left">
                 <div className="text-xl font-bold mb-2">{feature.title}</div>
@@ -774,20 +777,20 @@ function HowTeamsUseItSection() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-left md:text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             How Teams Use Pikku
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
             Real-world scenarios where one function serves multiple use cases
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {useCases.map((useCase, idx) => (
-            <div key={idx} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
+            <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-md">
               <Heading as="h3" className="text-xl font-bold mb-3 text-primary">
                 {useCase.title}
               </Heading>
@@ -825,12 +828,12 @@ function TryItNowSection() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-br from-white via-primary/5 to-white dark:from-gray-800 dark:via-primary/10 dark:to-gray-800">
-      <div className="max-w-screen-lg mx-auto px-4 text-center">
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-4">
           Get Started in Minutes
         </Heading>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 md:max-w-2xl md:mx-auto">
           Create your first Pikku app with one command. You'll have a function running across HTTP, WebSockets, and more in under 5 minutes.
         </p>
         <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark transition-colors" onClick={copyToClipboard}>
@@ -853,7 +856,7 @@ function TryItNowSection() {
 /** Call to Action */
 function CallToActionSection() {
   return (
-    <section className="py-16 bg-gray-900 dark:bg-gray-800">
+    <section className="py-16 bg-neutral-900 dark:bg-neutral-900">
       <div className="max-w-screen-lg mx-auto px-4 text-center">
         <div className="text-white">
           <Heading as="h2" className="text-4xl font-bold mb-6 text-white">
@@ -863,7 +866,7 @@ function CallToActionSection() {
             Stop duplicating logic. Write once, deploy anywhere with Pikku.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/docs" className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
+            <Link to="/docs" className="bg-white text-gray-900 hover:bg-neutral-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
               Get Started
             </Link>
             <Link to="https://github.com/pikkujs/pikku" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
@@ -886,8 +889,8 @@ export default function Home() {
     >
       <Hero />
       <main>
-        <AhaMomentSection />
         <UsedBySection />
+        <AhaMomentSection />
         <ProductionFeaturesSection />
         <HowTeamsUseItSection />
         <ProblemSolutionSection />
