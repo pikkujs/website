@@ -9,8 +9,18 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
+      - name: Check out website repository
         uses: actions/checkout@v4
+
+      - name: Check out pikku monorepo for skills
+        uses: actions/checkout@v4
+        with:
+          repository: pikkujs/pikku
+          path: pikku
+
+      - name: Sync skills from pikku repo
+        run: ./sync-skills.sh pikku/.claude/skills
+
       - run: corepack enable
         shell: bash
       - uses: actions/setup-node@v4
