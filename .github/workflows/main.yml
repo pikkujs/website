@@ -18,6 +18,19 @@ jobs:
           repository: pikkujs/pikku
           path: pikku-repo
 
+      - name: Debug - Check directory structure
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Contents of current directory:"
+          ls -la
+          echo "Contents of pikku-repo:"
+          ls -la pikku-repo || echo "pikku-repo not found"
+          echo "Contents of pikku-repo/.claude:"
+          ls -la pikku-repo/.claude || echo ".claude not found"
+          echo "Contents of pikku-repo/.claude/skills:"
+          ls -la pikku-repo/.claude/skills || echo "skills not found"
+
       - name: Sync skills from pikku repo
         run: ./sync-skills.sh pikku-repo/.claude/skills
 
