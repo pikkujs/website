@@ -49,7 +49,16 @@ const config: Config = {
   },
 
   plugins: [
-    tailwindPlugin
+    tailwindPlugin,
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'why',
+        path: 'why',
+        routeBasePath: 'why',
+        sidebarPath: false,
+      },
+    ],
   ],
 
   presets: [
@@ -128,6 +137,11 @@ const config: Config = {
         src: 'img/pikku.png',
       },
       items: [
+        {
+          to: '/why/costs-of-moving',
+          label: 'Why?',
+          position: 'right',
+        },
         {
           type: 'docSidebar',
           sidebarId: 'docs',
