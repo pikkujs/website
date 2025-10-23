@@ -2,6 +2,8 @@
 sidebar_position: 6
 ---
 
+import { BundleArchitecturesSection } from '@site/src/components/BundleArchitecturesSection';
+
 # Tree-Shaking and Filtering
 
 Pikku analyzes your wirings at build time to generate optimized entry points. This allows you to deploy the same codebase as a monolith, microservices, or individual functions without code changes.
@@ -136,6 +138,8 @@ This is intentional. It means:
 ## Architecture Evolution
 
 The same codebase can be deployed differently as your needs change:
+
+<BundleArchitecturesSection />
 
 ### Phase 1: Monolith
 

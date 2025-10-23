@@ -8,6 +8,8 @@ import { runtimes } from '@site/data/homepage';
 import { protocolDeployments, protocolToDeploymentKey } from '@site/data/deployments';
 import { WiringIcon } from '../components/WiringIcons';
 import LiveExamples from '../components/LiveExamples';
+import { BundleArchitecturesSection } from '../components/BundleArchitecturesSection';
+import { testimonials } from '@site/data/testimonials';
 
 /** Reusable component for Pikku logo surrounded by icons */
 function PikkuCircularLayout({
@@ -68,8 +70,8 @@ function Hero() {
         <Heading as="h1" className="text-5xl font-bold mb-4 text-primary">
           Write Backend Logic Once. Run It Everywhere.
         </Heading>
-        <p className="text-xl font-medium leading-relaxed mb-4 text-gray-700 dark:text-gray-300">
-          Write your backend logic once. Pikku automatically adapts it to work with any protocol—HTTP APIs, WebSockets, queues, scheduled tasks, and more. No duplicate code, no vendor lock-in.
+        <p className="text-xl font-medium leading-relaxed mb-8 text-gray-700 dark:text-gray-300">
+          Write your backend logic once. Pikku automatically adapts it to work with any protocol—HTTP APIs, WebSockets, queues, scheduled tasks, and even AI tools via MCP. No duplicate code, no vendor lock-in.
         </p>
         <ul className="text-base mb-8 space-y-2 text-gray-700 dark:text-gray-300">
           <li className="flex items-start">
@@ -90,13 +92,22 @@ function Hero() {
           </li>
         </ul>
         <div className="flex flex-row gap-4 mt-6">
-          <Link to="#code-examples" className="button button--primary">
+          <Link
+            to="/docs"
+            className="button button--primary button--lg hover:scale-105 transition-transform shadow-lg hover:shadow-xl"
+          >
+            Get Started
+          </Link>
+          <Link
+            to="#code-examples"
+            className="button button--secondary button--lg hover:scale-105 transition-transform"
+          >
             See Examples
           </Link>
-          <Link to="/docs" className="button button--secondary">
-            Try Pikku
-          </Link>
         </div>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+          ⚡ 5-minute setup • MIT Licensed
+        </p>
       </div>
       <div className="hidden md:block w-1/2">
         <Image sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }} />
@@ -211,24 +222,17 @@ const card = await rpc.invoke(
 )`
     },
     {
-      title: 'MCP',
+      title: 'MCP (AI Tools)',
       icon: 'mcp',
-      code: `// Resource
+      code: `// Model Context Protocol
+// Expose to AI tools like Claude
+
 wireMCPResource({
-  name: 'getCard',
-  func: getCard
-})
-
-// Tool
-wireMCPTool({
-  name: 'getCard',
-  func: getCard
-})
-
-// Prompt
-wireMCPPrompt({
-  name: 'getCard',
-  func: getCard
+  uri: 'card/{cardId}',
+  title: 'Card Information',
+  description: 'Retrieve card by ID',
+  func: getCard,
+  tags: ['cards', 'data']
 })`
     },
     {
@@ -260,11 +264,11 @@ wireMCPPrompt({
     <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-12">
-          <Heading as="h2" className="text-4xl font-bold mb-4">
-            One Function. Every Protocol. Zero Duplication.
+          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
+            One Function. Every Protocol. <span className="bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">Zero Duplication.</span>
           </Heading>
           <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
-            Write your logic once. Wire it to HTTP, WebSockets, queues, scheduled tasks, CLI, or AI agents. Same logic. Different protocols.
+            Write your logic once. Wire it to HTTP, WebSockets, queues, scheduled tasks, CLI, or AI tools (via Model Context Protocol). Same logic. Different protocols.
           </p>
         </div>
 
@@ -387,7 +391,7 @@ wireMCPPrompt({
 
         <div className="mt-12 text-center">
           <p className="text-lg font-semibold text-primary">
-            Same authentication, permissions, and validation across all protocols
+            ✓ Same authentication, permissions, and validation across all protocols
           </p>
         </div>
       </div>
@@ -395,81 +399,23 @@ wireMCPPrompt({
   );
 }
 
-/** Bundle Only What You Deploy */
+/** Bundle Only What You Deploy - Condensed Summary */
 function ProblemSolutionSection() {
-  const architectures = [
-    {
-      name: 'Monolith',
-      icon: '🏢',
-      description: 'Run everything in one process',
-      command: 'pikku',
-      bundleSize: '~2.8MB',
-      includes: 'All functions, all protocols'
-    },
-    {
-      name: 'Microservices',
-      icon: '📦',
-      description: 'Split by domain or feature',
-      command: 'pikku --http-routes=/admin',
-      altCommand: 'pikku --tags=admin',
-      bundleSize: '~180KB',
-      includes: 'Only admin routes + dependencies'
-    },
-    {
-      name: 'Functions',
-      icon: 'λ',
-      description: 'One function per deployment',
-      command: 'pikku --http-routes=/users/:id --types=http',
-      bundleSize: '~50KB',
-      includes: 'Single endpoint + minimal runtime'
-    }
-  ];
-
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
-          <Heading as="h2" className="text-4xl font-bold mb-4">
-            Bundle Only What You Deploy
-          </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
-            Run your codebase as a monolith, as microservices, or as functions. Pikku creates the smallest bundle for your use case.
-          </p>
-        </div>
-
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            {architectures.map((arch, idx) => (
-              <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-lg text-center">
-                <div className="text-6xl mb-3">{arch.icon}</div>
-                <Heading as="h3" className="text-xl font-bold mb-2">
-                  {arch.name}
-                </Heading>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  {arch.description}
-                </p>
-                <div className="text-xs font-mono bg-neutral-100 dark:bg-neutral-900 p-2 rounded mb-2">
-                  {arch.command}
-                </div>
-                {arch.altCommand && (
-                  <div className="text-xs font-mono bg-neutral-100 dark:bg-neutral-900 p-2 rounded mb-2">
-                    {arch.altCommand}
-                  </div>
-                )}
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-neutral-700">
-                  <div className="text-sm font-semibold text-primary mb-1">{arch.bundleSize}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">{arch.includes}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Link to="/docs/concepts/tree-shaking" className="text-primary hover:underline font-medium text-lg">
-              Learn more about filtering and tree-shaking →
-            </Link>
-          </div>
-        </div>
+    <section className="py-12 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-lg mx-auto px-4 text-center">
+        <Heading as="h2" className="text-3xl font-bold mb-4">
+          Bundle Only What You Deploy
+        </Heading>
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-2">
+          Run as a monolith (~2.8MB), microservices (~180KB), or individual functions (~50KB). Pikku's tree-shaking creates the smallest bundle for your deployment.
+        </p>
+        <p className="text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mb-6">
+          Use CLI flags to filter by routes, tags, or function types—deploy exactly what you need, nothing more.
+        </p>
+        <Link to="/docs/concepts/tree-shaking" className="text-primary hover:underline font-medium text-lg">
+          Learn about deployment strategies and bundle optimization →
+        </Link>
       </div>
     </section>
   );
@@ -629,6 +575,41 @@ function UsedBySection() {
             </Link>
           ))}
         </div>
+
+      </div>
+    </section>
+  );
+}
+
+/** What Developers Say */
+function TestimonialsSection() {
+  return (
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-left md:text-center mb-12">
+          <Heading as="h2" className="text-4xl font-bold mb-4">
+            What Developers Say
+          </Heading>
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+            Real feedback from teams using Pikku in production
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {testimonials.map((testimonial, idx) => (
+            <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-md border border-gray-200 dark:border-neutral-800">
+              <p className="text-gray-700 dark:text-gray-300 mb-4 italic">
+                "{testimonial.quote}"
+              </p>
+              <div className="text-sm">
+                <p className="font-semibold text-gray-900 dark:text-gray-100">{testimonial.author}</p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {testimonial.role}{testimonial.company ? ` @ ${testimonial.company}` : ''}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -649,7 +630,7 @@ function DeployAnywhereSection() {
               Pikku works with Node, Bun, Deno, serverless, edge runtimes, and containers.
             </p>
             <p className="text-lg text-gray-500 dark:text-gray-400">
-              No lock-in. No framework rules. Just TypeScript.
+              No vendor lock-in. No framework opinions. Just TypeScript.
             </p>
           </div>
 
@@ -730,7 +711,7 @@ function ProductionFeaturesSection() {
           Ship Faster, Maintain Less
         </Heading>
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-4 md:max-w-2xl md:mx-auto">
-          Production-ready features that reduce development time and lower long-term maintenance costs
+          Write your business logic once and deliver features across all protocols instantly. One source of truth means fewer bugs, faster iterations, and the flexibility to pivot without rewrites.
         </p>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-12 md:max-w-2xl md:mx-auto">
           Tiny runtime with minimal overhead. Bundles as small as 50KB for single-function deployments.
@@ -748,6 +729,66 @@ function ProductionFeaturesSection() {
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+/** Why I Built Pikku */
+function WhyIBuiltPikkuSection() {
+  const pillars = [
+    {
+      icon: '💰',
+      title: 'Cost Optimization',
+      description: 'Start optimizing your infrastructure budget by having full freedom to switch deployments at any time'
+    },
+    {
+      icon: '⚡',
+      title: 'Speed & Type Safety',
+      description: 'Build fast without any runtime lock-in, with TypeScript having your back'
+    },
+    {
+      icon: '🤖',
+      title: 'AI-Era Quality',
+      description: 'Simplicity means dramatically better generated code quality'
+    }
+  ];
+
+  return (
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-left md:text-center mb-12">
+          <Heading as="h2" className="text-4xl font-bold mb-4">
+            Why I Built Pikku
+          </Heading>
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+            Three core principles that drove Pikku's creation
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {pillars.map((pillar, idx) => (
+            <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-md">
+              <div className="text-5xl mb-4">{pillar.icon}</div>
+              <Heading as="h3" className="text-xl font-bold mb-3 text-primary">
+                {pillar.title}
+              </Heading>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                {pillar.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link to="/docs/concepts/personal" className="text-primary hover:underline font-medium text-base">
+            Read the full story →
+          </Link>
+        </div>
+
+        <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-6">
+          — Yasser Fadl, Creator of Pikku
+        </p>
       </div>
     </section>
   );
@@ -866,10 +907,16 @@ function CallToActionSection() {
             Stop duplicating logic. Write once, deploy anywhere with Pikku.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/docs" className="bg-white text-gray-900 hover:bg-neutral-100 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
+            <Link
+              to="/docs"
+              className="bg-white text-gray-900 hover:bg-neutral-100 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg hover:shadow-xl"
+            >
               Get Started
             </Link>
-            <Link to="https://github.com/pikkujs/pikku" className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-semibold text-lg transition-colors">
+            <Link
+              to="https://github.com/pikkujs/pikku"
+              className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
+            >
               View on GitHub
             </Link>
           </div>
@@ -891,8 +938,10 @@ export default function Home() {
       <main>
         <UsedBySection />
         <AhaMomentSection />
+        <TestimonialsSection />
         <ProductionFeaturesSection />
         <HowTeamsUseItSection />
+        <WhyIBuiltPikkuSection />
         <ProblemSolutionSection />
         <TryItNowSection />
         <LiveExamples />
