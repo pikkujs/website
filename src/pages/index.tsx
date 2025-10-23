@@ -31,6 +31,7 @@ function PikkuCircularLayout({
           width={logoSize}
           height={logoSize}
           className="mx-auto"
+          style={{ objectFit: 'contain' }}
         />
       </div>
 
