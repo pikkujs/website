@@ -49,9 +49,11 @@ import { wireMCPResource } from './pikku-types.gen.js'
 import { getProjectDocs } from './functions/docs.function.js'
 
 wireMCPResource({
-  name: 'projectDocs',
+  uri: 'docs/{section}',
+  title: 'Project Documentation',
   description: 'Get project documentation by section',
-  func: getProjectDocs
+  func: getProjectDocs,
+  tags: ['mcp', 'docs']
 })
 ```
 
@@ -181,13 +183,19 @@ wireMCPTool({
   func: createIssue,
 
   // Optional
+  title: 'Create Issue',  // Display name for the tool
   middleware: [auditMiddleware],
   permissions: { admin: requireAdmin },
   tags: ['issues', 'write']
 })
 ```
 
-All three wiring functions (`wireMCPResource`, `wireMCPTool`, `wireMCPPrompt`) accept the same configuration options.
+**Required Properties:**
+- `wireMCPResource`: `uri`, `title`, `description`, `func`
+- `wireMCPTool`: `name`, `description`, `func` (optional: `title`)
+- `wireMCPPrompt`: `name`, `description`, `func`
+
+All three wiring functions support the same optional configuration (middleware, permissions, tags).
 
 ## Running the MCP Server
 
