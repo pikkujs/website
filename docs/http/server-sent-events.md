@@ -12,12 +12,12 @@ Pikku supports SSE as a progressive enhancement for GET routes - your function r
 
 ## Progressive Enhancement Pattern
 
-The recommended approach is to use `pikkuFunc` or `pikkuFuncSessionless` with an optional channel:
+The recommended approach is to use `pikkuFunc` or `pikkuSessionlessFunc` with an optional channel:
 
 ```typescript
-import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
 
-export const getStatus = pikkuFuncSessionless<
+export const getStatus = pikkuSessionlessFunc<
   void,
   { state: 'initial' | 'pending' | 'done' }
 >({
@@ -72,7 +72,7 @@ This pattern works for both SSE and regular HTTP clients:
 Here's a real-world example showing build progress:
 
 ```typescript
-export const watchBuild = pikkuFuncSessionless<
+export const watchBuild = pikkuSessionlessFunc<
   { projectId: string },
   { status: string; progress?: number }
 >({
@@ -180,7 +180,7 @@ async function pollStatus() {
 Stream live metrics with automatic updates:
 
 ```typescript
-export const getLiveMetrics = pikkuFuncSessionless<
+export const getLiveMetrics = pikkuSessionlessFunc<
   void,
   { cpu: number; memory: number; requests: number }
 >({
@@ -290,4 +290,4 @@ if (channel) {
 
 - [Channels](../channels/index.md) - For bidirectional real-time communication
 - [wireHTTP](./index.md) - HTTP route configuration
-- [Functions](../core/functions.md) - Understanding Pikku functions
+- [Functions](../core-features/functions.md) - Understanding Pikku functions

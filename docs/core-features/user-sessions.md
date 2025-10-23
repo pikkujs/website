@@ -68,7 +68,7 @@ Now your session type is available throughout your application with full type sa
 Use `userSession.set()` to create or update a session. This typically happens in a login function:
 
 ```typescript
-import { pikkuFuncSessionless, UnauthorizedError } from '@pikku/core'
+import { pikkuSessionlessFunc, UnauthorizedError } from '@pikku/core'
 
 type LoginInput = {
   email: string
@@ -80,7 +80,7 @@ type LoginResult = {
   user: { id: string; email: string; role: string }
 }
 
-export const login = pikkuFuncSessionless<LoginInput, LoginResult>({
+export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
   func: async ({ database, userSession, jwt }, data) => {
     // Verify credentials
     const user = await database.query('user', { email: data.email })
@@ -116,7 +116,7 @@ export const login = pikkuFuncSessionless<LoginInput, LoginResult>({
 })
 ```
 
-Notice we used `pikkuFuncSessionless` and set `auth: false` – this function doesn't require an existing session since we're creating one.
+Notice we used `pikkuSessionlessFunc` and set `auth: false` – this function doesn't require an existing session since we're creating one.
 
 ## Clearing a Session (Logout)
 
@@ -159,10 +159,10 @@ export const getProfile = pikkuFunc<void, UserProfile>({
 })
 ```
 
-For functions that work with or without authentication, use `pikkuFuncSessionless`:
+For functions that work with or without authentication, use `pikkuSessionlessFunc`:
 
 ```typescript
-export const getPublicData = pikkuFuncSessionless<void, PublicData>({
+export const getPublicData = pikkuSessionlessFunc<void, PublicData>({
   func: async ({ database }, data, session) => {
     // session might be undefined
     if (session) {
@@ -209,7 +209,7 @@ export const updatePreferences = pikkuFunc<PreferencesInput, void>({
 
 ## Custom Middleware
 
-You can create custom [middleware](/docs/core/middleware) to extend session behavior:
+You can create custom [middleware](/docs/core-features/middleware) to extend session behavior:
 
 ```typescript
 // Automatically update last activity timestamp
@@ -243,5 +243,5 @@ The `userSessionService` is the key: it abstracts session management so your fun
 
 For more details, see:
 - [UserSessionService API](/docs/api/user-session-service)
-- [Middleware](/docs/core/middleware)
-- [Permission Guards](/docs/core/permission-guards)
+- [Middleware](/docs/core-features/middleware)
+- [Permission Guards](/docs/core-features/permission-guards)

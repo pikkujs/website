@@ -14,7 +14,7 @@ Let's call a function from another function:
 
 ```typescript
 // Calculate order totals - reusable business logic
-export const calculateOrderTotal = pikkuFuncSessionless<
+export const calculateOrderTotal = pikkuSessionlessFunc<
   { items: Array<{ price: number; quantity: number }> },
   { subtotal: number; tax: number; total: number }
 >({
@@ -190,7 +190,7 @@ Each step:
 RPC automatically tracks call depth to prevent infinite loops:
 
 ```typescript
-export const processNestedCategories = pikkuFuncSessionless<
+export const processNestedCategories = pikkuSessionlessFunc<
   { categoryId: string; depth?: number },
   { processed: number }
 >({
@@ -354,7 +354,7 @@ Internal RPC calls are fully type-safe:
 
 ```typescript
 // Function signature defines types
-export const calculateTax = pikkuFuncSessionless<
+export const calculateTax = pikkuSessionlessFunc<
   { amount: number; rate: number },
   { tax: number; total: number }
 >({ /* ... */ })

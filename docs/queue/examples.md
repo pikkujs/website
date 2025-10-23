@@ -14,7 +14,7 @@ This page shows practical examples of using Pikku queues for common use cases. E
 
 ```typescript
 // email-worker.functions.ts
-import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
 
 interface EmailJob {
   to: string
@@ -30,7 +30,7 @@ interface EmailResult {
   provider: string
 }
 
-export const sendEmail = pikkuFuncSessionless<EmailJob, EmailResult>(
+export const sendEmail = pikkuSessionlessFunc<EmailJob, EmailResult>(
   async (context, jobData) => {
     const { logger, services } = context
     
@@ -121,7 +121,7 @@ async function sendPasswordReset(userEmail: string, resetToken: string) {
 
 ```typescript
 // image-worker.functions.ts
-import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
 
 interface ImageJob {
   imageUrl: string
@@ -139,7 +139,7 @@ interface ImageResult {
   fileSize: number
 }
 
-export const processImage = pikkuFuncSessionless<ImageJob, ImageResult>(
+export const processImage = pikkuSessionlessFunc<ImageJob, ImageResult>(
   async (context, jobData) => {
     const { logger, services } = context
     
@@ -246,7 +246,7 @@ async function processUserImage(userId: string, imageUrl: string) {
 
 ```typescript
 // export-worker.functions.ts
-import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
 
 interface ExportJob {
   userId: string
@@ -267,7 +267,7 @@ interface ExportResult {
   exportedAt: Date
 }
 
-export const exportData = pikkuFuncSessionless<ExportJob, ExportResult>(
+export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
   async (context, jobData) => {
     const { logger, services } = context
     
@@ -377,7 +377,7 @@ async function checkExportStatus(jobId: string) {
 
 ```typescript
 // notification-worker.functions.ts
-import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
 
 interface NotificationJob {
   userId: string
@@ -396,7 +396,7 @@ interface NotificationResult {
   metadata?: Record<string, any>
 }
 
-export const sendNotification = pikkuFuncSessionless<
+export const sendNotification = pikkuSessionlessFunc<
   NotificationJob,
   NotificationResult[]
 >(
@@ -561,7 +561,7 @@ async function sendBatchNotifications(notifications: NotificationJob[]) {
 
 ```typescript
 // cleanup-worker.functions.ts
-import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
 
 interface CleanupJob {
   type: 'files' | 'logs' | 'cache' | 'database'
@@ -576,7 +576,7 @@ interface CleanupResult {
   duration: number // milliseconds
 }
 
-export const runCleanup = pikkuFuncSessionless<CleanupJob, CleanupResult>(
+export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
   async (context, jobData) => {
     const { logger, services } = context
     const startTime = Date.now()

@@ -13,7 +13,7 @@ External RPCs let external clients invoke your Pikku functions via HTTP POST end
 Functions with `expose: true` can be called by external systems:
 
 ```typescript
-export const calculateOrderTotal = pikkuFuncSessionless<
+export const calculateOrderTotal = pikkuSessionlessFunc<
   { items: Array<{ price: number; quantity: number }> },
   { subtotal: number; tax: number; total: number }
 >({
@@ -53,10 +53,10 @@ Wire an HTTP endpoint that calls any exposed function:
 
 ```typescript
 import { wireHTTP } from './pikku-types.gen.js'
-import { pikkuFuncSessionless } from './pikku-types.gen.js'
+import { pikkuSessionlessFunc } from './pikku-types.gen.js'
 
 // Generic RPC caller function
-export const rpcCaller = pikkuFuncSessionless<
+export const rpcCaller = pikkuSessionlessFunc<
   { name: string; data: unknown },
   unknown
 >({

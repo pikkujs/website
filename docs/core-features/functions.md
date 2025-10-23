@@ -132,7 +132,7 @@ By default, Pikku functions require authentication (`auth: true`). This means a 
 ### Setting a Session (Login)
 
 ```typescript
-export const login = pikkuFuncSessionless<LoginInput, LoginResult>({
+export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
   func: async ({ database, userSession, jwt }, data) => {
     const user = await database.query('user', { email: data.email })
 
@@ -156,7 +156,7 @@ export const login = pikkuFuncSessionless<LoginInput, LoginResult>({
 })
 ```
 
-Notice we used `pikkuFuncSessionless` for the login function and set `auth: false` - it doesn't require an existing session since we're creating one.
+Notice we used `pikkuSessionlessFunc` for the login function and set `auth: false` - it doesn't require an existing session since we're creating one.
 
 ### Clearing a Session (Logout)
 

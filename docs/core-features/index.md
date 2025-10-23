@@ -118,9 +118,9 @@ https://raw.githubusercontent.com/pikkujs/yarn-workspace-starter/blob/main/pikku
 
 Now that you have a working Pikku project, you're ready to dive deeper:
 
-- **[Functions](/docs/core/functions)** – Learn how to write Pikku functions and understand their signature
-- **[Middleware](/docs/core/middleware)** – Add request processing, logging, and other cross-cutting concerns
-- **[Services](/docs/core/services)** – Set up databases, caches, and other external integrations
+- **[Functions](/docs/core-features/functions)** – Learn how to write Pikku functions and understand their signature
+- **[Middleware](/docs/core-features/middleware)** – Add request processing, logging, and other cross-cutting concerns
+- **[Services](/docs/core-features/services)** – Set up databases, caches, and other external integrations
 - **[HTTP](/docs/http)** – Wire functions to HTTP endpoints with routing, query params, and more
 - **[Channels](/docs/channels)** – Add real-time WebSocket communication
 - **[Scheduled Tasks](/docs/scheduled-tasks)** – Run functions on a schedule (cron jobs)

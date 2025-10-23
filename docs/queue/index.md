@@ -16,9 +16,9 @@ Let's process welcome emails in the background:
 
 ```typescript
 // email.function.ts
-import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
 
-export const sendWelcomeEmail = pikkuFuncSessionless<
+export const sendWelcomeEmail = pikkuSessionlessFunc<
   { userId: string; email: string; name: string },
   void
 >({
@@ -55,10 +55,10 @@ wireQueueWorker({
 
 ## Queue Functions
 
-Queue functions use `pikkuFuncSessionless` since background jobs don't have user sessions:
+Queue functions use `pikkuSessionlessFunc` since background jobs don't have user sessions:
 
 ```typescript
-export const processPayment = pikkuFuncSessionless<
+export const processPayment = pikkuSessionlessFunc<
   { orderId: string; amount: number; currency: string },
   { transactionId: string }
 >({
@@ -85,7 +85,7 @@ export const processPayment = pikkuFuncSessionless<
 ```
 
 :::warning Auth and Permissions for Queue Workers
-Queue workers are **internal background jobs** without user sessions or incoming requests. They should almost always use `pikkuFuncSessionless` with `auth: false`.
+Queue workers are **internal background jobs** without user sessions or incoming requests. They should almost always use `pikkuSessionlessFunc` with `auth: false`.
 
 **If a function has `auth: true` or `permissions`, it's likely wrong for queue usage.** Queue jobs can't authenticate or have permissions checked - they run in the background without a user context.
 :::
@@ -161,7 +161,7 @@ See [Queue Client](./client.md) for details on adding jobs, monitoring progress,
 Queue functions should throw errors for failures - Pikku handles the retry logic:
 
 ```typescript
-export const processPayment = pikkuFuncSessionless<PaymentInput, void>({
+export const processPayment = pikkuSessionlessFunc<PaymentInput, void>({
   func: async ({ paymentService, logger }, data) => {
     try {
       await paymentService.charge(data)
@@ -195,7 +195,7 @@ The queue system will automatically:
 For long-running jobs, you can report progress using the `interaction.queue` object:
 
 ```typescript
-export const generateReport = pikkuFuncSessionless<
+export const generateReport = pikkuSessionlessFunc<
   { reportId: string },
   void
 >({

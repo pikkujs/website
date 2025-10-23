@@ -59,7 +59,7 @@ If triggered by a serverless function like Lambda or Azure Timer, the platform's
 
 ## Scheduled Functions
 
-Scheduled functions use `pikkuVoidFunc` (an alias for `pikkuFuncSessionless<void, void>`) since they:
+Scheduled functions use `pikkuVoidFunc` (an alias for `pikkuSessionlessFunc<void, void>`) since they:
 - Don't receive any input data
 - Don't return any output
 - Don't have user sessions
@@ -343,6 +343,6 @@ export const monthlyProcessing = pikkuVoidFunc({
 
 ## Next Steps
 
-- [Middleware](./core/middleware.md) - Adding observability to scheduled tasks
-- [RPC](./core/rpcs/index.md) - Orchestrating complex workflows
-- [Errors](./core/errors.md) - Error handling patterns
+- [Middleware](./core-features/middleware.md) - Adding observability to scheduled tasks
+- [RPC](./core-features/rpcs/index.md) - Orchestrating complex workflows
+- [Errors](./core-features/errors.md) - Error handling patterns

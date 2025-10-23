@@ -232,4 +232,4 @@ Pikku's error system provides:
 - **Type-safe** – Full TypeScript support
 - **Automatic mapping** – Status codes and messages handled for you
 
-For more details on error handling in functions, see [Functions](/docs/core/functions#error-handling).
+For more details on error handling in functions, see [Functions](/docs/core-features/functions#error-handling).

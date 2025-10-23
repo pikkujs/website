@@ -72,7 +72,7 @@ export function BundleArchitecturesSection() {
           </div>
 
           <div className="mt-8 text-center">
-            <Link to="/docs/concepts/tree-shaking" className="text-primary hover:underline font-medium text-lg">
+            <Link to="/docs/philosophy/tree-shaking" className="text-primary hover:underline font-medium text-lg">
               Learn more about filtering and tree-shaking →
             </Link>
           </div>

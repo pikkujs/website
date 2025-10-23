@@ -202,5 +202,5 @@ Most users don't need to customize these - Pikku uses sensible defaults.
 
 ## Next Steps
 
-- [Getting Started](/docs/core) - Set up your first Pikku project
-- [Tree-Shaking](/docs/concepts/tree-shaking) - Learn about filtering
+- [Getting Started](/docs/core-features) - Set up your first Pikku project
+- [Tree-Shaking](/docs/philosophy/tree-shaking) - Learn about filtering

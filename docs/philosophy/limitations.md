@@ -75,6 +75,6 @@ While you can use JavaScript, Pikku's benefits (type-safe clients, automatic val
 
 Despite these limitations, Pikku handles most backend use cases effectively. Ready to get started?
 
-- [Getting Started](/docs/core) - Build your first function
-- [Architecture](/docs/concepts/architecture) - Understanding how Pikku works
+- [Getting Started](/docs/core-features) - Build your first function
+- [Architecture](/docs/philosophy/architecture) - Understanding how Pikku works
 - [GitHub](https://github.com/pikkujs/pikku) - Request features or report issues

@@ -269,7 +269,7 @@ class GameScoreService {
 }
 ```
 
-When this error is thrown from a function called via HTTP, Pikku automatically sends a 400 response. See [Errors](/docs/core/errors) for more details.
+When this error is thrown from a function called via HTTP, Pikku automatically sends a 400 response. See [Errors](/docs/core-features/errors) for more details.
 
 ## Environment-Based Service Switching
 
@@ -331,6 +331,6 @@ The key insight: **your services don't know about Pikku**. They're just classes 
 
 ## Next Steps
 
-- [Middleware](/docs/core/middleware) – Add cross-cutting concerns like logging and authentication
-- [Errors](/docs/core/errors) – Map custom errors to HTTP status codes
-- [Functions](/docs/core/functions) – Understand how functions use services
+- [Middleware](/docs/core-features/middleware) – Add cross-cutting concerns like logging and authentication
+- [Errors](/docs/core-features/errors) – Map custom errors to HTTP status codes
+- [Functions](/docs/core-features/functions) – Understand how functions use services

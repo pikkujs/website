@@ -41,7 +41,7 @@ External RPCs expose your functions to external clients via HTTP POST endpoints.
 
 ```typescript
 // Function is automatically available as external RPC
-export const calculateOrderTotal = pikkuFuncSessionless<
+export const calculateOrderTotal = pikkuSessionlessFunc<
   { items: Array<{ price: number }> },
   { total: number }
 >({

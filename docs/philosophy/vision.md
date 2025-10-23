@@ -32,7 +32,7 @@ Pick your runtime. Change it tomorrow. Your code stays the same.
 
 - **Traditional Servers** - [Express](https://expressjs.com), [Fastify](https://www.fastify.io), [uWS](https://github.com/uNetworking/uWebSockets.js)
 - **Serverless** - [AWS Lambda](https://aws.amazon.com/lambda), [Azure Functions](https://azure.microsoft.com/en-us/products/functions/), [Cloudflare Workers](https://workers.cloudflare.com)
-- **AI Agents** - [MCP](https://modelcontextprotocol.io/docs/concepts/resources) for Claude, GPT, and other models
+- **AI Agents** - [MCP](https://modelcontextprotocol.io/docs/philosophy/resources) for Claude, GPT, and other models
 - **Full-Stack Frameworks** - [Next.js](https://nextjs.org) with App or Pages Router
 
 **Start with a monolith. Scale to microservices. Optimize individual functions.** All without rewriting a single line of business logic.

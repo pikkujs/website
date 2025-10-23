@@ -16,9 +16,9 @@ Let's create a simple greeting command:
 
 ```typescript
 // greet.function.ts
-import { pikkuFuncSessionless } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
 
-export const greetUser = pikkuFuncSessionless<
+export const greetUser = pikkuSessionlessFunc<
   { name: string; loud?: boolean },
   { message: string; timestamp: string }
 >({
@@ -100,7 +100,7 @@ pikkuCLICommand({
 These map directly to your function's input:
 
 ```typescript
-export const installPackage = pikkuFuncSessionless<
+export const installPackage = pikkuSessionlessFunc<
   { package: string; version?: string; force?: boolean },
   { installed: string; version: string }
 >({
@@ -239,7 +239,7 @@ type BuildProgress =
   | { type: 'progress'; step: string; percent: number }
   | { type: 'complete'; duration: number }
 
-export const buildApp = pikkuFuncSessionless<
+export const buildApp = pikkuSessionlessFunc<
   { project: string },
   { success: boolean; duration: number }
 >({
@@ -500,7 +500,7 @@ CLI commands should throw errors when operations fail:
 ```typescript
 import { BadRequestError, NotFoundError } from '@pikku/core/errors'
 
-export const deleteUser = pikkuFuncSessionless<
+export const deleteUser = pikkuSessionlessFunc<
   { username: string },
   { deleted: boolean }
 >({
@@ -614,6 +614,6 @@ Subcommands:
 
 ## Next Steps
 
-- [Core Functions](../core/functions.md) - Understanding Pikku functions
-- [Middleware](../core/middleware.md) - Adding middleware to CLI commands
-- [Errors](../core/errors.md) - Error handling patterns
+- [Core Functions](../core-features/functions.md) - Understanding Pikku functions
+- [Middleware](../core-features/middleware.md) - Adding middleware to CLI commands
+- [Errors](../core-features/errors.md) - Error handling patterns

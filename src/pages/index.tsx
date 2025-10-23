@@ -413,7 +413,7 @@ function ProblemSolutionSection() {
         <p className="text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mb-6">
           Use CLI flags to filter by routes, tags, or function types—deploy exactly what you need, nothing more.
         </p>
-        <Link to="/docs/concepts/tree-shaking" className="text-primary hover:underline font-medium text-lg">
+        <Link to="/docs/philosophy/tree-shaking" className="text-primary hover:underline font-medium text-lg">
           Learn about deployment strategies and bundle optimization →
         </Link>
       </div>
@@ -781,7 +781,7 @@ function WhyIBuiltPikkuSection() {
         </div>
 
         <div className="mt-8 text-center">
-          <Link to="/docs/concepts/personal" className="text-primary hover:underline font-medium text-base">
+          <Link to="/docs/philosophy/personal" className="text-primary hover:underline font-medium text-base">
             Read the full story →
           </Link>
         </div>

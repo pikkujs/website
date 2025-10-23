@@ -72,7 +72,7 @@ This means you can:
 
 **Same codebase. Different deployment command. No refactoring.**
 
-See [Tree-Shaking](/docs/concepts/tree-shaking) for details on how this works.
+See [Tree-Shaking](/docs/philosophy/tree-shaking) for details on how this works.
 
 ## Key Features
 
@@ -195,7 +195,7 @@ Ready to try Pikku?
 npm create pikku@latest
 ```
 
-Then continue to [Getting Started](/docs/core) to build your first function.
+Then continue to [Getting Started](/docs/core-features) to build your first function.
 
 ## Philosophy
 
