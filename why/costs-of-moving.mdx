@@ -8,6 +8,7 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import CloudCostComparison from '@site/src/components/CloudCostComparison';
+import CloudCostAtlas from '@site/src/components/CloudCostAtlas';
 
 # Stop Locking Yourself In: The Real Cost of Choosing Too Early
 
@@ -163,6 +164,14 @@ wireQueue({
 **The key insight:** Start small, scale serverlessly for bursts, then optimize for steady load when patterns emerge. Same code, different runtime. **No rewrites — just redeploy.**
 
 <CloudCostComparison />
+
+---
+
+## Deep Dive: Explore Pricing Across Metrics
+
+The chart above shows serverless function costs, but cloud pricing has many dimensions. Use the interactive atlas below to explore how providers compare across different metrics: egress fees, compute costs, queue operations, and free tiers.
+
+<CloudCostAtlas />
 
 ---
 
