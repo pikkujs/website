@@ -1,10 +1,9 @@
-export type ProviderId = 'aws' | 'gcp' | 'azure' | 'cloudflare' | 'selfhosted';
+export type ProviderId = 'aws' | 'gcp' | 'azure' | 'cloudflare';
 
 export type MetricId =
   | 'egress_internet_gb'
   | 'egress_intra_gb'
   | 'function_gb_s'
-  | 'queue_req_m'
   | 'free_tier_reqs_m';
 
 export interface RegionPricing {

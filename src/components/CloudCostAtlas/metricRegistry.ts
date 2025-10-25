@@ -22,12 +22,6 @@ export const METRICS: Record<MetricId, MetricDefinition> = {
     better: 'lower',
     description: 'Cost per GB-second of serverless function execution',
   },
-  queue_req_m: {
-    label: 'Queue Requests',
-    unit: '$/M',
-    better: 'lower',
-    description: 'Cost per million queue operations (send/receive/delete)',
-  },
   free_tier_reqs_m: {
     label: 'Free Tier',
     unit: 'M req/mo',
@@ -63,7 +57,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.09, // First 10TB/mo
             egress_intra_gb: 0.01, // Same AZ is free, different AZ
             function_gb_s: 0.0000166667, // $0.00001667/GB-s
-            queue_req_m: 0.40, // SQS: $0.40 per million requests
             free_tier_reqs_m: 1.0, // 1M requests/month free tier
           },
           notes: ['100GB free egress/month', '400K GB-s compute free/month'],
@@ -73,7 +66,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.09,
             egress_intra_gb: 0.01,
             function_gb_s: 0.0000166667,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 1.0,
           },
           notes: ['Same pricing as us-east-1'],
@@ -83,7 +75,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.09,
             egress_intra_gb: 0.01,
             function_gb_s: 0.0000166667,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 1.0,
           },
           notes: ['Ireland region, same pricing'],
@@ -93,7 +84,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.12, // More expensive in Asia
             egress_intra_gb: 0.01,
             function_gb_s: 0.0000166667,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 1.0,
           },
           notes: ['Singapore region, higher egress costs'],
@@ -115,7 +105,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.12, // Generally more expensive than AWS
             egress_intra_gb: 0.01,
             function_gb_s: 0.0000025, // Cheaper compute
-            queue_req_m: 0.40, // Cloud Tasks pricing
             free_tier_reqs_m: 2.0, // 2M requests/month free
           },
           notes: ['Only 1GB network egress free/month', 'Cheaper compute, pricier egress'],
@@ -125,7 +114,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.12,
             egress_intra_gb: 0.01,
             function_gb_s: 0.0000025,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 2.0,
           },
         },
@@ -134,7 +122,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.12,
             egress_intra_gb: 0.01,
             function_gb_s: 0.0000025,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 2.0,
           },
           notes: ['Belgium region'],
@@ -144,7 +131,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.15, // Even more expensive in Asia
             egress_intra_gb: 0.01,
             function_gb_s: 0.0000025,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 2.0,
           },
           notes: ['Singapore region, highest egress costs'],
@@ -166,7 +152,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.087, // Slightly cheaper than AWS
             egress_intra_gb: 0.01,
             function_gb_s: 0.000016, // Similar to AWS
-            queue_req_m: 0.40, // Storage Queue pricing
             free_tier_reqs_m: 1.0, // 1M executions/month free
           },
           notes: ['100GB free egress/month', '400K GB-s compute free/month'],
@@ -176,7 +161,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.087,
             egress_intra_gb: 0.01,
             function_gb_s: 0.000016,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 1.0,
           },
         },
@@ -185,7 +169,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.087,
             egress_intra_gb: 0.01,
             function_gb_s: 0.000016,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 1.0,
           },
           notes: ['Ireland region'],
@@ -195,7 +178,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0.12, // Higher in Asia
             egress_intra_gb: 0.01,
             function_gb_s: 0.000016,
-            queue_req_m: 0.40,
             free_tier_reqs_m: 1.0,
           },
           notes: ['Singapore region'],
@@ -217,7 +199,6 @@ export const ATLAS_DATA: AtlasData = {
             egress_internet_gb: 0, // FREE! Major differentiator
             egress_intra_gb: 0, // Also free
             function_gb_s: 0.000012, // Estimated based on CPU time pricing
-            queue_req_m: 0.40, // Queue operations pricing (paid plan)
             free_tier_reqs_m: 0.1, // 100K requests/day on free plan = ~3M/month
           },
           notes: [
@@ -225,29 +206,6 @@ export const ATLAS_DATA: AtlasData = {
             'Global edge network',
             'No regional pricing',
             'Paid plan: $5/10M requests',
-          ],
-        },
-      },
-    },
-    {
-      id: 'selfhosted',
-      name: 'Self-Hosted',
-      displayName: 'Self-Hosted (VPS)',
-      color: '#10B981',
-      regions: {
-        'any': {
-          metrics: {
-            egress_internet_gb: 0, // Depends on provider, often included
-            egress_intra_gb: 0, // Free within same network
-            function_gb_s: 0.000008, // Estimated amortized cost
-            queue_req_m: 0, // Redis/PostgreSQL on same machine
-            free_tier_reqs_m: Infinity, // No request limits
-          },
-          notes: [
-            'Fixed monthly cost regardless of requests',
-            'Suitable for predictable high-volume workloads',
-            'Requires ops expertise',
-            'Typical VPS: $40-200/month',
           ],
         },
       },

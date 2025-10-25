@@ -16,28 +16,51 @@ Every architecture choice has a cost.
 The wrong one just hides it longer.
 **Pikku keeps your options open** — same code, any runtime, no rewrites.
 
----
-
 ## The Problem: Decisions That Age Badly
 
 Teams over-optimize early — for scale, for cost, or for the trend of the day. Then scale shifts, costs spike, and refactors begin.
 
-```mermaid
-timeline
-    title Startup Architecture Timeline
-    Day 1 : Monolith
-           : Cheap + Simple
-    Month 6 : Traffic spikes
-            : Servers strain
-    Year 1 : Serverless migration
-           : Costs rise
-    Year 2 : Migration pain
-           : Refactor begins
-```
+### 🧱 Monolith Scaling Wall
 
-Research shows switching clouds or runtimes later can **double your spend** and **delay launches by months**. Yet most teams make these decisions when they have the least information.
+**The Decision:** "Keep it simple, build a monolith."
 
----
+**The Wall:**
+- Can't scale parts independently
+- Deploy everything or nothing
+- One bottleneck affects all features
+
+**Result:** Forced to rewrite when one feature needs different resources than the rest.
+
+### ⚙️ Microservices Too Soon
+
+**The Decision:** "We'll need to scale, so let's start with microservices."
+
+**The Wall:**
+- Coordination overhead kills velocity
+- Operational complexity from day 1
+- More infrastructure than features
+
+**Result:** Slow to ship, expensive to run, team spends more time on DevOps than product.
+
+### 💸 Serverless Lock-in
+
+**The Decision:** "Go all-in on [Cloud X] serverless."
+
+**The Wall:**
+- Vendor-specific APIs everywhere
+- Costs spike unpredictably at scale
+- Migration means rewriting everything
+
+**Result:** Stuck paying premium prices or facing 6+ month rewrite to switch.
+
+### The Pikku Way
+
+Instead of betting on one architecture upfront, **Pikku lets you adapt**:
+- Start with what's simplest for your current scale
+- Switch runtimes when economics or requirements change
+- Same code, same types, zero rewrites
+
+Architecture becomes **configuration**, not **commitment**.
 
 ## The Research Speaks
 
@@ -85,127 +108,9 @@ Technical and economic switching costs create long-term constraints on architect
 
 Even regulators agree: **egress fees** and **technical barriers** discourage switching. The UK Competition and Markets Authority (CMA, 2025) highlighted these as major concerns in cloud markets.
 
----
-
-## Example: Scale Smoothly, Spend Wisely
-
-Consider a queue-based background job system. Your needs change as you grow:
-
-```mermaid
-graph LR
-    A[Start: PgBoss/Postgres] -->|Traffic grows| B[Burst: Lambda + SQS]
-    B -->|Load stabilizes| C[Steady: Worker Fleet]
-
-    style A fill:#e1f5ff
-    style B fill:#fff4e1
-    style C fill:#e8f5e9
-
-    D[Same Code] -.->|Redeploy| A
-    D -.->|Redeploy| B
-    D -.->|Redeploy| C
-```
-
-<Tabs groupId="queue-runtime">
-<TabItem value="pgboss" label="🚀 Start Small" default>
-
-```typescript
-// Start with PgBoss - zero infrastructure overhead
-import { PgBossQueue } from '@pikku/queue-pg-boss'
-
-wireQueue({
-  name: 'processUpload',
-  queue: 'uploads',
-  func: processUpload
-})
-```
-
-**Best for:** MVP, low volume, simple setup
-**Cost:** $0 extra (uses existing database)
-
-</TabItem>
-
-<TabItem value="lambda" label="⚡ Handle Spikes">
-
-```typescript
-// Same code, serverless execution
-import { LambdaQueue } from '@pikku/aws-lambda'
-
-wireQueue({
-  name: 'processUpload',
-  queue: 'uploads',
-  func: processUpload
-})
-```
-
-**Best for:** Unpredictable bursts, pay-per-use
-**Cost:** Pay only when it runs
-
-</TabItem>
-
-<TabItem value="worker" label="📊 Optimize Steady Load">
-
-```typescript
-// Same code, dedicated workers
-import { BullMQQueue } from '@pikku/queue-bullmq'
-
-wireQueue({
-  name: 'processUpload',
-  queue: 'uploads',
-  func: processUpload
-})
-```
-
-**Best for:** Consistent high volume
-**Cost:** Cheaper for always-on workloads
-
-</TabItem>
-</Tabs>
-
-**The key insight:** Start small, scale serverlessly for bursts, then optimize for steady load when patterns emerge. Same code, different runtime. **No rewrites — just redeploy.**
-
-<CloudCostComparison />
-
----
-
-## Deep Dive: Explore Pricing Across Metrics
-
-The chart above shows serverless function costs, but cloud pricing has many dimensions. Use the interactive atlas below to explore how providers compare across different metrics: egress fees, compute costs, queue operations, and free tiers.
-
 <CloudCostAtlas />
 
----
-
-## Architecture That Adapts
-
-Pikku turns architecture into a **config**, not a **commitment**.
-
-```mermaid
-graph TD
-    A[Your Code] --> B[Pikku Runtime]
-    B --> C[HTTP: Express/Fastify]
-    B --> D[Serverless: Lambda/Cloudflare]
-    B --> E[WebSocket: ws/uWS]
-    B --> F[Queue: BullMQ/SQS/PgBoss]
-    B --> G[Cron: node-cron/CloudWatch]
-    B --> H[CLI: Local/Remote]
-
-    style A fill:#9c27b0,color:#fff
-    style B fill:#673ab7,color:#fff
-```
-
-Write once, deploy anywhere — serverless today, fleet tomorrow, cloud-agnostic forever.
-
-### What Pikku Abstracts
-
-- **HTTP**: Express, Fastify, AWS Lambda, Cloudflare Workers, Next.js
-- **WebSocket**: ws, uWebSockets.js, API Gateway, Durable Objects
-- **Queues**: BullMQ, PgBoss, SQS, Cloud Tasks
-- **Schedulers**: node-cron, CloudWatch Events, Cloudflare Cron
-- **CLI**: Local terminal, WebSocket RPC, MCP tools
-
-Each runtime provides the same interface, same middleware, same type safety. Your business logic stays pure.
-
----
+<CloudCostComparison />
 
 ## Keep the Cost of Changing Your Mind Near Zero
 
@@ -221,23 +126,51 @@ The real cost of lock-in isn't just money — it's **opportunity cost**. Every m
 ### Real-World Scenario
 
 ```typescript
-// Day 1: Start on Express (simple)
-import { ExpressRuntime } from '@pikku/express'
-const runtime = new ExpressRuntime()
+// Day 1: Start with everything monolithic
+import { PikkuExpressServer } from '@pikku/express'
+import { PgBossQueueWorkers } from '@pikku/queue-pg-boss'
 
-// Month 6: Add serverless HTTP for scale
-import { LambdaRuntime } from '@pikku/aws-lambda'
-const runtime = new LambdaRuntime()
+// HTTP server
+const server = new PikkuExpressServer(config, services, createSession)
+await server.start()
 
-// Year 1: Optimize costs with mixed approach
-// HTTP on Lambda (bursty traffic)
-// WebSockets on EC2 (stateful connections)
-// Queues on BullMQ (predictable load)
+// Background jobs (using existing Postgres)
+const queueWorker = new PgBossQueueWorkers(pgPool, services, createSession)
+await queueWorker.registerQueues()
+
+// Simple, fast to ship, low cost
 ```
 
-Same functions. Same types. Same middleware. Different trade-offs.
+```typescript
+// Month 6: Traffic spikes, don't want to think about scaling
+import { corsHTTP } from '@pikku/lambda/http'
 
----
+export const handler = async (event: APIGatewayProxyEvent) => {
+  return await corsHTTP(event, services, createSession)
+}
+// Auto-scales, pay per request, no ops overhead
+```
+
+```typescript
+// Year 1: Launch enterprise edition, need on-premise deployment
+import { PikkuUWSServer } from '@pikku/uws'
+
+const enterpriseServer = new PikkuUWSServer(config, services, createSession)
+await enterpriseServer.start()
+// Runs fully off-cloud for compliance/data residency (uWS is way faster)
+```
+
+```typescript
+// Year 2: Lambda costs > VMs + maintenance
+// Switch to dedicated workers for predictable load
+import { BullQueueWorkers } from '@pikku/queue-bullmq'
+
+const queueWorker = new BullQueueWorkers(redisConnection, services, createSession)
+await queueWorker.registerQueues()
+// Lower costs, full control, acceptable ops burden
+```
+
+**Same logic, different economics.**
 
 ## The Bottom Line
 
@@ -260,9 +193,3 @@ Modern applications need flexibility more than they need early optimization. Pik
   - [LIBRA: Hybrid Serverless Computing](https://doi.org/10.1109/IC2E52221.2021.00027)
   - [Opara-Martins et al.: Vendor Lock-in](https://doi.org/10.1016/j.cose.2016.07.008)
   - [UK CMA Cloud Services Investigation 2024-2025](https://www.gov.uk/cma-cases/cloud-services)
-
----
-
-**Stay Portable. Stay Profitable.**
-
-Stop choosing too early. Start building for change.
