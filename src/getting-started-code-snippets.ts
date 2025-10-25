@@ -21,46 +21,45 @@ export const codeTypes = `import {
   export interface Services extends CoreServices<SingletonServices> {}
   `;
   
-  export const codeImplementations = `/**
+  export const codeImplementations = `import { pikkuConfig, pikkuServices, pikkuSessionServices } from '#pikku/pikku-types.gen.js'
+
+  /**
    * Loads configuration for the application (created once at startup).
    */
-  export const createConfig: CreateConfig<Config> = async () => {
+  export const createConfig = pikkuConfig(async () => {
     return {
       logLevel: LogLevel.info
     }
-  }
-  
+  })
+
   /**
    * Creates the singleton services for the application (created once at startup).
    */
-  export const createSingletonServices: CreateSingletonServices<
-    Config,
-    SingletonServices
-  > = async (config: Config): Promise<SingletonServices> => {
-    const variablesService = new LocalVariablesService()
-    const logger = new ConsoleLogger()
-    const jwt = new JoseJWTService<UserSession>(keys, logger)
-    const httpSessionService = new PikkuHTTPSessionService<UserSession>(jwt, {})
-  
-    return {
-      config,
-      logger,
-      variablesService,
-      jwt,
-      httpSessionService
+  export const createSingletonServices = pikkuServices(
+    async (config, existingServices) => {
+      const variablesService = new LocalVariablesService()
+      const logger = new ConsoleLogger()
+      const jwt = new JoseJWTService<UserSession>(keys, logger)
+      const httpSessionService = new PikkuHTTPSessionService<UserSession>(jwt, {})
+
+      return {
+        config,
+        logger,
+        variablesService,
+        jwt,
+        httpSessionService
+      }
     }
-  }
-  
+  )
+
   /**
    * Creates the session services on each request.
    */
-  export const createSessionServices: CreateSessionServices<
-    SingletonServices,
-    Services,
-    UserSession
-  > = async (_services, _session) => {
-    return {}
-  }
+  export const createSessionServices = pikkuSessionServices(
+    async (_services, _interaction, _session) => {
+      return {}
+    }
+  )
   `;
   
   // 2) Snippet for Pikku CLI config

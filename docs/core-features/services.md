@@ -141,60 +141,68 @@ Then implement the factories that create your services:
 
 ```typescript
 // services.ts
-import type { CreateSingletonServices, CreateSessionServices } from '@pikku/core'
+import { pikkuConfig, pikkuServices, pikkuSessionServices } from '#pikku/pikku-types.gen.js'
 
-export const createSingletonServices: CreateSingletonServices<
-  Config,
-  SingletonServices
-> = async (config: Config): Promise<SingletonServices> => {
-  const logger = new ConsoleLogger()
-
-  if (config.logLevel) {
-    logger.setLevel(config.logLevel)
-  }
-
-  const jwt = new JoseJWTService(
-    async () => [
-      {
-        id: 'my-key',
-        value: process.env.JWT_SECRET || 'dev-secret',
-      },
-    ],
-    logger
-  )
-
-  const database = new DatabasePool(config.database)
-  await database.connect()
-
-  const books = new BookService()
-
+export const createConfig = pikkuConfig(async () => {
   return {
-    config,
-    logger,
-    jwt,
-    database,
-    books,
+    logLevel: 'info',
+    database: {
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432'),
+    }
   }
-}
+})
 
-export const createSessionServices: CreateSessionServices<
-  SingletonServices,
-  Services,
-  UserSession
-> = async (singletonServices, interaction, session) => {
-  // Return only the session-specific services
-  // Pikku automatically merges these with singletonServices
-  return {
-    userSession: createUserSessionService(interaction),
-    dbTransaction: new DatabaseTransaction(singletonServices.database),
+export const createSingletonServices = pikkuServices(
+  async (config, existingServices) => {
+    const logger = new ConsoleLogger()
+
+    if (config.logLevel) {
+      logger.setLevel(config.logLevel)
+    }
+
+    const jwt = new JoseJWTService(
+      async () => [
+        {
+          id: 'my-key',
+          value: process.env.JWT_SECRET || 'dev-secret',
+        },
+      ],
+      logger
+    )
+
+    const database = new DatabasePool(config.database)
+    await database.connect()
+
+    const books = new BookService()
+
+    return {
+      config,
+      logger,
+      jwt,
+      database,
+      books,
+    }
   }
-}
+)
+
+export const createSessionServices = pikkuSessionServices(
+  async (singletonServices, interaction, session) => {
+    // Return only the session-specific services
+    // Pikku automatically merges these with singletonServices
+    return {
+      userSession: createUserSessionService(interaction),
+      dbTransaction: new DatabaseTransaction(singletonServices.database),
+    }
+  }
+)
 ```
 
 Key points:
 
-- **`createSingletonServices`** receives `config` as the first parameter and returns singleton services
-- **`createSessionServices`** receives `(singletonServices, interaction, session)` and returns **only** the session-specific services
+- **`pikkuConfig`** wraps your config factory - no generic types needed
+- **`pikkuServices`** wraps your singleton services factory - receives `(config, existingServices?)` and types are inferred
+- **`pikkuSessionServices`** wraps your session services factory - receives `(singletonServices, interaction, session)` and types are inferred
 - Pikku automatically merges session services with singleton services, so your functions have access to both
 - Don't spread `...singletonServices` – Pikku handles that for you
 
@@ -276,44 +284,43 @@ When this error is thrown from a function called via HTTP, Pikku automatically s
 Services make it easy to swap implementations based on environment:
 
 ```typescript
-export const createSingletonServices: CreateSingletonServices<
-  Config,
-  SingletonServices
-> = async (config: Config): Promise<SingletonServices> => {
-  const isProduction = process.env.NODE_ENV === 'production'
+export const createSingletonServices = pikkuServices(
+  async (config, existingServices) => {
+    const isProduction = process.env.NODE_ENV === 'production'
 
-  let storage: Storage
-  if (isProduction) {
-    // Use S3 in production
-    storage = new S3Storage(config.aws)
-  } else {
-    // Use local filesystem in development
-    storage = new LocalStorage('./tmp')
-  }
+    let storage: Storage
+    if (isProduction) {
+      // Use S3 in production
+      storage = new S3Storage(config.aws)
+    } else {
+      // Use local filesystem in development
+      storage = new LocalStorage('./tmp')
+    }
 
-  return {
-    config,
-    storage,
-    // ... other services
+    return {
+      config,
+      storage,
+      // ... other services
+    }
   }
-}
+)
 ```
 
 For tests, create a separate factory that returns mocked services:
 
 ```typescript
 // services.test.ts
-export const createTestServices = async (
-  config: Config
-): Promise<SingletonServices> => {
-  return {
-    config,
-    logger: new NoOpLogger(),
-    database: new MockDatabase(),
-    storage: new InMemoryStorage(),
-    // ... other mocks
+export const createTestServices = pikkuServices(
+  async (config, existingServices) => {
+    return {
+      config,
+      logger: new NoOpLogger(),
+      database: new MockDatabase(),
+      storage: new InMemoryStorage(),
+      // ... other mocks
+    }
   }
-}
+)
 ```
 
 ## Summary
