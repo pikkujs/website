@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: pikkujs/pikku
-          ref: treeshaking
           path: pikku-repo
 
       - name: Sync skills from pikku repo

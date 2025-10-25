@@ -130,7 +130,6 @@ export default function CloudCostComparison() {
   const [includeEgress, setIncludeEgress] = useState(true);
   const [includeCPU, setIncludeCPU] = useState(true);
   const [includeMemory, setIncludeMemory] = useState(true);
-  const [includeFreeTiers, setIncludeFreeTiers] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -153,23 +152,23 @@ export default function CloudCostComparison() {
       const costs: Record<string, number> = {};
 
       CLOUD_PROVIDERS.forEach(provider => {
-        costs[provider.name] = calculateCloudCost(requests, provider, includeEgress, includeCPU, includeMemory, includeFreeTiers).total;
+        costs[provider.name] = calculateCloudCost(requests, provider, includeEgress, includeCPU, includeMemory, false).total;
       });
 
       data.push({ requests, costs });
     }
 
     return data;
-  }, [includeEgress, includeCPU, includeMemory, includeFreeTiers]);
+  }, [includeEgress, includeCPU, includeMemory]);
 
   // Current costs at selected load
   const currentCosts = useMemo(() => {
     const costs: Record<string, CostBreakdown> = {};
     CLOUD_PROVIDERS.forEach(provider => {
-      costs[provider.name] = calculateCloudCost(currentLoad, provider, includeEgress, includeCPU, includeMemory, includeFreeTiers);
+      costs[provider.name] = calculateCloudCost(currentLoad, provider, includeEgress, includeCPU, includeMemory, false);
     });
     return costs;
-  }, [currentLoad, includeEgress, includeCPU, includeMemory, includeFreeTiers]);
+  }, [currentLoad, includeEgress, includeCPU, includeMemory]);
 
   // Determine cheapest provider
   const cheapest = useMemo(() => {
@@ -359,15 +358,6 @@ export default function CloudCostComparison() {
               style={{ marginRight: '0.5rem', width: '1rem', height: '1rem' }}
             />
             <span style={{ fontSize: '0.875rem' }}>Egress</span>
-          </label>
-          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={includeFreeTiers}
-              onChange={(e) => setIncludeFreeTiers(e.target.checked)}
-              style={{ marginRight: '0.5rem', width: '1rem', height: '1rem' }}
-            />
-            <span style={{ fontSize: '0.875rem' }}>Include Free Tiers</span>
           </label>
         </div>
 

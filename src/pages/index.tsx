@@ -130,7 +130,7 @@ function AhaMomentSection() {
       where: { id: cardId }
     })
 
-    // Works with WebSocket channels too!
+    // Works with WebSocket channels and SSE too!
     if (channel) {
       await channel.send({ type: 'card-fetched', card })
     }
@@ -799,22 +799,22 @@ function WhyIBuiltPikkuSection() {
 function HowTeamsUseItSection() {
   const useCases = [
     {
-      title: 'Real-Time Dashboard',
-      problem: 'Building a monitoring dashboard that shows live metrics',
-      solution: 'Write one getMetrics function. Serve initial page load via HTTP, then stream updates via Server-Sent Events. Same data source, same validation, same permissions.',
-      benefits: ['No duplicate API logic', 'Progressive enhancement over HTTP', 'Works with existing HTTP clients']
+      title: 'Marta',
+      problem: 'Caregivers, patients, and administrators all need different portals with different permissions—but sharing the same backend',
+      solution: 'Write matching logic once. One backend serves caregiver portal, patient portal, and admin dashboard. Each portal has its own cookies and permissions, all managed by Pikku\'s session system.',
+      benefits: ['Single backend for all user types', 'Different permissions per portal', 'Shared business logic, isolated access']
     },
     {
-      title: 'Order Processing',
-      problem: 'E-commerce orders need HTTP checkout, live status updates, and background payment processing',
-      solution: 'Write one processOrder function. Wire it to HTTP (checkout API), WebSocket (live order tracking), and queue (async payment processing). Same business logic everywhere.',
-      benefits: ['Write order logic once', 'Real-time updates without duplication', 'Reliable async payment handling']
+      title: 'HeyGermany',
+      problem: 'Nurses, employers, and admin staff need separate interfaces with different data access—all from one backend',
+      solution: 'Write eligibility logic once. One backend serves nurse applications, employer dashboards, and admin verification. Each user type gets different cookies and permission filters automatically.',
+      benefits: ['Multiple portals, one codebase', 'Role-based access control', 'Unified credential validation']
     },
     {
-      title: 'Admin Tools',
-      problem: 'Operations team needs both API access and CLI tools',
-      solution: 'Write your admin functions once. Expose them via HTTP API for your web dashboard and CLI for ops scripts. Same permissions, same audit logging.',
-      benefits: ['No CLI-specific code needed', 'API and CLI stay in sync', 'Shared authentication and logging']
+      title: 'BambooRose',
+      problem: 'Customer admins, end users, and internal ops need different views of the same release data—with strict access boundaries',
+      solution: 'Write deployment tracking once. One backend powers customer dashboards, user portals, and ops CLI. Session-based permissions ensure each user type sees only their data.',
+      benefits: ['Single source of truth', 'Fine-grained access control', 'Consistent data across all portals']
     }
   ];
 
