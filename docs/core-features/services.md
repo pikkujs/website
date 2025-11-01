@@ -141,7 +141,7 @@ Then implement the factories that create your services:
 
 ```typescript
 // services.ts
-import { pikkuConfig, pikkuServices, pikkuSessionServices } from '#pikku/pikku-types.gen.js'
+import { pikkuConfig, pikkuServices, pikkuSessionServices } from '#pikku'
 
 export const createConfig = pikkuConfig(async () => {
   return {

@@ -374,5 +374,5 @@ result.invalid  // ❌ TypeScript error
 ## Next Steps
 
 - [External RPCs](./external.md) - Exposing functions to clients
-- [Functions](../functions.md) - Understanding Pikku functions
-- [Middleware](../middleware.md) - Applying middleware
+- [Functions](../core-features/functions.md) - Understanding Pikku functions
+- [Middleware](../core-features/middleware.md) - Applying middleware

@@ -1,5 +1,5 @@
 ---
-sidebar_position: 60
+sidebar_position: 0
 title: RPC (Remote Procedure Calls)
 description: Internal and external function invocation
 ---

@@ -33,7 +33,7 @@ graph LR
 Let's write middleware that tracks response time:
 
 ```typescript
-import { pikkuMiddleware } from '#pikku/pikku-types.gen.js'
+import { pikkuMiddleware } from '#pikku'
 
 export const responseTime = pikkuMiddleware(async ({ logger }, interaction, next) => {
   const start = Date.now()
@@ -139,7 +139,7 @@ Use wire-specific middleware for:
 For HTTP routes specifically, you can apply middleware globally or per-prefix:
 
 ```typescript
-import { addHTTPMiddleware } from '#pikku/pikku-types.gen.js'
+import { addHTTPMiddleware } from '#pikku/http'
 
 // All HTTP routes will run this middleware
 addHTTPMiddleware([corsHeaders, securityHeaders])
@@ -163,7 +163,7 @@ Use HTTP transport middleware for:
 For scheduled tasks, you can apply middleware globally:
 
 ```typescript
-import { addSchedulerMiddleware } from '#pikku/pikku-types.gen.js'
+import { addSchedulerMiddleware } from '#pikku/scheduler'
 
 // All scheduled tasks will run this middleware
 addSchedulerMiddleware([withSchedulerMetrics, withRetry])

@@ -15,7 +15,7 @@ Pikku supports SSE as a progressive enhancement for GET routes - your function r
 The recommended approach is to use `pikkuFunc` or `pikkuSessionlessFunc` with an optional channel:
 
 ```typescript
-import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku'
 
 export const getStatus = pikkuSessionlessFunc<
   void,
@@ -41,7 +41,7 @@ export const getStatus = pikkuSessionlessFunc<
 Wire it with `sse: true`:
 
 ```typescript
-import { wireHTTP } from '#pikku/pikku-types.gen.js'
+import { wireHTTP } from '#pikku/http'
 
 wireHTTP({
   method: 'get',

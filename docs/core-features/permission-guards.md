@@ -15,7 +15,7 @@ Permissions run in parallel, so they should be independent checks that don't dep
 A permission is a function that returns a boolean:
 
 ```typescript
-import { pikkuPermission } from '#pikku/pikku-types.gen.js'
+import { pikkuPermission } from '#pikku'
 
 export const requireAuth = pikkuPermission(async (_services, _data, session) => {
   return session?.userId != null
@@ -29,7 +29,7 @@ export const requireAdmin = pikkuPermission(async (_services, _data, session) =>
 Use them in your function:
 
 ```typescript
-import { pikkuFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuFunc } from '#pikku'
 
 export const deleteUser = pikkuFunc<{ userId: string }, void>({
   func: async ({ database }, data) => {
@@ -176,7 +176,7 @@ export const activeSubscription = pikkuPermission(
 For HTTP routes, you can apply permissions at the route level or globally:
 
 ```typescript
-import { wireHTTP } from '#pikku/pikku-types.gen.js'
+import { wireHTTP } from '#pikku/http'
 
 // Route-level permissions
 wireHTTP({
@@ -193,7 +193,7 @@ wireHTTP({
 Or apply to all routes with a prefix:
 
 ```typescript
-import { addHTTPPermission } from '#pikku/pikku-types.gen.js'
+import { addHTTPPermission } from '#pikku/http'
 
 // All /admin routes require authentication and admin role
 addHTTPPermission('/admin', {

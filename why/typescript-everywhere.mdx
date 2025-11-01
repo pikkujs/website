@@ -1,0 +1,362 @@
+---
+title: "TypeScript Everywhere"
+description: End-to-end type safety across all protocols, runtimes, and deployment targets.
+sidebar_position: 3
+hide_table_of_contents: false
+---
+
+import WhyPageFooter from '@site/src/components/WhyPageFooter';
+
+<div style={{textAlign: 'center', padding: '2rem 0 3rem', marginBottom: '3rem', borderBottom: '1px solid var(--ifm-color-emphasis-200)'}}>
+
+# TypeScript Everywhere
+
+<p style={{fontSize: '1.5rem', fontWeight: '600', marginTop: '1rem', marginBottom: '1.5rem'}}>
+End-to-End Type Safety
+</p>
+
+<p style={{fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--ifm-color-emphasis-700)'}}>
+Complete type safety from function definitions to auto-generated clients, across all protocols and deployment targets.
+</p>
+
+</div>
+
+## The Problem: Type Safety Ends at the API Boundary
+
+Most backend frameworks don't provide end-to-end type safety:
+- **Manual type synchronization** — Copy-paste types between backend and frontend, hoping they stay in sync
+- **Runtime-only validation** — Errors surface in production, not during development
+- **Protocol-specific solutions** — Type-safe HTTP clients don't help with WebSockets, queues, or other protocols
+
+**The result:** Runtime errors, API contract drift, and wasted time debugging type mismatches between client and server.
+
+## Pikku's Solution: Types Flow Everywhere
+
+With Pikku, types flow seamlessly from your backend functions to your clients, across all protocols.
+
+### 1. Define Type-Safe Functions
+
+```typescript
+import { pikkuFunc } from '@pikku/core'
+
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string; email: string }
+>({
+  func: async ({ database }, { userId }) => {
+    return await database.users.findById(userId)
+  },
+  permissions: { authenticated: true }
+})
+
+export const updateUser = pikkuFunc<
+  { userId: string; name: string; email: string },
+  { success: boolean }
+>({
+  func: async ({ database }, data) => {
+    await database.users.update(data.userId, {
+      name: data.name,
+      email: data.email
+    })
+    return { success: true }
+  },
+  permissions: { owner: true }
+})
+```
+
+### 2. Wire Functions to Any Protocol
+
+The same function types work across HTTP, WebSockets, queues, scheduled tasks, RPC, MCP, and CLI:
+
+```typescript
+// HTTP
+wireHTTP({ method: 'get', route: '/users/:userId', func: getUser })
+
+// WebSocket
+wireChannel({
+  name: 'users',
+  onMessageWiring: {
+    getUser: { func: getUser }
+  }
+})
+
+// Queue
+wireQueueWorker({ queue: 'user-updates', func: updateUser })
+
+// Scheduled Task
+wireScheduler({ cron: '0 * * * *', func: syncUsers })
+
+// RPC (internal function calls)
+const user = await rpc.invoke('getUser', { userId: '123' })
+//    ^? { id: string; name: string; email: string }
+
+// MCP (AI agents)
+wireMCPTool({
+  name: 'getUser',
+  description: 'Retrieve user by ID',
+  func: getUser
+})
+
+// CLI
+wireCLI({
+  program: 'users',
+  commands: {
+    get: pikkuCLICommand({
+      parameters: '<userId>',
+      func: getUser
+    })
+  }
+})
+```
+
+**Every protocol gets the same type safety. Zero duplication.**
+
+### 3. Auto-Generated Type-Safe Clients
+
+Run `npx pikku` and Pikku generates fully typed clients for all your functions:
+
+#### HTTP Client
+
+```typescript
+// Auto-generated HTTP client
+import { PikkuFetch } from './.pikku/pikku-fetch.gen'
+
+const client = new PikkuFetch({ serverUrl: 'https://api.example.com' })
+
+// ✅ Full IntelliSense and type checking
+const user = await client.get('/users/:userId', { userId: '123' })
+//    ^? { id: string; name: string; email: string }
+
+// ❌ TypeScript error: missing required fields
+await client.patch('/users/:userId', { userId: '123' })
+//                                    ^^^^^^^^^^^^^^^^ Type error: missing 'name' and 'email'
+
+// ✅ Correct usage
+await client.patch('/users/:userId', {
+  userId: '123',
+  name: 'John Doe',
+  email: 'john@example.com'
+})
+```
+
+#### RPC Client
+
+```typescript
+// Auto-generated RPC client for external calls
+import { PikkuRPC } from './.pikku/pikku-rpc.gen'
+
+const rpc = new PikkuRPC()
+rpc.setServerUrl('https://api.example.com')
+
+// ✅ Type-safe RPC calls
+const user = await rpc.invoke('getUser', { userId: '123' })
+//    ^? { id: string; name: string; email: string }
+
+await rpc.invoke('updateUser', {
+  userId: '123',
+  name: 'John Doe',
+  email: 'john@example.com'
+})
+```
+
+#### WebSocket Client
+
+```typescript
+// Auto-generated WebSocket client
+import { PikkuWebSocket } from './.pikku/pikku-websocket.gen'
+
+const ws = new PikkuWebSocket<'users'>('wss://api.example.com', apiKey)
+
+// Get a typed route
+const route = ws.getRoute('action')
+
+// ✅ Type-safe message sending
+route.send('getUser', { userId: '123' })
+
+// ✅ Type-safe message receiving
+route.subscribe('userUpdated', (user) => {
+  //                             ^? { id: string; name: string; email: string }
+  console.log(user.name)
+})
+```
+
+#### Queue Client
+
+```typescript
+// Auto-generated Queue client
+import { PikkuQueues } from './.pikku/pikku-queues.gen'
+
+const queues = new PikkuQueues()
+
+// ✅ Type-safe queue job dispatch
+await queues.addJob('processUser', { userId: '123' })
+//                                  ^? Type-checked against function input
+
+await queues.addJob('sendEmail', {
+  to: 'user@example.com',
+  subject: 'Welcome',
+  body: 'Hello!'
+})
+```
+
+## Benefits
+
+### ✅ Catch Errors at Compile Time
+
+```typescript
+// ❌ TypeScript catches this before it runs
+await client.get('/users/:userId', { id: '123' })
+//                                   ^^^ Type error: expected 'userId', got 'id'
+
+// ❌ TypeScript catches this too
+const user = await client.get('/users/:userId', { userId: 123 })
+//                                                         ^^^ Type error: expected string, got number
+```
+
+### ✅ Auto-Complete Everywhere
+
+Your editor knows exactly what data each function expects and returns:
+
+- IntelliSense in your IDE
+- Auto-complete for function parameters
+- Type hints for return values
+- Instant feedback on type errors
+
+### ✅ Refactor with Confidence
+
+Change a function signature and TypeScript tells you everywhere that needs updating:
+
+```typescript
+// Change function signature - remove 'email' field
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string } // Removed 'email'
+>({
+  // ...implementation
+})
+
+// TypeScript immediately catches everywhere using the removed field
+const user = await client.get('/users/:userId', { userId: '123' })
+console.log(user.email)
+//               ^^^^^ Type error: Property 'email' does not exist
+
+// Or in destructuring
+const { id, name, email } = await client.get('/users/:userId', { userId: '123' })
+//                ^^^^^ Type error: Property 'email' does not exist
+```
+
+### ✅ API Contract Enforcement
+
+Types become the single source of truth for your API contracts:
+
+- Frontend and backend can't drift apart
+- Breaking changes are caught immediately
+- Documentation stays in sync (types generate OpenAPI schemas)
+
+## Real-World Impact
+
+### Before Pikku
+
+```typescript
+// Backend (Express)
+app.get('/users/:userId', async (req, res) => {
+  const user = await database.users.findById(req.params.userId)
+  res.json(user)
+})
+
+// Frontend - NO TYPE SAFETY
+const response = await fetch(`/users/${userId}`)
+const user = await response.json() // 'any' type - hope for the best
+console.log(user.name) // Runtime error if API changed
+```
+
+### With Pikku
+
+```typescript
+// Backend (type-safe function)
+export const getUser = pikkuFunc<{ userId: string }, User>({
+  func: async ({ database }, { userId }) => {
+    return await database.users.findById(userId)
+  }
+})
+
+// Frontend - FULL TYPE SAFETY
+const user = await client.get('/users/:userId', { userId: '123' })
+//    ^? User - TypeScript knows the exact shape
+console.log(user.name) // ✅ Compile-time verified
+```
+
+## TypeScript + Automatic Runtime Validation
+
+Pikku automatically generates runtime validation from your TypeScript types:
+
+```typescript
+// Just define your TypeScript types
+type CreateUserInput = {
+  name: string
+  email: string
+  age: number
+}
+
+export const createUser = pikkuFunc<
+  CreateUserInput,
+  { id: string; success: boolean }
+>({
+  func: async ({ database }, data) => {
+    // data is guaranteed to match CreateUserInput at runtime
+    const id = await database.users.create(data)
+    return { id, success: true }
+  }
+})
+```
+
+**How it works:**
+
+1. Run `npx pikku` to generate JSON schemas from your TypeScript types
+2. Pikku validates all incoming data against these schemas automatically
+3. If validation fails, the function isn't called—an error is returned immediately
+
+```typescript
+// ✅ Compile-time: TypeScript checks shape
+// ✅ Runtime: Auto-generated schema validates data
+await client.post('/users', {
+  name: 'John',
+  email: 'john@example.com',
+  age: 25
+})
+
+// ❌ Runtime validation fails before function runs
+await client.post('/users', {
+  name: 'John',
+  email: 'john@example.com'
+  // Missing 'age' - validation error (422 status)
+})
+
+// ❌ Runtime validation fails for wrong type
+await client.post('/users', {
+  name: 'John',
+  email: 'john@example.com',
+  age: '25' // String instead of number - validation error
+})
+```
+
+**No manual validation code needed.** Just define TypeScript types, and Pikku handles the rest.
+
+## The Bottom Line
+
+<div style={{backgroundColor: 'var(--ifm-color-emphasis-100)', border: '3px solid var(--ifm-color-primary)', borderRadius: '8px', padding: '2rem', margin: '2rem 0', textAlign: 'center'}}>
+
+### Types aren't just documentation. They're guarantees.
+
+**Pikku makes your entire backend type-safe—across all protocols, all runtimes, all clients.**
+
+Catch errors before they reach production. Refactor with confidence. Ship faster.
+
+</div>
+
+## Next Steps
+
+- **[Explore type-safe functions](/docs/core-features/functions)** — Learn how to write type-safe Pikku functions
+- **[Get started](/docs)** — Build your first type-safe backend
+
+<WhyPageFooter />

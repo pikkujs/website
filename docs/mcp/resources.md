@@ -22,8 +22,8 @@ Let's create a resource that provides user information. Both the domain function
 
 ```typescript
 // user.function.ts
-import { pikkuFunc, pikkuMCPResourceFunc } from '#pikku/pikku-types.gen.js'
-import type { MCPResourceResponse } from '#pikku/pikku-types.gen.js'
+import { pikkuFunc, pikkuMCPResourceFunc } from '#pikku'
+import type { MCPResourceResponse } from '#pikku'
 import { NotFoundError } from '@pikku/core/errors'
 
 // Domain function - reusable across all transports
@@ -78,7 +78,7 @@ export const getUserInfoMCP = pikkuMCPResourceFunc<
 
 ```typescript
 // user.mcp.ts
-import { wireMCPResource } from './pikku-types.gen.js'
+import { wireMCPResource } from '#pikku/mcp'
 import { getUserInfoMCP } from './functions/user.function.js'
 
 wireMCPResource({
@@ -218,7 +218,7 @@ return [
 Wire your resource functions with these options:
 
 ```typescript
-import { wireMCPResource } from './pikku-types.gen.js'
+import { wireMCPResource } from '#pikku/mcp'
 import { searchDocs } from './functions/docs.function.js'
 import { requireRead } from './permissions.js'
 import { auditMiddleware } from './middleware.js'

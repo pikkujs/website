@@ -16,8 +16,8 @@ Let's expose project documentation to AI agents:
 
 ```typescript
 // docs.function.ts
-import { pikkuMCPResourceFunc } from '#pikku/pikku-types.gen.js'
-import type { MCPResourceResponse } from '#pikku/pikku-types.gen.js'
+import { pikkuMCPResourceFunc } from '#pikku'
+import type { MCPResourceResponse } from '#pikku'
 
 export const getProjectDocs = pikkuMCPResourceFunc<
   { section: string },
@@ -45,7 +45,7 @@ export const getProjectDocs = pikkuMCPResourceFunc<
 
 ```typescript
 // docs.mcp.ts
-import { wireMCPResource } from './pikku-types.gen.js'
+import { wireMCPResource } from '#pikku/mcp'
 import { getProjectDocs } from './functions/docs.function.js'
 
 wireMCPResource({
@@ -70,7 +70,7 @@ That's it! AI agents can now request your documentation. Pikku automatically:
 Resources provide data sources for AI models - documentation, user data, search results, or any queryable information:
 
 ```typescript
-import type { MCPResourceResponse } from '#pikku/pikku-types.gen.js'
+import type { MCPResourceResponse } from '#pikku'
 
 export const searchCode = pikkuMCPResourceFunc<
   { query: string; limit?: number },
@@ -101,7 +101,7 @@ export const searchCode = pikkuMCPResourceFunc<
 Tools let AI models perform actions - creating records, running operations, or modifying state:
 
 ```typescript
-import type { MCPToolResponse } from '#pikku/pikku-types.gen.js'
+import type { MCPToolResponse } from '#pikku'
 
 export const createIssue = pikkuMCPToolFunc<
   { title: string; description: string; priority: 'low' | 'medium' | 'high' },
@@ -136,7 +136,7 @@ export const createIssue = pikkuMCPToolFunc<
 Prompts generate reusable prompt templates for AI interactions:
 
 ```typescript
-import type { MCPPromptResponse } from '#pikku/pikku-types.gen.js'
+import type { MCPPromptResponse } from '#pikku'
 
 export const codeReviewPrompt = pikkuMCPPromptFunc<
   { filePath: string; context: string },
@@ -171,7 +171,7 @@ export const codeReviewPrompt = pikkuMCPPromptFunc<
 Wire your MCP functions with these configuration options:
 
 ```typescript
-import { wireMCPTool } from './pikku-types.gen.js'
+import { wireMCPTool } from '#pikku/mcp'
 import { createIssue } from './functions/issues.function.js'
 import { requireAdmin } from './permissions.js'
 import { auditMiddleware } from './middleware.js'
@@ -213,7 +213,7 @@ MCP functions should throw errors when operations fail. Register errors with bot
 
 ```typescript
 import { PikkuError } from '@pikku/core/errors'
-import { addError } from '#pikku/pikku-types.gen.js'
+import { addError } from '#pikku'
 
 export class ResourceNotFoundError extends PikkuError {}
 

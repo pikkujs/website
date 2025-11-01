@@ -15,7 +15,7 @@ The beauty of Pikku functions is that they're **transport-agnostic**. Write your
 Here's a simple function that fetches a book from a database:
 
 ```typescript
-import { pikkuFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuFunc } from '#pikku'
 
 export const getBook = pikkuFunc<{ bookId: string }, Book>({
   func: async ({ database }, data) => {
@@ -251,7 +251,7 @@ RPC calls are great for orchestrating complex workflows while maintaining securi
 <!-- TODO: Document bailout mechanism for skipping auth/permissions in trusted contexts -->
 :::
 
-See [RPC (Remote Procedure Calls)](./rpcs/index.md) for more details on when and how to use RPC.
+See [RPC (Remote Procedure Calls)](../rpcs/index.md) for more details on when and how to use RPC.
 
 ## Error Handling
 

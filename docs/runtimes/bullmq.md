@@ -52,8 +52,8 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/sr
 
 Register workers with specific queues:
 
-```typescript reference title="queue-worker.routes.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/queue-worker.routes.ts
+```typescript reference title="queue-worker.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/queue-worker.wiring.ts
 ```
 
 ### BullMQ Runtime Server

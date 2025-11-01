@@ -1,0 +1,161 @@
+---
+title: "Architecture Flexibility"
+description: Avoid costly rewrites. Start simple, scale smart, switch runtimes without code changes.
+sidebar_position: 1
+hide_table_of_contents: false
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import WhyPageFooter from '@site/src/components/WhyPageFooter';
+
+<div style={{textAlign: 'center', padding: '2rem 0 3rem', marginBottom: '3rem', borderBottom: '1px solid var(--ifm-color-emphasis-200)'}}>
+
+# Architecture Flexibility
+
+<p style={{fontSize: '1.5rem', fontWeight: '600', marginTop: '1rem', marginBottom: '1.5rem'}}>
+Don't Lock Yourself In
+</p>
+
+<p style={{fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--ifm-color-emphasis-700)'}}>
+Every architecture choice has a cost. The wrong one just hides it longer.
+</p>
+
+</div>
+
+## The Problem: Decisions That Age Badly
+
+### ⚙️ Microservices Too Soon
+
+**The Decision:** "We'll need to scale, so let's start with microservices."
+
+**The Wall:**
+- Coordination overhead kills velocity
+- Operational complexity from day 1
+- More infrastructure than features
+
+**Result:** Slow to ship and expensive to run — paying the price for premature complexity. Your team spends more on DevOps overhead (orchestration, monitoring, deployments) than you've saved in theoretical scalability gains.
+
+### 🧱 Monolith Scaling Wall
+
+**The Decision:** "Keep it simple, build a monolith."
+
+**The Wall:**
+- Can't scale parts independently
+- Deploy everything or nothing
+- One bottleneck affects all features
+
+**Result:** A costly migration project that diverts your team from building business value. Engineering effort gets redirected from features to infrastructure refactoring.
+
+### The Pikku Way
+
+Instead of betting on one architecture upfront, **Pikku lets you adapt**:
+- **Start simple** to save time and money early on (monolith, serverless—whatever fits your current needs)
+- **Switch runtimes** as economics or requirements change (scale, cost, compliance) without code rewrites
+- **Same code, same types, near-zero switching costs** — deploy the same logic to any runtime
+
+**Pikku lets you defer big architectural commitments without incurring technical debt or surprise costs later.** Infrastructure becomes **an addon**, not **a core feature**.
+
+## Real-World Scenario: Adapting Without Rewrites
+
+**How one company adapted infrastructure as economics changed—without a single rewrite:**
+
+```typescript
+// Day 1: Start serverless — zero ops overhead
+import { corsHTTP } from '@pikku/lambda/http'
+
+export const handler = async (event: APIGatewayProxyEvent) => {
+  return await corsHTTP(event, services, createSession)
+}
+
+// ✅ No servers to manage, instant auto-scaling
+// ✅ Pay only for requests, perfect for early stage
+// 💰 Focus 100% on product, not infrastructure
+```
+
+```typescript
+// Year 1: Enterprise client requires on-premise deployment
+import { PikkuExpressServer } from '@pikku/express'
+
+const enterpriseServer = new PikkuExpressServer(config, services, createSession)
+await enterpriseServer.start()
+
+// ✅ Same code, deployed on-premise for compliance
+// ✅ Meets data residency requirements
+// 🎉 Landed enterprise deal worth 10x the infrastructure cost
+```
+
+```typescript
+// Year 2: Lambda gets slow and expensive at scale
+// Switch to Kubernetes cluster (or ECS, or VMs)
+import { PikkuFastifyServer } from '@pikku/fastify'
+
+const server = new PikkuFastifyServer(config, services, createSession)
+await server.start()
+
+// ✅ Predictable costs, better performance
+// ✅ Deploy to Kubernetes, ECS, or any container platform
+// 💰 Cut infrastructure costs by 60% with dedicated resources
+```
+
+**Same code, different economics at each stage.**
+
+## Pikku's Philosophy
+
+1. **Write portable code by default** — No runtime-specific imports in your functions
+2. **Choose your runtime at deploy time** — Not at write time
+3. **Switch without rewrites** — Change config, not code
+4. **Mix and match** — HTTP on Lambda, WebSockets on a server, queues on BullMQ
+
+## The Benefits
+
+<div className="grid md:grid-cols-2 gap-6 my-8">
+
+<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+
+### ✅ Start Simple
+
+Begin with the simplest architecture that works. No premature optimization, no unnecessary complexity.
+
+Deploy as a monolith on a single server or go serverless for instant auto-scaling.
+
+</div>
+
+<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+
+### ✅ Scale Smart
+
+When requirements change, adapt your architecture without rewriting code.
+
+Move specific functions to different runtimes based on their needs.
+
+</div>
+
+<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+
+### ✅ Mix & Match
+
+Run different parts of your application on different platforms simultaneously.
+
+HTTP APIs on Lambda, WebSockets on a dedicated server, queues on BullMQ.
+
+</div>
+
+<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+
+### ✅ Zero Rewrites
+
+Infrastructure changes are configuration changes, not code changes.
+
+Your team builds features instead of managing migrations.
+
+</div>
+
+</div>
+
+## Next Steps
+
+- **[Learn about vendor lock-in](/why/vendor-lock-in)** — See the research on why flexibility matters
+- **[Get started](/docs)** — Build your first portable backend
+
+<WhyPageFooter />

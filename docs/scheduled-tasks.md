@@ -16,7 +16,7 @@ Let's create a daily maintenance task:
 
 ```typescript
 // maintenance.function.ts
-import { pikkuVoidFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuVoidFunc } from '#pikku'
 
 export const runDailyMaintenance = pikkuVoidFunc({
   func: async ({ database, logger }) => {
@@ -42,7 +42,7 @@ export const runDailyMaintenance = pikkuVoidFunc({
 
 ```typescript
 // maintenance.schedule.ts
-import { wireScheduler } from './pikku-types.gen.js'
+import { wireScheduler } from '#pikku/scheduler'
 import { runDailyMaintenance } from './functions/maintenance.function.js'
 
 wireScheduler({
@@ -65,7 +65,7 @@ Scheduled functions use `pikkuVoidFunc` (an alias for `pikkuSessionlessFunc<void
 - Don't have user sessions
 
 ```typescript
-import { pikkuVoidFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuVoidFunc } from '#pikku'
 
 export const generateWeeklyReport = pikkuVoidFunc({
   func: async ({ database, emailService, logger }) => {
@@ -160,7 +160,7 @@ Cron expressions are interpreted as **UTC** by default (unless your runtime spec
 ### Basic Wiring
 
 ```typescript
-import { wireScheduler } from './pikku-types.gen.js'
+import { wireScheduler } from '#pikku/scheduler'
 import { runMaintenance } from './functions/maintenance.function.js'
 
 wireScheduler({
@@ -179,7 +179,7 @@ wireScheduler({
 For different schedules across environments:
 
 ```typescript
-import { wireScheduler } from './pikku-types.gen.js'
+import { wireScheduler } from '#pikku/scheduler'
 import { config } from './config.js'
 import { runBackup } from './functions/backup.function.js'
 
@@ -194,7 +194,7 @@ wireScheduler({
 Middleware is important for scheduled tasks since they don't have automatic observability. Add logging, metrics, or error handling:
 
 ```typescript
-import { pikkuMiddleware } from '#pikku/pikku-types.gen.js'
+import { pikkuMiddleware } from '#pikku'
 
 export const schedulerMetrics = pikkuMiddleware(
   async ({ logger }, interaction, next) => {
@@ -243,7 +243,7 @@ wireScheduler({
 Apply middleware to all scheduled tasks:
 
 ```typescript
-import { addSchedulerMiddleware } from './pikku-types.gen.js'
+import { addSchedulerMiddleware } from '#pikku/scheduler'
 
 addSchedulerMiddleware([schedulerMetrics, alertMiddleware])
 ```
@@ -283,7 +283,7 @@ You can wire multiple schedules in a single file:
 
 ```typescript
 // housekeeping.schedule.ts
-import { wireScheduler } from './pikku-types.gen.js'
+import { wireScheduler } from '#pikku/scheduler'
 import {
   cleanupOldLogs,
   updateStatistics,
@@ -344,5 +344,5 @@ export const monthlyProcessing = pikkuVoidFunc({
 ## Next Steps
 
 - [Middleware](./core-features/middleware.md) - Adding observability to scheduled tasks
-- [RPC](./core-features/rpcs/index.md) - Orchestrating complex workflows
+- [RPC](./rpcs/index.md) - Orchestrating complex workflows
 - [Errors](./core-features/errors.md) - Error handling patterns

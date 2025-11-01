@@ -14,7 +14,7 @@ This page shows practical examples of using Pikku queues for common use cases. E
 
 ```typescript
 // email-worker.functions.ts
-import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku'
 
 interface EmailJob {
   to: string
@@ -64,7 +64,7 @@ export const sendEmail = pikkuSessionlessFunc<EmailJob, EmailResult>(
 
 ```typescript
 // email-worker.wiring.ts
-import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { wireQueueWorker } from '#pikku/queue'
 import { sendEmail } from './email-worker.functions.js'
 
 wireQueueWorker({
@@ -121,7 +121,7 @@ async function sendPasswordReset(userEmail: string, resetToken: string) {
 
 ```typescript
 // image-worker.functions.ts
-import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku'
 
 interface ImageJob {
   imageUrl: string
@@ -192,7 +192,7 @@ export const processImage = pikkuSessionlessFunc<ImageJob, ImageResult>(
 
 ```typescript
 // image-worker.wiring.ts
-import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { wireQueueWorker } from '#pikku/queue'
 import { processImage } from './image-worker.functions.js'
 
 wireQueueWorker({
@@ -246,7 +246,7 @@ async function processUserImage(userId: string, imageUrl: string) {
 
 ```typescript
 // export-worker.functions.ts
-import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku'
 
 interface ExportJob {
   userId: string
@@ -321,7 +321,7 @@ export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
 
 ```typescript
 // export-worker.wiring.ts
-import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { wireQueueWorker } from '#pikku/queue'
 import { exportData } from './export-worker.functions.js'
 
 wireQueueWorker({
@@ -377,7 +377,7 @@ async function checkExportStatus(jobId: string) {
 
 ```typescript
 // notification-worker.functions.ts
-import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku'
 
 interface NotificationJob {
   userId: string
@@ -470,7 +470,7 @@ export const sendNotification = pikkuSessionlessFunc<
 
 ```typescript
 // notification-worker.wiring.ts
-import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { wireQueueWorker } from '#pikku/queue'
 import { sendNotification } from './notification-worker.functions.js'
 
 // High priority notifications
@@ -561,7 +561,7 @@ async function sendBatchNotifications(notifications: NotificationJob[]) {
 
 ```typescript
 // cleanup-worker.functions.ts
-import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku'
 
 interface CleanupJob {
   type: 'files' | 'logs' | 'cache' | 'database'
@@ -657,7 +657,7 @@ export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
 
 ```typescript
 // cleanup-worker.wiring.ts
-import { wireQueueWorker } from '../.pikku/pikku-types.gen.js'
+import { wireQueueWorker } from '#pikku/queue'
 import { runCleanup } from './cleanup-worker.functions.js'
 
 wireQueueWorker({

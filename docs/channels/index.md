@@ -16,7 +16,7 @@ Let's create a simple chat channel:
 
 ```typescript
 // chat.function.ts
-import { pikkuChannelFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuChannelFunc } from '#pikku'
 
 export const onMessage = pikkuChannelFunc<
   { message: string },      // Input - what clients send
@@ -41,7 +41,7 @@ export const onMessage = pikkuChannelFunc<
 
 ```typescript
 // chat.channel.ts
-import { wireChannel } from './pikku-types.gen.js'
+import { wireChannel } from '#pikku/channel'
 import { onMessage } from './functions/chat.function.js'
 
 wireChannel({
@@ -221,7 +221,7 @@ export const onMessage = pikkuChannelFunc<
 Wire your channel functions together with `wireChannel`:
 
 ```typescript
-import { wireChannel } from './pikku-types.gen.js'
+import { wireChannel } from '#pikku/channel'
 import { onConnect, onDisconnect, onMessage } from './functions/chat.function.js'
 
 wireChannel({

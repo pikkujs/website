@@ -22,8 +22,8 @@ Let's create a tool that creates issues. Both the domain function and MCP adapte
 
 ```typescript
 // issues.function.ts
-import { pikkuFunc, pikkuMCPToolFunc } from '#pikku/pikku-types.gen.js'
-import type { MCPToolResponse } from '#pikku/pikku-types.gen.js'
+import { pikkuFunc, pikkuMCPToolFunc } from '#pikku'
+import type { MCPToolResponse } from '#pikku'
 
 // Domain function - reusable across all transports
 export const createIssue = pikkuFunc<
@@ -74,7 +74,7 @@ export const createIssueMCP = pikkuMCPToolFunc<
 
 ```typescript
 // issues.mcp.ts
-import { wireMCPTool } from './pikku-types.gen.js'
+import { wireMCPTool } from '#pikku/mcp'
 import { createIssueMCP } from './functions/issues.function.js'
 
 wireMCPTool({
@@ -210,7 +210,7 @@ export const generateChartMCP = pikkuMCPToolFunc<
 Wire your tool functions with these options:
 
 ```typescript
-import { wireMCPTool } from './pikku-types.gen.js'
+import { wireMCPTool } from '#pikku/mcp'
 import { processOrderMCP } from './functions/orders.mcp-function.js'
 import { requireAdmin } from './permissions.js'
 import { auditMiddleware } from './middleware.js'

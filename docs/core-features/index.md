@@ -49,7 +49,7 @@ You should see a response from your first Pikku function!
 Let's look at the Hello World function that came with the starter. Open `functions/hello-world.function.ts`:
 
 ```typescript
-import { pikkuFunc } from '@pikku/core'
+import { pikkuFunc } from '#pikku'
 
 export const helloWorld = pikkuFunc({
   func: async () => {
@@ -61,7 +61,7 @@ export const helloWorld = pikkuFunc({
 This function is wired to an HTTP route in `http.ts`:
 
 ```typescript
-import { wireHTTP } from '@pikku/core'
+import { wireHTTP } from '#pikku/http'
 import { helloWorld } from './functions/hello-world.function'
 
 wireHTTP({ route: '/api/hello-world', func: helloWorld })
@@ -84,12 +84,62 @@ This runs the CLI in watch mode, which:
 3. Creates validation schemas for your functions
 4. Indexes routes and channels for fast lookup
 
-The CLI generates two key files you'll import in your code:
+The CLI generates type definitions and bootstrap code that you'll import in your code using path aliases:
 
-- **`#pikku/pikku-types.gen.ts`** – Type definitions for your entire API
-- **`#pikku/pikku-bootstrap.gen.ts`** – Bootstrap code that wires up all your functions
+- **`#pikku`** – Core types (pikkuFunc, pikkuMiddleware, etc.)
+- **`#pikku/http`** – HTTP wiring functions (wireHTTP, addHTTPMiddleware, etc.)
+- **`#pikku/channel`** – Channel wiring functions (wireChannel, addChannelMiddleware, etc.)
+- **`#pikku/cli`** – CLI wiring functions (wireCLI, pikkuCLICommand, etc.)
+- **`#pikku/queue`** – Queue wiring functions (wireQueueWorker, etc.)
+- **`#pikku/scheduler`** – Scheduler wiring functions (wireScheduler, etc.)
+- **`#pikku/mcp`** – MCP wiring functions (wireMCPTool, wireMCPResource, wireMCPPrompt)
 
 These files are regenerated whenever you change your functions or wirings. Don't edit them manually – they're automatically kept in sync with your source code.
+
+### Import Patterns
+
+Pikku uses a consistent import pattern across your codebase:
+
+1. **Core function types** come from `#pikku`:
+   ```typescript
+   import { pikkuFunc, pikkuMiddleware, pikkuPermission } from '#pikku'
+   ```
+
+2. **Wiring functions** come from their specific modules:
+   ```typescript
+   import { wireHTTP, addHTTPMiddleware } from '#pikku/http'
+   import { wireChannel } from '#pikku/channel'
+   import { wireCLI } from '#pikku/cli'
+   import { wireQueueWorker } from '#pikku/queue'
+   import { wireScheduler } from '#pikku/scheduler'
+   import { wireMCPTool, wireMCPResource, wireMCPPrompt } from '#pikku/mcp'
+   ```
+
+3. **Configure these aliases** in your `tsconfig.json`:
+   ```json
+   {
+     "compilerOptions": {
+       "paths": {
+         "#pikku": [".pikku/index.gen.ts"],
+         "#pikku/http": [".pikku/http/index.gen.ts"],
+         "#pikku/channel": [".pikku/channel/index.gen.ts"],
+         "#pikku/cli": [".pikku/cli/index.gen.ts"],
+         "#pikku/queue": [".pikku/queue/index.gen.ts"],
+         "#pikku/scheduler": [".pikku/scheduler/index.gen.ts"],
+         "#pikku/mcp": [".pikku/mcp/index.gen.ts"]
+       }
+     }
+   }
+   ```
+
+The generated files live in `.pikku/` directory:
+- `.pikku/index.gen.ts` - Core types and function definitions
+- `.pikku/http/index.gen.ts` - HTTP-specific wiring and middleware functions
+- `.pikku/channel/index.gen.ts` - Channel-specific functions
+- `.pikku/cli/index.gen.ts` - CLI-specific functions
+- `.pikku/queue/index.gen.ts` - Queue-specific functions
+- `.pikku/scheduler/index.gen.ts` - Scheduler-specific functions
+- `.pikku/mcp/index.gen.ts` - MCP-specific functions
 
 ## Project Structure
 

@@ -1,0 +1,182 @@
+---
+title: "Why Pikku?"
+description: Write once, run anywhere. Zero vendor lock-in. Full TypeScript type safety. Control your infrastructure costs.
+sidebar_position: 0
+hide_table_of_contents: false
+---
+
+import Link from '@docusaurus/Link';
+import WhyPageFooter from '@site/src/components/WhyPageFooter';
+
+# Why Pikku?
+
+**Write backend logic once. Run it everywhere. Keep the cost of changing your mind near zero.**
+
+Pikku solves the fundamental problems that slow teams down: vendor lock-in, protocol duplication, and infrastructure lock-in. Whether you're building a new product or scaling an existing one, Pikku gives you the flexibility to adapt without rewrites.
+
+## The Core Benefits
+
+<div className="grid md:grid-cols-2 gap-6 my-8">
+
+<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md border-2 border-primary">
+
+### 🏗️ Architectural Flexibility
+
+**Same code, any runtime. Deploy anywhere without rewrites.**
+
+- Start with a monolith, scale to microservices—no code changes
+- Switch from serverless to VMs to containers—just config
+- Mix deployment strategies: HTTP on Lambda, WebSockets on a server
+- Adapt to new platforms as they emerge
+
+Traditional frameworks lock you into one architecture. Pikku adapts to your needs at any stage.
+
+<Link to="/why/architecture-flexibility" className="text-primary hover:underline font-medium">
+  Learn about avoiding costly rewrites →
+</Link>
+
+</div>
+
+<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md border-2 border-primary">
+
+### 💰 Cost Optimization
+
+**Control infrastructure costs. Never get trapped by vendor pricing.**
+
+- Deploy to the most cost-effective platform for each workload
+- Switch providers when pricing changes—no vendor leverage over you
+- Avoid costly migration projects that divert engineering from business value
+- 40% cost reduction with hybrid architectures (research-backed)
+
+Pikku reduces Total Cost of Ownership by eliminating rewrite costs and maintaining vendor negotiating power.
+
+<Link to="/why/vendor-lock-in" className="text-primary hover:underline font-medium">
+  See the cost breakdown →
+</Link>
+
+</div>
+
+<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md border-2 border-primary">
+
+### 📝 TypeScript Everywhere
+
+**End-to-end type safety across all protocols and runtimes.**
+
+- Write TypeScript functions with full type inference
+- Auto-generated type-safe clients for HTTP, WebSockets, and RPC
+- Catch errors at compile time, not in production
+- IntelliSense support across your entire stack
+
+Pikku brings complete type safety to every layer of your backend—across all protocols and runtimes.
+
+<Link to="/why/typescript-everywhere" className="text-primary hover:underline font-medium">
+  Learn about end-to-end type safety →
+</Link>
+
+</div>
+
+<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md border-2 border-primary">
+
+### 🔌 Protocol Unification
+
+**One function. Every protocol. Zero duplication.**
+
+- HTTP APIs, WebSockets, queues, cron jobs, CLI, MCP—from one codebase
+- Same auth, permissions, and validation across all protocols
+- Progressive enhancement: Add SSE to HTTP without breaking clients
+- Expose backend logic to AI agents via Model Context Protocol
+
+Stop maintaining separate implementations for each protocol. Write once, wire anywhere.
+
+<Link to="/why/protocol-unification" className="text-primary hover:underline font-medium">
+  Learn how protocol unification works →
+</Link>
+
+</div>
+
+</div>
+
+## Other Key Advantages
+
+### 🚀 Ship Faster, Maintain Less
+
+Write business logic once and deliver features across all protocols instantly. One source of truth means:
+
+- **Fewer bugs** — No sync issues between HTTP and WebSocket implementations
+- **Faster iterations** — Change logic once, updates everywhere
+- **Easier testing** — Test functions directly without mocking protocol layers
+
+### 🔐 Production-Ready Features
+
+Built-in support for everything production apps need:
+
+- **Authentication & Authorization** — Cookie, bearer, API key auth with fine-grained permissions
+- **Services** — Singleton and per-request dependency injection (database, logger, config)
+- **Middleware** — Before/after hooks that work across all protocols
+- **Schema Validation** — Auto-validate against TypeScript schemas at runtime
+- **OpenAPI Generation** — Auto-generated API documentation from your functions
+
+### 🪶 Zero Lock-In
+
+Pikku doesn't lock you in—it frees you from lock-in:
+
+- **Standard TypeScript** — No magic, no proprietary APIs
+- **Bring your own tools** — Any database, any logger, any framework
+- **Tiny runtime** — Minimal overhead, bundles as small as 50KB
+- **Easy migration** — If you ever need to leave, it's just TypeScript functions
+
+### 🤖 AI-Era Quality
+
+Simple, consistent patterns mean dramatically better AI-generated code:
+
+- Claude, GPT, and other AI tools understand Pikku's patterns
+- Generate new functions with confidence
+- Expose functions to AI agents via Model Context Protocol (MCP)
+- Build CLI tools and automation from your existing backend logic
+
+## Who Benefits Most?
+
+- **Startups** — Ship fast without premature architecture decisions. Pivot without rewrites.
+- **Scale-ups** — Adapt infrastructure as economics change. Avoid vendor lock-in.
+- **Enterprises** — Support multiple deployment models (cloud + on-prem) from one codebase.
+- **Agencies** — Reuse backend logic across client projects. Deploy to each client's preferred platform.
+
+## Strategic Value
+
+<div className="grid md:grid-cols-2 gap-4 my-6">
+
+<div className="flex items-start">
+<span className="text-green-500 text-2xl mr-3">✓</span>
+<div>
+<strong>Lower Total Cost of Ownership (TCO)</strong>
+<p className="text-sm text-gray-600 dark:text-gray-400">Avoid expensive cloud migrations and maintain leverage with vendors</p>
+</div>
+</div>
+
+<div className="flex items-start">
+<span className="text-green-500 text-2xl mr-3">✓</span>
+<div>
+<strong>Reduce Infrastructure Risk</strong>
+<p className="text-sm text-gray-600 dark:text-gray-400">Never get locked into one cloud, architecture, or execution model</p>
+</div>
+</div>
+
+<div className="flex items-start">
+<span className="text-green-500 text-2xl mr-3">✓</span>
+<div>
+<strong>Accelerate Time-to-Market</strong>
+<p className="text-sm text-gray-600 dark:text-gray-400">Build features instead of managing infrastructure transitions</p>
+</div>
+</div>
+
+<div className="flex items-start">
+<span className="text-green-500 text-2xl mr-3">✓</span>
+<div>
+<strong>Future-Proof Your Stack</strong>
+<p className="text-sm text-gray-600 dark:text-gray-400">Adapt to new runtimes and platforms without rewriting business logic</p>
+</div>
+</div>
+
+</div>
+
+<WhyPageFooter />

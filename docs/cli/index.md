@@ -16,7 +16,7 @@ Let's create a simple greeting command:
 
 ```typescript
 // greet.function.ts
-import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku'
 
 export const greetUser = pikkuSessionlessFunc<
   { name: string; loud?: boolean },
@@ -38,7 +38,7 @@ export const greetUser = pikkuSessionlessFunc<
 
 ```typescript
 // greet.cli.ts
-import { wireCLI, pikkuCLICommand } from './pikku-types.gen.js'
+import { wireCLI, pikkuCLICommand } from '#pikku/cli'
 import { pikkuCLIRender } from '@pikku/core'
 import { greetUser } from './functions/greet.function.js'
 
@@ -539,7 +539,7 @@ Error: User not found: bob
 Apply middleware to CLI commands for logging, metrics, or validation:
 
 ```typescript
-import { pikkuMiddleware } from '#pikku/pikku-types.gen.js'
+import { pikkuMiddleware } from '#pikku'
 
 export const cliMetrics = pikkuMiddleware(
   async ({ logger }, interaction, next) => {

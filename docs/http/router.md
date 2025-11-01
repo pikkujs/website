@@ -15,7 +15,7 @@ For route-specific middleware and permissions, see [wireHTTP](./index.md) config
 Applies middleware globally or to routes matching a prefix.
 
 ```typescript
-import { addHTTPMiddleware } from '#pikku/pikku-types.gen.js'
+import { addHTTPMiddleware } from '#pikku/http'
 import { corsMiddleware, responseTime } from './middleware.js'
 
 // All HTTP routes
@@ -34,7 +34,8 @@ addHTTPMiddleware('/admin', [requireAuth, auditLog])
 ### Global HTTP Middleware
 
 ```typescript
-import { addHTTPMiddleware, pikkuMiddleware } from '#pikku/pikku-types.gen.js'
+import { addHTTPMiddleware } from '#pikku/http'
+import { pikkuMiddleware } from '#pikku'
 
 const cors = pikkuMiddleware(async (_services, interaction, next) => {
   if (interaction.http) {
@@ -107,7 +108,7 @@ addHTTPMiddleware('/api', [rateLimit])
 Applies permissions globally or to routes matching a prefix.
 
 ```typescript
-import { addHTTPPermission } from '#pikku/pikku-types.gen.js'
+import { addHTTPPermission } from '#pikku/http'
 import { requireAuth, requireAdmin } from './permissions.js'
 
 // Routes starting with /admin require auth + admin
@@ -130,7 +131,7 @@ addHTTPPermission('*', {
 ### Example with Multiple Permissions
 
 ```typescript
-import { pikkuPermission } from '#pikku/pikku-types.gen.js'
+import { pikkuPermission } from '#pikku'
 
 const requireAuth = pikkuPermission(async (_services, _data, session) => {
   return session?.userId != null

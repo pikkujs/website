@@ -1,0 +1,166 @@
+---
+title: "Avoiding Vendor Lock-In"
+description: Research-backed strategies to control costs and maintain negotiating power with cloud providers.
+sidebar_position: 2
+hide_table_of_contents: false
+---
+
+import CloudCostComparison from '@site/src/components/CloudCostComparison';
+import CloudCostAtlas from '@site/src/components/CloudCostAtlas';
+import WhyPageFooter from '@site/src/components/WhyPageFooter';
+
+<div style={{textAlign: 'center', padding: '2rem 0 3rem', marginBottom: '3rem', borderBottom: '1px solid var(--ifm-color-emphasis-200)'}}>
+
+# Avoiding Vendor Lock-In
+
+<p style={{fontSize: '1.5rem', fontWeight: '600', marginTop: '1rem', marginBottom: '1.5rem'}}>
+Control Your Infrastructure Costs
+</p>
+
+<p style={{fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--ifm-color-emphasis-700)'}}>
+Research-backed strategies to maintain negotiating power with cloud providers and reduce Total Cost of Ownership.
+</p>
+
+</div>
+
+## The Serverless Lock-In Trap
+
+**The Decision:** "Go all-in on [Cloud X] serverless."
+
+**The Wall:**
+- Vendor-specific APIs everywhere
+- Costs spike unpredictably at scale
+- Migration means rewriting everything
+
+**Result:** The financial trap closes. You're stuck with soaring bills or facing a migration project that diverts engineering from business value. Either way, vendor lock-in eliminates your negotiating leverage and control over infrastructure costs.
+
+## The Research Speaks
+
+**It's not just us saying this** — studies, industry data, and even regulators validate the need for architectural flexibility to avoid vendor lock-in and control costs.
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1rem', margin: '1.5rem 0', backgroundColor: 'var(--ifm-color-emphasis-100)'}}>
+
+**Industry Reality:**
+- **78% of organizations** pursue hybrid or multi-cloud strategies specifically to avoid vendor lock-in and reduce costs ([Fortinet 2024](https://www.fortinet.com/resources/cyberglossary/what-is-multi-cloud), [451 Research/S&P Global 2020](https://blogs.oracle.com/cloud-infrastructure/post/the-multicloud-security-challenge))
+- **2/3 of CIOs** want to avoid cloud vendor lock-in, yet **71% of companies** still end up heavily tied to a single provider using dozens of that provider's services ([Bain & Company 2020](https://www.bain.com/insights/snap-chart-cios-say-they-want-to-avoid-vendor-lock-in/))
+- This creates a massive challenge: leaders recognize the risk, but traditional approaches make true portability nearly impossible
+
+</div>
+
+<div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', margin: '2rem 0'}}>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1.5rem', backgroundColor: 'var(--ifm-background-surface-color)'}}>
+
+### 40% Cost Reduction
+
+> "Hybrid architectures can run at **40% of the cost** of single-cloud setups."
+
+*— [Skedulix, IEEE Cloud 2020](https://ieeexplore.ieee.org/document/9284312)*
+
+Multi-cloud scheduling achieves significant cost savings by dynamically selecting optimal execution environments.
+
+</div>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1.5rem', backgroundColor: 'var(--ifm-background-surface-color)'}}>
+
+### 85% Fewer Violations
+
+> "Mixing VM-based and serverless resources cut SLA violations by **85%** and costs by **53%**."
+
+*— [LIBRA, 2021](https://doi.org/10.1109/IC2E52221.2021.00027)*
+
+Hybrid deployments provide better reliability and cost efficiency than single-architecture approaches.
+
+</div>
+
+<div style={{border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: '8px', padding: '1.5rem', backgroundColor: 'var(--ifm-background-surface-color)'}}>
+
+### Substantial Barriers
+
+> "Vendor lock-in … demands substantial effort to overcome existing barriers."
+
+*— [Opara-Martins et al.](https://doi.org/10.1016/j.cose.2016.07.008)*
+
+Technical and economic switching costs create long-term constraints on architectural evolution.
+
+</div>
+
+</div>
+
+Even regulators agree: **egress fees** and **technical barriers** discourage switching. The [UK Competition and Markets Authority (CMA, 2025)](https://www.gov.uk/cma-cases/cloud-services) highlighted these as major concerns in cloud markets.
+
+## Cloud Cost Comparison
+
+<CloudCostAtlas />
+
+<CloudCostComparison />
+
+## Keep the Cost of Changing Your Mind Near Zero
+
+The real cost of lock-in isn't just money — it's **opportunity cost**. Every day spent rewriting for a new runtime is a day not spent building features or serving customers. Migration projects divert your best engineers from delivering business value. **Pikku prevents this by dramatically reducing the Total Cost of Ownership (TCO) of your infrastructure.**
+
+### Reducing Infrastructure Risk & Controlling Costs
+
+**Pikku lowers TCO through architectural flexibility:**
+
+- **Avoid expensive migrations** — No rewrite projects that divert engineering from business value when you need to change clouds or execution models
+- **Control costs as you scale** — Always run on the most cost-efficient infrastructure for each component (start serverless, move to VMs when economics shift)
+- **Maintain vendor leverage** — Never get trapped by a single cloud provider raising prices. You can switch without pain.
+- **Accelerate time-to-market** — Your team builds features instead of managing infrastructure transitions
+
+### Example: Cost Control as You Scale
+
+**Nearly half of cloud-based businesses struggle to control costs as they scale**, often because switching to cheaper alternatives means costly rewrites. With Pikku, you continually choose the best price-performance option for each workload—no rewrite needed.
+
+**Day 1:** Start serverless on AWS Lambda — $0/month (free tier), instant auto-scaling
+
+**Month 6:** Traffic grows — still on Lambda — $200/month, no ops overhead
+
+**Year 1:** Steady high traffic — switch to dedicated VMs — $80/month, 60% cost reduction
+
+**Year 2:** Hybrid approach — critical paths on VMs, burst handling on Lambda — optimal cost/performance
+
+**Same code. Different economics. Zero rewrites.**
+
+## The Bottom Line
+
+<div style={{backgroundColor: 'var(--ifm-color-emphasis-100)', border: '3px solid var(--ifm-color-primary)', borderRadius: '8px', padding: '2rem', margin: '2rem 0', textAlign: 'center'}}>
+
+### Build once, run anywhere. Keep the cost of changing your mind near zero.
+
+**In a world where requirements change overnight, flexibility is the optimization.**
+
+Pikku ensures you can adapt infrastructure without burning time or money on rewrites. Your architecture becomes a competitive advantage, not a constraint.
+
+</div>
+
+## Strategic Value
+
+**Lower Total Cost of Ownership (TCO):**
+- Avoid expensive cloud migrations and maintain leverage with vendors
+- No rewrite projects that divert engineering from business value when switching platforms
+- Always run on the most economical infrastructure for your scale
+
+**Reduce Infrastructure Risk:**
+- Never get locked into one cloud, architecture, or execution model
+- Maintain negotiating power with cloud providers
+- Adapt to regulatory requirements (on-prem, specific regions) without rewrites
+
+**Accelerate Time-to-Market:**
+- Build features instead of managing infrastructure transitions
+- Respond to market changes faster than competitors
+- Focus engineering effort on competitive advantages, not platform migrations
+
+## Further Reading
+
+### Research References
+- [Skedulix: Hybrid Cloud Scheduling](https://ieeexplore.ieee.org/document/9284312)
+- [LIBRA: Hybrid Serverless Computing](https://doi.org/10.1109/IC2E52221.2021.00027)
+- [Opara-Martins et al.: Vendor Lock-in](https://doi.org/10.1016/j.cose.2016.07.008)
+- [UK CMA Cloud Services Investigation 2024-2025](https://www.gov.uk/cma-cases/cloud-services)
+
+### Next Steps
+- **[See architecture flexibility](/why/architecture-flexibility)** — Learn how to adapt without rewrites
+- **[Get started](/docs)** — Build your first portable backend
+
+<WhyPageFooter />

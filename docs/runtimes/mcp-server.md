@@ -53,8 +53,8 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/sr
 
 Register your functions as MCP endpoints:
 
-```typescript reference title="mcp.routes.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/mcp.routes.ts
+```typescript reference title="mcp.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/mcp.wiring.ts
 ```
 
 ### MCP Server Runtime
@@ -118,7 +118,7 @@ Pikku automatically generates:
 To add new MCP endpoints:
 
 1. Define functions in `mcp.functions.ts`
-2. Register them in `mcp.routes.ts` 
+2. Register them in `mcp.wiring.ts` 
 3. Restart the server
 
 The Pikku CLI handles all schema generation and type safety automatically.

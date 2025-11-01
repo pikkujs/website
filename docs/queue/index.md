@@ -16,7 +16,7 @@ Let's process welcome emails in the background:
 
 ```typescript
 // email.function.ts
-import { pikkuSessionlessFunc } from '#pikku/pikku-types.gen.js'
+import { pikkuSessionlessFunc } from '#pikku'
 
 export const sendWelcomeEmail = pikkuSessionlessFunc<
   { userId: string; email: string; name: string },
@@ -44,7 +44,7 @@ export const sendWelcomeEmail = pikkuSessionlessFunc<
 
 ```typescript
 // email.queue.ts
-import { wireQueueWorker } from './pikku-types.gen.js'
+import { wireQueueWorker } from '#pikku/queue'
 import { sendWelcomeEmail } from './functions/email.function.js'
 
 wireQueueWorker({
@@ -103,7 +103,7 @@ If you need portability, use `void` as the output type.
 Configure how your queue worker processes jobs:
 
 ```typescript
-import { wireQueueWorker } from './pikku-types.gen.js'
+import { wireQueueWorker } from '#pikku/queue'
 import { processPayment } from './functions/payment.function.js'
 
 wireQueueWorker({

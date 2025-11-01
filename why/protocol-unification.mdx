@@ -1,0 +1,573 @@
+---
+title: "Protocol Unification"
+description: How Pikku unifies HTTP, WebSocket, queues, MCP, and more under one simple function interface.
+sidebar_position: 4
+hide_table_of_contents: false
+---
+
+import WhyPageFooter from '@site/src/components/WhyPageFooter';
+
+<div style={{textAlign: 'center', padding: '2rem 0 3rem', marginBottom: '3rem', borderBottom: '1px solid var(--ifm-color-emphasis-200)'}}>
+
+# Protocol Unification
+
+<p style={{fontSize: '1.5rem', fontWeight: '600', marginTop: '1rem', marginBottom: '1.5rem'}}>
+One Function, Every Protocol
+</p>
+
+<p style={{fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--ifm-color-emphasis-700)'}}>
+Pikku's core innovation is <strong>protocol unification</strong>: write your business logic once as a function, then wire it to any protocol without changing the implementation.
+</p>
+
+</div>
+
+## How It Works
+
+All protocols share the same foundation:
+1. **Define a function** with TypeScript input/output types
+2. **Wire to protocols** that need it
+3. **Same auth, permissions, validation** across all protocols
+
+Let's see how each protocol handles data flow.
+
+---
+
+## HTTP: Request In, Response Out
+
+The simplest protocol—synchronous request/response.
+
+### How It Works
+
+```typescript
+// 1. Define the function
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string; email: string }
+>({
+  func: async ({ database }, { userId }) => {
+    return await database.users.findById(userId)
+  }
+})
+
+// 2. Wire to HTTP
+wireHTTP({
+  method: 'get',
+  route: '/users/:userId',
+  func: getUser
+})
+```
+
+### Data Flow
+
+```
+Client Request
+    ↓
+GET /users/123
+    ↓
+Pikku extracts { userId: '123' } from route params
+    ↓
+Calls getUser({ userId: '123' })
+    ↓
+Function returns { id: '123', name: 'John', email: 'john@example.com' }
+    ↓
+HTTP 200 with JSON response
+    ↓
+Client receives response
+```
+
+**Key Points:**
+- Route params, query params, and body all become function input
+- Return value becomes HTTP response body
+- Errors become HTTP status codes (404, 422, 500, etc.)
+
+---
+
+## Server-Sent Events (SSE): Progressive Enhancement
+
+Add real-time streaming to HTTP endpoints without breaking existing clients.
+
+### How It Works
+
+```typescript
+// 1. Define the function (same as before)
+export const trackOrder = pikkuFunc<
+  { orderId: string },
+  { status: string; location: string; eta: string }
+>({
+  func: async ({ database, channel }, { orderId }) => {
+    const order = await database.orders.findById(orderId)
+
+    // Send progress updates if SSE is enabled
+    if (channel) {
+      await channel.send({ type: 'status', data: 'Processing order...' })
+      await channel.send({ type: 'location', data: order.currentLocation })
+    }
+
+    return {
+      status: order.status,
+      location: order.currentLocation,
+      eta: order.estimatedDelivery
+    }
+  }
+})
+
+// 2. Wire to HTTP with SSE enabled
+wireHTTP({
+  method: 'get',
+  route: '/orders/:orderId/track',
+  func: trackOrder,
+  sse: true  // Enable Server-Sent Events
+})
+```
+
+### Data Flow
+
+```
+Regular HTTP Client → GET /orders/123/track
+    ↓
+Function executes (channel is undefined)
+    ↓
+Returns final result as JSON
+    ↓
+HTTP 200 with { status: '...', location: '...', eta: '...' }
+
+SSE Client → GET /orders/123/track (Accept: text/event-stream)
+    ↓
+Function executes (channel is available)
+    ↓
+Sends progress updates via channel.send()
+    ↓
+Client receives streaming events in real-time
+    ↓
+Function completes and returns final result
+    ↓
+SSE connection closes
+```
+
+**Key Points:**
+- Same function works for both regular HTTP and SSE
+- Detect SSE with `if (channel)` check
+- Regular HTTP clients get final result only
+- SSE clients get progress updates + final result
+- No breaking changes to existing API consumers
+
+---
+
+## WebSocket: Bidirectional with Channels
+
+WebSocket adds real-time, bidirectional communication through channels.
+
+### How It Works
+
+```typescript
+// 1. Define the function (same as before)
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string; email: string }
+>({
+  func: async ({ database, channel }, { userId }) => {
+    const user = await database.users.findById(userId)
+
+    // Optional: Send updates via channel
+    if (channel) {
+      await channel.send({ type: 'user-fetched', user })
+    }
+
+    return user
+  }
+})
+
+// 2. Wire to WebSocket channel
+wireChannel({
+  name: 'users',
+  onMessageWiring: {
+    getUser: { func: getUser }
+  }
+})
+```
+
+### Data Flow
+
+```
+Client connects to WebSocket
+    ↓
+Subscribes to 'users' channel
+    ↓
+Sends message: { action: 'getUser', data: { userId: '123' } }
+    ↓
+Pikku extracts data and calls getUser({ userId: '123' })
+    ↓
+Function returns user object
+    ↓
+WebSocket sends response message back to client
+    ↓
+Function also sends additional update via channel.send()
+    ↓
+All subscribers to 'users' channel receive the update
+```
+
+**Key Points:**
+- `channel` service available for sending messages to subscribers
+- Same function works for both request/response and pub/sub patterns
+- Automatic message routing by action name
+
+---
+
+## Queues: Async Job Processing
+
+Queues enable background job processing with optional result waiting.
+
+### How It Works
+
+```typescript
+// 1. Define the function (same as before)
+export const sendEmail = pikkuFunc<
+  { to: string; subject: string; body: string },
+  { messageId: string }
+>({
+  func: async ({ emailService }, { to, subject, body }) => {
+    const messageId = await emailService.send({ to, subject, body })
+    return { messageId }
+  }
+})
+
+// 2. Wire to queue
+wireQueueWorker({
+  queue: 'email-queue',
+  func: sendEmail
+})
+```
+
+### Data Flow (Fire and Forget)
+
+```
+Client adds job to queue
+    ↓
+queueClient.add('email-queue', { to: 'user@example.com', ... })
+    ↓
+Job stored in queue (Redis, PostgreSQL, SQS, etc.)
+    ↓
+Queue worker picks up job
+    ↓
+Calls sendEmail({ to: '...', subject: '...', body: '...' })
+    ↓
+Function executes (sends email)
+    ↓
+Returns result (if provider supports it - BullMQ/pg-boss yes, SQS no)
+    ↓
+Job marked as complete
+```
+
+### Data Flow (Wait for Result - BullMQ/pg-boss only)
+
+```
+Client adds job and waits
+    ↓
+const jobId = await queueClient.add('email-queue', data)
+const job = await queueClient.getJob('email-queue', jobId)
+const result = await job.waitForCompletion?.({ timeout: 30000 })
+    ↓
+Job processed in background
+    ↓
+Client receives result: { messageId: '...' } (if supported by provider)
+```
+
+**Key Points:**
+- Same function works for both fire-and-forget and wait-for-result patterns
+- Provider-dependent features (BullMQ and pg-boss support waiting, SQS doesn't)
+- Automatic retry on failures
+
+---
+
+## MCP: Transform for AI Agents
+
+Model Context Protocol (MCP) exposes functions to AI agents like Claude. Requires special response formatting.
+
+### How It Works with Adapters
+
+```typescript
+// 1. Domain function (reusable everywhere)
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string; email: string }
+>({
+  func: async ({ database }, { userId }) => {
+    return await database.users.findById(userId)
+  }
+})
+
+// 2. MCP adapter (transforms for AI)
+export const getUserMCP = pikkuMCPResourceFunc<
+  { userId: string }
+>({
+  func: async ({ rpc }, { userId }) => {
+    // Call domain function via RPC
+    const user = await rpc.invoke('getUser', { userId })
+
+    // Transform to MCP format
+    return [
+      {
+        uri: `user://${userId}`,
+        text: JSON.stringify(user)
+      }
+    ]
+  }
+})
+
+// 3. Wire to MCP
+wireMCPResource({
+  uri: 'user/{userId}',
+  title: 'User Information',
+  description: 'Retrieve user data by ID',
+  func: getUserMCP
+})
+```
+
+### Data Flow
+
+```
+AI Agent requests resource
+    ↓
+MCP protocol: GET resource user/123
+    ↓
+Pikku calls getUserMCP({ userId: '123' })
+    ↓
+Adapter calls rpc.invoke('getUser', { userId: '123' })
+    ↓
+Domain function executes and returns user object
+    ↓
+Adapter transforms to MCP format: [{ uri: 'user://123', text: '{"id":"123",...}' }]
+    ↓
+AI Agent receives formatted response
+```
+
+**Key Points:**
+- Keep domain logic in regular `pikkuFunc` (reusable)
+- Use thin `pikkuMCPResourceFunc` or `pikkuMCPToolFunc` adapters
+- Adapters transform data to MCP-required formats
+- MCP tools return `[{ type: 'text', text: '...' }]`
+- MCP resources return `[{ uri: '...', text: '...' }]`
+
+---
+
+## RPC: Internal Function Calls
+
+Call functions from within other functions with full type safety.
+
+### How It Works
+
+```typescript
+// 1. Define functions
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string; email: string }
+>({
+  func: async ({ database }, { userId }) => {
+    return await database.users.findById(userId)
+  }
+})
+
+export const getUserOrders = pikkuFunc<
+  { userId: string },
+  { user: User; orders: Order[] }
+>({
+  func: async ({ database, rpc }, { userId }) => {
+    // Call another function internally
+    const user = await rpc.invoke('getUser', { userId })
+    const orders = await database.orders.findByUserId(userId)
+
+    return { user, orders }
+  }
+})
+```
+
+### Data Flow
+
+```
+getUserOrders called
+    ↓
+Needs user data
+    ↓
+Calls rpc.invoke('getUser', { userId: '123' })
+    ↓
+Pikku executes getUser with same permissions/session context
+    ↓
+Returns user object
+    ↓
+getUserOrders continues execution
+    ↓
+Returns combined result
+```
+
+**Key Points:**
+- Type-safe internal function calls
+- Shares same session and permissions context
+- Enables composition without code duplication
+
+---
+
+## Scheduled Tasks: Time-Based Execution
+
+Run functions on a schedule (cron-like).
+
+### How It Works
+
+```typescript
+// 1. Define the function
+export const sendDailyDigest = pikkuFunc<
+  void,
+  { emailsSent: number }
+>({
+  func: async ({ database, emailService }) => {
+    const users = await database.users.findActive()
+
+    for (const user of users) {
+      await emailService.sendDigest(user)
+    }
+
+    return { emailsSent: users.length }
+  }
+})
+
+// 2. Wire to scheduler
+wireScheduler({
+  cron: '0 9 * * *',  // Every day at 9 AM
+  func: sendDailyDigest
+})
+```
+
+### Data Flow
+
+```
+Scheduler tick (9:00 AM)
+    ↓
+Pikku calls sendDailyDigest()
+    ↓
+Function executes
+    ↓
+Returns result { emailsSent: 42 }
+    ↓
+Result logged
+    ↓
+Waits for next scheduled time
+```
+
+**Key Points:**
+- No input parameters (scheduled, not triggered by external event)
+- Runs in background on schedule
+- Same middleware and error handling as other protocols
+
+---
+
+## CLI: Command-Line Interface
+
+Expose functions as CLI commands.
+
+### How It Works
+
+```typescript
+// 1. Define the function (same as before)
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string; email: string }
+>({
+  func: async ({ database }, { userId }) => {
+    return await database.users.findById(userId)
+  }
+})
+
+// 2. Wire to CLI
+wireCLI({
+  program: 'users',
+  commands: {
+    get: pikkuCLICommand({
+      parameters: '<userId>',
+      func: getUser
+    })
+  }
+})
+```
+
+### Data Flow
+
+```
+Terminal: users get 123
+    ↓
+CLI parser extracts { userId: '123' }
+    ↓
+Calls getUser({ userId: '123' })
+    ↓
+Function returns user object
+    ↓
+CLI formats and prints to stdout
+    ↓
+User sees formatted output
+```
+
+**Key Points:**
+- Same function works in CLI and HTTP/WebSocket/etc.
+- Automatic argument parsing
+- Formatted console output
+
+---
+
+## The Unification Pattern
+
+All protocols follow the same pattern:
+
+1. **Input Extraction** — Protocol-specific data (route params, WebSocket message, queue job, etc.) → function parameters
+2. **Function Execution** — Same TypeScript function runs with same services, permissions, validation
+3. **Output Transformation** — Function return value → protocol-specific response (HTTP JSON, WebSocket message, queue result, MCP format)
+
+This is why you can write logic once and deploy everywhere.
+
+## Key Benefits
+
+### ✅ Write Once, Wire Anywhere
+
+```typescript
+// One function
+export const getUser = pikkuFunc<Input, Output>({ ... })
+
+// Many protocols
+wireHTTP({ route: '/users/:userId', func: getUser })
+wireChannel({ onMessageWiring: { getUser: { func: getUser } } })
+wireQueueWorker({ queue: 'get-user', func: getUser })
+wireMCPResource({ uri: 'user/{userId}', func: getUserMCP })  // Thin adapter
+wireCLI({ commands: { get: pikkuCLICommand({ func: getUser }) } })
+```
+
+### ✅ Same Behavior Everywhere
+
+- Authentication works the same way
+- Permissions are enforced consistently
+- Validation happens automatically
+- Middleware runs for all protocols
+- Error handling is uniform
+
+### ✅ Easy Testing
+
+Test the function directly—no need to mock HTTP requests, WebSocket connections, or queue infrastructure:
+
+```typescript
+const result = await getUser.func(services, { userId: '123' })
+expect(result.name).toBe('John Doe')
+```
+
+### ✅ Flexible Deployment
+
+- Start with HTTP monolith
+- Add WebSocket for real-time features
+- Move expensive operations to queues
+- Expose to AI agents via MCP
+- Provide CLI for admin tasks
+
+**Same code. Different protocols. Zero rewrites.**
+
+## Next Steps
+
+- **[TypeScript Everywhere](/why/typescript-everywhere)** — See how type safety flows across all protocols
+- **[Get started](/docs)** — Build your first unified backend
+- **[Documentation](/docs)** — Deep dive into each protocol
+
+<WhyPageFooter />

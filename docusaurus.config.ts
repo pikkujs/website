@@ -138,7 +138,7 @@ const config: Config = {
       },
       items: [
         {
-          to: '/why/costs-of-moving',
+          to: '/why',
           label: 'Why?',
           position: 'right',
         },
@@ -158,12 +158,6 @@ const config: Config = {
           to: '/blog',
           label: 'Blog',
           position: 'right'
-        },
-        {
-          to: 'https://github.com/orgs/pikkujs/discussions',
-          label: 'Discussions',
-          position: 'right',
-          className: "discussions-link"
         },
         {
           type: 'html',

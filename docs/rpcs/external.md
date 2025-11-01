@@ -45,15 +45,15 @@ Everything else is derived from the function:
 - Permissions from `permissions` property
 - Error responses from thrown errors
 
-See [Authentication](../middleware.md) for auth configuration.
+See [Middleware](../core-features/middleware.md) for auth configuration.
 
 ## Wiring an RPC Endpoint
 
 Wire an HTTP endpoint that calls any exposed function:
 
 ```typescript
-import { wireHTTP } from './pikku-types.gen.js'
-import { pikkuSessionlessFunc } from './pikku-types.gen.js'
+import { wireHTTP } from '#pikku/http'
+import { pikkuSessionlessFunc } from '#pikku'
 
 // Generic RPC caller function
 export const rpcCaller = pikkuSessionlessFunc<
@@ -130,10 +130,10 @@ The client:
 - Handles authentication
 - Formats errors appropriately
 
-See [Fetch Client](../../http/fetch-client.md) for details.
+See [Fetch Client](../http/fetch-client.md) for details.
 
 ## Next Steps
 
 - [Internal RPCs](./internal.md) - Function-to-function calls
-- [Fetch Client](../../http/fetch-client.md) - Type-safe HTTP client
-- [Functions](../functions.md) - Understanding Pikku functions
+- [Fetch Client](../http/fetch-client.md) - Type-safe HTTP client
+- [Functions](../core-features/functions.md) - Understanding Pikku functions
