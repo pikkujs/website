@@ -148,12 +148,12 @@ const config: Config = {
           position: 'right',
           label: 'Docs',
         },
-        {
-          type: 'docSidebar',
-          sidebarId: 'skills',
-          position: 'right',
-          label: 'Skills',
-        },
+        // {
+        //   type: 'docSidebar',
+        //   sidebarId: 'skills',
+        //   position: 'right',
+        //   label: 'Skills',
+        // },
         {
           to: '/blog',
           label: 'Blog',

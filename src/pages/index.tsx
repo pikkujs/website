@@ -10,6 +10,7 @@ import { WiringIcon } from '../components/WiringIcons';
 import LiveExamples from '../components/LiveExamples';
 import { BundleArchitecturesSection } from '../components/BundleArchitecturesSection';
 import { testimonials } from '@site/data/testimonials';
+import Card from '../components/Card';
 
 /** Reusable component for Pikku logo surrounded by icons */
 function PikkuCircularLayout({
@@ -585,7 +586,7 @@ function UsedBySection() {
 /** What Developers Say */
 function TestimonialsSection() {
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -598,7 +599,7 @@ function TestimonialsSection() {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {testimonials.map((testimonial, idx) => (
-            <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-md border border-gray-200 dark:border-neutral-800">
+            <Card key={idx} variant="testimonial">
               <p className="text-gray-700 dark:text-gray-300 mb-4 italic">
                 "{testimonial.quote}"
               </p>
@@ -608,7 +609,7 @@ function TestimonialsSection() {
                   {testimonial.role}{testimonial.company ? ` @ ${testimonial.company}` : ''}
                 </p>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>
@@ -741,22 +742,39 @@ function WhyIBuiltPikkuSection() {
     {
       icon: '💰',
       title: 'Cost Optimization',
-      description: 'Start optimizing your infrastructure budget by having full freedom to switch deployments at any time'
+      description: 'Start optimizing your infrastructure budget by having full freedom to switch deployments at any time',
+      link: '/why/vendor-lock-in',
+      linkText: 'Learn about avoiding costly rewrites →'
     },
     {
       icon: '⚡',
       title: 'Speed & Type Safety',
-      description: 'Build fast without any runtime lock-in, with TypeScript having your back'
+      description: 'Build fast without any runtime lock-in, with TypeScript having your back',
+      link: '/why/typescript-everywhere',
+      linkText: 'See how TypeScript powers everything →'
     },
     {
       icon: '🤖',
       title: 'AI-Era Quality',
-      description: 'Simplicity means dramatically better generated code quality'
+      description: 'Simplicity means dramatically better generated code quality',
+      link: '/why/architecture-flexibility',
+      linkText: 'Explore architecture flexibility →'
+    }
+  ];
+
+  const videos = [
+    {
+      id: '-MV12EYqJHM',
+      title: 'Pikku Overview'
+    },
+    {
+      id: 'dBZf7Bk7ReI',
+      title: 'Deep Dive'
     }
   ];
 
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -767,18 +785,38 @@ function WhyIBuiltPikkuSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
           {pillars.map((pillar, idx) => (
-            <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-md">
-              <div className="text-5xl mb-4">{pillar.icon}</div>
-              <Heading as="h3" className="text-xl font-bold mb-3 text-primary">
-                {pillar.title}
-              </Heading>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                {pillar.description}
-              </p>
-            </div>
+            <Card
+              key={idx}
+              icon={pillar.icon}
+              title={pillar.title}
+              description={pillar.description}
+              link={{ href: pillar.link, text: pillar.linkText }}
+            />
           ))}
+        </div>
+
+        <div className="mt-12 mb-8">
+          <Heading as="h3" className="text-2xl font-bold mb-6 text-center">
+            Watch the Talks
+          </Heading>
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {videos.map((video, idx) => (
+              <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg overflow-hidden shadow-lg">
+                <div className="relative" style={{ paddingBottom: '56.25%' }}>
+                  <iframe
+                    className="absolute top-0 left-0 w-full h-full"
+                    src={`https://www.youtube.com/embed/${video.id}`}
+                    title={video.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="mt-8 text-center">
@@ -819,7 +857,7 @@ function HowTeamsUseItSection() {
   ];
 
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -832,7 +870,7 @@ function HowTeamsUseItSection() {
 
         <div className="grid md:grid-cols-3 gap-8">
           {useCases.map((useCase, idx) => (
-            <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-md">
+            <Card key={idx} variant="white">
               <Heading as="h3" className="text-xl font-bold mb-3 text-primary">
                 {useCase.title}
               </Heading>
@@ -855,7 +893,7 @@ function HowTeamsUseItSection() {
                   ))}
                 </ul>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>
@@ -870,7 +908,7 @@ function TryItNowSection() {
   };
 
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-4">
           Get Started in Minutes
@@ -942,11 +980,11 @@ export default function Home() {
         <TestimonialsSection />
         <ProductionFeaturesSection />
         <HowTeamsUseItSection />
-        <WhyIBuiltPikkuSection />
         <ProblemSolutionSection />
         <TryItNowSection />
         <LiveExamples />
-        <DeployAnywhereSection />
+        <WhyIBuiltPikkuSection />
+        {/* <DeployAnywhereSection /> */}
         <CallToActionSection />
       </main>
     </Layout>

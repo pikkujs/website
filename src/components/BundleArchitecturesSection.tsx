@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
+import Card from './Card';
 
 /** Bundle Only What You Deploy - Reusable component */
 export function BundleArchitecturesSection() {
@@ -47,7 +48,7 @@ export function BundleArchitecturesSection() {
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {architectures.map((arch, idx) => (
-              <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-lg text-center">
+              <Card key={idx} variant="white" className="text-center shadow-lg">
                 <div className="text-6xl mb-3">{arch.icon}</div>
                 <Heading as="h3" className="text-xl font-bold mb-2">
                   {arch.name}
@@ -67,7 +68,7 @@ export function BundleArchitecturesSection() {
                   <div className="text-sm font-semibold text-primary mb-1">{arch.bundleSize}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">{arch.includes}</div>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
 

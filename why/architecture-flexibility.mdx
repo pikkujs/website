@@ -8,6 +8,7 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import WhyPageFooter from '@site/src/components/WhyPageFooter';
+import Card from '@site/src/components/Card';
 
 <div style={{textAlign: 'center', padding: '2rem 0 3rem', marginBottom: '3rem', borderBottom: '1px solid var(--ifm-color-emphasis-200)'}}>
 
@@ -111,7 +112,7 @@ await server.start()
 
 <div className="grid md:grid-cols-2 gap-6 my-8">
 
-<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+<Card variant="minimal">
 
 ### ✅ Start Simple
 
@@ -119,9 +120,9 @@ Begin with the simplest architecture that works. No premature optimization, no u
 
 Deploy as a monolith on a single server or go serverless for instant auto-scaling.
 
-</div>
+</Card>
 
-<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+<Card variant="minimal">
 
 ### ✅ Scale Smart
 
@@ -129,9 +130,9 @@ When requirements change, adapt your architecture without rewriting code.
 
 Move specific functions to different runtimes based on their needs.
 
-</div>
+</Card>
 
-<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+<Card variant="minimal">
 
 ### ✅ Mix & Match
 
@@ -139,9 +140,9 @@ Run different parts of your application on different platforms simultaneously.
 
 HTTP APIs on Lambda, WebSockets on a dedicated server, queues on BullMQ.
 
-</div>
+</Card>
 
-<div className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg shadow-md">
+<Card variant="minimal">
 
 ### ✅ Zero Rewrites
 
@@ -149,7 +150,7 @@ Infrastructure changes are configuration changes, not code changes.
 
 Your team builds features instead of managing migrations.
 
-</div>
+</Card>
 
 </div>
 

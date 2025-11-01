@@ -58,10 +58,36 @@ wireMCPResource({
 ```
 
 That's it! AI agents can now request your documentation. Pikku automatically:
-- Validates the input against your function's type
-- Calls your function with clean, typed data
-- Formats the response according to MCP protocol
-- Handles errors appropriately
+- **Generates JSON schemas** from your TypeScript types (during `npx pikku`)
+- **Validates the input** against your function's type
+- **Calls your function** with clean, typed data
+- **Formats the response** according to MCP protocol
+- **Handles errors** appropriately
+
+### Automatic Schema Generation
+
+When you define an MCP function with TypeScript types:
+
+```typescript
+export const getProjectDocs = pikkuMCPResourceFunc<
+  { section: string },
+  MCPResourceResponse
+>({ ... })
+```
+
+Pikku automatically:
+1. Extracts your TypeScript types (`{ section: string }`)
+2. Converts them to JSON Schema
+3. Includes the schema in the MCP endpoint definition
+4. Tells AI agents exactly what parameters are expected
+
+**AI agents receive schemas that specify:**
+- Which parameters are required
+- What type each parameter is (string, number, array, object, etc.)
+- Nested object structures
+- Array item types
+
+**You never write schemas manually.** Your TypeScript types are the single source of truth.
 
 ## MCP Function Types
 
