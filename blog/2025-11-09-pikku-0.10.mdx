@@ -1,0 +1,297 @@
+---
+title: Pikku 0.10 — Smart Tree-Shaking and CLI support!
+description: Pikku 0.10 delivers production-ready tree-shaking with service aggregation, a revolutionized CLI framework, and major middleware improvements.
+---
+
+import Card from '@site/src/components/Card';
+
+Pikku 0.10 represents a massive leap in **production readiness** and **developer experience**. This release focuses on **intelligent tree-shaking** that dramatically reduces bundle sizes, a way to create CLI's from your functions that run locally or remote and major middleware improvements.
+
+> tl;dr: smaller bundles via service aggregation, CLI-over-Channel streaming, and middleware/permission factories.
+
+<!-- truncate -->
+
+---
+
+
+## ⚡ CLI Framework
+
+The CLI has been completely rewritten for 0.10 with streaming, RPC support, and channel execution.
+
+CLI commands are Pikku RPCs, enabling:
+- **Type safety** for all commands
+- **Middleware** and **permissions** support
+- **Local or remote** execution
+- **Streaming output** via websockets when remote
+
+To wire up a CLI you simply mention the CLI layout you want,
+with full type support on functions.
+
+```typescript
+wireCLI({
+  program: 'calc-tool',
+  description: 'Mathematical calculator CLI',
+
+  // Global options (inherited by all commands)
+  options: {
+    verbose: {
+      description: 'Enable verbose output',
+      short: 'v',
+      default: false,
+    },
+  },
+
+  commands: {
+    // Command group with subcommands
+    calc: {
+      description: 'Mathematical calculations',
+      subcommands: {
+        add: pikkuCLICommand({
+          parameters: '<a> <b>',
+          func: addNumbers,
+          description: 'Add two numbers',
+          render: calcRenderer,
+        }),
+        subtract: pikkuCLICommand({
+          parameters: '<a> <b>',
+          func: subtractNumbers,
+          description: 'Subtract two numbers',
+          render: calcRenderer,
+        }),
+      },
+    },
+  },
+})
+```
+
+### Creating your CLI
+
+
+To create a CLI, simply add the cli name to your `pikku.config.json`
+
+```json
+{
+  ...,
+  "cli": {
+    "entrypoints": {
+      "my-cli": [
+        {
+          "type": "local",
+          "path": "src/cli-local.ts"
+        },
+        {
+          "type": "channel",
+          "name": "cli",
+          "route": "/cli",
+          "wirePath": "src/cli-channel.ts",
+          "path": "src/cli-remote.ts"
+        }
+      ]
+    }
+  }
+}
+```
+
+This will create a local CLI (think commander JS), and would also create a Remote Websocket CLI server you can run your commands against!
+
+### Renderering Output
+
+CLI output can then be rendered either directly via your functions (as we normally do with a logger), or a via render function. This is what allows you to run against a server but have it render as if it's local.
+
+```typescript
+// Calculator result renderer
+export const calcRenderer = pikkuCLIRender<{
+  expression: string
+  result: number
+}>((_services, output) => {
+  console.log(`Expression: ${output.expression}`)
+  console.log(`Result: ${output.result}`)
+})
+
+// JSON fallback renderer (global)
+export const jsonRenderer = pikkuCLIRender((_services, output: any) => {
+  console.log(JSON.stringify(output, null, 2))
+})
+
+// Table renderer for lists
+export const tableRenderer = pikkuCLIRender<{ items: any[]; total: number }>(
+  (_services, output) => {
+    console.log(`Found ${output.total} items:`)
+    console.table(output.items)
+  }
+)
+```
+
+### Get Started
+
+Try the CLI template:
+
+```bash
+npm create pikku@latest -- --template cli
+```
+
+📚 **[View CLI examples →](/?wiring=cli#code-examples)** • **[CLI docs →](https://pikku.dev/docs/cli)**
+
+
+---
+
+## Intelligent Tree-Shaking: Only Bundle What You Use
+
+Pikku 0.10 introduces **service awareness**, built into the inspection phase that analyzes your entire codebase to determine exactly which services are actually used.
+
+### How It Works
+
+Pikku now tracks service usage across:
+- Functions themselves
+- Middleware chains
+- Permission guards
+- Session factories
+- Tag-based registrations
+
+```bash
+# Generate optimized bundle with service tracking
+pikku --tags 'web,api' --types 'http,channel'
+```
+
+The result? **Dramatically smaller bundles** with only the services you actually need.
+
+### Service Map Generation
+
+```typescript
+// Generated service map
+export const serviceMap = {
+  logger: true,
+  database: true,
+  jwt: true,
+  email: false //- not used, excluded from bundle
+  s3: false  // - not used, excluded from bundle
+}
+```
+
+This enables **lazy loading** of optional services:
+
+```typescript
+if (singletonServices.email) {
+  const { EmailService } = await import('@my-app/email')
+  email = new EmailService(config)
+}
+```
+
+### Advanced Filtering
+
+Wildcard and name-based filtering for precise control:
+
+```bash
+# Include only admin and API routes
+pikku --tags 'admin,api'
+
+# Exclude edge-incompatible functions
+pikku --exclude-tags 'server-only'
+
+# Filter by function name patterns
+pikku --names 'user*,auth*'
+```
+
+📚 **[Learn more → CLI Filtering](https://pikku.dev/docs/cli/filtering)**
+
+---
+
+## Middleware & Permissions Evolution
+
+### Factory Pattern with Metadata
+
+Middleware and permissions now support **factories** with **optional metadata**:
+
+```typescript
+export const requireRole = pikkuMiddlewareFactory<{ role: string }>({
+  name: 'requireRole',
+  description: 'Enforce user role requirement',
+  func: ({ role }) => async (services, interaction, next) => {
+    if (services.session.role !== role) {
+      throw new UnauthorizedError(`Requires ${role} role`)
+    }
+    return next()
+  }
+})
+
+// Usage
+wireHTTP({
+  route: '/admin',
+  middleware: [requireRole({ role: 'admin' })]
+})
+```
+
+### Permission Factories
+
+```typescript
+export const canEditResource = pikkuPermissionFactory<{
+  resourceType: string
+}>({
+  name: 'canEditResource',
+  description: 'Check if user can edit resource',
+  func: ({ resourceType }) => async (services, data, session) => {
+    const resource = await services.db.get(resourceType, data.id)
+    return resource.ownerId === session.userId
+  }
+})
+```
+
+---
+
+## Developer Experience Improvements
+
+### React-Style Error Codes
+
+Errors now include documentation codes so you can look it up on the website.
+
+### MCP URI Validation
+
+Compile-time validation for Model Context Protocol resources:
+
+```typescript
+wireMCPResource({
+  uri: 'user/{userId}/posts/{postId}', // Validated at build time
+  func: getPost
+})
+```
+
+
+---
+
+## Performance Optimizations
+
+### Caching System
+
+- **Middleware resolution** cached at startup
+- **Permission lookups** cached per route
+- **HTTP meta** converted to Map (faster lookups)
+
+### Smaller Bundles
+
+- Split type generation (one file per wiring)
+- Only import functions used by RPCs
+- Tree-shakeable service dependencies
+
+
+## What's Next
+
+Pikku 0.10 sets the foundation for:
+
+- **Workflows** (coming really, really soon)
+- **Pluggable routers** (choose your routing strategy)
+- **Enhanced MCP support** (OAuth, notifications)
+- **Documentation expansion** (tutorials, examples)
+
+---
+
+## Try It Now
+
+Pikku 0.10 represents months of production hardening, developer experience improvements, and architectural refinements. **Intelligent tree-shaking** makes this the most production-ready Pikku release yet.
+
+- 🧪 **[Get Started](https://pikku.dev/docs/quickstart)**
+- 💻 **[View on GitHub](https://github.com/vramework/pikku)**
+- 💬 **[Join the conversation](https://github.com/vramework/pikku/discussions)**
+
+Thanks for building with Pikku.
+
+— Yasser

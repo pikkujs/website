@@ -24,7 +24,7 @@ Run commands directly on your local machine. The CLI invokes functions in-proces
 - Executing admin tasks locally
 - Working in development/testing environments
 
-[Learn more about Local CLI →](./local-cli.md)
+[Learn more about Local CLI →](./local-cli.mdx)
 
 ### Remote CLI
 
@@ -199,7 +199,7 @@ export const buildApp = pikkuSessionlessFunc({
 
 ## Next Steps
 
-- **[Local CLI](./local-cli.md)** - Run commands directly in-process
+- **[Local CLI](./local-cli.mdx)** - Run commands directly in-process
 - **[Remote CLI](./remote-cli.md)** - Invoke remote functions via RPC
 - **[Core Functions](../core-features/functions.md)** - Understanding Pikku functions
 - **[Middleware](../core-features/middleware.md)** - Adding middleware to CLI commands

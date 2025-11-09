@@ -589,9 +589,14 @@ function WorkflowsSection() {
     <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-12">
-          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
-            Long-Running Workflows with Built-in Resilience
-          </Heading>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
+            <Heading as="h2" className="text-4xl md:text-5xl font-bold">
+              Long-Running Workflows with Built-in Resilience
+            </Heading>
+            <span className="inline-block bg-primary text-white text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+              Coming in 0.11
+            </span>
+          </div>
           <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
             Build complex, multi-step processes that survive failures, handle time delays, and maintain state across server restarts.
           </p>
@@ -1025,7 +1030,7 @@ function TryItNowSection() {
   };
 
   return (
-    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section id="get-started" className="py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-4">
           Get Started in Minutes
@@ -1097,7 +1102,7 @@ export default function Home() {
         <WorkflowsSection />
         <TestimonialsSection />
         <ProductionFeaturesSection />
-        <HowTeamsUseItSection />
+        {/* <HowTeamsUseItSection /> */}
         <ProblemSolutionSection />
         <TryItNowSection />
         <LiveExamples />

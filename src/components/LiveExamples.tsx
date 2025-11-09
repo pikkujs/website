@@ -177,6 +177,22 @@ function TabContent({ tabKey }: { tabKey: FunctionType }) {
 
 /** Main examples section with Docusaurus tabs */
 function InteractiveExamplesSection() {
+  // Check URL for wiring parameter to set initial tab
+  const getInitialTab = () => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.split('?')[1] || '');
+      const wiring = params.get('wiring') || hashParams.get('wiring');
+
+      if (wiring && wiring in FUNCTION_TABS) {
+        return wiring;
+      }
+    }
+    return 'http';
+  };
+
+  const [defaultTab] = React.useState(getInitialTab);
+
   return (
     <section className="py-16">
       <div className="max-w-[1600px] w-full mx-auto px-4">
@@ -189,7 +205,7 @@ function InteractiveExamplesSection() {
           </p>
         </div>
 
-        <Tabs defaultValue="http" lazy={true}>
+        <Tabs key={defaultTab} defaultValue={defaultTab} lazy={true}>
           <TabItem 
             value="http" 
             label={
