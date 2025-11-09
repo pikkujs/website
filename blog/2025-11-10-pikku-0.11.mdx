@@ -1,0 +1,307 @@
+---
+title: Introducing Workflows in Pikku 0.11
+description: Build reliable, durable workflows without the infrastructure complexity
+draft: true
+---
+
+Building reliable software shouldn't require mastering distributed systems. Yet adding durability to async processes typically means wrestling with message queues, retry logic, state machines, and persistence layers.
+
+**Pikku 0.11** changes this with Workflows—a new primitive that turns your TypeScript functions into durable, observable workflows that survive failures and retries automatically.
+
+<!-- truncate -->
+
+---
+
+## The Problem with Async Reliability
+
+Consider a typical order processing flow: validate payment, reserve inventory, send confirmation. Simple in theory, but in practice you need:
+
+- **Retry logic** when services fail
+- **State persistence** across restarts
+- **Observability** into what's running
+- **Timeouts and delays** without blocking resources
+
+This complexity pushes teams toward heavyweight orchestration tools or accepting fragile systems.
+
+## Workflows: Durability Without Complexity
+
+Pikku Workflows make async functions durable with minimal code:
+
+```typescript
+import { pikkuWorkflowFunc } from '.pikku/workflow/pikku-workflow-types.gen.js'
+
+export const processOrder = pikkuWorkflowFunc<
+  { orderId: string; userId: string },
+  { success: boolean; orderId: string }
+>(async ({ workflow }, { orderId, userId }) => {
+  // Each step is atomic and retryable
+  const payment = await workflow.do(
+    'Validate payment',
+    'validatePayment',
+    { orderId }
+  )
+
+  const inventory = await workflow.do(
+    'Reserve inventory',
+    'reserveInventory',
+    { orderId }
+  )
+
+  await workflow.do('Send confirmation', 'sendEmail', {
+    to: userId,
+    subject: 'Order Confirmed',
+    body: `Order ${orderId} confirmed!`
+  })
+
+  return { success: true, orderId }
+})
+```
+
+That's it. No queues, no state machines, no complex configuration.
+
+### How It Works
+
+When you call `processOrder`, Pikku:
+
+1. **Persists each step** as it executes
+2. **Tracks progress** in your chosen backend (PostgreSQL, Redis, BullMQ, or pg-boss)
+3. **Retries failures** with exponential backoff
+4. **Resumes from the last completed step** after crashes
+
+If the payment succeeds but inventory reservation fails, Pikku retries *only* the inventory step—payment isn't re-executed.
+
+## Execution Models
+
+Pikku workflows support three execution approaches to match your performance and reliability needs:
+
+### 1. Queue-Based Execution (Default)
+
+Each workflow step runs as a separate queue job, providing maximum durability:
+
+```typescript
+export const processOrder = pikkuWorkflowFunc<Input, Output>(
+  async ({ workflow }, { orderId }) => {
+    // Each step runs in its own queue job
+    await workflow.do('Validate payment', 'validatePayment', { orderId })
+    await workflow.do('Reserve inventory', 'reserveInventory', { orderId })
+    // Steps execute sequentially, surviving crashes between steps
+  }
+)
+```
+
+**Best for**: Long-running workflows, critical operations that must survive server restarts.
+
+### 2. Inline Execution with Retry
+
+Steps execute immediately in the current process, with automatic retries on failure:
+
+```typescript
+export const processOrder = pikkuWorkflowFunc<Input, Output>(
+  async ({ workflow }, { orderId }) => {
+    // Runs immediately, retries on failure
+    await workflow.do('Validate payment', 'validatePayment', { orderId }, {
+      executeInline: true
+    })
+  }
+)
+```
+
+**Best for**: Fast operations where low latency matters, but you still want retry logic, state tracking, and caching.
+
+### 3. Sleep for Delays
+
+Pause workflow execution for hours or days without holding resources:
+
+```typescript
+export const trialReminder = pikkuWorkflowFunc<Input, Output>(
+  async ({ workflow }, { userId }) => {
+    await workflow.do('Send welcome email', 'sendWelcome', { userId })
+
+    // Sleep for 7 days - workflow pauses, resources freed
+    await workflow.sleep('Wait for trial period', '7d')
+
+    // Resumes after 7 days
+    await workflow.do('Send reminder', 'sendReminder', { userId })
+  }
+)
+```
+
+**Best for**: Time-based workflows, trial periods, scheduled follow-ups, rate limiting.
+
+You can mix these approaches within a single workflow:
+
+```typescript
+export const orderFlow = pikkuWorkflowFunc<Input, Output>(
+  async ({ workflow }, { orderId }) => {
+    // Fast validation inline
+    await workflow.do('Validate order', 'validate', { orderId }, {
+      executeInline: true
+    })
+
+    // Critical payment in queue
+    await workflow.do('Process payment', 'processPayment', { orderId })
+
+    // Wait before follow-up
+    await workflow.sleep('Wait for shipping', '2d')
+
+    // Send follow-up email
+    await workflow.do('Send tracking info', 'sendTracking', { orderId })
+  }
+)
+```
+
+## Real-World Patterns
+
+### Extended Delays Without Resource Waste
+
+Need to wait hours or days? Workflows sleep without holding resources:
+
+```typescript
+export const subscriptionTrial = pikkuWorkflowFunc<
+  { userId: string },
+  { converted: boolean }
+>(async ({ workflow }, { userId }) => {
+  // Send welcome email immediately
+  await workflow.do('Send welcome email', 'sendWelcome', { userId })
+
+  // Wait 7 days (workflow sleeps, resources freed)
+  await workflow.sleep('Wait for trial period', '7d')
+
+  // Check if user converted
+  const user = await workflow.do('Check user subscription', async () => {
+    return await getUser(userId)
+  })
+
+  if (!user.subscribed) {
+    await workflow.do('Send trial ending reminder', 'sendTrialEnding', { userId })
+  }
+
+  return { converted: user.subscribed }
+})
+```
+
+## Observable by Default
+
+Every workflow run is tracked with full history:
+
+```typescript
+// Get workflow status
+const run = await workflowService.getRun(runId)
+// => { status: 'running', output: null, error: null }
+
+// Get complete history
+const steps = await workflowService.getRunHistory(runId)
+// => Full execution timeline with retries, errors, and step attempts
+```
+
+## Deploy Anywhere
+
+Workflows run on your existing infrastructure:
+
+**PostgreSQL** (via pg-boss):
+```typescript
+import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
+import { PgWorkflowService } from '@pikku/pg'
+import postgres from 'postgres'
+
+// Create pg-boss service factory
+const pgBossFactory = new PgBossServiceFactory(process.env.DATABASE_URL)
+await pgBossFactory.init()
+
+// Create workflow service
+const workflowService = new PgWorkflowService(postgres(process.env.DATABASE_URL))
+await workflowService.init()
+
+// Create singleton services with queue, scheduler, and workflowService
+const singletonServices = await createSingletonServices(config, {
+  queueService: pgBossFactory.getQueueService(),
+  schedulerService: pgBossFactory.getSchedulerService(),
+  workflowService,
+})
+```
+
+**Redis** (via BullMQ):
+```typescript
+import { BullServiceFactory } from '@pikku/queue-bullmq'
+import { RedisWorkflowService } from '@pikku/redis'
+
+// Create BullMQ service factory
+const bullFactory = new BullServiceFactory()
+await bullFactory.init()
+
+// Create workflow service
+const workflowService = new RedisWorkflowService(undefined)
+
+// Create singleton services with queue, scheduler, and workflowService
+const singletonServices = await createSingletonServices(config, {
+  queueService: bullFactory.getQueueService(),
+  schedulerService: bullFactory.getSchedulerService(),
+  workflowService,
+})
+```
+
+## Wire It Up
+
+Wire workflows and trigger them via HTTP:
+
+```typescript
+import { wireWorkflow } from '.pikku/workflow/pikku-workflow-types.gen.js'
+import { wireHTTP } from '.pikku/pikku-types.gen.js'
+
+// Wire the workflow
+wireWorkflow({
+  name: 'process-order',
+  description: 'Process customer orders',
+  func: processOrder,
+})
+
+// Trigger via HTTP
+wireHTTP({
+  auth: false,
+  method: 'post',
+  route: '/orders/process',
+  func: async ({ rpc }, data) => {
+    const { runId } = await rpc.startWorkflow('process-order', data)
+    return { runId }
+  }
+})
+```
+
+## Try It Now
+
+Get started with workflows in minutes:
+
+```bash
+npm create pikku@latest -- --template workflows-pg
+```
+
+This creates a complete workflow app with:
+- PostgreSQL-backed workflows
+- Example order processing flow
+- Retry and cancellation demos
+- Full type safety
+
+**[View workflow examples →](https://pikku.dev/docs/wiring/workflows)** • **[Workflow docs →](https://pikku.dev/docs/wiring/workflows)**
+
+---
+
+## What's Next
+
+Pikku 0.11 establishes workflows as a core primitive alongside HTTP, WebSockets, and Schedulers. Future releases will add:
+
+- **Visual workflow builder** for complex orchestrations
+- **Webhook steps** for external system integration
+- **Parallel execution** for concurrent steps
+- **Workflow templates** for common patterns
+
+---
+
+Pikku 0.11 makes durable workflows accessible to every TypeScript developer. No message queues to configure, no state machines to design, no complex infrastructure to maintain.
+
+Just write functions. Pikku handles the rest.
+
+- **[Get Started](https://pikku.dev/docs/quickstart)**
+- **[View on GitHub](https://github.com/vramework/pikku)**
+- **[Workflow Templates](https://pikku.dev/docs/wiring/workflows)**
+
+Thanks for building with Pikku.

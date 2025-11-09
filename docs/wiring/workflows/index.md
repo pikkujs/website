@@ -1,189 +1,187 @@
-# Workflows
+# Getting Started
 
-Pikku workflows provide a powerful way to orchestrate multi-step processes with automatic state management, deterministic replay, and step caching. They're perfect for complex business processes that span multiple operations, need to handle failures gracefully, or require time-based delays.
-
-## What are Workflows?
-
-Workflows are long-running, multi-step processes that can survive server restarts, handle failures, and resume from where they left off. Unlike simple function calls or RPC chains, workflows maintain their state in a persistent external store and use deterministic replay to ensure correctness.
-
-**Key features:**
-
-- **Deterministic Replay**: Completed steps are never re-executed. When a workflow resumes, it replays from the beginning using cached results for completed steps.
-- **State Persistence**: Workflow state is stored in an external store (like PostgreSQL or Redis), surviving server restarts and crashes.
-- **Step Caching**: Each step's result is cached, preventing duplicate work during replay.
-- **Multiple Execution Modes**: Run workflows inline (synchronous) for testing or remote (asynchronous via queue workers) for production.
-- **Type Safety**: Full TypeScript support with generated types for workflow inputs and outputs.
-
-## When to Use Workflows
-
-Workflows are ideal for scenarios that involve:
-
-- **Multi-step business processes**: User onboarding, order fulfillment, approval workflows
-- **Operations requiring time delays**: Sending reminder emails after X days, trial expiration handling
-- **Processes that need to survive failures**: Payment processing, data migration, batch operations
-- **Long-running tasks**: Report generation, video processing, data aggregation
-
-### Workflows vs Other Pikku Features
-
-| Feature | Use Case | State Management | Execution |
-|---------|----------|------------------|-----------|
-| **Workflows** | Multi-step processes with delays and failure recovery | Persistent (external store) | Asynchronous (queue-based) or synchronous |
-| **Queue Jobs** | Single background tasks | None (fire-and-forget) | Asynchronous (queue-based) |
-| **Scheduled Tasks** | Recurring cron-like jobs | None | Time-based triggers |
-| **RPC Calls** | Direct function invocations | None | Synchronous or asynchronous |
-
-## Core Concepts
-
-### Workflow Runs
-
-Each workflow execution is called a **run**. A run has:
-- A unique `runId`
-- Current status: `running`, `completed`, `failed`, or `cancelled`
-- Input data
-- Output data (when completed)
-- Metadata (creation time, last interaction, etc.)
-
-### Steps
-
-Workflows are composed of **steps**. Each step has:
-- A descriptive name (used for logging and debugging)
-- A status: `pending`, `scheduled`, `succeeded`, or `failed`
-- Cached result data (for replay)
-- Execution metadata (including `attemptCount` for retries)
-
-There are three types of steps:
-
-1. **RPC Steps**: Call other Pikku functions via queue workers (with optional retry configuration)
-2. **Inline Steps**: Execute code immediately with caching (with optional retry configuration)
-3. **Sleep Steps**: Time-based delays
-
-Learn more in [Step Types](./steps.md).
-
-### Execution Modes
-
-Workflows automatically run in one of two modes based on your configuration:
-
-**Inline Mode** (synchronous):
-- Used when no queue service is configured
-- Executes immediately in the same process
-- Perfect for testing and development
-- No queue workers required
-- Steps execute sequentially without queue jobs
-
-**Remote Mode** (asynchronous):
-- Used when a queue service is configured
-- Executes via Pikku queue workers
-- Production-ready with horizontal scaling
-- Survives server restarts
-- Steps execute in separate worker processes
-
-The mode is determined automatically based on whether a `queueService` is available in your singleton services.
-
-## How Workflows Work
-
-### Remote Mode Flow
-
-```
-1. User calls rpc.startWorkflow('workflow-name', inputData)
-2. Workflow run created in state storage
-3. Orchestrator job added to queue
-4. Orchestrator executes workflow function
-5. On RPC step:
-   a. Step marked as "scheduled"
-   b. Step worker job added to queue
-   c. Worker executes RPC call
-   d. Result stored in state
-   e. Orchestrator resumed
-6. Orchestrator replays from beginning
-   - Uses cached results for completed steps
-   - Continues from last completed step
-7. Process repeats until workflow completes or fails
-```
-
-### Deterministic Replay
-
-When a workflow resumes (after a delay, failure, or RPC step completion), it **replays from the beginning**. However, completed steps are not re-executed - their cached results are used instead.
-
-This ensures:
-- Workflows can survive failures and resume correctly
-- Step results are consistent across replays
-- Complex branching logic works as expected
-- Time-based operations (sleep) don't reset
-
-**Example:**
-
-```typescript
-// First execution
-await workflow.do('Step 1', async () => createUser()) // Executes
-await workflow.do('Step 2', async () => sendEmail()) // Executes
-await workflow.sleep('Wait', '5min')                 // Schedules timer
-
-// After 5 minutes (replay)
-await workflow.do('Step 1', async () => createUser()) // SKIPPED (cached)
-await workflow.do('Step 2', async () => sendEmail()) // SKIPPED (cached)
-await workflow.sleep('Wait', '5min')                 // SKIPPED (cached)
-await workflow.do('Step 3', async () => sendReminder()) // Executes
-```
+Build reliable, multi-step processes that survive failures and resume automatically. Workflows turn your TypeScript functions into durable operations with built-in state management, retries, and time delays.
 
 ## Quick Example
 
-Here's a simple user onboarding workflow:
-
 ```typescript
-import { pikkuWorkflowFunc } from './.pikku/workflow/pikku-workflow-types.gen'
+import { pikkuWorkflowFunc } from '.pikku/workflow/pikku-workflow-types.gen'
 
 export const onboardingWorkflow = pikkuWorkflowFunc<
   { email: string; userId: string },
   { success: boolean }
->(async ({ workflow, rpc }, data) => {
-  // Step 1: Create user profile (RPC step - runs in queue worker)
-  await workflow.do(
-    'Create user profile in database',
-    'createUserProfile',
-    data
-  )
+>(async ({ workflow }, data) => {
+  // Step 1: Call another function via queue
+  await workflow.do('Create user profile', 'createUserProfile', data)
 
-  // Step 2: Generate welcome message (inline step - runs immediately)
+  // Step 2: Execute code immediately
   const message = await workflow.do(
     'Generate welcome message',
-    async () => `Welcome to our platform, ${data.email}!`
+    async () => `Welcome, ${data.email}!`
   )
 
-  // Step 3: Wait 5 minutes before sending email
-  await workflow.sleep('Wait 5 minutes before welcome email', '5min')
+  // Step 3: Wait 5 minutes
+  await workflow.sleep('Wait before email', '5min')
 
-  // Step 4: Send welcome email (RPC step - runs in queue worker)
-  await workflow.do(
-    'Send welcome email',
-    'sendEmail',
-    { to: data.email, message }
-  )
+  // Step 4: Send email
+  await workflow.do('Send welcome email', 'sendEmail', {
+    to: data.email,
+    message
+  })
 
   return { success: true }
 })
 ```
 
-Wire it to your application:
+## Try It Live
+
+Get started with a working workflow example:
+
+- **[PostgreSQL (pg-boss)](https://github.com/vramework/pikku/tree/main/pikku/templates/workflows-pg-boss)** - Workflows backed by PostgreSQL
+- **[Redis (BullMQ)](https://github.com/vramework/pikku/tree/main/pikku/templates/workflows-bullmq)** - Workflows backed by Redis
+
+Or create a new project:
+
+```bash
+npm create pikku@latest -- --template workflows-pg
+```
+
+## Three Types of Steps
+
+### 1. RPC Steps - Call Functions via Queue
+
+Execute other Pikku functions as separate queue jobs:
 
 ```typescript
-import { wireWorkflow } from './.pikku/workflow/pikku-workflow-types.gen'
-import { onboardingWorkflow } from './workflows.functions'
+const user = await workflow.do(
+  'Create user in database',
+  'createUserProfile',  // RPC function name
+  { email: data.email }
+)
+```
+
+**Best for**: Database operations, external API calls, CPU-intensive tasks
+
+### 2. Inline Steps - Execute Immediately
+
+Run code inline with automatic caching:
+
+```typescript
+const message = await workflow.do(
+  'Generate personalized message',
+  async () => {
+    return `Welcome to our platform, ${user.email}!`
+  }
+)
+```
+
+**Best for**: Fast operations, external API calls, data transformations
+
+### 3. Sleep Steps - Time Delays
+
+Pause workflow execution for minutes, hours, or days:
+
+```typescript
+await workflow.sleep('Wait 7 days for trial', '7d')
+await workflow.sleep('Wait 5 minutes', '5min')
+await workflow.sleep('Wait 30 seconds', '30s')
+```
+
+**Best for**: Trial periods, reminder emails, rate limiting
+
+## Retry Configuration
+
+Both RPC and inline steps support automatic retries:
+
+```typescript
+// Retry up to 3 times with 5 second delays
+const payment = await workflow.do(
+  'Process payment',
+  'processPayment',
+  { amount: 100 },
+  {
+    retries: 3,       // Number of retry attempts (default: 0)
+    retryDelay: '5s'  // Delay between retries (default: 0)
+  }
+)
+
+// Inline step with retries
+const apiData = await workflow.do(
+  'Fetch from external API',
+  async () => externalApi.getData(),
+  {
+    retries: 2,
+    retryDelay: '3s'
+  }
+)
+```
+
+## Setup
+
+### 1. Install Dependencies
+
+```bash
+# For PostgreSQL
+npm install @pikku/pg @pikku/queue-pg-boss postgres
+
+# For Redis
+npm install @pikku/redis @pikku/queue-bullmq
+```
+
+### 2. Configure Workflow Service
+
+**PostgreSQL:**
+```typescript
+import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
+import { PgWorkflowService } from '@pikku/pg'
+import postgres from 'postgres'
+
+const pgBossFactory = new PgBossServiceFactory(process.env.DATABASE_URL)
+await pgBossFactory.init()
+
+const workflowService = new PgWorkflowService(postgres(process.env.DATABASE_URL))
+await workflowService.init()
+
+const singletonServices = await createSingletonServices(config, {
+  queueService: pgBossFactory.getQueueService(),
+  schedulerService: pgBossFactory.getSchedulerService(),
+  workflowService,
+})
+```
+
+**Redis:**
+```typescript
+import { BullServiceFactory } from '@pikku/queue-bullmq'
+import { RedisWorkflowService } from '@pikku/redis'
+
+const bullFactory = new BullServiceFactory()
+await bullFactory.init()
+
+const workflowService = new RedisWorkflowService(undefined)
+
+const singletonServices = await createSingletonServices(config, {
+  queueService: bullFactory.getQueueService(),
+  schedulerService: bullFactory.getSchedulerService(),
+  workflowService,
+})
+```
+
+### 3. Wire Your Workflow
+
+```typescript
+import { wireWorkflow } from '.pikku/workflow/pikku-workflow-types.gen'
 
 wireWorkflow({
   name: 'onboarding',
   description: 'User onboarding workflow',
   func: onboardingWorkflow,
-  tags: ['onboarding', 'users']
 })
 ```
 
-Note: Execution mode (inline vs remote) is determined automatically based on whether a queue service is configured.
-
-Start the workflow:
+### 4. Start a Workflow
 
 ```typescript
-// Via RPC
-const runId = await rpc.startWorkflow('onboarding', {
+const { runId } = await rpc.startWorkflow('onboarding', {
   email: 'user@example.com',
   userId: 'user-123'
 })
@@ -191,6 +189,4 @@ const runId = await rpc.startWorkflow('onboarding', {
 
 ## Next Steps
 
-- **[Getting Started](./getting-started.md)**: Set up workflows in your project
-- **[Step Types](./steps.md)**: Learn about RPC, inline, and sleep steps
-- **[Configuration](./configuration.md)**: Configure state storage and execution modes
+- **[How Workflows Work](./overview.md)** - Deep dive into execution models, deterministic replay, and queue interactions
