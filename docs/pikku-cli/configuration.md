@@ -1,10 +1,10 @@
 ---
-sidebar_position: 10
-title: Pikku CLI Configuration
+sidebar_position: 1
+title: Configuration
 description: Complete reference for pikku.config.json
 ---
 
-# Pikku CLI Configuration
+# Configuration
 
 The `pikku.config.json` file configures how the Pikku CLI scans your codebase and generates files.
 
@@ -48,6 +48,69 @@ The `pikku.config.json` file configures how the Pikku CLI scans your codebase an
   "websocketFile": "sdk/pikku-websocket.gen.ts",
   "queueFile": "sdk/pikku-queue.gen.ts",
   "rpcWiringsFile": "sdk/pikku-rpc.gen.ts"
+}
+```
+
+### Workflows
+
+Configure workflow execution mode and queue settings.
+
+**Single Queue Mode:**
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `workflows.singleQueue` | `true` | Use single queue for all workflows |
+| `workflows.path` | `string` | Output path for generated workflow types |
+| `workflows.orchestratorQueue` | `string` | Optional custom orchestrator queue name |
+| `workflows.workerQueue` | `string` | Optional custom worker queue name |
+
+**Example (Single Queue):**
+```json
+{
+  "workflows": {
+    "singleQueue": true,
+    "path": "src/workflows/pikku.workflows.gen.ts",
+    "orchestratorQueue": "pikku-workflow-orchestrator",
+    "workerQueue": "pikku-workflow-worker"
+  }
+}
+```
+
+### CLI
+
+Configure CLI entrypoints. Each CLI can have multiple execution modes: local (direct command-line), channel (remote via WebSocket), or a simple string path.
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `cli.entrypoints` | `object` | Map of CLI names to their configuration(s) |
+
+**Entrypoint types:**
+- `string` - Simple path to wiring file
+- `{ type: 'local', path: string }` - Local CLI execution
+- `{ type: 'channel', wirePath: string, name?: string, route?: string, path?: string }` - Remote CLI via WebSocket
+- Array of any above types - Multiple execution modes for one CLI
+
+**Example:**
+```json
+{
+  "cli": {
+    "entrypoints": {
+      "my-cli": [
+        {
+          "type": "local",
+          "path": "src/cli-local.ts"
+        },
+        {
+          "type": "channel",
+          "wirePath": "src/cli-channel.ts",
+          "name": "cli",
+          "route": "/cli",
+          "path": "src/cli-remote.ts"
+        }
+      ],
+      "simple-cli": "src/simple-cli.ts"
+    }
+  }
 }
 ```
 
@@ -125,37 +188,6 @@ This ensures generated imports use `@my-app/sdk` instead of relative paths like 
 |--------|------|-------------|
 | `extends` | `string` | Extend another Pikku config file |
 | `supportsImportAttributes` | `boolean` | Enable import attributes for schema imports (TypeScript 5.3+) |
-| `middlewareServices` | `string[]` | Services available in middleware (before session creation) |
-
-### Generated File Paths
-
-Most users don't need to customize these - Pikku uses sensible defaults.
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `bootstrapFile` | `.pikku/pikku-bootstrap.gen.ts` | Main bootstrap file |
-| `typesDeclarationFile` | `.pikku/pikku-types.gen.ts` | Type definitions |
-| `servicesFile` | `.pikku/pikku-services.gen.ts` | Service types |
-| `functionsFile` | `.pikku/function/pikku-functions.gen.ts` | Function registry |
-| `functionsMetaFile` | `.pikku/function/pikku-functions-meta.gen.ts` | Function metadata |
-| `httpRoutesFile` | `.pikku/http/pikku-http-wirings.gen.ts` | HTTP routes |
-| `httpRoutesMetaFile` | `.pikku/http/pikku-http-wirings-meta.gen.ts` | HTTP metadata |
-| `httpRoutesMapDeclarationFile` | `.pikku/http/pikku-http-wirings-map.gen.d.ts` | HTTP type map |
-| `channelsFile` | `.pikku/channel/pikku-channels.gen.ts` | WebSocket channels |
-| `channelsMetaFile` | `.pikku/channel/pikku-channels-meta.gen.ts` | Channel metadata |
-| `channelsMapDeclarationFile` | `.pikku/channel/pikku-channels-map.gen.d.ts` | Channel type map |
-| `queueWorkersFile` | `.pikku/queue/pikku-queue-workers-wirings.gen.ts` | Queue workers |
-| `queueWorkersMetaFile` | `.pikku/queue/pikku-queue-workers-wirings-meta.gen.ts` | Queue metadata |
-| `queueMapDeclarationFile` | `.pikku/queue/pikku-queue-workers-wirings-map.gen.d.ts` | Queue type map |
-| `schedulersFile` | `.pikku/scheduler/pikku-schedulers-wirings.gen.ts` | Scheduled tasks |
-| `schedulersMetaFile` | `.pikku/scheduler/pikku-schedulers-wirings-meta.gen.ts` | Scheduler metadata |
-| `rpcFile` | `.pikku/rpc/pikku-rpc-wirings.gen.ts` | RPC functions |
-| `rpcMetaFile` | `.pikku/rpc/pikku-rpc-wirings-meta.gen.ts` | RPC metadata |
-| `rpcMapDeclarationFile` | `.pikku/rpc/pikku-rpc-wirings-map.gen.d.ts` | RPC type map |
-| `mcpEndpointsFile` | `.pikku/mcp/pikku-mcp-wirings.gen.ts` | MCP endpoints |
-| `mcpEndpointsMetaFile` | `.pikku/mcp/pikku-mcp-wirings-meta.gen.ts` | MCP metadata |
-| `mcpJsonFile` | `.pikku/mcp/pikku-mcp.gen.json` | MCP JSON manifest |
-| `schemaDirectory` | `.pikku/schemas` | JSON schemas directory |
 
 ## Example Configurations
 
@@ -203,4 +235,4 @@ Most users don't need to customize these - Pikku uses sensible defaults.
 ## Next Steps
 
 - [Getting Started](/docs/core-features) - Set up your first Pikku project
-- [Tree-Shaking](/docs/philosophy/tree-shaking) - Learn about filtering
+- [Tree-Shaking](/docs/pikku-cli/tree-shaking) - Learn about filtering

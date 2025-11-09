@@ -130,61 +130,6 @@ export const getUserInfoMCP = pikkuMCPResourceFunc<
 
 This pattern keeps business logic in one place while adapting output for different transports (HTTP, MCP, CLI, etc.).
 
-## Orchestrating Complex Workflows
-
-Use RPC to coordinate multiple operations:
-
-```typescript
-export const closeAccount = pikkuFunc<
-  { accountId: string },
-  { closed: true }
->({
-  func: async ({ rpc, logger }, data, session) => {
-    logger.info('Starting account closure', { accountId: data.accountId })
-
-    // Each step is a separate, testable function
-    await rpc.invoke('validateAccountOwnership', {
-      accountId: data.accountId
-    })
-
-    await rpc.invoke('cancelActiveSubscriptions', {
-      accountId: data.accountId
-    })
-
-    await rpc.invoke('revokeAccessKeys', {
-      accountId: data.accountId
-    })
-
-    await rpc.invoke('sendClosureNotification', {
-      accountId: data.accountId
-    })
-
-    await rpc.invoke('archiveAccountData', {
-      accountId: data.accountId
-    })
-
-    logger.info('Account closure complete')
-
-    return { closed: true }
-  },
-  auth: true,
-  permissions: {
-    owner: requireAccountOwner
-  },
-  docs: {
-    summary: 'Close an account',
-    tags: ['accounts']
-  }
-})
-```
-
-Each step:
-- Can be tested independently
-- Can be reused in other workflows
-- Can be called from different transports
-- Can be modified without affecting the orchestration
-- On roadmap: Can be called on remote servers (microservices)
-
 ## Recursion with Depth Tracking
 
 RPC automatically tracks call depth to prevent infinite loops:

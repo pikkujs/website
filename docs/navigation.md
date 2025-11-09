@@ -39,11 +39,11 @@ New to Pikku? Start here:
 - [User Sessions](/docs/core-features/user-sessions) - Authentication & state
 - [Permission Guards](/docs/core-features/permission-guards) - Authorization
 - [Testing](/docs/core-features/testing) - Unit testing functions
-- [Tree-Shaking](/docs/philosophy/tree-shaking) - Optimized builds
+- [Tree-Shaking](/docs/pikku-cli/tree-shaking) - Optimized builds
 
 ### Configuration & Deployment
 
-- [CLI Configuration](/docs/core-features/pikku-cli) - Configure code generation
+- [CLI Configuration](/docs/pikku-cli/configuration) - Configure code generation
 
 ## I Want To...
 
@@ -52,24 +52,24 @@ New to Pikku? Start here:
 1. [Create functions](/docs/core-features/functions)
 2. [Wire HTTP routes](/docs/wiring/http)
 3. [Add user sessions](/docs/core-features/user-sessions)
-4. [Generate OpenAPI spec](/docs/core-features/pikku-cli#openapi-generation)
+4. [Generate OpenAPI spec](/docs/pikku-cli/configuration#openapi-generation)
 
 ### Add Real-Time Features
 
 1. [Understand channels](/docs/wiring/channels)
 2. [Wire WebSocket handlers](/docs/wiring/channels)
-3. [Generate WebSocket client](/docs/core-features/pikku-cli#client-generation)
+3. [Generate WebSocket client](/docs/pikku-cli/configuration#client-generation)
 
 ### Deploy to Production
 
 1. Choose a runtime (Express, Lambda, etc.)
-2. [Configure tree-shaking](/docs/philosophy/tree-shaking) (optional)
+2. [Configure tree-shaking](/docs/pikku-cli/tree-shaking) (optional)
 3. Deploy to your chosen platform
 
 ### Work in a Monorepo
 
-1. [Configure package mappings](/docs/core-features/pikku-cli#monorepo-support)
-2. [Generate shared clients](/docs/core-features/pikku-cli#client-generation)
+1. [Configure package mappings](/docs/pikku-cli/configuration#monorepo-support)
+2. [Generate shared clients](/docs/pikku-cli/configuration#client-generation)
 3. [See monorepo example](https://github.com/pikkujs/yarn-workspace-starter)
 
 ### Migrate from Another Framework / Integrate Pikku with Another Framework

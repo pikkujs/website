@@ -364,4 +364,4 @@ This ensures your middleware fails fast if accidentally used on the wrong transp
 
 - [Permissions](./permission-guards.md) - Authorization and permissions
 - [Functions](./functions.md) - Understanding Pikku functions
-- [HTTP Wiring](../http/index.md) - Wire functions to HTTP routes
+- [HTTP Wiring](../wiring/http/index.md) - Wire functions to HTTP routes

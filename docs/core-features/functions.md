@@ -251,7 +251,7 @@ RPC calls are great for orchestrating complex workflows while maintaining securi
 <!-- TODO: Document bailout mechanism for skipping auth/permissions in trusted contexts -->
 :::
 
-See [RPC (Remote Procedure Calls)](../rpcs/index.md) for more details on when and how to use RPC.
+See [RPC (Remote Procedure Calls)](../wiring/rpcs/index.md) for more details on when and how to use RPC.
 
 ## Error Handling
 
@@ -345,9 +345,9 @@ This structure isn't required - you can organize your code however you want. Thi
 
 Now that you understand how functions work, learn how to connect them to the outside world:
 
-- [Wire functions to HTTP routes](../http/index.md)
-- [Handle real-time WebSocket connections](../channels/index.md)
-- [Process background jobs with queues](../queue/index.md)
-- [Run scheduled tasks](../scheduled-tasks.md)
-- [Build CLI tools](../cli/index.md)
-- [Expose functions as MCP tools for AI agents](../mcp/index.md)
+- [Wire functions to HTTP routes](../wiring/http/index.md)
+- [Handle real-time WebSocket connections](../wiring/channels/index.md)
+- [Process background jobs with queues](../wiring/queue/index.md)
+- [Run scheduled tasks](../wiring/scheduled-tasks.md)
+- [Build CLI tools](../wiring/cli/index.md)
+- [Expose functions as MCP tools for AI agents](../wiring/mcp/index.md)

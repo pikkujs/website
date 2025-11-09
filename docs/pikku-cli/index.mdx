@@ -1,0 +1,166 @@
+---
+sidebar_position: 0
+title: Pikku CLI
+description: Code generation and build-time optimization tool
+---
+
+# Pikku CLI
+
+The Pikku CLI is a type generation and build-time optimization tool that scans your codebase, analyzes your functions and wirings, and generates type-safe clients, entry points, and optimized bundles.
+
+## Quick Start
+
+Run Pikku to generate all necessary files:
+
+```bash
+npx pikku
+```
+
+This scans your `src/` directory (or directories specified in `pikku.config.json`), analyzes your functions and wirings, and generates:
+
+- Type-safe clients (HTTP, WebSocket, Queue, RPC)
+- Type definitions and schemas
+- Optimized entry points with tree-shaking
+- OpenAPI specifications (if configured)
+
+## Commands
+
+### `pikku` (default)
+
+Generates all files once and exits.
+
+```bash
+npx pikku
+```
+
+### `pikku watch`
+
+Runs in watch mode, regenerating files when source code changes.
+
+```bash
+npx pikku watch
+```
+
+Perfect for development - your generated types stay in sync as you write code.
+
+### `pikku all`
+
+Alias for the default `pikku` command.
+
+```bash
+npx pikku all
+```
+
+## Common Flags
+
+### `--silent`
+
+Suppresses all output except errors.
+
+```bash
+npx pikku --silent
+```
+
+Useful in CI/CD pipelines where you only want to see failures.
+
+### `--tags`
+
+Filter functions by tags. Only generate code for functions with matching tags.
+
+```bash
+npx pikku --tags public,api
+```
+
+### `--types`
+
+Filter by wiring types. Only include specific protocols.
+
+```bash
+npx pikku --types http,rpc
+```
+
+Available types: `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli`, `workflow`
+
+### `--http-routes`
+
+Filter HTTP functions by route pattern.
+
+```bash
+npx pikku --http-routes /api
+```
+
+Only includes HTTP routes starting with `/api`.
+
+### `--names`
+
+Filter functions by name pattern (supports wildcards).
+
+```bash
+npx pikku --names 'user*,auth*'
+```
+
+### `--exclude-tags`
+
+Exclude functions with specific tags.
+
+```bash
+npx pikku --exclude-tags internal,deprecated
+```
+
+## Common Workflows
+
+### Development
+
+Run in watch mode for live updates:
+
+```bash
+npx pikku watch
+```
+
+### Production Build
+
+Generate optimized code for production:
+
+```bash
+npx pikku --silent
+```
+
+### Filter by Environment
+
+Generate different bundles for different deployments:
+
+```bash
+# Public API only
+npx pikku --tags public --types http
+
+# Admin service
+npx pikku --tags admin --http-routes /admin
+
+# Background workers
+npx pikku --types queue,scheduler
+```
+
+### Monorepo with Shared SDK
+
+Generate shared clients in a separate package:
+
+```bash
+npx pikku
+```
+
+With `pikku.config.json`:
+
+```json
+{
+  "fetchFile": "packages/sdk/.pikku/pikku-fetch.gen.ts",
+  "websocketFile": "packages/sdk/.pikku/pikku-websocket.gen.ts",
+  "packageMappings": {
+    "packages/sdk": "@my-app/sdk"
+  }
+}
+```
+
+## Next Steps
+
+- **[Configuration](./configuration)** - Configure `pikku.config.json` for your project
+- **[Tree-Shaking](./tree-shaking)** - Learn how filtering and tree-shaking work

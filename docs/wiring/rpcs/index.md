@@ -28,7 +28,6 @@ export const processOrder = pikkuFunc<OrderInput, OrderResult>({
 ```
 
 **Use internal RPCs for:**
-- Orchestrating complex workflows
 - Transforming function output before returning to clients
 - Reusing business logic across different transports
 - Recursion with depth tracking
@@ -83,7 +82,6 @@ See [External RPCs](./external.md) for details.
 - Exposing functions to external clients
 - Building integrations between systems
 - Type-safe API consumption
-- Future: microservice-to-microservice calls
 
 ## Key Benefits
 

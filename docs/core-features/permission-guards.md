@@ -207,7 +207,7 @@ addHTTPPermission('*', {
 })
 ```
 
-See [HTTP Router](../http/router.md) for more on `addHTTPPermission`.
+See [HTTP Router](../wiring/http/router.md) for more on `addHTTPPermission`.
 
 ## Error Handling
 
@@ -444,5 +444,5 @@ if (!session?.userId) throw new Error('Unauthorized')  // Returns 500, not 403
 ## Next Steps
 
 - [Functions](./functions.md) - Understanding Pikku functions
-- [HTTP Router](../http/router.md) - HTTP-specific permissions with `addHTTPPermission`
+- [HTTP Router](../wiring/http/router.md) - HTTP-specific permissions with `addHTTPPermission`
 - [Middleware](./middleware.md) - Request/response transformation

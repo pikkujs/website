@@ -72,7 +72,7 @@ This means you can:
 
 **Same codebase. Different deployment command. No refactoring.**
 
-See [Tree-Shaking](/docs/philosophy/tree-shaking) for details on how this works.
+See [Tree-Shaking](/docs/pikku-cli/tree-shaking) for details on how this works.
 
 ## Key Features
 
