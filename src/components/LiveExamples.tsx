@@ -91,6 +91,16 @@ const FUNCTION_TABS = {
       mcp: { name: 'MCP Server', repo: 'template-mcp-server', runtimeFiles: ['src/start.ts'] }
     },
     files: ['src/mcp.functions.ts', 'src/mcp.wiring.ts', 'client/mcp.ts']
+  },
+  cli: {
+    name: 'CLI',
+    icon: 'cli',
+    description: 'Command-line tools',
+    defaultDeployment: 'cli',
+    deployments: {
+      cli: { name: 'CLI', repo: 'template-cli', runtimeFiles: ['src/server.ts'] }
+    },
+    files: ['src/cli.functions.ts', 'src/cli.wiring.ts', 'src/cli.render.ts']
   }
 };
 
@@ -253,8 +263,8 @@ function InteractiveExamplesSection() {
             <TabContent tabKey="rpc" />
           </TabItem>
 
-          <TabItem 
-            value="mcp" 
+          <TabItem
+            value="mcp"
             label={
               <div className="flex items-center space-x-2">
                 <WiringIcon wiringId="mcp" size={16} />
@@ -263,6 +273,18 @@ function InteractiveExamplesSection() {
             }
           >
             <TabContent tabKey="mcp" />
+          </TabItem>
+
+          <TabItem
+            value="cli"
+            label={
+              <div className="flex items-center space-x-2">
+                <WiringIcon wiringId="cli" size={16} />
+                <span>CLI</span>
+              </div> as any
+            }
+          >
+            <TabContent tabKey="cli" />
           </TabItem>
         </Tabs>
       </div>

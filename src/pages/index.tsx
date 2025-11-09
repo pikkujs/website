@@ -82,7 +82,7 @@ function Hero() {
           </li>
           <li className="flex items-start">
             <span className="text-green-500 mr-2 mt-0.5">✓</span>
-            <span>Deploy to any platform without code changes</span>
+            <span>Serverless or server — deploy to any platform without code changes</span>
           </li>
           <li className="flex items-start">
             <span className="text-green-500 mr-2 mt-0.5">✓</span>
@@ -583,6 +583,129 @@ function UsedBySection() {
   );
 }
 
+/** Workflows Section */
+function WorkflowsSection() {
+  return (
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-left md:text-center mb-12">
+          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
+            Long-Running Workflows with Built-in Resilience
+          </Heading>
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+            Build complex, multi-step processes that survive failures, handle time delays, and maintain state across server restarts.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+          {/* Left: Code Example */}
+          <div>
+            <CodeBlock language="typescript" title="User Onboarding Workflow">
+{`export const onboardingWorkflow = pikkuWorkflowFunc(
+  async ({ workflow }, { email, userId }) => {
+    // Step 1: Create user profile (RPC step)
+    const user = await workflow.do(
+      'Create user profile',
+      'createUserProfile',
+      { email, userId }
+    )
+
+    // Step 2: Add to CRM (inline step)
+    const crmUser = await workflow.do(
+      'Create user in CRM',
+      async () => crmApi.createUser(user)
+    )
+
+    // Step 3: Wait 5 minutes
+    await workflow.sleep(
+      'Wait before welcome email',
+      '5min'
+    )
+
+    // Step 4: Send welcome email (RPC step)
+    await workflow.do(
+      'Send welcome email',
+      'sendEmail',
+      { to: email, template: 'welcome' }
+    )
+
+    return { success: true }
+  }
+)`}
+            </CodeBlock>
+          </div>
+
+          {/* Right: Features */}
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-start mb-2">
+                <span className="text-2xl mr-3">🔄</span>
+                <div>
+                  <h3 className="text-xl font-bold mb-1">Deterministic Replay</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Completed steps are cached and never re-executed. Workflows resume from where they left off after failures or delays.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-start mb-2">
+                <span className="text-2xl mr-3">💾</span>
+                <div>
+                  <h3 className="text-xl font-bold mb-1">Persistent State</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Store state in any database—PostgreSQL and Redis support out of the box. Survives server restarts and you don't pay for the time it isn't running.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-start mb-2">
+                <span className="text-2xl mr-3">⏱️</span>
+                <div>
+                  <h3 className="text-xl font-bold mb-1">Time-Based Steps</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Sleep steps for delays, reminders, trial expirations, and scheduled follow-ups.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-start mb-2">
+                <span className="text-2xl mr-3">🔗</span>
+                <div>
+                  <h3 className="text-xl font-bold mb-1">RPC & Inline Steps</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Mix RPC calls (via queue workers) with inline code. Full type safety across all steps.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <Link
+                to="/docs/workflows"
+                className="text-primary hover:underline font-medium text-lg inline-flex items-center"
+              >
+                Learn about Workflows →
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-12 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+            Perfect for user onboarding, order fulfillment, payment processing, approval workflows, and any multi-step business process.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** What Developers Say */
 function TestimonialsSection() {
   return (
@@ -819,12 +942,6 @@ function WhyIBuiltPikkuSection() {
           </div>
         </div>
 
-        <div className="mt-8 text-center">
-          <Link to="/docs/philosophy/personal" className="text-primary hover:underline font-medium text-base">
-            Read the full story →
-          </Link>
-        </div>
-
         <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-6">
           — Yasser Fadl, Creator of Pikku
         </p>
@@ -977,6 +1094,7 @@ export default function Home() {
       <main>
         <UsedBySection />
         <AhaMomentSection />
+        <WorkflowsSection />
         <TestimonialsSection />
         <ProductionFeaturesSection />
         <HowTeamsUseItSection />

@@ -61,6 +61,7 @@ Pikku currently supports:
 - ✅ CLI
 - ✅ Queue Workers
 - ✅ Scheduled Tasks
+- ✅ Workflows
 
 GraphQL is not currently supported. You can still build GraphQL resolvers that call Pikku functions, but there's no first-class integration.
 

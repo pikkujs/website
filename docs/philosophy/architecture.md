@@ -2,7 +2,8 @@
 title: Architecture
 ---
 
-Pikku is built on a simple yet powerful principle: **everything is functions**. This function-first architecture enables unprecedented deployment flexibility, type safety, and code reusability across different runtime environments.
+Pikku is built on a simple yet powerful principle: **everything is functions**. This function-first architecture enables
+ deployment flexibility, type safety, and code reusability across different runtime environments.
 
 ## Everything Is Functions
 
@@ -49,39 +50,48 @@ graph LR
 
 ## Protocol Normalization & Wiring
 
-Pikku's wiring system acts as an adapter layer that normalizes different protocols into a consistent function call interface. When a request comes in, the wiring layer:
+Pikku's wiring system acts as an adapter layer that normalizes different protocols into a consistent function call interface. When a request comes in, the function runner:
 
-1. **Normalizes Input**: Converts protocol-specific data (HTTP body/query, WebSocket message, etc.) into function parameters
-2. **Handles Authentication**: Extracts and validates user sessions 
-3. **Validates Schema**: Runs input validation against defined schemas
-4. **Checks Permissions**: Verifies user has required permissions
-5. **Applies Middleware**: Runs wiring and function-specific middleware
-6. **Executes Function**: Calls your business logic function
-7. **Unnormalizes Output**: Converts function response back to protocol format
+1. **Runs Middleware (before)**: Executes before hooks
+2. **Validates Session**: Extracts and validates the user session
+3. **Normalizes Input Data**: Converts protocol-specific data into function parameters
+4. **Validates Authentication**: Validates user authentication if required
+5. **Validates Schema**: Runs input validation against defined schemas
+6. **Checks Permissions**: Verifies user has required permissions
+7. **Executes Function**: Calls your business logic function
+8. **Runs Middleware (after)**: Executes after hooks
+9. **Unnormalizes Output**: Converts function response back to protocol format
 
 ```mermaid
 sequenceDiagram
     participant Client
     participant Protocol as Protocol Layer<br/>(HTTP/WS/etc)
     participant Wiring as Wiring System
+    participant Runner as Function Runner
     participant Function as Business Function
     participant Services as Services Layer
 
     Client->>Protocol: Request (HTTP/WS/etc)
     Protocol->>Wiring: Raw Protocol Data
-    
-    Wiring->>Wiring: Normalize Input Data
-    Wiring->>Wiring: Extract Session
-    Wiring->>Wiring: Validate Schema
-    Wiring->>Wiring: Check Permissions
-    Wiring->>Wiring: Run Middleware
-    
-    Wiring->>Function: function(services, data, session)
+
+    Wiring->>Runner: Invoke Function
+
+    Runner->>Runner: Run Middleware (before)
+    Runner->>Runner: Validate Session
+    Runner->>Runner: Normalize Input Data
+    Runner->>Runner: Validate Authentication
+    Runner->>Runner: Validate Schema
+    Runner->>Runner: Check Permissions
+
+    Runner->>Function: function(services, data, session)
     Function->>Services: Access Database/Logger/etc
     Services-->>Function: Service Responses
-    Function-->>Wiring: Return Result
-    
-    Wiring->>Wiring: Unnormalize Output
+    Function-->>Runner: Return Result
+
+    Runner->>Runner: Run Middleware (after)
+    Runner->>Runner: Unnormalize Output
+    Runner-->>Wiring: Final Result
+
     Wiring->>Protocol: Protocol Response
     Protocol->>Client: Response (HTTP/WS/etc)
 ```
@@ -431,13 +441,13 @@ End-to-end type safety from database to UI, with compile-time validation and run
 Deploy the same code to Express, Lambda, Cloudflare Workers, Next.js, or any other runtime.
 
 ### 4. **Minimal Runtime Overhead**
-Most complexity is handled at build time, resulting in lightweight runtime execution.
+Most complexity is handled at build time, resulting in lightweight runtime execution (< 50kb).
 
 ### 5. **Easy Testing**
-Pure functions with dependency injection make unit testing trivial.
+Pure functions with dependency lookup make unit testing trivial.
 
 ### 6. **Incremental Adoption**
-Can be adopted gradually in existing applications without major rewrites.
+Can be adopted gradually in existing applications without major rewrites. Supports middleware for Express, and can be adopted in NestJS, Fastify, uWS—anything goes.
 
 ```mermaid
 graph LR

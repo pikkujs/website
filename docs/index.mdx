@@ -1,39 +1,217 @@
 ---
 sidebar_position: 0
-title: Pikku
-description: Introducting Pikku
+title: Getting Started
+description: Build your first Pikku application
 ---
 
-Pikku - meaning tiny 🔎 in Finnish - is a minimalistic batteries included framework built around simple functions. It works with any event driven design (currently **http**, **websockets**, **mcp**, **queues** and **scheduled tasks**) and can be run on any Javascript runtime, currently Cloudflare Workers, Fastify, Bun, AWS Lambda, Express, uWS, WS and others.
+# Getting Started with Pikku
 
-## Quick Start
+Pikku is a TypeScript framework that lets you write backend logic once and wire it to any protocol—HTTP, WebSockets, queues, scheduled tasks, and more. This guide will get you up and running in minutes.
+
+## Create Your Project
+
+Run the create command and follow the prompts:
 
 ```bash npm2yarn
 npm create pikku@latest
 ```
 
----
+You'll be asked:
 
-## Features
+1. **Project name** - Choose a name for your project (default: `my-app`)
+2. **Template** - Select a runtime template:
+   - `express` - Express server (recommended for beginners)
+   - `fastify` - Fastify server
+   - `nextjs` - Next.js App Router
+   - `aws-lambda` - AWS Lambda
+   - `cloudflare-workers` - Cloudflare Workers
+   - And many more...
+3. **Package manager** - Choose npm, yarn, or bun
+4. **Install dependencies** - Yes to install and generate types automatically
 
-* **Tiny** 🔎 - The Pikku footprint is minimal. It currently relies on two small dependencies [cookie](https://www.npmjs.com/package/cookie) and [path-to-regex](https://www.npmjs.com/package/path-to-regex).
-* **Deploy Anywhere** 🌍 - Run your functions anywhere, as long as it's event based. Currently supporting HTTP, WebSockets and Scheduled Tasks with more coming soon.
-* **Batteries Included** 🔋 - Services, session management, auth, docs, it's all here..
-* **Zero Boilerplate** 🪶 - Only write business logic in Typescript, Pikku automatically optimizes, validates and generates everything needed in a powerful framework.
+The CLI will download the template, install dependencies, and run `npx pikku` to generate type-safe clients.
 
----
+Navigate to your project:
 
-## Quick Intro
+```bash
+cd my-app
+```
 
-![Getting Started](/img/quick-start.gif)
+## Your Project Structure
 
----
+```
+my-app/
+├── src/
+│   ├── functions.ts          # Your business logic
+│   ├── wiring.ts              # Connect functions to protocols
+│   └── services.ts            # Services like database, logger
+├── .pikku/                    # Generated files (don't edit)
+│   ├── http/                  # HTTP types and wiring
+│   └── pikku-types.gen.ts     # Generated types
+├── pikku.config.json          # Pikku configuration
+└── package.json
+```
 
-## Introduction Talk
+## Explore the Example Functions
+
+The template includes example functions. Open `src/functions.ts`:
+
+```typescript
+import { pikkuFunc } from '@pikku/core'
+
+// A simple hello world function
+export const helloWorld = pikkuFunc(
+  async ({ logger }, data: null) => {
+    logger.info('Hello world called')
+    return { message: 'Hello World!' }
+  }
+)
+```
+
+And they're already wired to HTTP in `src/wiring.ts`:
+
+```typescript
+import { wireHTTP } from './.pikku/http/pikku-http.gen'
+import { helloWorld } from './functions'
+
+wireHTTP({
+  method: 'get',
+  route: '/hello-world',
+  func: helloWorld
+})
+```
+
+## Run Your Server
+
+Start the development server:
+
+```bash npm2yarn
+npm run start
+```
+
+Your API is now running at `http://localhost:4002`! Test it:
+
+```bash
+curl http://localhost:4002/hello-world
+```
+
+You should see:
+```json
+{"message":"Hello World!"}
+```
+
+## Add Your Own Function
+
+Let's create a new function. Edit `src/functions.ts`:
+
+```typescript
+// Add this new function
+interface GetUserInput {
+  userId: string
+}
+
+export const getUser = pikkuFunc<GetUserInput>(
+  async ({ logger }, { userId }) => {
+    logger.info(`Getting user ${userId}`)
+
+    return {
+      id: userId,
+      name: 'John Doe',
+      email: 'john@example.com'
+    }
+  }
+)
+```
+
+Wire it to HTTP in `src/wiring.ts`:
+
+```typescript
+import { getUser } from './functions'
+
+wireHTTP({
+  method: 'get',
+  route: '/users/:userId',
+  func: getUser
+})
+```
+
+Regenerate types and restart:
+
+```bash npm2yarn
+npx pikku && npm run start
+```
+
+Test your new endpoint:
+
+```bash
+curl http://localhost:4002/users/123
+```
+
+## Key Concepts
+
+### 1. Functions Are Protocol-Agnostic
+
+Your business logic is separate from HTTP, WebSockets, or any protocol. The same function can be wired to multiple protocols:
+
+```typescript
+// Wire to HTTP
+wireHTTP({ method: 'get', route: '/user/:id', func: getUser })
+
+// Wire to WebSocket
+wireChannel({
+  name: 'users',
+  onMessageWiring: { action: { getUser } }
+})
+
+// Wire to Queue
+wireQueueWorker({ queue: 'process-user', func: getUser })
+```
+
+### 2. Type-Safe Clients
+
+Pikku generates type-safe clients automatically. After running `npx pikku`, you can use them:
+
+```typescript
+import { pikkuFetch } from './.pikku/pikku-fetch.gen'
+
+// Type-safe HTTP client
+const response = await pikkuFetch.fetch('/users/123', 'GET', null)
+// response is typed based on your function's return type
+```
+
+### 3. Services
+
+Services are dependency-injected into your functions:
+
+```typescript
+export const getUser = pikkuFunc(
+  async ({ database, logger, config }, { userId }) => {
+    // Access services
+    const user = await database.users.findById(userId)
+    logger.info(`Found user ${user.name}`)
+
+    return user
+  }
+)
+```
+
+Configure services in `src/services.ts`.
+
+## What's Next?
+
+Now that you have a working application, explore more:
+
+- **[Core Features](/docs/core-features)** - Learn about sessions, middleware, and auth
+- **[WebSockets](/docs/channels)** - Add real-time communication
+- **[Workflows](/docs/workflows)** - Build multi-step processes with state management
+- **[Queue Workers](/docs/queue)** - Process background jobs
+- **[Deploy Anywhere](/docs/runtimes/aws-lambda)** - Run on AWS Lambda, Cloudflare Workers, and more
+
+## Video Tutorial
 
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 
-<LiteYouTubeEmbed 
-    id="94ioOCzoEb4"
-    title="An introduction talk to Pikku (previously vramework) at the nodejs Berlin meetup"
+<LiteYouTubeEmbed
+  id="dBZf7Bk7ReI"
+  title="Pikku Deep Dive"
 />
