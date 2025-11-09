@@ -176,3 +176,106 @@
 [data-theme='dark'] .tabs__item--active:hover {
   background-color: rgb(38 38 38);
 }
+
+/* ========================================
+   Ionic-Inspired Sidebar Styling
+   ======================================== */
+
+/* Sidebar container */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--ifm-toc-border-color);
+}
+
+/* Add padding to the right of the sidebar menu */
+.theme-doc-sidebar-menu {
+  padding-right: 1.5rem !important;
+}
+
+/* Also try the menu list */
+aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
+  padding-right: 1.5rem !important;
+}
+
+/* Sidebar menu links - Ionic-style typography */
+.menu__link {
+  font-size: 0.813rem;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+/* First-level categories - slightly bolder */
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible .menu__link {
+  font-weight: 600;
+}
+
+/* Hover effect - opacity reduction like Ionic */
+.menu__link:not(.menu__link--active):hover {
+  opacity: 0.7;
+  background: transparent;
+}
+
+/* Active link inherits primary color */
+.menu__link--active {
+  opacity: 1;
+}
+
+/* Remove extra padding from first-level categories */
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible > .menu__list {
+  padding-left: 0;
+}
+
+/* Collapsible item as block element */
+.menu__list-item-collapsible {
+  display: block;
+}
+
+/* Remove chevron/caret completely */
+.menu__link--sublist-caret::before {
+  display: none !important;
+}
+
+.menu__link--sublist-caret::after {
+  display: none !important;
+}
+
+.menu__caret {
+  display: none !important;
+}
+
+/* Sidebar link flex layout for icons */
+.menu__list-item-collapsible .menu__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+/* Smooth transitions */
+.menu__link,
+.menu__caret {
+  transition: opacity 0.2s ease, background-color 0.2s ease;
+}
+
+/* Nested menu lists - add left border with reduced padding */
+.menu__list .menu__list {
+  border-left: 1px solid var(--ifm-toc-border-color);
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+/* Increase font size for category titles */
+.theme-doc-sidebar-item-category .menu__link--sublist {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* First-level categories - even larger */
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible .menu__link {
+  font-size: 0.938rem;
+  font-weight: 600;
+}
+
+/* Table of contents left border - match sidebar height */
+.table-of-contents__left-border {
+  min-height: calc(100vh - var(--ifm-navbar-height)) !important;
+}
