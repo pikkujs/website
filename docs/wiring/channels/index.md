@@ -408,7 +408,7 @@ The `eventHub` service provides these methods:
 
 EventHub works across all transports - WebSocket channels, Server-Sent Events, and even custom implementations. In stateless environments, it offloads subscription management to a shared service, allowing messages to route correctly even when connections are handled by different function instances.
 
-See the [EventHub API documentation](../api/event-hub.md) for more details.
+See the [EventHub API documentation](../../api/event-hub.md) for more details.
 
 ## Stateful vs Stateless
 

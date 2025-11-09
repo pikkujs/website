@@ -243,4 +243,4 @@ Pikku automatically generates workers for:
 
 - **[Main Guide](./index.md)**: Back to workflow overview
 - **[Step Types](./steps.md)**: Learn about RPC, inline, and sleep steps
-- **[Queue Documentation](/docs/queue)**: Configure queue workers
+- **[Queue Documentation](/docs/wiring/queue)**: Configure queue workers

@@ -53,10 +53,10 @@ export default function Card({
   variant = 'default'
 }: CardProps) {
   const variantClasses = {
-    default: 'bg-neutral-50 dark:bg-neutral-900 rounded-lg p-6 shadow-md border-2 border-primary',
-    white: 'bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-md',
-    testimonial: 'bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-md border border-gray-200 dark:border-neutral-800',
-    minimal: 'bg-white dark:bg-neutral-800 rounded-lg p-6 shadow-md'
+    default: 'bg-white dark:bg-neutral-900 rounded-lg p-6 border border-gray-200 dark:border-neutral-800 card-shadow',
+    white: 'bg-white dark:bg-neutral-900 rounded-lg p-6 card-shadow',
+    testimonial: 'bg-white dark:bg-neutral-900 rounded-lg p-6 border border-gray-200 dark:border-neutral-800 card-shadow',
+    minimal: 'bg-white dark:bg-neutral-800 rounded-lg p-6 card-shadow'
   };
 
   return (

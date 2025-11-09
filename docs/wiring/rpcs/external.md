@@ -45,7 +45,7 @@ Everything else is derived from the function:
 - Permissions from `permissions` property
 - Error responses from thrown errors
 
-See [Middleware](../core-features/middleware.md) for auth configuration.
+See [Middleware](../../core-features/middleware.md) for auth configuration.
 
 ## Wiring an RPC Endpoint
 
@@ -136,4 +136,4 @@ See [Fetch Client](../http/fetch-client.md) for details.
 
 - [Internal RPCs](./internal.md) - Function-to-function calls
 - [Fetch Client](../http/fetch-client.md) - Type-safe HTTP client
-- [Functions](../core-features/functions.md) - Understanding Pikku functions
+- [Functions](../../core-features/functions.md) - Understanding Pikku functions

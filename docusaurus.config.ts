@@ -120,9 +120,9 @@ const config: Config = {
     image: 'img/pikku.png',
     respectPrefersColorScheme: true,
     announcementBar: {
-      id: 'pikku-0.8',
+      id: 'pikku-0.10',
       content:
-        '🚀 <strong>Pikku 0.9 is here!</strong> — cleaner naming, tag‑driven cross‑cutting, RPC exposure. <a target="_blank" rel="noopener noreferrer" href="/blog/2025/08/23/pikku-0.9">Read more →</a>',
+        '🚀 <strong>Pikku 0.10 is here!</strong> — Smart tree-shaking, CLI support, and middleware improvements. <a target="_blank" rel="noopener noreferrer" href="/blog/2025/11/09/pikku-0.10">Read more →</a>',
       backgroundColor: '#4F46E5',
       textColor: '#FFFFFF',
       isCloseable: true,

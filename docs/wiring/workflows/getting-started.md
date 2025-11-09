@@ -6,7 +6,7 @@ This guide will walk you through setting up workflows in your Pikku project.
 
 - A Pikku project with RPC and queue functionality set up
 - An external state store (PostgreSQL or Redis)
-- A queue service configured (see [Queue documentation](/docs/queue))
+- A queue service configured (see [Queue documentation](/docs/wiring/queue))
 
 ## Installation
 

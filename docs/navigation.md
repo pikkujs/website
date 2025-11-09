@@ -27,12 +27,12 @@ New to Pikku? Start here:
 
 ### Protocols
 
-- [HTTP](/docs/http) - REST APIs
-- [Channels](/docs/channels) - WebSocket real-time
-- [Queue](/docs/queue) - Background jobs
-- [Scheduled Tasks](/docs/scheduled-tasks) - Cron jobs
-- [CLI](/docs/cli) - Command-line tools
-- [MCP](/docs/mcp) - Model Context Protocol
+- [HTTP](/docs/wiring/http) - REST APIs
+- [Channels](/docs/wiring/channels) - WebSocket real-time
+- [Queue](/docs/wiring/queue) - Background jobs
+- [Scheduled Tasks](/docs/wiring/scheduled-tasks) - Cron jobs
+- [CLI](/docs/wiring/cli) - Command-line tools
+- [MCP](/docs/wiring/mcp) - Model Context Protocol
 
 ### Advanced
 
@@ -50,14 +50,14 @@ New to Pikku? Start here:
 ### Build an API
 
 1. [Create functions](/docs/core-features/functions)
-2. [Wire HTTP routes](/docs/http)
+2. [Wire HTTP routes](/docs/wiring/http)
 3. [Add user sessions](/docs/core-features/user-sessions)
 4. [Generate OpenAPI spec](/docs/core-features/pikku-cli#openapi-generation)
 
 ### Add Real-Time Features
 
-1. [Understand channels](/docs/channels)
-2. [Wire WebSocket handlers](/docs/channels)
+1. [Understand channels](/docs/wiring/channels)
+2. [Wire WebSocket handlers](/docs/wiring/channels)
 3. [Generate WebSocket client](/docs/core-features/pikku-cli#client-generation)
 
 ### Deploy to Production

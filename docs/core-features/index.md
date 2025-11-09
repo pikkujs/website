@@ -171,8 +171,8 @@ Now that you have a working Pikku project, you're ready to dive deeper:
 - **[Functions](/docs/core-features/functions)** – Learn how to write Pikku functions and understand their signature
 - **[Middleware](/docs/core-features/middleware)** – Add request processing, logging, and other cross-cutting concerns
 - **[Services](/docs/core-features/services)** – Set up databases, caches, and other external integrations
-- **[HTTP](/docs/http)** – Wire functions to HTTP endpoints with routing, query params, and more
-- **[Channels](/docs/channels)** – Add real-time WebSocket communication
-- **[Scheduled Tasks](/docs/scheduled-tasks)** – Run functions on a schedule (cron jobs)
+- **[HTTP](/docs/wiring/http)** – Wire functions to HTTP endpoints with routing, query params, and more
+- **[Channels](/docs/wiring/channels)** – Add real-time WebSocket communication
+- **[Scheduled Tasks](/docs/wiring/scheduled-tasks)** – Run functions on a schedule (cron jobs)
 
 Questions or need help? Check out our [GitHub discussions](https://github.com/pikkujs/pikku) – we're happy to help you get going with Pikku!

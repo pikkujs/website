@@ -290,4 +290,4 @@ if (channel) {
 
 - [Channels](../channels/index.md) - For bidirectional real-time communication
 - [wireHTTP](./index.md) - HTTP route configuration
-- [Functions](../core-features/functions.md) - Understanding Pikku functions
+- [Functions](../../core-features/functions.md) - Understanding Pikku functions

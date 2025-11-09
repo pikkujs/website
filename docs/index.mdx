@@ -57,11 +57,11 @@ my-app/
 The template includes example functions. Open `src/functions.ts`:
 
 ```typescript
-import { pikkuFunc } from '@pikku/core'
+import { pikkuFunc } from './.pikku/pikku-types.gen'
 
 // A simple hello world function
 export const helloWorld = pikkuFunc(
-  async ({ logger }, data: null) => {
+  async ({ logger }) => {
     logger.info('Hello world called')
     return { message: 'Hello World!' }
   }
@@ -147,6 +147,38 @@ Test your new endpoint:
 curl http://localhost:4002/users/123
 ```
 
+## Create a Type-Safe Client
+
+Pikku automatically generates type-safe clients from your functions. Create a `pikku-fetch.ts` wrapper to use them:
+
+```typescript
+import { pikkuFetch } from './.pikku/pikku-fetch.gen'
+
+// Create a configured client instance
+export const api = pikkuFetch({
+  baseURL: 'http://localhost:4002'
+})
+```
+
+Now you can make type-safe API calls from your frontend or other services:
+
+```typescript
+import { api } from './pikku-fetch'
+
+// Type-safe HTTP calls - TypeScript knows the exact request/response types
+const user = await api.fetch('/users/123', 'GET', null)
+// user is typed as { id: string; name: string; email: string }
+
+const greeting = await api.fetch('/hello-world', 'GET', null)
+// greeting is typed as { message: string }
+```
+
+The client automatically:
+- Validates request and response types at compile time
+- Handles JSON serialization/deserialization
+- Provides autocomplete for all your endpoints
+- Catches type errors before runtime
+
 ## Key Concepts
 
 ### 1. Functions Are Protocol-Agnostic
@@ -202,9 +234,9 @@ Configure services in `src/services.ts`.
 Now that you have a working application, explore more:
 
 - **[Core Features](/docs/core-features)** - Learn about sessions, middleware, and auth
-- **[WebSockets](/docs/channels)** - Add real-time communication
-- **[Workflows](/docs/workflows)** - Build multi-step processes with state management
-- **[Queue Workers](/docs/queue)** - Process background jobs
+- **[WebSockets](/docs/wiring/channels)** - Add real-time communication
+- **[Workflows](/docs/wiring/workflows)** - Build multi-step processes with state management
+- **[Queue Workers](/docs/wiring/queue)** - Process background jobs
 - **[Deploy Anywhere](/docs/runtimes/aws-lambda)** - Run on AWS Lambda, Cloudflare Workers, and more
 
 ## Video Tutorial

@@ -232,13 +232,13 @@ Pikku supports multiple queue backends:
 - Push-based (no polling needed)
 - Advanced features (priority, delayed jobs, job events)
 - Great for high-throughput systems
-- See [BullMQ Runtime](../runtimes/bullmq.md)
+- See [BullMQ Runtime](../../runtimes/bullmq.md)
 
 ### pg-boss (PostgreSQL)
 - Poll-based
 - ACID guarantees
 - No additional infrastructure if you already use PostgreSQL
-- See [PG Boss Runtime](../runtimes/pg-boss.md)
+- See [PG Boss Runtime](../../runtimes/pg-boss.md)
 
 ### AWS SQS
 - Cloud-native serverless queues

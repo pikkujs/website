@@ -302,15 +302,15 @@ wireMCPResource({
                 return (
                   <div
                     key={idx}
-                    className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-xl transition-all cursor-pointer relative"
+                    className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-lg transition-all cursor-pointer relative"
                     onClick={() => setActiveProtocol(idx)}
                   >
                     {isActive && (
-                      <div className="absolute -top-3 -right-3 w-8 h-8 md:w-12 md:h-12">
+                      <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8">
                         <Image
                           sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }}
-                          width={48}
-                          height={48}
+                          width={32}
+                          height={32}
                           className="drop-shadow-lg"
                         />
                       </div>
@@ -334,7 +334,7 @@ wireMCPResource({
             {/* Code display section below */}
             {activeProtocol !== null && (
               <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
-                <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 shadow-lg border-2 border-primary">
+                <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 border-2 border-primary card-shadow">
                   <div className="flex items-center mb-4">
                     <WiringIcon wiringId={wiringExamples[activeProtocol].icon} size={24} />
                     <span className="ml-3 text-xl font-bold text-gray-900 dark:text-gray-100">
@@ -364,9 +364,10 @@ wireMCPResource({
                 <div className="flex justify-center">
                   <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6 max-w-3xl">
                   {Object.entries(deployments).map(([key, deployment]) => (
-                    <div
+                    <Link
                       key={key}
-                      className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3 shadow-md transition-all relative"
+                      href={`/?wiring=${wiringExamples[activeProtocol].icon}&deployment=${key}#code-examples`}
+                      className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3 shadow-md hover:shadow-lg transition-all relative cursor-pointer"
                     >
                       <div className="flex flex-col items-center">
                         <Image
@@ -382,7 +383,7 @@ wireMCPResource({
                           {deployment.name}
                         </span>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                   </div>
                 </div>
@@ -404,20 +405,24 @@ wireMCPResource({
 /** Bundle Only What You Deploy - Condensed Summary */
 function ProblemSolutionSection() {
   return (
-    <section className="py-12 border-t border-gray-200 dark:border-neutral-700">
-      <div className="max-w-screen-lg mx-auto px-4 text-center">
-        <Heading as="h2" className="text-3xl font-bold mb-4">
-          Bundle Only What You Deploy
-        </Heading>
-        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-2">
-          Run as a monolith (~2.8MB), microservices (~180KB), or individual functions (~50KB). Pikku's tree-shaking creates the smallest bundle for your deployment.
-        </p>
-        <p className="text-base text-gray-500 dark:text-gray-400 max-w-2xl mx-auto mb-6">
-          Use CLI flags to filter by routes, tags, or function types—deploy exactly what you need, nothing more.
-        </p>
-        <Link to="/docs/philosophy/tree-shaking" className="text-primary hover:underline font-medium text-lg">
-          Learn about deployment strategies and bundle optimization →
-        </Link>
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-left md:text-center mb-12">
+          <Heading as="h2" className="text-4xl font-bold mb-4">
+            Bundle Only What You Deploy
+          </Heading>
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+            Run your codebase as a monolith, as microservices, or as functions. Pikku creates the smallest bundle for your use case.
+          </p>
+        </div>
+
+        <BundleArchitecturesSection />
+
+        <div className="mt-8 text-center">
+          <Link to="/docs/philosophy/tree-shaking" className="text-primary hover:underline font-medium text-lg">
+            Learn more about filtering and tree-shaking →
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -490,7 +495,7 @@ function ProtocolSupportSection() {
 
         <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
           {protocols.map((protocol, idx) => (
-            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg hover:shadow-lg transition-shadow">
+            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg card-shadow">
               <div className="flex justify-center mb-4">
                 <WiringIcon wiringId={protocol.wiringId} size={48} />
               </div>
@@ -604,7 +609,7 @@ function WorkflowsSection() {
 
         <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
           {/* Left: Code Example */}
-          <div>
+          <div className="overflow-x-auto">
             <CodeBlock language="typescript" title="User Onboarding Workflow">
 {`export const onboardingWorkflow = pikkuWorkflowFunc(
   async ({ workflow }, { email, userId }) => {
@@ -642,57 +647,36 @@ function WorkflowsSection() {
 
           {/* Right: Features */}
           <div className="space-y-6">
-            <div>
-              <div className="flex items-start mb-2">
-                <span className="text-2xl mr-3">🔄</span>
-                <div>
-                  <h3 className="text-xl font-bold mb-1">Deterministic Replay</h3>
+              <div className="flex flex-col items-start mb-2">
+                  <h3 className="text-xl font-bold mb-1">1. Deterministic Replay</h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     Completed steps are cached and never re-executed. Workflows resume from where they left off after failures or delays.
                   </p>
-                </div>
               </div>
-            </div>
-
-            <div>
-              <div className="flex items-start mb-2">
-                <span className="text-2xl mr-3">💾</span>
-                <div>
-                  <h3 className="text-xl font-bold mb-1">Persistent State</h3>
+              <div className="flex flex-col items-start mb-2">
+                  <h3 className="text-xl font-bold mb-1">2. Persistent State</h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     Store state in any database—PostgreSQL and Redis support out of the box. Survives server restarts and you don't pay for the time it isn't running.
                   </p>
-                </div>
               </div>
-            </div>
 
-            <div>
-              <div className="flex items-start mb-2">
-                <span className="text-2xl mr-3">⏱️</span>
-                <div>
-                  <h3 className="text-xl font-bold mb-1">Time-Based Steps</h3>
+              <div className="flex flex-col items-start mb-2">
+                  <h3 className="text-xl font-bold mb-1">3. Time-Based Steps</h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     Sleep steps for delays, reminders, trial expirations, and scheduled follow-ups.
                   </p>
                 </div>
-              </div>
-            </div>
 
-            <div>
-              <div className="flex items-start mb-2">
-                <span className="text-2xl mr-3">🔗</span>
-                <div>
-                  <h3 className="text-xl font-bold mb-1">RPC & Inline Steps</h3>
+              <div className="flex flex-col items-start mb-2">
+                  <h3 className="text-xl font-bold mb-1">4. RPC & Inline Steps</h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     Mix RPC calls (via queue workers) with inline code. Full type safety across all steps.
                   </p>
-                </div>
               </div>
-            </div>
-
+    
             <div className="mt-6">
               <Link
-                to="/docs/workflows"
+                to="/docs/wiring/workflows"
                 className="text-primary hover:underline font-medium text-lg inline-flex items-center"
               >
                 Learn about Workflows →
@@ -849,7 +833,7 @@ function ProductionFeaturesSection() {
 
         <div className="grid md:grid-cols-3 gap-6">
           {features.map((feature, idx) => (
-            <div key={idx} className="flex flex-col items-start p-6 bg-neutral-50 dark:bg-neutral-900 rounded-lg hover:shadow-md transition-shadow">
+            <div key={idx} className="flex flex-col items-start p-6 bg-neutral-50 dark:bg-neutral-900 rounded-lg card-shadow">
               <span className="text-4xl mb-4">{feature.icon}</span>
               <div className="text-left">
                 <div className="text-xl font-bold mb-2">{feature.title}</div>
@@ -931,7 +915,7 @@ function WhyIBuiltPikkuSection() {
           </Heading>
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {videos.map((video, idx) => (
-              <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg overflow-hidden shadow-lg">
+              <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg overflow-hidden card-shadow">
                 <div className="relative" style={{ paddingBottom: '56.25%' }}>
                   <iframe
                     className="absolute top-0 left-0 w-full h-full"

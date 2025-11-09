@@ -178,7 +178,7 @@ Note: These are prefix matches, not glob patterns. `/admin` matches `/admin/user
 
 ## Middleware Execution Order
 
-See [Middleware](../core-features/middleware.md#execution-order) for the complete execution order across all scopes.
+See [Middleware](../../core-features/middleware.md#execution-order) for the complete execution order across all scopes.
 
 For HTTP routes, middleware runs in this order:
 1. **Global HTTP middleware** - `addHTTPMiddleware([...])`
@@ -265,6 +265,6 @@ addHTTPMiddleware([securityHeaders])
 
 ## Next Steps
 
-- [Middleware](../core-features/middleware.md) - Understanding middleware concepts
-- [Permission Guards](../core-features/permission-guards.md) - Understanding permissions
+- [Middleware](../../core-features/middleware.md) - Understanding middleware concepts
+- [Permission Guards](../../core-features/permission-guards.md) - Understanding permissions
 - [wireHTTP](./index.md) - Route-specific configuration

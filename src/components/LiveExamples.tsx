@@ -121,20 +121,38 @@ function DeploymentSelector({
   if (!showDeploymentOptions) return null;
 
   return (
-    <div className="flex items-center space-x-2">
-      <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">Deploy to:</span>
-      <div className="shadow-sm inline-flex bg-white dark:bg-neutral-700 rounded-lg border border-gray-200 dark:border-gray-600">
+    <div className="flex items-center flex-wrap gap-3">
+      <span className="text-sm text-gray-500 dark:text-gray-400">Deploy to:</span>
+      <div className="inline-flex flex-wrap gap-3">
         {Object.entries(deployments).map(([key, deployment]) => (
           <div
             key={key}
             onClick={() => onDeploymentChange(key)}
-            className={`px-3 py-1.5 text-sm font-medium transition-all first:rounded-l-lg last:rounded-r-lg cursor-pointer ${
+            className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer relative ${
               activeDeployment === key
-                ? 'bg-primary text-white'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-600'
+                ? 'bg-neutral-50 dark:bg-neutral-900 shadow-md hover:shadow-lg transition-all'
+                : 'bg-neutral-50 dark:bg-neutral-900 shadow-md hover:shadow-lg transition-all'
             }`}
+            style={activeDeployment === key ? {
+              position: 'relative'
+            } : {}}
           >
             {deployment.name}
+            {activeDeployment === key && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '-12px',
+                  right: '-12px',
+                  width: '32px',
+                  height: '32px',
+                  backgroundImage: 'url(/img/pikku.png)',
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
+                  filter: 'drop-shadow(0 4px 6px rgb(0 0 0 / 0.1))'
+                }}
+              />
+            )}
           </div>
         ))}
       </div>
@@ -144,10 +162,19 @@ function DeploymentSelector({
 
 /** Tab content component for each function type */
 function TabContent({ tabKey }: { tabKey: FunctionType }) {
-  const [activeDeployment, setActiveDeployment] = useState<{ type: 'code' | 'deployment'; runtime: string }>({
-    type: 'code',
-    runtime: FUNCTION_TABS[tabKey].defaultDeployment
-  });
+  const getInitialDeployment = () => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const deployment = params.get('deployment');
+
+      if (deployment && deployment in FUNCTION_TABS[tabKey].deployments) {
+        return { type: 'deployment' as const, runtime: deployment };
+      }
+    }
+    return { type: 'code' as const, runtime: FUNCTION_TABS[tabKey].defaultDeployment };
+  };
+
+  const [activeDeployment, setActiveDeployment] = useState<{ type: 'code' | 'deployment'; runtime: string }>(getInitialDeployment);
 
   const currentTab = FUNCTION_TABS[tabKey];
   const currentDeployment = currentTab.deployments[activeDeployment.runtime];
@@ -157,7 +184,7 @@ function TabContent({ tabKey }: { tabKey: FunctionType }) {
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <Stackblitz 
+          <Stackblitz
             key={`${tabKey}-${activeDeployment.runtime}`}
             repo={currentDeployment.repo}
             initialFiles={activeDeployment.type === 'code' ? currentTab.files : currentDeployment.runtimeFiles}

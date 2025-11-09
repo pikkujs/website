@@ -177,7 +177,7 @@ addHTTPPermission('/admin', {
 })
 ```
 
-See [Permission Guards](../core-features/permission-guards.md) for more details.
+See [Permission Guards](../../core-features/permission-guards.md) for more details.
 
 ### Middleware
 
@@ -214,7 +214,7 @@ Middleware runs in this order:
 4. Wire-specific middleware (defined in `wireHTTP`)
 5. Function-level middleware
 
-See [Middleware](../core-features/middleware.md) for more details.
+See [Middleware](../../core-features/middleware.md) for more details.
 
 ### SSE (Server-Sent Events)
 
@@ -331,7 +331,7 @@ export const borrowBook = pikkuFunc<{ bookId: string }, BorrowResult>({
 })
 ```
 
-See [Errors](../core-features/errors.md) for more on error handling.
+See [Errors](../../core-features/errors.md) for more on error handling.
 
 ## Next Steps
 

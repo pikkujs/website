@@ -36,7 +36,7 @@ wireHTTP({ route: '/admin/users/:id', func: deleteUser })
 wireHTTP({ route: '/status', func: getStatus })
 ```
 
-### Deploy Everything
+### Deploying Everything
 
 ```bash
 pikku
@@ -44,7 +44,7 @@ pikku
 
 Generates an entry point that imports all three functions and instantiates all services: `database`, `audit`, `cache`.
 
-### Deploy Filtered Subset
+### Deploying Filtered Subset
 
 ```bash
 pikku --http-routes=/status
@@ -105,20 +105,61 @@ Filters use AND logic - functions must match all criteria.
 
 ## Service Loading
 
-Pikku generates a `services.ts` file that dynamically loads only the services your filtered functions need:
+Pikku analyzes which services your filtered functions actually use and generates optimized service initialization code. This happens in two ways:
+
+### 1. Static Filtering (Recommended)
+
+When services can be completely excluded, Pikku doesn't import them at all:
 
 ```typescript
-// Generated services.ts
-import { createDatabase } from '../services/database'
+// Generated services.ts - only imports what's needed
 import { createCache } from '../services/cache'
 
-export async function createServices() {
+export const createServices = pikkuServices(async () => {
   return {
     cache: await createCache(),
-    // database and audit are NOT loaded
+    // database and audit are NOT imported or loaded
   }
-}
+})
 ```
+
+### 2. Dynamic Filtering (For Shared Bundles)
+
+When you need one bundle to serve multiple filtered deployments, Pikku uses conditional loading:
+
+```typescript
+import { requiredSingletonServices } from './required-services.gen'
+
+export const createServices = pikkuServices(async (config) => {
+  const logger = new ConsoleLogger()
+  const cache = new RedisCache()
+
+  // Only create JWT service if it's actually needed
+  let jwt: JWTService | undefined
+  if (requiredSingletonServices.jwt) {
+    const { JoseJWTService } = await import('@pikku/jose')
+    jwt = new JoseJWTService(
+      async () => [{ id: 'my-key', value: 'secret' }],
+      logger
+    )
+  }
+
+  // Only create database if needed
+  let database: Database | undefined
+  if (requiredSingletonServices.database) {
+    database = await createDatabase(config.databaseUrl)
+  }
+
+  return {
+    logger,
+    cache,
+    jwt,
+    database,
+  }
+})
+```
+
+The `pikkuServices` wrapper ensures type safety and proper integration with Pikku's service system.
 
 ### Why This Isn't More Magical
 

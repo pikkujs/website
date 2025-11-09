@@ -104,3 +104,75 @@
 .navbar__logo {
   height: 3rem;
 }
+
+/* Subtle shadow for non-clickable cards */
+.card-shadow {
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+/* Style code example tabs like cards */
+.tabs {
+  border: none;
+  overflow: visible;
+}
+
+.tabs .tabs__list {
+  overflow: visible;
+}
+
+.tabs__item {
+  background-color: rgb(250 250 250);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  border: none;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  transition: all 0.2s;
+  position: relative;
+  overflow: visible;
+}
+
+[data-theme='dark'] .tabs__item {
+  background-color: rgb(23 23 23);
+}
+
+.tabs__item--active {
+  background-color: rgb(250 250 250);
+}
+
+[data-theme='dark'] .tabs__item--active {
+  background-color: rgb(23 23 23);
+}
+
+.tabs__item--active::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 32px;
+  height: 32px;
+  background-image: url('/img/pikku.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.1));
+}
+
+.tabs__item:hover {
+  background-color: rgb(245 245 245);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+[data-theme='dark'] .tabs__item:hover {
+  background-color: rgb(38 38 38);
+}
+
+.tabs__item--active:hover {
+  background-color: rgb(245 245 245);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+[data-theme='dark'] .tabs__item--active:hover {
+  background-color: rgb(38 38 38);
+}

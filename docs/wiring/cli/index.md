@@ -201,5 +201,5 @@ export const buildApp = pikkuSessionlessFunc({
 
 - **[Local CLI](./local-cli.mdx)** - Run commands directly in-process
 - **[Remote CLI](./remote-cli.md)** - Invoke remote functions via RPC
-- **[Core Functions](../core-features/functions.md)** - Understanding Pikku functions
-- **[Middleware](../core-features/middleware.md)** - Adding middleware to CLI commands
+- **[Core Functions](../../core-features/functions.md)** - Understanding Pikku functions
+- **[Middleware](../../core-features/middleware.md)** - Adding middleware to CLI commands
