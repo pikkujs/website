@@ -127,6 +127,11 @@ const config: Config = {
       textColor: '#FFFFFF',
       isCloseable: true,
     },
+    algolia: {
+      appId: 'CE37WLYS11',
+      apiKey: 'e6cedad541bb44c2f7f26ddb63d27c92',
+      indexName: 'pikku',
+    },
     mermaid: {
       theme: { light: 'neutral', dark: 'dark' },
     },
@@ -137,6 +142,10 @@ const config: Config = {
         src: 'img/pikku.png',
       },
       items: [
+        {
+          type: 'search',
+          position: 'left',
+        },
         {
           to: '/why',
           label: 'Why?',
