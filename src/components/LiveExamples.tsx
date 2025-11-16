@@ -179,8 +179,6 @@ function TabContent({ tabKey }: { tabKey: FunctionType }) {
   const currentTab = FUNCTION_TABS[tabKey];
   const currentDeployment = currentTab.deployments[activeDeployment.runtime];
 
-  console.log(currentDeployment, currentTab, activeDeployment.type === 'code' ? currentTab.files : currentDeployment.runtimeFiles)
-
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
