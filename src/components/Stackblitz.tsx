@@ -17,12 +17,12 @@ export const Stackblitz: React.FunctionComponent<{ repo: string, initialFiles: s
           showSidebar: false,
           clickToLoad: false
         });
-      } catch {
-        console.log('Error')
+      } catch (error) {
+        console.error('Failed to load StackBlitz project:', error)
       }
     }
     load()
-  }, []);
+  }, [repo, initialFiles]);
 
   return <div className='h-[800px] rounded-md border border-zinc-2'>
     <div ref={containerRef}></div>
