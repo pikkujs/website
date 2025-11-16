@@ -29,10 +29,12 @@ const config: Config = {
   projectName: 'pikku-website', // Usually your repo name.
 
   // onBrokenLinks: 'ignore',
-  onBrokenMarkdownLinks: 'throw',
 
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'throw',
+    },
   },
 
   themes: [
