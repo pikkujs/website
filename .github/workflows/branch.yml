@@ -1,0 +1,22 @@
+name: Branch
+run-name: Publish to github pages
+on:
+  push:
+    branches-ignore:
+      - main
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out website repository
+        uses: actions/checkout@v4
+
+      - run: corepack enable
+        shell: bash
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install
+      - run: yarn build
