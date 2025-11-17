@@ -17,11 +17,12 @@ export const codeTypes = `import {
     jwt: JWTService<UserSession>
   }
   
-  // Session services, created/destroyed on each request.
+  // Wire services, created per HTTP request, queue, CLI command,
+  // or entire websocket lifetime (when local).
   export interface Services extends CoreServices<SingletonServices> {}
   `;
   
-  export const codeImplementations = `import { pikkuConfig, pikkuServices, pikkuSessionServices } from '#pikku/pikku-types.gen.js'
+  export const codeImplementations = `import { pikkuConfig, pikkuServices, pikkuWireServices } from '#pikku/pikku-types.gen.js'
 
   /**
    * Loads configuration for the application (created once at startup).
@@ -53,10 +54,11 @@ export const codeTypes = `import {
   )
 
   /**
-   * Creates the session services on each request.
+   * Creates the wire services per HTTP request, queue, CLI command,
+   * or entire websocket lifetime (when local).
    */
-  export const createSessionServices = pikkuSessionServices(
-    async (_services, _interaction, _session) => {
+  export const createWireServices = pikkuWireServices(
+    async (_services, _wire) => {
       return {}
     }
   )
@@ -74,19 +76,19 @@ export const codeTypes = `import {
   // 3) Integration Snippets
   export const codeExpress = `import express from 'express'
   import { pikkuExpressMiddleware } from '@pikku/express-middleware'
-  import { createSessionServices } from '../src/services.js'
-  
+  import { createWireServices } from '../src/services.js'
+
   import '../.pikku/pikku-bootstrap'
-  
+
   const start = async () => {
     const app = express()
     const port = 3000
-  
+
     const config = await createConfig()
     const singletonServices = await createSingletonServices(config)
-  
+
     app.use(
-      pikkuExpressMiddleware(singletonServices, createSessionServices, {
+      pikkuExpressMiddleware(singletonServices, createWireServices, {
         respondWith404: false,
       })
     )
@@ -105,32 +107,32 @@ export const codeTypes = `import {
     pikkuWebsocketHandler,
   } from '@pikku/uws-handler'
   
-  import { createSessionServices } from './services.js'
+  import { createWireServices } from './services.js'
   import '../.pikku/pikku-bootstrap'
-  
+
   const port = 9001
-  
+
   const start = async () => {
     const app = uWS.App()
-  
+
     const config = await createConfig()
     const singletonServices = await createSingletonServices(config)
-    
+
     app.any(
       '/*',
       pikkuHTTPHandler({
         logRoutes: true,
         singletonServices,
-        createSessionServices,
+        createWireServices,
       })
     )
-    
+
     app.ws(
       '/*',
       pikkuWebsocketHandler({
         logRoutes: true,
         singletonServices,
-        createSessionServices,
+        createWireServices,
       })
     )
   
@@ -152,26 +154,26 @@ export const codeTypes = `import {
   import { LocalVariablesService, LocalSecretService } from '@pikku/core/services';
   
   import { createConfig } from './config';
-  import { createSingletonServices, createSessionServices } from './services';
-  
+  import { createSingletonServices, createWireServices } from './services';
+
   import './.pikku/pikku-bootstrap';
-  
+
   const setupServices = async (env: Record<string, string | undefined>) => {
     const localVariables = new LocalVariablesService(env)
     const config = await createConfig(localVariables)
     const localSecrets = new LocalSecretService(localVariables)
     return await createSingletonServices(config, localVariables, localSecrets)
   }
-  
+
   export default {
     async scheduled(controller, env) {
       const singletonServices = await setupServices(env);
       await runScheduled(controller, singletonServices);
     },
-  
+
     async fetch(request, env): Promise<Response> {
       const singletonServices = await setupServices(env);
-      return await runFetch(request, singletonServices, createSessionServices);
+      return await runFetch(request, singletonServices, createWireServices);
     },
   } satisfies ExportedHandler<Record<string, string>>;
   `;
@@ -235,19 +237,19 @@ export const codeTypes = `import {
   
   export const corslessHandler = async (event: APIGatewayProxyEvent) => {
     const singletonServices = await coldStart()
-    return corslessHTTP(event, singletonServices, createSessionServices)
+    return corslessHTTP(event, singletonServices, createWireServices)
   }
-  
+
   export const corsHandler = async (event: APIGatewayProxyEvent) => {
     const singletonServices = await coldStart()
-    return corsHTTP(event, [], singletonServices, createSessionServices)
+    return corsHTTP(event, [], singletonServices, createWireServices)
   }
   `;
   
   export const codeScheduled = `import { createConfig } from './config'
   import {
     createSingletonServices,
-    createSessionServices,
+    createWireServices,
   } from './services'
   import { PikkuTaskScheduler } from '@pikku/schedule'
   import { ScheduledTaskNames } from './.pikku/pikku-schedules'

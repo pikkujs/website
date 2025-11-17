@@ -97,14 +97,15 @@ export const sendMessage = pikkuChannelFunc<
   { message: string; timestamp: number },
   { room: string }
 >({
-  func: async ({ database, channel }, data, session) => {
+  func: async ({ database, channel }, data, { session }) => {
     // session is guaranteed to exist because auth: true
+    const user = await session?.get()
     const timestamp = Date.now()
 
     await database.insert('messages', {
       room: channel.openingData.room,
       message: data.message,
-      userId: session.userId,
+      userId: user.userId,
       timestamp
     })
 

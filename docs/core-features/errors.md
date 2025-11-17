@@ -58,9 +58,10 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 import { NotFoundError, ForbiddenError, TooManyRequestsError } from '@pikku/core/errors'
 
 export const getBook = pikkuFunc<{ bookId: string }, Book>({
-  func: async ({ database, rateLimit }, data, session) => {
+  func: async ({ database, rateLimit }, data, { session }) => {
     // Check rate limit
-    if (!await rateLimit.check(session.userId)) {
+    const user = await session?.get()
+    if (!await rateLimit.check(user.userId)) {
       throw new TooManyRequestsError()
     }
 
@@ -116,10 +117,11 @@ Then use them in your functions:
 
 ```typescript
 export const borrowBook = pikkuFunc<{ bookId: string }, BorrowReceipt>({
-  func: async ({ database }, data, session) => {
+  func: async ({ database }, data, { session }) => {
     // Check user's borrow limit
+    const user = await session?.get()
     const borrowCount = await database.count('borrows', {
-      userId: session.userId,
+      userId: user.userId,
       returned: false
     })
 

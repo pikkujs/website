@@ -3,6 +3,10 @@ title: Pikku Now Uses Fetch!
 description: Simplifying Server Support with Native Request/Response APIs
 ---
 
+:::info Updated for Pikku v0.11
+This post contains historical code examples. In v0.11, function signatures changed to use the `wire` parameter pattern, and `pikkuSessionServices` was renamed to `pikkuWireServices`. See the [current documentation](/docs) for updated examples.
+:::
+
 We're excited to announce that **Pikku now uses `fetch` directly** within its APIs—taking inspiration from frameworks like Hono and pushing even closer to modern web standards.
 
 <!-- truncate -->

@@ -181,7 +181,7 @@ import { PikkuTaskScheduler } from '@pikku/schedule'
 import {
   createConfig,
   createSingletonServices,
-  createSessionServices,
+  createWireServices,
 } from '../../functions/src/services.js'
 
 async function main(): Promise<void> {
@@ -191,7 +191,7 @@ async function main(): Promise<void> {
   const appServer = new PikkuExpressServer(
     { ...config, port: 4002, hostname: 'localhost' },
     singletonServices,
-    createSessionServices
+    createWireServices
   )
   await appServer.init()
   await appServer.start()
@@ -209,7 +209,7 @@ import { APIGatewayProxyEvent, ScheduledHandler } from 'aws-lambda'
 
 export const httpRoute = async (event: APIGatewayProxyEvent) => {
   const singletonServices = await coldStart()
-  const result = await runFetch(singletonServices, createSessionServices, event)
+  const result = await runFetch(singletonServices, createWireServices, event)
   return result
 }
 
@@ -239,7 +239,7 @@ export default {
     return await runFetch(
       request as unknown as Request,
       singletonServices,
-      createSessionServices
+      createWireServices
     )
   },
 } satisfies ExportedHandler<Record<string, string>>

@@ -42,16 +42,16 @@ await fetch(
     new PikkuExpressRequest(req),
     new PikkuExpressResponse(res),
     singletonServices,
-    createSessionServices,
+    createWireServices,
     {
         // The HTTP method
         method: req.method.toLowerCase() as any,
         // The HTTP Route
         route: req.path,
-        // Whether we want allow the route handler to return a 404, or 
+        // Whether we want allow the route handler to return a 404, or
         // not do anything if the route isn't found
         respondWith404: true
-        // This skips us trying to find a session for a route that 
+        // This skips us trying to find a session for a route that
         // isn't authenticated
         skipUserSession: false
     }

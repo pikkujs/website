@@ -17,12 +17,14 @@ A permission is a function that returns a boolean:
 ```typescript
 import { pikkuPermission } from '#pikku'
 
-export const requireAuth = pikkuPermission(async (_services, _data, session) => {
-  return session?.userId != null
+export const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
+  const user = await session?.get()
+  return user?.userId != null
 })
 
-export const requireAdmin = pikkuPermission(async (_services, _data, session) => {
-  return session?.role === 'admin'
+export const requireAdmin = pikkuPermission(async (_services, _data, { session }) => {
+  const user = await session?.get()
+  return user?.role === 'admin'
 })
 ```
 
@@ -52,16 +54,20 @@ Both permissions must pass for the function to execute. If either returns `false
 
 ```typescript
 pikkuPermission<DataType>(
-  async (services, data, session) => boolean
+  async (services, data, { session }) => boolean
 )
 ```
 
 Parameters:
-- **services** - Your application services (destructure what you need)
+- **services** - Your singleton services only (destructure what you need). Wire services are not available in permissions.
 - **data** - The input data (typed with `DataType`)
-- **session** - The current user session (from `userSession.get()`)
+- **wire** - The wire object (destructure `{ session }` to access session via `session?.get()`)
 
 Return `true` to allow access, `false` to deny with 403.
+
+:::info Singleton Services Only
+Permissions receive **only singleton services** in the first parameter, not wire services. This is because permissions run before wire services are created. If you need access to wire-scoped resources, use the `wire` parameter to access them.
+:::
 
 ## Data-Based Permissions
 
@@ -69,14 +75,15 @@ Permissions can inspect the request data:
 
 ```typescript
 export const requireOwnership = pikkuPermission<{ resourceId: string }>(
-  async ({ database }, data, session) => {
-    if (!session?.userId) return false
+  async ({ database }, data, { session }) => {
+    const user = await session?.get()
+    if (!user?.userId) return false
 
     const resource = await database.query('resources', {
       where: { id: data.resourceId }
     })
 
-    return resource?.ownerId === session.userId
+    return resource?.ownerId === user.userId
   }
 )
 ```
@@ -110,14 +117,15 @@ export const updateResource = pikkuFunc<
 You can compose multiple permissions:
 
 ```typescript
-export const requirePremium = pikkuPermission(async ({ database }, _data, session) => {
-  if (!session?.userId) return false
+export const requirePremium = pikkuPermission(async ({ database }, _data, { session }) => {
+  const user = await session?.get()
+  if (!user?.userId) return false
 
-  const user = await database.query('users', {
-    where: { id: session.userId }
+  const dbUser = await database.query('users', {
+    where: { id: user.userId }
   })
 
-  return user?.isPremium === true
+  return dbUser?.isPremium === true
 })
 
 // Use multiple permissions together
@@ -143,8 +151,9 @@ export const getPremiumContent = pikkuFunc<{ contentId: string }, Content>({
 Permissions can perform complex queries:
 
 ```typescript
-export const withinQuota = pikkuPermission(async ({ database }, _data, session) => {
-  if (!session?.userId) return false
+export const withinQuota = pikkuPermission(async ({ database }, _data, { session }) => {
+  const user = await session?.get()
+  if (!user?.userId) return false
 
   const usage = await database.query('api_usage', {
     where: {
@@ -161,7 +170,7 @@ export const activeSubscription = pikkuPermission(
     if (!session?.userId) return false
 
     const sub = await database.query('subscriptions', {
-      where: { userId: session.userId }
+      where: { userId: user.userId }
     })
 
     if (!sub) return false
@@ -284,9 +293,10 @@ Don't depend on execution order - each permission should be an independent check
 ```typescript
 // Requires session to exist (default)
 export const getProfile = pikkuFunc({
-  func: async ({ database }, _data, session) => {
+  func: async ({ database }, _data, { session }) => {
     // session is guaranteed to exist
-    return await database.query('users', { where: { id: session.userId } })
+    const user = await session?.get()
+    return await database.query('users', { where: { id: user.userId } })
   },
   auth: true,  // Default
   docs: {
@@ -420,7 +430,7 @@ export const requireSubscription = pikkuPermission(
     if (cached !== null) return cached === 'true'
 
     const sub = await database.query('subscriptions', {
-      where: { userId: session.userId }
+      where: { userId: user.userId }
     })
 
     const isActive = sub && new Date(sub.expiresAt) > new Date()

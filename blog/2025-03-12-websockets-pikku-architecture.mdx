@@ -9,8 +9,6 @@ description: How Pikku Bridges Serverless and Server-Based Websocket Connections
 
 Real-time communication is a cornerstone of modern web apps—from live chats and collaborative tools to instant notifications. WebSockets have emerged as the go-to solution for these use cases, enabling persistent, two-way connections between clients and servers ([The WebSocket API (WebSockets) - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API#:~:text=The%20WebSocket%20API%20makes%20it,the%20server%20for%20a%20reply)). However, implementing WebSockets in **serverless** environments (like AWS Lambda or Cloudflare Workers) can be challenging due to their stateless nature ([How I implemented WebSocket API Gateway with AWS Lambda](https://tsh.io/blog/implementing-websocket-with-aws-lambda-and-api-gateway/#:~:text=The%20answer%20is%20simple,to%20send%20messages%20to%20them)). This is where **Pikku** comes in. In this post, we'll explore WebSocket fundamentals, examine the hurdles of using WebSockets on Cloudflare and AWS, and see how Pikku's hybrid approach makes running WebSocket channels effortless across serverless *and* traditional servers.
 
-{/* truncate */}
-
 ## Introduction to WebSockets
 
 **WebSockets** are a protocol that provides a full-duplex (two-way) communication channel over a single, long-lived connection. Unlike HTTP, which follows a request-response pattern, a WebSocket connection stays open, allowing the server to push data to the client at any time and the client to send messages to the server as needed ([How I implemented WebSocket API Gateway with AWS Lambda](https://tsh.io/blog/implementing-websocket-with-aws-lambda-and-api-gateway/#:~:text=The%20WebSocket%20API%20is%20a,charts%2C%20or%20even%20gaming%20platforms)). This eliminates the need for constant polling and reduces latency, making WebSockets ideal for real-time features like chat applications, live dashboards, online games, and collaborative editing tools ([How I implemented WebSocket API Gateway with AWS Lambda](https://tsh.io/blog/implementing-websocket-with-aws-lambda-and-api-gateway/#:~:text=The%20WebSocket%20API%20is%20a,charts%2C%20or%20even%20gaming%20platforms)).
@@ -61,6 +59,8 @@ WebSockets no longer have to be a black box of state management hacks or provide
 
 **Ready to try Pikku for yourself?** The best way to appreciate its simplicity is to see it in action. Head over to the Pikku documentation and get started with a quick tutorial, or spin up the Pikku starter project (which includes examples for AWS and Cloudflare) to deploy a WebSocket channel in minutes. Give Pikku a spin in your next project and experience how effortless real-time web development can be. With Pikku handling your WebSockets, you can focus on building awesome features — and let the framework bridge the gap between serverless scale and real-time state. Happy coding, and welcome to the future of WebSocket development with Pikku!
 </details>
+
+{/* truncate */}
 
 # Bridging the Gap: Real-Time WebSocket Channels with Pikku
 

@@ -44,14 +44,15 @@ export const processOrder = pikkuFunc<
   { items: Array<{ price: number; quantity: number }> },
   { orderId: string; total: number }
 >({
-  func: async ({ rpc, database }, data, session) => {
+  func: async ({ rpc, database }, data, { session }) => {
     // Internal RPC call
     const totals = await rpc.invoke('calculateOrderTotal', {
       items: data.items
     })
 
+    const user = await session?.get()
     const order = await database.insert('orders', {
-      userId: session.userId,
+      userId: user.userId,
       ...totals,
       status: 'pending'
     })
@@ -188,7 +189,8 @@ export const restrictedOperation = pikkuFunc<
   { resourceId: string },
   { success: boolean }
 >({
-  func: async ({ database }, data, session) => {
+  func: async ({ database }, data, { session }) => {
+    const user = await session?.get()
     // Requires auth and checks permissions
     return { success: true }
   },
@@ -202,7 +204,8 @@ export const orchestrator = pikkuFunc<
   { resourceId: string },
   { complete: boolean }
 >({
-  func: async ({ rpc }, data, session) => {
+  func: async ({ rpc }, data, { session }) => {
+    const user = await session?.get()
     // This RPC call inherits session from orchestrator
     // Auth and permissions are still checked
     await rpc.invoke('restrictedOperation', {

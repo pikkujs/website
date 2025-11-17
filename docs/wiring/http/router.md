@@ -133,22 +133,25 @@ addHTTPPermission('*', {
 ```typescript
 import { pikkuPermission } from '#pikku'
 
-const requireAuth = pikkuPermission(async (_services, _data, session) => {
-  return session?.userId != null
+const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
+  const user = await session?.get()
+  return user?.userId != null
 })
 
-const requireAdmin = pikkuPermission(async (_services, _data, session) => {
-  return session?.role === 'admin'
+const requireAdmin = pikkuPermission(async (_services, _data, { session }) => {
+  const user = await session?.get()
+  return user?.role === 'admin'
 })
 
-const requirePremium = pikkuPermission(async ({ database }, _data, session) => {
-  if (!session?.userId) return false
+const requirePremium = pikkuPermission(async ({ database }, _data, { session }) => {
+  const user = await session?.get()
+  if (!user?.userId) return false
 
-  const user = await database.query('users', {
-    where: { id: session.userId }
+  const dbUser = await database.query('users', {
+    where: { id: user.userId }
   })
 
-  return user?.isPremium === true
+  return dbUser?.isPremium === true
 })
 
 // Admin routes need both auth and admin role

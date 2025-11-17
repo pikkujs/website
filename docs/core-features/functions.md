@@ -53,7 +53,7 @@ Pikku functions use an object configuration with a `func` property that contains
 
 ```typescript
 const myFunction = pikkuFunc<InputType, OutputType>({
-  func: async ({ database, logger }, data, session) => {
+  func: async ({ database, logger }, data, { session }) => {
     // Your logic here - destructure only the services you need
     return result
   },
@@ -78,14 +78,14 @@ func: async ({ database, logger }, data) => {
 ```
 
 :::info Accessing Transport-Specific Information
-If you need access to transport-specific information (like HTTP headers or WebSocket channel info), you can also destructure the `interaction` object from services:
+If you need access to transport-specific information (like HTTP headers or WebSocket channel info), you can destructure from the `wire` parameter:
 
 ```typescript
-func: async ({ database, interaction }, data) => {
-  if (interaction.http) {
-    const userAgent = interaction.http.headers['user-agent']
+func: async ({ database }, data, { http }) => {
+  if (http) {
+    const userAgent = http.headers['user-agent']
   }
-  // interaction.http, interaction.channel, interaction.queue, etc.
+  // Destructure what you need: { http }, { channel }, { queue }, etc.
 }
 ```
 :::
@@ -116,12 +116,14 @@ export const createBook = pikkuFunc<CreateBookInput, Book>({
 })
 ```
 
-**3. Session** - The authenticated user's session (if `auth: true`)
+**3. Wire** - Access to session and transport-specific details
+
+When you need the user's session or transport-specific information, destructure from the third parameter:
 
 ```typescript
-func: async ({ database }, data, session) => {
-  const userId = session?.userId
-  // session is available if auth is enabled
+func: async ({ database }, data, { session }) => {
+  const user = await session?.get()
+  const userId = user?.userId
 }
 ```
 
@@ -133,7 +135,7 @@ By default, Pikku functions require authentication (`auth: true`). This means a 
 
 ```typescript
 export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
-  func: async ({ database, userSession, jwt }, data) => {
+  func: async ({ database, jwt }, data, { session }) => {
     const user = await database.query('user', { email: data.email })
 
     if (!user || !await verifyPassword(data.password, user.passwordHash)) {
@@ -141,7 +143,7 @@ export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
     }
 
     // Set the session - works across HTTP, WebSocket, etc.
-    await userSession.set({
+    await session?.set({
       userId: user.id,
       role: user.role
     })
@@ -162,8 +164,8 @@ Notice we used `pikkuSessionlessFunc` for the login function and set `auth: fals
 
 ```typescript
 export const logout = pikkuFunc<void, void>({
-  func: async ({ userSession }) => {
-    await userSession.clear()
+  func: async ({}, data, { session }) => {
+    await session?.clear()
   },
   docs: {
     summary: 'Logout user',
@@ -172,7 +174,7 @@ export const logout = pikkuFunc<void, void>({
 })
 ```
 
-The `userSession` service abstracts session storage, so it works identically whether your users are connecting via HTTP cookies, WebSocket connections, or any other transport that requires a session.
+The `session` from the wire parameter abstracts session storage, so it works identically whether your users are connecting via HTTP cookies, WebSocket connections, or any other transport that requires a session.
 
 See [User Sessions](./user-sessions.md) for more details on session management.
 
@@ -202,12 +204,13 @@ Permissions are defined separately and can be reused across functions:
 ```typescript
 // permissions.ts
 export const requireBookOwner: PikkuPermission<{ bookId: string }> =
-  async ({ database }, data, session) => {
-    if (!session?.userId) return false
+  async ({ database }, data, { session }) => {
+    const user = await session?.get()
+    if (!user?.userId) return false
 
     const book = await database.query('book', {
       bookId: data.bookId,
-      ownerId: session.userId
+      ownerId: user.userId
     })
 
     return !!book
