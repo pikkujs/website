@@ -18,7 +18,7 @@ import { Stackblitz } from '@site/src/components/Stackblitz';
 ```typescript title="Fastify plugin"
 import pikkuFastifyPlugin from '@pikku/fastify-plugin'
 
-import { createSingletonServices, createSessionServices } from 'path/to/pikku-bootstrap.ts'
+import { createSingletonServices, createWireServices } from 'path/to/pikku-bootstrap.ts'
 
 // The fastify server setup goes here...
 
@@ -26,7 +26,7 @@ const singletonServices = await createSingletonServices()
 app.register(pikkuFastifyPlugin, {
    pikku: {
       singletonServices,
-      createSessionServices,
+      createWireServices,
       respondWith404: true,
       logRoutes: true,
       loadSchemas: true

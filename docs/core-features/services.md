@@ -81,19 +81,19 @@ const database = new DatabasePool({ ... })
 ```
 
 :::warning Don't Store Request State
-Since singleton services are shared across all function calls, **never** store request-specific data in them (like user IDs or session data). That's what session services are for.
+Since singleton services are shared across all function calls, **never** store request-specific data in them (like user IDs or session data). That's what wire services are for.
 :::
 
-### Session Services
+### Wire Services
 
-Created fresh for each function call and exist only for that call's duration. Use these for:
+Created for all supported wirings. Use these for:
 
 - **Request/Response** – HTTP headers, cookies, response modification
-- **Database transactions** – Per-request transaction scope
+- **Database transactions** – Per-wire transaction scope
 - **User sessions** – Current user's session data
-- **Temporary resources** – Auto-cleanup after the request
+- **Temporary resources** – Auto-cleanup after the wire completes
 
-Session services can depend on singleton services and have access to the current `interaction` and `session`.
+Wire services can depend on singleton services and have access to the current `wire` object (which includes session access).
 
 ## Creating Services
 
@@ -141,7 +141,7 @@ Then implement the factories that create your services:
 
 ```typescript
 // services.ts
-import { pikkuConfig, pikkuServices, pikkuSessionServices } from '#pikku'
+import { pikkuConfig, pikkuServices, pikkuWireServices } from '#pikku'
 
 export const createConfig = pikkuConfig(async () => {
   return {
@@ -186,12 +186,12 @@ export const createSingletonServices = pikkuServices(
   }
 )
 
-export const createSessionServices = pikkuSessionServices(
-  async (singletonServices, interaction, session) => {
-    // Return only the session-specific services
+export const createWireServices = pikkuWireServices(
+  async (singletonServices, wire) => {
+    // Return only the wire-specific services
     // Pikku automatically merges these with singletonServices
     return {
-      userSession: createUserSessionService(interaction),
+      userSession: createUserSessionService(wire),
       dbTransaction: new DatabaseTransaction(singletonServices.database),
     }
   }
@@ -202,8 +202,8 @@ Key points:
 
 - **`pikkuConfig`** wraps your config factory - no generic types needed
 - **`pikkuServices`** wraps your singleton services factory - receives `(config, existingServices?)` and types are inferred
-- **`pikkuSessionServices`** wraps your session services factory - receives `(singletonServices, interaction, session)` and types are inferred
-- Pikku automatically merges session services with singleton services, so your functions have access to both
+- **`pikkuWireServices`** wraps your wire services factory - receives `(singletonServices, wire)` and types are inferred
+- Pikku automatically merges wire services with singleton services, so your functions have access to both
 - Don't spread `...singletonServices` – Pikku handles that for you
 
 :::tip

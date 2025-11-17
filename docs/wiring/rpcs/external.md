@@ -72,7 +72,7 @@ export const rpcCaller = pikkuSessionlessFunc<
 // Wire it to HTTP
 wireHTTP({
   method: 'post',
-  route: '/rpc',
+  route: '/rpc/:rpcName',
   func: rpcCaller
 })
 ```
@@ -80,17 +80,15 @@ wireHTTP({
 External clients call it:
 
 ```bash
-POST /rpc
+POST /rpc/calculateOrderTotal
 Content-Type: application/json
 
 {
-  "name": "calculateOrderTotal",
   "data": {
     "items": [
       { "price": 10, "quantity": 2 },
       { "price": 15, "quantity": 1 }
     ]
-  }
 }
 ```
 

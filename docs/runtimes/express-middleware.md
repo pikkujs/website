@@ -22,14 +22,14 @@ Pikku can be / is best used within express as a middleware function.
 ```typescript title="Express middleware"
 import { pikkuExpressMiddleware } from '@pikku/express-middleware'
 
-import { createSingletonServices, createSessionServices } from 'path/to/pikku-bootstrap.ts'
+import { createSingletonServices, createWireServices } from 'path/to/pikku-bootstrap.ts'
 
 // The express server setup goes here...
 
 const singletonServices = await createSingletonServices()
 app.use(pikkuExpressMiddleware(
-   singletonServices, 
-   createSessionServices, 
+   singletonServices,
+   createWireServices,
    {
       respondWith404: false,
       logRoutes: true,

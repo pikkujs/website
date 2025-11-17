@@ -4,6 +4,10 @@ description: How and why pikku uses services
 image: service.svg
 ---
 
+:::info Updated for Pikku v0.11
+This is a historical post from 2021. In v0.11, function signatures changed to use the `wire` parameter pattern, and `pikkuSessionServices` was renamed to `pikkuWireServices`. See the [current documentation](/docs) for updated examples.
+:::
+
 Quick intro, Pikku is a thin wrapper ontop of express / serverless / any request-response mechanism that hides away all the boiler plate. The goal is for a user to be able to be able to add an endpoint, with schemas, permissions and session management without actually having to do any boiler plate.
 
 <!-- truncate -->

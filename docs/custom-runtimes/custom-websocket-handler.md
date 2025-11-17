@@ -38,7 +38,7 @@ const channelHandler = await runLocalChannel({
   request,
   response,
   singletonServices: singletonServicesWithEventHub,
-  createSessionServices,
+  createWireServices,
   route: req.getUrl() as string,
 })
 ```

@@ -35,7 +35,7 @@ Let's write middleware that tracks response time:
 ```typescript
 import { pikkuMiddleware } from '#pikku'
 
-export const responseTime = pikkuMiddleware(async ({ logger }, interaction, next) => {
+export const responseTime = pikkuMiddleware(async ({ logger }, wire, next) => {
   const start = Date.now()
 
   // Call next middleware/function
@@ -46,32 +46,49 @@ export const responseTime = pikkuMiddleware(async ({ logger }, interaction, next
   logger.info(`Request completed in ${duration}ms`)
 
   // For HTTP, you can set headers
-  if (interaction.http) {
-    interaction.http.response.setHeader('X-Response-Time', `${duration}ms`)
+  if (wire.http) {
+    wire.http.response.setHeader('X-Response-Time', `${duration}ms`)
   }
 })
 ```
 
 The middleware:
 - Destructures `logger` from services (tree-shaking benefit)
-- Has access to the `interaction` object (http, channel, queue, etc.)
+- Has access to the `wire` object (http, channel, queue, etc.)
 - Calls `next()` to continue the chain
 - Can run code before and after the function
+
+## Middleware Signature
+
+```typescript
+pikkuMiddleware(async (services, wire, next) => {
+  // Your middleware logic
+})
+```
+
+**Parameters:**
+- **services** - Your singleton services only (destructure what you need). Wire services are not available in middleware.
+- **wire** - The wire object containing transport-specific details (http, channel, queue, etc.)
+- **next** - Function to call the next middleware or the main function
+
+:::info Singleton Services Only
+Middleware receives **only singleton services** in the first parameter, not wire services. This is because middleware wraps around the wire lifecycle. If you need access to wire-scoped resources, use the `wire` parameter to access them.
+:::
 
 ## Authentication Middleware
 
 A common use case is extracting authentication info:
 
 ```typescript
-export const authMiddleware = pikkuMiddleware(async ({ jwt, userSession }, interaction, next) => {
+export const authMiddleware = pikkuMiddleware(async ({ jwt, userSession }, wire, next) => {
   let token = null
 
   // Extract token based on transport
-  if (interaction.http) {
-    token = interaction.http.request.getHeader('Authorization')?.replace('Bearer ', '')
-  } else if (interaction.channel) {
+  if (wire.http) {
+    token = wire.http.request.getHeader('Authorization')?.replace('Bearer ', '')
+  } else if (wire.channel) {
     // For channels, auth is typically handled during connection
-    token = interaction.channel.channelData?.token
+    token = wire.channel.channelData?.token
   }
 
   if (token) {
@@ -226,32 +243,32 @@ For this request, middleware runs in this order:
 8. `apiKeyValidation` (after)
 9. `corsHeaders` (after)
 
-## Interaction Object
+## Wire Object
 
-Middleware receives an `interaction` object that varies by transport:
+Middleware receives a `wire` object that varies by transport:
 
 ```typescript
-export const transportAware = pikkuMiddleware(async (services, interaction, next) => {
-  if (interaction.http) {
+export const transportAware = pikkuMiddleware(async (services, wire, next) => {
+  if (wire.http) {
     // HTTP-specific: request, response
-    const userAgent = interaction.http.request.getHeader('User-Agent')
-    interaction.http.response.setHeader('X-Custom', 'value')
+    const userAgent = wire.http.request.getHeader('User-Agent')
+    wire.http.response.setHeader('X-Custom', 'value')
   }
 
-  if (interaction.channel) {
+  if (wire.channel) {
     // Channel-specific: connectionId, channelData, userId
-    const connectionId = interaction.channel.connectionId
-    const customData = interaction.channel.channelData
+    const connectionId = wire.channel.connectionId
+    const customData = wire.channel.channelData
   }
 
-  if (interaction.queue) {
+  if (wire.queue) {
     // Queue-specific: queue name, payload, attempt
-    const attempt = interaction.queue.attempt
+    const attempt = wire.queue.attempt
   }
 
-  if (interaction.scheduledTask) {
+  if (wire.scheduledTask) {
     // Scheduler-specific: cron, lastRun, nextRun
-    const cron = interaction.scheduledTask.cron
+    const cron = wire.scheduledTask.cron
   }
 
   await next()
@@ -263,7 +280,7 @@ export const transportAware = pikkuMiddleware(async (services, interaction, next
 Middleware can catch and transform errors:
 
 ```typescript
-export const errorHandler = pikkuMiddleware(async ({ logger }, interaction, next) => {
+export const errorHandler = pikkuMiddleware(async ({ logger }, wire, next) => {
   try {
     await next()
   } catch (error) {
@@ -273,9 +290,9 @@ export const errorHandler = pikkuMiddleware(async ({ logger }, interaction, next
     })
 
     // For HTTP, you can set custom error responses
-    if (interaction.http) {
-      interaction.http.response.setStatus(500)
-      interaction.http.response.setHeader('X-Error-Id', generateErrorId())
+    if (wire.http) {
+      wire.http.response.setStatus(500)
+      wire.http.response.setHeader('X-Error-Id', generateErrorId())
     }
 
     // Re-throw to let Pikku handle it
@@ -289,25 +306,25 @@ export const errorHandler = pikkuMiddleware(async ({ logger }, interaction, next
 Sometimes you only want middleware to run in certain conditions:
 
 ```typescript
-export const conditionalCache = pikkuMiddleware(async ({ cache }, interaction, next) => {
+export const conditionalCache = pikkuMiddleware(async ({ cache }, wire, next) => {
   // Only cache GET requests
-  if (interaction.http?.request.method !== 'GET') {
+  if (wire.http?.request.method !== 'GET') {
     return await next()
   }
 
-  const cacheKey = interaction.http.request.path
+  const cacheKey = wire.http.request.path
   const cached = await cache.get(cacheKey)
 
   if (cached) {
     // Short-circuit - don't call next()
-    interaction.http.response.body = cached
+    wire.http.response.body = cached
     return
   }
 
   await next()
 
   // Cache the response after function completes
-  await cache.set(cacheKey, interaction.http.response.body)
+  await cache.set(cacheKey, wire.http.response.body)
 })
 ```
 
@@ -322,10 +339,10 @@ If validation fails, Pikku throws a `ValidationError` with details about which f
 **Destructure services** - Helps Pikku tree-shake unused services:
 ```typescript
 // ✅ Good - only bundles logger
-pikkuMiddleware(({ logger }, interaction, next) => { ... })
+pikkuMiddleware(({ logger }, wire, next) => { ... })
 
 // ❌ Bad - bundles all services
-pikkuMiddleware((services, interaction, next) => { ... })
+pikkuMiddleware((services, wire, next) => { ... })
 ```
 
 :::tip Transport-Agnostic vs Transport-Specific Middleware
@@ -336,8 +353,8 @@ pikkuMiddleware((services, interaction, next) => { ... })
 ```typescript
 import { InvalidMiddlewareInteractionError } from '@pikku/core/errors'
 
-export const cookieParser = pikkuMiddleware(async (services, interaction, next) => {
-  if (!interaction.http) {
+export const cookieParser = pikkuMiddleware(async (services, wire, next) => {
+  if (!wire.http) {
     throw new InvalidMiddlewareInteractionError()
   }
   // Parse cookies from HTTP request
