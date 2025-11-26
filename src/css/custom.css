@@ -1,4 +1,18 @@
 @import './wiring-icons.css';
+@import "tailwindcss/theme";
+
+/* Use Docusaurus theme toggle for dark: utilities instead of prefers-color-scheme */
+@custom-variant dark (&:is(.dark &, [data-theme="dark"] &, [data-theme="dark"] *));
+
+/* Tailwind v4 theme tokens (used by utilities like bg-primary, text-primary, etc.) */
+@theme {
+  --color-primary: #a863ee;
+  --color-primary-dark: #5e20b8;
+  --color-primary-darker: #6d25d0;
+  --color-primary-light: #8748e0;
+  --color-primary-lighter: #955af0;
+  --color-primary-lightest: #a56fff;
+}
 
 @tailwind base;
 @tailwind components;

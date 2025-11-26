@@ -334,7 +334,7 @@ wireMCPResource({
             {/* Code display section below */}
             {activeProtocol !== null && (
               <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
-                <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 border-2 border-primary card-shadow">
+                <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 border-2 border-neutral-200 dark:border-neutral-700 card-shadow">
                   <div className="flex items-center mb-4">
                     <WiringIcon wiringId={wiringExamples[activeProtocol].icon} size={24} />
                     <span className="ml-3 text-xl font-bold text-gray-900 dark:text-gray-100">
@@ -1022,7 +1022,7 @@ function TryItNowSection() {
         <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 md:max-w-2xl md:mx-auto">
           Create your first Pikku app with one command. You'll have a function running across HTTP, WebSockets, and more in under 5 minutes.
         </p>
-        <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark transition-colors" onClick={copyToClipboard}>
+        <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors" onClick={copyToClipboard}>
           npm create pikku@latest
           <button
             className="absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/20 hover:bg-white/30 rounded-md p-2 backdrop-blur-sm"

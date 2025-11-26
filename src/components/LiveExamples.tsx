@@ -181,7 +181,7 @@ function TabContent({ tabKey }: { tabKey: FunctionType }) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="rounded-lg border border-neutral-200 dark:border-neutral-800 overflow-hidden">
           <Stackblitz
             key={`${tabKey}-${activeDeployment.runtime}`}
             repo={currentDeployment.repo}
