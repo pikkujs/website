@@ -31,10 +31,8 @@ export const getStatus = pikkuSessionlessFunc<
     // Always return initial response immediately
     return { state: 'initial' }
   },
-  docs: {
-    summary: 'Get current status with optional streaming updates',
-    tags: ['status']
-  }
+  title: 'Get current status with optional streaming updates',
+  tags: ['status']
 })
 ```
 
@@ -48,11 +46,7 @@ wireHTTP({
   route: '/status',
   func: getStatus,
   sse: true,  // Enables SSE support
-  auth: false,
-  docs: {
-    summary: 'Status endpoint with SSE support',
-    tags: ['status']
-  }
+  auth: false
 })
 ```
 
@@ -103,10 +97,8 @@ export const watchBuild = pikkuSessionlessFunc<
       progress: 0
     }
   },
-  docs: {
-    summary: 'Watch build progress with real-time updates',
-    tags: ['builds']
-  }
+  title: 'Watch build progress with real-time updates',
+  tags: ['builds']
 })
 
 wireHTTP({
@@ -114,11 +106,7 @@ wireHTTP({
   route: '/builds/:projectId/watch',
   func: watchBuild,
   sse: true,
-  auth: false,
-  docs: {
-    summary: 'Watch build progress',
-    tags: ['builds']
-  }
+  auth: false
 })
 ```
 
@@ -203,21 +191,15 @@ export const getLiveMetrics = pikkuSessionlessFunc<
 
     return current
   },
-  docs: {
-    summary: 'Get live system metrics',
-    tags: ['metrics']
-  }
+  title: 'Get live system metrics',
+  tags: ['metrics']
 })
 
 wireHTTP({
   method: 'get',
   route: '/metrics/live',
   func: getLiveMetrics,
-  sse: true,
-  docs: {
-    summary: 'Live metrics endpoint',
-    tags: ['metrics']
-  }
+  sse: true
 })
 ```
 

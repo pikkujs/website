@@ -33,10 +33,8 @@ export const calculateOrderTotal = pikkuSessionlessFunc<
 
     return { subtotal, tax, total }
   },
-  docs: {
-    summary: 'Calculate order totals with tax',
-    tags: ['orders']
-  }
+  title: 'Calculate order totals with tax',
+  tags: ['orders']
 })
 
 // Process order - uses RPC to calculate totals
@@ -50,9 +48,8 @@ export const processOrder = pikkuFunc<
       items: data.items
     })
 
-    const user = await session?.get()
     const order = await database.insert('orders', {
-      userId: user.userId,
+      userId: session.userId,
       ...totals,
       status: 'pending'
     })
@@ -63,10 +60,8 @@ export const processOrder = pikkuFunc<
     }
   },
   auth: true,
-  docs: {
-    summary: 'Process a new order',
-    tags: ['orders']
-  }
+  title: 'Process a new order',
+  tags: ['orders']
 })
 ```
 
@@ -99,10 +94,8 @@ export const getUserInfo = pikkuFunc<
 
     return { userId: user.userId, name: user.name, email: user.email }
   },
-  docs: {
-    summary: 'Get user information',
-    tags: ['users']
-  }
+  title: 'Get user information',
+  tags: ['users']
 })
 
 // MCP adapter - transforms output for AI agents
@@ -122,10 +115,8 @@ export const getUserInfoMCP = pikkuMCPResourceFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Get user information (MCP adapter)',
-    tags: ['mcp', 'users']
-  }
+  title: 'Get user information (MCP adapter)',
+  tags: ['mcp', 'users']
 })
 ```
 
@@ -168,10 +159,8 @@ export const processNestedCategories = pikkuSessionlessFunc<
 
     return { processed }
   },
-  docs: {
-    summary: 'Process nested categories recursively',
-    tags: ['categories']
-  }
+  title: 'Process nested categories recursively',
+  tags: ['categories']
 })
 ```
 
@@ -190,8 +179,7 @@ export const restrictedOperation = pikkuFunc<
   { success: boolean }
 >({
   func: async ({ database }, data, { session }) => {
-    const user = await session?.get()
-    // Requires auth and checks permissions
+    // session is available directly - requires auth and checks permissions
     return { success: true }
   },
   auth: true,
@@ -205,7 +193,6 @@ export const orchestrator = pikkuFunc<
   { complete: boolean }
 >({
   func: async ({ rpc }, data, { session }) => {
-    const user = await session?.get()
     // This RPC call inherits session from orchestrator
     // Auth and permissions are still checked
     await rpc.invoke('restrictedOperation', {
@@ -252,10 +239,8 @@ export const safeWorkflow = pikkuFunc<
       }
     }
   },
-  docs: {
-    summary: 'Process order with error handling',
-    tags: ['orders']
-  }
+  title: 'Process order with error handling',
+  tags: ['orders']
 })
 ```
 

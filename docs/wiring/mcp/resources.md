@@ -47,11 +47,8 @@ export const getUserInfo = pikkuFunc<
       lastLogin: user.lastLogin
     }
   },
-  docs: {
-    summary: 'Get user information by ID',
-    tags: ['users'],
-    errors: ['NotFoundError']
-  }
+  title: 'Get user information by ID',
+  tags: ['users']
 })
 
 // MCP adapter - just formats the response for AI agents
@@ -69,10 +66,8 @@ export const getUserInfoMCP = pikkuMCPResourceFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Get user information (MCP adapter)',
-    tags: ['mcp', 'users']
-  }
+  title: 'Get user information (MCP adapter)',
+  tags: ['mcp', 'users']
 })
 ```
 
@@ -107,10 +102,8 @@ export const getProjectReadme = pikkuFunc<void, { content: string; path: string 
       path: readme.path
     }
   },
-  docs: {
-    summary: 'Get project README',
-    tags: ['docs']
-  }
+  title: 'Get project README',
+  tags: ['docs']
 })
 ```
 
@@ -131,10 +124,8 @@ export const getProjectReadmeMCP = pikkuMCPResourceFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Get project README (MCP adapter)',
-    tags: ['mcp', 'docs']
-  }
+  title: 'Get project README (MCP adapter)',
+  tags: ['mcp', 'docs']
 })
 ```
 
@@ -155,10 +146,8 @@ export const searchDocs = pikkuFunc<
 
     return results
   },
-  docs: {
-    summary: 'Search documentation',
-    tags: ['docs', 'search']
-  }
+  title: 'Search documentation',
+  tags: ['docs', 'search']
 })
 ```
 
@@ -178,10 +167,8 @@ export const searchDocsMCP = pikkuMCPResourceFunc<
       text: doc.content
     }))
   },
-  docs: {
-    summary: 'Search documentation (MCP adapter)',
-    tags: ['mcp', 'docs', 'search']
-  }
+  title: 'Search documentation (MCP adapter)',
+  tags: ['mcp', 'docs', 'search']
 })
 ```
 
@@ -262,11 +249,8 @@ export const getFile = pikkuFunc<
 
     return file
   },
-  docs: {
-    summary: 'Get file contents',
-    tags: ['files'],
-    errors: ['NotFoundError', 'BadRequestError']
-  }
+  title: 'Get file contents',
+  tags: ['files']
 })
 ```
 
@@ -287,10 +271,8 @@ export const getFileMCP = pikkuMCPResourceFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Get file contents (MCP adapter)',
-    tags: ['mcp', 'files']
-  }
+  title: 'Get file contents (MCP adapter)',
+  tags: ['mcp', 'files']
 })
 ```
 
@@ -317,10 +299,8 @@ export const getRelatedDocs = pikkuFunc<
 
     return { main: doc, related }
   },
-  docs: {
-    summary: 'Get document and related documents',
-    tags: ['docs']
-  }
+  title: 'Get document and related documents',
+  tags: ['docs']
 })
 ```
 
@@ -343,10 +323,8 @@ export const getRelatedDocsMCP = pikkuMCPResourceFunc<
       }))
     ]
   },
-  docs: {
-    summary: 'Get document and related documents (MCP adapter)',
-    tags: ['mcp', 'docs']
-  }
+  title: 'Get document and related documents (MCP adapter)',
+  tags: ['mcp', 'docs']
 })
 ```
 

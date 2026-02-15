@@ -32,10 +32,8 @@ export const calculateOrderTotal = pikkuSessionlessFunc<
     return { subtotal, tax, total }
   },
   expose: true,  // Can be called externally
-  docs: {
-    summary: 'Calculate order totals with tax',
-    tags: ['orders']
-  }
+  title: 'Calculate order totals with tax',
+  tags: ['orders']
 })
 ```
 
@@ -63,10 +61,8 @@ export const rpcCaller = pikkuSessionlessFunc<
   func: async ({ rpc }, { name, data }) => {
     return await rpc.invokeExposed(name, data)
   },
-  docs: {
-    summary: 'Call any exposed function via RPC',
-    tags: ['rpc']
-  }
+  title: 'Call any exposed function via RPC',
+  tags: ['rpc']
 })
 
 // Wire it to HTTP

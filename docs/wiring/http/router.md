@@ -37,21 +37,20 @@ addHTTPMiddleware('/admin', [requireAuth, auditLog])
 import { addHTTPMiddleware } from '#pikku/http'
 import { pikkuMiddleware } from '#pikku'
 
-const cors = pikkuMiddleware(async (_services, interaction, next) => {
-  if (interaction.http) {
-    interaction.http.response.setHeader('Access-Control-Allow-Origin', '*')
-    interaction.http.response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+const cors = pikkuMiddleware(async (_services, { http }, next) => {
+  if (http) {
+    http.response.setHeader('Access-Control-Allow-Origin', '*')
+    http.response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
   }
   await next()
 })
 
-const responseTime = pikkuMiddleware(async (_services, interaction, next) => {
+const responseTime = pikkuMiddleware(async (_services, { http }, next) => {
   const start = Date.now()
   await next()
-
-  if (interaction.http) {
+  if (http) {
     const duration = Date.now() - start
-    interaction.http.response.setHeader('X-Response-Time', `${duration}ms`)
+    http.response.setHeader('X-Response-Time', `${duration}ms`)
   }
 })
 
@@ -62,33 +61,33 @@ addHTTPMiddleware([cors, responseTime])
 ### Prefix-Based Middleware
 
 ```typescript
-const adminAuth = pikkuMiddleware(async ({ jwt, userSession }, interaction, next) => {
-  if (!interaction.http) return await next()
+const adminAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
+  if (!http) return await next()
 
-  const token = interaction.http.request.getHeader('Authorization')
+  const token = http.request.getHeader('Authorization')
   if (!token) {
-    interaction.http.response.setStatus(401).json({ error: 'Unauthorized' })
+    http.response.setStatus(401).json({ error: 'Unauthorized' })
     return
   }
 
   try {
     const payload = await jwt.verify(token.replace('Bearer ', ''))
-    await userSession.set(payload)
+    setSession(payload)
     await next()
   } catch (e) {
-    interaction.http.response.setStatus(401).json({ error: 'Invalid token' })
+    http.response.setStatus(401).json({ error: 'Invalid token' })
   }
 })
 
-const rateLimit = pikkuMiddleware(async ({ cache }, interaction, next) => {
-  if (!interaction.http) return await next()
+const rateLimit = pikkuMiddleware(async ({ cache }, { http }, next) => {
+  if (!http) return await next()
 
-  const ip = interaction.http.request.getHeader('x-forwarded-for') || 'unknown'
+  const ip = http.request.getHeader('x-forwarded-for') || 'unknown'
   const key = `ratelimit:${ip}`
   const count = (await cache.get(key)) || 0
 
   if (count > 100) {
-    interaction.http.response.setStatus(429).json({ error: 'Too many requests' })
+    http.response.setStatus(429).json({ error: 'Too many requests' })
     return
   }
 
@@ -134,21 +133,18 @@ addHTTPPermission('*', {
 import { pikkuPermission } from '#pikku'
 
 const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
-  const user = await session?.get()
-  return user?.userId != null
+  return session?.userId != null
 })
 
 const requireAdmin = pikkuPermission(async (_services, _data, { session }) => {
-  const user = await session?.get()
-  return user?.role === 'admin'
+  return session?.role === 'admin'
 })
 
 const requirePremium = pikkuPermission(async ({ database }, _data, { session }) => {
-  const user = await session?.get()
-  if (!user?.userId) return false
+  if (!session?.userId) return false
 
   const dbUser = await database.query('users', {
-    where: { id: user.userId }
+    where: { id: session.userId }
   })
 
   return dbUser?.isPremium === true
@@ -196,15 +192,15 @@ For HTTP routes, middleware runs in this order:
 Extract JWT tokens and set user session:
 
 ```typescript
-const jwtAuth = pikkuMiddleware(async ({ jwt, userSession }, interaction, next) => {
-  if (!interaction.http) return await next()
+const jwtAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
+  if (!http) return await next()
 
-  const token = interaction.http.request.getHeader('Authorization')?.replace('Bearer ', '')
+  const token = http.request.getHeader('Authorization')?.replace('Bearer ', '')
 
   if (token) {
     try {
       const payload = await jwt.verify(token)
-      await userSession.set({
+      setSession({
         userId: payload.userId,
         role: payload.role
       })
@@ -226,19 +222,19 @@ addHTTPMiddleware('/api', [jwtAuth])
 Log all requests with timing:
 
 ```typescript
-const requestLogger = pikkuMiddleware(async ({ logger }, interaction, next) => {
-  if (!interaction.http) return await next()
+const requestLogger = pikkuMiddleware(async ({ logger }, { http }, next) => {
+  if (!http) return await next()
 
   const start = Date.now()
-  const method = interaction.http.request.method
-  const url = interaction.http.request.url
+  const method = http.request.method
+  const url = http.request.url
 
   logger.info(`${method} ${url} - Started`)
 
   await next()
 
   const duration = Date.now() - start
-  const status = interaction.http.response.status || 200
+  const status = http.response.status || 200
   logger.info(`${method} ${url} - ${status} (${duration}ms)`)
 })
 
@@ -251,14 +247,14 @@ addHTTPMiddleware([requestLogger])
 Add security headers to all responses:
 
 ```typescript
-const securityHeaders = pikkuMiddleware(async (_services, interaction, next) => {
+const securityHeaders = pikkuMiddleware(async (_services, { http }, next) => {
   await next()
 
-  if (interaction.http) {
-    interaction.http.response.setHeader('X-Content-Type-Options', 'nosniff')
-    interaction.http.response.setHeader('X-Frame-Options', 'DENY')
-    interaction.http.response.setHeader('X-XSS-Protection', '1; mode=block')
-    interaction.http.response.setHeader('Strict-Transport-Security', 'max-age=31536000')
+  if (http) {
+    http.response.setHeader('X-Content-Type-Options', 'nosniff')
+    http.response.setHeader('X-Frame-Options', 'DENY')
+    http.response.setHeader('X-XSS-Protection', '1; mode=block')
+    http.response.setHeader('Strict-Transport-Security', 'max-age=31536000')
   }
 })
 

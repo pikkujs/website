@@ -19,6 +19,7 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 | `UnauthorizedError` | 401 | Authentication required but missing or invalid |
 | `MissingSessionError` | 401 | No session provided (more specific than Unauthorized) |
 | `InvalidSessionError` | 401 | Session provided but not valid |
+| `PaymentRequiredError` | 402 | Payment or subscription required |
 | `ForbiddenError` | 403 | User authenticated but lacks permission |
 | `InvalidOriginError` | 403 | Request from unauthorized origin (CORS) |
 
@@ -30,12 +31,17 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 | `NotFoundError` | 404 | Resource doesn't exist |
 | `MethodNotAllowedError` | 405 | HTTP method not supported for this resource |
 | `NotAcceptableError` | 406 | Can't produce response matching Accept headers |
+| `ProxyAuthenticationRequiredError` | 407 | Proxy authentication required |
 | `RequestTimeoutError` | 408 | Request took too long |
 | `ConflictError` | 409 | Request conflicts with current state (e.g., duplicate) |
 | `GoneError` | 410 | Resource permanently deleted |
+| `LengthRequiredError` | 411 | Content-Length header required |
+| `PreconditionFailedError` | 412 | Precondition in headers not met |
 | `PayloadTooLargeError` | 413 | Request body too large |
 | `URITooLongError` | 414 | Request URI exceeds server limits |
 | `UnsupportedMediaTypeError` | 415 | Content-Type not supported |
+| `RangeNotSatisfiableError` | 416 | Requested range not satisfiable |
+| `ExpectationFailedError` | 417 | Expect header requirement not met |
 | `UnprocessableContentError` | 422 | Syntax correct but semantically invalid |
 | `LockedError` | 423 | Resource is locked |
 | `TooManyRequestsError` | 429 | Rate limit exceeded |
@@ -45,6 +51,7 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 | Error Class | Status Code | Use Case |
 |------------|-------------|----------|
 | `InternalServerError` | 500 | Generic server error |
+| `MissingSchemaError` | 500 | Schema not found during validation |
 | `NotImplementedError` | 501 | Feature not yet implemented |
 | `BadGatewayError` | 502 | Invalid response from upstream server |
 | `ServiceUnavailableError` | 503 | Server temporarily unavailable |
@@ -60,8 +67,7 @@ import { NotFoundError, ForbiddenError, TooManyRequestsError } from '@pikku/core
 export const getBook = pikkuFunc<{ bookId: string }, Book>({
   func: async ({ database, rateLimit }, data, { session }) => {
     // Check rate limit
-    const user = await session?.get()
-    if (!await rateLimit.check(user.userId)) {
+    if (!await rateLimit.check(session.userId)) {
       throw new TooManyRequestsError()
     }
 
@@ -78,11 +84,8 @@ export const getBook = pikkuFunc<{ bookId: string }, Book>({
 
     return book
   },
-  docs: {
-    summary: 'Get a book by ID',
-    tags: ['books'],
-    errors: ['NotFoundError', 'ForbiddenError', 'TooManyRequestsError']
-  }
+  title: 'Get a book by ID',
+  tags: ['books']
 })
 ```
 
@@ -119,9 +122,8 @@ Then use them in your functions:
 export const borrowBook = pikkuFunc<{ bookId: string }, BorrowReceipt>({
   func: async ({ database }, data, { session }) => {
     // Check user's borrow limit
-    const user = await session?.get()
     const borrowCount = await database.count('borrows', {
-      userId: user.userId,
+      userId: session.userId,
       returned: false
     })
 
@@ -142,11 +144,8 @@ export const borrowBook = pikkuFunc<{ bookId: string }, BorrowReceipt>({
       borrowedAt: new Date()
     })
   },
-  docs: {
-    summary: 'Borrow a book',
-    tags: ['books'],
-    errors: ['BookLimitExceededError', 'OutOfStockError', 'NotFoundError']
-  }
+  title: 'Borrow a book',
+  tags: ['books']
 })
 ```
 
@@ -214,7 +213,7 @@ Errors are automatically adapted to the protocol being used:
 
 1. **Use specific errors** – Prefer `NotFoundError` over generic `BadRequestError`
 
-2. **Document expected errors** – List them in `docs.errors` so API consumers know what to handle
+2. **Document expected errors** – List them in the HTTP route `docs.errors` so API consumers know what to handle
 
 3. **Provide context** – Customize error messages to help users understand what went wrong
 

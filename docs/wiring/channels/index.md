@@ -32,10 +32,8 @@ export const onMessage = pikkuChannelFunc<
     // Return value is automatically sent to the client
     return { message: `Echo: ${data.message}` }
   },
-  docs: {
-    summary: 'Handle chat messages',
-    tags: ['chat']
-  }
+  title: 'Handle chat messages',
+  tags: ['chat']
 })
 ```
 
@@ -70,12 +68,12 @@ export const authenticate = pikkuChannelFunc<
   { authenticated: boolean },
   { room: string }
 >({
-  func: async ({ jwt, userSession }, data) => {
+  func: async ({ jwt, setSession }, data) => {
     try {
       const payload = await jwt.verify(data.token)
 
       // Set the user session for this connection
-      await userSession.set({
+      await setSession({
         userId: payload.userId,
         role: payload.role
       })
@@ -86,10 +84,8 @@ export const authenticate = pikkuChannelFunc<
     }
   },
   auth: false,  // Don't require auth for the authenticate action itself
-  docs: {
-    summary: 'Authenticate a WebSocket connection',
-    tags: ['auth']
-  }
+  title: 'Authenticate a WebSocket connection',
+  tags: ['auth']
 })
 
 export const sendMessage = pikkuChannelFunc<
@@ -97,25 +93,22 @@ export const sendMessage = pikkuChannelFunc<
   { message: string; timestamp: number },
   { room: string }
 >({
-  func: async ({ database, channel }, data, { session }) => {
+  func: async ({ database, channel, session }, data) => {
     // session is guaranteed to exist because auth: true
-    const user = await session?.get()
     const timestamp = Date.now()
 
     await database.insert('messages', {
       room: channel.openingData.room,
       message: data.message,
-      userId: user.userId,
+      userId: session.userId,
       timestamp
     })
 
     return { message: data.message, timestamp }
   },
   auth: true,  // Require authentication
-  docs: {
-    summary: 'Send a message',
-    tags: ['chat']
-  }
+  title: 'Send a message',
+  tags: ['chat']
 })
 ```
 
@@ -165,10 +158,8 @@ export const onConnect = pikkuChannelConnectionFunc<
     // Return value is automatically sent
     return { welcome: `Welcome to ${channel.openingData.room}!` }
   },
-  docs: {
-    summary: 'Handle new connections',
-    tags: ['chat']
-  }
+  title: 'Handle new connections',
+  tags: ['chat']
 })
 ```
 
@@ -182,10 +173,8 @@ export const onDisconnect = pikkuChannelDisconnectionFunc<{ room: string }>({
     logger.info('User disconnected from room', { room: data.room })
     // No return value - connection is closing
   },
-  docs: {
-    summary: 'Handle disconnections',
-    tags: ['chat']
-  }
+  title: 'Handle disconnections',
+  tags: ['chat']
 })
 ```
 
@@ -210,10 +199,8 @@ export const onMessage = pikkuChannelFunc<
 
     return { message: data.message, timestamp }
   },
-  docs: {
-    summary: 'Handle incoming messages',
-    tags: ['chat']
-  }
+  title: 'Handle incoming messages',
+  tags: ['chat']
 })
 ```
 
@@ -356,10 +343,8 @@ export const broadcastToRoom = pikkuFunc<
       }
     )
   },
-  docs: {
-    summary: 'Broadcast message to all users in a room',
-    tags: ['chat']
-  }
+  title: 'Broadcast message to all users in a room',
+  tags: ['chat']
 })
 ```
 

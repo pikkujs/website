@@ -43,11 +43,8 @@ export const createIssue = pikkuFunc<
 
     return issue
   },
-  docs: {
-    summary: 'Create a new issue',
-    tags: ['issues'],
-    errors: ['BadRequestError']
-  }
+  title: 'Create a new issue',
+  tags: ['issues']
 })
 
 // MCP adapter - just formats the response for AI agents
@@ -65,10 +62,8 @@ export const createIssueMCP = pikkuMCPToolFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Create a new issue (MCP adapter)',
-    tags: ['mcp', 'issues']
-  }
+  title: 'Create a new issue (MCP adapter)',
+  tags: ['mcp', 'issues']
 })
 ```
 
@@ -125,10 +120,8 @@ export const processOrder = pikkuFunc<
       status: order.status
     }
   },
-  docs: {
-    summary: 'Process an order end-to-end',
-    tags: ['orders']
-  }
+  title: 'Process an order end-to-end',
+  tags: ['orders']
 })
 ```
 
@@ -148,10 +141,8 @@ export const processOrderMCP = pikkuMCPToolFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Process an order (MCP adapter)',
-    tags: ['mcp', 'orders']
-  }
+  title: 'Process an order (MCP adapter)',
+  tags: ['mcp', 'orders']
 })
 ```
 
@@ -198,10 +189,8 @@ export const generateChartMCP = pikkuMCPToolFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Generate chart (MCP adapter)',
-    tags: ['mcp', 'charts']
-  }
+  title: 'Generate chart (MCP adapter)',
+  tags: ['mcp', 'charts']
 })
 ```
 

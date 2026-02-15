@@ -35,10 +35,8 @@ export const sendWelcomeEmail = pikkuSessionlessFunc<
     logger.info('Welcome email sent', { userId: data.userId })
   },
   auth: false,  // Queue jobs don't have user sessions
-  docs: {
-    summary: 'Send welcome email to new users',
-    tags: ['email']
-  }
+  title: 'Send welcome email to new users',
+  tags: ['email']
 })
 ```
 
@@ -76,11 +74,8 @@ export const processPayment = pikkuSessionlessFunc<
     return { transactionId: transaction.id }
   },
   auth: false,
-  docs: {
-    summary: 'Process payment for an order',
-    tags: ['payments'],
-    errors: ['PaymentFailedError']
-  }
+  title: 'Process payment for an order',
+  tags: ['payments']
 })
 ```
 
@@ -177,11 +172,8 @@ export const processPayment = pikkuSessionlessFunc<PaymentInput, void>({
     }
   },
   auth: false,
-  docs: {
-    summary: 'Process payment',
-    tags: ['payments'],
-    errors: ['PaymentFailedError']
-  }
+  title: 'Process payment',
+  tags: ['payments']
 })
 ```
 
@@ -192,33 +184,33 @@ The queue system will automatically:
 
 ## Monitoring Job Progress
 
-For long-running jobs, you can report progress using the `interaction.queue` object:
+For long-running jobs, you can report progress using the `queue` object destructured from services:
 
 ```typescript
 export const generateReport = pikkuSessionlessFunc<
   { reportId: string },
   void
 >({
-  func: async ({ database, interaction }, data) => {
+  func: async ({ database, queue }, data) => {
     // Update progress if queue supports it
-    if (interaction.queue?.updateProgress) {
-      await interaction.queue.updateProgress(0)
+    if (queue?.updateProgress) {
+      await queue.updateProgress(0)
     }
 
     const data1 = await database.query('...')
-    await interaction.queue?.updateProgress(33)
+    await queue?.updateProgress(33)
 
     const data2 = await database.query('...')
-    await interaction.queue?.updateProgress(66)
+    await queue?.updateProgress(66)
 
     await generateReportFile(data1, data2)
-    await interaction.queue?.updateProgress(100)
+    await queue?.updateProgress(100)
   },
   auth: false
 })
 ```
 
-The `interaction.queue` object also provides:
+The `queue` object also provides:
 - `fail(reason)` - Mark the job as failed with a reason
 - `discard()` - Discard the job (won't retry)
 - `queueName` - The name of the queue

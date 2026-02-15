@@ -25,12 +25,9 @@ export const getBook = pikkuFunc<{ bookId: string }, Book>({
       throw new NotFoundError()
     }
   },
-  docs: {
-    summary: 'Fetch a book by ID',
-    description: 'Returns a book from the database',
-    tags: ['books'],
-    errors: ['NotFoundError']
-  }
+  title: 'Fetch a book by ID',
+  description: 'Returns a book from the database',
+  tags: ['books']
 })
 ```
 
@@ -60,7 +57,9 @@ const myFunction = pikkuFunc<InputType, OutputType>({
   // Optional configuration
   auth: true,
   permissions: { /* ... */ },
-  docs: { /* ... */ }
+  title: '...',
+  description: '...',
+  tags: ['...']
 })
 ```
 
@@ -109,10 +108,8 @@ export const createBook = pikkuFunc<CreateBookInput, Book>({
     // title and author are strings, publishedYear is optional number
     return await database.insert('book', data)
   },
-  docs: {
-    summary: 'Create a new book',
-    tags: ['books']
-  }
+  title: 'Create a new book',
+  tags: ['books']
 })
 ```
 
@@ -122,8 +119,8 @@ When you need the user's session or transport-specific information, destructure 
 
 ```typescript
 func: async ({ database }, data, { session }) => {
-  const user = await session?.get()
-  const userId = user?.userId
+  // session IS the user session value directly
+  const userId = session?.userId
 }
 ```
 
@@ -135,7 +132,7 @@ By default, Pikku functions require authentication (`auth: true`). This means a 
 
 ```typescript
 export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
-  func: async ({ database, jwt }, data, { session }) => {
+  func: async ({ database, jwt }, data, { setSession }) => {
     const user = await database.query('user', { email: data.email })
 
     if (!user || !await verifyPassword(data.password, user.passwordHash)) {
@@ -143,7 +140,7 @@ export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
     }
 
     // Set the session - works across HTTP, WebSocket, etc.
-    await session?.set({
+    setSession({
       userId: user.id,
       role: user.role
     })
@@ -151,10 +148,8 @@ export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
     return { token: await jwt.sign({ userId: user.id }), user }
   },
   auth: false,  // No existing session required for login
-  docs: {
-    summary: 'Authenticate a user',
-    tags: ['auth']
-  }
+  title: 'Authenticate a user',
+  tags: ['auth']
 })
 ```
 
@@ -164,13 +159,11 @@ Notice we used `pikkuSessionlessFunc` for the login function and set `auth: fals
 
 ```typescript
 export const logout = pikkuFunc<void, void>({
-  func: async ({}, data, { session }) => {
-    await session?.clear()
+  func: async ({}, _data, { clearSession }) => {
+    clearSession()
   },
-  docs: {
-    summary: 'Logout user',
-    tags: ['auth']
-  }
+  title: 'Logout user',
+  tags: ['auth']
 })
 ```
 
@@ -192,10 +185,8 @@ export const deleteBook = pikkuFunc<{ bookId: string }, void>({
     owner: requireBookOwner,
     admin: requireAdmin
   },
-  docs: {
-    summary: 'Delete a book',
-    tags: ['books']
-  }
+  title: 'Delete a book',
+  tags: ['books']
 })
 ```
 
@@ -205,12 +196,12 @@ Permissions are defined separately and can be reused across functions:
 // permissions.ts
 export const requireBookOwner: PikkuPermission<{ bookId: string }> =
   async ({ database }, data, { session }) => {
-    const user = await session?.get()
-    if (!user?.userId) return false
+    // session IS the user session value directly
+    if (!session?.userId) return false
 
     const book = await database.query('book', {
       bookId: data.bookId,
-      ownerId: user.userId
+      ownerId: session.userId
     })
 
     return !!book
@@ -241,10 +232,8 @@ export const processOrder = pikkuFunc<{ orderId: string }, Order>({
       set: { status: 'completed', paymentId: payment.id }
     })
   },
-  docs: {
-    summary: 'Process an order end-to-end',
-    tags: ['orders']
-  }
+  title: 'Process an order end-to-end',
+  tags: ['orders']
 })
 ```
 
@@ -278,11 +267,8 @@ export const updateBook = pikkuFunc<UpdateBookInput, Book>({
       throw new NotFoundError('Book not found')
     }
   },
-  docs: {
-    summary: 'Update a book',
-    tags: ['books'],
-    errors: ['NotFoundError', 'BadRequestError']
-  }
+  title: 'Update a book',
+  tags: ['books']
 })
 ```
 
@@ -290,24 +276,71 @@ When called via HTTP, `BadRequestError` becomes a 400 response and `NotFoundErro
 
 See [Errors](./errors.md) for more on error handling and creating custom errors.
 
-## Documenting Functions
+## Function Metadata
 
-The `docs` block on each function serves multiple purposes:
+Functions support metadata properties for documentation and API generation:
 
 ```typescript
-docs: {
-  summary: 'A short one-liner describing what this does',
+export const myFunc = pikkuFunc<Input, Output>({
+  func: async (services, data) => { ... },
+  title: 'A short one-liner describing what this does',
   description: 'Optional longer description with more context',
   tags: ['category', 'grouping'],
-  errors: ['NotFoundError', 'ValidationError']
-}
+})
 ```
 
-This documentation is used to:
+This metadata is used to:
 - Generate OpenAPI specifications for your HTTP APIs
 - Create type-safe clients
 - Build developer documentation
 - Help AI agents understand your MCP tools
+
+## Input and Output Validation
+
+Pikku supports runtime validation using [Zod](https://zod.dev):
+
+```typescript
+import { z } from 'zod'
+
+export const createBook = pikkuFunc<CreateBookInput, Book>({
+  func: async ({ database }, data) => {
+    return await database.insert('book', data)
+  },
+  input: z.object({
+    title: z.string().min(1),
+    author: z.string(),
+    publishedYear: z.number().optional()
+  }),
+  output: z.object({
+    id: z.string(),
+    title: z.string(),
+    author: z.string()
+  }),
+  title: 'Create a new book',
+  tags: ['books']
+})
+```
+
+The `input` and `output` schemas provide runtime validation on top of the compile-time TypeScript type checking.
+
+## Visibility Control
+
+Control how your functions are exposed:
+
+```typescript
+export const internalHelper = pikkuFunc<Input, Output>({
+  func: async (services, data) => { ... },
+  internal: true  // Not exposed via external RPC
+})
+
+export const publicAPI = pikkuFunc<Input, Output>({
+  func: async (services, data) => { ... },
+  expose: true  // Explicitly exposed via RPC
+})
+```
+
+- `expose: true` - Makes the function available for external RPC calls
+- `internal: true` - Marks the function as internal-only (not exposed externally)
 
 ## Organizing Your Code
 

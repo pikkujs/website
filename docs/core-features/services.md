@@ -49,10 +49,8 @@ export const getBook = pikkuFunc<{ bookId: string }, Book>({
     }
     return book
   },
-  docs: {
-    summary: 'Get a book by ID',
-    tags: ['books']
-  }
+  title: 'Get a book by ID',
+  tags: ['books']
 })
 ```
 
@@ -259,7 +257,7 @@ The trade-off: Pikku requires you to explicitly create your services in factory 
 Services can throw Pikku errors that are automatically mapped to HTTP status codes:
 
 ```typescript
-import { PikkuError, addError } from '@pikku/core'
+import { PikkuError, addError } from '#pikku'
 
 export class NotEnoughPointsError extends PikkuError {}
 addError(NotEnoughPointsError, { status: 400, message: 'Not enough points!' })

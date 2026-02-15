@@ -57,10 +57,8 @@ export const greetUser = pikkuSessionlessFunc<
       timestamp: new Date().toISOString()
     }
   },
-  docs: {
-    summary: 'Greet a user by name',
-    tags: ['cli']
-  }
+  title: 'Greet a user by name',
+  tags: ['cli']
 })
 ```
 

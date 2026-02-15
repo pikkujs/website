@@ -18,13 +18,11 @@ A permission is a function that returns a boolean:
 import { pikkuPermission } from '#pikku'
 
 export const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
-  const user = await session?.get()
-  return user?.userId != null
+  return session?.userId != null
 })
 
 export const requireAdmin = pikkuPermission(async (_services, _data, { session }) => {
-  const user = await session?.get()
-  return user?.role === 'admin'
+  return session?.role === 'admin'
 })
 ```
 
@@ -41,10 +39,8 @@ export const deleteUser = pikkuFunc<{ userId: string }, void>({
     auth: requireAuth,
     admin: requireAdmin
   },
-  docs: {
-    summary: 'Delete a user',
-    tags: ['users']
-  }
+  title: 'Delete a user',
+  tags: ['users']
 })
 ```
 
@@ -61,7 +57,7 @@ pikkuPermission<DataType>(
 Parameters:
 - **services** - Your singleton services only (destructure what you need). Wire services are not available in permissions.
 - **data** - The input data (typed with `DataType`)
-- **wire** - The wire object (destructure `{ session }` to access session via `session?.get()`)
+- **wire** - The wire object (destructure `{ session }` to access the session directly)
 
 Return `true` to allow access, `false` to deny with 403.
 
@@ -76,14 +72,13 @@ Permissions can inspect the request data:
 ```typescript
 export const requireOwnership = pikkuPermission<{ resourceId: string }>(
   async ({ database }, data, { session }) => {
-    const user = await session?.get()
-    if (!user?.userId) return false
+    if (!session?.userId) return false
 
     const resource = await database.query('resources', {
       where: { id: data.resourceId }
     })
 
-    return resource?.ownerId === user.userId
+    return resource?.ownerId === session.userId
   }
 )
 ```
@@ -105,10 +100,8 @@ export const updateResource = pikkuFunc<
     auth: requireAuth,
     owner: requireOwnership  // Uses resourceId from data
   },
-  docs: {
-    summary: 'Update a resource',
-    tags: ['resources']
-  }
+  title: 'Update a resource',
+  tags: ['resources']
 })
 ```
 
@@ -118,11 +111,10 @@ You can compose multiple permissions:
 
 ```typescript
 export const requirePremium = pikkuPermission(async ({ database }, _data, { session }) => {
-  const user = await session?.get()
-  if (!user?.userId) return false
+  if (!session?.userId) return false
 
   const dbUser = await database.query('users', {
-    where: { id: user.userId }
+    where: { id: session.userId }
   })
 
   return dbUser?.isPremium === true
@@ -139,10 +131,8 @@ export const getPremiumContent = pikkuFunc<{ contentId: string }, Content>({
     auth: requireAuth,
     premium: requirePremium
   },
-  docs: {
-    summary: 'Get premium content',
-    tags: ['content']
-  }
+  title: 'Get premium content',
+  tags: ['content']
 })
 ```
 
@@ -152,8 +142,7 @@ Permissions can perform complex queries:
 
 ```typescript
 export const withinQuota = pikkuPermission(async ({ database }, _data, { session }) => {
-  const user = await session?.get()
-  if (!user?.userId) return false
+  if (!session?.userId) return false
 
   const usage = await database.query('api_usage', {
     where: {
@@ -166,11 +155,11 @@ export const withinQuota = pikkuPermission(async ({ database }, _data, { session
 })
 
 export const activeSubscription = pikkuPermission(
-  async ({ database }, _data, session) => {
+  async ({ database }, _data, { session }) => {
     if (!session?.userId) return false
 
     const sub = await database.query('subscriptions', {
-      where: { userId: user.userId }
+      where: { userId: session.userId }
     })
 
     if (!sub) return false
@@ -224,7 +213,7 @@ If a permission throws an error, it's treated as a server error (500), not unaut
 
 ```typescript
 // ✅ Good - returns false for unauthorized
-export const requireOwnership = pikkuPermission(async ({ database }, data, session) => {
+export const requireOwnership = pikkuPermission(async ({ database }, data, { session }) => {
   if (!session?.userId) return false
 
   try {
@@ -239,7 +228,7 @@ export const requireOwnership = pikkuPermission(async ({ database }, data, sessi
 })
 
 // ❌ Bad - throws for unauthorized
-export const requireOwnership = pikkuPermission(async ({ database }, data, session) => {
+export const requireOwnership = pikkuPermission(async ({ database }, data, { session }) => {
   if (!session?.userId) {
     throw new Error('Not authenticated')  // This returns 500, not 403!
   }
@@ -295,14 +284,11 @@ Don't depend on execution order - each permission should be an independent check
 export const getProfile = pikkuFunc({
   func: async ({ database }, _data, { session }) => {
     // session is guaranteed to exist
-    const user = await session?.get()
-    return await database.query('users', { where: { id: user.userId } })
+    return await database.query('users', { where: { id: session?.userId } })
   },
   auth: true,  // Default
-  docs: {
-    summary: 'Get user profile',
-    tags: ['users']
-  }
+  title: 'Get user profile',
+  tags: ['users']
 })
 
 // No session required
@@ -311,10 +297,8 @@ export const getPublicContent = pikkuFunc({
     return await database.query('content', { where: { id: data.id } })
   },
   auth: false,
-  docs: {
-    summary: 'Get public content',
-    tags: ['content']
-  }
+  title: 'Get public content',
+  tags: ['content']
 })
 ```
 
@@ -322,18 +306,16 @@ export const getPublicContent = pikkuFunc({
 
 ```typescript
 export const deleteAccount = pikkuFunc({
-  func: async ({ database }, _data, session) => {
-    await database.delete('users', { where: { id: session.userId } })
+  func: async ({ database }, _data, { session }) => {
+    await database.delete('users', { where: { id: session?.userId } })
   },
   auth: true,  // Session required
   permissions: {
     verified: requireEmailVerified,  // Additional check
     notBanned: requireNotBanned      // Additional check
   },
-  docs: {
-    summary: 'Delete account',
-    tags: ['users']
-  }
+  title: 'Delete account',
+  tags: ['users']
 })
 ```
 
@@ -343,16 +325,16 @@ Define permissions once, reuse everywhere:
 
 ```typescript
 // permissions.ts
-export const requireAuth = pikkuPermission(async (_services, _data, session) => {
+export const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
   return session?.userId != null
 })
 
-export const requireAdmin = pikkuPermission(async (_services, _data, session) => {
+export const requireAdmin = pikkuPermission(async (_services, _data, { session }) => {
   return session?.role === 'admin'
 })
 
 export const requireOwnership = pikkuPermission<{ resourceId: string }>(
-  async ({ database }, data, session) => {
+  async ({ database }, data, { session }) => {
     if (!session?.userId) return false
     const resource = await database.query('resources', {
       where: { id: data.resourceId }
@@ -373,10 +355,8 @@ export const updateResource = pikkuFunc({
     auth: requireAuth,
     owner: requireOwnership
   },
-  docs: {
-    summary: 'Update resource',
-    tags: ['resources']
-  }
+  title: 'Update resource',
+  tags: ['resources']
 })
 
 export const deleteUser = pikkuFunc({
@@ -385,12 +365,44 @@ export const deleteUser = pikkuFunc({
     auth: requireAuth,
     admin: requireAdmin
   },
-  docs: {
-    summary: 'Delete user',
-    tags: ['users']
-  }
+  title: 'Delete user',
+  tags: ['users']
 })
 ```
+
+## Permission Factories
+
+For permissions that need configuration parameters, use `pikkuPermissionFactory`:
+
+```typescript
+import { pikkuPermissionFactory, pikkuPermission } from '#pikku'
+
+export const requireRole = pikkuPermissionFactory<{ role: string }>(({ role }) => {
+  return pikkuPermission(async (_services, _data, { session }) => {
+    if (!session || session.role !== role) {
+      return false
+    }
+    return true
+  })
+})
+```
+
+Use the factory to create configured permissions:
+
+```typescript
+export const deleteUser = pikkuFunc<{ userId: string }, void>({
+  func: async ({ database }, data) => {
+    await database.delete('users', { where: { id: data.userId } })
+  },
+  permissions: {
+    admin: requireRole({ role: 'admin' })
+  },
+  title: 'Delete a user',
+  tags: ['users']
+})
+```
+
+Permission factories are useful when you have similar permission logic that varies by a parameter - roles, resource types, feature flags, etc.
 
 ## Best Practices
 
@@ -409,7 +421,7 @@ permissions: {
 }
 
 // ❌ Bad - doing too much
-export const requireEverything = pikkuPermission(async (services, data, session) => {
+export const requireEverything = pikkuPermission(async (services, data, { session }) => {
   if (!session?.userId) return false
   if (session.role !== 'admin') return false
   if (!session.emailVerified) return false
@@ -422,7 +434,7 @@ export const requireEverything = pikkuPermission(async (services, data, session)
 ```typescript
 // ✅ Good - caches subscription check
 export const requireSubscription = pikkuPermission(
-  async ({ cache, database }, _data, session) => {
+  async ({ cache, database }, _data, { session }) => {
     if (!session?.userId) return false
 
     const cacheKey = `sub:${session.userId}`
@@ -430,7 +442,7 @@ export const requireSubscription = pikkuPermission(
     if (cached !== null) return cached === 'true'
 
     const sub = await database.query('subscriptions', {
-      where: { userId: user.userId }
+      where: { userId: session.userId }
     })
 
     const isActive = sub && new Date(sub.expiresAt) > new Date()

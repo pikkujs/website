@@ -80,7 +80,7 @@ import {
   NotFoundError,
   ConflictError,
   InternalServerError
-} from '@pikku/core'
+} from '#pikku'
 
 // Validate input and throw appropriate errors
 const createUser: CorePikkuFunction<
@@ -207,7 +207,7 @@ throw new ForbiddenError('Insufficient permissions')
 Pikku maintains an internal registry of error types and their HTTP status codes. You can also register custom errors:
 
 ```typescript
-import { PikkuError, addError } from '@pikku/core'
+import { PikkuError, addError } from '#pikku'
 
 class CustomBusinessError extends PikkuError {}
 

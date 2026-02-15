@@ -33,10 +33,8 @@ export const runDailyMaintenance = pikkuVoidFunc({
     logger.info('Daily maintenance completed')
   },
   auth: false,  // Scheduled tasks don't have user sessions
-  docs: {
-    summary: 'Run daily maintenance tasks',
-    tags: ['maintenance']
-  }
+  title: 'Run daily maintenance tasks',
+  tags: ['maintenance']
 })
 ```
 
@@ -83,10 +81,8 @@ export const generateWeeklyReport = pikkuVoidFunc({
     logger.info('Weekly report sent')
   },
   auth: false,
-  docs: {
-    summary: 'Generate and send weekly report',
-    tags: ['reports']
-  }
+  title: 'Generate and send weekly report',
+  tags: ['reports']
 })
 ```
 
@@ -197,16 +193,16 @@ Middleware is important for scheduled tasks since they don't have automatic obse
 import { pikkuMiddleware } from '#pikku'
 
 export const schedulerMetrics = pikkuMiddleware(
-  async ({ logger }, interaction, next) => {
+  async ({ logger }, { scheduledTask }, next) => {
     // Guard for scheduled task interaction
-    if (!interaction.scheduledTask) {
+    if (!scheduledTask) {
       throw new InvalidMiddlewareInteractionError(
         'schedulerMetrics middleware can only be used with scheduled tasks'
       )
     }
 
     const start = Date.now()
-    const taskName = interaction.scheduledTask.name
+    const taskName = scheduledTask.name
 
     logger.info('Scheduled task started', { task: taskName })
 
@@ -267,11 +263,8 @@ export const syncData = pikkuVoidFunc({
     }
   },
   auth: false,
-  docs: {
-    summary: 'Sync external data',
-    tags: ['sync'],
-    errors: ['DataSyncError']
-  }
+  title: 'Sync external data',
+  tags: ['sync']
 })
 ```
 
@@ -334,10 +327,8 @@ export const monthlyProcessing = pikkuVoidFunc({
     logger.info('Monthly processing completed')
   },
   auth: false,
-  docs: {
-    summary: 'Run all monthly processing tasks',
-    tags: ['monthly', 'batch']
-  }
+  title: 'Run all monthly processing tasks',
+  tags: ['monthly', 'batch']
 })
 ```
 

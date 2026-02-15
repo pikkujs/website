@@ -1,5 +1,5 @@
 ---
-sidebar_position: 10
+sidebar_position: 12
 title: Middleware
 description: How middleware works
 ---
@@ -58,6 +58,122 @@ The middleware:
 - Calls `next()` to continue the chain
 - Can run code before and after the function
 
+## Built-in Middleware
+
+Pikku provides built-in middleware for common authentication and CORS patterns via `@pikku/core/middleware`:
+
+### Bearer Token Authentication
+
+```typescript
+import { authBearer } from '@pikku/core/middleware'
+
+// JWT mode (default) - decodes bearer tokens using the JWT service
+addHTTPMiddleware([authBearer()])
+
+// Static token mode - validates against a fixed token
+addHTTPMiddleware([
+  authBearer({
+    token: {
+      value: process.env.API_TOKEN,
+      userSession: { userId: 'system', role: 'admin' }
+    }
+  })
+])
+```
+
+### API Key Authentication
+
+```typescript
+import { authAPIKey } from '@pikku/core/middleware'
+
+// Look for API key in x-api-key header
+addHTTPMiddleware([authAPIKey({ source: 'header' })])
+
+// Look in query parameter
+addHTTPMiddleware([authAPIKey({ source: 'query' })])
+
+// Check both header and query
+addHTTPMiddleware([authAPIKey({ source: 'all' })])
+```
+
+### Cookie-Based Authentication
+
+```typescript
+import { authCookie } from '@pikku/core/middleware'
+
+addHTTPMiddleware([
+  authCookie({
+    name: 'session',
+    expiresIn: { value: 30, unit: 'day' },
+    options: {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      path: '/'
+    }
+  })
+])
+```
+
+### CORS
+
+```typescript
+import { cors } from '@pikku/core/middleware'
+
+// Allow all origins
+addHTTPMiddleware([cors()])
+
+// Specific origin with credentials
+addHTTPMiddleware([
+  cors({
+    origin: 'https://app.example.com',
+    credentials: true,
+  })
+])
+
+// Multiple origins
+addHTTPMiddleware([
+  cors({
+    origin: ['https://app.example.com', 'https://admin.example.com'],
+  })
+])
+```
+
+## Middleware Factories
+
+Use `pikkuMiddlewareFactory` to create configurable middleware:
+
+```typescript
+import { pikkuMiddlewareFactory, pikkuMiddleware } from '#pikku'
+
+export const rateLimit = pikkuMiddlewareFactory<{
+  maxRequests: number
+  windowMs: number
+}>(({ maxRequests, windowMs }) =>
+  pikkuMiddleware(async ({ cache }, { http }, next) => {
+    if (!http) return next()
+
+    const ip = http.request.header('x-forwarded-for') || 'unknown'
+    const key = `ratelimit:${ip}`
+    const count = (await cache.get(key)) || 0
+
+    if (count >= maxRequests) {
+      throw new TooManyRequestsError()
+    }
+
+    await cache.set(key, count + 1, { ttl: windowMs / 1000 })
+    return next()
+  })
+)
+
+// Usage
+addHTTPMiddleware('/api', [
+  rateLimit({ maxRequests: 100, windowMs: 60000 })
+])
+```
+
+All built-in middleware (`authBearer`, `authAPIKey`, `authCookie`, `cors`) are implemented using `pikkuMiddlewareFactory`.
+
 ## Middleware Signature
 
 ```typescript
@@ -80,21 +196,17 @@ Middleware receives **only singleton services** in the first parameter, not wire
 A common use case is extracting authentication info:
 
 ```typescript
-export const authMiddleware = pikkuMiddleware(async ({ jwt, userSession }, wire, next) => {
+export const authMiddleware = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
   let token = null
 
-  // Extract token based on transport
-  if (wire.http) {
-    token = wire.http.request.getHeader('Authorization')?.replace('Bearer ', '')
-  } else if (wire.channel) {
-    // For channels, auth is typically handled during connection
-    token = wire.channel.channelData?.token
+  if (http) {
+    token = http.request.getHeader('Authorization')?.replace('Bearer ', '')
   }
 
   if (token) {
     try {
       const payload = await jwt.verify(token)
-      await userSession.set({
+      setSession({
         userId: payload.userId,
         role: payload.role
       })
@@ -121,10 +233,8 @@ export const createOrder = pikkuFunc<OrderInput, Order>({
     return await database.insert('orders', data)
   },
   middleware: [validateOrder, checkInventory],
-  docs: {
-    summary: 'Create a new order',
-    tags: ['orders']
-  }
+  title: 'Create a new order',
+  tags: ['orders']
 })
 ```
 
@@ -217,10 +327,8 @@ export const updateSettings = pikkuFunc<SettingsInput, Settings>({
     return await database.update('settings', data)
   },
   middleware: [validateSettings],  // Function-level
-  docs: {
-    summary: 'Update system settings',
-    tags: ['settings']
-  }
+  title: 'Update system settings',
+  tags: ['settings']
 })
 
 // Wiring

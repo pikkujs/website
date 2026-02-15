@@ -26,11 +26,8 @@ export const getBook = pikkuFunc<{ bookId: string }, Book>({
       throw new NotFoundError()
     }
   },
-  docs: {
-    summary: 'Fetch a book by ID',
-    tags: ['books'],
-    errors: ['NotFoundError']
-  }
+  title: 'Fetch a book by ID',
+  tags: ['books']
 })
 ```
 
@@ -84,13 +81,6 @@ wireHTTP({
 
   // Optional - Server-Sent Events
   sse: false,  // Enable SSE for GET routes (default: false)
-
-  // Optional - Documentation
-  docs: {
-    description: 'Delete a book from the library',
-    tags: ['books'],
-    errors: ['NotFoundError', 'UnauthorizedError']
-  }
 })
 ```
 
@@ -231,20 +221,6 @@ wireHTTP({
 
 Your function can then send incremental updates through the `channel` service. See [Server-Sent Events](./server-sent-events.md) for more details.
 
-### Docs
-
-Documentation for OpenAPI generation:
-
-```typescript
-docs: {
-  description: 'Detailed description of what this endpoint does',
-  tags: ['category'],
-  errors: ['NotFoundError', 'BadRequestError']
-}
-```
-
-Combined with the `docs` on your function, this generates complete OpenAPI documentation. See [OpenAPI](./openapi.md) for more details.
-
 ## How Data Flows
 
 Pikku automatically merges data from multiple sources into a single, typed input for your function:
@@ -323,11 +299,8 @@ export const borrowBook = pikkuFunc<{ bookId: string }, BorrowResult>({
       set: { status: 'borrowed' }
     })
   },
-  docs: {
-    summary: 'Borrow a book',
-    tags: ['books'],
-    errors: ['NotFoundError', 'BookNotAvailableError']
-  }
+  title: 'Borrow a book',
+  tags: ['books']
 })
 ```
 

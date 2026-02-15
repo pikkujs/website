@@ -35,11 +35,9 @@ export const getProjectDocs = pikkuMCPResourceFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Get project documentation',
-    description: 'Returns documentation for a specific section',
-    tags: ['mcp', 'docs']
-  }
+  title: 'Get project documentation',
+  description: 'Returns documentation for a specific section',
+  tags: ['mcp', 'docs']
 })
 ```
 
@@ -113,10 +111,8 @@ export const searchCode = pikkuMCPResourceFunc<
       text: r.codeSnippet
     }))
   },
-  docs: {
-    summary: 'Search codebase',
-    tags: ['mcp', 'code-search']
-  }
+  title: 'Search codebase',
+  tags: ['mcp', 'code-search']
 })
 ```
 
@@ -148,10 +144,8 @@ export const createIssue = pikkuMCPToolFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Create a new issue',
-    tags: ['mcp', 'issues']
-  }
+  title: 'Create a new issue',
+  tags: ['mcp', 'issues']
 })
 ```
 
@@ -183,10 +177,8 @@ export const codeReviewPrompt = pikkuMCPPromptFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Generate code review prompt',
-    tags: ['mcp', 'code-review']
-  }
+  title: 'Generate code review prompt',
+  tags: ['mcp', 'code-review']
 })
 ```
 
@@ -273,11 +265,8 @@ export const getFile = pikkuMCPResourceFunc<
       }
     ]
   },
-  docs: {
-    summary: 'Get file contents',
-    tags: ['mcp'],
-    errors: ['ResourceNotFoundError']
-  }
+  title: 'Get file contents',
+  tags: ['mcp']
 })
 ```
 

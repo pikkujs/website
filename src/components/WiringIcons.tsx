@@ -77,6 +77,14 @@ export const MCPIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }
   </div>
 );
 
+export const TriggerIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
+  <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-amber-600 dark:text-amber-400" fill="currentColor">
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+    </svg>
+  </div>
+);
+
 export const CLIIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
     <svg width={size} height={size} viewBox="0 0 24 24" className="text-cyan-600 dark:text-cyan-400" fill="none">
@@ -103,6 +111,7 @@ export const WiringIcon: React.FC<WiringIconComponentProps> = ({ wiringId, class
     rpc: RPCIcon,
     mcp: MCPIcon,
     cli: CLIIcon,
+    trigger: TriggerIcon,
   };
 
   const IconComponent = iconComponents[wiringId];
