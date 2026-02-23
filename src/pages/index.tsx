@@ -588,6 +588,100 @@ function UsedBySection() {
   );
 }
 
+/** Agents Section */
+function AgentsSection() {
+  return (
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-left md:text-center mb-12">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
+            <Heading as="h2" className="text-4xl md:text-5xl font-bold">
+              AI Agents with Full Backend Access
+            </Heading>
+            <span className="inline-block bg-primary text-white text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+              Alpha
+            </span>
+          </div>
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+            Define agents that use your existing functions as tools. Same auth, same permissions, same services — powered by any LLM.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+          {/* Left: Features */}
+          <div className="space-y-6">
+              <div className="flex flex-col items-start mb-2">
+                  <h3 className="text-xl font-bold mb-1">1. Functions as Tools</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Your existing Pikku functions become agent tools automatically. No adapters, no glue code — just reference the functions you already have.
+                  </p>
+              </div>
+              <div className="flex flex-col items-start mb-2">
+                  <h3 className="text-xl font-bold mb-1">2. Auth & Permissions Built In</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Agents inherit the same session, permissions, and middleware as every other protocol. No separate security layer to maintain.
+                  </p>
+              </div>
+              <div className="flex flex-col items-start mb-2">
+                  <h3 className="text-xl font-bold mb-1">3. Any LLM Provider</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Bring your own model — OpenAI, Anthropic, or any provider. Pikku handles tool calling, context, and execution.
+                  </p>
+              </div>
+              <div className="flex flex-col items-start mb-2">
+                  <h3 className="text-xl font-bold mb-1">4. Test in the Console</h3>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Chat with agents directly in the Pikku Console playground. Iterate on prompts and tool configurations without building a frontend.
+                  </p>
+              </div>
+          </div>
+
+          {/* Right: Code Example */}
+          <div className="overflow-x-auto">
+            <CodeBlock language="typescript" title="src/agents/support.agent.ts">
+{`export const supportAgent = pikkuAgent({
+  name: 'support',
+  description: 'Customer support agent',
+  instructions: \`You are a helpful support agent.
+Look up the customer's account and recent
+orders to assist with their questions.\`,
+  tools: [
+    getCustomer,
+    getOrders,
+    createTicket,
+    sendEmail
+  ],
+  model: 'claude-sonnet-4-20250514'
+})
+
+// Wire to HTTP for chat endpoint
+wireHTTP({
+  method: 'post',
+  route: '/api/agent/support',
+  func: supportAgent
+})
+
+// Also available via WebSocket
+wireChannel({
+  name: 'support',
+  onMessageWiring: {
+    action: { supportAgent }
+  }
+})`}
+            </CodeBlock>
+          </div>
+        </div>
+
+        <div className="mt-12 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+            Perfect for customer support, data analysis, admin automation, and any task where AI needs access to your backend.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** Workflows Section */
 function WorkflowsSection() {
   return (
@@ -598,9 +692,6 @@ function WorkflowsSection() {
             <Heading as="h2" className="text-4xl md:text-5xl font-bold">
               Long-Running Workflows with Built-in Resilience
             </Heading>
-            <span className="inline-block bg-primary text-white text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
-              Coming in 0.11
-            </span>
           </div>
           <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
             Build complex, multi-step processes that survive failures, handle time delays, and maintain state across server restarts.
@@ -723,6 +814,73 @@ function TestimonialsSection() {
               </div>
             </Card>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** The Console */
+function ConsoleSection() {
+  const features = [
+    {
+      icon: '🔍',
+      title: 'Explore Everything',
+      desc: 'Browse functions, routes, channels, MCP tools, and CLI commands in a structured tree view'
+    },
+    {
+      icon: '🔄',
+      title: 'Run Workflows',
+      desc: 'Visualize workflow graphs, start runs with custom input, and stream progress in real time'
+    },
+    {
+      icon: '🤖',
+      title: 'Agent Playground',
+      desc: 'Chat with any registered agent directly in the browser to test prompts and tool integrations'
+    },
+    {
+      icon: '🔑',
+      title: 'Manage Configuration',
+      desc: 'View and edit secrets and variables per environment, with built-in OAuth2 flow support'
+    }
+  ];
+
+  return (
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-left md:text-center mb-12">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
+            <Heading as="h2" className="text-4xl md:text-5xl font-bold">
+              The Pikku Console
+            </Heading>
+            <span className="inline-block bg-primary text-white text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
+              Alpha
+            </span>
+          </div>
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+            A per-environment visual control plane for your application. Explore, test, and manage everything from one UI.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+          {features.map((feature, idx) => (
+            <div key={idx} className="flex flex-col items-start p-6 bg-neutral-50 dark:bg-neutral-900 rounded-lg card-shadow">
+              <span className="text-3xl mb-3">{feature.icon}</span>
+              <div className="text-left">
+                <div className="text-lg font-bold mb-2">{feature.title}</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">{feature.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link
+            to="/docs/console"
+            className="text-primary hover:underline font-medium text-lg inline-flex items-center"
+          >
+            Learn more about the Console →
+          </Link>
         </div>
       </div>
     </section>
@@ -1084,7 +1242,9 @@ export default function Home() {
         <UsedBySection />
         <AhaMomentSection />
         <WorkflowsSection />
-        <TestimonialsSection />
+        <AgentsSection />
+        <ConsoleSection />
+        {/* <TestimonialsSection /> */}
         <ProductionFeaturesSection />
         {/* <HowTeamsUseItSection /> */}
         <ProblemSolutionSection />

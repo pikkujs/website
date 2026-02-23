@@ -74,8 +74,8 @@ New to Pikku? Start here:
 
 ### Migrate from Another Framework / Integrate Pikku with Another Framework
 
-- From Express (TODO)
-- From Hono (TODO)
+- From Express — *Coming Soon*
+- From Hono — *Coming Soon*
 
 ## Still Need Help?
 

@@ -24,6 +24,15 @@ const sidebars: SidebarsConfig = {
     ]
   }, {
     type: 'category',
+    label: 'The Console',
+    description: 'Visual control plane for exploring and managing your app',
+    items: [
+      'console/index',
+      'console/getting-started',
+      'console/features'
+    ]
+  }, {
+    type: 'category',
     label: 'Wiring',
     description: 'Connect your functions to different protocols',
     collapsible: true,

@@ -189,6 +189,10 @@ const runId = await rpc.startWorkflow('onboarding', {
 })
 ```
 
+## Visualizing Workflows in the Console
+
+The [Pikku Console](/docs/console) renders your workflows as interactive visual graphs, lets you start workflow runs with custom input, and streams execution progress in real time. See [Console Features](/docs/console/features#workflows) for details.
+
 ## Next Steps
 
 - **[Getting Started](./getting-started.md)**: Set up workflows in your project

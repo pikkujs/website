@@ -111,6 +111,12 @@ The client handles:
 
 **Separate OAuth secrets**: Keep app secrets (`secretId`) separate from tokens (`tokenSecretId`). App secrets rarely change; tokens change frequently.
 
+## Managing Secrets with the Console
+
+The [Pikku Console](/docs/console) provides a visual interface for managing secrets per environment. You can view, set, and update secret values — including running OAuth2 authorization flows for credentials like GitHub or Stripe — without touching code or environment files.
+
+See [Console Features](/docs/console/features#configuration) for details.
+
 ## Next Steps
 
 - [Variables](./variables.md) — Non-sensitive configuration management

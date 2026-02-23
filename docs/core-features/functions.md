@@ -239,8 +239,6 @@ export const processOrder = pikkuFunc<{ orderId: string }, Order>({
 
 :::tip
 RPC calls are great for orchestrating complex workflows while maintaining security boundaries. Each `rpc.invoke()` still runs through the full auth and permission checks.
-
-<!-- TODO: Document bailout mechanism for skipping auth/permissions in trusted contexts -->
 :::
 
 See [RPC (Remote Procedure Calls)](../wiring/rpcs/index.md) for more details on when and how to use RPC.

@@ -122,9 +122,9 @@ const config: Config = {
     image: 'img/pikku.png',
     respectPrefersColorScheme: true,
     announcementBar: {
-      id: 'pikku-0.10',
+      id: 'pikku-console',
       content:
-        '🚀 <strong>Pikku 0.10 is here!</strong> — Smart tree-shaking, CLI support, and middleware improvements. <a target="_blank" rel="noopener noreferrer" href="/blog/2025/11/09/pikku-0.10">Read more →</a>',
+        '🚀 <strong>New: The Pikku Console</strong> — A visual control plane to explore functions, test agents, and manage your app. <a href="/docs/console">Learn more →</a>',
       backgroundColor: '#4F46E5',
       textColor: '#FFFFFF',
       isCloseable: true,

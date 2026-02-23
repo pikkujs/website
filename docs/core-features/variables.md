@@ -83,3 +83,7 @@ const redisConfigSchema = z.object({
   port: z.string().default('6379'),
 })
 ```
+
+## Managing Variables with the Console
+
+The [Pikku Console](/docs/console) provides a visual interface for viewing and editing variables per environment. See [Console Features](/docs/console/features#configuration) for details.

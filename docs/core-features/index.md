@@ -131,5 +131,6 @@ Now that you have a working Pikku project, you're ready to dive deeper:
 - **[HTTP](/docs/wiring/http)** – Wire functions to HTTP endpoints with routing, query params, and more
 - **[Channels](/docs/wiring/channels)** – Add real-time WebSocket communication
 - **[Scheduled Tasks](/docs/wiring/scheduled-tasks)** – Run functions on a schedule (cron jobs)
+- **[The Console](/docs/console)** – Explore your app visually with the Pikku Console
 
 Questions or need help? Check out our [GitHub discussions](https://github.com/pikkujs/pikku) – we're happy to help you get going with Pikku!
