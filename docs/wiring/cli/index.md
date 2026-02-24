@@ -195,6 +195,60 @@ export const buildApp = pikkuSessionlessFunc({
 })
 ```
 
+## Configuration Reference
+
+Add CLI entrypoints to `pikku.config.json`:
+
+```json
+{
+  "cli": {
+    "entrypoints": {
+      "my-cli": [
+        {
+          "type": "local",
+          "path": ".pikku/cli-local.gen.ts"
+        },
+        {
+          "type": "channel",
+          "name": "cli",
+          "route": "/cli",
+          "wirePath": ".pikku/cli-channel.ts",
+          "path": ".pikku/cli-remote.gen.ts"
+        }
+      ]
+    }
+  }
+}
+```
+
+Run `npx pikku` to generate the CLI executables. Each entrypoint can have both local and remote modes — they share the same `wireCLI` definition.
+
+### wireCLI Options
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `program` | `string` | The CLI program name (shown in help text) |
+| `description` | `string` | Program description |
+| `commands` | `Record<string, Command>` | Top-level commands |
+
+### pikkuCLICommand Options
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `func` | `PikkuFunc` | The Pikku function to invoke |
+| `parameters` | `string` | Positional params: `<required>` `[optional]` |
+| `description` | `string` | Command description for help text |
+| `options` | `Record<string, Option>` | Named flags and options |
+| `render` | `CLIRender` | Output renderer function |
+
+### Option Properties
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `description` | `string` | Help text for the option |
+| `short` | `string` | Single-letter alias (e.g., `'v'` for `--verbose` / `-v`) |
+| `default` | `any` | Default value (also determines the type: `false` → boolean flag) |
+
 ## Next Steps
 
 - **[Local CLI](./local-cli.mdx)** - Run commands directly in-process

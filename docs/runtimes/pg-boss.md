@@ -133,6 +133,78 @@ Failed jobs are automatically retried with PostgreSQL-backed persistence:
 - Dead letter queue functionality
 - Full error logging and tracking
 
+## PgBossServiceFactory API
+
+The `PgBossServiceFactory` from `@pikku/queue-pg-boss` manages the lifecycle of all pg-boss components:
+
+```typescript
+import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
+
+const pgBossFactory = new PgBossServiceFactory({
+  connectionString: process.env.DATABASE_URL!,
+})
+await pgBossFactory.init()
+```
+
+### Key Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `getQueueService()` | `QueueService` | Publishes jobs to queues |
+| `getQueueWorkers()` | `QueueWorkers` | Processes jobs from queues |
+| `getSchedulerService()` | `SchedulerService` | Manages scheduled/recurring tasks |
+| `init()` | `Promise<void>` | Initializes pg-boss and creates tables |
+| `close()` | `Promise<void>` | Shuts down pg-boss gracefully |
+
+### Worker Registration
+
+```typescript
+import { registerQueueWorkers } from '@pikku/core/queue'
+
+const queueWorkers = pgBossFactory.getQueueWorkers()
+registerQueueWorkers(queueWorkers, singletonServices, createWireServices)
+```
+
+### Full Setup with Workflows
+
+```typescript
+import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
+import { registerQueueWorkers } from '@pikku/core/queue'
+import { createSchedulerRuntimeHandlers } from '@pikku/core/scheduler'
+
+const pgBossFactory = new PgBossServiceFactory({
+  connectionString: process.env.DATABASE_URL!,
+})
+await pgBossFactory.init()
+
+const singletonServices = await createSingletonServices(config, {
+  queueService: pgBossFactory.getQueueService(),
+})
+
+// Register queue workers
+const queueWorkers = pgBossFactory.getQueueWorkers()
+registerQueueWorkers(queueWorkers, singletonServices, createWireServices)
+
+// Set up scheduler
+const schedulerHandlers = createSchedulerRuntimeHandlers(
+  singletonServices,
+  createWireServices
+)
+const schedulerService = pgBossFactory.getSchedulerService()
+schedulerService.setHandlers(schedulerHandlers)
+await schedulerService.start()
+```
+
+### Graceful Shutdown
+
+```typescript
+process.on('SIGTERM', async () => {
+  await schedulerService.stop()
+  await pgBossFactory.close()
+  process.exit(0)
+})
+```
+
 ## Advantages
 
 - **ACID Compliance**: Full transaction support

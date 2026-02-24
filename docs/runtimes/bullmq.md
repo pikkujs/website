@@ -101,6 +101,93 @@ BullMQ provides built-in monitoring capabilities:
 - Failed job inspection and retry
 - Real-time queue monitoring
 
+## BullServiceFactory API
+
+The `BullServiceFactory` from `@pikku/queue-bullmq` manages the lifecycle of all BullMQ components:
+
+```typescript
+import { BullServiceFactory } from '@pikku/queue-bullmq'
+
+const bullFactory = new BullServiceFactory({
+  redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+})
+```
+
+### Key Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `getQueueService()` | `QueueService` | Publishes jobs to queues |
+| `getQueueWorkers()` | `QueueWorkers` | Processes jobs from queues |
+| `getSchedulerService()` | `SchedulerService` | Manages scheduled/recurring tasks |
+
+### Worker Registration
+
+Use `registerQueueWorkers()` to set up workers with the factory:
+
+```typescript
+import { registerQueueWorkers } from '@pikku/core/queue'
+
+const queueWorkers = bullFactory.getQueueWorkers()
+registerQueueWorkers(queueWorkers, singletonServices, createWireServices)
+```
+
+### Scheduler Handlers
+
+For scheduled tasks, use `createSchedulerRuntimeHandlers()`:
+
+```typescript
+import { createSchedulerRuntimeHandlers } from '@pikku/core/scheduler'
+
+const schedulerHandlers = createSchedulerRuntimeHandlers(
+  singletonServices,
+  createWireServices
+)
+
+const schedulerService = bullFactory.getSchedulerService()
+schedulerService.setHandlers(schedulerHandlers)
+await schedulerService.start()
+```
+
+### Full Setup with Workflows
+
+```typescript
+import { BullServiceFactory } from '@pikku/queue-bullmq'
+import { registerQueueWorkers } from '@pikku/core/queue'
+import { createSchedulerRuntimeHandlers } from '@pikku/core/scheduler'
+
+const bullFactory = new BullServiceFactory({
+  redisUrl: process.env.REDIS_URL!,
+})
+
+const singletonServices = await createSingletonServices(config, {
+  queueService: bullFactory.getQueueService(),
+})
+
+// Register queue workers
+const queueWorkers = bullFactory.getQueueWorkers()
+registerQueueWorkers(queueWorkers, singletonServices, createWireServices)
+
+// Set up scheduler
+const schedulerHandlers = createSchedulerRuntimeHandlers(
+  singletonServices,
+  createWireServices
+)
+const schedulerService = bullFactory.getSchedulerService()
+schedulerService.setHandlers(schedulerHandlers)
+await schedulerService.start()
+```
+
+### Graceful Shutdown
+
+```typescript
+process.on('SIGTERM', async () => {
+  await schedulerService.stop()
+  await queueWorkers.close()
+  process.exit(0)
+})
+```
+
 ## Error Handling
 
 Failed jobs are automatically retried based on configuration. Use proper error handling in your worker functions to distinguish between retryable and non-retryable errors.

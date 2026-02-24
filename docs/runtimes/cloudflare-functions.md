@@ -108,3 +108,104 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/cloudflare-w
 ```
 
 This file acts as the entry point and routes requests to the Pikku runtime.
+
+## Scheduled Tasks
+
+Cloudflare Workers support cron triggers via the `scheduled` event handler:
+
+```typescript
+import { runScheduled } from '@pikku/cloudflare'
+
+export default {
+  async fetch(request, env, ctx) {
+    // HTTP handling...
+  },
+
+  async scheduled(event, env, ctx) {
+    const singletonServices = await setupServices(env)
+    await runScheduled(event, singletonServices)
+  },
+}
+```
+
+Configure cron schedules in `wrangler.toml`:
+
+```toml
+[triggers]
+crons = ["*/5 * * * *", "0 9 * * 1"]
+```
+
+`runScheduled` matches the cron pattern from the event against your registered scheduled tasks and executes the matching ones.
+
+## WebSocket with Durable Objects
+
+Cloudflare Workers support WebSocket connections using [Durable Objects](https://developers.cloudflare.com/durable-objects/) and WebSocket Hibernation:
+
+```typescript
+import { CloudflareWebSocketHibernationServer } from '@pikku/cloudflare'
+
+export class WebSocketServer extends CloudflareWebSocketHibernationServer {
+  constructor(state: DurableObjectState, env: Env) {
+    super(state, env, async (env) => {
+      return setupServices(env)
+    }, createWireServices)
+  }
+}
+```
+
+The `CloudflareWebSocketHibernationServer` abstract class handles:
+- WebSocket upgrade requests
+- Connection lifecycle (connect, message, disconnect, error)
+- WebSocket hibernation for cost-effective idle connections
+- Channel store using Durable Object storage
+
+### wrangler.toml Configuration
+
+```toml
+[durable_objects]
+bindings = [
+  { name = "WEBSOCKET_SERVER", class_name = "WebSocketServer" }
+]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["WebSocketServer"]
+```
+
+### HTTP Entry Point with WebSocket Upgrade
+
+```typescript
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url)
+
+    // Route WebSocket upgrades to Durable Object
+    if (request.headers.get('Upgrade') === 'websocket') {
+      const id = env.WEBSOCKET_SERVER.idFromName('default')
+      const stub = env.WEBSOCKET_SERVER.get(id)
+      return stub.fetch(request)
+    }
+
+    // Handle HTTP normally
+    const singletonServices = await setupServices(env)
+    return runFetch(request, singletonServices, createWireServices)
+  },
+}
+```
+
+## Environment Variables
+
+Cloudflare Workers access environment variables through the `env` parameter rather than `process.env`. The `setupServices` helper bridges this:
+
+```typescript
+import { LocalVariablesService } from '@pikku/core/services'
+
+export const setupServices = async (env: Record<string, string>) => {
+  const config = await createConfig()
+  return createSingletonServices(config, {
+    variables: new LocalVariablesService(env),
+  })
+}
+```
+
+This maps Cloudflare's `env` bindings to Pikku's `VariablesService`, making them accessible via `variables.getVariable('MY_VAR')` in your functions.

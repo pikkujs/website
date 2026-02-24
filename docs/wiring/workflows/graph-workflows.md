@@ -2,22 +2,17 @@
 sidebar_position: 4
 title: Graph Workflows
 description: Declarative node-based workflow definitions
-draft: true
 ---
 
 # Graph Workflows
 
-:::caution Draft Documentation
-This feature is still being finalized. The API may change.
-:::
-
-Graph workflows define multi-step processes declaratively as a graph of nodes. Instead of writing imperative code with `workflow.do()` and `workflow.sleep()`, you describe the workflow structure as data - nodes, connections, and data flow.
+Graph workflows define multi-step processes declaratively as a graph of nodes. Instead of writing imperative code with `workflow.do()` and `workflow.sleep()`, you describe the workflow structure as data — nodes, connections, and data flow between them.
 
 ## When to Use Graph Workflows
 
 **Use graph workflows when:**
 - You want a visual/declarative workflow definition
-- The workflow will be edited in Pikku Forge (visual editor)
+- The workflow will be viewed or edited in the [Pikku Console](/docs/console)
 - You prefer configuration over code
 - The flow is primarily RPC calls with data passing between them
 
@@ -29,45 +24,34 @@ Graph workflows define multi-step processes declaratively as a graph of nodes. I
 ## Basic Example
 
 ```typescript
-import { pikkuWorkflowGraph, wireWorkflow } from '#pikku/workflow'
+import { pikkuWorkflowGraph } from './.pikku/workflow/pikku-workflow-types.gen'
 
-export const orderWorkflow = pikkuWorkflowGraph({
-  description: 'Process a new order',
-  tags: ['orders'],
+export const todoReviewWorkflow = pikkuWorkflowGraph({
+  description: 'Review overdue todos and send summary notification',
+  tags: ['review', 'overdue', 'notification'],
   nodes: {
-    validateOrder: 'validateOrder',
-    processPayment: 'processPayment',
-    sendConfirmation: 'sendOrderConfirmation',
-  },
-  wires: {
-    http: [{ route: '/orders', method: 'post', startNode: 'validateOrder' }],
+    fetchOverdue: 'fetchOverdueTodos',
+    sendSummary: 'sendOverdueSummary',
   },
   config: {
-    validateOrder: {
-      next: 'processPayment',
+    fetchOverdue: {
+      input: () => ({ userId: 'user1' }),
+      next: 'sendSummary',
     },
-    processPayment: {
+    sendSummary: {
       input: (ref) => ({
-        orderId: ref('validateOrder', 'orderId'),
-        amount: ref('validateOrder', 'total'),
-      }),
-      next: 'sendConfirmation',
-    },
-    sendConfirmation: {
-      input: (ref) => ({
-        email: ref('input', 'customerEmail'),
-        orderId: ref('validateOrder', 'orderId'),
+        userId: ref('fetchOverdue', 'userId'),
+        overdueCount: ref('fetchOverdue', 'count'),
+        todos: ref('fetchOverdue', 'todos'),
       }),
     },
   },
 })
-
-wireWorkflow({ graph: orderWorkflow })
 ```
 
 ## Structure
 
-A graph workflow has four main parts:
+A graph workflow has three main parts:
 
 ### nodes
 
@@ -81,21 +65,9 @@ nodes: {
 }
 ```
 
-### wires
-
-Defines how the workflow can be triggered:
-
-```typescript
-wires: {
-  http: [{ route: '/signup', method: 'post', startNode: 'createUser' }],
-  schedule: [{ cron: '0 9 * * *', startNode: 'dailyReport' }],
-  queue: [{ name: 'orders', startNode: 'processOrder' }],
-}
-```
-
 ### config
 
-Configures each node's behavior:
+Configures each node's input, flow control, and error handling:
 
 ```typescript
 config: {
@@ -223,7 +195,6 @@ config: {
   handlePaymentError: {
     input: (ref) => ({
       orderId: ref('input', 'orderId'),
-      // error details available in the error handler
     }),
   },
 }
@@ -239,11 +210,9 @@ export const updateProgress = pikkuSessionlessFunc<
   { updated: boolean }
 >({
   func: async ({ graph }, { step }) => {
-    // Get current state
     const state = await graph.getState()
     const completedSteps = (state.completedSteps as string[]) || []
 
-    // Update state
     await graph.setState('completedSteps', [...completedSteps, step])
     await graph.setState('lastUpdated', new Date().toISOString())
 
@@ -267,37 +236,30 @@ interface PikkuGraphWire {
 }
 ```
 
-## Wiring the Workflow
+## Wiring to HTTP
 
-After defining the graph, wire it to enable triggers:
+Use `graphStart()` to wire a graph workflow to an HTTP endpoint:
 
 ```typescript
-wireWorkflow({
-  graph: orderWorkflow,
-  enabled: true,   // default: true
+import { graphStart } from './.pikku/workflow/pikku-workflow-types.gen'
+import { wireHTTP } from './.pikku/pikku-types.gen'
+
+wireHTTP({
+  auth: false,
+  method: 'post',
+  route: '/workflow/review',
+  func: graphStart('todoReviewWorkflow', 'fetchOverdue'),
 })
 ```
 
-## Trigger Types
+`graphStart()` takes the workflow name and the entry node ID. It returns a function that starts the workflow and returns a `{ runId }` response.
 
-Graph workflows support multiple trigger types in the `wires` configuration:
+## Visualizing in the Console
 
-```typescript
-wires: {
-  // HTTP endpoint
-  http: [{ route: '/start', method: 'post', startNode: 'entry' }],
+The [Pikku Console](/docs/console) renders graph workflows as interactive visual graphs, showing nodes, connections, and execution progress in real time. See [Console Features](/docs/console/features#workflows) for details.
 
-  // Scheduled (cron)
-  schedule: [{ cron: '0 * * * *', startNode: 'hourlyJob' }],
+## Next Steps
 
-  // Queue message
-  queue: [{ name: 'orders', startNode: 'processOrder' }],
-
-  // WebSocket channel
-  channel: [{
-    name: 'notifications',
-    onConnect: 'handleConnect',
-    onMessage: 'handleMessage',
-  }],
-}
-```
+- **[DSL Workflows](./index.md)**: Imperative workflow style with `workflow.do()` and `workflow.sleep()`
+- **[Steps](./steps.md)**: Step types and retry configuration
+- **[Configuration](./configuration.md)**: State storage and execution mode setup

@@ -273,6 +273,45 @@ export const myTrigger = pikkuTriggerFunc<Input, Output>({
 })
 ```
 
+## Trigger Service
+
+Triggers are managed by a `TriggerService` that handles their lifecycle. Pikku provides `InMemoryTriggerService` for single-process deployments:
+
+```typescript
+import { InMemoryTriggerService } from '@pikku/core/services'
+
+const triggerService = new InMemoryTriggerService()
+
+const singletonServices = await createSingletonServices(config, {
+  triggerService,
+})
+
+// After server startup, start triggers
+triggerService.setServices(singletonServices, createWireServices)
+await triggerService.start()
+
+// On shutdown
+await triggerService.stop()
+```
+
+The `InMemoryTriggerService`:
+1. Reads all `wireTrigger` and `wireTriggerSource` registrations from state
+2. For each source that has a matching trigger declaration, sets up the subscription
+3. When `trigger.invoke()` is called, dispatches to the target via RPC
+4. On `stop()`, calls the teardown function returned by each trigger source
+
+### TriggerService Interface
+
+```typescript
+interface TriggerService {
+  setServices(singletonServices, createWireServices?): void
+  start(): Promise<void>
+  stop(): Promise<void>
+}
+```
+
+For workflows that use both queues and triggers, initialize the trigger service after the queue and workflow services are ready.
+
 ## Use Cases
 
 - **Message queues** — Redis pub/sub, AMQP, MQTT

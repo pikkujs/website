@@ -145,3 +145,116 @@ export const myScheduledTask: ScheduledHandler = async () => {
 ```
 
 Since this function is only triggered by AWS Lambda and does not rely on additional AWS-specific logic, no further configuration is needed.
+
+## SQS Queue Worker
+
+Process SQS messages as Pikku queue jobs using `runSQSQueueWorker`:
+
+```typescript
+import { SQSHandler } from 'aws-lambda'
+import { runSQSQueueWorker } from '@pikku/lambda'
+
+export const mySQSWorker: SQSHandler = async (event) => {
+  const singletonServices = await coldStart()
+  return await runSQSQueueWorker({
+    singletonServices,
+    createWireServices,
+    event,
+  })
+}
+```
+
+`runSQSQueueWorker` processes each SQS record as a queue job and returns an `SQSBatchResponse` with batch item failures, so failed messages are automatically retried.
+
+### Serverless Framework Configuration
+
+```yaml
+functions:
+  sqsWorker:
+    handler: src/main.mySQSWorker
+    events:
+      - sqs:
+          arn: !GetAtt MyQueue.Arn
+          batchSize: 10
+          functionResponseType: ReportBatchItemFailures
+```
+
+## WebSocket (API Gateway)
+
+Pikku supports WebSocket connections through API Gateway using three Lambda handlers:
+
+```typescript
+import {
+  connectWebsocket,
+  disconnectWebsocket,
+  processWebsocketMessage,
+} from '@pikku/lambda'
+import { PgChannelStore, PgEventHubStore } from '@pikku/pg'
+
+export const wsConnect = async (event) => {
+  const singletonServices = await coldStart()
+  return connectWebsocket(event, singletonServices)
+}
+
+export const wsDisconnect = async (event) => {
+  const singletonServices = await coldStart()
+  return disconnectWebsocket(event, singletonServices)
+}
+
+export const wsMessage = async (event) => {
+  const singletonServices = await coldStart()
+  return processWebsocketMessage(event, singletonServices, createWireServices)
+}
+```
+
+WebSocket support requires:
+- **API Gateway WebSocket API** — a separate API Gateway configured for WebSocket
+- **`PgChannelStore`** or equivalent — persists connection state across Lambda invocations
+- **`LambdaEventHubService`** — sends messages back to connected clients via API Gateway Management API
+
+### Serverless Framework Configuration
+
+```yaml
+functions:
+  wsConnect:
+    handler: src/websocket.wsConnect
+    events:
+      - websocket: $connect
+  wsDisconnect:
+    handler: src/websocket.wsDisconnect
+    events:
+      - websocket: $disconnect
+  wsMessage:
+    handler: src/websocket.wsMessage
+    events:
+      - websocket: $default
+```
+
+## Multi-Handler Pattern
+
+A single Lambda file can export multiple handlers for different event sources:
+
+```typescript
+// main.ts
+export { httpRoute } from './http-handler'
+export { myScheduledTask } from './scheduler-handler'
+export { mySQSWorker } from './sqs-handler'
+```
+
+## Cold Start Optimization
+
+The cold start pattern caches singleton services at the module level so they persist across invocations within the same Lambda container:
+
+```typescript
+let cachedServices: SingletonServices | undefined
+
+export const coldStart = async () => {
+  if (!cachedServices) {
+    const config = await createConfig()
+    cachedServices = await createSingletonServices(config)
+  }
+  return cachedServices
+}
+```
+
+This avoids re-initializing database connections, JWT services, and other singletons on warm invocations.

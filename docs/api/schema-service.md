@@ -2,7 +2,62 @@
 title: SchemaService
 ---
 
-The SchemaService interface provides schema compilation, validation, and management capabilities in Pikku. It allows you to define, compile, and validate data against JSON schemas.
+The SchemaService validates function inputs and outputs against JSON schemas at runtime. Pikku automatically compiles schemas from your Standard Schema definitions (Zod, ArkType, Valibot, etc.) during bootstrap, and validates data on every function call.
+
+You don't call the SchemaService directly — Pikku handles it internally. You just need to choose an implementation and register it in your singleton services.
+
+## Choosing an Implementation
+
+| | `@pikku/schema-ajv` | `@pikku/schema-cfworker` |
+|---|---|---|
+| **Package** | `AjvSchemaService` | `CFWorkerSchemaService` |
+| **Backend** | [Ajv](https://ajv.js.org/) + ajv-formats | [@cfworker/json-schema](https://github.com/cfworker/cfworker) |
+| **Runtime** | Node.js, Bun, Deno | Cloudflare Workers, Node.js |
+| **Format validation** | Built-in (email, date, uri, etc.) | Not included |
+| **Type coercion** | Yes (`coerceTypes: true`) | No |
+| **Default values** | Yes (`useDefaults: true`) | No |
+| **Best for** | Node.js servers | Cloudflare Workers (no Node.js APIs) |
+
+### AJV Schema Service
+
+The default choice for Node.js environments. Supports format validation, type coercion, and default value injection:
+
+```bash npm2yarn
+npm install @pikku/schema-ajv
+```
+
+```typescript
+import { AjvSchemaService } from '@pikku/schema-ajv'
+
+const singletonServices = await createSingletonServices(config, {
+  schemaService: new AjvSchemaService(logger),
+})
+```
+
+AJV automatically:
+- Coerces types (e.g., string `"42"` → number `42`)
+- Applies default values from your schemas
+- Validates formats like `email`, `date-time`, `uri`
+
+### Cloudflare Worker Schema Service
+
+For Cloudflare Workers, which don't have access to Node.js APIs that AJV depends on:
+
+```bash npm2yarn
+npm install @pikku/schema-cfworker
+```
+
+```typescript
+import { CFWorkerSchemaService } from '@pikku/schema-cfworker'
+
+const singletonServices = await createSingletonServices(config, {
+  schemaService: new CFWorkerSchemaService(logger),
+})
+```
+
+:::note
+`CFWorkerSchemaService` deep-clones schema values before compilation to avoid mutation issues with the `@cfworker/json-schema` validator.
+:::
 
 ## Methods
 
@@ -17,13 +72,13 @@ Compiles a schema with the provided name and value, making it available for vali
 
 ### `validateSchema(schema: string, data: any): Promise<void> | void`
 
-Validates data against a specified schema.
+Validates data against a specified schema. Throws `UnprocessableContentError` if validation fails.
 
 - **Parameters:**
   - `schema`: The name of the schema to validate against
   - `data`: The data to validate against the schema
 - **Returns:** A promise if asynchronous, or void if synchronous
-- **Throws:** Validation error if data doesn't match schema
+- **Throws:** `UnprocessableContentError` if data doesn't match schema
 
 ### `getSchemaNames(): Set<string>`
 
@@ -31,35 +86,21 @@ Retrieves a set of all registered schema names.
 
 - **Returns:** A set containing the names of all available schemas
 
-## Usage Example
+### `getSchemaKeys(schemaName: string): string[]`
 
-```typescript
-import { AjvSchemaService } from '@pikku/schema-ajv'
+Returns the top-level property keys of a compiled schema. Useful for CLI argument parsing.
 
-// Create schema service
-const schemaService = new AjvSchemaService()
+- **Parameters:**
+  - `schemaName`: The name of the compiled schema
+- **Returns:** Array of property key names, or empty array if schema has no properties
 
-// Compile a schema
-await schemaService.compileSchema('user', {
-  type: 'object',
-  properties: {
-    name: { type: 'string' },
-    age: { type: 'number' }
-  },
-  required: ['name']
-})
+## Interface
 
-// Validate data
-const userData = { name: 'John', age: 30 }
-await schemaService.validateSchema('user', userData) // Passes
-
-// Get all schema names
-const schemas = schemaService.getSchemaNames() // Set{'user'}
+```typescript reference title="schema-service.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/schema-service.ts
 ```
 
-## Implementations
-
-Pikku provides several schema service implementations:
+## Source
 
 ### AJV Schema Service
 
@@ -71,10 +112,4 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/sche
 
 ```typescript reference title="cfworker-json-schema.ts"
 https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/schema-cfworker/src/cfworker-json-schema.ts
-```
-
-## Interface
-
-```typescript reference title="schema-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/schema-service.ts
 ```
