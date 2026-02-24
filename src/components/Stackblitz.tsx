@@ -15,7 +15,7 @@ export const Stackblitz: React.FunctionComponent<{ repo: string, initialFiles: s
           openFile, //:openFile.filter(f => !f.startsWith('client/')),
           view: 'editor',
           showSidebar: false,
-          clickToLoad: false
+          clickToLoad: false,
         });
       } catch (error) {
         console.error('Failed to load StackBlitz project:', error)

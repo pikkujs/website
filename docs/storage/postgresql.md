@@ -2,6 +2,7 @@
 sidebar_position: 1
 title: PostgreSQL
 description: PostgreSQL storage backend for Pikku services
+ai: true
 ---
 
 # PostgreSQL (`@pikku/pg`)

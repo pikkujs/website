@@ -2,6 +2,7 @@
 sidebar_position: 4
 title: Deployment
 description: Deploy workflows with BullMQ or PG Boss queue backends
+ai: true
 ---
 
 # Workflow Deployment

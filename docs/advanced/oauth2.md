@@ -1,6 +1,7 @@
 ---
 title: OAuth2 Credentials
 description: Manage OAuth2 tokens for third-party service integrations
+ai: true
 ---
 
 # OAuth2 Credentials
@@ -105,25 +106,6 @@ The [Pikku Console](/docs/console) provides a UI for managing OAuth2 credentials
 4. **Disconnect** — Clears stored tokens
 
 This makes it easy to set up third-party integrations per environment without writing custom OAuth flows.
-
-## PKCE Support
-
-For public clients (e.g., CLI tools or SPAs) that can't securely store a client secret, enable PKCE:
-
-```typescript
-wireOAuth2Credential({
-  name: 'google',
-  displayName: 'Google',
-  secretId: 'google-app-credentials',
-  tokenSecretId: 'google-oauth-token',
-  authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-  tokenUrl: 'https://oauth2.googleapis.com/token',
-  scopes: ['openid', 'email', 'profile'],
-  pkce: true,
-})
-```
-
-With PKCE enabled, the `clientSecret` in your app credentials is optional.
 
 ## Token Storage
 

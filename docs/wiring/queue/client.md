@@ -2,10 +2,8 @@
 sidebar_position: 3
 title: Queue Client
 description: Discover the type-safe queue client for adding and managing jobs
+ai: true
 ---
-
-<AIDisclaimer />
-
 
 # Queue Client
 

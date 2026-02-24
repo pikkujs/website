@@ -2,6 +2,7 @@
 sidebar_position: 2
 title: Redis
 description: Redis storage backend for Pikku services
+ai: true
 ---
 
 # Redis (`@pikku/redis`)

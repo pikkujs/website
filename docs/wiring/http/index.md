@@ -308,6 +308,7 @@ See [Errors](../../core-features/errors.md) for more on error handling.
 
 ## Next Steps
 
+- [Route Groups](./route-groups.md) - Composable route contracts with `defineHTTPRoutes` / `wireHTTPRoutes`
 - [Global HTTP Middleware and Permissions](./router.md)
 - [Server-Sent Events](./server-sent-events.md)
 - [OpenAPI Documentation](./openapi.md)

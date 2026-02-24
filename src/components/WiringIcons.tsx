@@ -85,6 +85,29 @@ export const TriggerIcon: React.FC<WiringIconProps> = ({ className = "", size = 
   </div>
 );
 
+export const BotIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
+  <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-violet-600 dark:text-violet-400" fill="none">
+      <rect x="3" y="8" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="9" cy="14" r="1.5" fill="currentColor"/>
+      <circle cx="15" cy="14" r="1.5" fill="currentColor"/>
+      <path d="M12 2v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+      <circle cx="12" cy="2" r="1" fill="currentColor"/>
+    </svg>
+  </div>
+);
+
+export const WorkflowIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
+  <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-teal-600 dark:text-teal-400" fill="none">
+      <circle cx="7" cy="5" r="2.5" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="7" cy="19" r="2.5" stroke="currentColor" strokeWidth="2"/>
+      <circle cx="17" cy="12" r="2.5" stroke="currentColor" strokeWidth="2"/>
+      <path d="M7 7.5v9M7 7.5c0 3 3 4.5 7.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  </div>
+);
+
 export const CLIIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
     <svg width={size} height={size} viewBox="0 0 24 24" className="text-cyan-600 dark:text-cyan-400" fill="none">
@@ -112,6 +135,8 @@ export const WiringIcon: React.FC<WiringIconComponentProps> = ({ wiringId, class
     mcp: MCPIcon,
     cli: CLIIcon,
     trigger: TriggerIcon,
+    bot: BotIcon,
+    workflow: WorkflowIcon,
   };
 
   const IconComponent = iconComponents[wiringId];

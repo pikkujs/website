@@ -1,6 +1,7 @@
 ---
 title: Node Metadata
 description: Categorize functions as visual nodes for graph workflows and the Console
+ai: true
 ---
 
 # Node Metadata

@@ -2,6 +2,7 @@
 title: AWS Services
 description: S3, Secrets Manager, and SQS implementations
 sidebar_position: 4
+ai: true
 ---
 
 # AWS Services

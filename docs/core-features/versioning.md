@@ -1,6 +1,7 @@
 ---
 title: Versioning & Contracts
 description: Detect breaking API changes with contract hashing
+ai: true
 ---
 
 # Versioning & Contracts

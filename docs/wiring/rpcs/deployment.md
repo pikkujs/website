@@ -2,6 +2,7 @@
 sidebar_position: 3
 title: Deployment & Remote RPC
 description: Cross-instance function discovery and remote invocation
+ai: true
 ---
 
 # Deployment & Remote RPC

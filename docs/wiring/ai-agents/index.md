@@ -1,3 +1,7 @@
+---
+ai: true
+---
+
 # AI Agents
 
 Pikku AI Agents let you define conversational AI assistants that use your Pikku functions as tools, maintain conversation memory, support multi-agent orchestration, and stream responses in real time — all with the same transport-agnostic architecture as the rest of Pikku.

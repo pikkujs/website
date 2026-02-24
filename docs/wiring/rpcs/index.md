@@ -1,14 +1,14 @@
 ---
 sidebar_position: 0
 title: RPC (Remote Procedure Calls)
-description: Internal and external function invocation
+description: Internal, external, and remote function invocation
 ---
 
 # RPC (Remote Procedure Calls)
 
-RPC lets you invoke Pikku functions - either from other functions (internal) or from external clients (external). This is how you orchestrate workflows, expose APIs, and compose smaller functions into larger operations.
+RPC lets you invoke Pikku functions — internally from other functions, externally from clients, or remotely across instances. This is how you orchestrate workflows, expose APIs, and compose smaller functions into larger operations.
 
-## Two Types of RPCs
+## Three Types of RPCs
 
 ### Internal RPCs
 
@@ -65,15 +65,37 @@ Content-Type: application/json
 **Use external RPCs for:**
 - Exposing functions to external systems
 - Building API clients
-- Microservice communication (on roadmap: remote server invocation)
 - Type-safe API calls
 
 See [External RPCs](./external.md) for details.
 
+### Remote RPCs
+
+Remote RPCs let you invoke functions hosted on other instances — across microservices, scaled deployments, or separate processes. Pikku's deployment service handles function discovery and routing automatically:
+
+```typescript
+export const processOrder = pikkuFunc<OrderInput, OrderResult>({
+  func: async ({ rpc }, data) => {
+    // Remote RPC - calls a function on another instance
+    const result = await rpc.remote('generateInvoice', {
+      orderId: data.orderId
+    })
+    return { orderId: data.orderId, invoice: result }
+  }
+})
+```
+
+**Use remote RPCs for:**
+- Cross-instance function invocation
+- Microservice communication
+- Distributed workloads across scaled deployments
+
+See [Deployment & Remote RPC](./deployment.md) for details.
+
 ## When to Use Each Type
 
 **Internal RPC (`rpc.invoke()`)**:
-- Calling one function from another
+- Calling one function from another within the same instance
 - Orchestrating multi-step workflows
 - Adapting function output for specific transports (HTTP, MCP, CLI)
 - Recursion with depth tracking
@@ -82,6 +104,11 @@ See [External RPCs](./external.md) for details.
 - Exposing functions to external clients
 - Building integrations between systems
 - Type-safe API consumption
+
+**Remote RPC (`rpc.remote()`)**:
+- Calling functions on other instances
+- Microservice-to-microservice communication
+- Distributed deployments where functions live on different servers
 
 ## Key Benefits
 
@@ -93,9 +120,10 @@ See [External RPCs](./external.md) for details.
 
 **Transport Agnostic**: Functions work the same whether called via RPC, HTTP, WebSocket, queues, or CLI
 
-**Future: Remote Calls**: On roadmap - invoke functions on remote servers (microservices)
+**Remote Discovery**: Deployment service automatically routes remote calls to the correct instance
 
 ## Next Steps
 
 - [Internal RPCs](./internal.md) - Function-to-function calls
 - [External RPCs](./external.md) - Exposing functions to clients
+- [Deployment & Remote RPC](./deployment.md) - Cross-instance invocation

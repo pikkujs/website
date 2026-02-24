@@ -2,6 +2,7 @@
 sidebar_position: 3
 title: Kysely
 description: Kysely-based storage backend for Pikku services with type-safe SQL
+ai: true
 ---
 
 # Kysely (`@pikku/kysely`)
