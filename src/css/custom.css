@@ -350,6 +350,11 @@ a.no-underline:hover * {
   border-top: 1px solid rgba(168, 99, 238, 0.18);
 }
 
+.footer .footer__links {
+  justify-content: center;
+  gap: 4rem;
+}
+
 /* Hide site footer on doc pages */
 .docs-doc-page .theme-layout-footer {
   display: none;
