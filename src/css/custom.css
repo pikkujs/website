@@ -430,3 +430,10 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
 .sse-line-appear {
   animation: sse-line-appear 0.4s ease-out both;
 }
+
+.wire-hero-websocket {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(168, 85, 247, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(139, 92, 246, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
