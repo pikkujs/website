@@ -117,14 +117,6 @@ const config: Config = {
       disableSwitch: true,
       respectPrefersColorScheme: false,
     },
-    announcementBar: {
-      id: 'pikku-console',
-      content:
-        '🚀 <strong>New: The Pikku Console</strong> — A visual control plane to explore functions, test agents, and manage your app. <a href="/docs/console">Learn more →</a>',
-      backgroundColor: '#4F46E5',
-      textColor: '#FFFFFF',
-      isCloseable: true,
-    },
     algolia: {
       appId: 'CE37WLYS11',
       apiKey: 'e6cedad541bb44c2f7f26ddb63d27c92',
