@@ -1,25 +1,14 @@
 ---
-title: "TypeScript Everywhere"
-description: End-to-end type safety across all protocols, runtimes, and deployment targets.
-sidebar_position: 3
-hide_table_of_contents: false
+title: TypeScript Everywhere — End-to-End Type Safety
+description: Complete type safety from function definitions to auto-generated clients, across all protocols and deployment targets.
+authors: yasser
+tags: [typescript, backend, dx]
+draft: true
 ---
 
-import WhyPageFooter from '@site/src/components/WhyPageFooter';
+**Types aren't just documentation. They're guarantees.** Complete type safety from function definitions to auto-generated clients, across all protocols and deployment targets.
 
-<div style={{textAlign: 'center', padding: '2rem 0 3rem', marginBottom: '3rem', borderBottom: '1px solid var(--ifm-color-emphasis-200)'}}>
-
-# TypeScript Everywhere
-
-<p style={{fontSize: '1.5rem', fontWeight: '600', marginTop: '1rem', marginBottom: '1.5rem'}}>
-End-to-End Type Safety
-</p>
-
-<p style={{fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--ifm-color-emphasis-700)'}}>
-Complete type safety from function definitions to auto-generated clients, across all protocols and deployment targets.
-</p>
-
-</div>
+<!-- truncate -->
 
 ## The Problem: Type Safety Ends at the API Boundary
 
@@ -201,7 +190,7 @@ await queues.addJob('sendEmail', {
 
 ## Benefits
 
-### ✅ Catch Errors at Compile Time
+### Catch Errors at Compile Time
 
 ```typescript
 // ❌ TypeScript catches this before it runs
@@ -213,7 +202,7 @@ const user = await client.get('/users/:userId', { userId: 123 })
 //                                                         ^^^ Type error: expected string, got number
 ```
 
-### ✅ Auto-Complete Everywhere
+### Auto-Complete Everywhere
 
 Your editor knows exactly what data each function expects and returns:
 
@@ -222,7 +211,7 @@ Your editor knows exactly what data each function expects and returns:
 - Type hints for return values
 - Instant feedback on type errors
 
-### ✅ Refactor with Confidence
+### Refactor with Confidence
 
 Change a function signature and TypeScript tells you everywhere that needs updating:
 
@@ -239,13 +228,9 @@ export const getUser = pikkuFunc<
 const user = await client.get('/users/:userId', { userId: '123' })
 console.log(user.email)
 //               ^^^^^ Type error: Property 'email' does not exist
-
-// Or in destructuring
-const { id, name, email } = await client.get('/users/:userId', { userId: '123' })
-//                ^^^^^ Type error: Property 'email' does not exist
 ```
 
-### ✅ API Contract Enforcement
+### API Contract Enforcement
 
 Types become the single source of truth for your API contracts:
 
@@ -331,32 +316,11 @@ await client.post('/users', {
   email: 'john@example.com'
   // Missing 'age' - validation error (422 status)
 })
-
-// ❌ Runtime validation fails for wrong type
-await client.post('/users', {
-  name: 'John',
-  email: 'john@example.com',
-  age: '25' // String instead of number - validation error
-})
 ```
 
 **No manual validation code needed.** Just define TypeScript types, and Pikku handles the rest.
-
-## The Bottom Line
-
-<div style={{backgroundColor: 'var(--ifm-color-emphasis-100)', border: '3px solid var(--ifm-color-primary)', borderRadius: '8px', padding: '2rem', margin: '2rem 0', textAlign: 'center'}}>
-
-### Types aren't just documentation. They're guarantees.
-
-**Pikku makes your entire backend type-safe—across all protocols, all runtimes, all clients.**
-
-Catch errors before they reach production. Refactor with confidence. Ship faster.
-
-</div>
 
 ## Next Steps
 
 - **[Explore type-safe functions](/docs/core-features/functions)** — Learn how to write type-safe Pikku functions
 - **[Get started](/docs)** — Build your first type-safe backend
-
-<WhyPageFooter />

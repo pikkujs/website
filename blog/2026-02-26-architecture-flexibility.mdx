@@ -1,32 +1,22 @@
 ---
-title: "Architecture Flexibility"
+title: Architecture Flexibility — Don't Lock Yourself In
 description: Avoid costly rewrites. Start simple, scale smart, switch runtimes without code changes.
-sidebar_position: 1
-hide_table_of_contents: false
+authors: yasser
+tags: [architecture, backend, typescript]
+draft: true
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import WhyPageFooter from '@site/src/components/WhyPageFooter';
 import Card from '@site/src/components/Card';
 
-<div style={{textAlign: 'center', padding: '2rem 0 3rem', marginBottom: '3rem', borderBottom: '1px solid var(--ifm-color-emphasis-200)'}}>
-
-# Architecture Flexibility
-
-<p style={{fontSize: '1.5rem', fontWeight: '600', marginTop: '1rem', marginBottom: '1.5rem'}}>
-Don't Lock Yourself In
-</p>
-
-<p style={{fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--ifm-color-emphasis-700)'}}>
 Every architecture choice has a cost. The wrong one just hides it longer.
-</p>
 
-</div>
+<!-- truncate -->
 
 ## The Problem: Decisions That Age Badly
 
-### ⚙️ Microservices Too Soon
+### Microservices Too Soon
 
 **The Decision:** "We'll need to scale, so let's start with microservices."
 
@@ -37,7 +27,7 @@ Every architecture choice has a cost. The wrong one just hides it longer.
 
 **Result:** Slow to ship and expensive to run — paying the price for premature complexity. Your team spends more on DevOps overhead (orchestration, monitoring, deployments) than you've saved in theoretical scalability gains.
 
-### 🧱 Monolith Scaling Wall
+### The Monolith Scaling Wall
 
 **The Decision:** "Keep it simple, build a monolith."
 
@@ -114,7 +104,7 @@ await server.start()
 
 <Card variant="minimal">
 
-### ✅ Start Simple
+### Start Simple
 
 Begin with the simplest architecture that works. No premature optimization, no unnecessary complexity.
 
@@ -124,7 +114,7 @@ Deploy as a monolith on a single server or go serverless for instant auto-scalin
 
 <Card variant="minimal">
 
-### ✅ Scale Smart
+### Scale Smart
 
 When requirements change, adapt your architecture without rewriting code.
 
@@ -134,7 +124,7 @@ Move specific functions to different runtimes based on their needs.
 
 <Card variant="minimal">
 
-### ✅ Mix & Match
+### Mix & Match
 
 Run different parts of your application on different platforms simultaneously.
 
@@ -144,7 +134,7 @@ HTTP APIs on Lambda, WebSockets on a dedicated server, queues on BullMQ.
 
 <Card variant="minimal">
 
-### ✅ Zero Rewrites
+### Zero Rewrites
 
 Infrastructure changes are configuration changes, not code changes.
 
@@ -156,7 +146,5 @@ Your team builds features instead of managing migrations.
 
 ## Next Steps
 
-- **[Learn about vendor lock-in](/why/vendor-lock-in)** — See the research on why flexibility matters
+- **[Avoiding vendor lock-in](/blog/avoiding-vendor-lock-in)** — See the research on why flexibility matters
 - **[Get started](/docs)** — Build your first portable backend
-
-<WhyPageFooter />

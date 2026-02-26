@@ -1,0 +1,257 @@
+---
+title: Protocol Unification — One Function, Every Protocol
+description: How Pikku unifies HTTP, WebSocket, queues, MCP, and more under one simple function interface.
+authors: yasser
+tags: [architecture, backend, typescript]
+draft: true
+---
+
+Pikku's core innovation is **protocol unification**: write your business logic once as a function, then wire it to any protocol without changing the implementation.
+
+<!-- truncate -->
+
+## How It Works
+
+All protocols share the same foundation:
+1. **Define a function** with TypeScript input/output types
+2. **Wire to protocols** that need it
+3. **Same auth, permissions, validation** across all protocols
+
+Let's see how each protocol handles data flow.
+
+---
+
+## HTTP: Request In, Response Out
+
+The simplest protocol—synchronous request/response.
+
+```typescript
+// 1. Define the function
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string; email: string }
+>({
+  func: async ({ database }, { userId }) => {
+    return await database.users.findById(userId)
+  }
+})
+
+// 2. Wire to HTTP
+wireHTTP({
+  method: 'get',
+  route: '/users/:userId',
+  func: getUser
+})
+```
+
+**Data flow:**
+
+```
+Client Request
+    ↓
+GET /users/123
+    ↓
+Pikku extracts { userId: '123' } from route params
+    ↓
+Calls getUser({ userId: '123' })
+    ↓
+Function returns { id: '123', name: 'John', email: 'john@example.com' }
+    ↓
+HTTP 200 with JSON response
+```
+
+- Route params, query params, and body all become function input
+- Return value becomes HTTP response body
+- Errors become HTTP status codes (404, 422, 500, etc.)
+
+---
+
+## Server-Sent Events (SSE): Progressive Enhancement
+
+Add real-time streaming to HTTP endpoints without breaking existing clients.
+
+```typescript
+export const trackOrder = pikkuFunc<
+  { orderId: string },
+  { status: string; location: string; eta: string }
+>({
+  func: async ({ database, channel }, { orderId }) => {
+    const order = await database.orders.findById(orderId)
+
+    // Send progress updates if SSE is enabled
+    if (channel) {
+      await channel.send({ type: 'status', data: 'Processing order...' })
+      await channel.send({ type: 'location', data: order.currentLocation })
+    }
+
+    return {
+      status: order.status,
+      location: order.currentLocation,
+      eta: order.estimatedDelivery
+    }
+  }
+})
+
+wireHTTP({
+  method: 'get',
+  route: '/orders/:orderId/track',
+  func: trackOrder,
+  sse: true  // Enable Server-Sent Events
+})
+```
+
+- Same function works for both regular HTTP and SSE
+- Detect SSE with `if (channel)` check
+- Regular HTTP clients get final result only; SSE clients get progress updates + final result
+- No breaking changes to existing API consumers
+
+---
+
+## WebSocket: Bidirectional with Channels
+
+```typescript
+wireChannel({
+  name: 'users',
+  onMessageWiring: {
+    getUser: { func: getUser }
+  }
+})
+```
+
+- `channel` service available for sending messages to subscribers
+- Same function works for both request/response and pub/sub patterns
+- Automatic message routing by action name
+
+---
+
+## Queues: Async Job Processing
+
+```typescript
+export const sendEmail = pikkuFunc<
+  { to: string; subject: string; body: string },
+  { messageId: string }
+>({
+  func: async ({ emailService }, { to, subject, body }) => {
+    const messageId = await emailService.send({ to, subject, body })
+    return { messageId }
+  }
+})
+
+wireQueueWorker({
+  queue: 'email-queue',
+  func: sendEmail
+})
+```
+
+- Same function works for both fire-and-forget and wait-for-result patterns
+- Automatic retry on failures
+
+---
+
+## MCP: Transform for AI Agents
+
+Model Context Protocol (MCP) exposes functions to AI agents like Claude. Requires special response formatting.
+
+```typescript
+// 1. Domain function (reusable everywhere)
+export const getUser = pikkuFunc<
+  { userId: string },
+  { id: string; name: string; email: string }
+>({
+  func: async ({ database }, { userId }) => {
+    return await database.users.findById(userId)
+  }
+})
+
+// 2. MCP adapter (transforms for AI)
+export const getUserMCP = pikkuMCPResourceFunc<{ userId: string }>({
+  func: async ({ rpc }, { userId }) => {
+    const user = await rpc.invoke('getUser', { userId })
+    return [{ uri: `user://${userId}`, text: JSON.stringify(user) }]
+  }
+})
+
+// 3. Wire to MCP
+wireMCPResource({
+  uri: 'user/{userId}',
+  title: 'User Information',
+  description: 'Retrieve user data by ID',
+  func: getUserMCP
+})
+```
+
+- Keep domain logic in regular `pikkuFunc` (reusable)
+- Use thin adapters for MCP-specific formatting
+- MCP tools return `[{ type: 'text', text: '...' }]`; resources return `[{ uri: '...', text: '...' }]`
+
+---
+
+## CLI: Command-Line Interface
+
+```typescript
+wireCLI({
+  program: 'users',
+  commands: {
+    get: pikkuCLICommand({
+      parameters: '<userId>',
+      func: getUser
+    })
+  }
+})
+```
+
+- Same function works in CLI and HTTP/WebSocket/etc.
+- Automatic argument parsing and formatted console output
+
+---
+
+## The Unification Pattern
+
+All protocols follow the same pattern:
+
+1. **Input Extraction** — Protocol-specific data (route params, WebSocket message, queue job, etc.) → function parameters
+2. **Function Execution** — Same TypeScript function runs with same services, permissions, validation
+3. **Output Transformation** — Function return value → protocol-specific response (HTTP JSON, WebSocket message, queue result, MCP format)
+
+This is why you can write logic once and deploy everywhere.
+
+## Key Benefits
+
+### Write Once, Wire Anywhere
+
+```typescript
+// One function
+export const getUser = pikkuFunc<Input, Output>({ ... })
+
+// Many protocols
+wireHTTP({ route: '/users/:userId', func: getUser })
+wireChannel({ onMessageWiring: { getUser: { func: getUser } } })
+wireQueueWorker({ queue: 'get-user', func: getUser })
+wireMCPResource({ uri: 'user/{userId}', func: getUserMCP })
+wireCLI({ commands: { get: pikkuCLICommand({ func: getUser }) } })
+```
+
+### Same Behavior Everywhere
+
+- Authentication works the same way
+- Permissions are enforced consistently
+- Validation happens automatically
+- Middleware runs for all protocols
+- Error handling is uniform
+
+### Easy Testing
+
+Test the function directly—no need to mock HTTP requests, WebSocket connections, or queue infrastructure:
+
+```typescript
+const result = await getUser.func(services, { userId: '123' })
+expect(result.name).toBe('John Doe')
+```
+
+**Same code. Different protocols. Zero rewrites.**
+
+## Next Steps
+
+- **[TypeScript Everywhere](/blog/typescript-everywhere)** — See how type safety flows across all protocols
+- **[Get started](/docs)** — Build your first unified backend
+- **[Documentation](/docs)** — Deep dive into each protocol

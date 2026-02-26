@@ -1,25 +1,14 @@
 ---
-title: "AI-Era Quality"
-description: How Pikku enables AI-first backends with Model Context Protocol (MCP) and better AI-generated code
-sidebar_position: 5
-hide_table_of_contents: false
+title: Your Backend, Now AI-Ready
+description: How Pikku enables AI-first backends with Model Context Protocol (MCP) and better AI-generated code.
+authors: yasser
+tags: [ai, mcp, backend, typescript]
+draft: true
 ---
 
-import WhyPageFooter from '@site/src/components/WhyPageFooter';
-
-<div style={{textAlign: 'center', padding: '2rem 0 3rem', marginBottom: '3rem', borderBottom: '1px solid var(--ifm-color-emphasis-200)'}}>
-
-# AI-Era Quality
-
-<p style={{fontSize: '1.5rem', fontWeight: '600', marginTop: '1rem', marginBottom: '1.5rem'}}>
-Your Backend, Now AI-Ready
-</p>
-
-<p style={{fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', color: 'var(--ifm-color-emphasis-700)'}}>
 The next internet is AI-first. Pikku lets your existing backend work with AI assistants like Claude—no extra work required.
-</p>
 
-</div>
+<!-- truncate -->
 
 ## Why This Matters
 
@@ -47,7 +36,7 @@ But there's a problem: **Most backends weren't built for this.** They're built f
 
 Pikku solves this with **Model Context Protocol (MCP)**—a new standard for AI-backend communication.
 
-## What is MCP? (Non-Technical Explanation)
+## What is MCP?
 
 Think of MCP like a universal adapter for AI assistants.
 
@@ -70,53 +59,33 @@ With Pikku, you write your business logic **once**, then it works for:
 
 **Same code. Different interfaces. Zero duplication.**
 
-## How MCP Works (Technical Overview)
+## How MCP Works
 
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) is an open protocol created by Anthropic that standardizes how AI agents interact with external systems.
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) is an open protocol created by Anthropic that standardizes how AI agents interact with external systems. Think of it as "HTTP for AI agents"—through three primitives:
 
-Think of it as "HTTP for AI agents"—a standard way for AI models to interact with your backend through three primitives:
-
-### 1. **Resources** — Read Data
+### Resources — Read Data
 
 Resources let AI assistants access your data (like GET requests in HTTP).
 
-Examples:
-- `user/{userId}` — Fetch user information
-- `orders` — List all orders
-- `logs/{date}` — Get logs from a specific date
+Examples: `user/{userId}`, `orders`, `logs/{date}`
 
-### 2. **Tools** — Take Actions
+### Tools — Take Actions
 
 Tools let AI assistants perform actions (like POST/PUT/DELETE in HTTP).
 
-Examples:
-- `createOrder` — Create a new order
-- `sendEmail` — Send an email notification
-- `cancelSubscription` — Cancel a user's subscription
+Examples: `createOrder`, `sendEmail`, `cancelSubscription`
 
-### 3. **Prompts** — Provide Instructions
+### Prompts — Provide Instructions
 
 Prompts guide the AI on how to use your system effectively.
 
-Examples:
-- `analyze-user-behavior` — Instructions for analyzing user activity patterns
-- `generate-report` — Template for generating business reports
-- `debug-error` — Guide for troubleshooting common errors
+Examples: `analyze-user-behavior`, `generate-report`, `debug-error`
 
-Major AI platforms are adopting MCP:
-- **Claude Desktop** — Native MCP support
-- **OpenAI** — Exploring MCP integration
-- **VS Code** — GitHub Copilot working on MCP support
-
-MCP is becoming the standard protocol for AI-backend communication, just like HTTP is for web browsers.
+Major AI platforms are adopting MCP: Claude Desktop (native support), OpenAI (exploring integration), and VS Code Copilot (in progress). It's becoming the standard for AI-backend communication.
 
 ## How Pikku Enables MCP
 
-Pikku makes it trivial to expose your existing functions as MCP resources, tools, and prompts.
-
 ### Example 1: MCP Resource (Read Data)
-
-Resources let AI agents fetch data—like GET requests.
 
 ```typescript
 // 1. Write your function once
@@ -130,58 +99,28 @@ export const getUser = pikkuFunc<
 })
 
 // 2. Wire to HTTP for web/mobile clients
-wireHTTP({
-  method: 'get',
-  route: '/users/:userId',
-  func: getUser
-})
+wireHTTP({ method: 'get', route: '/users/:userId', func: getUser })
 
 // 3. Create a thin MCP resource adapter
 export const getUserMCP = pikkuMCPResourceFunc<{ userId: string }>({
   func: async ({ rpc }, { userId }) => {
     const user = await rpc.invoke('getUser', { userId })
-    return [{
-      uri: `user://${userId}`,
-      text: JSON.stringify(user)
-    }]
+    return [{ uri: `user://${userId}`, text: JSON.stringify(user) }]
   }
 })
 
 // 4. Wire to MCP for AI agents
 wireMCPResource({
-  uri: 'user/{userId}',  // Route with parameter
+  uri: 'user/{userId}',
   title: 'User Information',
   description: 'Retrieve user data by ID',
   func: getUserMCP
 })
 ```
 
-**AI agents can now access:** `user://123`, `user://456`, etc.
-
 ### Example 2: MCP Tool (Take Actions)
 
-Tools let AI agents perform actions—like POST requests.
-
 ```typescript
-// 1. Write your function once
-export const createOrder = pikkuFunc<
-  { userId: string; items: Array<{ productId: string; qty: number }> },
-  { orderId: string; total: number }
->({
-  func: async ({ database }, { userId, items }) => {
-    const order = await database.orders.create({ userId, items })
-    return { orderId: order.id, total: order.total }
-  }
-})
-
-// 2. Wire to HTTP for web/mobile clients
-wireHTTP({
-  method: 'post',
-  route: '/orders',
-  func: createOrder
-})
-
-// 3. Create a thin MCP tool adapter
 export const createOrderMCP = pikkuMCPToolFunc<{
   userId: string;
   items: Array<{ productId: string; qty: number }>
@@ -195,7 +134,6 @@ export const createOrderMCP = pikkuMCPToolFunc<{
   }
 })
 
-// 4. Wire to MCP for AI agents
 wireMCPTool({
   name: 'createOrder',
   description: 'Create a new order for a user',
@@ -203,73 +141,18 @@ wireMCPTool({
 })
 ```
 
-**AI agents can now:** Create orders on behalf of users.
-
-### Example 3: MCP Prompt (Provide Instructions)
-
-Prompts guide AI agents on how to use your system.
-
-```typescript
-export const analyzeUserPrompt = pikkuMCPPromptFunc({
-  func: async ({ rpc }, { userId }) => {
-    const user = await rpc.invoke('getUser', { userId })
-    const orders = await rpc.invoke('getUserOrders', { userId })
-
-    return [{
-      type: 'text',
-      text: `Analyze user behavior for ${user.name}:
-
-      User has placed ${orders.length} orders.
-      Last order was on ${orders[0]?.date}.
-
-      Please:
-      1. Identify purchasing patterns
-      2. Suggest personalized recommendations
-      3. Flag any concerning behavior`
-    }]
-  }
-})
-
-wireMCPPrompt({
-  name: 'analyze-user-behavior',
-  description: 'Get instructions for analyzing user behavior patterns',
-  func: analyzeUserPrompt
-})
-```
-
-**AI agents get:** Pre-built instructions for common tasks.
-
 ### The Key Insight: Thin Adapters + Automatic Schemas
 
-Notice the pattern across all examples:
+Notice the pattern:
 - **Business logic** lives in regular Pikku functions (reusable everywhere)
 - **MCP adapters** are thin wrappers that transform data to MCP format
 - **No duplication** — Core logic is shared between HTTP, WebSocket, MCP, etc.
 
 But here's the magic: **Pikku automatically generates JSON schemas from your TypeScript types.**
 
-When you define a tool like this:
-
-```typescript
-export const createOrderMCP = pikkuMCPToolFunc<{
-  userId: string;
-  items: Array<{ productId: string; qty: number }>
-}>({ ... })
-```
-
-Pikku automatically:
-1. Converts your TypeScript types to JSON Schema during `npx pikku`
-2. Includes the schema in the MCP endpoint definition
-3. Tells the AI agent exactly what parameters are required and their types
-
-**The AI agent knows:**
-- `userId` is required and must be a string
-- `items` is required and must be an array
-- Each item needs `productId` (string) and `qty` (number)
+When you define a tool, Pikku automatically converts your TypeScript types to JSON Schema, includes the schema in the MCP endpoint definition, and tells the AI agent exactly what parameters are required.
 
 You don't write schemas manually. You don't keep them in sync. **Your TypeScript types ARE the source of truth.**
-
-This is how you build AI-first backends without doubling your maintenance burden.
 
 ## Why Pikku's Patterns Are AI-Friendly
 
@@ -287,28 +170,16 @@ Instead of scanning all your project files to understand your codebase, AI agent
 
 Think of it as **living documentation for all transports**, automatically generated and always up-to-date.
 
-When you ask Claude to "add a new endpoint that creates users," it doesn't need to:
-- Scan through your project files
-- Parse TypeScript files
-- Figure out your routing patterns
-- Guess your naming conventions
+When you ask Claude to "add a new endpoint that creates users," it doesn't need to scan through project files or guess your naming conventions. It reads Pikku's metadata and knows exactly where functions are defined, how to wire them, what types to use, and what patterns to follow.
 
-It just reads Pikku's metadata and knows exactly:
-- Where functions are defined
-- How to wire them to HTTP/WebSocket/MCP
-- What types to use
-- What patterns to follow
-
-### 1. **Simple, Consistent Patterns**
+### Simple, Consistent Patterns
 
 AI models like Claude and GPT understand Pikku's patterns because they're:
 - **Predictable** — Every function follows the same structure
 - **Explicit** — No magic, no hidden behavior
 - **Declarative** — Wiring is configuration, not code
 
-When you ask an AI to "add a new endpoint," it knows exactly what to generate.
-
-### 2. **Single Source of Truth**
+### Single Source of Truth
 
 With traditional frameworks:
 ```typescript
@@ -335,36 +206,9 @@ wireMCPTool({ name: 'getUser', func: getUserMCP })
 
 Less code to generate = fewer errors = higher quality output.
 
-### 3. **Type-Safe by Default**
-
-Pikku forces TypeScript types on inputs and outputs. This means:
-- AI models generate strongly-typed code by default
-- Type errors are caught at compile time, not runtime
-- IntelliSense helps developers (and AI models) understand the codebase
-
-## The Benefits
-
-### ✅ Zero Cognitive Overhead
-
-Expose your backend to AI agents without learning new concepts. If you can write a Pikku function, you can make it work with MCP.
-
-### ✅ No Duplicate Code
-
-Don't maintain separate "AI versions" of your APIs. Use the same functions for humans and AI agents.
-
-### ✅ Future-Proof
-
-As AI protocols evolve (MCP v2, v3, etc.), Pikku adapters can be updated without changing your business logic.
-
-### ✅ Better AI-Generated Code
-
-Simple patterns mean Claude, GPT, and other tools generate higher-quality Pikku code on the first try.
-
 ## Real-World Use Cases
 
-### 1. **AI Assistants That Access Your Data**
-
-Build a Claude Desktop integration that lets users query your database:
+### AI Assistants That Access Your Data
 
 ```
 User: "Show me all orders from last month"
@@ -372,9 +216,7 @@ Claude: Uses your MCP resource to fetch orders
 Claude: Presents results in a formatted table
 ```
 
-### 2. **AI Agents That Take Actions**
-
-Let AI models trigger workflows in your system:
+### AI Agents That Take Actions
 
 ```
 User: "Send a reminder email to all inactive users"
@@ -382,9 +224,7 @@ Claude: Uses your MCP tool to invoke `sendReminderEmails` function
 Claude: Confirms action and reports results
 ```
 
-### 3. **Developer Tools Powered by AI**
-
-Expose your backend as MCP resources for AI-powered dev tools:
+### Developer Tools Powered by AI
 
 - VS Code Copilot suggests code based on your API schema
 - Claude Desktop helps debug by querying your logs and metrics
@@ -392,8 +232,6 @@ Expose your backend as MCP resources for AI-powered dev tools:
 
 ## Next Steps
 
-- **[Protocol Unification](/why/protocol-unification)** — See how one function works across all protocols
+- **[Protocol Unification](/blog/protocol-unification)** — See how one function works across all protocols
 - **[MCP Documentation](/docs/wiring/mcp)** — Learn how to build MCP integrations with Pikku
 - **[Get Started](/docs)** — Build your first AI-ready backend
-
-<WhyPageFooter />

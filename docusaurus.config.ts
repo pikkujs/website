@@ -52,15 +52,6 @@ const config: Config = {
 
   plugins: [
     tailwindPlugin,
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'why',
-        path: 'why',
-        routeBasePath: 'why',
-        sidebarPath: false,
-      },
-    ],
   ],
 
   presets: [
@@ -153,11 +144,6 @@ const config: Config = {
           position: 'left',
         },
         {
-          to: '/why',
-          label: 'Why?',
-          position: 'right',
-        },
-        {
           type: 'docSidebar',
           sidebarId: 'docs',
           position: 'right',
@@ -222,15 +208,6 @@ const config: Config = {
             { label: 'Runtimes', to: '/docs/runtimes/fastify' },
             { label: 'CLI Reference', to: '/docs/pikku-cli/overview' },
             { label: 'The Console', to: '/docs/console' },
-          ],
-        },
-        {
-          title: 'Why Pikku',
-          items: [
-            { label: 'Overview', to: '/why' },
-            { label: 'Avoiding Vendor Lock-in', to: '/why/vendor-lock-in' },
-            { label: 'TypeScript Everywhere', to: '/why/typescript-everywhere' },
-            { label: 'Architecture Flexibility', to: '/why/architecture-flexibility' },
           ],
         },
         {
