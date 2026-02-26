@@ -494,3 +494,38 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
     radial-gradient(ellipse at 38% 65%, rgba(124, 58, 237, 0.06) 0%, transparent 48%),
     #0a0a0f;
 }
+
+.wire-hero-function {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(168, 99, 238, 0.20) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(192, 132, 252, 0.08) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-services {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(234, 179, 8, 0.16) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(168, 99, 238, 0.08) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-security {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(34, 197, 94, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(16, 185, 129, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-treeshaking {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(6, 182, 212, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(20, 184, 166, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-builtins {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(249, 115, 22, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(245, 158, 11, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}

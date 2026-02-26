@@ -46,7 +46,7 @@
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
-  width: 680px;
+  width: 1060px;
   max-width: calc(100vw - 32px);
   background: #0d0d14;
   border: 1px solid rgba(168, 99, 238, 0.18);
@@ -68,11 +68,21 @@
   pointer-events: auto;
 }
 
-/* 3-column grid */
+/* 3-column grid (default) */
 .mega-menu-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+}
+
+/* 4-column variant */
+.mega-menu-grid--4col {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* 5-column variant */
+.mega-menu-grid--5col {
+  grid-template-columns: repeat(5, 1fr);
 }
 
 /* Category */
@@ -190,6 +200,13 @@
 .mega-menu-grid .mega-menu-column:nth-child(3) .mega-menu-item { animation-delay: 0.1s; }
 .mega-menu-grid .mega-menu-column:nth-child(3) .mega-menu-item:nth-child(2) { animation-delay: 0.13s; }
 .mega-menu-grid .mega-menu-column:nth-child(3) .mega-menu-item:nth-child(3) { animation-delay: 0.16s; }
+
+.mega-menu-grid .mega-menu-column:nth-child(4) .mega-menu-item { animation-delay: 0.15s; }
+.mega-menu-grid .mega-menu-column:nth-child(4) .mega-menu-item:nth-child(2) { animation-delay: 0.18s; }
+.mega-menu-grid .mega-menu-column:nth-child(4) .mega-menu-item:nth-child(3) { animation-delay: 0.21s; }
+
+.mega-menu-grid .mega-menu-column:nth-child(5) .mega-menu-item { animation-delay: 0.2s; }
+.mega-menu-grid .mega-menu-column:nth-child(5) .mega-menu-item:nth-child(2) { animation-delay: 0.23s; }
 
 /* Hide on mobile — Docusaurus handles mobile dropdown natively */
 @media (max-width: 996px) {
