@@ -410,3 +410,23 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
 .animate-orbit-counter-rotate {
   animation: orbit-counter-rotate 90s linear infinite;
 }
+
+/* ========================================
+   Wire Pages
+   ======================================== */
+
+.wire-hero-http {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(34, 197, 94, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(249, 115, 22, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+@keyframes sse-line-appear {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.sse-line-appear {
+  animation: sse-line-appear 0.4s ease-out both;
+}
