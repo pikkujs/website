@@ -121,7 +121,7 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/pikku.png',
     colorMode: {
-      defaultColorMode: 'dark',
+      defaultMode: 'dark',
       disableSwitch: true,
       respectPrefersColorScheme: false,
     },
@@ -206,7 +206,44 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      copyright: `MIT License\nCopyright © 2020-${new Date().getFullYear()} Yasser Fadl & Pikku Contributors.`,
+      logo: {
+        alt: 'Pikku',
+        src: 'img/pikku.png',
+        href: '/',
+        width: 40,
+        height: 40,
+      },
+      links: [
+        {
+          title: 'Learn',
+          items: [
+            { label: 'Getting Started', to: '/docs' },
+            { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },
+            { label: 'Runtimes', to: '/docs/runtimes/fastify' },
+            { label: 'CLI Reference', to: '/docs/pikku-cli/overview' },
+            { label: 'The Console', to: '/docs/console' },
+          ],
+        },
+        {
+          title: 'Why Pikku',
+          items: [
+            { label: 'Overview', to: '/why' },
+            { label: 'Avoiding Vendor Lock-in', to: '/why/vendor-lock-in' },
+            { label: 'TypeScript Everywhere', to: '/why/typescript-everywhere' },
+            { label: 'Architecture Flexibility', to: '/why/architecture-flexibility' },
+          ],
+        },
+        {
+          title: 'Community',
+          items: [
+            { label: 'GitHub', href: 'https://github.com/pikkujs/pikku' },
+            { label: 'Discord', href: 'https://discord.gg/z7r4rhwJ' },
+            { label: 'X / Twitter', href: 'https://x.com/pikkujs' },
+            { label: 'Blog', to: '/blog' },
+          ],
+        },
+      ],
+      copyright: `MIT License · Copyright © 2020–${new Date().getFullYear()} Yasser Fadl & Pikku Contributors.`,
     },
     prism: {
       theme: prismThemes.dracula,

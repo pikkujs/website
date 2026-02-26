@@ -56,6 +56,12 @@
   --ifm-color-primary-lighter: #955AF0;
   --ifm-color-primary-lightest: #A56FFF;
   --docusaurus-highlighted-code-line-bg: rgba(78, 26, 159, 0.3); /* Soft Glow for Dark Mode */
+  /* Single background color across the entire site */
+  --ifm-background-color: #0a0a0f;
+  --ifm-background-surface-color: #0a0a0f;
+  --ifm-navbar-background-color: #0a0a0f;
+  --ifm-footer-background-color: #0a0a0f;
+  background-color: #0a0a0f;
 }
 
 .scrollbar-hide {
@@ -300,6 +306,24 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
 /* Table of contents left border - match sidebar height */
 .table-of-contents__left-border {
   min-height: calc(100vh - var(--ifm-navbar-height)) !important;
+}
+
+/* Lock everything to the single background color */
+[data-theme='dark'] body,
+[data-theme='dark'] .main-wrapper,
+[data-theme='dark'] .navbar,
+[data-theme='dark'] .footer,
+[data-theme='dark'] .footer--dark {
+  background-color: #0a0a0f;
+}
+
+[data-theme='dark'] .navbar {
+  box-shadow: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='dark'] .footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* ========================================

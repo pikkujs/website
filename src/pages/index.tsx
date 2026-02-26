@@ -134,10 +134,10 @@ function Hero() {
             <span className="text-white">One function.</span><br />
             <span className="text-primary">Every protocol.</span>
           </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-6 lg:mb-14 text-gray-300">
+          <p className="text-xl font-medium leading-relaxed mb-6 lg:mb-14 text-neutral-300">
             Define your backend logic once. Pikku adapts it to HTTP, WebSocket, queues, cron, CLI, and AI agents — same auth, same middleware, no rewrites.
           </p>
-          <ul className="text-base mb-6 lg:mb-14 space-y-2 text-gray-300">
+          <ul className="text-base mb-6 lg:mb-14 space-y-2 text-neutral-300">
             <li className="flex items-start">
               <span className="text-green-400 mr-2 mt-0.5">✓</span>
               <span>Unified backend logic across all protocols</span>
@@ -169,7 +169,7 @@ function Hero() {
               See How It Works
             </Link>
           </div>
-          <p className="mt-4 text-sm text-gray-500 font-mono">
+          <p className="mt-4 text-sm text-neutral-500 font-mono">
             $ npm create pikku@latest &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Open Source
           </p>
         </div>
@@ -229,6 +229,37 @@ function Hero() {
           </p>
         </div>
       </header>
+
+      {/* Built with Pikku — logo bar anchored to bottom of hero */}
+      <div className="max-w-screen-xl mx-auto w-full px-6 pb-8 pt-6">
+        <p className="text-center text-xs font-semibold tracking-widest uppercase text-white/20 mb-0">
+          Built with Pikku
+        </p>
+        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-6">
+          {[
+            { name: 'AgreeWe',          logo: 'agreewe-dark.png',         url: 'https://www.agreewe.com' },
+            { name: 'HeyGermany',       logo: 'heygermany-dark.svg',      url: 'https://hey-germany.com' },
+            { name: 'marta',            logo: 'marta-light.svg',          url: 'https://marta.de' },
+            { name: 'BambooRose',       logo: 'bamboorose-dark.png',      url: 'https://bamboorose.com' },
+            { name: 'Calligraphy Cut',  logo: 'calligraphycut-dark.svg',  url: 'https://calligraphy-cut.com' },
+          ].map((company) => (
+            <Link
+              key={company.name}
+              href={company.url}
+              className="flex items-center justify-center px-4 py-3 rounded-lg opacity-35 hover:opacity-70 transition-opacity"
+              title={company.name}
+            >
+              <img
+                src={`img/logos/${company.logo}`}
+                alt={company.name}
+                width={120}
+                height={40}
+                className="object-contain"
+              />
+            </Link>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -373,7 +404,7 @@ program.command("get <id>")
   ];
 
   return (
-    <section className="py-8 lg:py-12 bg-neutral-950 border-t border-neutral-800">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-lg mx-auto px-6">
         <div className="text-center mb-6 lg:mb-14">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Problem</p>
@@ -396,9 +427,9 @@ program.command("get <id>")
               <div
                 key={i}
                 data-card
-                className="snap-start flex-shrink-0 w-full md:w-[calc(33.333%-10.667px)] bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden"
+                className="snap-start flex-shrink-0 w-full md:w-[calc(33.333%-10.667px)] bg-[#0d0d0d] rounded-xl border border-neutral-800 overflow-hidden"
               >
-                <div className="flex items-center gap-1.5 px-4 py-2.5 bg-neutral-800/80 border-b border-neutral-700/60">
+                <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#0d0d0d] border-b border-neutral-800/60">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
@@ -507,20 +538,20 @@ function CapabilitiesSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             Beyond Request-Response
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-2xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-2xl md:mx-auto">
             The same function composition model extends to workflows, AI agents, and a visual control plane.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           {capabilities.map((cap, idx) => (
-            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900 rounded-xl p-8 flex flex-col card-shadow">
+            <div key={idx} className="bg-[#0d0d0d] rounded-xl p-8 flex flex-col border border-neutral-800 card-shadow">
               <div className="flex items-start justify-between mb-4">
                 <span className="text-4xl">{cap.icon}</span>
                 {cap.badge && (
@@ -530,10 +561,10 @@ function CapabilitiesSection() {
                 )}
               </div>
               <h3 className="text-xl font-bold mb-2">{cap.title}</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">{cap.description}</p>
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-6 leading-relaxed">{cap.description}</p>
               <ul className="space-y-2 mb-6 lg:mb-14 flex-1">
                 {cap.highlights.map((h, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                  <li key={i} className="flex items-start gap-2 text-sm text-neutral-700 dark:text-neutral-300">
                     <span className="text-primary mt-0.5 shrink-0">✓</span>
                     <span>{h}</span>
                   </li>
@@ -720,7 +751,7 @@ wireTriggerSource({
   ];
 
   return (
-    <section id="code-examples" className="py-8 lg:py-12 bg-neutral-900 border-t border-neutral-800 overflow-x-hidden">
+    <section id="code-examples" className="py-8 lg:py-12 overflow-x-hidden">
       <div className="max-w-screen-xl mx-auto px-6">
         <div className="text-center mb-6 lg:mb-14">
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
@@ -738,7 +769,7 @@ wireTriggerSource({
           <div className="w-full min-w-0 lg:max-w-[400px]">
             <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Write once</p>
             <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-              <div className="flex items-center gap-3 px-5 py-3 bg-neutral-800 border-b border-neutral-700/80">
+              <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
                 <span className="text-sm font-semibold text-neutral-200">getCard.ts</span>
                 <span className="ml-auto text-xs text-neutral-600 font-mono">func.ts</span>
               </div>
@@ -773,7 +804,7 @@ wireTriggerSource({
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer border-2 ${
                       isActive
                         ? 'border-primary bg-primary/15 scale-125 shadow-lg shadow-primary/20'
-                        : 'border-neutral-700 bg-neutral-800/90 hover:border-neutral-500 hover:scale-110'
+                        : 'border-neutral-800 bg-[#0d0d0d] hover:border-neutral-600 hover:scale-110'
                     }`}
                     title={example.title}
                   >
@@ -801,7 +832,7 @@ wireTriggerSource({
             <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Wiring code</p>
             {activeProtocol !== null && (
               <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-                <div className="flex items-center gap-3 px-5 py-3 bg-neutral-800 border-b border-neutral-700/80">
+                <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
                   <WiringIcon wiringId={wiringExamples[activeProtocol].icon} size={15} />
                   <span className="text-sm font-semibold text-neutral-200">{wiringExamples[activeProtocol].title}</span>
                   <span className="ml-auto text-xs text-neutral-600 font-mono">wiring.ts</span>
@@ -828,13 +859,13 @@ wireTriggerSource({
 /** Bundle Only What You Deploy - Condensed Summary */
 function ProblemSolutionSection() {
   return (
-    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             Bundle Only What You Deploy
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
             Run your codebase as a monolith, as microservices, or as functions. Pikku creates the smallest bundle for your use case.
           </p>
         </div>
@@ -905,30 +936,30 @@ function ProtocolSupportSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-6">
             Every Way Your Backend Communicates
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
             Pikku supports all the protocols modern backends need. Same function, different protocol.
           </p>
         </div>
 
         <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
           {protocols.map((protocol, idx) => (
-            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900 p-6 rounded-lg card-shadow">
+            <div key={idx} className="bg-neutral-900 p-6 rounded-lg card-shadow">
               <div className="flex justify-center mb-4">
                 <WiringIcon wiringId={protocol.wiringId} size={48} />
               </div>
               <Heading as="h3" className="text-lg font-bold text-center mb-2">
                 {protocol.name}
               </Heading>
-              <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-2">
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 text-center mb-2">
                 {protocol.desc}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-500 text-center">
+              <p className="text-xs text-neutral-500 dark:text-neutral-500 text-center">
                 {protocol.detail}
               </p>
             </div>
@@ -939,72 +970,10 @@ function ProtocolSupportSection() {
   );
 }
 
-/** Used By Section */
-function UsedBySection() {
-  const companies = [
-    {
-      name: 'AgreeWe',
-      logo: { light: 'agreewe-light.png', dark: 'agreewe-dark.png' },
-      url: 'https://www.agreewe.com'
-    },
-    {
-      name: 'HeyGermany',
-      logo: { light: 'heygermany-light.svg', dark: 'heygermany-dark.svg' },
-      url: 'https://hey-germany.com'
-    },
-    {
-      name: 'marta',
-      logo: { light: 'marta-light.svg', dark: 'marta-light.svg' },
-      url: 'https://marta.de'
-    },
-    {
-      name: 'BambooRose',
-      logo: { light: 'bamboorose-light.png', dark: 'bamboorose-dark.png' },
-      url: 'https://bamboorose.com'
-    },
-    {
-      name: 'Calligraphy Cut',
-      logo: { light: 'calligraphycut-light.svg', dark: 'calligraphycut-dark.svg' },
-      url: 'https://calligraphy-cut.com'
-    }
-  ];
-
-  return (
-    <section className="bg-[#0a0a0f] border-t border-white/5 py-6">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <p className="text-center text-xs font-semibold tracking-widest uppercase text-white/25 mb-6">
-          Built with Pikku
-        </p>
-        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-6">
-          {companies.map((company, idx) => (
-            <Link
-              key={idx}
-              href={company.url}
-              className="flex items-center justify-center px-4 py-3 rounded-lg opacity-40 hover:opacity-80 transition-opacity"
-              title={company.name}
-            >
-              <Image
-                sources={{
-                  light: `img/logos/${company.logo.dark}`,
-                  dark: `img/logos/${company.logo.dark}`
-                }}
-                alt={company.name}
-                width={120}
-                height={40}
-                className="object-contain"
-              />
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /** Agents Section */
 function AgentsSection() {
   return (
-    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
@@ -1015,7 +984,7 @@ function AgentsSection() {
               Alpha
             </span>
           </div>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
             Define agents that use your existing functions as tools. Same auth, same permissions, same services — powered by any LLM.
           </p>
         </div>
@@ -1025,25 +994,25 @@ function AgentsSection() {
           <div className="space-y-6">
               <div className="flex flex-col items-start mb-2">
                   <h3 className="text-xl font-bold mb-1">1. Functions as Tools</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Your existing Pikku functions become agent tools automatically. No adapters, no glue code — just reference the functions you already have.
                   </p>
               </div>
               <div className="flex flex-col items-start mb-2">
                   <h3 className="text-xl font-bold mb-1">2. Auth & Permissions Built In</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Agents inherit the same session, permissions, and middleware as every other protocol. No separate security layer to maintain.
                   </p>
               </div>
               <div className="flex flex-col items-start mb-2">
                   <h3 className="text-xl font-bold mb-1">3. Any LLM Provider</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Bring your own model — OpenAI, Anthropic, or any provider. Pikku handles tool calling, context, and execution.
                   </p>
               </div>
               <div className="flex flex-col items-start mb-2">
                   <h3 className="text-xl font-bold mb-1">4. Test in the Console</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Chat with agents directly in the Pikku Console playground. Iterate on prompts and tool configurations without building a frontend.
                   </p>
               </div>
@@ -1086,7 +1055,7 @@ wireChannel({
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto">
             Perfect for customer support, data analysis, admin automation, and any task where AI needs access to your backend.
           </p>
         </div>
@@ -1098,7 +1067,7 @@ wireChannel({
 /** Workflows Section */
 function WorkflowsSection() {
   return (
-    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
@@ -1106,7 +1075,7 @@ function WorkflowsSection() {
               Long-Running Workflows with Built-in Resilience
             </Heading>
           </div>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
             Build complex, multi-step processes that survive failures, handle time delays, and maintain state across server restarts.
           </p>
         </div>
@@ -1153,27 +1122,27 @@ function WorkflowsSection() {
           <div className="space-y-6">
               <div className="flex flex-col items-start mb-2">
                   <h3 className="text-xl font-bold mb-1">1. Deterministic Replay</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Completed steps are cached and never re-executed. Workflows resume from where they left off after failures or delays.
                   </p>
               </div>
               <div className="flex flex-col items-start mb-2">
                   <h3 className="text-xl font-bold mb-1">2. Persistent State</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Store state in any database—PostgreSQL and Redis support out of the box. Survives server restarts and you don't pay for the time it isn't running.
                   </p>
               </div>
 
               <div className="flex flex-col items-start mb-2">
                   <h3 className="text-xl font-bold mb-1">3. Time-Based Steps</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Sleep steps for delays, reminders, trial expirations, and scheduled follow-ups.
                   </p>
                 </div>
 
               <div className="flex flex-col items-start mb-2">
                   <h3 className="text-xl font-bold mb-1">4. RPC & Inline Steps</h3>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-neutral-600 dark:text-neutral-400">
                     Mix RPC calls (via queue workers) with inline code. Full type safety across all steps.
                   </p>
               </div>
@@ -1190,7 +1159,7 @@ function WorkflowsSection() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto">
             Perfect for user onboarding, order fulfillment, payment processing, approval workflows, and any multi-step business process.
           </p>
         </div>
@@ -1202,13 +1171,13 @@ function WorkflowsSection() {
 /** What Developers Say */
 function TestimonialsSection() {
   return (
-    <section className="py-8 lg:py-12 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             What Developers Say
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
             Real feedback from teams using Pikku in production
           </p>
         </div>
@@ -1216,12 +1185,12 @@ function TestimonialsSection() {
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {testimonials.map((testimonial, idx) => (
             <Card key={idx} variant="testimonial">
-              <p className="text-gray-700 dark:text-gray-300 mb-4 italic">
+              <p className="text-neutral-700 dark:text-neutral-300 mb-4 italic">
                 "{testimonial.quote}"
               </p>
               <div className="text-sm">
-                <p className="font-semibold text-gray-900 dark:text-gray-100">{testimonial.author}</p>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="font-semibold text-neutral-900 dark:text-neutral-100">{testimonial.author}</p>
+                <p className="text-neutral-600 dark:text-neutral-400">
                   {testimonial.role}{testimonial.company ? ` @ ${testimonial.company}` : ''}
                 </p>
               </div>
@@ -1259,7 +1228,7 @@ function ConsoleSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
@@ -1270,18 +1239,18 @@ function ConsoleSection() {
               Alpha
             </span>
           </div>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
             A per-environment visual control plane for your application. Explore, test, and manage everything from one UI.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
           {features.map((feature, idx) => (
-            <div key={idx} className="flex flex-col items-start p-6 bg-neutral-50 dark:bg-neutral-900 rounded-lg card-shadow">
+            <div key={idx} className="flex flex-col items-start p-6 bg-[#0d0d0d] rounded-lg border border-neutral-800 card-shadow">
               <span className="text-3xl mb-3">{feature.icon}</span>
               <div className="text-left">
                 <div className="text-lg font-bold mb-2">{feature.title}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">{feature.desc}</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">{feature.desc}</div>
               </div>
             </div>
           ))}
@@ -1303,7 +1272,7 @@ function ConsoleSection() {
 /** Deploy Anywhere */
 function DeployAnywhereSection() {
   return (
-    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Deploy Anywhere. Blend In Everywhere.
@@ -1311,10 +1280,10 @@ function DeployAnywhereSection() {
 
         <div className="grid md:grid-cols-2 md:gap-12 md:items-center">
           <div className="text-left">
-            <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+            <p className="text-xl text-neutral-600 dark:text-neutral-300 leading-relaxed mb-6">
               Pikku works with Node, Bun, Deno, serverless, edge runtimes, and containers.
             </p>
-            <p className="text-lg text-gray-500 dark:text-gray-400">
+            <p className="text-lg text-neutral-500 dark:text-neutral-400">
               No vendor lock-in. No framework opinions. Just TypeScript.
             </p>
           </div>
@@ -1390,26 +1359,26 @@ function ProductionFeaturesSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Ship Faster, Maintain Less
         </Heading>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-4 md:max-w-2xl md:mx-auto">
+        <p className="text-xl text-neutral-600 dark:text-neutral-300 mb-4 md:max-w-2xl md:mx-auto">
           Write your business logic once and deliver features across all protocols instantly. One source of truth means fewer bugs, faster iterations, and the flexibility to pivot without rewrites.
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 md:max-w-2xl md:mx-auto">
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6 md:max-w-2xl md:mx-auto">
           Tiny runtime with minimal overhead. Bundles as small as 50KB for single-function deployments.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
           {features.map((feature, idx) => (
-            <div key={idx} className="flex flex-col items-start p-6 bg-neutral-50 dark:bg-neutral-900 rounded-lg card-shadow">
+            <div key={idx} className="flex flex-col items-start p-6 bg-[#0d0d0d] rounded-lg border border-neutral-800 card-shadow">
               <span className="text-4xl mb-4">{feature.icon}</span>
               <div className="text-left">
                 <div className="text-xl font-bold mb-2">{feature.title}</div>
-                <div className="text-gray-600 dark:text-gray-400 text-sm mb-2">{feature.desc}</div>
-                <div className="text-gray-500 dark:text-gray-500 text-xs">{feature.detail}</div>
+                <div className="text-neutral-600 dark:text-neutral-400 text-sm mb-2">{feature.desc}</div>
+                <div className="text-neutral-500 dark:text-neutral-500 text-xs">{feature.detail}</div>
               </div>
             </div>
           ))}
@@ -1457,13 +1426,13 @@ function WhyIBuiltPikkuSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-12 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             Why I Built Pikku
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
             Three core principles that drove Pikku's creation
           </p>
         </div>
@@ -1480,13 +1449,13 @@ function WhyIBuiltPikkuSection() {
           ))}
         </div>
 
-        <div className="mt-12 mb-6 lg:mb-14">
+        {/* <div className="mt-12 mb-6 lg:mb-14">
           <Heading as="h3" className="text-2xl font-bold mb-6 text-center">
             Watch the Talks
           </Heading>
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {videos.map((video, idx) => (
-              <div key={idx} className="bg-white dark:bg-neutral-900 rounded-lg overflow-hidden card-shadow">
+              <div key={idx} className="bg-[#0d0d0d] rounded-lg overflow-hidden card-shadow">
                 <div className="relative" style={{ paddingBottom: '56.25%' }}>
                   <iframe
                     className="absolute top-0 left-0 w-full h-full"
@@ -1500,9 +1469,9 @@ function WhyIBuiltPikkuSection() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-6">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 text-center mt-6">
           — Yasser Fadl, Creator of Pikku
         </p>
       </div>
@@ -1534,13 +1503,13 @@ function HowTeamsUseItSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-12 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             How Teams Use Pikku
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
+          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
             Real-world scenarios where one function serves multiple use cases
           </p>
         </div>
@@ -1552,16 +1521,16 @@ function HowTeamsUseItSection() {
                 {useCase.title}
               </Heading>
               <div className="mb-4">
-                <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">The Challenge:</p>
-                <p className="text-sm text-gray-700 dark:text-gray-300">{useCase.problem}</p>
+                <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-1">The Challenge:</p>
+                <p className="text-sm text-neutral-700 dark:text-neutral-300">{useCase.problem}</p>
               </div>
               <div className="mb-4">
-                <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">With Pikku:</p>
-                <p className="text-sm text-gray-700 dark:text-gray-300">{useCase.solution}</p>
+                <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-1">With Pikku:</p>
+                <p className="text-sm text-neutral-700 dark:text-neutral-300">{useCase.solution}</p>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">Benefits:</p>
-                <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-2">Benefits:</p>
+                <ul className="text-sm text-neutral-700 dark:text-neutral-300 space-y-1">
                   {useCase.benefits.map((benefit, bidx) => (
                     <li key={bidx} className="flex items-start">
                       <span className="text-green-500 mr-2">✓</span>
@@ -1585,12 +1554,12 @@ function TryItNowSection() {
   };
 
   return (
-    <section id="get-started" className="py-8 lg:py-12 bg-neutral-50 dark:bg-neutral-900">
+    <section id="get-started" className="py-8 lg:py-12">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-4">
           Get Started in Minutes
         </Heading>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 lg:mb-14 md:max-w-2xl md:mx-auto">
+        <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-6 lg:mb-14 md:max-w-2xl md:mx-auto">
           Create your first Pikku app with one command. You'll have a function running across HTTP, WebSockets, and more in under 5 minutes.
         </p>
         <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors" onClick={copyToClipboard}>
@@ -1617,7 +1586,7 @@ function CallToActionSection() {
   };
 
   return (
-    <section className="py-8 lg:py-12 bg-neutral-900 dark:bg-neutral-950 relative overflow-hidden">
+    <section className="py-8 lg:py-12 relative overflow-hidden">
       {/* Subtle background glow */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-primary/10 blur-[80px]" />
@@ -1626,7 +1595,7 @@ function CallToActionSection() {
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
           Your next backend shouldn't have eight copies of the same function.
         </Heading>
-        <p className="text-lg text-gray-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
           Write it once. Pikku wires it everywhere.
         </p>
 
@@ -1661,7 +1630,7 @@ function CallToActionSection() {
             View on GitHub
           </Link>
         </div>
-        <p className="text-gray-600 text-sm mt-6">MIT Licensed &nbsp;•&nbsp; Open Source &nbsp;•&nbsp; 5-minute setup</p>
+        <p className="text-neutral-500 text-sm mt-6">MIT Licensed &nbsp;•&nbsp; Open Source &nbsp;•&nbsp; 5-minute setup</p>
       </div>
     </section>
   );
@@ -1676,7 +1645,6 @@ export default function Home() {
       description="Write backend logic once and wire it to HTTP, WebSockets, queues, cron jobs, AI agents, and more. Deploy anywhere—Express, Lambda, Cloudflare Workers, and beyond."
     >
       <Hero />
-      <UsedBySection />
       <main>
         {/* 1. Pain — make the developer nod */}
         <PainSection />
@@ -1687,18 +1655,18 @@ export default function Home() {
         {/* 3. Trust — what developers say */}
         <TestimonialsSection />
 
-        {/* 4. Depth — what else you can build */}
+        {/* 3. Depth — what else you can build */}
         <CapabilitiesSection />
 
-        {/* 5. Confidence — production-grade, serious */}
+        {/* 4. Confidence — production-grade, serious */}
         <ProductionFeaturesSection />
         <ProblemSolutionSection />
 
-        {/* 6. Action — single strong CTA */}
+        {/* 5. Action — single strong CTA */}
         <CallToActionSection />
 
-        {/* 7. For the curious — dive deeper */}
-        <LiveExamples />
+        {/* 6. For the curious — dive deeper */}
+        {/* <LiveExamples /> */}
         <WhyIBuiltPikkuSection />
       </main>
     </Layout>

@@ -53,10 +53,10 @@ export default function Card({
   variant = 'default'
 }: CardProps) {
   const variantClasses = {
-    default: 'bg-white dark:bg-neutral-900 rounded-lg p-6 border border-gray-200 dark:border-neutral-800 card-shadow',
-    white: 'bg-white dark:bg-neutral-900 rounded-lg p-6 card-shadow',
-    testimonial: 'bg-white dark:bg-neutral-900 rounded-lg p-6 border border-gray-200 dark:border-neutral-800 card-shadow',
-    minimal: 'bg-white dark:bg-neutral-800 rounded-lg p-6 card-shadow'
+    default: 'bg-[#0d0d0d] rounded-lg p-6 border border-neutral-800 card-shadow',
+    white: 'bg-[#0d0d0d] rounded-lg p-6 border border-neutral-800 card-shadow',
+    testimonial: 'bg-[#0d0d0d] rounded-lg p-6 border border-neutral-800 card-shadow',
+    minimal: 'bg-[#0d0d0d] rounded-lg p-6 card-shadow'
   };
 
   return (
@@ -74,7 +74,7 @@ export default function Card({
       )}
 
       {description && (
-        <div className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+        <div className="text-sm text-neutral-700 dark:text-neutral-300 mb-4">
           {typeof description === 'string' ? <p>{description}</p> : description}
         </div>
       )}
