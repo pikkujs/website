@@ -326,6 +326,12 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
   border-left: 1px solid rgba(168, 99, 238, 0.18) !important;
 }
 
+/* Prevent Infima from adding underline on hover to card/button links */
+a.no-underline:hover,
+a.no-underline:hover * {
+  text-decoration: none !important;
+}
+
 /* Lock everything to the single background color */
 [data-theme='dark'] body,
 [data-theme='dark'] .main-wrapper,
