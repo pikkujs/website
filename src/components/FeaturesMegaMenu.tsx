@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from '@docusaurus/Link';
 import { wireTypes, wireCategories, type WireCategory } from '../data/wireTypes';
-import { Code2, Wrench, Shield, GitBranch, Scissors, Package, Monitor, Key, Puzzle } from 'lucide-react';
+import { Code2, Wrench, Shield, GitBranch, Scissors, Package, Monitor, Key, Puzzle, Gauge } from 'lucide-react';
 
 const coreEntries = [
   { id: 'function', label: 'Functions', description: 'One signature, every protocol', url: '/core/function', icon: Code2 },
@@ -19,6 +19,7 @@ const deploymentEntries = [
 const platformEntries = [
   { id: 'console', label: 'Console', description: 'Visual control plane for your app', url: '/core/console', icon: Monitor },
   { id: 'addons', label: 'Addons', description: 'Extend with npm packages', url: '/core/addons', icon: Puzzle },
+  { id: 'benchmarks', label: 'Benchmarks', description: 'Real-world performance numbers', url: '/benchmarks', icon: Gauge },
 ];
 
 export default function FeaturesMegaMenu(): React.ReactNode {

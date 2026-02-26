@@ -126,7 +126,7 @@ function CoreConceptsSection() {
                   </p>
                 </div>
               </div>
-              <span className="absolute bottom-6 right-8 text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
                 Learn more &rarr;
               </span>
             </Link>
@@ -240,7 +240,7 @@ function DeploymentSection() {
                   </p>
                 </div>
               </div>
-              <span className="absolute bottom-6 right-8 text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
                 Learn more &rarr;
               </span>
             </Link>
@@ -309,7 +309,7 @@ function PlatformSection() {
                   </p>
                 </div>
               </div>
-              <span className="absolute bottom-6 right-8 text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
                 Learn more &rarr;
               </span>
             </Link>
@@ -350,7 +350,7 @@ function EcosystemSection() {
                   </p>
                 </div>
               </div>
-              <span className="absolute bottom-6 right-8 text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
                 Learn more &rarr;
               </span>
             </Link>
