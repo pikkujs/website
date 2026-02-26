@@ -1,4 +1,5 @@
 @import './wiring-icons.css';
+@import './mega-menu.css';
 @import "tailwindcss/theme";
 
 /* Use Docusaurus theme toggle for dark: utilities instead of prefers-color-scheme */

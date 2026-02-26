@@ -1,0 +1,199 @@
+/* ========================================
+   Features Mega-Menu
+   ======================================== */
+
+.mega-menu {
+  position: relative;
+}
+
+.mega-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ifm-navbar-link-color);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.mega-menu-trigger:hover {
+  color: var(--ifm-navbar-link-hover-color);
+  text-decoration: none;
+}
+
+.mega-menu-trigger-caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid currentColor;
+  margin-left: 2px;
+  transition: transform 0.2s ease;
+}
+
+.mega-menu-trigger[aria-expanded='true'] .mega-menu-trigger-caret {
+  transform: rotate(180deg);
+}
+
+/* Panel */
+.mega-menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 680px;
+  max-width: calc(100vw - 32px);
+  background: #0d0d14;
+  border: 1px solid rgba(168, 99, 238, 0.18);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 48px rgba(168, 99, 238, 0.06);
+  padding: 24px 28px 16px;
+  z-index: 400;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.mega-menu-panel--open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* 3-column grid */
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Category */
+.mega-menu-category-label {
+  font-family: 'Plus Jakarta Sans', var(--ifm-font-family-base);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+
+/* Item */
+.mega-menu-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.15s ease;
+  opacity: 0;
+  animation: mega-menu-item-in 0.3s ease forwards;
+}
+
+.mega-menu-item:hover {
+  background: rgba(168, 99, 238, 0.08);
+  text-decoration: none;
+  color: inherit;
+}
+
+.mega-menu-item:focus-visible {
+  outline: 2px solid rgba(168, 99, 238, 0.5);
+  outline-offset: -2px;
+}
+
+/* Icon box */
+.mega-menu-icon-box {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Text */
+.mega-menu-item-label {
+  font-family: 'Plus Jakarta Sans', var(--ifm-font-family-base);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.2;
+}
+
+.mega-menu-item-desc {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.42);
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+/* Footer */
+.mega-menu-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(168, 99, 238, 0.12);
+  text-align: right;
+}
+
+.mega-menu-footer a {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(168, 99, 238, 0.7);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.mega-menu-footer a:hover {
+  color: rgba(168, 99, 238, 1);
+  text-decoration: none;
+}
+
+/* Staggered item entrance */
+@keyframes mega-menu-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* nth-child stagger per column */
+.mega-menu-column .mega-menu-item:nth-child(2) { animation-delay: 0.03s; }
+.mega-menu-column .mega-menu-item:nth-child(3) { animation-delay: 0.06s; }
+.mega-menu-column .mega-menu-item:nth-child(4) { animation-delay: 0.09s; }
+.mega-menu-column .mega-menu-item:nth-child(5) { animation-delay: 0.12s; }
+
+/* Column-level stagger */
+.mega-menu-grid .mega-menu-column:nth-child(2) .mega-menu-item { animation-delay: 0.05s; }
+.mega-menu-grid .mega-menu-column:nth-child(2) .mega-menu-item:nth-child(2) { animation-delay: 0.08s; }
+.mega-menu-grid .mega-menu-column:nth-child(2) .mega-menu-item:nth-child(3) { animation-delay: 0.11s; }
+.mega-menu-grid .mega-menu-column:nth-child(2) .mega-menu-item:nth-child(4) { animation-delay: 0.14s; }
+.mega-menu-grid .mega-menu-column:nth-child(2) .mega-menu-item:nth-child(5) { animation-delay: 0.17s; }
+
+.mega-menu-grid .mega-menu-column:nth-child(3) .mega-menu-item { animation-delay: 0.1s; }
+.mega-menu-grid .mega-menu-column:nth-child(3) .mega-menu-item:nth-child(2) { animation-delay: 0.13s; }
+.mega-menu-grid .mega-menu-column:nth-child(3) .mega-menu-item:nth-child(3) { animation-delay: 0.16s; }
+
+/* Hide on mobile — Docusaurus handles mobile dropdown natively */
+@media (max-width: 996px) {
+  .mega-menu {
+    display: none;
+  }
+}
