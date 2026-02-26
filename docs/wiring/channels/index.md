@@ -12,45 +12,17 @@ Your domain functions don't need to know they're being called through a WebSocke
 
 ## Your First Channel
 
-Let's create a simple chat channel:
+Here's a complete channel example from the templates. It handles connection lifecycle events and uses action-based message routing:
 
-```typescript
-// chat.function.ts
-import { pikkuChannelFunc } from '#pikku'
-
-export const onMessage = pikkuChannelFunc<
-  { message: string },      // Input - what clients send
-  { message: string },      // Output - what we send back
-  { room: string }          // ChannelData - from URL params/query params/depends on source
->({
-  func: async ({ logger, channel }, data) => {
-    logger.info('Message received', {
-      room: channel.openingData.room,
-      message: data.message
-    })
-
-    // Return value is automatically sent to the client
-    return { message: `Echo: ${data.message}` }
-  },
-  title: 'Handle chat messages',
-  tags: ['chat']
-})
+```typescript reference title="channel.functions.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/channel.functions.ts
 ```
 
-```typescript
-// chat.channel.ts
-import { wireChannel } from '#pikku/channel'
-import { onMessage } from './functions/chat.function.js'
-
-wireChannel({
-  name: 'chat',
-  route: '/chat',
-  onMessage,
-  auth: false
-})
+```typescript reference title="channel.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/channel.wiring.ts
 ```
 
-That's it! Clients can now connect to your chat channel and send messages. Pikku automatically:
+Clients send action-based messages like `{ action: 'subscribe', topic: 'todo-created' }` to interact with the channel. Pikku automatically:
 - Upgrades HTTP connections to WebSocket
 - Routes messages to your function
 - Validates message data against your types

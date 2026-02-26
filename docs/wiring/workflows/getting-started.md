@@ -70,52 +70,14 @@ npx pikku
 
 Here's the workflow from the templates showing all three step types:
 
-```typescript
-// From pikku-workflows/templates/functions/src/workflow.functions.ts
-export const onboardingWorkflow = pikkuWorkflowFunc<
-  { email: string; userId: string },
-  { userId: string; email: string }
->(async ({ workflow }, data) => {
-  // Step 1: RPC step - calls another Pikku function via queue worker
-  const user = await workflow.do(
-    `Create user profile in database for ${data.email}`,
-    'createUserProfile',
-    data
-  )
-
-  // Step 2: Inline step - executes immediately with caching
-  const welcomeMessage = await workflow.do(
-    'Generate personalized welcome message',
-    async () => generateWelcomeMessage(user.email)
-  )
-
-  // Step 3: Sleep step - time-based delay
-  await workflow.sleep('Sleeping for 5 minutes', '5min')
-
-  // Step 4: RPC step - sends email via queue worker
-  await workflow.do('Send welcome email to user', 'sendEmail', {
-    to: data.email,
-    subject: 'Welcome!',
-    body: welcomeMessage,
-  })
-
-  return {
-    userId: data.userId,
-    email: data.email,
-  }
-})
+```typescript reference title="workflow.functions.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/workflow.functions.ts
 ```
 
-Wire it:
+Wire it via HTTP:
 
-```typescript
-// From pikku-workflows/templates/functions/src/workflow.wiring.ts
-wireWorkflow({
-  name: 'onboarding',
-  description: 'User onboarding workflow with email and profile setup',
-  func: onboardingWorkflow,
-  tags: ['onboarding', 'users'],
-})
+```typescript reference title="workflow.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/workflow.wiring.ts
 ```
 
 The execution mode (inline vs remote) is determined automatically based on whether a queue service is configured in your singleton services.

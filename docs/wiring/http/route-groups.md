@@ -12,26 +12,8 @@ For larger APIs, `defineHTTPRoutes` and `wireHTTPRoutes` let you organise routes
 
 Use `defineHTTPRoutes` to create a route contract:
 
-```typescript
-// routes/todos.routes.ts
-import { defineHTTPRoutes } from '#pikku/http'
-import {
-  listTodos, getTodo, createTodo,
-  updateTodo, deleteTodo, completeTodo
-} from '../functions/todos.functions.js'
-
-export const todosRoutes = defineHTTPRoutes({
-  auth: false,
-  tags: ['todos'],
-  routes: {
-    list: { method: 'get', route: '/todos', func: listTodos },
-    get: { method: 'get', route: '/todos/:id', func: getTodo },
-    create: { method: 'post', route: '/todos', func: createTodo },
-    update: { method: 'put', route: '/todos/:id', func: updateTodo },
-    delete: { method: 'delete', route: '/todos/:id', func: deleteTodo },
-    complete: { method: 'post', route: '/todos/:id/complete', func: completeTodo },
-  },
-})
+```typescript reference title="todos.http.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/todos.http.ts
 ```
 
 `defineHTTPRoutes` doesn't register anything — it returns a route contract that can be composed and wired later.

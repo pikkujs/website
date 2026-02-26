@@ -23,30 +23,8 @@ Graph workflows define multi-step processes declaratively as a graph of nodes. I
 
 ## Basic Example
 
-```typescript
-import { pikkuWorkflowGraph } from './.pikku/workflow/pikku-workflow-types.gen'
-
-export const todoReviewWorkflow = pikkuWorkflowGraph({
-  description: 'Review overdue todos and send summary notification',
-  tags: ['review', 'overdue', 'notification'],
-  nodes: {
-    fetchOverdue: 'fetchOverdueTodos',
-    sendSummary: 'sendOverdueSummary',
-  },
-  config: {
-    fetchOverdue: {
-      input: () => ({ userId: 'user1' }),
-      next: 'sendSummary',
-    },
-    sendSummary: {
-      input: (ref) => ({
-        userId: ref('fetchOverdue', 'userId'),
-        overdueCount: ref('fetchOverdue', 'count'),
-        todos: ref('fetchOverdue', 'todos'),
-      }),
-    },
-  },
-})
+```typescript reference title="graph.graph.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/graph.graph.ts
 ```
 
 ## Structure
@@ -240,16 +218,8 @@ interface PikkuGraphWire {
 
 Use `graphStart()` to wire a graph workflow to an HTTP endpoint:
 
-```typescript
-import { graphStart } from './.pikku/workflow/pikku-workflow-types.gen'
-import { wireHTTP } from './.pikku/pikku-types.gen'
-
-wireHTTP({
-  auth: false,
-  method: 'post',
-  route: '/workflow/review',
-  func: graphStart('todoReviewWorkflow', 'fetchOverdue'),
-})
+```typescript reference title="graph.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/graph.wiring.ts
 ```
 
 `graphStart()` takes the workflow name and the entry node ID. It returns a function that starts the workflow and returns a `{ runId }` response.

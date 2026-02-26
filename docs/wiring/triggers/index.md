@@ -14,86 +14,21 @@ A trigger has two parts:
 
 ## Your First Trigger
 
-### 1. Create the trigger source
+Here's a complete trigger example from the templates. The source polls an event using `setInterval`, and the target function processes the payload:
 
-The trigger source subscribes to an external event and calls `trigger.invoke()` when something happens:
+```typescript reference title="trigger.functions.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/trigger.functions.ts
+```
 
-```typescript
-// poll-trigger.function.ts
-import { pikkuTriggerFunc } from '#pikku'
-
-export const pollForUpdates = pikkuTriggerFunc<
-  { url: string; intervalMs: number },  // Input - configuration
-  { data: any }                          // Output - what gets fired
->({
-  title: 'Poll for updates',
-  description: 'Polls an external URL for new data',
-  func: async ({ logger }, { url, intervalMs }, { trigger }) => {
-    logger.info(`Starting poll trigger for ${url}`)
-
-    const interval = setInterval(async () => {
-      const response = await fetch(url)
-      const data = await response.json()
-      trigger.invoke({ data })
-    }, intervalMs)
-
-    // Return teardown function for cleanup
-    return () => {
-      clearInterval(interval)
-      logger.info(`Stopped polling ${url}`)
-    }
-  }
-})
+```typescript reference title="trigger.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/trigger.wiring.ts
 ```
 
 The trigger function:
 1. Receives services and input configuration
-2. Sets up the subscription
+2. Sets up the subscription (interval, pub/sub listener, etc.)
 3. Calls `trigger.invoke(data)` when events occur
 4. Returns a teardown function for cleanup
-
-### 2. Create the target function
-
-The target is a regular Pikku function that runs when the trigger fires:
-
-```typescript
-// on-update.function.ts
-import { pikkuSessionlessFunc } from '#pikku'
-
-export const onUpdate = pikkuSessionlessFunc({
-  func: async ({ logger, database }, data) => {
-    logger.info('Received update from trigger')
-    await database.insert('events', data)
-    return data
-  },
-  title: 'Handle update event',
-  internal: true  // Not exposed via external RPC
-})
-```
-
-### 3. Wire them together
-
-Triggers use two wiring functions. This separation exists because the trigger source (the subscription) can run on a different machine from the consumer (the target function). `wireTrigger` declares the target, `wireTriggerSource` registers the subscription:
-
-```typescript
-// updates.trigger.ts
-import { wireTrigger, wireTriggerSource } from '#pikku/trigger'
-import { onUpdate } from './functions/on-update.function.js'
-import { pollForUpdates } from './functions/poll-trigger.function.js'
-
-// Declare the trigger and its target
-wireTrigger({
-  name: 'poll-updates',
-  func: onUpdate  // The function to invoke when trigger fires
-})
-
-// Register the subscription source
-wireTriggerSource({
-  name: 'poll-updates',  // Must match wireTrigger name
-  func: pollForUpdates,
-  input: { url: 'https://api.example.com/updates', intervalMs: 5000 }
-})
-```
 
 ## How It Works
 
@@ -220,27 +155,9 @@ export const postgresChanges = pikkuTriggerFunc<
 
 ### Polling
 
-```typescript
-import { pikkuTriggerFunc } from '#pikku'
+The template's `testEventTrigger` (shown in the "Your First Trigger" section above) is a polling trigger — it fires every second using `setInterval`. See `trigger.functions.ts` for the complete implementation.
 
-export const pollTrigger = pikkuTriggerFunc<
-  { eventName: string },
-  { payload: string }
->(async ({ logger }, { eventName }, { trigger }) => {
-  logger.info(`Trigger setup for event: ${eventName}`)
-
-  const interval = setInterval(() => {
-    trigger.invoke({ payload: `event from ${eventName}` })
-  }, 1_000)
-
-  return () => {
-    clearInterval(interval)
-    logger.info(`Trigger teardown for event: ${eventName}`)
-  }
-})
-```
-
-Note that `pikkuTriggerFunc` supports both the config object syntax (with `title`, `description`, etc.) and the direct function syntax shown above.
+Note that `pikkuTriggerFunc` supports both the config object syntax (with `title`, `description`, etc.) and the direct function syntax shown in the template.
 
 ## Triggering Workflows
 

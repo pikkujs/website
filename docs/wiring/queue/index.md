@@ -12,43 +12,14 @@ Your domain functions don't need to know they're being called from a queue. They
 
 ## Your First Queue Worker
 
-Let's process welcome emails in the background:
+Here's a queue worker from the templates — it processes todo reminder jobs:
 
-```typescript
-// email.function.ts
-import { pikkuSessionlessFunc } from '#pikku'
-
-export const sendWelcomeEmail = pikkuSessionlessFunc<
-  { userId: string; email: string; name: string },
-  void
->({
-  func: async ({ emailService, logger }, data) => {
-    logger.info('Sending welcome email', { userId: data.userId })
-
-    await emailService.send({
-      to: data.email,
-      subject: `Welcome ${data.name}!`,
-      template: 'welcome',
-      data: { name: data.name }
-    })
-
-    logger.info('Welcome email sent', { userId: data.userId })
-  },
-  auth: false,  // Queue jobs don't have user sessions
-  title: 'Send welcome email to new users',
-  tags: ['email']
-})
+```typescript reference title="queue.functions.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/queue.functions.ts
 ```
 
-```typescript
-// email.queue.ts
-import { wireQueueWorker } from '#pikku/queue'
-import { sendWelcomeEmail } from './functions/email.function.js'
-
-wireQueueWorker({
-  queue: 'email',
-  func: sendWelcomeEmail
-})
+```typescript reference title="queue.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/queue.wiring.ts
 ```
 
 ## Queue Functions

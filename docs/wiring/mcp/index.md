@@ -10,49 +10,16 @@ MCP lets AI agents access your application's data and capabilities. Your Pikku f
 
 Your domain functions don't need to know they're being called by an AI agent. They receive typed input, do their work, and return structured data. Pikku handles all the MCP protocol details.
 
-## Your First MCP Resource
+## Your First MCP Endpoint
 
-Let's expose project documentation to AI agents:
+Here are MCP functions and wiring from the templates, showing a tool, resource, and two prompts:
 
-```typescript
-// docs.function.ts
-import { pikkuMCPResourceFunc } from '#pikku'
-import type { MCPResourceResponse } from '#pikku'
-
-export const getProjectDocs = pikkuMCPResourceFunc<
-  { section: string },
-  MCPResourceResponse
->({
-  func: async ({ database }, data) => {
-    const docs = await database.query('documentation', {
-      where: { section: data.section }
-    })
-
-    return [
-      {
-        uri: `docs://${data.section}`,
-        text: docs.content
-      }
-    ]
-  },
-  title: 'Get project documentation',
-  description: 'Returns documentation for a specific section',
-  tags: ['mcp', 'docs']
-})
+```typescript reference title="mcp.functions.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/mcp.functions.ts
 ```
 
-```typescript
-// docs.mcp.ts
-import { wireMCPResource } from '#pikku/mcp'
-import { getProjectDocs } from './functions/docs.function.js'
-
-wireMCPResource({
-  uri: 'docs/{section}',
-  title: 'Project Documentation',
-  description: 'Get project documentation by section',
-  func: getProjectDocs,
-  tags: ['mcp', 'docs']
-})
+```typescript reference title="mcp.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/mcp.wiring.ts
 ```
 
 That's it! AI agents can now request your documentation. Pikku automatically:
@@ -120,34 +87,7 @@ export const searchCode = pikkuMCPResourceFunc<
 
 ### Tools
 
-Tools let AI models perform actions - creating records, running operations, or modifying state:
-
-```typescript
-import type { MCPToolResponse } from '#pikku'
-
-export const createIssue = pikkuMCPToolFunc<
-  { title: string; description: string; priority: 'low' | 'medium' | 'high' },
-  MCPToolResponse
->({
-  func: async ({ database }, data) => {
-    const issue = await database.insert('issues', {
-      title: data.title,
-      description: data.description,
-      priority: data.priority,
-      createdAt: Date.now()
-    })
-
-    return [
-      {
-        type: 'text',
-        text: `Created issue #${issue.id}: ${issue.title}`
-      }
-    ]
-  },
-  title: 'Create a new issue',
-  tags: ['mcp', 'issues']
-})
-```
+Tools let AI models perform actions - creating records, running operations, or modifying state. The template's `createTodoTool` (in `mcp.functions.ts` above) is an example. Tools return an array of content blocks:
 
 **Response format**: Array of `{ type: 'text', text: string } | { type: 'image', data: string }`
 

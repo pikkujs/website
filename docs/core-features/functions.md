@@ -128,44 +128,13 @@ func: async ({ database }, data, { session }) => {
 
 By default, Pikku functions require authentication (`auth: true`). This means a user session must exist for the function to execute.
 
-### Setting a Session (Login)
+### Authentication Functions (Login, Logout, GetMe)
 
-```typescript
-export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
-  func: async ({ database, jwt }, data, { setSession }) => {
-    const user = await database.query('user', { email: data.email })
-
-    if (!user || !await verifyPassword(data.password, user.passwordHash)) {
-      throw new UnauthorizedError('Invalid credentials')
-    }
-
-    // Set the session - works across HTTP, WebSocket, etc.
-    setSession({
-      userId: user.id,
-      role: user.role
-    })
-
-    return { token: await jwt.sign({ userId: user.id }), user }
-  },
-  auth: false,  // No existing session required for login
-  title: 'Authenticate a user',
-  tags: ['auth']
-})
+```typescript reference title="auth.functions.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/auth.functions.ts
 ```
 
-Notice we used `pikkuSessionlessFunc` for the login function and set `auth: false` - it doesn't require an existing session since we're creating one.
-
-### Clearing a Session (Logout)
-
-```typescript
-export const logout = pikkuFunc<void, void>({
-  func: async ({}, _data, { clearSession }) => {
-    clearSession()
-  },
-  title: 'Logout user',
-  tags: ['auth']
-})
-```
+The `login` function uses `jwt.encode` to issue a token and returns it alongside the user. The `logout` function calls `clearSession()` to clear the session. The `getMe` function reads the current session to return the authenticated user.
 
 The `session` from the wire parameter abstracts session storage, so it works identically whether your users are connecting via HTTP cookies, WebSocket connections, or any other transport that requires a session.
 

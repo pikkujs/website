@@ -12,44 +12,17 @@ Your domain functions don't need to know they're being called by a scheduler. Th
 
 ## Your First Scheduled Task
 
-Let's create a daily maintenance task:
+Here's a scheduled task example from the templates — a daily summary and a weekly cleanup:
 
-```typescript
-// maintenance.function.ts
-import { pikkuVoidFunc } from '#pikku'
-
-export const runDailyMaintenance = pikkuVoidFunc({
-  func: async ({ database, logger }) => {
-    logger.info('Starting daily maintenance')
-
-    // Clean up old records
-    await database.delete('logs', {
-      where: { createdAt: { lt: Date.now() - 30 * 24 * 60 * 60 * 1000 } }
-    })
-
-    // Update statistics
-    await database.query('UPDATE stats SET last_updated = NOW()')
-
-    logger.info('Daily maintenance completed')
-  },
-  auth: false,  // Scheduled tasks don't have user sessions
-  title: 'Run daily maintenance tasks',
-  tags: ['maintenance']
-})
+```typescript reference title="scheduled.functions.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/scheduled.functions.ts
 ```
 
-```typescript
-// maintenance.schedule.ts
-import { wireScheduler } from '#pikku/scheduler'
-import { runDailyMaintenance } from './functions/maintenance.function.js'
-
-wireScheduler({
-  cron: '0 3 * * *',  // Run at 3:00 AM UTC every day
-  func: runDailyMaintenance
-})
+```typescript reference title="scheduled.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/scheduled.wiring.ts
 ```
 
-That's it! Your function will now run every day at 3 AM UTC.
+That's it! Your functions will now run on their configured schedules.
 
 :::note
 If triggered by a serverless function like Lambda or Azure Timer, the platform's scheduler overrides this cron setting. The cron in `wireScheduler` is only for in-process scheduling (using `@pikku/scheduler`).
@@ -118,31 +91,31 @@ Common examples:
 ```typescript
 // Every 5 minutes
 wireScheduler({
-  cron: '*/5 * * * *',
+  schedule:'*/5 * * * *',
   func: healthCheck
 })
 
 // Every hour at minute 30
 wireScheduler({
-  cron: '30 * * * *',
+  schedule:'30 * * * *',
   func: hourlyUpdate
 })
 
 // Every day at 2:30 AM
 wireScheduler({
-  cron: '30 2 * * *',
+  schedule:'30 2 * * *',
   func: dailyBackup
 })
 
 // Every Monday at 9:00 AM
 wireScheduler({
-  cron: '0 9 * * 1',
+  schedule:'0 9 * * 1',
   func: weeklyReport
 })
 
 // First day of every month at midnight
 wireScheduler({
-  cron: '0 0 1 * *',
+  schedule:'0 0 1 * *',
   func: monthlyBilling
 })
 ```
@@ -161,7 +134,7 @@ import { runMaintenance } from './functions/maintenance.function.js'
 
 wireScheduler({
   // Required
-  cron: '0 3 * * *',
+  schedule:'0 3 * * *',
   func: runMaintenance,
 
   // Optional
@@ -170,7 +143,7 @@ wireScheduler({
 })
 ```
 
-### Sourcing Cron from Config
+### Sourcing Schedule from Config
 
 For different schedules across environments:
 
@@ -180,7 +153,7 @@ import { config } from './config.js'
 import { runBackup } from './functions/backup.function.js'
 
 wireScheduler({
-  cron: config.backupSchedule,  // '0 2 * * *' in prod, '0 */4 * * *' in dev
+  schedule: config.backupSchedule,  // '0 2 * * *' in prod, '0 */4 * * *' in dev
   func: runBackup
 })
 ```
@@ -228,7 +201,7 @@ export const schedulerMetrics = pikkuMiddleware(
 
 ```typescript
 wireScheduler({
-  cron: '0 3 * * *',
+  schedule:'0 3 * * *',
   func: runMaintenance,
   middleware: [schedulerMetrics, retryMiddleware]
 })
@@ -286,25 +259,25 @@ import {
 
 // Every hour - cleanup logs
 wireScheduler({
-  cron: '0 * * * *',
+  schedule:'0 * * * *',
   func: cleanupOldLogs
 })
 
 // Every 6 hours - update stats
 wireScheduler({
-  cron: '0 */6 * * *',
+  schedule:'0 */6 * * *',
   func: updateStatistics
 })
 
 // Daily at 2 AM - archive old data
 wireScheduler({
-  cron: '0 2 * * *',
+  schedule:'0 2 * * *',
   func: archiveOldData
 })
 
 // Every 15 minutes - refresh cache
 wireScheduler({
-  cron: '*/15 * * * *',
+  schedule:'*/15 * * * *',
   func: refreshCache
 })
 ```

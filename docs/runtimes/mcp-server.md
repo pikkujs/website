@@ -46,7 +46,7 @@ After creating your project, you'll have these key files:
 Define your MCP endpoints (tools, resources, prompts):
 
 ```typescript reference title="mcp.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/mcp.functions.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/mcp.functions.ts
 ```
 
 ### MCP Registration
@@ -54,7 +54,7 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/sr
 Register your functions as MCP endpoints:
 
 ```typescript reference title="mcp.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/mcp.wiring.ts
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/mcp.wiring.ts
 ```
 
 ### MCP Server Runtime

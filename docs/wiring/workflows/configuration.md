@@ -110,27 +110,7 @@ const workflowService = new RedisWorkflowService(
 )
 ```
 
-## Workflow Metadata
-
-Configure workflow metadata when wiring:
-
-```typescript
-wireWorkflow({
-  name: 'order-fulfillment',
-  description: 'Process order payment, inventory, and shipping',
-  func: orderFulfillmentWorkflow,
-  tags: ['orders', 'fulfillment', 'payments']
-})
-```
-
-### Options
-
-- **`name`**: (string, required) Unique workflow identifier
-- **`description`**: (string) Human-readable description
-- **`func`**: (function, required) Workflow function
-- **`tags`**: (string[]) Tags for categorization and filtering
-
-### Execution Mode
+## Execution Mode
 
 The execution mode (inline vs remote) is determined automatically:
 - **Remote mode**: Used when a `queueService` is configured in singleton services

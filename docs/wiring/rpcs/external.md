@@ -12,29 +12,8 @@ External RPCs let external clients invoke your Pikku functions via HTTP POST end
 
 Functions with `expose: true` can be called by external systems:
 
-```typescript
-export const calculateOrderTotal = pikkuSessionlessFunc<
-  { items: Array<{ price: number; quantity: number }> },
-  { subtotal: number; tax: number; total: number }
->({
-  func: async ({ database }, data) => {
-    const subtotal = data.items.reduce(
-      (sum, item) => sum + (item.price * item.quantity),
-      0
-    )
-
-    const taxRate = await database.query('config', {
-      where: { key: 'tax_rate' }
-    })
-
-    const tax = subtotal * (taxRate?.value ?? 0.08)
-
-    return { subtotal, tax, total }
-  },
-  expose: true,  // Can be called externally
-  title: 'Calculate order totals with tax',
-  tags: ['orders']
-})
+```typescript reference title="remote-rpc.functions.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/remote-rpc.functions.ts
 ```
 
 Everything else is derived from the function:
@@ -76,15 +55,14 @@ wireHTTP({
 External clients call it:
 
 ```bash
-POST /rpc/calculateOrderTotal
+POST /rpc/greet
 Content-Type: application/json
 
 {
   "data": {
-    "items": [
-      { "price": 10, "quantity": 2 },
-      { "price": 15, "quantity": 1 }
-    ]
+    "name": "Alice",
+    "greeting": "Hello"
+  }
 }
 ```
 
@@ -92,9 +70,9 @@ Response:
 
 ```json
 {
-  "subtotal": 35,
-  "tax": 2.8,
-  "total": 37.8
+  "message": "Hello, Alice!",
+  "timestamp": 1234567890000,
+  "serverPort": 3001
 }
 ```
 
@@ -108,14 +86,12 @@ import { pikkuClient } from './pikku-fetch.gen.js'
 const client = pikkuClient('https://api.example.com')
 
 // Fully type-safe RPC calls
-const totals = await client.calculateOrderTotal({
-  items: [
-    { price: 10, quantity: 2 },
-    { price: 15, quantity: 1 }
-  ]
+const result = await client.greet({
+  name: 'Alice',
+  greeting: 'Hello'
 })
 
-console.log(totals.subtotal)  // TypeScript knows the return type
+console.log(result.message)  // TypeScript knows the return type
 ```
 
 The client:

@@ -40,68 +40,28 @@ Run commands that invoke functions on a remote server via RPC. The CLI acts as a
 
 ## Your First CLI Command
 
-Let's create a simple greeting command:
+Here are CLI wiring and renderers from the templates, showing a full todo CLI with list, add, show, complete, and delete commands:
 
-```typescript
-// greet.function.ts
-import { pikkuSessionlessFunc } from '#pikku'
-
-export const greetUser = pikkuSessionlessFunc<
-  { name: string; loud?: boolean },
-  { message: string; timestamp: string }
->({
-  func: async (_, data) => {
-    const message = `Hello, ${data.name}!`
-    return {
-      message: data.loud ? message.toUpperCase() : message,
-      timestamp: new Date().toISOString()
-    }
-  },
-  title: 'Greet a user by name',
-  tags: ['cli']
-})
+```typescript reference title="cli.wiring.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/cli.wiring.ts
 ```
 
-```typescript
-// greet.cli.ts
-import { wireCLI, pikkuCLICommand } from '#pikku/cli'
-import { pikkuCLIRender } from '@pikku/core'
-import { greetUser } from './functions/greet.function.js'
-
-wireCLI({
-  program: 'greet-tool',
-  description: 'A simple greeting CLI tool',
-  commands: {
-    greet: pikkuCLICommand({
-      parameters: '<name>',
-      func: greetUser,
-      description: 'Greet a user by name',
-      render: pikkuCLIRender((services, data) => {
-        console.log(data.message)
-      }),
-      options: {
-        loud: {
-          description: 'Use loud greeting (uppercase)',
-          short: 'l',
-          default: false
-        }
-      }
-    })
-  }
-})
+```typescript reference title="cli.render.ts"
+https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/cli.render.ts
 ```
 
 Now you can use your CLI:
 
 ```bash
-greet-tool greet Alice
-# Hello, Alice!
+todo-cli list
+# Found 3 todo(s):
+# [ ] [HIGH] abc123: Buy groceries (due: 2024-12-31)
 
-greet-tool greet Alice --loud
-# HELLO, ALICE!
+todo-cli add "Write tests" --priority high
+# Success: Write tests
 
-greet-tool greet Alice -l
-# HELLO, ALICE!
+todo-cli complete <id>
+# Success
 ```
 
 Pikku automatically:
