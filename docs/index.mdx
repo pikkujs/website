@@ -4,15 +4,18 @@ title: Getting Started
 description: Build your first Pikku application
 ---
 
+import Link from '@docusaurus/Link';
+import { WebSocketIcon, QueueIcon, WorkflowIcon, RPCIcon, HttpIcon, BotIcon } from '@site/src/components/WiringIcons';
+
 # Getting Started with Pikku
 
-Pikku is a TypeScript framework that lets you write backend logic once and wire it to any protocol—HTTP, WebSockets, queues, scheduled tasks, and more. This guide will get you up and running in minutes.
+Pikku is a TypeScript framework where you write plain functions and wire them to any protocol — HTTP, WebSockets, queues, cron, and more — without changing your business logic.
 
-## Create Your Project
+This guide gets you to a working API in under five minutes.
+
+## 1. Create Your Project
 
 import PackageManagerTabs from '@site/src/components/PackageManagerTabs';
-
-Run the create command and follow the prompts:
 
 <PackageManagerTabs
   npm="npm create pikku@latest"
@@ -21,50 +24,28 @@ Run the create command and follow the prompts:
   bun="bun create pikku@latest"
 />
 
-You'll be asked:
-
-1. **Project name** - Choose a name for your project (default: `my-app`)
-2. **Template** - Select a runtime template:
-   - `express` - Express server (recommended for beginners)
-   - `fastify` - Fastify server
-   - `nextjs` - Next.js App Router
-   - `aws-lambda` - AWS Lambda
-   - `cloudflare-workers` - Cloudflare Workers
-   - And many more...
-3. **Package manager** - Choose npm, yarn, or bun
-4. **Install dependencies** - Yes to install and generate types automatically
-
-The CLI will download the template, install dependencies, and run `npx pikku` to generate type-safe clients.
-
-Navigate to your project:
+Follow the prompts. Choose **Express** if you're unsure — it's the simplest starting point. The CLI will scaffold the project, install dependencies, and generate type-safe clients automatically.
 
 ```bash
 cd my-app
 ```
 
-## Your Project Structure
+## 2. Start the Server
 
-```
-my-app/
-├── src/
-│   ├── functions.ts          # Your business logic
-│   ├── wiring.ts              # Connect functions to protocols
-│   └── services.ts            # Services like database, logger
-├── .pikku/                    # Generated files (don't edit)
-│   ├── http/                  # HTTP types and wiring
-│   └── pikku-types.gen.ts     # Generated types
-├── pikku.config.json          # Pikku configuration
-└── package.json
+```bash npm2yarn
+npm run start
 ```
 
-## Explore the Example Functions
+Your API is running at `http://localhost:4002`. Test it:
 
-The template includes example functions. Open `src/functions.ts`:
+```bash
+curl http://localhost:4002/hello-world
+# {"message":"Hello World!"}
+```
+
+That response came from a plain TypeScript function in `src/functions.ts`:
 
 ```typescript
-import { pikkuFunc } from './.pikku/pikku-types.gen'
-
-// A simple hello world function
 export const helloWorld = pikkuFunc(
   async ({ logger }) => {
     logger.info('Hello world called')
@@ -73,12 +54,9 @@ export const helloWorld = pikkuFunc(
 )
 ```
 
-And they're already wired to HTTP in `src/wiring.ts`:
+Wired to HTTP in `src/wiring.ts`:
 
 ```typescript
-import { wireHTTP } from './.pikku/http/pikku-http.gen'
-import { helloWorld } from './functions'
-
 wireHTTP({
   method: 'get',
   route: '/hello-world',
@@ -86,49 +64,32 @@ wireHTTP({
 })
 ```
 
-## Run Your Server
+The function knows nothing about HTTP. That's the point.
 
-Start the development server:
+## 3. Add Your Own Function
 
-```bash npm2yarn
-npm run start
-```
-
-Your API is now running at `http://localhost:4002`! Test it:
-
-```bash
-curl http://localhost:4002/hello-world
-```
-
-You should see:
-```json
-{"message":"Hello World!"}
-```
-
-## Add Your Own Function
-
-Let's create a new function. Edit `src/functions.ts`:
+Open `src/functions.ts` and add:
 
 ```typescript
-// Add this new function
 interface GetUserInput {
   userId: string
 }
 
-export const getUser = pikkuFunc<GetUserInput>(
+interface GetUserOutput {
+  id: string
+  name: string
+  email: string
+}
+
+export const getUser = pikkuFunc<GetUserInput, GetUserOutput>(
   async ({ logger }, { userId }) => {
     logger.info(`Getting user ${userId}`)
-
-    return {
-      id: userId,
-      name: 'John Doe',
-      email: 'john@example.com'
-    }
+    return { id: userId, name: 'John Doe', email: 'john@example.com' }
   }
 )
 ```
 
-Wire it to HTTP in `src/wiring.ts`:
+Wire it in `src/wiring.ts`:
 
 ```typescript
 import { getUser } from './functions'
@@ -146,104 +107,66 @@ Regenerate types and restart:
 npx pikku && npm run start
 ```
 
-Test your new endpoint:
-
 ```bash
 curl http://localhost:4002/users/123
+# {"id":"123","name":"John Doe","email":"john@example.com"}
 ```
-
-## Create a Type-Safe Client
-
-Pikku automatically generates type-safe clients from your functions. Create a `pikku-fetch.ts` wrapper to use them:
-
-```typescript
-import { pikkuFetch } from './.pikku/pikku-fetch.gen'
-
-// Create a configured client instance
-export const api = pikkuFetch({
-  baseURL: 'http://localhost:4002'
-})
-```
-
-Now you can make type-safe API calls from your frontend or other services:
-
-```typescript
-import { api } from './pikku-fetch'
-
-// Type-safe HTTP calls - TypeScript knows the exact request/response types
-const user = await api.fetch('/users/123', 'GET', null)
-// user is typed as { id: string; name: string; email: string }
-
-const greeting = await api.fetch('/hello-world', 'GET', null)
-// greeting is typed as { message: string }
-```
-
-The client automatically:
-- Validates request and response types at compile time
-- Handles JSON serialization/deserialization
-- Provides autocomplete for all your endpoints
-- Catches type errors before runtime
-
-## Key Concepts
-
-### 1. Functions Are Protocol-Agnostic
-
-Your business logic is separate from HTTP, WebSockets, or any protocol. The same function can be wired to multiple protocols:
-
-```typescript
-// Wire to HTTP
-wireHTTP({ method: 'get', route: '/user/:id', func: getUser })
-
-// Wire to WebSocket
-wireChannel({
-  name: 'users',
-  onMessageWiring: { action: { getUser } }
-})
-
-// Wire to Queue
-wireQueueWorker({ queue: 'process-user', func: getUser })
-```
-
-### 2. Type-Safe Clients
-
-Pikku generates type-safe clients automatically. After running `npx pikku`, you can use them:
-
-```typescript
-import { pikkuFetch } from './.pikku/pikku-fetch.gen'
-
-// Type-safe HTTP client
-const response = await pikkuFetch.fetch('/users/123', 'GET', null)
-// response is typed based on your function's return type
-```
-
-### 3. Services
-
-Services are dependency-injected into your functions:
-
-```typescript
-export const getUser = pikkuFunc(
-  async ({ database, logger, config }, { userId }) => {
-    // Access services
-    const user = await database.users.findById(userId)
-    logger.info(`Found user ${user.name}`)
-
-    return user
-  }
-)
-```
-
-Configure services in `src/services.ts`.
 
 ## What's Next?
 
-Now that you have a working application, explore more:
+You have a working API. Here's where to go depending on what you want to build:
 
-- **[Core Features](/docs/core-features)** - Learn about sessions, middleware, and auth
-- **[WebSockets](/docs/wiring/channels)** - Add real-time communication
-- **[Workflows](/docs/wiring/workflows)** - Build multi-step processes with state management
-- **[Queue Workers](/docs/wiring/queue)** - Process background jobs
-- **[Deploy Anywhere](/docs/runtimes/aws-lambda)** - Run on AWS Lambda, Cloudflare Workers, and more
-- **[The Console](/docs/console)** - Visually explore functions, test agents, and manage configuration
+<div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'0.75rem',marginTop:'1.25rem'}}>
+
+<Link to="/docs/core-features" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
+  <RPCIcon size={22} />
+  <div>
+    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Core Features</div>
+    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Functions, middleware, sessions, and error handling</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/channels" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
+  <WebSocketIcon size={22} />
+  <div>
+    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Channels</div>
+    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Add WebSocket real-time support</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/queue" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
+  <QueueIcon size={22} />
+  <div>
+    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Queue Workers</div>
+    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Run background jobs and async tasks</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/workflows" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
+  <WorkflowIcon size={22} />
+  <div>
+    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Workflows</div>
+    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Build multi-step processes with state</div>
+  </div>
+</Link>
+
+<Link to="/docs/runtimes/aws-lambda" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
+  <HttpIcon size={22} />
+  <div>
+    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Runtimes</div>
+    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Deploy to Lambda, Cloudflare, Fastify, and more</div>
+  </div>
+</Link>
+
+<Link to="/docs/console" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
+  <BotIcon size={22} />
+  <div>
+    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>The Console</div>
+    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Explore and test your functions visually</div>
+  </div>
+</Link>
+
+</div>
 
 ## Video Tutorial
 
