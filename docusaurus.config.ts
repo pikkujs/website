@@ -205,8 +205,8 @@ const config: Config = {
           items: [
             { label: 'Getting Started', to: '/docs' },
             { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },
-            { label: 'Runtimes', to: '/docs/runtimes/fastify' },
-            { label: 'CLI Reference', to: '/docs/pikku-cli/overview' },
+            { label: 'Runtimes', to: '/docs/runtimes/fastify-plugin' },
+            { label: 'CLI Reference', to: '/docs/pikku-cli' },
             { label: 'The Console', to: '/docs/console' },
           ],
         },

@@ -873,7 +873,7 @@ wireHTTP({
 
             <div className="pt-2">
               <Link
-                to="/wiring/ai-agents"
+                to="/docs/wiring/ai-agents"
                 className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm"
               >
                 Read the AI Agents docs →
