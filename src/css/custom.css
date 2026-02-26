@@ -501,6 +501,14 @@ a.no-underline:hover * {
     #0a0a0f;
 }
 
+.wire-hero-getting-started {
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(168, 99, 238, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 70%, rgba(52, 211, 153, 0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 70% 60%, rgba(96, 165, 250, 0.06) 0%, transparent 40%),
+    #0a0a0f;
+}
+
 .wire-hero-function {
   background:
     radial-gradient(ellipse at 68% 50%, rgba(168, 99, 238, 0.20) 0%, transparent 55%),
@@ -555,4 +563,59 @@ a.no-underline:hover * {
     radial-gradient(ellipse at 68% 50%, rgba(245, 158, 11, 0.18) 0%, transparent 55%),
     radial-gradient(ellipse at 38% 65%, rgba(252, 211, 77, 0.06) 0%, transparent 48%),
     #0a0a0f;
+}
+
+/* ─── Docs index navigation cards ─── */
+
+.doc-nav-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1.125rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.doc-nav-card:hover {
+  border-color: rgba(168, 99, 238, 0.3);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.doc-nav-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.doc-nav-title {
+  font-weight: 650;
+  font-size: 0.9375rem;
+  margin-bottom: 0.15rem;
+}
+
+.doc-nav-desc {
+  font-size: 0.8125rem;
+  opacity: 0.55;
+  line-height: 1.4;
+}
+
+.doc-nav-card--compact {
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+}
+
+.doc-nav-card--compact .doc-nav-title {
+  font-size: 0.8125rem;
+  margin-bottom: 0;
+}
+
+.doc-nav-card--compact .doc-nav-desc {
+  font-size: 0.75rem;
 }

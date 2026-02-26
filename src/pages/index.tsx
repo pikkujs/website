@@ -163,7 +163,7 @@ function Hero() {
           </ul>
           <div className="flex flex-row gap-4 mt-6">
             <Link
-              to="/docs"
+              to="/getting-started"
               className="button button--primary button--lg hover:scale-105 transition-transform shadow-lg hover:shadow-xl"
             >
               Try It in 5 Minutes

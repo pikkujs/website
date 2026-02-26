@@ -213,7 +213,7 @@ const config: Config = {
         {
           title: 'Learn',
           items: [
-            { label: 'Getting Started', to: '/docs' },
+            { label: 'Getting Started', to: '/getting-started' },
             { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },
             { label: 'Runtimes', to: '/docs/runtimes/fastify-plugin' },
             { label: 'CLI Reference', to: '/docs/pikku-cli' },

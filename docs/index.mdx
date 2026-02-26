@@ -1,178 +1,224 @@
 ---
 sidebar_position: 0
-title: Getting Started
-description: Build your first Pikku application
+title: Documentation
+description: Pikku documentation — guides, references, and API docs
 ---
 
 import Link from '@docusaurus/Link';
-import { WebSocketIcon, QueueIcon, WorkflowIcon, RPCIcon, HttpIcon, BotIcon } from '@site/src/components/WiringIcons';
+import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon, WorkflowIcon, TriggerIcon, RPCIcon } from '@site/src/components/WiringIcons';
 
-# Getting Started with Pikku
+# Documentation
 
-Pikku is a TypeScript framework where you write plain functions and wire them to any protocol — HTTP, WebSockets, queues, cron, and more — without changing your business logic.
+<div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'1rem',marginTop:'1.5rem'}}>
 
-This guide gets you to a working API in under five minutes.
-
-## 1. Create Your Project
-
-import PackageManagerTabs from '@site/src/components/PackageManagerTabs';
-
-<PackageManagerTabs
-  npm="npm create pikku@latest"
-  yarn="yarn create pikku"
-  pnpm="pnpm create pikku@latest"
-  bun="bun create pikku@latest"
-/>
-
-Follow the prompts. Choose **Express** if you're unsure — it's the simplest starting point. The CLI will scaffold the project, install dependencies, and generate type-safe clients automatically.
-
-```bash
-cd my-app
-```
-
-## 2. Start the Server
-
-```bash npm2yarn
-npm run start
-```
-
-Your API is running at `http://localhost:4002`. Test it:
-
-```bash
-curl http://localhost:4002/hello-world
-# {"message":"Hello World!"}
-```
-
-That response came from a plain TypeScript function in `src/functions.ts`:
-
-```typescript
-export const helloWorld = pikkuFunc(
-  async ({ logger }) => {
-    logger.info('Hello world called')
-    return { message: 'Hello World!' }
-  }
-)
-```
-
-Wired to HTTP in `src/wiring.ts`:
-
-```typescript
-wireHTTP({
-  method: 'get',
-  route: '/hello-world',
-  func: helloWorld
-})
-```
-
-The function knows nothing about HTTP. That's the point.
-
-## 3. Add Your Own Function
-
-Open `src/functions.ts` and add:
-
-```typescript
-interface GetUserInput {
-  userId: string
-}
-
-interface GetUserOutput {
-  id: string
-  name: string
-  email: string
-}
-
-export const getUser = pikkuFunc<GetUserInput, GetUserOutput>(
-  async ({ logger }, { userId }) => {
-    logger.info(`Getting user ${userId}`)
-    return { id: userId, name: 'John Doe', email: 'john@example.com' }
-  }
-)
-```
-
-Wire it in `src/wiring.ts`:
-
-```typescript
-import { getUser } from './functions'
-
-wireHTTP({
-  method: 'get',
-  route: '/users/:userId',
-  func: getUser
-})
-```
-
-Regenerate types and restart:
-
-```bash npm2yarn
-npx pikku && npm run start
-```
-
-```bash
-curl http://localhost:4002/users/123
-# {"id":"123","name":"John Doe","email":"john@example.com"}
-```
-
-## What's Next?
-
-You have a working API. Here's where to go depending on what you want to build:
-
-<div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'0.75rem',marginTop:'1.25rem'}}>
-
-<Link to="/docs/core-features" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
-  <RPCIcon size={22} />
+<Link to="/docs/philosophy" className="doc-nav-card">
+  <div className="doc-nav-icon">📐</div>
   <div>
-    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Core Features</div>
-    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Functions, middleware, sessions, and error handling</div>
+    <div className="doc-nav-title">Philosophy</div>
+    <div className="doc-nav-desc">Why Pikku exists and the problems it solves</div>
   </div>
 </Link>
 
-<Link to="/docs/wiring/channels" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
-  <WebSocketIcon size={22} />
+<Link to="/docs/core-features" className="doc-nav-card">
+  <div className="doc-nav-icon">⚙️</div>
   <div>
-    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Channels</div>
-    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Add WebSocket real-time support</div>
+    <div className="doc-nav-title">Core Features</div>
+    <div className="doc-nav-desc">Functions, middleware, sessions, and error handling</div>
   </div>
 </Link>
 
-<Link to="/docs/wiring/queue" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
-  <QueueIcon size={22} />
+<Link to="/docs/pikku-cli" className="doc-nav-card">
+  <div className="doc-nav-icon">🔧</div>
   <div>
-    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Queue Workers</div>
-    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Run background jobs and async tasks</div>
+    <div className="doc-nav-title">Pikku CLI</div>
+    <div className="doc-nav-desc">Code generation, filtering, and tree-shaking</div>
   </div>
 </Link>
 
-<Link to="/docs/wiring/workflows" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
-  <WorkflowIcon size={22} />
+<Link to="/docs/console" className="doc-nav-card">
+  <div className="doc-nav-icon">🖥️</div>
   <div>
-    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Workflows</div>
-    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Build multi-step processes with state</div>
-  </div>
-</Link>
-
-<Link to="/docs/runtimes/aws-lambda" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
-  <HttpIcon size={22} />
-  <div>
-    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>Runtimes</div>
-    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Deploy to Lambda, Cloudflare, Fastify, and more</div>
-  </div>
-</Link>
-
-<Link to="/docs/console" style={{display:'flex',alignItems:'flex-start',gap:'0.75rem',padding:'1rem 1.125rem',borderRadius:'10px',border:'1px solid rgba(255,255,255,0.08)',background:'rgba(255,255,255,0.03)',textDecoration:'none',color:'inherit'}}>
-  <BotIcon size={22} />
-  <div>
-    <div style={{fontWeight:600,fontSize:'0.9375rem',marginBottom:'0.2rem'}}>The Console</div>
-    <div style={{fontSize:'0.8125rem',opacity:0.6,lineHeight:1.4}}>Explore and test your functions visually</div>
+    <div className="doc-nav-title">The Console</div>
+    <div className="doc-nav-desc">Visual control plane for exploring and managing your app</div>
   </div>
 </Link>
 
 </div>
 
-## Video Tutorial
+## Wiring
 
-import LiteYouTubeEmbed from 'react-lite-youtube-embed';
+Connect your functions to protocols.
 
-<LiteYouTubeEmbed
-  id="dBZf7Bk7ReI"
-  title="Pikku Deep Dive"
-/>
+<div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'0.75rem',marginTop:'0.75rem'}}>
+
+<Link to="/docs/wiring/http" className="doc-nav-card doc-nav-card--compact">
+  <HttpIcon size={20} />
+  <div>
+    <div className="doc-nav-title">HTTP</div>
+    <div className="doc-nav-desc">REST APIs & SSE</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/channels" className="doc-nav-card doc-nav-card--compact">
+  <WebSocketIcon size={20} />
+  <div>
+    <div className="doc-nav-title">Channel</div>
+    <div className="doc-nav-desc">WebSocket real-time</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/rpcs" className="doc-nav-card doc-nav-card--compact">
+  <RPCIcon size={20} />
+  <div>
+    <div className="doc-nav-title">RPC</div>
+    <div className="doc-nav-desc">Function-to-function calls</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/queue" className="doc-nav-card doc-nav-card--compact">
+  <QueueIcon size={20} />
+  <div>
+    <div className="doc-nav-title">Queue</div>
+    <div className="doc-nav-desc">Background jobs</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/scheduled-tasks" className="doc-nav-card doc-nav-card--compact">
+  <CronIcon size={20} />
+  <div>
+    <div className="doc-nav-title">Scheduled Tasks</div>
+    <div className="doc-nav-desc">Cron & recurring</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/workflows" className="doc-nav-card doc-nav-card--compact">
+  <WorkflowIcon size={20} />
+  <div>
+    <div className="doc-nav-title">Workflows</div>
+    <div className="doc-nav-desc">Multi-step processes</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/ai-agents" className="doc-nav-card doc-nav-card--compact">
+  <BotIcon size={20} />
+  <div>
+    <div className="doc-nav-title">AI Agents</div>
+    <div className="doc-nav-desc">Conversational AI</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/mcp" className="doc-nav-card doc-nav-card--compact">
+  <MCPIcon size={20} />
+  <div>
+    <div className="doc-nav-title">MCP</div>
+    <div className="doc-nav-desc">Model Context Protocol</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/cli" className="doc-nav-card doc-nav-card--compact">
+  <CLIIcon size={20} />
+  <div>
+    <div className="doc-nav-title">CLI</div>
+    <div className="doc-nav-desc">Command-line tools</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/triggers" className="doc-nav-card doc-nav-card--compact">
+  <TriggerIcon size={20} />
+  <div>
+    <div className="doc-nav-title">Triggers</div>
+    <div className="doc-nav-desc">Event-driven subs</div>
+  </div>
+</Link>
+
+</div>
+
+## Runtimes
+
+Deploy to any platform.
+
+<div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'0.75rem',marginTop:'0.75rem'}}>
+
+<Link to="/docs/runtimes/fastify-plugin" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">Fastify</div>
+</Link>
+
+<Link to="/docs/runtimes/express-middleware" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">Express</div>
+</Link>
+
+<Link to="/docs/runtimes/aws-lambda" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">AWS Lambda</div>
+</Link>
+
+<Link to="/docs/runtimes/cloudflare-functions" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">Cloudflare</div>
+</Link>
+
+<Link to="/docs/runtimes/nextjs-app" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">Next.js</div>
+</Link>
+
+<Link to="/docs/runtimes/uws-handler" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">uWebSockets</div>
+</Link>
+
+<Link to="/docs/runtimes/mcp-server" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">MCP Server</div>
+</Link>
+
+<Link to="/docs/runtimes/bullmq" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">BullMQ</div>
+</Link>
+
+<Link to="/docs/runtimes/pg-boss" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">PG Boss</div>
+</Link>
+
+</div>
+
+## More
+
+<div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'1rem',marginTop:'0.75rem'}}>
+
+<Link to="/docs/middleware/auth-jwt" className="doc-nav-card">
+  <div className="doc-nav-icon">🔒</div>
+  <div>
+    <div className="doc-nav-title">Middleware</div>
+    <div className="doc-nav-desc">Authentication and request processing</div>
+  </div>
+</Link>
+
+<Link to="/docs/storage" className="doc-nav-card">
+  <div className="doc-nav-icon">💾</div>
+  <div>
+    <div className="doc-nav-title">Storage</div>
+    <div className="doc-nav-desc">Database backends for AI, workflows, and channels</div>
+  </div>
+</Link>
+
+<Link to="/docs/addon" className="doc-nav-card">
+  <div className="doc-nav-icon">🧩</div>
+  <div>
+    <div className="doc-nav-title">Addons</div>
+    <div className="doc-nav-desc">Reusable function packages</div>
+  </div>
+</Link>
+
+<Link to="/docs/advanced/import-patterns" className="doc-nav-card">
+  <div className="doc-nav-icon">🔬</div>
+  <div>
+    <div className="doc-nav-title">Advanced</div>
+    <div className="doc-nav-desc">Custom runtimes and advanced topics</div>
+  </div>
+</Link>
+
+<Link to="/docs/api/jwt-service" className="doc-nav-card">
+  <div className="doc-nav-icon">📖</div>
+  <div>
+    <div className="doc-nav-title">API Reference</div>
+    <div className="doc-nav-desc">Complete API documentation</div>
+  </div>
+</Link>
+
+</div>
