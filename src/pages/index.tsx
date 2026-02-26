@@ -124,7 +124,7 @@ function Hero() {
         <div className="absolute right-[12%] top-[40%] w-52 h-52 rounded-full bg-cyan-400/10 blur-[60px]" />
       </div>
 
-      <header className="flex max-w-screen-xl mx-auto w-full pt-10 pb-8 lg:pt-16 lg:pb-12 px-6 gap-12 items-center">
+      <header className="flex max-w-screen-xl mx-auto w-full pt-10 pb-8 lg:pt-12 lg:pb-8 px-6 gap-12 items-center">
         {/* Left: Text content */}
         <div className="md:w-1/2">
           <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-primary/40 bg-primary/10 px-3 py-1 rounded mb-6">
@@ -373,7 +373,7 @@ program.command("get <id>")
   ];
 
   return (
-    <section className="py-8 lg:py-24 bg-neutral-950 border-t border-neutral-800">
+    <section className="py-8 lg:py-12 bg-neutral-950 border-t border-neutral-800">
       <div className="max-w-screen-lg mx-auto px-6">
         <div className="text-center mb-6 lg:mb-14">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Problem</p>
@@ -507,7 +507,7 @@ function CapabilitiesSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -720,7 +720,7 @@ wireTriggerSource({
   ];
 
   return (
-    <section id="code-examples" className="py-8 lg:py-20 bg-neutral-900 border-t border-neutral-800 overflow-x-hidden">
+    <section id="code-examples" className="py-8 lg:py-12 bg-neutral-900 border-t border-neutral-800 overflow-x-hidden">
       <div className="max-w-screen-xl mx-auto px-6">
         <div className="text-center mb-6 lg:mb-14">
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
@@ -828,7 +828,7 @@ wireTriggerSource({
 /** Bundle Only What You Deploy - Condensed Summary */
 function ProblemSolutionSection() {
   return (
-    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -905,7 +905,7 @@ function ProtocolSupportSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-6">
@@ -970,42 +970,32 @@ function UsedBySection() {
   ];
 
   return (
-    <section className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-4 lg:mb-12">
-          <Heading as="h2" className="text-5xl font-bold mb-4">
-            Built with Pikku
-          </Heading>
-          <p className="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-3">
-            Already powering production systems across startups and platforms.
-          </p>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            From open-source frameworks to live platforms, Pikku adapts to diverse real-world projects.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 items-center justify-items-center mt-12">
+    <section className="bg-[#0a0a0f] border-t border-white/5 py-6">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <p className="text-center text-xs font-semibold tracking-widest uppercase text-white/25 mb-6">
+          Built with Pikku
+        </p>
+        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-6">
           {companies.map((company, idx) => (
             <Link
               key={idx}
               href={company.url}
-              className="flex items-center justify-center p-6 rounded-lg hover:bg-white/50 dark:hover:bg-neutral-900/50 transition-all hover:scale-105"
+              className="flex items-center justify-center px-4 py-3 rounded-lg opacity-40 hover:opacity-80 transition-opacity"
               title={company.name}
             >
               <Image
                 sources={{
-                  light: `img/logos/${company.logo.light}`,
+                  light: `img/logos/${company.logo.dark}`,
                   dark: `img/logos/${company.logo.dark}`
                 }}
                 alt={company.name}
-                width={160}
-                height={80}
+                width={120}
+                height={40}
                 className="object-contain"
               />
             </Link>
           ))}
         </div>
-
       </div>
     </section>
   );
@@ -1014,7 +1004,7 @@ function UsedBySection() {
 /** Agents Section */
 function AgentsSection() {
   return (
-    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
@@ -1108,7 +1098,7 @@ wireChannel({
 /** Workflows Section */
 function WorkflowsSection() {
   return (
-    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
@@ -1212,7 +1202,7 @@ function WorkflowsSection() {
 /** What Developers Say */
 function TestimonialsSection() {
   return (
-    <section className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-12 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -1269,7 +1259,7 @@ function ConsoleSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
@@ -1313,7 +1303,7 @@ function ConsoleSection() {
 /** Deploy Anywhere */
 function DeployAnywhereSection() {
   return (
-    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Deploy Anywhere. Blend In Everywhere.
@@ -1400,7 +1390,7 @@ function ProductionFeaturesSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-12 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Ship Faster, Maintain Less
@@ -1467,7 +1457,7 @@ function WhyIBuiltPikkuSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-12 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -1544,7 +1534,7 @@ function HowTeamsUseItSection() {
   ];
 
   return (
-    <section className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-12 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
@@ -1595,7 +1585,7 @@ function TryItNowSection() {
   };
 
   return (
-    <section id="get-started" className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section id="get-started" className="py-8 lg:py-12 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-4">
           Get Started in Minutes
@@ -1627,7 +1617,7 @@ function CallToActionSection() {
   };
 
   return (
-    <section className="py-8 lg:py-20 bg-neutral-900 dark:bg-neutral-950 relative overflow-hidden">
+    <section className="py-8 lg:py-12 bg-neutral-900 dark:bg-neutral-950 relative overflow-hidden">
       {/* Subtle background glow */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-primary/10 blur-[80px]" />
@@ -1686,6 +1676,7 @@ export default function Home() {
       description="Write backend logic once and wire it to HTTP, WebSockets, queues, cron jobs, AI agents, and more. Deploy anywhere—Express, Lambda, Cloudflare Workers, and beyond."
     >
       <Hero />
+      <UsedBySection />
       <main>
         {/* 1. Pain — make the developer nod */}
         <PainSection />
@@ -1693,8 +1684,7 @@ export default function Home() {
         {/* 2. Insight — show the solution interactively */}
         <AhaMomentSection />
 
-        {/* 3. Trust — who already uses it + what they say */}
-        <UsedBySection />
+        {/* 3. Trust — what developers say */}
         <TestimonialsSection />
 
         {/* 4. Depth — what else you can build */}
