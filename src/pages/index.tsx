@@ -14,6 +14,7 @@ import {
   Zap, ShieldCheck, Plug, RefreshCw, Timer, Database,
   Search, Bot, Key, LayoutDashboard, Link2, Settings,
   Layers, CheckCircle2, Feather, GitBranch, Puzzle, Lock,
+  Package, Blocks, KeyRound,
 } from 'lucide-react';
 
 /** Reusable component for Pikku logo surrounded by icons */
@@ -167,12 +168,12 @@ function Hero() {
             >
               Try It in 5 Minutes
             </Link>
-            <a
-              href="#code-examples"
+            <Link
+              to="/features"
               className="button button--secondary button--lg hover:scale-105 transition-transform"
             >
               See How It Works
-            </a>
+            </Link>
           </div>
           <p className="mt-4 text-sm text-neutral-500 font-mono">
             $ npm create pikku@latest &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Open Source
@@ -1091,6 +1092,125 @@ function ConsoleSection() {
   );
 }
 
+/** Addons — Drop-in backend modules */
+function AddonsSection() {
+  return (
+    <section className="py-16 lg:py-24">
+      <div className="max-w-screen-xl mx-auto px-4">
+
+        {/* Header */}
+        <div className="text-center mb-16">
+          <span className="text-xs font-semibold tracking-widest uppercase text-primary/80 block mb-4">Addons</span>
+          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
+            Install a backend feature<br />in one line
+          </Heading>
+          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+            Addons are drop-in function packages — Stripe, Postgres, SendGrid, and more. Install, configure secrets, call via namespaced RPC. Fully typed.
+          </p>
+        </div>
+
+        {/* Two-column: code left, differentiators right */}
+        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
+
+          {/* Left: Code Example */}
+          <div className="space-y-4">
+            <CodeBlock language="typescript" title="src/wiring.ts">
+{`// One line per addon
+wireAddon({
+  name: 'stripe',
+  package: '@pikku/addon-stripe'
+})
+wireAddon({
+  name: 'email',
+  package: '@pikku/addon-sendgrid',
+  secretOverrides: {
+    SENDGRID_API_KEY: 'MY_EMAIL_KEY'
+  }
+})`}
+            </CodeBlock>
+            <CodeBlock language="typescript" title="src/functions/checkout.func.ts">
+{`// Call addon functions via namespaced RPC
+const checkout = pikkuFunc({
+  func: async ({}, { plan }, { rpc }) => {
+    const session = await rpc.invoke(
+      'stripe:checkoutCreate',
+      { plan, currency: 'usd' }
+    )
+    await rpc.invoke(
+      'email:mailSend',
+      { to: session.email, template: 'receipt' }
+    )
+    return { url: session.url }
+  }
+})`}
+            </CodeBlock>
+          </div>
+
+          {/* Right: Differentiators + CTA */}
+          <div className="space-y-6">
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <Package className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Drop-in, not bolt-on</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Install a package, add one <code className="text-primary text-xs">wireAddon()</code> call, and its functions appear as namespaced RPC calls. No glue code, no adapters, no boilerplate.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <Blocks className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Fully typed across boundaries</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    The CLI generates TypeScript definitions for every addon function. <code className="text-primary text-xs">rpc.invoke('stripe:checkoutCreate', ...)</code> is autocompleted with the exact input and output types.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <KeyRound className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Secrets you control</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Addons declare what secrets they need. You map them to your own infrastructure with <code className="text-primary text-xs">secretOverrides</code> — no env vars leaking across packages.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <Plug className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Shared infrastructure</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Addons reuse your existing logger, database, and services — no duplicate connections. Each addon gets its own namespace, so nothing collides.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                to="/docs/addon"
+                className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm"
+              >
+                Read the Addons docs →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** Deploy Anywhere */
 function DeployAnywhereSection() {
   const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom];
@@ -1474,6 +1594,7 @@ export default function Home() {
         <AgentsSection />
         <WorkflowsSection />
         <ConsoleSection />
+        <AddonsSection />
 
         {/* 4. Confidence — production-grade primitives, deploy anywhere, bundle options */}
         <ProductionFeaturesSection />

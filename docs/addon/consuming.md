@@ -10,19 +10,18 @@ Once an addon is published, any Pikku application can consume it with minimal co
 
 ## Configuration
 
-Add addons to your `pikku.config.json`:
+Wire addons in a `*.wiring.ts` file:
 
-```json
-{
-  "srcDirectories": ["./src"],
-  "outDir": "./.pikku",
-  "addons": {
-    "postgres": { "package": "@pikku/addon-postgres" }
-  }
-}
+```typescript
+import { wireAddon } from '#pikku'
+
+wireAddon({
+  name: 'postgres',
+  package: '@pikku/addon-postgres',
+})
 ```
 
-The key (`postgres`) becomes the namespace prefix for all RPC calls to that addon's functions.
+The `name` becomes the namespace prefix for all RPC calls to that addon's functions.
 
 ## Setting Up Services
 
@@ -184,16 +183,12 @@ See [Triggers](../wiring/triggers/index.md) for more details on how triggers wor
 
 ## Multiple Addons
 
-Consume multiple addons, each under their own namespace:
+Wire multiple addons, each under their own namespace:
 
-```json
-{
-  "addons": {
-    "postgres": { "package": "@pikku/addon-postgres" },
-    "redis": { "package": "@pikku/addon-redis" },
-    "stripe": { "package": "@pikku/addon-stripe" }
-  }
-}
+```typescript
+wireAddon({ name: 'postgres', package: '@pikku/addon-postgres' })
+wireAddon({ name: 'redis', package: '@pikku/addon-redis' })
+wireAddon({ name: 'stripe', package: '@pikku/addon-stripe' })
 ```
 
 ```typescript
@@ -207,17 +202,14 @@ await rpc.invoke('stripe:chargeCreate', { amount: 2000, currency: 'usd', source:
 
 Addons define secrets with their own `secretId` names. If your application stores the same secret under a different name, you can override the mapping:
 
-```json
-{
-  "addons": {
-    "email": {
-      "package": "@pikku/addon-sendgrid",
-      "secretOverrides": {
-        "SENDGRID_API_KEY": "MY_EMAIL_API_KEY"
-      }
-    }
-  }
-}
+```typescript
+wireAddon({
+  name: 'email',
+  package: '@pikku/addon-sendgrid',
+  secretOverrides: {
+    SENDGRID_API_KEY: 'MY_EMAIL_API_KEY',
+  },
+})
 ```
 
 When the addon calls `secrets.getSecretJSON('SENDGRID_API_KEY')`, Pikku transparently looks up `MY_EMAIL_API_KEY` instead. The addon code doesn't need to know about your naming conventions.

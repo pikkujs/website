@@ -10,19 +10,16 @@ Addons define secrets with their own `secretId` naming conventions. Secret overr
 
 ## Configuration
 
-Override secrets in your `pikku.config.json`:
+Override secrets when wiring the addon:
 
-```json
-{
-  "addons": {
-    "ext": {
-      "package": "@pikku/my-addon",
-      "secretOverrides": {
-        "PACKAGE_API_KEY": "ACME_SERVICE_API_KEY"
-      }
-    }
-  }
-}
+```typescript
+wireAddon({
+  name: 'ext',
+  package: '@pikku/my-addon',
+  secretOverrides: {
+    PACKAGE_API_KEY: 'ACME_SERVICE_API_KEY',
+  },
+})
 ```
 
 This maps the addon's `PACKAGE_API_KEY` to your application's `ACME_SERVICE_API_KEY`.

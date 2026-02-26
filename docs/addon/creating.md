@@ -10,14 +10,12 @@ Addons are standard Pikku applications marked for reuse. They contain functions,
 
 ## Configuration
 
-Mark a project as an addon in `pikku.config.json`:
+Mark a project as an addon in a `*.wiring.ts` file:
 
-```json
-{
-  "srcDirectories": ["src"],
-  "outDir": "./.pikku",
-  "addon": true
-}
+```typescript
+import { wireAddon } from '#pikku'
+
+wireAddon({ addon: true })
 ```
 
 ## Package Structure
@@ -29,7 +27,7 @@ my-package/
   src/
     functions/         # Pikku functions
     my-service.ts      # Custom service class
-    services.ts        # Service factory (pikkuExternalServices)
+    services.ts        # Service factory (pikkuAddonServices)
     my-package.secret.ts   # Secret definitions (wireSecret)
     my-package.variable.ts # Variable definitions (wireVariable)
     index.ts           # Export all functions
