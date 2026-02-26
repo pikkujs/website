@@ -2,107 +2,95 @@
 title: ContentService
 ---
 
-The ContentService interface provides file storage and management capabilities in Pikku applications. It supports signed URLs, file uploads, downloads, and operations across different storage backends.
+The ContentService provides file storage and management capabilities. It supports signed URLs, direct uploads, downloads, and file operations across different storage backends.
+
+:::note
+Direct file uploads into Pikku functions (streaming multipart data) are not yet fully supported. The recommended pattern is to generate a signed upload URL client-side and have the client upload directly to storage.
+:::
 
 ## Methods
-
-### `signContentKey(contentKey: string, dateLessThan: Date, dateGreaterThan?: Date): Promise<string>`
-
-Signs a content key to generate a secure, time-limited access URL.
-
-- **Parameters:**
-  - `contentKey`: The key representing the content object
-  - `dateLessThan`: The expiration time for the signed URL
-  - `dateGreaterThan`: Optional start time before which access is denied
-- **Returns:** Promise resolving to the signed URL
-
-### `signURL(url: string, dateLessThan: Date, dateGreaterThan?: Date): Promise<string>`
-
-Signs an arbitrary URL to generate a secure, time-limited access URL.
-
-- **Parameters:**
-  - `url`: The full URL that needs signing
-  - `dateLessThan`: The expiration time for the signed URL
-  - `dateGreaterThan`: Optional start time before which access is denied
-- **Returns:** Promise resolving to the signed URL
 
 ### `getUploadURL(fileKey: string, contentType: string): Promise<{ uploadUrl: string; assetKey: string }>`
 
 Generates a signed URL for uploading a file directly to storage.
 
 - **Parameters:**
-  - `fileKey`: The desired key/location of the uploaded file
+  - `fileKey`: The desired key/path of the uploaded file
   - `contentType`: The MIME type of the file
-- **Returns:** Promise resolving to an object with upload URL and finalized asset key
+- **Returns:** An upload URL for the client to `PUT` to, and the finalized asset key
+
+### `signContentKey(contentKey: string, dateLessThan: Date, dateGreaterThan?: Date): Promise<string>`
+
+Signs a content key to produce a secure, time-limited access URL.
+
+- **Parameters:**
+  - `contentKey`: The key representing the stored object
+  - `dateLessThan`: Expiration time
+  - `dateGreaterThan`: Optional earliest valid time
+- **Returns:** Signed URL
+
+### `signURL(url: string, dateLessThan: Date, dateGreaterThan?: Date): Promise<string>`
+
+Signs an arbitrary URL to produce a time-limited access URL.
 
 ### `deleteFile(fileName: string): Promise<boolean>`
 
-Deletes a file from the storage backend.
-
-- **Parameters:**
-  - `fileName`: The name or key of the file to delete
-- **Returns:** Promise resolving to boolean indicating success
+Deletes a file from storage. Returns `true` on success.
 
 ### `writeFile(assetKey: string, stream: ReadStream): Promise<boolean>`
 
-Uploads a file stream to storage under a specified asset key.
-
-- **Parameters:**
-  - `assetKey`: The key where the file will be saved
-  - `stream`: A readable stream of the file contents
-- **Returns:** Promise resolving to boolean indicating success
+Uploads a readable stream to storage under a given key.
 
 ### `copyFile(assetKey: string, fromAbsolutePath: string): Promise<boolean>`
 
-Copies a file from a local absolute path into storage under a new asset key.
-
-- **Parameters:**
-  - `assetKey`: The destination key
-  - `fromAbsolutePath`: The local absolute file path
-- **Returns:** Promise resolving to boolean indicating success
+Copies a file from a local path into storage.
 
 ### `readFile(assetKey: string): Promise<ReadStream>`
 
-Reads a file from storage as a readable stream.
-
-- **Parameters:**
-  - `assetKey`: The key of the file to read
-- **Returns:** Promise resolving to a readable file stream
+Returns a readable stream for a stored file.
 
 ## Usage Example
 
 ```typescript
-// Upload and manage files
-const fileHandler: CorePikkuFunction<
-  { fileData: string },
-  { uploadUrl: string; downloadUrl: string }
-> = async (services, data) => {
-  // Get signed upload URL
-  const { uploadUrl, assetKey } = await services.content.getUploadURL(
-    'uploads/document.pdf',
-    'application/pdf'
-  )
-  
-  // Generate signed download URL (expires in 1 hour)
-  const expirationTime = new Date(Date.now() + 60 * 60 * 1000)
-  const downloadUrl = await services.content.signContentKey(
-    assetKey,
-    expirationTime
-  )
-  
-  return { uploadUrl, downloadUrl }
+interface RequestUploadInput {
+  filename: string
+  contentType: string
 }
+
+interface RequestUploadOutput {
+  uploadUrl: string
+  downloadUrl: string
+  assetKey: string
+}
+
+export const requestUpload = pikkuFunc<RequestUploadInput, RequestUploadOutput>(
+  async (services, data) => {
+    // Generate a signed URL so the client can upload directly to storage
+    const { uploadUrl, assetKey } = await services.content.getUploadURL(
+      `uploads/${data.filename}`,
+      data.contentType
+    )
+
+    // Generate a time-limited download URL (expires in 1 hour)
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
+    const downloadUrl = await services.content.signContentKey(assetKey, expiresAt)
+
+    return { uploadUrl, downloadUrl, assetKey }
+  }
+)
 ```
 
-## Implementation
+## Implementations
 
-Pikku provides a local file system implementation for development:
+### Local (development)
+
+Reads and writes from the local file system:
 
 ```typescript reference title="local-content.ts"
 https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/local-content.ts
 ```
 
-For production, you can use cloud storage implementations like S3:
+### AWS S3
 
 ```typescript reference title="s3-content.ts"
 https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/s3-content.ts

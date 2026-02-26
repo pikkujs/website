@@ -73,7 +73,7 @@ Server acting as gateway didn't receive timely response from upstream server.
 ## Usage Examples
 
 ```typescript
-import { 
+import {
   BadRequestError,
   UnauthorizedError,
   ForbiddenError,
@@ -82,74 +82,40 @@ import {
   InternalServerError
 } from '#pikku'
 
-// Validate input and throw appropriate errors
-const createUser: CorePikkuFunction<
+// Validate input
+export const createUser = pikkuFunc<
   { email: string; password: string },
   { userId: string }
-> = async (services, data, session) => {
-  // Validate input
-  if (!data.email || !data.password) {
-    throw new BadRequestError('Email and password are required')
-  }
-  
+>(async (services, data) => {
   if (!isValidEmail(data.email)) {
     throw new BadRequestError('Invalid email format')
   }
-  
-  // Check if user already exists
+
   const existingUser = await services.database.getUserByEmail(data.email)
   if (existingUser) {
     throw new ConflictError('User with this email already exists')
   }
-  
-  try {
-    const userId = await services.database.createUser(data)
-    return { userId }
-  } catch (error) {
-    throw new InternalServerError('Failed to create user')
-  }
-}
 
-// Authentication and authorization
-const getProtectedResource: CorePikkuFunction<
+  const userId = await services.database.createUser(data)
+  return { userId }
+})
+
+// Authorization
+export const getResource = pikkuFunc<
   { resourceId: string },
-  { data: any }
-> = async (services, data, session) => {
-  // Check authentication
-  if (!session) {
-    throw new UnauthorizedError('Authentication required')
-  }
-  
-  // Get resource
+  { resource: Resource }
+>(async (services, data, session) => {
   const resource = await services.database.getResource(data.resourceId)
   if (!resource) {
-    throw new NotFoundError('Resource not found')
+    throw new NotFoundError(`Resource ${data.resourceId} not found`)
   }
-  
-  // Check authorization
-  if (resource.ownerId !== session.userId && session.role !== 'admin') {
-    throw new ForbiddenError('Access denied to this resource')
-  }
-  
-  return { data: resource }
-}
 
-// Rate limiting example
-const rateLimitedEndpoint: CorePikkuFunction<
-  { message: string },
-  { result: string }
-> = async (services, data, session) => {
-  const rateLimitKey = `rate_limit:${session?.userId || 'anonymous'}`
-  const requests = await services.cache.get(rateLimitKey) || 0
-  
-  if (requests >= 100) {
-    throw new TooManyRequestsError('Rate limit exceeded. Try again later.')
+  if (resource.ownerId !== session.userId && session.role !== 'admin') {
+    throw new ForbiddenError('Access denied')
   }
-  
-  await services.cache.set(rateLimitKey, requests + 1, { ttl: 3600 })
-  
-  return { result: 'Success' }
-}
+
+  return { resource }
+})
 ```
 
 ## Custom Error Messages

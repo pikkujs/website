@@ -2,7 +2,7 @@
 title: SecretService
 ---
 
-The SecretService interface provides secure access to secrets and sensitive configuration values in Pikku applications. It abstracts secret retrieval across different environments and cloud providers.
+The SecretService provides secure access to secrets and sensitive configuration values. It abstracts secret retrieval across different environments and cloud providers, so your functions don't need to know where secrets live.
 
 ## Methods
 
@@ -11,21 +11,20 @@ The SecretService interface provides secure access to secrets and sensitive conf
 Retrieves a secret value as a string.
 
 - **Parameters:**
-  - `key`: The key/name of the secret to retrieve
-- **Returns:** Promise resolving to the secret value as a string
+  - `key`: The key/name of the secret
+- **Returns:** Promise resolving to the secret value
 
-### `getSecretJSON<Return = {}>(key: string): Promise<Return>`
+### `getSecretJSON<T>(key: string): Promise<T>`
 
-Retrieves a secret value and parses it as JSON.
+Retrieves a secret and parses it as JSON.
 
 - **Parameters:**
-  - `key`: The key/name of the secret to retrieve
-- **Returns:** Promise resolving to the parsed JSON object with the specified return type
+  - `key`: The key/name of the secret
+- **Returns:** Promise resolving to the parsed object typed as `T`
 
 ## Usage Example
 
 ```typescript
-// Define your secret types
 interface DatabaseConfig {
   host: string
   username: string
@@ -33,49 +32,27 @@ interface DatabaseConfig {
   database: string
 }
 
-// Use secrets in your function
-const connectToDatabase: CorePikkuFunction<{}, { status: string }> = async (services) => {
-  // Get a simple secret
-  const apiKey = await services.secrets.getSecret('API_KEY')
-  
-  // Get a JSON secret
-  const dbConfig = await services.secrets.getSecretJSON<DatabaseConfig>('DATABASE_CONFIG')
-  
-  // Use the secrets
-  const connection = await createConnection({
-    host: dbConfig.host,
-    username: dbConfig.username,
-    password: dbConfig.password,
-    database: dbConfig.database
-  })
-  
-  return { status: 'connected' }
-}
+export const connectToDatabase = pikkuFunc<void, { status: string }>(
+  async (services) => {
+    const dbConfig = await services.secrets.getSecretJSON<DatabaseConfig>('DATABASE_CONFIG')
 
-// Environment-specific secrets
-const getEnvironmentConfig: CorePikkuFunction<{}, { config: any }> = async (services) => {
-  // Get secrets that vary by environment
-  const jwtSecret = await services.secrets.getSecret('JWT_SECRET')
-  const encryptionKey = await services.secrets.getSecret('ENCRYPTION_KEY')
-  
-  // Parse complex configuration
-  const featureFlags = await services.secrets.getSecretJSON<Record<string, boolean>>('FEATURE_FLAGS')
-  
-  return {
-    config: {
-      hasJwt: !!jwtSecret,
-      hasEncryption: !!encryptionKey,
-      features: featureFlags
-    }
+    const connection = await createConnection({
+      host: dbConfig.host,
+      username: dbConfig.username,
+      password: dbConfig.password,
+      database: dbConfig.database,
+    })
+
+    return { status: 'connected' }
   }
-}
+)
 ```
 
-## Implementation
+## Implementations
 
-Pikku provides several secret service implementations:
+### Local (development)
 
-### Local Secrets (Development)
+Reads from a local `.secrets` file or environment variables:
 
 ```typescript reference title="local-secrets.ts"
 https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/local-secrets.ts

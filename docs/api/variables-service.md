@@ -2,51 +2,51 @@
 title: VariablesService
 ---
 
-The VariablesService interface provides access to environment variables and configuration values in Pikku applications. This abstraction is needed since some runtimes (like Cloudflare Workers) don't provide environment variables via `process.env`.
+The VariablesService provides access to environment variables and configuration values. This abstraction is necessary because some runtimes (like Cloudflare Workers) don't expose variables via `process.env`.
 
 ## Methods
 
 ### `get(name: string): Promise<string | undefined> | string | undefined`
 
-Retrieves a single environment variable by name.
+Retrieves a single variable by name.
 
 - **Parameters:**
-  - `name`: The name of the environment variable to retrieve
-- **Returns:** The variable value as a string, undefined if not found, or a Promise resolving to either
+  - `name`: The variable name
+- **Returns:** The value as a string, `undefined` if not found, or a Promise resolving to either
 
 ### `getAll(): Promise<Record<string, string | undefined>> | Record<string, string | undefined>`
 
-Retrieves all available environment variables.
+Retrieves all available variables.
 
 - **Returns:** A record of all variables with their values, or a Promise resolving to the record
 
 ## Usage Example
 
 ```typescript
-// Access variables in your function
-const myFunction: CorePikkuFunction<{}, { config: any }> = async (services) => {
-  // Get a specific variable
-  const apiUrl = await services.variables.get('API_URL')
-  
-  // Get all variables  
-  const allVars = await services.variables.getAll()
-  
-  return {
-    config: {
-      apiUrl,
+export const myFunction = pikkuFunc<void, { apiUrl: string; debug: boolean }>(
+  async (services) => {
+    const apiUrl = await services.variables.get('API_URL')
+    const allVars = await services.variables.getAll()
+
+    return {
+      apiUrl: apiUrl ?? '',
       debug: allVars.DEBUG === 'true'
     }
   }
-}
+)
 ```
 
-## Implementation
+## Implementations
 
-Pikku provides a local implementation for development and testing:
+### Local (development)
+
+Reads from `process.env`. Used automatically in Node.js and Bun environments:
 
 ```typescript reference title="local-variables.ts"
 https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/local-variables.ts
 ```
+
+For Cloudflare Workers, pass the `env` object from the Workers handler into your service setup.
 
 ## Interface
 
