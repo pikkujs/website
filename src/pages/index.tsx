@@ -5,7 +5,6 @@ import Heading from '@theme/Heading';
 import Image from '@theme/ThemedImage';
 import CodeBlock from '@theme/CodeBlock';
 import { runtimes } from '@site/data/homepage';
-import { protocolDeployments, protocolToDeploymentKey } from '@site/data/deployments';
 import { WiringIcon } from '../components/WiringIcons';
 import LiveExamples from '../components/LiveExamples';
 import { BundleArchitecturesSection } from '../components/BundleArchitecturesSection';
@@ -17,28 +16,57 @@ function PikkuCircularLayout({
   items,
   renderItem,
   logoSize = 180,
-  radius = 180
+  radius = 180,
+  animate = false,
+  orbitRotate = false,
+  className = '',
+  minHeight = 400,
+  centerOverlay,
+  centerNode,
+  showTrack = false,
 }: {
   items: any[];
   renderItem: (item: any, index: number) => React.ReactNode;
   logoSize?: number;
   radius?: number;
+  animate?: boolean;
+  orbitRotate?: boolean;
+  className?: string;
+  minHeight?: number;
+  centerOverlay?: React.ReactNode;
+  centerNode?: React.ReactNode;
+  showTrack?: boolean;
 }) {
   return (
-    <div className="relative flex items-center justify-center min-h-[400px]">
-      <div className="relative z-10">
-        <Image
-          sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }}
-          width={logoSize}
-          height={logoSize}
-          className="mx-auto"
-          style={{ objectFit: 'contain' }}
-        />
+    <div className={`relative flex items-center justify-center ${className}`} style={{ minHeight }}>
+      {/* Orbit track ring */}
+      {showTrack && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div
+            className="rounded-full border border-neutral-700/30"
+            style={{ width: radius * 2 + 64, height: radius * 2 + 64 }}
+          />
+        </div>
+      )}
+
+      <div className={`relative z-10 flex flex-col items-center ${animate ? 'animate-chameleon-enter' : ''}`}>
+        {centerNode ?? (
+          <Image
+            sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }}
+            width={logoSize}
+            height={logoSize}
+            className="mx-auto"
+            style={{ objectFit: 'contain' }}
+          />
+        )}
+        {centerOverlay && (
+          <div className="mt-2 text-center">{centerOverlay}</div>
+        )}
       </div>
 
       {/* Items arranged in a circle around Pikku */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative" style={{ width: '100%', height: '100%' }}>
+        <div className={`relative ${orbitRotate ? 'animate-orbit-rotate' : ''}`} style={{ width: '100%', height: '100%' }}>
           {items.map((item, index) => {
             const total = items.length;
             const angle = (index * 360) / total;
@@ -48,13 +76,17 @@ function PikkuCircularLayout({
             return (
               <div
                 key={index}
-                className="absolute"
+                className={`absolute ${animate ? 'animate-icon-fan-out' : ''}`}
                 style={{
-                  left: `calc(50% + ${x}px - 32px)`,
-                  top: `calc(50% + ${y}px - 32px)`,
+                  left: `calc(50% + ${x}px)`,
+                  top: `calc(50% + ${y}px)`,
+                  transform: 'translate(-50%, -50%)',
+                  ...(animate ? { animationDelay: `${index * 0.08 + 0.3}s` } : {}),
                 }}
               >
-                {renderItem(item, index)}
+                <div className={orbitRotate ? 'animate-orbit-counter-rotate' : ''}>
+                  {renderItem(item, index)}
+                </div>
               </div>
             );
           })}
@@ -66,55 +98,455 @@ function PikkuCircularLayout({
 
 /** Hero Section */
 function Hero() {
+  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
+
+  const protocols = [
+    { icon: 'http',      label: 'HTTP',       color: '#22c55e', hueRotate: 80  },
+    { icon: 'websocket', label: 'WebSocket',  color: '#a855f7', hueRotate: 240 },
+    { icon: 'sse',       label: 'SSE',        color: '#f97316', hueRotate: -10 },
+    { icon: 'queue',     label: 'Queue',      color: '#ef4444', hueRotate: -40 },
+    { icon: 'cron',      label: 'Cron',       color: '#eab308', hueRotate: 20  },
+    { icon: 'rpc',       label: 'RPC',        color: '#3b82f6', hueRotate: 180 },
+    { icon: 'mcp',       label: 'MCP',        color: '#ec4899', hueRotate: 290 },
+    { icon: 'cli',       label: 'CLI',        color: '#06b6d4', hueRotate: 145 },
+    { icon: 'bot',       label: 'AI Agent',   color: '#8b5cf6', hueRotate: 220 },
+    { icon: 'workflow',  label: 'Workflow',   color: '#10b981', hueRotate: 115 },
+    { icon: 'trigger',   label: 'Trigger',    color: '#f59e0b', hueRotate: 0   },
+  ];
+
+  const hovered = hoveredIndex !== null ? protocols[hoveredIndex] : null;
+
   return (
-    <header className="flex w-full max-w-screen-lg pt-16 pb-12 px-4 self-center">
-      <div className="md:w-1/2">
-        <Heading as="h1" className="text-5xl font-bold mb-4 text-primary">
-          Write Backend Logic Once. Run It Everywhere.
-        </Heading>
-        <p className="text-xl font-medium leading-relaxed mb-8 text-gray-700 dark:text-gray-300">
-          Write your backend logic once. Pikku automatically adapts it to work with any protocol—HTTP APIs, WebSockets, queues, scheduled tasks, and even AI tools via MCP. No duplicate code, no vendor lock-in.
-        </p>
-        <ul className="text-base mb-8 space-y-2 text-gray-700 dark:text-gray-300">
-          <li className="flex items-start">
-            <span className="text-green-500 mr-2 mt-0.5">✓</span>
-            <span>Unified backend logic across all protocols</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-green-500 mr-2 mt-0.5">✓</span>
-            <span>Serverless or server — deploy to any platform without code changes</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-green-500 mr-2 mt-0.5">✓</span>
-            <span>Full TypeScript type safety end-to-end</span>
-          </li>
-          <li className="flex items-start">
-            <span className="text-green-500 mr-2 mt-0.5">✓</span>
-            <span>Production-ready with sessions, auth, and middleware</span>
-          </li>
-        </ul>
-        <div className="flex flex-row gap-4 mt-6">
-          <Link
-            to="/docs"
-            className="button button--primary button--lg hover:scale-105 transition-transform shadow-lg hover:shadow-xl"
-          >
-            Get Started
-          </Link>
-          <Link
-            to="#code-examples"
-            className="button button--secondary button--lg hover:scale-105 transition-transform"
-          >
-            See Examples
-          </Link>
+    <div className="hero-section w-full relative overflow-hidden">
+      {/* Glow orbs behind the chameleon */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full bg-primary/15 blur-[90px]" />
+        <div className="absolute right-[12%] top-[40%] w-52 h-52 rounded-full bg-cyan-400/10 blur-[60px]" />
+      </div>
+
+      <header className="flex max-w-screen-xl mx-auto w-full pt-16 pb-12 px-6 gap-12 items-center">
+        {/* Left: Text content */}
+        <div className="md:w-1/2">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-primary/40 bg-primary/10 px-3 py-1 rounded mb-6">
+            TypeScript Backend Framework
+          </span>
+          <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
+            <span className="text-white">One function.</span><br />
+            <span className="text-primary">Every protocol.</span>
+          </Heading>
+          <p className="text-xl font-medium leading-relaxed mb-8 text-gray-300">
+            Define your backend logic once. Pikku adapts it to HTTP, WebSocket, queues, cron, CLI, and AI agents — same auth, same middleware, no rewrites.
+          </p>
+          <ul className="text-base mb-8 space-y-2 text-gray-300">
+            <li className="flex items-start">
+              <span className="text-green-400 mr-2 mt-0.5">✓</span>
+              <span>Unified backend logic across all protocols</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-400 mr-2 mt-0.5">✓</span>
+              <span>Serverless or server — deploy anywhere without code changes</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-400 mr-2 mt-0.5">✓</span>
+              <span>Full TypeScript type safety end-to-end</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-400 mr-2 mt-0.5">✓</span>
+              <span>Production-ready with sessions, auth, and middleware</span>
+            </li>
+          </ul>
+          <div className="flex flex-row gap-4 mt-6">
+            <Link
+              to="/docs"
+              className="button button--primary button--lg hover:scale-105 transition-transform shadow-lg hover:shadow-xl"
+            >
+              Try It in 5 Minutes
+            </Link>
+            <Link
+              to="#code-examples"
+              className="button button--secondary button--lg hover:scale-105 transition-transform"
+            >
+              See How It Works
+            </Link>
+          </div>
+          <p className="text-sm text-gray-500 mt-3">
+            ⚡ 5-minute setup &nbsp;•&nbsp; MIT Licensed &nbsp;•&nbsp; Open Source
+          </p>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
-          ⚡ 5-minute setup • MIT Licensed
-        </p>
+
+        {/* Right: Chameleon mascot + protocol orbit */}
+        <div className="hidden md:flex md:w-1/2 items-center justify-center flex-col">
+          <PikkuCircularLayout
+            items={protocols}
+            renderItem={(item, index) => (
+              <div
+                className="flex flex-col items-center gap-1.5 cursor-default"
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                <WiringIcon wiringId={item.icon} size={40} />
+                <span className="text-white/50 text-[11px] font-medium tracking-wide">{item.label}</span>
+              </div>
+            )}
+            centerNode={
+              <div style={{ width: 210, height: 210, position: 'relative' }}>
+                <img
+                  src="/img/pikku.png"
+                  width={210}
+                  height={210}
+                  alt="Pikku"
+                  style={{
+                    objectFit: 'contain',
+                    position: 'absolute', top: 0, left: 0,
+                    opacity: hovered ? 0 : 1,
+                    transition: 'opacity 0.35s ease',
+                  }}
+                />
+                <img
+                  src="/img/pikku-outline.svg"
+                  width={210}
+                  height={210}
+                  alt=""
+                  style={{
+                    objectFit: 'contain',
+                    position: 'absolute', top: 0, left: 0,
+                    opacity: hovered ? 1 : 0,
+                    transition: 'opacity 0.35s ease, filter 0.35s ease',
+                    filter: hovered
+                      ? `brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(${hovered.hueRotate}deg) drop-shadow(0 0 18px ${hovered.color})`
+                      : 'none',
+                  }}
+                />
+              </div>
+            }
+            logoSize={210}
+            radius={175}
+            animate
+            orbitRotate
+          />
+          <p className="text-white/30 text-xs font-medium tracking-widest uppercase text-center mt-6">
+            Like a chameleon adapts — your functions adapt
+          </p>
+        </div>
+      </header>
+    </div>
+  );
+}
+
+/** Pain framing — makes the developer nod before we show the solution */
+function PainSection() {
+  const trackRef = React.useRef<HTMLDivElement>(null);
+  const [canLeft, setCanLeft] = React.useState(false);
+  const [canRight, setCanRight] = React.useState(true);
+
+  const updateScroll = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 8);
+    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
+  };
+
+  const scroll = (dir: -1 | 1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const card = el.querySelector('[data-card]') as HTMLElement;
+    const step = card ? card.offsetWidth + 16 : el.clientWidth / 3;
+    el.scrollBy({ left: dir * step, behavior: 'smooth' });
+  };
+
+  // driftLines: 1-indexed line numbers to highlight in yellow
+  const files = [
+    {
+      name: 'getUser.http.ts',
+      badge: 'HTTP',
+      badgeClass: 'text-green-400 bg-green-400/10',
+      driftLines: [] as number[],
+      code: `\
+async function getUser(req, res) {
+  if (!req.user) {
+    return res.status(401).end()
+  }
+  const user = await db.getUser(req.params.id)
+  await audit.log("getUser", user)
+  res.json({ user })
+}`,
+    },
+    {
+      name: 'getUser.queue.ts',
+      badge: 'Queue',
+      badgeClass: 'text-red-400 bg-red-400/10',
+      driftLines: [2, 6],
+      code: `\
+async function getUser(job) {
+  // TODO: add auth like http?
+  const { userId } = job.data
+  const user = await db.getUser(userId)
+  return user
+  // audit.log removed (too slow?)
+}`,
+    },
+    {
+      name: 'getUser.cron.ts',
+      badge: 'Cron',
+      badgeClass: 'text-yellow-400 bg-yellow-400/10',
+      driftLines: [1, 4, 6],
+      code: `\
+// copied from queue (3 months ago)
+async function refreshUsers() {
+  const users = await db.getAll()
+  // different query, different shape
+  for (const u of users) {
+    // TODO: sync with http version
+  }
+}`,
+    },
+    {
+      name: 'getUser.ws.ts',
+      badge: 'WebSocket',
+      badgeClass: 'text-purple-400 bg-purple-400/10',
+      driftLines: [2, 6],
+      code: `\
+ws.on("getUser", (socket, data) => {
+  // TODO: share auth w/ HTTP
+  const user = await db.getUser(
+    data.userId
+  )
+  // different response format
+  socket.emit("user", { user })
+})`,
+    },
+    {
+      name: 'getUser.sse.ts',
+      badge: 'SSE',
+      badgeClass: 'text-orange-400 bg-orange-400/10',
+      driftLines: [1, 4],
+      code: `\
+// copied from HTTP for SSE
+router.get("/:id/stream", async (req, res) => {
+  res.type("text/event-stream")
+  // TODO: add auth check
+  const user = await db.getUser(req.params.id)
+  res.write(\`data: \${user.id}\`)
+})`,
+    },
+    {
+      name: 'getUser.rpc.ts',
+      badge: 'RPC',
+      badgeClass: 'text-blue-400 bg-blue-400/10',
+      driftLines: [3, 5],
+      code: `\
+rpc.register("getUser", async ({ userId }) => {
+  const user = await db.getUser(userId)
+  // internal — skip auth? (probably fine...)
+  return { user }
+  // audit.log removed — internal only
+})`,
+    },
+    {
+      name: 'getUser.mcp.ts',
+      badge: 'MCP',
+      badgeClass: 'text-pink-400 bg-pink-400/10',
+      driftLines: [2, 4],
+      code: `\
+tools.add({
+  name: "get_user", // snake_case?
+  handler: async ({ user_id }) => {
+    // TODO: figure out auth for MCP
+    return await db.getUser(user_id)
+  }
+})`,
+    },
+    {
+      name: 'getUser.cli.ts',
+      badge: 'CLI',
+      badgeClass: 'text-cyan-400 bg-cyan-400/10',
+      driftLines: [1, 4],
+      code: `\
+// copied from rpc handler
+program.command("get <id>")
+  .action(async (id) => {
+    // no auth in CLI (admin-only?)
+    const user = await db.getUser(id)
+    console.log(user)
+  })`,
+    },
+  ];
+
+  return (
+    <section className="py-24 bg-neutral-950 border-t border-neutral-800">
+      <div className="max-w-screen-lg mx-auto px-6">
+        <div className="text-center mb-14">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Problem</p>
+          <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
+            You've written this function<br className="hidden md:block" /> more than once.
+          </h2>
+          <p className="text-lg text-neutral-400 max-w-lg mx-auto leading-relaxed">
+            Every new protocol means a new copy. The copies drift. Auth diverges. TODOs accumulate. Bugs multiply.
+          </p>
+        </div>
+
+        {/* Carousel */}
+        <div className="relative mb-4">
+          <div
+            ref={trackRef}
+            onScroll={updateScroll}
+            className="flex gap-4 overflow-x-scroll snap-x snap-mandatory scrollbar-hide"
+          >
+            {files.map((file, i) => (
+              <div
+                key={i}
+                data-card
+                className="snap-start flex-shrink-0 w-full md:w-[calc(33.333%-10.667px)] bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden"
+              >
+                <div className="flex items-center gap-1.5 px-4 py-2.5 bg-neutral-800/80 border-b border-neutral-700/60">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
+                  <span className="ml-2 text-[11px] text-neutral-400 font-mono flex-1 truncate">{file.name}</span>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${file.badgeClass}`}>{file.badge}</span>
+                </div>
+                <pre className="p-4 m-0 font-mono text-[11.5px] leading-[1.75] min-h-[180px] overflow-x-auto bg-transparent">
+                  <code>
+                    {file.code.split('\n').map((line, j) => (
+                      <span
+                        key={j}
+                        className={`block ${file.driftLines.includes(j + 1)
+                          ? 'text-yellow-400/80 bg-yellow-400/6 -mx-4 px-4'
+                          : 'text-neutral-400'}`}
+                      >
+                        {line || '\u00A0'}
+                      </span>
+                    ))}
+                  </code>
+                </pre>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Carousel controls */}
+        <div className="flex items-center justify-between mb-12">
+          <span className="text-xs text-neutral-600">Swipe or use arrows to see all 8 protocols</span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => scroll(-1)}
+              disabled={!canLeft}
+              className="w-8 h-8 rounded-full border border-neutral-700 flex items-center justify-center text-neutral-400 disabled:opacity-25 hover:border-neutral-500 hover:text-white transition-all text-sm"
+            >←</button>
+            <button
+              onClick={() => scroll(1)}
+              disabled={!canRight}
+              className="w-8 h-8 rounded-full border border-neutral-700 flex items-center justify-center text-neutral-400 disabled:opacity-25 hover:border-neutral-500 hover:text-white transition-all text-sm"
+            >→</button>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 py-8 border-t border-neutral-800/60">
+          <div className="text-center">
+            <div className="text-2xl font-jakarta font-bold text-white">n protocols</div>
+            <div className="text-sm text-neutral-500 mt-1">means n copies of the same logic</div>
+          </div>
+          <div className="hidden sm:block text-neutral-700 text-lg font-mono">→</div>
+          <div className="text-center">
+            <div className="text-2xl font-jakarta font-bold text-yellow-400">n TODO comments</div>
+            <div className="text-sm text-neutral-500 mt-1">that will never be resolved</div>
+          </div>
+          <div className="hidden sm:block text-neutral-700 text-lg font-mono">→</div>
+          <div className="text-center">
+            <div className="text-2xl font-jakarta font-bold text-red-400">n × the bugs</div>
+            <div className="text-sm text-neutral-500 mt-1">to find, reproduce, and fix</div>
+          </div>
+        </div>
       </div>
-      <div className="hidden md:block w-1/2">
-        <Image sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }} />
+    </section>
+  );
+}
+
+/** Compact capabilities overview — Workflows, Agents, Console */
+function CapabilitiesSection() {
+  const capabilities = [
+    {
+      icon: '⚡',
+      badge: null,
+      title: 'Long-Running Workflows',
+      description: 'Multi-step processes that survive failures, handle delays, and persist state across server restarts.',
+      highlights: [
+        'Deterministic replay — completed steps never re-execute',
+        'Sleep steps for delays, reminders, trial expirations',
+        'PostgreSQL and Redis persistence out of the box',
+      ],
+      link: '/docs/wiring/workflows',
+      linkText: 'Workflow docs →',
+    },
+    {
+      icon: '🤖',
+      badge: 'Alpha',
+      title: 'AI Agents',
+      description: 'Your existing functions become agent tools automatically. Same auth, same permissions, any LLM provider.',
+      highlights: [
+        'No adapters, no glue code — just reference your functions',
+        'Agents inherit your full session and permission system',
+        'OpenAI, Anthropic, or any provider',
+      ],
+      link: '/docs/wiring/agents',
+      linkText: 'Agent docs →',
+    },
+    {
+      icon: '🖥️',
+      badge: 'Alpha',
+      title: 'The Pikku Console',
+      description: 'A per-environment visual control plane. Explore, test, and manage your entire application from one UI.',
+      highlights: [
+        'Browse functions, routes, channels, and CLI commands',
+        'Run and visualize workflows in real time',
+        'Chat with agents in the built-in playground',
+      ],
+      link: '/docs/console',
+      linkText: 'Console docs →',
+    },
+  ];
+
+  return (
+    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-left md:text-center mb-12">
+          <Heading as="h2" className="text-4xl font-bold mb-4">
+            Beyond Request-Response
+          </Heading>
+          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-2xl md:mx-auto">
+            The same function composition model extends to workflows, AI agents, and a visual control plane.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {capabilities.map((cap, idx) => (
+            <div key={idx} className="bg-neutral-50 dark:bg-neutral-900 rounded-xl p-8 flex flex-col card-shadow">
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-4xl">{cap.icon}</span>
+                {cap.badge && (
+                  <span className="text-xs font-semibold bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-full">
+                    {cap.badge}
+                  </span>
+                )}
+              </div>
+              <h3 className="text-xl font-bold mb-2">{cap.title}</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">{cap.description}</p>
+              <ul className="space-y-2 mb-8 flex-1">
+                {cap.highlights.map((h, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <span className="text-primary mt-0.5 shrink-0">✓</span>
+                    <span>{h}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link to={cap.link} className="text-primary hover:underline font-medium text-sm">
+                {cap.linkText}
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
-    </header>
+    </section>
   );
 }
 
@@ -122,37 +554,16 @@ function Hero() {
 function AhaMomentSection() {
   const [activeProtocol, setActiveProtocol] = React.useState<number | null>(0); // Default to HTTP
 
-  const functionCode = `export const getCard = pikkuFunc<
-  { cardId: string },
-  { id: string; title: string; status: string }
->({
-  func: async ({ database, channel }, { cardId }) => {
-    const card = await database.query('cards', {
-      where: { id: cardId }
-    })
-
-    // Works with WebSocket channels and SSE too!
-    if (channel) {
-      await channel.send({ type: 'card-fetched', card })
-    }
-
+  const functionCode = `const getCard = pikkuFunc({
+  title: 'Get Card',
+  description: 'Retrieve a card by ID',
+  func: async ({ db, audit }, { cardId }) => {
+    const card = await db.getCard(cardId)
+    await audit.log('getCard', { cardId })
     return card
   },
-  permissions: { owner: requireOwner },
-  docs: {
-    summary: 'Fetch a card by ID',
-    tags: ['cards']
-  }
+  permissions: { user: isAuthenticated }
 })`;
-
-  // Map protocol index to deployment options
-  const getDeploymentOptionsForProtocol = (protocolIndex: number) => {
-    const protocol = wiringExamples[protocolIndex];
-    if (!protocol) return null;
-
-    const deploymentKey = protocolToDeploymentKey[protocol.icon];
-    return protocolDeployments[deploymentKey] || null;
-  };
 
   const wiringExamples = [
     {
@@ -226,13 +637,8 @@ const card = await rpc.invoke(
     {
       title: 'MCP (AI Tools)',
       icon: 'mcp',
-      code: `// Model Context Protocol
-// Expose to AI tools like Claude
-
-wireMCPResource({
+      code: `wireMCPResource({
   uri: 'card/{cardId}',
-  title: 'Card Information',
-  description: 'Retrieve card by ID',
   func: getCard,
   tags: ['cards', 'data']
 })`
@@ -259,143 +665,160 @@ wireMCPResource({
     }
   }
 })`
-    }
+    },
+    {
+      title: 'AI Agent',
+      icon: 'bot',
+      code: `addAIAgent('cardAgent', {
+  name: 'Card Assistant',
+  description: 'Helps users look up cards',
+  instructions: \`You help users manage
+their cards. Use the tools
+provided to look up card info.\`,
+  model: 'claude-3-5-sonnet-20241022',
+  tools: [getCard],
+  maxSteps: 5,
+})`
+    },
+    {
+      title: 'Workflow',
+      icon: 'workflow',
+      code: `// Steps never re-execute on replay
+export const processCardWorkflow = pikkuWorkflowFunc<
+  { cardId: string },
+  { card: Card }
+>(async ({}, { cardId }, { workflow }) => {
+  const card = await workflow.do(
+    'Fetch card',
+    'getCard',
+    { cardId }
+  )
+  await workflow.sleep('Wait', '5s')
+  await workflow.do(
+    'Notify owner',
+    'sendNotification',
+    { cardId: card.id }
+  )
+  return { card }
+})`
+    },
+    {
+      title: 'Trigger',
+      icon: 'trigger',
+      code: `wireTrigger({
+  name: 'cardChanged',
+  func: getCard,
+})
+
+// Register the trigger source
+wireTriggerSource({
+  name: 'cardChanged',
+  func: webhookTrigger,
+  input: { secret: process.env.WEBHOOK_SECRET }
+})`
+    },
   ];
 
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
-          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
-            One Function. Every Protocol. <span className="bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">Zero Duplication.</span>
+    <section id="code-examples" className="py-20 bg-neutral-900 border-t border-neutral-800 overflow-x-hidden">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="text-center mb-14">
+          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
+            One function. <span className="text-primary">Every protocol.</span>
           </Heading>
-          <p className="text-xl text-gray-600 dark:text-gray-300 md:max-w-3xl md:mx-auto">
-            Write your logic once. Wire it to HTTP, WebSockets, queues, scheduled tasks, CLI, or AI tools (via Model Context Protocol). Same logic. Different protocols.
+          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+            Write your business logic once. Pikku wires it to any protocol — same auth, same permissions, no rewrites.
           </p>
         </div>
 
-        {/* Function Definition - Top Row */}
-        <div className="relative max-w-4xl mx-auto">
-          <div className="mb-8">
-            <div className="flex items-center justify-center mb-4">
-              <Heading as="h3" className="text-2xl font-bold">
-                1. Define Your Function
-              </Heading>
+        {/* Three-column pipeline: define → pick protocol → see wiring */}
+        <div className="grid md:grid-cols-[5fr_3fr_5fr] gap-8 items-start max-w-6xl mx-auto">
+
+          {/* Col 1: function definition */}
+          <div className="w-full min-w-0 lg:max-w-[400px]">
+            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Write once</p>
+            <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
+              <div className="flex items-center gap-3 px-5 py-3 bg-neutral-800 border-b border-neutral-700/80">
+                <span className="text-sm font-semibold text-neutral-200">getCard.ts</span>
+                <span className="ml-auto text-xs text-neutral-600 font-mono">func.ts</span>
+              </div>
+              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
+                <CodeBlock language="typescript">{functionCode}</CodeBlock>
+              </div>
             </div>
-            <div className="relative">
-              <CodeBlock language="typescript" title="src/functions/cards.function.ts">
-                {functionCode}
-              </CodeBlock>
+            <div className="mt-5 space-y-3">
+              {[
+                'Same auth & permissions across all protocols',
+                'One place to fix bugs and add features',
+                'Type-safe inputs and outputs everywhere',
+              ].map((line, i) => (
+                <div key={i} className="flex items-center gap-3 text-sm text-neutral-400">
+                  <span className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-bold">✓</span>
+                  {line}
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Wiring Examples - Bottom Row */}
-          <div>
-            <div className="flex items-center justify-center mb-6">
-              <Heading as="h3" className="text-2xl font-bold">
-                2. Wire to Any Protocol
-              </Heading>
-            </div>
-            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4">
-              {wiringExamples.map((example, idx) => {
+          {/* Col 2: circular protocol selector */}
+          <div className="flex flex-col items-center w-full min-w-0 lg:max-w-[400px]">
+            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-1 self-start">Pick a protocol</p>
+            <PikkuCircularLayout
+              items={wiringExamples}
+              renderItem={(example, idx) => {
                 const isActive = activeProtocol === idx;
                 return (
-                  <div
-                    key={idx}
-                    className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-2 md:p-4 shadow-md hover:shadow-lg transition-all cursor-pointer relative"
+                  <button
                     onClick={() => setActiveProtocol(idx)}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer border-2 ${
+                      isActive
+                        ? 'border-primary bg-primary/15 scale-125 shadow-lg shadow-primary/20'
+                        : 'border-neutral-700 bg-neutral-800/90 hover:border-neutral-500 hover:scale-110'
+                    }`}
+                    title={example.title}
                   >
-                    {isActive && (
-                      <div className="absolute -top-2 -right-2 w-6 h-6 md:w-8 md:h-8">
-                        <Image
-                          sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }}
-                          width={32}
-                          height={32}
-                          className="drop-shadow-lg"
-                        />
-                      </div>
-                    )}
-                    <div className="flex flex-col items-center">
-                      <div className="hidden md:block">
-                        <WiringIcon wiringId={example.icon} size={40} />
-                      </div>
-                      <div className="md:hidden">
-                        <WiringIcon wiringId={example.icon} size={28} />
-                      </div>
-                      <span className="mt-1 md:mt-2 font-semibold text-center text-gray-900 dark:text-gray-100 text-xs md:text-base">
-                        {example.title}
-                      </span>
-                    </div>
-                  </div>
+                    <WiringIcon wiringId={example.icon} size={18} />
+                  </button>
                 );
-              })}
-            </div>
+              }}
+              logoSize={90}
+              radius={110}
+              minHeight={280}
+              centerOverlay={
+                activeProtocol !== null ? (
+                  <span className="text-xs font-semibold text-neutral-400 tracking-wide">
+                    {wiringExamples[activeProtocol].title}
+                  </span>
+                ) : (
+                  <span className="text-xs text-neutral-600">click one</span>
+                )
+              }
+            />
+          </div>
 
-            {/* Code display section below */}
+          {/* Col 3: wiring code for selected protocol */}
+          <div className="w-full min-w-0 lg:max-w-[400px]">
+            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Wiring code</p>
             {activeProtocol !== null && (
-              <div className="mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
-                <div className="bg-white dark:bg-neutral-900 rounded-lg p-6 border-2 border-neutral-200 dark:border-neutral-700 card-shadow">
-                  <div className="flex items-center mb-4">
-                    <WiringIcon wiringId={wiringExamples[activeProtocol].icon} size={24} />
-                    <span className="ml-3 text-xl font-bold text-gray-900 dark:text-gray-100">
-                      {wiringExamples[activeProtocol].title}
-                    </span>
-                  </div>
-                  <CodeBlock language="typescript">
-                    {wiringExamples[activeProtocol].code}
-                  </CodeBlock>
+              <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
+                <div className="flex items-center gap-3 px-5 py-3 bg-neutral-800 border-b border-neutral-700/80">
+                  <WiringIcon wiringId={wiringExamples[activeProtocol].icon} size={15} />
+                  <span className="text-sm font-semibold text-neutral-200">{wiringExamples[activeProtocol].title}</span>
+                  <span className="ml-auto text-xs text-neutral-600 font-mono">wiring.ts</span>
+                </div>
+                <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
+                  <CodeBlock language="typescript">{wiringExamples[activeProtocol].code}</CodeBlock>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Deploy Anywhere - Third Section */}
-          {activeProtocol !== null && (() => {
-            const deployments = getDeploymentOptionsForProtocol(activeProtocol);
-            return deployments && (
-              <div className="mt-12">
-                <div className="flex items-center justify-center mb-6">
-                  <Heading as="h3" className="text-2xl font-bold">
-                    3. Deploy Anywhere
-                  </Heading>
-                </div>
-
-                {/* Deployment selector with icons */}
-                <div className="flex justify-center">
-                  <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mb-6 max-w-3xl">
-                  {Object.entries(deployments).map(([key, deployment]) => (
-                    <Link
-                      key={key}
-                      href={`/?wiring=${wiringExamples[activeProtocol].icon}&deployment=${key}#code-examples`}
-                      className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3 shadow-md hover:shadow-lg transition-all relative cursor-pointer"
-                    >
-                      <div className="flex flex-col items-center">
-                        <Image
-                          sources={{
-                            light: `img/logos/${deployment.img.light}`,
-                            dark: `img/logos/${deployment.img.dark}`
-                          }}
-                          width={40}
-                          height={40}
-                          className="mb-2"
-                        />
-                        <span className="text-xs font-semibold text-center text-gray-900 dark:text-gray-100">
-                          {deployment.name}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
         </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-lg font-semibold text-primary">
-            ✓ Same authentication, permissions, and validation across all protocols
-          </p>
+        <div className="mt-10 text-center">
+          <Link to="/docs" className="text-primary hover:underline font-medium text-sm">
+            Read the full docs →
+          </Link>
         </div>
       </div>
     </section>
@@ -1199,31 +1622,56 @@ function TryItNowSection() {
 
 /** Call to Action */
 function CallToActionSection() {
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText('npm create pikku@latest');
+  };
+
   return (
-    <section className="py-16 bg-neutral-900 dark:bg-neutral-900">
-      <div className="max-w-screen-lg mx-auto px-4 text-center">
-        <div className="text-white">
-          <Heading as="h2" className="text-4xl font-bold mb-6 text-white">
-            Ready to Simplify Your Backend?
-          </Heading>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Stop duplicating logic. Write once, deploy anywhere with Pikku.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/docs"
-              className="bg-white text-gray-900 hover:bg-neutral-100 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              Get Started
-            </Link>
-            <Link
-              to="https://github.com/pikkujs/pikku"
-              className="border-2 border-white text-white hover:bg-white hover:text-gray-900 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
-            >
-              View on GitHub
-            </Link>
-          </div>
+    <section className="py-20 bg-neutral-900 dark:bg-neutral-950 relative overflow-hidden">
+      {/* Subtle background glow */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-primary/10 blur-[80px]" />
+      </div>
+      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+        <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
+          Your next backend shouldn't have eight copies of the same function.
+        </Heading>
+        <p className="text-lg text-gray-400 mb-10 max-w-xl mx-auto">
+          Write it once. Pikku wires it everywhere.
+        </p>
+
+        {/* npm command */}
+        <div
+          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-primary/40 transition-all mb-8"
+          onClick={copyToClipboard}
+        >
+          <span className="text-primary/70 select-none">$ </span>npm create pikku@latest
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
+            onClick={copyToClipboard}
+            title="Copy to clipboard"
+          >
+            <svg className="w-3.5 h-3.5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </button>
         </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link
+            to="/docs"
+            className="bg-primary text-white hover:bg-primary-dark px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-primary/20"
+          >
+            Read the Docs
+          </Link>
+          <Link
+            to="https://github.com/pikkujs/pikku"
+            className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
+          >
+            View on GitHub
+          </Link>
+        </div>
+        <p className="text-gray-600 text-sm mt-6">MIT Licensed &nbsp;•&nbsp; Open Source &nbsp;•&nbsp; 5-minute setup</p>
       </div>
     </section>
   );
@@ -1234,25 +1682,34 @@ function CallToActionSection() {
 export default function Home() {
   return (
     <Layout
-      title="Pikku - Write Once, Run Everywhere"
+      title="Pikku - One Function, Every Protocol"
       description="Write backend logic once and wire it to HTTP, WebSockets, queues, cron jobs, AI agents, and more. Deploy anywhere—Express, Lambda, Cloudflare Workers, and beyond."
     >
       <Hero />
       <main>
-        <UsedBySection />
+        {/* 1. Pain — make the developer nod */}
+        <PainSection />
+
+        {/* 2. Insight — show the solution interactively */}
         <AhaMomentSection />
-        <WorkflowsSection />
-        <AgentsSection />
-        <ConsoleSection />
-        {/* <TestimonialsSection /> */}
+
+        {/* 3. Trust — who already uses it + what they say */}
+        <UsedBySection />
+        <TestimonialsSection />
+
+        {/* 4. Depth — what else you can build */}
+        <CapabilitiesSection />
+
+        {/* 5. Confidence — production-grade, serious */}
         <ProductionFeaturesSection />
-        {/* <HowTeamsUseItSection /> */}
         <ProblemSolutionSection />
-        <TryItNowSection />
+
+        {/* 6. Action — single strong CTA */}
+        <CallToActionSection />
+
+        {/* 7. For the curious — dive deeper */}
         <LiveExamples />
         <WhyIBuiltPikkuSection />
-        {/* <DeployAnywhereSection /> */}
-        <CallToActionSection />
       </main>
     </Layout>
   );

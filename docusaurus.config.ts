@@ -120,7 +120,11 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/pikku.png',
-    respectPrefersColorScheme: true,
+    colorMode: {
+      defaultColorMode: 'dark',
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
+    },
     announcementBar: {
       id: 'pikku-console',
       content:
@@ -135,7 +139,7 @@ const config: Config = {
       indexName: 'pikku',
     },
     mermaid: {
-      theme: { light: 'neutral', dark: 'dark' },
+      theme: { light: 'dark', dark: 'dark' },
     },
     navbar: {
       title: 'Pikku',
@@ -205,7 +209,7 @@ const config: Config = {
       copyright: `MIT License\nCopyright © 2020-${new Date().getFullYear()} Yasser Fadl & Pikku Contributors.`,
     },
     prism: {
-      theme: prismThemes.github,
+      theme: prismThemes.dracula,
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,

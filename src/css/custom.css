@@ -58,6 +58,14 @@
   --docusaurus-highlighted-code-line-bg: rgba(78, 26, 159, 0.3); /* Soft Glow for Dark Mode */
 }
 
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 .header-link {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -292,4 +300,67 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
 /* Table of contents left border - match sidebar height */
 .table-of-contents__left-border {
   min-height: calc(100vh - var(--ifm-navbar-height)) !important;
+}
+
+/* ========================================
+   Hero Section — Dark Gradient
+   ======================================== */
+
+.hero-section {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(168, 99, 238, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(56, 189, 248, 0.08) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.hero-section .button--secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-section .button--secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.45);
+  color: white;
+}
+
+/* ========================================
+   Entry Animations (hero chameleon + icons)
+   ======================================== */
+
+@keyframes chameleon-enter {
+  from { opacity: 0; transform: scale(0.55); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes icon-fan-out {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.15); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.animate-chameleon-enter {
+  animation: chameleon-enter 0.7s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-icon-fan-out {
+  animation: icon-fan-out 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes orbit-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes orbit-counter-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+.animate-orbit-rotate {
+  animation: orbit-rotate 90s linear infinite;
+}
+
+.animate-orbit-counter-rotate {
+  animation: orbit-counter-rotate 90s linear infinite;
 }
