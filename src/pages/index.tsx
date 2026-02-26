@@ -10,6 +10,11 @@ import LiveExamples from '../components/LiveExamples';
 import { BundleArchitecturesSection } from '../components/BundleArchitecturesSection';
 import { testimonials } from '@site/data/testimonials';
 import Card from '../components/Card';
+import {
+  Zap, ShieldCheck, Plug, RefreshCw, Timer, Database,
+  Search, Bot, Key, LayoutDashboard, Link2, Settings,
+  Layers, CheckCircle2, Feather, GitBranch, Puzzle, Lock,
+} from 'lucide-react';
 
 /** Reusable component for Pikku logo surrounded by icons */
 function PikkuCircularLayout({
@@ -135,7 +140,7 @@ function Hero() {
             <span className="text-primary">Every protocol.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-6 lg:mb-14 text-neutral-300">
-            Define your backend logic once. Pikku adapts it to HTTP, WebSocket, queues, cron, CLI, and AI agents — same auth, same middleware, no rewrites.
+            Write your backend once. Pikku handles HTTP, WebSocket, queues, cron, CLI, and AI agents — all from the same function, with the same auth and middleware.
           </p>
           <ul className="text-base mb-6 lg:mb-14 space-y-2 text-neutral-300">
             <li className="flex items-start">
@@ -264,229 +269,47 @@ function Hero() {
   );
 }
 
-/** Pain framing — makes the developer nod before we show the solution */
+/** Pain framing — three root causes developers recognise immediately */
 function PainSection() {
-  const trackRef = React.useRef<HTMLDivElement>(null);
-  const [canLeft, setCanLeft] = React.useState(false);
-  const [canRight, setCanRight] = React.useState(true);
-
-  const updateScroll = () => {
-    const el = trackRef.current;
-    if (!el) return;
-    setCanLeft(el.scrollLeft > 8);
-    setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
-  };
-
-  const scroll = (dir: -1 | 1) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const card = el.querySelector('[data-card]') as HTMLElement;
-    const step = card ? card.offsetWidth + 16 : el.clientWidth / 3;
-    el.scrollBy({ left: dir * step, behavior: 'smooth' });
-  };
-
-  // driftLines: 1-indexed line numbers to highlight in yellow
-  const files = [
+  const pains = [
     {
-      name: 'getUser.http.ts',
-      badge: 'HTTP',
-      badgeClass: 'text-green-400 bg-green-400/10',
-      driftLines: [] as number[],
-      code: `\
-async function getUser(req, res) {
-  if (!req.user) {
-    return res.status(401).end()
-  }
-  const user = await db.getUser(req.params.id)
-  await audit.log("getUser", user)
-  res.json({ user })
-}`,
+      icon: <GitBranch className="w-6 h-6 text-primary" />,
+      title: 'Every protocol is another copy',
+      desc: 'HTTP, WebSocket, queues, CLI, SSE — each one gets its own handler. They start as copies but drift apart. Auth gets fixed in one place, not the others. Bugs multiply in silence.',
     },
     {
-      name: 'getUser.queue.ts',
-      badge: 'Queue',
-      badgeClass: 'text-red-400 bg-red-400/10',
-      driftLines: [2, 6],
-      code: `\
-async function getUser(job) {
-  // TODO: add auth like http?
-  const { userId } = job.data
-  const user = await db.getUser(userId)
-  return user
-  // audit.log removed (too slow?)
-}`,
+      icon: <Puzzle className="w-6 h-6 text-primary" />,
+      title: 'Workflows, agents, and MCP are always extra work',
+      desc: "Wiring a function to a workflow engine, an AI agent, or an MCP server means adapters, schema re-definitions, and another auth layer to maintain — even for logic you've already shipped.",
     },
     {
-      name: 'getUser.cron.ts',
-      badge: 'Cron',
-      badgeClass: 'text-yellow-400 bg-yellow-400/10',
-      driftLines: [1, 4, 6],
-      code: `\
-// copied from queue (3 months ago)
-async function refreshUsers() {
-  const users = await db.getAll()
-  // different query, different shape
-  for (const u of users) {
-    // TODO: sync with http version
-  }
-}`,
-    },
-    {
-      name: 'getUser.ws.ts',
-      badge: 'WebSocket',
-      badgeClass: 'text-purple-400 bg-purple-400/10',
-      driftLines: [2, 6],
-      code: `\
-ws.on("getUser", (socket, data) => {
-  // TODO: share auth w/ HTTP
-  const user = await db.getUser(
-    data.userId
-  )
-  // different response format
-  socket.emit("user", { user })
-})`,
-    },
-    {
-      name: 'getUser.sse.ts',
-      badge: 'SSE',
-      badgeClass: 'text-orange-400 bg-orange-400/10',
-      driftLines: [1, 4],
-      code: `\
-// copied from HTTP for SSE
-router.get("/:id/stream", async (req, res) => {
-  res.type("text/event-stream")
-  // TODO: add auth check
-  const user = await db.getUser(req.params.id)
-  res.write(\`data: \${user.id}\`)
-})`,
-    },
-    {
-      name: 'getUser.rpc.ts',
-      badge: 'RPC',
-      badgeClass: 'text-blue-400 bg-blue-400/10',
-      driftLines: [3, 5],
-      code: `\
-rpc.register("getUser", async ({ userId }) => {
-  const user = await db.getUser(userId)
-  // internal — skip auth? (probably fine...)
-  return { user }
-  // audit.log removed — internal only
-})`,
-    },
-    {
-      name: 'getUser.mcp.ts',
-      badge: 'MCP',
-      badgeClass: 'text-pink-400 bg-pink-400/10',
-      driftLines: [2, 4],
-      code: `\
-tools.add({
-  name: "get_user", // snake_case?
-  handler: async ({ user_id }) => {
-    // TODO: figure out auth for MCP
-    return await db.getUser(user_id)
-  }
-})`,
-    },
-    {
-      name: 'getUser.cli.ts',
-      badge: 'CLI',
-      badgeClass: 'text-cyan-400 bg-cyan-400/10',
-      driftLines: [1, 4],
-      code: `\
-// copied from rpc handler
-program.command("get <id>")
-  .action(async (id) => {
-    // no auth in CLI (admin-only?)
-    const user = await db.getUser(id)
-    console.log(user)
-  })`,
+      icon: <Lock className="w-6 h-6 text-primary" />,
+      title: "Switching infrastructure means rewriting",
+      desc: 'Going from Express to Lambda, or Cloudflare Workers to a container, touches every handler. Your business logic ends up tangled with framework APIs you never wanted to care about.',
     },
   ];
 
   return (
-    <section className="py-8 lg:py-12">
+    <section className="py-16 lg:py-24">
       <div className="max-w-screen-lg mx-auto px-6">
-        <div className="text-center mb-6 lg:mb-14">
+        <div className="text-center mb-16">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Problem</p>
           <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
             You've written this function<br className="hidden md:block" /> more than once.
           </h2>
           <p className="text-lg text-neutral-400 max-w-lg mx-auto leading-relaxed">
-            Every new protocol means a new copy. The copies drift. Auth diverges. TODOs accumulate. Bugs multiply.
+            And you'll write it again. Here's why.
           </p>
         </div>
 
-        {/* Carousel */}
-        <div className="relative mb-4">
-          <div
-            ref={trackRef}
-            onScroll={updateScroll}
-            className="flex gap-4 overflow-x-scroll snap-x snap-mandatory scrollbar-hide"
-          >
-            {files.map((file, i) => (
-              <div
-                key={i}
-                data-card
-                className="snap-start flex-shrink-0 w-full md:w-[calc(33.333%-10.667px)] bg-[#0d0d0d] rounded-xl border border-neutral-800 overflow-hidden"
-              >
-                <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#0d0d0d] border-b border-neutral-800/60">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/50" />
-                  <span className="ml-2 text-[11px] text-neutral-400 font-mono flex-1 truncate">{file.name}</span>
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${file.badgeClass}`}>{file.badge}</span>
-                </div>
-                <pre className="p-4 m-0 font-mono text-[11.5px] leading-[1.75] min-h-[180px] overflow-x-auto bg-transparent">
-                  <code>
-                    {file.code.split('\n').map((line, j) => (
-                      <span
-                        key={j}
-                        className={`block ${file.driftLines.includes(j + 1)
-                          ? 'text-yellow-400/80 bg-yellow-400/6 -mx-4 px-4'
-                          : 'text-neutral-400'}`}
-                      >
-                        {line || '\u00A0'}
-                      </span>
-                    ))}
-                  </code>
-                </pre>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Carousel controls */}
-        <div className="flex items-center justify-between mb-6">
-          <span className="text-xs text-neutral-600">Swipe or use arrows to see all 8 protocols</span>
-          <div className="flex gap-2">
-            <button
-              onClick={() => scroll(-1)}
-              disabled={!canLeft}
-              className="w-8 h-8 rounded-full border border-neutral-700 flex items-center justify-center text-neutral-400 disabled:opacity-25 hover:border-neutral-500 hover:text-white transition-all text-sm"
-            >←</button>
-            <button
-              onClick={() => scroll(1)}
-              disabled={!canRight}
-              className="w-8 h-8 rounded-full border border-neutral-700 flex items-center justify-center text-neutral-400 disabled:opacity-25 hover:border-neutral-500 hover:text-white transition-all text-sm"
-            >→</button>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 py-8 border-t border-neutral-800/60">
-          <div className="text-center">
-            <div className="text-2xl font-jakarta font-bold text-white">n protocols</div>
-            <div className="text-sm text-neutral-500 mt-1">means n copies of the same logic</div>
-          </div>
-          <div className="hidden sm:block text-neutral-700 text-lg font-mono">→</div>
-          <div className="text-center">
-            <div className="text-2xl font-jakarta font-bold text-yellow-400">n TODO comments</div>
-            <div className="text-sm text-neutral-500 mt-1">that will never be resolved</div>
-          </div>
-          <div className="hidden sm:block text-neutral-700 text-lg font-mono">→</div>
-          <div className="text-center">
-            <div className="text-2xl font-jakarta font-bold text-red-400">n × the bugs</div>
-            <div className="text-sm text-neutral-500 mt-1">to find, reproduce, and fix</div>
-          </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {pains.map((pain, i) => (
+            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-7">
+              <div className="mb-5">{pain.icon}</div>
+              <h3 className="text-base font-bold mb-3 text-white">{pain.title}</h3>
+              <p className="text-sm text-neutral-400 leading-relaxed">{pain.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -540,15 +363,6 @@ function CapabilitiesSection() {
   return (
     <section className="py-8 lg:py-12">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-4 lg:mb-12">
-          <Heading as="h2" className="text-4xl font-bold mb-4">
-            Beyond Request-Response
-          </Heading>
-          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-2xl md:mx-auto">
-            The same function composition model extends to workflows, AI agents, and a visual control plane.
-          </p>
-        </div>
-
         <div className="grid md:grid-cols-3 gap-8">
           {capabilities.map((cap, idx) => (
             <div key={idx} className="bg-[#0d0d0d] rounded-xl p-8 flex flex-col border border-neutral-800 card-shadow">
@@ -973,91 +787,99 @@ function ProtocolSupportSection() {
 /** Agents Section */
 function AgentsSection() {
   return (
-    <section className="py-8 lg:py-12">
+    <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-4 lg:mb-12">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
-            <Heading as="h2" className="text-4xl md:text-5xl font-bold">
-              AI Agents with Full Backend Access
-            </Heading>
-            <span className="inline-block bg-primary text-white text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
-              Alpha
-            </span>
+
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">AI Agents</span>
+            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
           </div>
-          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            Define agents that use your existing functions as tools. Same auth, same permissions, same services — powered by any LLM.
+          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
+            Your functions are already agent tools
+          </Heading>
+          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+            No adapters. No schema writing. No separate auth layer. Pass your existing Pikku functions directly — the agent gets your full backend.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
-          {/* Left: Features */}
-          <div className="space-y-6">
-              <div className="flex flex-col items-start mb-2">
-                  <h3 className="text-xl font-bold mb-1">1. Functions as Tools</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Your existing Pikku functions become agent tools automatically. No adapters, no glue code — just reference the functions you already have.
-                  </p>
-              </div>
-              <div className="flex flex-col items-start mb-2">
-                  <h3 className="text-xl font-bold mb-1">2. Auth & Permissions Built In</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Agents inherit the same session, permissions, and middleware as every other protocol. No separate security layer to maintain.
-                  </p>
-              </div>
-              <div className="flex flex-col items-start mb-2">
-                  <h3 className="text-xl font-bold mb-1">3. Any LLM Provider</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Bring your own model — OpenAI, Anthropic, or any provider. Pikku handles tool calling, context, and execution.
-                  </p>
-              </div>
-              <div className="flex flex-col items-start mb-2">
-                  <h3 className="text-xl font-bold mb-1">4. Test in the Console</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Chat with agents directly in the Pikku Console playground. Iterate on prompts and tool configurations without building a frontend.
-                  </p>
-              </div>
-          </div>
+        {/* Two-column: code left, differentiators right */}
+        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
 
-          {/* Right: Code Example */}
+          {/* Left: Code Example */}
           <div className="overflow-x-auto">
             <CodeBlock language="typescript" title="src/agents/support.agent.ts">
-{`export const supportAgent = pikkuAgent({
+{`// These already exist in your backend — no changes needed
+import { getCustomer, getOrders, createTicket } from './functions'
+
+export const supportAgent = pikkuAgent({
   name: 'support',
-  description: 'Customer support agent',
   instructions: \`You are a helpful support agent.
-Look up the customer's account and recent
-orders to assist with their questions.\`,
-  tools: [
-    getCustomer,
-    getOrders,
-    createTicket,
-    sendEmail
-  ],
-  model: 'claude-sonnet-4-20250514'
+Look up the customer's account and recent orders.\`,
+  tools: [getCustomer, getOrders, createTicket],
+  model: 'claude-sonnet-4-5'
 })
 
-// Wire to HTTP for chat endpoint
+// Wire it just like any HTTP endpoint
 wireHTTP({
   method: 'post',
-  route: '/api/agent/support',
+  route: '/api/chat',
   func: supportAgent
-})
-
-// Also available via WebSocket
-wireChannel({
-  name: 'support',
-  onMessageWiring: {
-    action: { supportAgent }
-  }
 })`}
             </CodeBlock>
           </div>
-        </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto">
-            Perfect for customer support, data analysis, admin automation, and any task where AI needs access to your backend.
-          </p>
+          {/* Right: Two differentiators + CTA */}
+          <div className="space-y-6">
+            {/* Differentiator 1 */}
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <Zap className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Zero glue code</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Pass any Pikku function as a tool — the agent inherits its type signature, description, and input schema automatically. No adapters, no wrappers, no manual schema definitions.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Differentiator 2 */}
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Auth follows the agent</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Agents inherit the caller's session, permissions, and middleware. The same rules that protect your HTTP endpoints automatically protect every tool the agent can call — no separate security layer to build or maintain.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Differentiator 3 */}
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <Plug className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Any LLM, same interface</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Bring OpenAI, Anthropic, or any provider. Pikku handles tool calling, streaming, and context — you just swap the model name.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                to="/wiring/ai-agents"
+                className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm"
+              >
+                Read the AI Agents docs →
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1067,45 +889,91 @@ wireChannel({
 /** Workflows Section */
 function WorkflowsSection() {
   return (
-    <section className="py-8 lg:py-12">
+    <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-4 lg:mb-12">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
-            <Heading as="h2" className="text-4xl md:text-5xl font-bold">
-              Long-Running Workflows with Built-in Resilience
-            </Heading>
-          </div>
-          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            Build complex, multi-step processes that survive failures, handle time delays, and maintain state across server restarts.
+
+        {/* Header */}
+        <div className="text-center mb-16">
+          <span className="text-xs font-semibold tracking-widest uppercase text-primary/80 block mb-4">Workflows</span>
+          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
+            Multi-step processes that<br />survive anything
+          </Heading>
+          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+            Write sequential logic like normal code. Pikku handles persistence, retries, and resumption — even across server restarts.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
-          {/* Left: Code Example */}
+        {/* Two-column: code right, differentiators left */}
+        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
+
+          {/* Left: differentiators */}
+          <div className="space-y-6">
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <RefreshCw className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Deterministic replay</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Completed steps are cached and never re-executed. A workflow that fails on step 4 resumes from step 4 — not from the beginning.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <Timer className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Sleep for hours, days, or weeks</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    <code className="text-primary text-xs">workflow.sleep('5min')</code> suspends execution without holding a server connection. Perfect for trial expirations, reminders, and follow-ups.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+              <div className="flex items-start gap-4">
+                <Database className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <h3 className="text-lg font-bold mb-2">Survives restarts</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    State is persisted to PostgreSQL or Redis between steps. Deploy a new version mid-workflow and execution continues from where it left off.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                to="/docs/wiring/workflows"
+                className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm"
+              >
+                Read the Workflows docs →
+              </Link>
+            </div>
+          </div>
+
+          {/* Right: Code Example */}
           <div className="overflow-x-auto">
-            <CodeBlock language="typescript" title="User Onboarding Workflow">
+            <CodeBlock language="typescript" title="src/workflows/onboarding.workflow.ts">
 {`export const onboardingWorkflow = pikkuWorkflowFunc(
   async ({ workflow }, { email, userId }) => {
-    // Step 1: Create user profile (RPC step)
+    // Each step is persisted — safe to retry
     const user = await workflow.do(
       'Create user profile',
       'createUserProfile',
       { email, userId }
     )
 
-    // Step 2: Add to CRM (inline step)
-    const crmUser = await workflow.do(
-      'Create user in CRM',
-      async () => crmApi.createUser(user)
+    await workflow.do(
+      'Add to CRM',
+      async () => crm.createUser(user)
     )
 
-    // Step 3: Wait 5 minutes
-    await workflow.sleep(
-      'Wait before welcome email',
-      '5min'
-    )
+    // Suspend for 5 minutes — no server held
+    await workflow.sleep('Wait before welcome email', '5min')
 
-    // Step 4: Send welcome email (RPC step)
     await workflow.do(
       'Send welcome email',
       'sendEmail',
@@ -1117,51 +985,6 @@ function WorkflowsSection() {
 )`}
             </CodeBlock>
           </div>
-
-          {/* Right: Features */}
-          <div className="space-y-6">
-              <div className="flex flex-col items-start mb-2">
-                  <h3 className="text-xl font-bold mb-1">1. Deterministic Replay</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Completed steps are cached and never re-executed. Workflows resume from where they left off after failures or delays.
-                  </p>
-              </div>
-              <div className="flex flex-col items-start mb-2">
-                  <h3 className="text-xl font-bold mb-1">2. Persistent State</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Store state in any database—PostgreSQL and Redis support out of the box. Survives server restarts and you don't pay for the time it isn't running.
-                  </p>
-              </div>
-
-              <div className="flex flex-col items-start mb-2">
-                  <h3 className="text-xl font-bold mb-1">3. Time-Based Steps</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Sleep steps for delays, reminders, trial expirations, and scheduled follow-ups.
-                  </p>
-                </div>
-
-              <div className="flex flex-col items-start mb-2">
-                  <h3 className="text-xl font-bold mb-1">4. RPC & Inline Steps</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400">
-                    Mix RPC calls (via queue workers) with inline code. Full type safety across all steps.
-                  </p>
-              </div>
-    
-            <div className="mt-6">
-              <Link
-                to="/docs/wiring/workflows"
-                className="text-primary hover:underline font-medium text-lg inline-flex items-center"
-              >
-                Learn about Workflows →
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-12 text-center">
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto">
-            Perfect for user onboarding, order fulfillment, payment processing, approval workflows, and any multi-step business process.
-          </p>
         </div>
       </div>
     </section>
@@ -1175,10 +998,10 @@ function TestimonialsSection() {
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
-            What Developers Say
+            Built for the problems developers actually have
           </Heading>
           <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            Real feedback from teams using Pikku in production
+            From the teams who switched
           </p>
         </div>
 
@@ -1204,64 +1027,56 @@ function TestimonialsSection() {
 
 /** The Console */
 function ConsoleSection() {
-  const features = [
-    {
-      icon: '🔍',
-      title: 'Explore Everything',
-      desc: 'Browse functions, routes, channels, MCP tools, and CLI commands in a structured tree view'
-    },
-    {
-      icon: '🔄',
-      title: 'Run Workflows',
-      desc: 'Visualize workflow graphs, start runs with custom input, and stream progress in real time'
-    },
-    {
-      icon: '🤖',
-      title: 'Agent Playground',
-      desc: 'Chat with any registered agent directly in the browser to test prompts and tool integrations'
-    },
-    {
-      icon: '🔑',
-      title: 'Manage Configuration',
-      desc: 'View and edit secrets and variables per environment, with built-in OAuth2 flow support'
-    }
-  ];
-
   return (
-    <section className="py-8 lg:py-12">
+    <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-4 lg:mb-12">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
-            <Heading as="h2" className="text-4xl md:text-5xl font-bold">
-              The Pikku Console
-            </Heading>
-            <span className="inline-block bg-primary text-white text-sm font-semibold px-3 py-1 rounded-full whitespace-nowrap">
-              Alpha
-            </span>
+
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">Visual Control Plane</span>
+            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
           </div>
-          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            A per-environment visual control plane for your application. Explore, test, and manage everything from one UI.
+          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
+            See your entire backend<br />from one place
+          </Heading>
+          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+            The Pikku Console gives every environment its own control plane — browse functions, run agents, manage secrets, and trigger workflows without writing a line of tooling code.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-          {features.map((feature, idx) => (
-            <div key={idx} className="flex flex-col items-start p-6 bg-[#0d0d0d] rounded-lg border border-neutral-800 card-shadow">
-              <span className="text-3xl mb-3">{feature.icon}</span>
-              <div className="text-left">
-                <div className="text-lg font-bold mb-2">{feature.title}</div>
-                <div className="text-sm text-neutral-600 dark:text-neutral-400">{feature.desc}</div>
-              </div>
-            </div>
+        {/* Screenshot */}
+        <div className="relative max-w-5xl mx-auto mb-12">
+          <div className="rounded-xl overflow-hidden border border-neutral-800 shadow-2xl">
+            <img
+              src="/img/console-screenshot.png"
+              alt="Pikku Console — browse and inspect all functions, wirings, and services"
+              className="w-full block"
+            />
+          </div>
+          {/* Fade out bottom edge */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0f] to-transparent rounded-b-xl pointer-events-none" />
+        </div>
+
+        {/* Feature pills */}
+        <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto mb-10">
+          {[
+            { icon: <Search className="w-3.5 h-3.5" />, label: 'Browse all functions & wirings' },
+            { icon: <Bot className="w-3.5 h-3.5" />, label: 'Agent playground' },
+            { icon: <Zap className="w-3.5 h-3.5" />, label: 'Run & visualize workflows' },
+            { icon: <Key className="w-3.5 h-3.5" />, label: 'Manage secrets & variables' },
+            { icon: <LayoutDashboard className="w-3.5 h-3.5" />, label: 'Per-environment control' },
+          ].map((pill, i) => (
+            <span key={i} className="inline-flex items-center gap-2 px-4 py-2 bg-[#0d0d0d] border border-neutral-800 rounded-full text-sm text-neutral-300">
+              {pill.icon}
+              {pill.label}
+            </span>
           ))}
         </div>
 
-        <div className="mt-10 text-center">
-          <Link
-            to="/docs/console"
-            className="text-primary hover:underline font-medium text-lg inline-flex items-center"
-          >
-            Learn more about the Console →
+        <div className="text-center">
+          <Link to="/docs/console" className="text-primary hover:underline font-medium text-sm">
+            Console docs →
           </Link>
         </div>
       </div>
@@ -1271,47 +1086,46 @@ function ConsoleSection() {
 
 /** Deploy Anywhere */
 function DeployAnywhereSection() {
+  const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom];
   return (
-    <section className="py-8 lg:py-12">
-      <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
-        <Heading as="h2" className="text-4xl font-bold mb-6">
-          Deploy Anywhere. Blend In Everywhere.
+    <section className="py-16 lg:py-24">
+      <div className="max-w-screen-lg mx-auto px-4 text-center">
+        <span className="text-xs font-semibold tracking-widest uppercase text-primary/80 block mb-4">Deploy Anywhere</span>
+        <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
+          Change your runtime.<br />Keep your functions.
         </Heading>
+        <p className="text-xl text-neutral-400 max-w-2xl mx-auto mb-12">
+          Same code runs on Express, Fastify, AWS Lambda, Cloudflare Workers, Next.js, and more. Switching runtimes never requires touching your functions.
+        </p>
 
-        <div className="grid md:grid-cols-2 md:gap-12 md:items-center">
-          <div className="text-left">
-            <p className="text-xl text-neutral-600 dark:text-neutral-300 leading-relaxed mb-6">
-              Pikku works with Node, Bun, Deno, serverless, edge runtimes, and containers.
-            </p>
-            <p className="text-lg text-neutral-500 dark:text-neutral-400">
-              No vendor lock-in. No framework opinions. Just TypeScript.
-            </p>
-          </div>
-
-          <PikkuCircularLayout
-            items={[...runtimes.cloud, ...runtimes.middleware, runtimes.custom]}
-            renderItem={(deployment) => (
-              <div className="flex flex-col items-center hover:scale-110 transition-all duration-200">
-                <Link
-                  href={deployment.docs}
-                  title={`Deploy to ${deployment.name}`}
-                >
-                  <Image
-                    width={64}
-                    height={64}
-                    className='mx-auto'
-                    sources={{
-                      light: `img/logos/${deployment.img.light}`,
-                      dark: `img/logos/${deployment.img.dark}`
-                    }}
-                  />
-                </Link>
-              </div>
-            )}
-            logoSize={160}
-            radius={140}
-          />
+        <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+          {allRuntimes.map((runtime, idx) => (
+            <Link
+              key={idx}
+              to={runtime.docs}
+              className="flex items-center gap-2.5 px-4 py-2.5 bg-[#0d0d0d] border border-neutral-800 rounded-lg hover:border-neutral-600 transition-colors duration-200 no-underline"
+              title={`Deploy to ${runtime.name}`}
+            >
+              <Image
+                width={20}
+                height={20}
+                className="flex-shrink-0"
+                sources={{
+                  light: `img/logos/${runtime.img.light}`,
+                  dark: `img/logos/${runtime.img.dark}`
+                }}
+              />
+              <span className="text-sm font-medium text-neutral-300">{runtime.name}</span>
+            </Link>
+          ))}
         </div>
+
+        <p className="mt-8 text-sm text-neutral-500">
+          Plus any custom runtime via the adapter interface.{' '}
+          <Link to="/docs/custom-runtimes/custom-http-runtime" className="text-primary hover:underline">
+            Build your own →
+          </Link>
+        </p>
       </div>
     </section>
   );
@@ -1323,37 +1137,37 @@ function ProductionFeaturesSection() {
     {
       title: 'Type-Safe Clients',
       desc: 'Auto-generated from your function definitions',
-      icon: '🔗',
+      icon: <Link2 className="w-6 h-6 text-primary" />,
       detail: 'HTTP fetch, WebSocket, and RPC clients with full IntelliSense'
     },
     {
       title: 'Auth & Permissions',
       desc: 'Built-in filters, no manual checks',
-      icon: '🔐',
+      icon: <ShieldCheck className="w-6 h-6 text-primary" />,
       detail: 'Cookie, bearer, API key auth with fine-grained permissions'
     },
     {
       title: 'Services',
       desc: 'Singleton and per-request injection',
-      icon: '⚙️',
+      icon: <Settings className="w-6 h-6 text-primary" />,
       detail: 'Database, logger, config—all type-safe and testable'
     },
     {
       title: 'Middleware',
       desc: 'Before/after hooks across all protocols',
-      icon: '🪆',
+      icon: <Layers className="w-6 h-6 text-primary" />,
       detail: 'Logging, metrics, tracing—work everywhere'
     },
     {
       title: 'Schema Validation',
       desc: 'Auto-validate against TypeScript input schemas',
-      icon: '✅',
-      detail: 'Runtime validation catches errors before they hit your functions'
+      icon: <CheckCircle2 className="w-6 h-6 text-primary" />,
+      detail: 'Runtime validation catches errors before they hit your functions — supports Zod'
     },
     {
       title: 'Zero Lock-In',
       desc: 'Standard TypeScript, no magic',
-      icon: '🪶',
+      icon: <Feather className="w-6 h-6 text-primary" />,
       detail: 'Tiny runtime, bring your own database/logger/tools'
     }
   ];
@@ -1362,19 +1176,16 @@ function ProductionFeaturesSection() {
     <section className="py-8 lg:py-12">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
-          Ship Faster, Maintain Less
+          Production-grade out of the box
         </Heading>
-        <p className="text-xl text-neutral-600 dark:text-neutral-300 mb-4 md:max-w-2xl md:mx-auto">
-          Write your business logic once and deliver features across all protocols instantly. One source of truth means fewer bugs, faster iterations, and the flexibility to pivot without rewrites.
-        </p>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6 md:max-w-2xl md:mx-auto">
-          Tiny runtime with minimal overhead. Bundles as small as 50KB for single-function deployments.
+        <p className="text-xl text-neutral-400 mb-10 md:max-w-2xl md:mx-auto">
+          Auth, validation, type-safe clients, middleware — all built in. No bolting on third-party packages or writing boilerplate for every new protocol.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
           {features.map((feature, idx) => (
             <div key={idx} className="flex flex-col items-start p-6 bg-[#0d0d0d] rounded-lg border border-neutral-800 card-shadow">
-              <span className="text-4xl mb-4">{feature.icon}</span>
+              <div className="mb-4">{feature.icon}</div>
               <div className="text-left">
                 <div className="text-xl font-bold mb-2">{feature.title}</div>
                 <div className="text-neutral-600 dark:text-neutral-400 text-sm mb-2">{feature.desc}</div>
@@ -1652,22 +1463,23 @@ export default function Home() {
         {/* 2. Insight — show the solution interactively */}
         <AhaMomentSection />
 
-        {/* 3. Trust — what developers say */}
-        <TestimonialsSection />
+        {/* 3. Differentiators — Agents, Workflows, Console */}
+        <AgentsSection />
+        <WorkflowsSection />
+        <ConsoleSection />
 
-        {/* 3. Depth — what else you can build */}
-        <CapabilitiesSection />
-
-        {/* 4. Confidence — production-grade, serious */}
+        {/* 4. Confidence — production-grade primitives, deploy anywhere, bundle options */}
         <ProductionFeaturesSection />
+        <DeployAnywhereSection />
         <ProblemSolutionSection />
 
-        {/* 5. Action — single strong CTA */}
+        {/* 5. Social proof — just before the CTA */}
+        <TestimonialsSection />
+
+        {/* 6. Action — single strong CTA */}
         <CallToActionSection />
 
-        {/* 6. For the curious — dive deeper */}
         {/* <LiveExamples /> */}
-        <WhyIBuiltPikkuSection />
       </main>
     </Layout>
   );
