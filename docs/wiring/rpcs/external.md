@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
-title: External RPCs
-description: Exposing functions to external clients
+title: Exposed RPCs
+description: Calling exposed functions from external clients
 ---
 
-# External RPCs
+# Exposed RPCs
 
-External RPCs let external clients invoke your Pikku functions via HTTP POST endpoints (and channels on roadmap).
+Exposed RPCs let external clients invoke your Pikku functions via HTTP POST endpoints.
 
 ## Exposing Functions
 
@@ -36,12 +36,8 @@ import { pikkuSessionlessFunc } from '#pikku'
 export const rpcCaller = pikkuSessionlessFunc<
   { name: string; data: unknown },
   unknown
->({
-  func: async ({ rpc }, { name, data }) => {
-    return await rpc.invokeExposed(name, data)
-  },
-  title: 'Call any exposed function via RPC',
-  tags: ['rpc']
+>(async ({ rpc }, { name, data }) => {
+  return await rpc.invokeExposed(name, data)
 })
 
 // Wire it to HTTP

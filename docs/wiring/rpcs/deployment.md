@@ -1,11 +1,11 @@
 ---
 sidebar_position: 3
-title: Deployment & Remote RPC
+title: Remote
 description: Cross-instance function discovery and remote invocation
 ai: true
 ---
 
-# Deployment & Remote RPC
+# Remote
 
 When your application runs across multiple instances (microservices, scaled deployments, or separate processes), Pikku's deployment service enables automatic function discovery and remote invocation between instances.
 
@@ -116,7 +116,7 @@ export const remoteGreet = pikkuSessionlessFunc<
 })
 ```
 
-## DeploymentService Interface
+## RemoteService Interface
 
 ```typescript
 interface DeploymentService {

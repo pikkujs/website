@@ -34,20 +34,18 @@ export const processOrder = pikkuFunc<OrderInput, OrderResult>({
 
 See [Internal RPCs](./internal.md) for details.
 
-### External RPCs
+### Exposed RPCs
 
-External RPCs expose your functions to external clients via HTTP POST endpoints. Clients can invoke any function directly:
+Exposed RPCs expose your functions to external clients via HTTP POST endpoints. Clients can invoke any function directly:
 
 ```typescript
 // Function is automatically available as external RPC
 export const calculateOrderTotal = pikkuSessionlessFunc<
   { items: Array<{ price: number }> },
   { total: number }
->({
-  func: async ({ database }, data) => {
-    // Business logic
-    return { total: 100 }
-  }
+>(async ({ database }, data) => {
+  // Business logic
+  return { total: 100 }
 })
 ```
 
@@ -67,7 +65,7 @@ Content-Type: application/json
 - Building API clients
 - Type-safe API calls
 
-See [External RPCs](./external.md) for details.
+See [Exposed RPCs](./external.md) for details.
 
 ### Remote RPCs
 
@@ -90,7 +88,7 @@ export const processOrder = pikkuFunc<OrderInput, OrderResult>({
 - Microservice communication
 - Distributed workloads across scaled deployments
 
-See [Deployment & Remote RPC](./deployment.md) for details.
+See [Remote](./deployment.md) for details.
 
 ## When to Use Each Type
 
@@ -125,5 +123,5 @@ See [Deployment & Remote RPC](./deployment.md) for details.
 ## Next Steps
 
 - [Internal RPCs](./internal.md) - Function-to-function calls
-- [External RPCs](./external.md) - Exposing functions to clients
-- [Deployment & Remote RPC](./deployment.md) - Cross-instance invocation
+- [Exposed RPCs](./external.md) - Exposing functions to clients
+- [Remote](./deployment.md) - Cross-instance invocation

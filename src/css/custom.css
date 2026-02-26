@@ -64,6 +64,14 @@
   background-color: #0a0a0f;
 }
 
+/* Styled <hr> dividers in dark mode — fade from edges with a purple tint */
+[data-theme='dark'] hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(168, 99, 238, 0.3) 30%, rgba(168, 99, 238, 0.3) 70%, transparent);
+  margin: 2rem 0;
+}
+
 .scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -213,6 +221,9 @@
 .theme-doc-sidebar-container {
   border-right: 1px solid var(--ifm-toc-border-color);
 }
+[data-theme='dark'] .theme-doc-sidebar-container {
+  border-right: 1px solid rgba(168, 99, 238, 0.18);
+}
 
 /* Add padding to the right of the sidebar menu */
 .theme-doc-sidebar-menu {
@@ -290,6 +301,9 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
   margin-left: 0.5rem;
   padding-left: 0.5rem;
 }
+[data-theme='dark'] .menu__list .menu__list {
+  border-left: 1px solid rgba(168, 99, 238, 0.2);
+}
 
 /* Increase font size for category titles */
 .theme-doc-sidebar-item-category .menu__link--sublist {
@@ -307,6 +321,9 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
 .table-of-contents__left-border {
   min-height: calc(100vh - var(--ifm-navbar-height)) !important;
 }
+[data-theme='dark'] .table-of-contents__left-border {
+  border-left: 1px solid rgba(168, 99, 238, 0.18) !important;
+}
 
 /* Lock everything to the single background color */
 [data-theme='dark'] body,
@@ -319,11 +336,16 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
 
 [data-theme='dark'] .navbar {
   box-shadow: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(168, 99, 238, 0.18);
 }
 
 [data-theme='dark'] .footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(168, 99, 238, 0.18);
+}
+
+/* Hide site footer on doc pages */
+.docs-doc-page .theme-layout-footer {
+  display: none;
 }
 
 /* ========================================
