@@ -1,18 +1,24 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from '@docusaurus/Link';
 import { wireTypes, wireCategories, type WireCategory } from '../data/wireTypes';
-import { Code2, Wrench, Shield, GitBranch, Scissors, Package } from 'lucide-react';
+import { Code2, Wrench, Shield, GitBranch, Scissors, Package, Monitor, Key, Puzzle } from 'lucide-react';
 
 const coreEntries = [
   { id: 'function', label: 'Functions', description: 'One signature, every protocol', url: '/core/function', icon: Code2 },
   { id: 'services', label: 'Services', description: 'Injected toolbox with tree-shaking', url: '/core/services', icon: Wrench },
   { id: 'security', label: 'Security', description: 'Sessions, permissions & auth', url: '/core/security', icon: Shield },
   { id: 'versioning', label: 'Versioning', description: 'Contract hashing & CI enforcement', url: '/core/versioning', icon: GitBranch },
+  { id: 'secrets', label: 'Secrets & Variables', description: 'Type-safe config with Zod', url: '/core/secrets', icon: Key },
 ];
 
 const deploymentEntries = [
   { id: 'treeshaking', label: 'Tree-Shaking', description: 'Filter & deploy only what you need', url: '/core/treeshaking', icon: Scissors },
   { id: 'built-in-services', label: 'Built-in Services', description: 'Every interface & provider', url: '/core/built-in-services', icon: Package },
+];
+
+const platformEntries = [
+  { id: 'console', label: 'Console', description: 'Visual control plane for your app', url: '/core/console', icon: Monitor },
+  { id: 'addons', label: 'Addons', description: 'Extend with npm packages', url: '/core/addons', icon: Puzzle },
 ];
 
 export default function FeaturesMegaMenu(): React.ReactNode {
@@ -102,7 +108,7 @@ export default function FeaturesMegaMenu(): React.ReactNode {
       </a>
 
       <div className={`mega-menu-panel${open ? ' mega-menu-panel--open' : ''}`} role="menu">
-        <div className="mega-menu-grid mega-menu-grid--5col">
+        <div className="mega-menu-grid mega-menu-grid--6col">
           {/* Core column */}
           <div className="mega-menu-column">
             <div className="mega-menu-category-label">Core</div>
@@ -159,6 +165,31 @@ export default function FeaturesMegaMenu(): React.ReactNode {
           <div className="mega-menu-column">
             <div className="mega-menu-category-label">Deployment</div>
             {deploymentEntries.map((entry) => {
+              const Icon = entry.icon;
+              return (
+                <Link
+                  key={entry.id}
+                  to={entry.url}
+                  className="mega-menu-item"
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                >
+                  <div className="mega-menu-icon-box">
+                    <Icon size={20} />
+                  </div>
+                  <div>
+                    <div className="mega-menu-item-label">{entry.label}</div>
+                    <div className="mega-menu-item-desc">{entry.description}</div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Platform column */}
+          <div className="mega-menu-column">
+            <div className="mega-menu-category-label">Platform</div>
+            {platformEntries.map((entry) => {
               const Icon = entry.icon;
               return (
                 <Link

@@ -529,3 +529,24 @@ aside.theme-doc-sidebar-container > div > nav > ul.menu__list {
     radial-gradient(ellipse at 38% 65%, rgba(245, 158, 11, 0.06) 0%, transparent 48%),
     #0a0a0f;
 }
+
+.wire-hero-addons {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(99, 102, 241, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(129, 140, 248, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-console {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(244, 63, 94, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(251, 113, 133, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-secrets {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(245, 158, 11, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(252, 211, 77, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}

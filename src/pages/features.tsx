@@ -3,7 +3,7 @@ import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import { wireTypes, wireCategories, type WireCategory } from '../data/wireTypes';
-import { Code2, GitBranch, Wrench, Shield, Copy, Check, Scissors, Package } from 'lucide-react';
+import { Code2, GitBranch, Wrench, Shield, Copy, Check, Scissors, Package, Puzzle, Monitor, Key } from 'lucide-react';
 
 /* ─────────────────────────────────────────────
    Core concept cards data
@@ -37,6 +37,13 @@ const coreConcepts = [
     description: 'Evolve functions, keep workflows running. Contract hashing and CI enforcement.',
     icon: GitBranch,
     accent: 'fuchsia',
+  },
+  {
+    title: 'Secrets & Variables',
+    url: '/core/secrets',
+    description: 'Type-safe config with Zod schemas — validated at startup, managed from code or Console.',
+    icon: Key,
+    accent: 'amber',
   },
 ];
 
@@ -245,7 +252,117 @@ function DeploymentSection() {
 }
 
 /* ─────────────────────────────────────────────
-   5. CTA
+   Platform cards data
+   ───────────────────────────────────────────── */
+
+const platformCards = [
+  {
+    title: 'Console',
+    url: '/core/console',
+    description: 'Visual control plane — explore functions, run workflows, test agents, and manage config.',
+    icon: Monitor,
+    accent: 'rose',
+  },
+];
+
+/* ─────────────────────────────────────────────
+   Ecosystem cards data
+   ───────────────────────────────────────────── */
+
+const ecosystemCards = [
+  {
+    title: 'Addons',
+    url: '/core/addons',
+    description: 'Bundle functions, services, and secrets into npm packages. Install once, wire once.',
+    icon: Puzzle,
+    accent: 'indigo',
+  },
+];
+
+/* ─────────────────────────────────────────────
+   5. PLATFORM
+   ───────────────────────────────────────────── */
+
+function PlatformSection() {
+  return (
+    <section className="max-w-screen-xl mx-auto px-6 pb-16 lg:pb-20">
+      <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-8">Platform</p>
+      <div className="grid md:grid-cols-2 gap-6">
+        {platformCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Link
+              key={card.title}
+              to={card.url}
+              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
+            >
+              <div className="flex items-start gap-5">
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                  <Icon size={22} className="text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="font-jakarta text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
+                    {card.title}
+                  </h3>
+                  <p className="text-base text-neutral-400 leading-relaxed m-0">
+                    {card.description}
+                  </p>
+                </div>
+              </div>
+              <span className="absolute bottom-6 right-8 text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+                Learn more &rarr;
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   6. ECOSYSTEM
+   ───────────────────────────────────────────── */
+
+function EcosystemSection() {
+  return (
+    <section className="max-w-screen-xl mx-auto px-6 pb-16 lg:pb-20">
+      <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-8">Ecosystem</p>
+      <div className="grid md:grid-cols-2 gap-6">
+        {ecosystemCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Link
+              key={card.title}
+              to={card.url}
+              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
+            >
+              <div className="flex items-start gap-5">
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                  <Icon size={22} className="text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="font-jakarta text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
+                    {card.title}
+                  </h3>
+                  <p className="text-base text-neutral-400 leading-relaxed m-0">
+                    {card.description}
+                  </p>
+                </div>
+              </div>
+              <span className="absolute bottom-6 right-8 text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+                Learn more &rarr;
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   7. CTA
    ───────────────────────────────────────────── */
 
 function CTASection() {
@@ -296,6 +413,8 @@ export default function FeaturesPage(): React.ReactNode {
         <CoreConceptsSection />
         <WiresSection />
         <DeploymentSection />
+        <PlatformSection />
+        <EcosystemSection />
         <CTASection />
       </main>
     </Layout>

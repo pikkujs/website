@@ -43,14 +43,14 @@
 
 /* Panel */
 .mega-menu-panel {
-  position: absolute;
-  top: calc(100% + 6px);
+  position: fixed;
+  top: var(--ifm-navbar-height);
+  left: 0;
   right: 0;
-  width: 1060px;
-  max-width: calc(100vw - 32px);
+  width: 100vw;
   background: #0d0d14;
-  border: 1px solid rgba(168, 99, 238, 0.18);
-  border-radius: 16px;
+  border-top: 1px solid rgba(168, 99, 238, 0.18);
+  border-radius: 0;
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.5),
     0 0 48px rgba(168, 99, 238, 0.06);
@@ -83,6 +83,11 @@
 /* 5-column variant */
 .mega-menu-grid--5col {
   grid-template-columns: repeat(5, 1fr);
+}
+
+/* 6-column variant */
+.mega-menu-grid--6col {
+  grid-template-columns: repeat(6, 1fr);
 }
 
 /* Category */
@@ -207,6 +212,10 @@
 
 .mega-menu-grid .mega-menu-column:nth-child(5) .mega-menu-item { animation-delay: 0.2s; }
 .mega-menu-grid .mega-menu-column:nth-child(5) .mega-menu-item:nth-child(2) { animation-delay: 0.23s; }
+
+.mega-menu-grid .mega-menu-column:nth-child(6) .mega-menu-item { animation-delay: 0.25s; }
+.mega-menu-grid .mega-menu-column:nth-child(6) .mega-menu-item:nth-child(2) { animation-delay: 0.28s; }
+.mega-menu-grid .mega-menu-column:nth-child(6) .mega-menu-item:nth-child(3) { animation-delay: 0.31s; }
 
 /* Hide on mobile — Docusaurus handles mobile dropdown natively */
 @media (max-width: 996px) {
