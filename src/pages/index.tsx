@@ -124,20 +124,20 @@ function Hero() {
         <div className="absolute right-[12%] top-[40%] w-52 h-52 rounded-full bg-cyan-400/10 blur-[60px]" />
       </div>
 
-      <header className="flex max-w-screen-xl mx-auto w-full pt-16 pb-12 px-6 gap-12 items-center">
+      <header className="flex max-w-screen-xl mx-auto w-full pt-10 pb-8 lg:pt-16 lg:pb-12 px-6 gap-12 items-center">
         {/* Left: Text content */}
         <div className="md:w-1/2">
           <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-primary/40 bg-primary/10 px-3 py-1 rounded mb-6">
-            TypeScript Backend Framework
+            Stop copying functions across protocols
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">One function.</span><br />
             <span className="text-primary">Every protocol.</span>
           </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-8 text-gray-300">
+          <p className="text-xl font-medium leading-relaxed mb-6 lg:mb-14 text-gray-300">
             Define your backend logic once. Pikku adapts it to HTTP, WebSocket, queues, cron, CLI, and AI agents — same auth, same middleware, no rewrites.
           </p>
-          <ul className="text-base mb-8 space-y-2 text-gray-300">
+          <ul className="text-base mb-6 lg:mb-14 space-y-2 text-gray-300">
             <li className="flex items-start">
               <span className="text-green-400 mr-2 mt-0.5">✓</span>
               <span>Unified backend logic across all protocols</span>
@@ -169,8 +169,8 @@ function Hero() {
               See How It Works
             </Link>
           </div>
-          <p className="text-sm text-gray-500 mt-3">
-            ⚡ 5-minute setup &nbsp;•&nbsp; MIT Licensed &nbsp;•&nbsp; Open Source
+          <p className="mt-4 text-sm text-gray-500 font-mono">
+            $ npm create pikku@latest &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Open Source
           </p>
         </div>
 
@@ -373,9 +373,9 @@ program.command("get <id>")
   ];
 
   return (
-    <section className="py-24 bg-neutral-950 border-t border-neutral-800">
+    <section className="py-8 lg:py-24 bg-neutral-950 border-t border-neutral-800">
       <div className="max-w-screen-lg mx-auto px-6">
-        <div className="text-center mb-14">
+        <div className="text-center mb-6 lg:mb-14">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Problem</p>
           <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
             You've written this function<br className="hidden md:block" /> more than once.
@@ -425,7 +425,7 @@ program.command("get <id>")
         </div>
 
         {/* Carousel controls */}
-        <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center justify-between mb-6">
           <span className="text-xs text-neutral-600">Swipe or use arrows to see all 8 protocols</span>
           <div className="flex gap-2">
             <button
@@ -507,9 +507,9 @@ function CapabilitiesSection() {
   ];
 
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             Beyond Request-Response
           </Heading>
@@ -531,7 +531,7 @@ function CapabilitiesSection() {
               </div>
               <h3 className="text-xl font-bold mb-2">{cap.title}</h3>
               <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 leading-relaxed">{cap.description}</p>
-              <ul className="space-y-2 mb-8 flex-1">
+              <ul className="space-y-2 mb-6 lg:mb-14 flex-1">
                 {cap.highlights.map((h, i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
                     <span className="text-primary mt-0.5 shrink-0">✓</span>
@@ -720,9 +720,9 @@ wireTriggerSource({
   ];
 
   return (
-    <section id="code-examples" className="py-20 bg-neutral-900 border-t border-neutral-800 overflow-x-hidden">
+    <section id="code-examples" className="py-8 lg:py-20 bg-neutral-900 border-t border-neutral-800 overflow-x-hidden">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-14">
+        <div className="text-center mb-6 lg:mb-14">
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
             One function. <span className="text-primary">Every protocol.</span>
           </Heading>
@@ -828,9 +828,9 @@ wireTriggerSource({
 /** Bundle Only What You Deploy - Condensed Summary */
 function ProblemSolutionSection() {
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             Bundle Only What You Deploy
           </Heading>
@@ -905,9 +905,9 @@ function ProtocolSupportSection() {
   ];
 
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-6">
             Every Way Your Backend Communicates
           </Heading>
@@ -970,9 +970,9 @@ function UsedBySection() {
   ];
 
   return (
-    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-6">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-5xl font-bold mb-4">
             Built with Pikku
           </Heading>
@@ -1014,9 +1014,9 @@ function UsedBySection() {
 /** Agents Section */
 function AgentsSection() {
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
             <Heading as="h2" className="text-4xl md:text-5xl font-bold">
               AI Agents with Full Backend Access
@@ -1108,9 +1108,9 @@ wireChannel({
 /** Workflows Section */
 function WorkflowsSection() {
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
             <Heading as="h2" className="text-4xl md:text-5xl font-bold">
               Long-Running Workflows with Built-in Resilience
@@ -1212,9 +1212,9 @@ function WorkflowsSection() {
 /** What Developers Say */
 function TestimonialsSection() {
   return (
-    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             What Developers Say
           </Heading>
@@ -1269,9 +1269,9 @@ function ConsoleSection() {
   ];
 
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
             <Heading as="h2" className="text-4xl md:text-5xl font-bold">
               The Pikku Console
@@ -1313,7 +1313,7 @@ function ConsoleSection() {
 /** Deploy Anywhere */
 function DeployAnywhereSection() {
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Deploy Anywhere. Blend In Everywhere.
@@ -1400,7 +1400,7 @@ function ProductionFeaturesSection() {
   ];
 
   return (
-    <section className="py-16 border-t border-gray-200 dark:border-neutral-700">
+    <section className="py-8 lg:py-16 border-t border-gray-200 dark:border-neutral-700">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Ship Faster, Maintain Less
@@ -1408,7 +1408,7 @@ function ProductionFeaturesSection() {
         <p className="text-xl text-gray-600 dark:text-gray-300 mb-4 md:max-w-2xl md:mx-auto">
           Write your business logic once and deliver features across all protocols instantly. One source of truth means fewer bugs, faster iterations, and the flexibility to pivot without rewrites.
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-12 md:max-w-2xl md:mx-auto">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 md:max-w-2xl md:mx-auto">
           Tiny runtime with minimal overhead. Bundles as small as 50KB for single-function deployments.
         </p>
 
@@ -1467,9 +1467,9 @@ function WhyIBuiltPikkuSection() {
   ];
 
   return (
-    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             Why I Built Pikku
           </Heading>
@@ -1478,7 +1478,7 @@ function WhyIBuiltPikkuSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-3 gap-8 mb-6">
           {pillars.map((pillar, idx) => (
             <Card
               key={idx}
@@ -1490,7 +1490,7 @@ function WhyIBuiltPikkuSection() {
           ))}
         </div>
 
-        <div className="mt-12 mb-8">
+        <div className="mt-12 mb-6 lg:mb-14">
           <Heading as="h3" className="text-2xl font-bold mb-6 text-center">
             Watch the Talks
           </Heading>
@@ -1544,9 +1544,9 @@ function HowTeamsUseItSection() {
   ];
 
   return (
-    <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-12">
+        <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
             How Teams Use Pikku
           </Heading>
@@ -1595,12 +1595,12 @@ function TryItNowSection() {
   };
 
   return (
-    <section id="get-started" className="py-20 bg-neutral-50 dark:bg-neutral-900">
+    <section id="get-started" className="py-8 lg:py-20 bg-neutral-50 dark:bg-neutral-900">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-4">
           Get Started in Minutes
         </Heading>
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 md:max-w-2xl md:mx-auto">
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-6 lg:mb-14 md:max-w-2xl md:mx-auto">
           Create your first Pikku app with one command. You'll have a function running across HTTP, WebSockets, and more in under 5 minutes.
         </p>
         <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors" onClick={copyToClipboard}>
@@ -1627,7 +1627,7 @@ function CallToActionSection() {
   };
 
   return (
-    <section className="py-20 bg-neutral-900 dark:bg-neutral-950 relative overflow-hidden">
+    <section className="py-8 lg:py-20 bg-neutral-900 dark:bg-neutral-950 relative overflow-hidden">
       {/* Subtle background glow */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-primary/10 blur-[80px]" />
@@ -1642,7 +1642,7 @@ function CallToActionSection() {
 
         {/* npm command */}
         <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-primary/40 transition-all mb-8"
+          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-primary/40 transition-all mb-6 lg:mb-14"
           onClick={copyToClipboard}
         >
           <span className="text-primary/70 select-none">$ </span>npm create pikku@latest
