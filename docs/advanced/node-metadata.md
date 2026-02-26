@@ -97,4 +97,4 @@ This produces JSON files in the `.pikku/` output directory that the Console read
 
 - **Graph workflow builder** — Nodes appear as draggable elements in the Console's graph editor, categorized by type
 - **Function discovery** — The category and type annotations make it easier to browse large function registries
-- **External packages** — Published Pikku packages can include node metadata so their functions appear correctly in the consumer's Console
+- **Addons** — Published Pikku addons can include node metadata so their functions appear correctly in the consumer's Console

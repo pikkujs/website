@@ -494,22 +494,6 @@ function TypeSafeClientSection() {
    7. MIDDLEWARE
    ───────────────────────────────────────────── */
 
-const wireMiddlewareCode = `wireChannel({
-  domain: 'todos',
-  onConnect: async () => {},
-  onDisconnect: async () => {},
-  // Channel-level — wraps every outbound channel.send()
-  channelMiddleware: [rateLimit({ maxMessages: 100, windowMs: 60_000 })],
-  onMessageWiring: {
-    create: {
-      func: createTodo,
-      // Per-action wire middleware
-      middleware: [auditLog]
-    },
-    list: { func: listTodos },
-  }
-})`;
-
 const channelMiddlewareCode = `import { pikkuChannelMiddleware } from '@pikku/core'
 
 // Channel middleware intercepts channel.send()
@@ -587,12 +571,8 @@ function MiddlewareSection() {
           ))}
         </div>
 
-        {/* Code examples side by side */}
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
-          <CodeCard filename="todos.channel.ts" badge="wire middleware" icon={<WebSocketIcon size={15} />}>
-            <CodeBlock language="typescript">{wireMiddlewareCode}</CodeBlock>
-          </CodeCard>
-
+        {/* Code example */}
+        <div className="max-w-3xl mx-auto">
           <CodeCard filename="channel-middleware.ts" badge="channel middleware" icon={<WebSocketIcon size={15} />}>
             <CodeBlock language="typescript">{channelMiddlewareCode}</CodeBlock>
           </CodeCard>
@@ -619,14 +599,14 @@ function DeploySection() {
   const modes = [
     {
       title: 'Stateful',
-      runtime: 'uWebSockets.js',
+      runtime: 'uWebSockets.js, ws',
       desc: 'In-process EventHub, persistent connections. Best for low-latency real-time apps.',
       border: 'border-purple-500/30',
       bg: 'bg-purple-500/5',
     },
     {
       title: 'Serverless',
-      runtime: 'AWS Lambda + API Gateway',
+      runtime: 'AWS Lambda, Cloudflare',
       desc: 'PostgreSQL-backed EventHub, managed WebSocket API. Best for scale-to-zero workloads.',
       border: 'border-neutral-700',
       bg: 'bg-neutral-900/50',
@@ -723,7 +703,7 @@ function CTASection() {
         </div>
 
         <p className="text-neutral-500 text-sm mt-8">
-          MIT Licensed &nbsp;&middot;&nbsp; Works with uWebSockets.js, AWS Lambda &amp; API Gateway
+          MIT Licensed &nbsp;&middot;&nbsp; Works with uWebSockets.js, ws, AWS Lambda &amp; Cloudflare
         </p>
       </div>
     </section>

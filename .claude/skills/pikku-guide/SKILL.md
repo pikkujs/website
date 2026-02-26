@@ -1,6 +1,6 @@
 ---
 name: pikku-guide
-description: "Use when the user wants to write or update a guide, tutorial, or how-to page for the Pikku documentation. Covers sections: core-features, wiring (HTTP, WebSocket, queue, cron, MCP, CLI, RPC, triggers, workflows, AI agents), runtimes (Fastify, Express, Next.js, Lambda, Cloudflare, etc.), middleware (auth), custom-runtimes, advanced topics, and external-packages. Triggered by: 'write a guide for X', 'document how X works', 'add a page about X', 'update the wiring doc for X', 'write the runtime doc for Y'."
+description: "Use when the user wants to write or update a guide, tutorial, or how-to page for the Pikku documentation. Covers sections: core-features, wiring (HTTP, WebSocket, queue, cron, MCP, CLI, RPC, triggers, workflows, AI agents), runtimes (Fastify, Express, Next.js, Lambda, Cloudflare, etc.), middleware (auth), custom-runtimes, advanced topics, and addons. Triggered by: 'write a guide for X', 'document how X works', 'add a page about X', 'update the wiring doc for X', 'write the runtime doc for Y'."
 metadata:
   version: 1.0.0
 ---

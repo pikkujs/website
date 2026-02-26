@@ -1,28 +1,28 @@
 ---
 sidebar_position: 1
-title: Creating Packages
-description: How to create an external package
+title: Creating Addons
+description: How to create an addon
 ---
 
-# Creating an External Package
+# Creating an Addon
 
-External packages are standard Pikku applications marked for reuse. They contain functions, services, middleware, secrets, and variables — just like any Pikku project.
+Addons are standard Pikku applications marked for reuse. They contain functions, services, middleware, secrets, and variables — just like any Pikku project.
 
 ## Configuration
 
-Mark a package as external in `pikku.config.json`:
+Mark a project as an addon in `pikku.config.json`:
 
 ```json
 {
   "srcDirectories": ["src"],
   "outDir": "./.pikku",
-  "externalPackage": true
+  "addon": true
 }
 ```
 
 ## Package Structure
 
-A typical external package looks like this:
+A typical addon looks like this:
 
 ```
 my-package/
@@ -60,14 +60,14 @@ wireSecret({
 
 ## Creating Services
 
-Use `pikkuExternalServices` to create your service factory. It receives the consumer's existing services (logger, secrets, variables) so you don't duplicate infrastructure:
+Use `pikkuAddonServices` to create your service factory. It receives the consumer's existing services (logger, secrets, variables) so you don't duplicate infrastructure:
 
 ```typescript
 // services.ts
 import { SendgridService } from './sendgrid-api.service.js'
-import { pikkuExternalServices } from '#pikku'
+import { pikkuAddonServices } from '#pikku'
 
-export const createSingletonServices = pikkuExternalServices(
+export const createSingletonServices = pikkuAddonServices(
   async (config, { secrets }) => {
     const apiKey = await secrets.getSecretJSON<string>('SENDGRID_API_KEY')
     const sendgrid = new SendgridService(apiKey)
@@ -76,7 +76,7 @@ export const createSingletonServices = pikkuExternalServices(
 )
 ```
 
-The `pikkuExternalServices` helper ensures your factory receives typed secrets and the consumer's shared services (logger, variables, etc.).
+The `pikkuAddonServices` helper ensures your factory receives typed secrets and the consumer's shared services (logger, variables, etc.).
 
 ## Writing Functions
 
@@ -141,7 +141,7 @@ export const onChanges = pikkuTriggerFunc<
 })
 ```
 
-Consumers then wire this to their own handler function — see [Consuming Packages](./consuming.md#using-trigger-sources).
+Consumers then wire this to their own handler function — see [Consuming Addons](./consuming.md#using-trigger-sources).
 
 ## Publishing
 
@@ -168,7 +168,7 @@ npm publish
 
 ## Best Practices
 
-**Service sharing**: Use `pikkuExternalServices` — it handles receiving the consumer's logger, secrets, and variables automatically.
+**Service sharing**: Use `pikkuAddonServices` — it handles receiving the consumer's logger, secrets, and variables automatically.
 
 **Secret naming**: Use descriptive `secretId` names that make overrides intuitive: `SENDGRID_API_KEY`, `STRIPE_CREDENTIALS`.
 

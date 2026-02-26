@@ -106,17 +106,17 @@ function Hero() {
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
 
   const protocols = [
-    { icon: 'http',      label: 'HTTP',       color: '#22c55e', hueRotate: 80  },
-    { icon: 'websocket', label: 'WebSocket',  color: '#a855f7', hueRotate: 240 },
-    { icon: 'sse',       label: 'SSE',        color: '#f97316', hueRotate: -10 },
-    { icon: 'queue',     label: 'Queue',      color: '#ef4444', hueRotate: -40 },
-    { icon: 'cron',      label: 'Cron',       color: '#eab308', hueRotate: 20  },
-    { icon: 'rpc',       label: 'RPC',        color: '#3b82f6', hueRotate: 180 },
-    { icon: 'mcp',       label: 'MCP',        color: '#ec4899', hueRotate: 290 },
-    { icon: 'cli',       label: 'CLI',        color: '#06b6d4', hueRotate: 145 },
-    { icon: 'bot',       label: 'AI Agent',   color: '#8b5cf6', hueRotate: 220 },
-    { icon: 'workflow',  label: 'Workflow',   color: '#10b981', hueRotate: 115 },
-    { icon: 'trigger',   label: 'Trigger',    color: '#f59e0b', hueRotate: 0   },
+    { icon: 'http',      label: 'HTTP',       color: '#22c55e', hueRotate: 80,  link: '/wires/http' },
+    { icon: 'websocket', label: 'WebSocket',  color: '#a855f7', hueRotate: 240, link: '/wires/websocket' },
+    { icon: 'sse',       label: 'SSE',        color: '#f97316', hueRotate: -10, link: null },
+    { icon: 'queue',     label: 'Queue',      color: '#ef4444', hueRotate: -40, link: '/wires/queue' },
+    { icon: 'cron',      label: 'Cron',       color: '#eab308', hueRotate: 20,  link: '/wires/cron' },
+    { icon: 'rpc',       label: 'RPC',        color: '#3b82f6', hueRotate: 180, link: '/wires/rpc' },
+    { icon: 'mcp',       label: 'MCP',        color: '#ec4899', hueRotate: 290, link: '/wires/mcp' },
+    { icon: 'cli',       label: 'CLI',        color: '#06b6d4', hueRotate: 145, link: '/wires/cli' },
+    { icon: 'bot',       label: 'AI Agent',   color: '#8b5cf6', hueRotate: 220, link: '/wires/bot' },
+    { icon: 'workflow',  label: 'Workflow',   color: '#10b981', hueRotate: 115, link: '/wires/workflow' },
+    { icon: 'trigger',   label: 'Trigger',    color: '#f59e0b', hueRotate: 0,   link: '/wires/trigger' },
   ];
 
   const hovered = hoveredIndex !== null ? protocols[hoveredIndex] : null;
@@ -167,12 +167,12 @@ function Hero() {
             >
               Try It in 5 Minutes
             </Link>
-            <Link
-              to="#code-examples"
+            <a
+              href="#code-examples"
               className="button button--secondary button--lg hover:scale-105 transition-transform"
             >
               See How It Works
-            </Link>
+            </a>
           </div>
           <p className="mt-4 text-sm text-neutral-500 font-mono">
             $ npm create pikku@latest &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Open Source
@@ -183,16 +183,23 @@ function Hero() {
         <div className="hidden md:flex md:w-1/2 items-center justify-center flex-col">
           <PikkuCircularLayout
             items={protocols}
-            renderItem={(item, index) => (
-              <div
-                className="flex flex-col items-center gap-1.5 cursor-default"
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-              >
-                <WiringIcon wiringId={item.icon} size={40} />
-                <span className="text-white/50 text-[11px] font-medium tracking-wide">{item.label}</span>
-              </div>
-            )}
+            renderItem={(item, index) => {
+              const content = (
+                <div
+                  className="flex flex-col items-center gap-1.5 transition-transform duration-200 hover:scale-110"
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                >
+                  <WiringIcon wiringId={item.icon} size={40} />
+                  <span className="text-white/50 text-[11px] font-medium tracking-wide">{item.label}</span>
+                </div>
+              );
+              return item.link ? (
+                <Link to={item.link} className="no-underline cursor-pointer">{content}</Link>
+              ) : (
+                <div className="cursor-default">{content}</div>
+              );
+            }}
             centerNode={
               <div style={{ width: 210, height: 210, position: 'relative' }}>
                 <img

@@ -29,6 +29,7 @@ const config: Config = {
   projectName: 'pikku-website', // Usually your repo name.
 
   // onBrokenLinks: 'ignore',
+  onBrokenAnchors: 'warn',
 
   markdown: {
     mermaid: true,
@@ -142,6 +143,23 @@ const config: Config = {
         {
           type: 'search',
           position: 'left',
+        },
+        {
+          type: 'dropdown',
+          label: 'Features',
+          position: 'right',
+          items: [
+            { label: 'HTTP', to: '/wires/http' },
+            { label: 'WebSocket', to: '/wires/websocket' },
+            { label: 'RPC', to: '/wires/rpc' },
+            { label: 'Queue', to: '/wires/queue' },
+            { label: 'Cron', to: '/wires/cron' },
+            { label: 'CLI', to: '/wires/cli' },
+            { label: 'Workflows', to: '/wires/workflow' },
+            { label: 'AI Agents', to: '/wires/bot' },
+            { label: 'MCP', to: '/wires/mcp' },
+            { label: 'Triggers', to: '/wires/trigger' },
+          ],
         },
         {
           type: 'docSidebar',
