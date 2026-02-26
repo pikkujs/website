@@ -43,8 +43,6 @@ No framework lock-in. No vendor lock-in. **Just adaptability.**
 
 ## Developer Experience: Less Boilerplate, More Building
 
-Pikku is for developers who hate boilerplate and love simplicity.
-
 **Your functions receive:**
 - Services (database, cache, logger)
 - Data (validated automatically)
@@ -63,23 +61,9 @@ Pikku uses your types to automate everything:
 - **Runtime Validation** - JSON schemas generated from TypeScript types (no extra libraries)
 - **Type-Safe Clients** - Auto-generated HTTP fetch, WebSocket, and RPC clients
 - **OpenAPI Docs** - Complete API documentation from your functions
-- **Smart Tree-Shaking** - Bundle only what you deploy (coming soon: service-level tree-shaking)
+- **Smart Tree-Shaking** - Bundle only what you deploy
 - **Next.js Integration** - Typed wrappers for seamless full-stack development
 - **Session Management** - Built-in auth and permissions across all protocols
 
 **You write functions. Pikku handles the rest.** No decorators, no runtime reflection, no magic—just static analysis of plain TypeScript.
 
----
-
-## The Greener Future: Optimize for the Planet
-
-Infrastructure choices have environmental consequences. Pikku's flexibility lets you experiment with different runtimes and measure their impact.
-
-**VMs? Containers? Serverless?** Test them all with the same codebase. Compare:
-- CPU cycles
-- Memory consumption
-- Carbon footprint
-
-Imagine a future where Pikku helps you optimize not just for performance and cost, but for **environmental impact** too. Choose the runtime that's best for your users *and* the planet.
-
-This vision is still in the concept stage, but we're committed to making performance optimization and environmental responsibility go hand in hand.

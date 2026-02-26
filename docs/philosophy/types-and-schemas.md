@@ -4,19 +4,19 @@ title: Types and Schemas
 description: A brief overview of Pikku's capabilities
 ---
 
-Pikku is almost driven entirely by **Types**. This ensures type safety across the application, reducing errors and improving maintainability.
+Pikku is driven entirely by **Types**. This ensures type safety across the application, reducing errors and improving maintainability.
 
-The easiest way to use types is by specifying them within a `PikkuFunction`
+Define input and output types directly on your function:
 
 ```typescript
 type Input = { sortBy: 'age' | 'name' }
-type Response = { users: Array<{ name: string, age: number }> }
-const myFunction: pikkuFunc<Input, Output>((services, data, session) => {
+type Output = { users: Array<{ name: string, age: number }> }
+const myFunction = pikkuFunc<Input, Output>(async (services, data) => {
   return await services.users.getUsers(data)
 })
 ```
 
-The pikku CLI will then extract those types to generate all the revelevant information needed to run the functions, as well as generate typed sdks, documentation and schemas to validate the input against, all from the types defined.
+The Pikku CLI extracts those types to generate all the relevant information needed to run the functions — typed SDKs, documentation, and schemas to validate input — all from the types you've already defined.
 
 ## JSON Schema Validation
 

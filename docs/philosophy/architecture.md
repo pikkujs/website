@@ -14,12 +14,9 @@ At its core, Pikku treats all application logic as pure, testable functions. Whe
 const getUserProfile = pikkuFunc<
   { userId: string },
   { name: string; email: string }
->({
-  func: async ({ database }, data) => {
-    const user = await database.getUser(data.userId)
-    return { name: user.name, email: user.email }
-  },
-  title: 'Get user profile'
+>(async ({ database }, data) => {
+  const user = await database.getUser(data.userId)
+  return { name: user.name, email: user.email }
 })
 ```
 
@@ -309,18 +306,20 @@ The `pikkuFuncId` serves as the universal identifier that connects your function
 
 ```typescript
 // Example 1: Exported function - included in bundle, exposed via RPC
-export const createUser = pikkuFunc<CreateUserInput, CreateUserOutput>()
-.func(async (services, data) => {
-  // Implementation
-})
+export const createUser = pikkuFunc<CreateUserInput, CreateUserOutput>(
+  async (services, data) => {
+    // Implementation
+  }
+)
 // ✅ Included: Exported function
 // ✅ Available via RPC
 
 // Example 2: Wired function - included in bundle
-const getUserProfile = pikkuFunc<GetUserInput, GetUserOutput>()
-.func(async (services, data) => {
-  // Implementation
-})
+const getUserProfile = pikkuFunc<GetUserInput, GetUserOutput>(
+  async (services, data) => {
+    // Implementation
+  }
+)
 
 wireHTTP({
   method: 'get',
@@ -332,10 +331,11 @@ wireHTTP({
 // are registered and callable at runtime
 
 // Example 3: Internal helper - tree-shaken out
-const validateUserData = pikkuFunc<ValidationInput, ValidationOutput>()
-.func(async (services, data) => {
-  // Helper function not exported or wired
-})
+const validateUserData = pikkuFunc<ValidationInput, ValidationOutput>(
+  async (services, data) => {
+    // Helper function not exported or wired
+  }
+)
 // ❌ Excluded: Not exported, not referenced by any wiring
 
 ```
@@ -430,60 +430,3 @@ pikkuRPC.setServerUrl('http://localhost:4002')
 await pikkuRPC.invoke('helloWorld', null)
 ```
 
-## Architecture Benefits
-
-This architecture provides several key advantages:
-
-### 1. **Protocol Agnostic**
-Write once, deploy to HTTP, WebSocket, RPC, or scheduled tasks without code changes.
-
-### 2. **Type Safety**
-End-to-end type safety from database to UI, with compile-time validation and runtime schema checking.
-
-### 3. **Deployment Flexibility** 
-Deploy the same code to Express, Lambda, Cloudflare Workers, Next.js, or any other runtime.
-
-### 4. **Minimal Runtime Overhead**
-Most complexity is handled at build time, resulting in lightweight runtime execution (< 50kb).
-
-### 5. **Easy Testing**
-Pure functions with dependency lookup make unit testing trivial.
-
-### 6. **Incremental Adoption**
-Can be adopted gradually in existing applications without major rewrites. Supports middleware for Express, and can be adopted in NestJS, Fastify, uWS—anything goes.
-
-```mermaid
-graph LR
-    subgraph "Development"
-        A[Write Functions]
-        B[Define Types]
-        C[Configure Wiring]
-    end
-    
-    subgraph "Build Time"
-        D[Inspector Analysis]
-        E[Code Generation]
-        F[Type Validation]
-    end
-    
-    subgraph "Runtime"
-        G[Lightweight Execution]
-        H[Transport Normalization]
-        I[Function Dispatch]
-    end
-    
-    A --> D
-    B --> D  
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    G --> H
-    H --> I
-    
-    style D fill:#e8f5e8
-    style E fill:#e8f5e8
-    style F fill:#e8f5e8
-```
-
-This architecture makes Pikku uniquely suited for building scalable, maintainable applications that can evolve with your infrastructure needs without requiring code rewrites.

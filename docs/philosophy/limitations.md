@@ -50,32 +50,14 @@ Pikku is in active development. While stable for production use:
 
 We take stability seriously, but version 0.x means we're still refining the API based on real-world usage.
 
-## No GraphQL Support
+## TypeScript-First
 
-Pikku currently supports:
-
-- ✅ REST (HTTP)
-- ✅ WebSocket (Channels)
-- ✅ RPC
-- ✅ MCP
-- ✅ CLI
-- ✅ Queue Workers
-- ✅ Scheduled Tasks
-- ✅ Workflows
-
-GraphQL is not currently supported. You can still build GraphQL resolvers that call Pikku functions, but there's no first-class integration.
-
-## TypeScript Required
-
-While you can use JavaScript, Pikku's benefits (type-safe clients, automatic validation, tree-shaking) require TypeScript:
-
-- **TypeScript**: Full feature set
-- **JavaScript**: Limited - no automatic schema generation or type-safe clients
+Pikku is built around TypeScript. The core features — automatic schema generation, type-safe clients, and tree-shaking — all rely on static analysis of your types. JavaScript projects can use Pikku, but without TypeScript you lose most of what makes it useful.
 
 ## Next Steps
 
 Despite these limitations, Pikku handles most backend use cases effectively. Ready to get started?
 
-- [Getting Started](/docs/core-features) - Build your first function
+- [Getting Started](/docs) - Build your first function
 - [Architecture](/docs/philosophy/architecture) - Understanding how Pikku works
 - [GitHub](https://github.com/pikkujs/pikku) - Request features or report issues
