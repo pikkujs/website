@@ -172,11 +172,11 @@ function Hero() {
               to="/features"
               className="button button--secondary button--lg hover:scale-105 transition-transform"
             >
-              See How It Works
+              Explore Features
             </Link>
           </div>
-          <p className="mt-4 text-sm text-neutral-500 font-mono">
-            $ npm create pikku@latest &nbsp;·&nbsp; MIT &nbsp;·&nbsp; Open Source
+          <p className="mt-4 text-sm text-neutral-400 font-mono">
+            $ npm create pikku@latest &nbsp;·&nbsp; <span className="text-primary/70">MIT Licensed</span> &nbsp;·&nbsp; <span className="text-primary/70">Open Source</span>
           </p>
         </div>
 
@@ -259,7 +259,7 @@ function Hero() {
             <Link
               key={company.name}
               href={company.url}
-              className="flex items-center justify-center px-4 py-3 rounded-lg opacity-35 hover:opacity-70 transition-opacity"
+              className="flex items-center justify-center px-4 py-3 rounded-lg opacity-55 hover:opacity-80 transition-opacity"
               title={company.name}
             >
               <img
@@ -283,7 +283,7 @@ function PainSection() {
     {
       icon: <GitBranch className="w-6 h-6 text-primary" />,
       title: 'Every protocol is another copy',
-      desc: 'HTTP, WebSocket, queues, CLI, SSE — each one gets its own handler. They start as copies but drift apart. Auth gets fixed in one place, not the others. Bugs multiply in silence.',
+      desc: 'HTTP, WebSocket, queues, CLI, SSE — five protocols, five handlers. They start as copies but drift apart. Auth gets fixed in one place, not the others. Bugs multiply in silence.',
     },
     {
       icon: <Puzzle className="w-6 h-6 text-primary" />,
@@ -577,10 +577,10 @@ wireTriggerSource({
       <div className="max-w-screen-xl mx-auto px-6">
         <div className="text-center mb-6 lg:mb-14">
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            One function. <span className="text-primary">Every protocol.</span>
+            Same function. <span className="text-primary">Any transport.</span>
           </Heading>
           <p className="text-lg text-neutral-400 max-w-xl mx-auto">
-            Write your business logic once. Pikku wires it to any protocol — same auth, same permissions, no rewrites.
+            The function on the left works with every protocol on the right. Same auth, same validation, zero rewrites.
           </p>
         </div>
 
@@ -802,7 +802,7 @@ function AgentsSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">AI Agents</span>
-            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
+            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha — used in production</span>
           </div>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
             Your functions are already agent tools
@@ -1009,7 +1009,7 @@ function TestimonialsSection() {
             Built for the problems developers actually have
           </Heading>
           <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            From the teams who switched
+            From the teams already shipping with it
           </p>
         </div>
 
@@ -1043,10 +1043,10 @@ function ConsoleSection() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">Visual Control Plane</span>
-            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
+            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha — used in production</span>
           </div>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
-            See your entire backend<br />from one place
+            Every function, every wire,<br />every secret — one screen
           </Heading>
           <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
             The Pikku Console gives every environment its own control plane — browse functions, run agents, manage secrets, and trigger workflows without writing a line of tooling code.
@@ -1105,7 +1105,7 @@ function AddonsSection() {
             Install a backend feature<br />in one line
           </Heading>
           <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
-            Addons are drop-in function packages — Stripe, Postgres, SendGrid, and more. Install, configure secrets, call via namespaced RPC. Fully typed.
+            Stripe billing. SendGrid emails. One <code className="text-primary text-lg">wireAddon()</code> call each. Install, configure secrets, call via namespaced RPC — fully typed.
           </p>
         </div>
 
@@ -1346,7 +1346,7 @@ function WhyIBuiltPikkuSection() {
     {
       icon: '🤖',
       title: 'AI-Era Quality',
-      description: 'Simplicity means dramatically better generated code quality',
+      description: 'AI tools generate better code with Pikku because there\'s less framework surface to get wrong',
       link: '/why/architecture-flexibility',
       linkText: 'Explore architecture flexibility →'
     }
@@ -1368,10 +1368,10 @@ function WhyIBuiltPikkuSection() {
       <div className="max-w-screen-xl mx-auto px-4">
         <div className="text-left md:text-center mb-4 lg:mb-12">
           <Heading as="h2" className="text-4xl font-bold mb-4">
-            Why I Built Pikku
+            Why Teams Choose Pikku
           </Heading>
           <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            Three core principles that drove Pikku's creation
+            Three reasons teams adopt Pikku over building from scratch
           </p>
         </div>
 
@@ -1410,7 +1410,7 @@ function WhyIBuiltPikkuSection() {
         </div> */}
 
         <p className="text-sm text-neutral-600 dark:text-neutral-400 text-center mt-6">
-          — Yasser Fadl, Creator of Pikku
+          — Built by Yasser Fadl and the Pikku community
         </p>
       </div>
     </section>
@@ -1421,20 +1421,20 @@ function WhyIBuiltPikkuSection() {
 function HowTeamsUseItSection() {
   const useCases = [
     {
-      title: 'Marta',
-      problem: 'Caregivers, patients, and administrators all need different portals with different permissions—but sharing the same backend',
+      title: 'Marta — Three portals, one backend',
+      problem: 'Caregivers, patients, and administrators all need different portals with different permissions — but sharing the same backend',
       solution: 'Write matching logic once. One backend serves caregiver portal, patient portal, and admin dashboard. Each portal has its own cookies and permissions, all managed by Pikku\'s session system.',
       benefits: ['Single backend for all user types', 'Different permissions per portal', 'Shared business logic, isolated access']
     },
     {
-      title: 'HeyGermany',
-      problem: 'Nurses, employers, and admin staff need separate interfaces with different data access—all from one backend',
+      title: 'HeyGermany — Multi-role access from one codebase',
+      problem: 'Nurses, employers, and admin staff need separate interfaces with different data access — all from one backend',
       solution: 'Write eligibility logic once. One backend serves nurse applications, employer dashboards, and admin verification. Each user type gets different cookies and permission filters automatically.',
       benefits: ['Multiple portals, one codebase', 'Role-based access control', 'Unified credential validation']
     },
     {
-      title: 'BambooRose',
-      problem: 'Customer admins, end users, and internal ops need different views of the same release data—with strict access boundaries',
+      title: 'BambooRose — One source of truth across portals and CLI',
+      problem: 'Customer admins, end users, and internal ops need different views of the same release data — with strict access boundaries',
       solution: 'Write deployment tracking once. One backend powers customer dashboards, user portals, and ops CLI. Session-based permissions ensure each user type sees only their data.',
       benefits: ['Single source of truth', 'Fine-grained access control', 'Consistent data across all portals']
     }
@@ -1495,10 +1495,10 @@ function TryItNowSection() {
     <section id="get-started" className="py-8 lg:py-12">
       <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
         <Heading as="h2" className="text-4xl font-bold mb-4">
-          Get Started in Minutes
+          Five minutes to your first function
         </Heading>
         <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-6 lg:mb-14 md:max-w-2xl md:mx-auto">
-          Create your first Pikku app with one command. You'll have a function running across HTTP, WebSockets, and more in under 5 minutes.
+          One command. You'll have a function running across HTTP, WebSockets, and more before your coffee gets cold.
         </p>
         <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors" onClick={copyToClipboard}>
           npm create pikku@latest
@@ -1556,10 +1556,10 @@ function CallToActionSection() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            to="/docs"
+            to="/getting-started"
             className="bg-primary text-white hover:bg-primary-dark px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-primary/20"
           >
-            Read the Docs
+            Start Building
           </Link>
           <Link
             to="https://github.com/pikkujs/pikku"
@@ -1568,7 +1568,7 @@ function CallToActionSection() {
             View on GitHub
           </Link>
         </div>
-        <p className="text-neutral-500 text-sm mt-6">MIT Licensed &nbsp;•&nbsp; Open Source &nbsp;•&nbsp; 5-minute setup</p>
+        <p className="text-neutral-400 text-sm mt-6 font-medium">5-minute setup &nbsp;•&nbsp; MIT Licensed &nbsp;•&nbsp; Open Source</p>
       </div>
     </section>
   );

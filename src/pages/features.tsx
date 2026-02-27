@@ -3,7 +3,7 @@ import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import { wireTypes, wireCategories, type WireCategory } from '../data/wireTypes';
-import { Code2, GitBranch, Wrench, Shield, Copy, Check, Scissors, Package, Puzzle, Monitor, Key } from 'lucide-react';
+import { Code2, GitBranch, Wrench, Shield, Copy, Check, Scissors, Package, Puzzle, Monitor, Key, Blocks } from 'lucide-react';
 
 /* ─────────────────────────────────────────────
    Core concept cards data
@@ -20,7 +20,7 @@ const coreConcepts = [
   {
     title: 'Services',
     url: '/core/services',
-    description: 'Two factory functions — pikkuServices and pikkuWireServices — with automatic tree-shaking.',
+    description: 'Inject what you need. Tree-shake what you don\'t. Type-safe dependency injection without decorators.',
     icon: Wrench,
     accent: 'yellow',
   },
@@ -85,11 +85,11 @@ function Hero() {
           Features
         </span>
         <Heading as="h1" className="font-jakarta text-5xl lg:text-6xl font-bold mb-5 leading-tight">
-          <span className="text-white">Everything Pikku </span>
-          <span className="text-purple-400">can do.</span>
+          <span className="text-white">Two concepts. Eleven wires. </span>
+          <span className="text-purple-400">Ship faster.</span>
         </Heading>
         <p className="text-xl font-medium leading-relaxed text-neutral-400 max-w-2xl mx-auto">
-          Two core concepts, ten wire types. Write once, connect everywhere.
+          Most frameworks make you choose. Pikku doesn't — write once, connect everywhere.
         </p>
       </header>
     </div>
@@ -263,6 +263,13 @@ const platformCards = [
     icon: Monitor,
     accent: 'rose',
   },
+  {
+    title: 'VS Code Extension',
+    url: '/core/vscode',
+    description: 'Full project introspection — explore functions, browse wirings, generate code, and jump to definitions.',
+    icon: Blocks,
+    accent: 'teal',
+  },
 ];
 
 /* ─────────────────────────────────────────────
@@ -370,10 +377,10 @@ function CTASection() {
     <section className="max-w-screen-xl mx-auto px-6 pb-20 lg:pb-28">
       <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-10 lg:p-14 text-center">
         <Heading as="h2" className="font-jakarta text-3xl lg:text-4xl font-bold text-white mb-4">
-          Ready to build?
+          Pick a wire. Start building.
         </Heading>
         <p className="text-lg text-neutral-400 mb-8 max-w-xl mx-auto">
-          Scaffold a new project in seconds and start wiring functions to any protocol.
+          Scaffold a new project in seconds — you'll have a function running across protocols in under 5 minutes.
         </p>
 
         <div className="flex justify-center mb-8">
@@ -385,7 +392,7 @@ function CTASection() {
             to="/docs"
             className="bg-purple-500 text-white hover:bg-purple-600 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-purple-500/20 no-underline"
           >
-            Read the Docs
+            Start Building
           </Link>
           <a
             href="https://github.com/pikkujs/pikku"
@@ -407,7 +414,7 @@ function CTASection() {
 
 export default function FeaturesPage(): React.ReactNode {
   return (
-    <Layout title="Features" description="Everything Pikku can do — core concepts and wire types for connecting your functions to any protocol.">
+    <Layout title="Features" description="Two concepts. Eleven wire types. Write your TypeScript backend once — Pikku wires it to HTTP, WebSocket, queues, cron, CLI, AI agents, and more.">
       <main className="bg-[#0a0a0f] text-white min-h-screen">
         <Hero />
         <CoreConceptsSection />
