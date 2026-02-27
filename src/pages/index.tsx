@@ -743,7 +743,7 @@ function AgentsSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">AI Agents</span>
-            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha — used in production</span>
+            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
           </div>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
             Your functions are already agent tools
@@ -984,7 +984,7 @@ function ConsoleSection() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">Visual Control Plane</span>
-            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha — used in production</span>
+            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
           </div>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
             Every function, every wire,<br />every secret — one screen
