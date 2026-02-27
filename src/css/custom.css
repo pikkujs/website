@@ -366,6 +366,57 @@ a.no-underline:hover * {
   border-bottom: 1px solid rgba(168, 99, 238, 0.18);
 }
 
+/* ========================================
+   Mobile Sidebar — clean up
+   ======================================== */
+
+/* Hide HTML navbar items (separators, github stars, social links) in mobile sidebar.
+   Docusaurus renders type:'html' items as .menu__list-item in mobile mode,
+   and social/icon links get .header-link class. */
+.navbar-sidebar .menu__list-item:has(> span),
+.navbar-sidebar .menu__list-item:has(> .header-github-stars),
+.navbar-sidebar .menu__list-item .header-link,
+.navbar-sidebar a.header-link,
+.navbar-sidebar a[aria-label="X (Twitter) account"],
+.navbar-sidebar a[aria-label="Discord"],
+.navbar-sidebar a[aria-label="Star on GitHub"],
+.navbar-sidebar .header-github-stars {
+  display: none !important;
+}
+
+/* Style the mobile sidebar to match the site */
+.navbar-sidebar {
+  background: #0a0a0f;
+  border-right: 1px solid rgba(168, 99, 238, 0.18);
+}
+
+.navbar-sidebar .navbar-sidebar__brand {
+  border-bottom: 1px solid rgba(168, 99, 238, 0.12);
+}
+
+.navbar-sidebar .menu__link {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.navbar-sidebar .menu__link:hover {
+  color: white;
+  background: rgba(168, 99, 238, 0.08);
+}
+
+.navbar-sidebar .menu__link--active {
+  color: var(--ifm-color-primary);
+  background: rgba(168, 99, 238, 0.1);
+}
+
+.navbar-sidebar .menu__link--sublist {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
 [data-theme='dark'] .footer {
   border-top: 1px solid rgba(168, 99, 238, 0.18);
 }

@@ -16,6 +16,7 @@ const config: Config = {
   title: 'Pikku',
   tagline: 'The Typescript Function Backend',
   favicon: 'img/favicon.ico',
+  clientModules: ['./src/github-stars.js'],
 
   // Set the production url of your site here
   url: 'https://pikku.dev',
@@ -141,16 +142,32 @@ const config: Config = {
           label: 'Features',
           position: 'right',
           items: [
+            // Core
+            { label: 'Functions', to: '/core/function' },
+            { label: 'Services', to: '/core/services' },
+            { label: 'Security', to: '/core/security' },
+            { label: 'Versioning', to: '/core/versioning' },
+            { label: 'Secrets & Variables', to: '/core/secrets' },
+            // Protocols
             { label: 'HTTP', to: '/wires/http' },
             { label: 'WebSocket', to: '/wires/websocket' },
             { label: 'RPC', to: '/wires/rpc' },
+            { label: 'MCP', to: '/wires/mcp' },
+            // Scheduling & Processing
             { label: 'Queue', to: '/wires/queue' },
             { label: 'Cron', to: '/wires/cron' },
-            { label: 'CLI', to: '/wires/cli' },
-            { label: 'Workflows', to: '/wires/workflow' },
-            { label: 'AI Agents', to: '/wires/bot' },
-            { label: 'MCP', to: '/wires/mcp' },
             { label: 'Triggers', to: '/wires/trigger' },
+            { label: 'CLI', to: '/wires/cli' },
+            // AI & Orchestration
+            { label: 'AI Agents', to: '/wires/bot' },
+            { label: 'Workflows', to: '/wires/workflow' },
+            // Deployment
+            { label: 'Tree-Shaking', to: '/core/treeshaking' },
+            { label: 'Built-in Services', to: '/core/built-in-services' },
+            // Platform
+            { label: 'Console', to: '/core/console' },
+            { label: 'Addons', to: '/core/addons' },
+            { label: 'Benchmarks', to: '/benchmarks' },
           ],
         },
         {
@@ -176,10 +193,9 @@ const config: Config = {
           value: '<span>|</span>',
         },
         {
-          href: 'https://github.com/pikkujs/pikku',
-          className: "header-link header-github-link",
-          "aria-label": "GitHub repository",
+          type: 'html',
           position: 'right',
+          value: '<a href="https://github.com/pikkujs/pikku" target="_blank" rel="noopener noreferrer" class="header-github-stars" aria-label="Star on GitHub"><svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"/></svg><span class="github-star-count"></span></a>',
         },
         {
           href: 'https://x.com/pikkujs',
