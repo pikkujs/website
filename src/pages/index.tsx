@@ -140,8 +140,11 @@ function Hero() {
             <span className="text-white">One function.</span><br />
             <span className="text-primary">Every protocol.</span>
           </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-6 lg:mb-14 text-neutral-300">
+          <p className="text-xl font-medium leading-relaxed mb-4 text-neutral-300">
             Write your TypeScript backend once. Pikku wires it to HTTP, WebSocket, queues, cron, CLI, and AI agents — same function, same auth, same middleware.
+          </p>
+          <p className="text-sm text-neutral-500 mb-6 lg:mb-14">
+            Like tRPC's type safety, Hono's speed, and NestJS's structure — without choosing between them.
           </p>
           <ul className="text-base mb-6 lg:mb-14 space-y-2 text-neutral-300">
             <li className="flex items-start">
@@ -324,79 +327,105 @@ function PainSection() {
   );
 }
 
-/** Compact capabilities overview — Workflows, Agents, Console */
-function CapabilitiesSection() {
-  const capabilities = [
-    {
-      icon: '⚡',
-      badge: null,
-      title: 'Long-Running Workflows',
-      description: 'Multi-step processes that survive failures, handle delays, and persist state across server restarts.',
-      highlights: [
-        'Deterministic replay — completed steps never re-execute',
-        'Sleep steps for delays, reminders, trial expirations',
-        'PostgreSQL and Redis persistence out of the box',
-      ],
-      link: '/docs/wiring/workflows',
-      linkText: 'Workflow docs →',
-    },
-    {
-      icon: '🤖',
-      badge: 'Alpha',
-      title: 'AI Agents',
-      description: 'Your existing functions become agent tools automatically. Same auth, same permissions, any LLM provider.',
-      highlights: [
-        'No adapters, no glue code — just reference your functions',
-        'Agents inherit your full session and permission system',
-        'OpenAI, Anthropic, or any provider',
-      ],
-      link: '/docs/wiring/agents',
-      linkText: 'Agent docs →',
-    },
-    {
-      icon: '🖥️',
-      badge: 'Alpha',
-      title: 'The Pikku Console',
-      description: 'A per-environment visual control plane. Explore, test, and manage your entire application from one UI.',
-      highlights: [
-        'Browse functions, routes, channels, and CLI commands',
-        'Run and visualize workflows in real time',
-        'Chat with agents in the built-in playground',
-      ],
-      link: '/docs/console',
-      linkText: 'Console docs →',
-    },
-  ];
+/** Before/After — visual contrast showing the problem vs. the Pikku solution */
+function BeforeAfterSection() {
+  const beforeCode = `// Same logic, copied per protocol
+app.get('/cards/:id', auth, validate, async (req, res) => {
+  const card = await db.getCard(req.params.id)
+  res.json(card)
+})
+ws.on('getCard', auth, validate, async (msg, socket) => {
+  const card = await db.getCard(msg.cardId) // ← again
+  socket.send(JSON.stringify(card))
+})
+// + queue, cron, CLI, RPC, SSE... each drifts.
+
+// ─── Workflow? Add Inngest / Temporal ────
+inngest.createFunction({ id: 'onboarding' }, ...,
+  async ({ step }) => {
+    await step.run('create-profile', () => createProfile(id))
+    await step.sleep('wait', '5m')
+    await step.run('send-welcome', () => sendWelcome(id))
+  })
+// New SDK, new schema, new deploy pipeline.
+
+// ─── AI agent? Add Vercel AI / LangChain ─
+const tools = { getCard: tool({
+  parameters: z.object({ cardId: z.string() }),
+  execute: async ({ cardId }) => db.getCard(cardId),
+})} // Auth? Permissions? You're on your own.
+// Three frameworks. Three auth layers. One backend.`;
+
+  const afterCode = `// With Pikku — write it once
+const getCard = pikkuFunc({
+  func: async ({ db, audit }, { cardId }) => {
+    const card = await db.getCard(cardId)
+    await audit.log('getCard', { cardId })
+    return card
+  },
+  permissions: { user: isAuthenticated }
+})
+
+// Wire it to anything — same auth, same logic
+wireHTTP({ method: 'get', route: '/cards/:cardId', func: getCard })
+wireChannel({ name: 'cards', onMessage: { getCard } })
+wireQueueWorker({ queue: 'fetch-card', func: getCard })
+wireCLI({ program: 'cards', commands: { get: getCard } })
+
+// Workflows just reference your functions
+const onboarding = pikkuWorkflowFunc(
+  async ({}, { userId }, { workflow }) => {
+    await workflow.do('Create profile', 'createProfile', { userId })
+    await workflow.sleep('Wait 5 min', '5m')
+    await workflow.do('Send welcome', 'sendWelcome', { userId })
+  }
+)
+
+// AI agents too — same functions, same auth
+const support = pikkuAgent({
+  tools: [getCard, getOrders, createTicket],
+  model: 'claude-sonnet-4-5'
+})
+// Auth, permissions, and validation carry over. Done.`;
 
   return (
-    <section className="py-8 lg:py-12">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8">
-          {capabilities.map((cap, idx) => (
-            <div key={idx} className="bg-[#0d0d0d] rounded-xl p-8 flex flex-col border border-neutral-800 card-shadow">
-              <div className="flex items-start justify-between mb-4">
-                <span className="text-4xl">{cap.icon}</span>
-                {cap.badge && (
-                  <span className="text-xs font-semibold bg-primary/10 text-primary border border-primary/20 px-2 py-1 rounded-full">
-                    {cap.badge}
-                  </span>
-                )}
-              </div>
-              <h3 className="text-xl font-bold mb-2">{cap.title}</h3>
-              <p className="text-neutral-600 dark:text-neutral-400 text-sm mb-6 leading-relaxed">{cap.description}</p>
-              <ul className="space-y-2 mb-6 lg:mb-14 flex-1">
-                {cap.highlights.map((h, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-neutral-700 dark:text-neutral-300">
-                    <span className="text-primary mt-0.5 shrink-0">✓</span>
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link to={cap.link} className="text-primary hover:underline font-medium text-sm">
-                {cap.linkText}
-              </Link>
+    <section className="py-8 lg:py-16">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="text-center mb-10">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Difference</p>
+          <h2 className="text-3xl md:text-4xl font-jakarta font-bold text-white leading-tight mb-4">
+            Four handlers that drift apart — or <span className="text-primary">one function that doesn't.</span>
+          </h2>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+          {/* Before */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-2 h-2 rounded-full bg-red-500" />
+              <span className="text-sm font-semibold text-red-400">Without Pikku</span>
+              <span className="ml-auto text-xs text-neutral-600 font-mono">repeated + fragile</span>
             </div>
-          ))}
+            <div className="rounded-xl border border-red-500/20 overflow-hidden opacity-70">
+              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
+                <CodeBlock language="typescript">{beforeCode}</CodeBlock>
+              </div>
+            </div>
+          </div>
+
+          {/* After */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-2 h-2 rounded-full bg-green-500" />
+              <span className="text-sm font-semibold text-green-400">With Pikku</span>
+              <span className="ml-auto text-xs text-neutral-600 font-mono">1 function + wirings</span>
+            </div>
+            <div className="rounded-xl border border-green-500/20 overflow-hidden">
+              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
+                <CodeBlock language="typescript">{afterCode}</CodeBlock>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -698,94 +727,6 @@ function ProblemSolutionSection() {
           <Link to="/docs/pikku-cli/tree-shaking" className="text-primary hover:underline font-medium text-lg">
             Learn more about filtering and tree-shaking →
           </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Protocol Support Visual */
-function ProtocolSupportSection() {
-  const protocols = [
-    {
-      wiringId: 'http',
-      name: 'HTTP',
-      desc: 'REST APIs with OpenAPI',
-      detail: 'Type-safe endpoints with auto-generated docs'
-    },
-    {
-      wiringId: 'websocket',
-      name: 'WebSocket',
-      desc: 'Real-time communication',
-      detail: 'Bidirectional messaging with channels and pub/sub'
-    },
-    {
-      wiringId: 'sse',
-      name: 'Server-Sent Events',
-      desc: 'Progressive enhancement',
-      detail: 'Stream updates without breaking HTTP clients'
-    },
-    {
-      wiringId: 'queue',
-      name: 'Queues',
-      desc: 'Background jobs',
-      detail: 'BullMQ, SQS, PG Boss, and more'
-    },
-    {
-      wiringId: 'cron',
-      name: 'Scheduled Tasks',
-      desc: 'Cron jobs',
-      detail: 'Time-based automation with middleware'
-    },
-    {
-      wiringId: 'rpc',
-      name: 'RPC',
-      desc: 'Internal service calls',
-      detail: 'Type-safe function invocation'
-    },
-    {
-      wiringId: 'mcp',
-      name: 'Model Context Protocol',
-      desc: 'AI agent integrations',
-      detail: 'Expose functions to Claude, GPT, and other AI tools'
-    },
-    {
-      wiringId: 'cli',
-      name: 'CLI',
-      desc: 'Command-line tools',
-      detail: 'Build terminal apps from your functions'
-    }
-  ];
-
-  return (
-    <section className="py-8 lg:py-12">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-4 lg:mb-12">
-          <Heading as="h2" className="text-4xl font-bold mb-6">
-            Every Way Your Backend Communicates
-          </Heading>
-          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            Pikku supports all the protocols modern backends need. Same function, different protocol.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-3 md:grid-cols-4 gap-6">
-          {protocols.map((protocol, idx) => (
-            <div key={idx} className="bg-neutral-900 p-6 rounded-lg card-shadow">
-              <div className="flex justify-center mb-4">
-                <WiringIcon wiringId={protocol.wiringId} size={48} />
-              </div>
-              <Heading as="h3" className="text-lg font-bold text-center mb-2">
-                {protocol.name}
-              </Heading>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 text-center mb-2">
-                {protocol.desc}
-              </p>
-              <p className="text-xs text-neutral-500 dark:text-neutral-500 text-center">
-                {protocol.detail}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </section>
@@ -1326,197 +1267,6 @@ function ProductionFeaturesSection() {
   );
 }
 
-/** Why I Built Pikku */
-function WhyIBuiltPikkuSection() {
-  const pillars = [
-    {
-      icon: '💰',
-      title: 'Cost Optimization',
-      description: 'Start optimizing your infrastructure budget by having full freedom to switch deployments at any time',
-      link: '/why/vendor-lock-in',
-      linkText: 'Learn about avoiding costly rewrites →'
-    },
-    {
-      icon: '⚡',
-      title: 'Speed & Type Safety',
-      description: 'Build fast without any runtime lock-in, with TypeScript having your back',
-      link: '/why/typescript-everywhere',
-      linkText: 'See how TypeScript powers everything →'
-    },
-    {
-      icon: '🤖',
-      title: 'AI-Era Quality',
-      description: 'AI tools generate better code with Pikku because there\'s less framework surface to get wrong',
-      link: '/why/architecture-flexibility',
-      linkText: 'Explore architecture flexibility →'
-    }
-  ];
-
-  const videos = [
-    {
-      id: '-MV12EYqJHM',
-      title: 'Pikku Overview'
-    },
-    {
-      id: 'dBZf7Bk7ReI',
-      title: 'Deep Dive'
-    }
-  ];
-
-  return (
-    <section className="py-8 lg:py-12">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-4 lg:mb-12">
-          <Heading as="h2" className="text-4xl font-bold mb-4">
-            Why Teams Choose Pikku
-          </Heading>
-          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            Three reasons teams adopt Pikku over building from scratch
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8 mb-6">
-          {pillars.map((pillar, idx) => (
-            <Card
-              key={idx}
-              icon={pillar.icon}
-              title={pillar.title}
-              description={pillar.description}
-              link={{ href: pillar.link, text: pillar.linkText }}
-            />
-          ))}
-        </div>
-
-        {/* <div className="mt-12 mb-6 lg:mb-14">
-          <Heading as="h3" className="text-2xl font-bold mb-6 text-center">
-            Watch the Talks
-          </Heading>
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {videos.map((video, idx) => (
-              <div key={idx} className="bg-[#0d0d0d] rounded-lg overflow-hidden card-shadow">
-                <div className="relative" style={{ paddingBottom: '56.25%' }}>
-                  <iframe
-                    className="absolute top-0 left-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/${video.id}`}
-                    title={video.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
-
-        <p className="text-sm text-neutral-600 dark:text-neutral-400 text-center mt-6">
-          — Built by Yasser Fadl and the Pikku community
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/** How Teams Use Pikku */
-function HowTeamsUseItSection() {
-  const useCases = [
-    {
-      title: 'Marta — Three portals, one backend',
-      problem: 'Caregivers, patients, and administrators all need different portals with different permissions — but sharing the same backend',
-      solution: 'Write matching logic once. One backend serves caregiver portal, patient portal, and admin dashboard. Each portal has its own cookies and permissions, all managed by Pikku\'s session system.',
-      benefits: ['Single backend for all user types', 'Different permissions per portal', 'Shared business logic, isolated access']
-    },
-    {
-      title: 'HeyGermany — Multi-role access from one codebase',
-      problem: 'Nurses, employers, and admin staff need separate interfaces with different data access — all from one backend',
-      solution: 'Write eligibility logic once. One backend serves nurse applications, employer dashboards, and admin verification. Each user type gets different cookies and permission filters automatically.',
-      benefits: ['Multiple portals, one codebase', 'Role-based access control', 'Unified credential validation']
-    },
-    {
-      title: 'BambooRose — One source of truth across portals and CLI',
-      problem: 'Customer admins, end users, and internal ops need different views of the same release data — with strict access boundaries',
-      solution: 'Write deployment tracking once. One backend powers customer dashboards, user portals, and ops CLI. Session-based permissions ensure each user type sees only their data.',
-      benefits: ['Single source of truth', 'Fine-grained access control', 'Consistent data across all portals']
-    }
-  ];
-
-  return (
-    <section className="py-8 lg:py-12">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-left md:text-center mb-4 lg:mb-12">
-          <Heading as="h2" className="text-4xl font-bold mb-4">
-            How Teams Use Pikku
-          </Heading>
-          <p className="text-xl text-neutral-600 dark:text-neutral-300 md:max-w-3xl md:mx-auto">
-            Real-world scenarios where one function serves multiple use cases
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {useCases.map((useCase, idx) => (
-            <Card key={idx} variant="white">
-              <Heading as="h3" className="text-xl font-bold mb-3 text-primary">
-                {useCase.title}
-              </Heading>
-              <div className="mb-4">
-                <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-1">The Challenge:</p>
-                <p className="text-sm text-neutral-700 dark:text-neutral-300">{useCase.problem}</p>
-              </div>
-              <div className="mb-4">
-                <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-1">With Pikku:</p>
-                <p className="text-sm text-neutral-700 dark:text-neutral-300">{useCase.solution}</p>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-2">Benefits:</p>
-                <ul className="text-sm text-neutral-700 dark:text-neutral-300 space-y-1">
-                  {useCase.benefits.map((benefit, bidx) => (
-                    <li key={bidx} className="flex items-start">
-                      <span className="text-green-500 mr-2">✓</span>
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Try it now */
-function TryItNowSection() {
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText('npm create pikku@latest');
-  };
-
-  return (
-    <section id="get-started" className="py-8 lg:py-12">
-      <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
-        <Heading as="h2" className="text-4xl font-bold mb-4">
-          Five minutes to your first function
-        </Heading>
-        <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-6 lg:mb-14 md:max-w-2xl md:mx-auto">
-          One command. You'll have a function running across HTTP, WebSockets, and more before your coffee gets cold.
-        </p>
-        <div className="bg-primary text-white p-6 rounded-lg font-mono text-lg max-w-md mx-auto relative group cursor-pointer hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors" onClick={copyToClipboard}>
-          npm create pikku@latest
-          <button
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/20 hover:bg-white/30 rounded-md p-2 backdrop-blur-sm"
-            onClick={copyToClipboard}
-            title="Copy to clipboard"
-          >
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /** Call to Action */
 function CallToActionSection() {
   const copyToClipboard = () => {
@@ -1587,7 +1337,10 @@ export default function Home() {
         {/* 1. Pain — make the developer nod */}
         <PainSection />
 
-        {/* 2. Insight — show the solution interactively */}
+        {/* 2. Before/After — visual contrast */}
+        <BeforeAfterSection />
+
+        {/* 3. Insight — show the solution interactively */}
         <AhaMomentSection />
 
         {/* 3. Differentiators — Agents, Workflows, Console */}

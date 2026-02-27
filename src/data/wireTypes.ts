@@ -20,6 +20,8 @@ export interface WireType {
   url: string;
   category: WireCategory;
   icon: React.FC<{ className?: string; size?: number }>;
+  badge?: string;
+  snippet?: string;
 }
 
 export const wireTypes: WireType[] = [
@@ -31,6 +33,7 @@ export const wireTypes: WireType[] = [
     url: '/wires/http',
     category: 'Protocols',
     icon: HttpIcon,
+    snippet: `wireHTTP({ method: 'get', route: '/cards/:id', func: getCard })`,
   },
   {
     id: 'websocket',
@@ -39,6 +42,7 @@ export const wireTypes: WireType[] = [
     url: '/wires/websocket',
     category: 'Protocols',
     icon: WebSocketIcon,
+    snippet: `wireChannel({ name: 'cards', onMessage: { getCard } })`,
   },
   {
     id: 'rpc',
@@ -47,6 +51,7 @@ export const wireTypes: WireType[] = [
     url: '/wires/rpc',
     category: 'Protocols',
     icon: RPCIcon,
+    snippet: `await rpc.invoke('getCard', { cardId })`,
   },
   {
     id: 'mcp',
@@ -55,6 +60,7 @@ export const wireTypes: WireType[] = [
     url: '/wires/mcp',
     category: 'Protocols',
     icon: MCPIcon,
+    snippet: `wireMCPResource({ uri: 'card/{id}', func: getCard })`,
   },
   // Scheduling & Processing
   {
@@ -64,6 +70,7 @@ export const wireTypes: WireType[] = [
     url: '/wires/queue',
     category: 'Scheduling & Processing',
     icon: QueueIcon,
+    snippet: `wireQueueWorker({ queue: 'cards', func: getCard })`,
   },
   {
     id: 'cron',
@@ -72,6 +79,7 @@ export const wireTypes: WireType[] = [
     url: '/wires/cron',
     category: 'Scheduling & Processing',
     icon: CronIcon,
+    snippet: `wireScheduler({ cron: '0 * * * *', func: syncCards })`,
   },
   {
     id: 'trigger',
@@ -97,6 +105,8 @@ export const wireTypes: WireType[] = [
     url: '/wires/bot',
     category: 'AI & Orchestration',
     icon: BotIcon,
+    badge: 'New',
+    snippet: `pikkuAgent({ tools: [getCard], model: 'claude-sonnet' })`,
   },
   {
     id: 'workflow',
@@ -105,6 +115,7 @@ export const wireTypes: WireType[] = [
     url: '/wires/workflow',
     category: 'AI & Orchestration',
     icon: WorkflowIcon,
+    snippet: `await workflow.do('Fetch', 'getCard', { cardId })`,
   },
 ];
 

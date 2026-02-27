@@ -186,19 +186,39 @@ function WiresSection() {
                   <Link
                     key={wire.id}
                     to={wire.url}
-                    className="group flex items-start gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
+                    className="group flex flex-col rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
                   >
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
-                      <Icon size={18} className="text-neutral-300 group-hover:text-purple-400 transition-colors" />
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
+                        <Icon size={18} className="text-neutral-300 group-hover:text-purple-400 transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-jakarta text-sm font-semibold text-white group-hover:text-purple-300 transition-colors">
+                            {wire.label}
+                          </h4>
+                          {wire.badge && (
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                              wire.badge === 'New'
+                                ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                                : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                            }`}>
+                              {wire.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-neutral-500 leading-relaxed m-0">
+                          {wire.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-jakarta text-sm font-semibold text-white mb-1 group-hover:text-purple-300 transition-colors">
-                        {wire.label}
-                      </h4>
-                      <p className="text-xs text-neutral-500 leading-relaxed m-0">
-                        {wire.description}
-                      </p>
-                    </div>
+                    {wire.snippet && (
+                      <div className="mt-3 rounded-lg bg-black/40 border border-white/[0.04] px-3 py-2 overflow-hidden">
+                        <code className="text-[11px] text-neutral-400 font-mono whitespace-nowrap block overflow-hidden text-ellipsis">
+                          {wire.snippet}
+                        </code>
+                      </div>
+                    )}
                   </Link>
                 );
               })}
@@ -389,7 +409,7 @@ function CTASection() {
 
         <div className="flex flex-wrap justify-center gap-4">
           <Link
-            to="/docs"
+            to="/getting-started"
             className="bg-purple-500 text-white hover:bg-purple-600 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-purple-500/20 no-underline"
           >
             Start Building
