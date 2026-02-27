@@ -105,7 +105,7 @@ export const wireTypes: WireType[] = [
     url: '/wires/bot',
     category: 'AI & Orchestration',
     icon: BotIcon,
-    badge: 'New',
+    badge: 'Alpha',
     snippet: `pikkuAgent({ tools: [getCard], model: 'claude-sonnet' })`,
   },
   {

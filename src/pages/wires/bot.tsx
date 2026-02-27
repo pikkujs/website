@@ -53,9 +53,14 @@ function Hero() {
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
         <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-violet-400 border border-violet-400/40 bg-violet-400/10 px-3 py-1 rounded mb-6">
-            Wire Type: AI Agent
-          </span>
+          <div className="flex items-center gap-2 mb-6">
+            <span className="inline-block text-xs font-semibold tracking-widest uppercase text-violet-400 border border-violet-400/40 bg-violet-400/10 px-3 py-1 rounded">
+              Wire Type: AI Agent
+            </span>
+            <span className="inline-block text-xs font-semibold tracking-wide uppercase text-violet-300/70 bg-violet-500/10 border border-violet-500/20 px-3 py-1 rounded-full">
+              Alpha
+            </span>
+          </div>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">AI agents,</span><br />
             <span className="text-violet-400">same functions.</span>
