@@ -134,14 +134,14 @@ function Hero() {
         {/* Left: Text content */}
         <div className="md:w-1/2">
           <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-primary/40 bg-primary/10 px-3 py-1 rounded mb-6">
-            Stop copying functions across protocols
+            The TypeScript Function Framework
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">One function.</span><br />
             <span className="text-primary">Every protocol.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-6 lg:mb-14 text-neutral-300">
-            Write your backend once. Pikku handles HTTP, WebSocket, queues, cron, CLI, and AI agents — all from the same function, with the same auth and middleware.
+            Write your TypeScript backend once. Pikku wires it to HTTP, WebSocket, queues, cron, CLI, and AI agents — same function, same auth, same middleware.
           </p>
           <ul className="text-base mb-6 lg:mb-14 space-y-2 text-neutral-300">
             <li className="flex items-start">
@@ -1113,7 +1113,7 @@ function AddonsSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
 
           {/* Left: Code Example */}
-          <div className="space-y-4">
+          <div className="space-y-4 min-w-0 overflow-hidden">
             <CodeBlock language="typescript" title="src/wiring.ts">
 {`// One line per addon
 wireAddon({
