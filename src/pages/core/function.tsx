@@ -311,13 +311,13 @@ const getBook = pikkuFunc({
 })`;
 
 const ciCheckCode = `# CI catches breaking changes before deploy
-$ npx pikku versions-check
+$ npx pikku versions check
 
 ✗ getBook — contract changed without version bump
   Input schema hash:  a1b2c3d4 → f9e8d7c6
   Output schema hash: i9j0k1l2 → z5y4x3w2
 
-  Run: npx pikku versions-update
+  Run: npx pikku versions update
   after bumping to version 2`;
 
 function VersioningSection() {
@@ -358,7 +358,7 @@ function VersioningSection() {
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Breaking changes fail the build</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    If you change a published schema without bumping the version, <code className="text-purple-400 text-xs">pikku versions-check</code> fails. Add it to CI and breaking changes never ship by accident.
+                    If you change a published schema without bumping the version, <code className="text-purple-400 text-xs">pikku versions check</code> fails. Add it to CI and breaking changes never ship by accident.
                   </p>
                 </div>
               </div>
@@ -370,7 +370,7 @@ function VersioningSection() {
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Version bumps are explicit</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    Set <code className="text-purple-400 text-xs">version: 2</code> on the function, run <code className="text-purple-400 text-xs">pikku versions-update</code>, commit. Old and new versions coexist — no migration needed.
+                    Set <code className="text-purple-400 text-xs">version: 2</code> on the function, run <code className="text-purple-400 text-xs">pikku versions update</code>, commit. Old and new versions coexist — no migration needed.
                   </p>
                 </div>
               </div>

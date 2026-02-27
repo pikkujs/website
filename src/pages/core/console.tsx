@@ -40,6 +40,9 @@ function Hero() {
         <p className="text-xl font-medium leading-relaxed text-neutral-300 max-w-2xl mx-auto mb-4">
           The Pikku Console is your visual control plane — explore functions, run workflows, test agents, and manage configuration in one UI.
         </p>
+        <p className="text-sm text-neutral-500 mb-6">
+          A static site that connects to your running Pikku app. No extra server, no hosted service — just open and go.
+        </p>
         <span className="inline-block text-xs font-semibold tracking-wide uppercase text-rose-300/70 bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-full">
           Alpha
         </span>

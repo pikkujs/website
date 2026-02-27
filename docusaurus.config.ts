@@ -166,6 +166,7 @@ const config: Config = {
             { label: 'Built-in Services', to: '/core/built-in-services' },
             // Platform
             { label: 'Console', to: '/core/console' },
+            { label: 'VS Code', to: '/core/vscode' },
             { label: 'Addons', to: '/core/addons' },
             { label: 'Benchmarks', to: '/benchmarks' },
           ],

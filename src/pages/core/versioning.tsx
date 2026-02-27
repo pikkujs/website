@@ -222,13 +222,13 @@ function HowItWorksSection() {
    3. CI GATE
    ───────────────────────────────────────────── */
 
-const ciTerminalOutput = `$ npx pikku versions-check
+const ciTerminalOutput = `$ npx pikku versions check
 
 ✗ getBook — contract changed without version bump
   Input schema hash:  a1b2c3d4 → f9e8d7c6
   Output schema hash: i9j0k1l2 → z5y4x3w2
 
-  Run: npx pikku versions-update
+  Run: npx pikku versions update
   after bumping to version 2`;
 
 const githubActionsYaml = `# .github/workflows/ci.yml
@@ -241,7 +241,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
-      - run: npx pikku versions-check`;
+      - run: npx pikku versions check`;
 
 function CIGateSection() {
   return (
@@ -255,7 +255,7 @@ function CIGateSection() {
             One line in CI. <span className="text-purple-400">Zero accidental breaking changes.</span>
           </Heading>
           <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Add <code className="text-purple-400 text-base">pikku versions-check</code> to your pipeline. Breaking changes fail the build with an actionable fix — before they reach production.
+            Add <code className="text-purple-400 text-base">pikku versions check</code> to your pipeline. Breaking changes fail the build with an actionable fix — before they reach production.
           </p>
         </div>
 
@@ -415,9 +415,9 @@ function GuaranteesSection() {
 function WorkflowSection() {
   const steps = [
     { title: 'Develop', desc: 'Change function inputs or outputs', command: null },
-    { title: 'Check', desc: 'Detect the contract change', command: 'npx pikku versions-check' },
+    { title: 'Check', desc: 'Detect the contract change', command: 'npx pikku versions check' },
     { title: 'Bump', desc: 'Increment version in your function', command: 'version: 2' },
-    { title: 'Update', desc: 'Record the new contract hash', command: 'npx pikku versions-update' },
+    { title: 'Update', desc: 'Record the new contract hash', command: 'npx pikku versions update' },
     { title: 'Commit', desc: 'Check in the updated manifest', command: 'git commit -am "bump getBook v2"' },
   ];
 
@@ -464,7 +464,7 @@ function CTASection() {
   const [copied, setCopied] = React.useState(false);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText('npx pikku versions-init');
+    navigator.clipboard.writeText('npx pikku versions init');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -487,7 +487,7 @@ function CTASection() {
           className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-purple-500/40 transition-all mb-10"
           onClick={copyToClipboard}
         >
-          <span className="text-purple-400/70 select-none">$ </span>npx pikku versions-init
+          <span className="text-purple-400/70 select-none">$ </span>npx pikku versions init
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
             onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}

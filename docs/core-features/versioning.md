@@ -20,7 +20,7 @@ Pikku tracks the "contract" of each function — its name and input/output schem
 ### Initialize the manifest
 
 ```bash
-npx pikku versions-init
+npx pikku versions init
 ```
 
 This creates `versions.json` with the current contract hashes for all your functions.
@@ -28,7 +28,7 @@ This creates `versions.json` with the current contract hashes for all your funct
 ### Check for breaking changes
 
 ```bash
-npx pikku versions-check
+npx pikku versions check
 ```
 
 Compares current function contracts against the manifest. Fails if:
@@ -38,7 +38,7 @@ Compares current function contracts against the manifest. Fails if:
 ### Update the manifest
 
 ```bash
-npx pikku versions-update
+npx pikku versions update
 ```
 
 Records the current contracts into the manifest. Run this after bumping function versions.
@@ -97,7 +97,7 @@ If any of these change, the hash changes, indicating a potentially breaking modi
 
 | Code | Name | Description |
 |------|------|-------------|
-| PKU860 | `MANIFEST_MISSING` | Version manifest not found — run `versions-init` |
+| PKU860 | `MANIFEST_MISSING` | Version manifest not found — run `versions init` |
 | PKU861 | `FUNCTION_VERSION_MODIFIED` | Contract hash changed for an existing version (immutable) |
 | PKU862 | `CONTRACT_CHANGED_REQUIRES_BUMP` | Latest contract changed without a version bump |
 | PKU863 | `VERSION_REGRESSION_OR_CONFLICT` | New version is ≤ latest but not in the manifest |
@@ -111,7 +111,7 @@ Add contract checking to your CI pipeline to catch breaking changes before they'
 ```yaml
 # GitHub Actions example
 - name: Check API contracts
-  run: npx pikku versions-check
+  run: npx pikku versions check
 ```
 
 If a function's input or output schema changed, the check fails and the developer must explicitly bump the version number — making breaking changes intentional rather than accidental.
@@ -119,7 +119,7 @@ If a function's input or output schema changed, the check fails and the develope
 ## Workflow
 
 1. **Develop** — Change function inputs/outputs as needed
-2. **Check** — `npx pikku versions-check` detects the contract change
+2. **Check** — `npx pikku versions check` detects the contract change
 3. **Bump** — Increment the function's version number
-4. **Update** — `npx pikku versions-update` records the new contract
+4. **Update** — `npx pikku versions update` records the new contract
 5. **Commit** — Check in the updated `versions.json`
