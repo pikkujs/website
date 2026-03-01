@@ -193,14 +193,11 @@ Events from sub-agents include `agent` and `session` fields so clients can track
 You can require user approval before certain tools execute. This is configured via the `requiresToolApproval` option when streaming:
 
 ```typescript
-await streamAIAgent(
-  'my-agent',
-  { message, threadId, resourceId },
-  channel,
-  params,
-  undefined,
-  { requiresToolApproval: 'explicit' }
-)
+await rpc.agent.stream('my-agent', {
+  message,
+  threadId,
+  resourceId
+}, { requiresToolApproval: 'explicit' })
 ```
 
 | Mode | Behavior |
@@ -214,16 +211,15 @@ When a tool requires approval:
 1. The agent stream emits an `approval-request` event with the tool name, args, and a reason
 2. Execution suspends — the run state is saved with `status: 'suspended'`
 3. The client presents the approval request to the user
-4. The user approves or denies via `resumeAIAgent()`
+4. The user approves or denies via `rpc.agent.resume()`
 5. If approved, the tool executes and the agent continues; if denied, the agent receives a denial message and continues
 
 ```typescript
 // Resume after approval
-await resumeAIAgent(
-  { toolCallId: 'tc_123', approved: true },
-  channel,
-  params
-)
+await rpc.agent.resume('run_abc', {
+  toolCallId: 'tc_123',
+  approved: true
+})
 ```
 
 ## Required Services

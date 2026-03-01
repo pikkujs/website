@@ -219,22 +219,21 @@ function FeaturesSection() {
    ───────────────────────────────────────────── */
 
 const invokeCode = `// Non-streaming: get the full result
-const result = await runAIAgent('todo-assistant', {
+const result = await rpc.agent.run('todo-assistant', {
   message: 'Create a task for tomorrow',
   threadId: 'thread-123',
   resourceId: 'user-456'
-}, { singletonServices })
+})
 
-console.log(result.text)     // Agent response
-console.log(result.steps)    // Tool calls made
+console.log(result.result)   // Agent response
 console.log(result.usage)    // Token usage`;
 
 const streamCode = `// Streaming: real-time events
-await streamAIAgent('todo-assistant', {
+await rpc.agent.stream('todo-assistant', {
   message: 'Create a task',
   threadId: 'thread-123',
   resourceId: 'user-456'
-}, channel, { singletonServices })
+})
 
 // Channel receives events:
 // { type: 'text-delta', text: '...' }
