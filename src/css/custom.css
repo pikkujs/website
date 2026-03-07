@@ -424,6 +424,13 @@ a.no-underline:hover * {
 .footer .footer__links {
   justify-content: center;
   gap: 4rem;
+  flex-direction: row;
+}
+
+@media (max-width: 996px) {
+  .footer .footer__links {
+    gap: 2rem;
+  }
 }
 
 /* Hide site footer on doc pages */

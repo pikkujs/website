@@ -99,14 +99,22 @@ export function NavbarPageToggle({ isDeveloperPage }: { isDeveloperPage: boolean
   const [container, setContainer] = React.useState<HTMLElement | null>(null);
 
   React.useEffect(() => {
-    const navRight = document.querySelector('.navbar__items--right');
-    if (!navRight) return;
-
     const el = document.createElement('div');
     el.className = 'navbar__item navbar-dev-toggle';
     el.style.display = 'flex';
     el.style.alignItems = 'center';
-    navRight.insertBefore(el, navRight.firstChild);
+
+    if (window.innerWidth < 997) {
+      // Mobile: insert after logo in left navbar items
+      const navLeft = document.querySelector('.navbar__items:not(.navbar__items--right)');
+      if (!navLeft) return;
+      navLeft.appendChild(el);
+    } else {
+      // Desktop: insert at start of right navbar items
+      const navRight = document.querySelector('.navbar__items--right');
+      if (!navRight) return;
+      navRight.insertBefore(el, navRight.firstChild);
+    }
     setContainer(el);
 
     return () => { el.remove(); };
@@ -116,15 +124,41 @@ export function NavbarPageToggle({ isDeveloperPage }: { isDeveloperPage: boolean
   return ReactDOM.createPortal(
     <Link
       to={isDeveloperPage ? '/' : '/developers'}
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all border no-underline"
-      style={{
-        background: isDeveloperPage ? 'rgba(168, 99, 238, 0.15)' : 'rgba(255,255,255,0.05)',
-        borderColor: isDeveloperPage ? 'rgba(168, 99, 238, 0.4)' : 'rgba(255,255,255,0.12)',
-        color: isDeveloperPage ? '#a863ee' : 'rgba(255,255,255,0.5)',
-      }}
+      className="no-underline cursor-pointer select-none"
+      title={isDeveloperPage ? 'Switch to Overview' : 'Switch to Dev Mode'}
+      style={{ display: 'inline-flex', alignItems: 'center' }}
     >
-      {isDeveloperPage ? <Code2 className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-      {isDeveloperPage ? 'Dev Mode' : 'Overview'}
+      {/* Track */}
+      <div
+        style={{
+          position: 'relative',
+          width: 62,
+          height: 38,
+          borderRadius: 10,
+          background: isDeveloperPage ? 'rgba(168, 99, 238, 0.2)' : 'rgba(255,255,255,0.06)',
+          border: `1px solid ${isDeveloperPage ? 'rgba(168, 99, 238, 0.3)' : 'rgba(255,255,255,0.1)'}`,
+          transition: 'all 0.2s',
+        }}
+      >
+        {/* Thumb */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 4,
+            left: isDeveloperPage ? 30 : 4,
+            width: 28,
+            height: 28,
+            borderRadius: 7,
+            background: isDeveloperPage ? '#a863ee' : 'rgba(255,255,255,0.12)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s',
+          }}
+        >
+          <Code2 style={{ width: 13, height: 13, color: isDeveloperPage ? '#fff' : 'rgba(255,255,255,0.4)' }} />
+        </div>
+      </div>
     </Link>,
     container
   );
@@ -157,7 +191,7 @@ export function Hero() {
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-10 pb-8 lg:pt-12 lg:pb-8 px-6 gap-12 items-center">
-        <div className="md:w-1/2">
+        <div className="w-full md:w-1/2">
           <div className="flex items-center gap-3 mb-6">
             <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-primary/40 bg-primary/10 px-3 py-1 rounded">
               TypeScript Function Framework
@@ -170,7 +204,7 @@ export function Hero() {
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300">
             Write your backend once. Pikku wires it to HTTP, WebSocket, queues, cron, AI agents, workflows, and more — same auth, same validation, zero rewrites.
           </p>
-          <div className="flex flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link
               to="/getting-started"
               className="button button--primary button--lg hover:scale-105 transition-transform shadow-lg hover:shadow-xl"
@@ -334,12 +368,12 @@ export function DeployAnywhereSection() {
 /** Production Features */
 export function ProductionFeaturesSection() {
   const features = [
-    { title: 'Type-Safe Clients', desc: 'Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense.', icon: <Link2 className="w-6 h-6 text-primary" /> },
-    { title: 'Auth & Permissions', desc: 'Cookie, bearer, API key auth with fine-grained permissions — built in.', icon: <ShieldCheck className="w-6 h-6 text-primary" /> },
-    { title: 'Services', desc: 'Singleton and per-request dependency injection, type-safe and testable.', icon: <Settings className="w-6 h-6 text-primary" /> },
-    { title: 'Middleware', desc: 'Before/after hooks for logging, metrics, tracing — work across all protocols.', icon: <Layers className="w-6 h-6 text-primary" /> },
-    { title: 'Schema Validation', desc: 'Runtime validation against TypeScript input schemas. Supports Zod.', icon: <CheckCircle2 className="w-6 h-6 text-primary" /> },
-    { title: 'Zero Lock-In', desc: 'Standard TypeScript, tiny runtime, MIT licensed. Bring your own everything.', icon: <Feather className="w-6 h-6 text-primary" /> },
+    { title: 'Type-Safe Clients', desc: 'Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense.', icon: <Link2 className="w-5 h-5" />, accent: 'from-blue-500/20 to-transparent', iconBg: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+    { title: 'Auth & Permissions', desc: 'Cookie, bearer, API key auth with fine-grained permissions — built in.', icon: <ShieldCheck className="w-5 h-5" />, accent: 'from-emerald-500/20 to-transparent', iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+    { title: 'Services', desc: 'Singleton and per-request dependency injection, type-safe and testable.', icon: <Settings className="w-5 h-5" />, accent: 'from-violet-500/20 to-transparent', iconBg: 'bg-violet-500/10 text-violet-400 border-violet-500/20' },
+    { title: 'Middleware', desc: 'Before/after hooks for logging, metrics, tracing — work across all protocols.', icon: <Layers className="w-5 h-5" />, accent: 'from-amber-500/20 to-transparent', iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
+    { title: 'Schema Validation', desc: 'Runtime validation against TypeScript input schemas. Supports Zod.', icon: <CheckCircle2 className="w-5 h-5" />, accent: 'from-cyan-500/20 to-transparent', iconBg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
+    { title: 'Zero Lock-In', desc: 'Standard TypeScript, tiny runtime, MIT licensed. Bring your own everything.', icon: <Feather className="w-5 h-5" />, accent: 'from-rose-500/20 to-transparent', iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20' },
   ];
 
   return (
@@ -356,12 +390,17 @@ export function ProductionFeaturesSection() {
           MIT licensed. Standard TypeScript. No VC-backed lock-in.
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-4">
           {features.map((feature, idx) => (
-            <div key={idx} className="flex flex-col items-start p-6 bg-[#0d0d0d] rounded-xl border border-neutral-800">
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-lg font-bold mb-2 text-white">{feature.title}</h3>
-              <p className="text-sm text-neutral-400 leading-relaxed">{feature.desc}</p>
+            <div key={idx} className="group relative overflow-hidden rounded-xl border border-neutral-800 bg-[#0d0d0d] p-6 text-left transition-colors hover:border-neutral-700">
+              <div className={`absolute inset-0 bg-gradient-to-br ${feature.accent} opacity-0 group-hover:opacity-100 transition-opacity`} />
+              <div className="relative">
+                <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg border ${feature.iconBg} mb-4`}>
+                  {feature.icon}
+                </div>
+                <h3 className="text-base font-bold mb-2 text-white">{feature.title}</h3>
+                <p className="text-sm text-neutral-400 leading-relaxed">{feature.desc}</p>
+              </div>
             </div>
           ))}
         </div>

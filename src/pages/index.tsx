@@ -112,7 +112,7 @@ wireCLI({ program: 'cards', commands: { get: getCard } })`;
               <span className="ml-auto text-xs text-neutral-600 font-mono">5 copies that drift</span>
             </div>
             <div className="rounded-xl border border-red-500/20 overflow-hidden opacity-70">
-              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
+              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
                 <CodeBlock language="typescript">{beforeCode}</CodeBlock>
               </div>
             </div>
@@ -125,7 +125,7 @@ wireCLI({ program: 'cards', commands: { get: getCard } })`;
               <span className="ml-auto text-xs text-neutral-600 font-mono">1 function + wirings</span>
             </div>
             <div className="rounded-xl border border-green-500/20 overflow-hidden">
-              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
+              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
                 <CodeBlock language="typescript">{afterCode}</CodeBlock>
               </div>
             </div>
@@ -305,7 +305,7 @@ await rpc.invoke('stripe:checkoutCreate', { plan: 'pro' })`,
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-3">{feat.title}</h3>
                   <p className="text-neutral-400 leading-relaxed mb-6">{feat.desc}</p>
-                  <div className="grid sm:grid-cols-3 gap-4 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
                     {feat.benefits.map((benefit, j) => (
                       <div key={j} className="flex items-start gap-2">
                         <span className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-bold mt-0.5">&#10003;</span>
@@ -318,8 +318,8 @@ await rpc.invoke('stripe:checkoutCreate', { plan: 'pro' })`,
                   </Link>
                 </div>
 
-                <div className="rounded-xl border border-neutral-700/80 overflow-hidden self-start">
-                  <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
+                <div className="rounded-xl border border-neutral-700/80 overflow-hidden self-start max-w-full">
+                  <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
                     <CodeBlock language="typescript">{feat.code}</CodeBlock>
                   </div>
                 </div>
