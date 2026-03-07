@@ -18,6 +18,36 @@ const config: Config = {
   favicon: 'img/favicon.ico',
   clientModules: ['./src/github-stars.js'],
 
+  headTags: [
+    {
+      tagName: 'meta',
+      attributes: { property: 'og:type', content: 'website' },
+    },
+    {
+      tagName: 'meta',
+      attributes: { name: 'twitter:card', content: 'summary_large_image' },
+    },
+    {
+      tagName: 'script',
+      attributes: { type: 'application/ld+json' },
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareSourceCode',
+        name: 'Pikku',
+        description: 'TypeScript function framework — write backend logic once and wire it to HTTP, WebSocket, queues, cron, AI agents, workflows, and more.',
+        url: 'https://pikku.dev',
+        codeRepository: 'https://github.com/pikkujs/pikku',
+        programmingLanguage: 'TypeScript',
+        license: 'https://opensource.org/licenses/MIT',
+        author: {
+          '@type': 'Organization',
+          name: 'Pikku',
+          url: 'https://pikku.dev',
+        },
+      }),
+    },
+  ],
+
   // Set the production url of your site here
   url: 'https://pikku.dev',
   // Set the /<baseUrl>/ pathname under which your site is served
@@ -111,8 +141,12 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
     image: 'img/pikku.png',
+    metadata: [
+      { name: 'description', content: 'TypeScript function framework — write backend logic once and wire it to HTTP, WebSocket, queues, cron, AI agents, workflows, and more.' },
+      { property: 'og:site_name', content: 'Pikku' },
+      { name: 'twitter:site', content: '@pikkujs' },
+    ],
     colorMode: {
       defaultMode: 'dark',
       disableSwitch: true,

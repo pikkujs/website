@@ -308,6 +308,7 @@ export function Hero() {
                 alt={company.name}
                 width={120}
                 height={40}
+                loading="lazy"
                 className="object-contain"
               />
             </Link>
@@ -430,7 +431,7 @@ export function ConsoleSection() {
         <div className="relative max-w-5xl mx-auto mb-10">
           <div className="rounded-xl overflow-hidden border border-neutral-800 shadow-2xl">
             <img
-              src="/img/console-screenshot.png"
+              src="/img/console-screenshot.webp" loading="lazy"
               alt="Pikku Console — browse and inspect all functions, wirings, and services"
               className="w-full block"
             />
