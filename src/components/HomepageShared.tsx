@@ -168,7 +168,7 @@ export function Hero() {
             <span className="text-primary">Every wiring.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300">
-            Write your backend once. Pikku wires it to HTTP, WebSocket, queues, cron, CLI, AI agents, and more — same auth, same validation, zero rewrites.
+            Write your backend once. Pikku wires it to HTTP, WebSocket, queues, cron, AI agents, workflows, and more — same auth, same validation, zero rewrites.
           </p>
           <div className="flex flex-row gap-4">
             <Link

@@ -204,16 +204,21 @@ function WhatYouGetSection() {
   );
 }
 
-/** Differentiators — Agents, Workflows, Addons aren't extra work */
+/** Differentiators — Agents, Workflows, Addons with code previews */
 function DifferentiatorsSection() {
   const features = [
     {
       icon: <Bot className="w-6 h-6 text-violet-400" />,
       tag: 'AI Agents',
       tagColor: 'text-violet-400',
+      borderColor: 'border-violet-500/20',
       badge: 'Alpha',
       title: 'Your functions are already agent tools',
       desc: 'Most frameworks need adapters, schema re-definitions, and a separate auth layer for AI agents. With Pikku, pass your existing functions directly. Types, permissions, and middleware carry over.',
+      code: `const support = pikkuAgent({
+  tools: [getCustomer, getOrders, createTicket],
+  model: 'claude-sonnet-4-5'
+})`,
       benefits: [
         'Zero glue code — functions become tools automatically',
         'Auth and permissions follow the agent',
@@ -226,8 +231,12 @@ function DifferentiatorsSection() {
       icon: <Workflow className="w-6 h-6 text-emerald-400" />,
       tag: 'Workflows',
       tagColor: 'text-emerald-400',
+      borderColor: 'border-emerald-500/20',
       title: 'Multi-step processes that survive restarts',
       desc: 'No separate workflow engine. Write sequential steps like normal code. Pikku persists each step, retries on failure, and resumes exactly where it left off — even after deploys.',
+      code: `await workflow.do('Create profile', 'createProfile', { userId })
+await workflow.sleep('Wait', '5min')
+await workflow.do('Send welcome', 'sendEmail', { to: email })`,
       benefits: [
         'Deterministic replay from the exact failure point',
         'Sleep for minutes, hours, or weeks',
@@ -240,8 +249,12 @@ function DifferentiatorsSection() {
       icon: <Package className="w-6 h-6 text-orange-400" />,
       tag: 'Addons',
       tagColor: 'text-orange-400',
+      borderColor: 'border-orange-500/20',
       title: 'Install Stripe billing in one line',
       desc: 'Addons are drop-in backend features. One wireAddon() call adds Stripe, SendGrid, or any package — fully typed, namespaced, sharing your existing database and services.',
+      code: `wireAddon({ name: 'stripe', package: '@pikku/addon-stripe' })
+// Then call it from anywhere:
+await rpc.invoke('stripe:checkoutCreate', { plan: 'pro' })`,
       benefits: [
         'Drop-in packages, not bolt-on frameworks',
         'Fully typed across package boundaries',
@@ -256,19 +269,19 @@ function DifferentiatorsSection() {
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-lg mx-auto px-6">
         <div className="text-center mb-16">
-          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Beyond Protocols</p>
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">More Than a Router</p>
           <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
-            Agents, workflows, and billing —<br className="hidden md:block" />
-            <span className="text-primary">without new frameworks.</span>
+            AI agents, durable workflows,<br className="hidden md:block" />
+            and drop-in billing — <span className="text-primary">built in.</span>
           </h2>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
-            Other tools make you adopt a separate SDK for each capability. Pikku builds them into the same function model.
+          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+            Other frameworks stop at HTTP. Pikku gives you agents, workflows, and installable backend features — all using the same functions you've already written.
           </p>
         </div>
 
         <div className="space-y-6">
           {features.map((feat, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-2xl p-8 md:p-10">
+            <div key={i} className={`bg-[#0d0d0d] border ${feat.borderColor || 'border-neutral-800'} rounded-2xl p-8 md:p-10`}>
               <div className="flex items-center gap-3 mb-4">
                 {feat.icon}
                 <span className={`text-xs font-bold tracking-widest uppercase ${feat.tagColor}`}>{feat.tag}</span>
@@ -279,19 +292,29 @@ function DifferentiatorsSection() {
                 )}
               </div>
 
-              <h3 className="text-2xl font-bold text-white mb-3">{feat.title}</h3>
-              <p className="text-neutral-400 leading-relaxed mb-6 max-w-2xl">{feat.desc}</p>
-              <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                {feat.benefits.map((benefit, j) => (
-                  <div key={j} className="flex items-start gap-2">
-                    <span className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-bold mt-0.5">&#10003;</span>
-                    <span className="text-sm text-neutral-400">{benefit}</span>
+              <div className="grid lg:grid-cols-[3fr_2fr] gap-8">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-3">{feat.title}</h3>
+                  <p className="text-neutral-400 leading-relaxed mb-6">{feat.desc}</p>
+                  <div className="grid sm:grid-cols-3 gap-4 mb-6">
+                    {feat.benefits.map((benefit, j) => (
+                      <div key={j} className="flex items-start gap-2">
+                        <span className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-bold mt-0.5">&#10003;</span>
+                        <span className="text-sm text-neutral-400">{benefit}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                  <Link to={feat.link} className="text-primary hover:underline font-medium text-sm">
+                    {feat.linkText} →
+                  </Link>
+                </div>
+
+                <div className="rounded-xl border border-neutral-700/80 overflow-hidden self-start">
+                  <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
+                    <CodeBlock language="typescript">{feat.code}</CodeBlock>
+                  </div>
+                </div>
               </div>
-              <Link to={feat.link} className="text-primary hover:underline font-medium text-sm">
-                {feat.linkText} →
-              </Link>
             </div>
           ))}
         </div>
@@ -311,8 +334,8 @@ export default function Home() {
       <main>
         <ProblemSection />
         <SolutionSection />
-        <TestimonialsSection />
         <DifferentiatorsSection />
+        <TestimonialsSection />
         <WhatYouGetSection />
         <DeployAnywhereSection />
         <ProductionFeaturesSection />
