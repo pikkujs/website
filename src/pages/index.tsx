@@ -45,6 +45,10 @@ function ProblemSection() {
           <p className="text-lg text-neutral-400 max-w-2xl mx-auto leading-relaxed">
             Every time you add a protocol, you copy-paste, re-wire auth, and pray the handlers don't drift. It's not lazy engineering — it's a missing abstraction.
           </p>
+          <p className="text-sm text-neutral-500 italic max-w-xl mx-auto mt-4">
+            "So many places in my code base have like three entry points: CLI, public HTTP API and internally from within the API. Would be so nice having everything just an invoke away."
+            <span className="not-italic block mt-1 text-neutral-600">— Alex Harley, CTO @ Bamboo Rose</span>
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -199,6 +203,10 @@ function WhatYouGetSection() {
             </Link>
           ))}
         </div>
+
+        <p className="text-center text-sm text-neutral-500 mt-8">
+          Only need HTTP right now? Start there. Add protocols later without touching your functions — zero upfront cost.
+        </p>
       </div>
     </section>
   );
@@ -275,7 +283,7 @@ await rpc.invoke('stripe:checkoutCreate', { plan: 'pro' })`,
             and drop-in billing — <span className="text-primary">built in.</span>
           </h2>
           <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Other frameworks stop at HTTP. Pikku gives you agents, workflows, and installable backend features — all using the same functions you've already written.
+            tRPC stops at HTTP. Hono gives you a fast router. NestJS buries you in decorators. Pikku gives you agents, workflows, and installable backend features — all using the same functions you've already written.
           </p>
         </div>
 

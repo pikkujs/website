@@ -349,8 +349,11 @@ export function ProductionFeaturesSection() {
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Production-grade out of the box
         </Heading>
-        <p className="text-lg text-neutral-400 mb-12 md:max-w-2xl md:mx-auto">
+        <p className="text-lg text-neutral-400 mb-6 md:max-w-2xl md:mx-auto">
           Auth, validation, type-safe clients, middleware — all built in. No bolting on third-party packages for every new protocol.
+        </p>
+        <p className="text-sm text-neutral-500 mb-12 md:max-w-2xl md:mx-auto">
+          MIT licensed. Standard TypeScript. No VC-backed lock-in.
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
