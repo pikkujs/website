@@ -224,6 +224,7 @@ function DifferentiatorsSection() {
       title: 'Your functions are already agent tools',
       desc: 'Most frameworks need adapters, schema re-definitions, and a separate auth layer for AI agents. With Pikku, pass your existing functions directly. Types, permissions, and middleware carry over.',
       code: `const support = pikkuAgent({
+  instructions: 'You are a support agent...',
   tools: [getCustomer, getOrders, createTicket],
   model: 'claude-sonnet-4-5'
 })`,
