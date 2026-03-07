@@ -1,6 +1,6 @@
 export const testimonials = [
   {
-    quote: "So many places in my code base have three entry points: CLI, HTTP API, and internal calls. Would be so nice having everything just an invoke away.",
+    quote: "So many places in my code base have like three entry points: CLI, public (sometimes protected) HTTP API and internally from within the API. Would be so nice having everything just an invoke away. With Nest it's a pain because you basically have to start the whole API up just to run CLI command.",
     author: "Alex Harley",
     role: "Co-founder",
     company: "Superbridge",
