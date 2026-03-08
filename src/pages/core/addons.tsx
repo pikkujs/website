@@ -185,7 +185,7 @@ wireSecret({
 
 const creatingServicesCode = `// src/services.ts
 export const createSingletonServices =
-  pikkuExternalServices(async (config, { variables, secrets }) => {
+  pikkuAddonServices(async (config, { variables, secrets }) => {
     const params = await variables.getJSON('REDIS_PARAMS')
     const password = await secrets.getSecret('REDIS_PASSWORD')
     return {
@@ -202,7 +202,7 @@ function CreatingSection() {
     },
     {
       icon: <Puzzle className="w-5 h-5 text-indigo-400 mt-0.5 shrink-0" />,
-      title: 'pikkuExternalServices',
+      title: 'pikkuAddonServices',
       desc: 'Your service factory receives the host app\'s variables and secrets. Return the services your addon functions need — they\'re injected automatically.',
     },
     {
@@ -232,7 +232,7 @@ function CreatingSection() {
             <CodeCard filename="redis.secret.ts" badge="wireSecret">
               <CodeBlock language="typescript">{creatingSecretCode}</CodeBlock>
             </CodeCard>
-            <CodeCard filename="services.ts" badge="pikkuExternalServices">
+            <CodeCard filename="services.ts" badge="pikkuAddonServices">
               <CodeBlock language="typescript">{creatingServicesCode}</CodeBlock>
             </CodeCard>
           </div>

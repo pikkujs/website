@@ -12,6 +12,9 @@
 /docs/skills
 /skills
 
+# Screenshots
+/*.png
+
 # Misc
 .DS_Store
 .env.local
