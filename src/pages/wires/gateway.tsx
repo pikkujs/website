@@ -100,9 +100,9 @@ const wiringCode = `wireGateway({
 })`;
 
 const handlerCode = `const handleMessage = pikkuFunc({
-  func: async ({ db, logger, gateway }, { senderId, text }) => {
+  func: async ({ database, logger }, { senderId, text }) => {
     logger.info(\`Message from \${senderId}: \${text}\`)
-    await db.saveMessage(senderId, text)
+    await database.saveMessage(senderId, text)
     return { text: \`Got it! You said: \${text}\` }
   }
 })`;

@@ -515,9 +515,9 @@ wireGateway({
             <CodeBlock language="typescript" title="src/gateway.functions.ts">
 {`// One handler for all platforms
 const handleMessage = pikkuFunc({
-  func: async ({ db, logger }, { senderId, text, attachments }) => {
-    logger.info(\`[\${gateway.platform}] \${senderId}: \${text}\`)
-    await db.saveMessage(senderId, text)
+  func: async ({ database, logger }, { senderId, text }) => {
+    logger.info(\`\${senderId}: \${text}\`)
+    await database.saveMessage(senderId, text)
 
     // Return value is auto-sent via the adapter
     return { text: \`Got it! You said: \${text}\` }

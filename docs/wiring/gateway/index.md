@@ -2,6 +2,7 @@
 sidebar_position: 0
 title: Introduction
 description: Multi-platform messaging integrations
+ai: true
 ---
 
 # Gateway
@@ -15,15 +16,15 @@ Your handler function receives the same `GatewayInboundMessage` regardless of wh
 Here's a WhatsApp webhook gateway:
 
 ```typescript title="gateway.functions.ts"
-import { pikkuFunc } from '#pikku/functions'
+import { pikkuFunc } from '#pikku'
 
 export const handleMessage = pikkuFunc<
   GatewayInboundMessage,
   GatewayOutboundMessage
 >({
-  func: async ({ db, logger }, { senderId, text }) => {
+  func: async ({ logger, database }, { senderId, text }) => {
     logger.info(`Message from ${senderId}: ${text}`)
-    await db.saveMessage(senderId, text)
+    await database.saveMessage(senderId, text)
     return { text: `Got it! You said: ${text}` }
   },
   title: 'Handle incoming gateway message',
@@ -47,7 +48,7 @@ wireGateway({
 
 Pikku automatically:
 - Registers POST and GET HTTP routes for the webhook
-- Handles webhook verification challenges (e.g., WhatsApp's GET challenge)
+- Handles webhook verification challenges on both GET and POST (e.g., WhatsApp's GET challenge, Slack's POST-based `url_verification`)
 - Parses inbound messages via the adapter
 - Calls your handler function with normalized data
 - Auto-sends responses back via the platform's API
@@ -70,7 +71,7 @@ wireGateway({
 })
 ```
 
-Pikku registers both a `POST` route (message receiver) and a `GET` route (webhook verification) at the given path. The adapter's `verifyWebhook` method handles platform-specific verification challenges automatically.
+Pikku registers both a `POST` route (message receiver) and a `GET` route (webhook verification) at the given path. The adapter's `verifyWebhook` method handles platform-specific verification challenges automatically — on both GET (e.g., WhatsApp challenge) and POST (e.g., Slack `url_verification`).
 
 ### WebSocket
 
@@ -210,6 +211,20 @@ interface GatewayOutboundMessage {
 }
 ```
 
+### GatewayAttachment
+
+File and media attachments shared by both inbound and outbound messages:
+
+```typescript
+interface GatewayAttachment {
+  type: string                          // Attachment type (e.g., 'image', 'document')
+  url?: string                          // URL to the file
+  data?: ArrayBuffer | Uint8Array       // Raw file data
+  mimeType?: string                     // MIME type (e.g., 'image/png')
+  filename?: string                     // Original filename
+}
+```
+
 If your handler returns an outbound message with `text`, `richContent`, or `attachments`, Pikku automatically calls `adapter.send()` to deliver it.
 
 ## The wire.gateway Object
@@ -267,7 +282,7 @@ Listener gateways need to be started explicitly. The `GatewayService` manages th
 ```typescript
 import { LocalGatewayService } from '@pikku/core/services'
 
-const gatewayService = new LocalGatewayService(singletonServices)
+const gatewayService = new LocalGatewayService()
 
 // Start all registered listener gateways
 await gatewayService.start()
