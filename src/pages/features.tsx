@@ -85,7 +85,7 @@ function Hero() {
           Features
         </span>
         <Heading as="h1" className="font-jakarta text-5xl lg:text-6xl font-bold mb-5 leading-tight">
-          <span className="text-white">Two concepts. Eleven wires. </span>
+          <span className="text-white">Two concepts. Twelve wires. </span>
           <span className="text-purple-400">Ship faster.</span>
         </Heading>
         <p className="text-xl font-medium leading-relaxed text-neutral-400 max-w-2xl mx-auto">
@@ -434,7 +434,7 @@ function CTASection() {
 
 export default function FeaturesPage(): React.ReactNode {
   return (
-    <Layout title="Features" description="Two concepts. Eleven wire types. Write your TypeScript backend once — Pikku wires it to HTTP, WebSocket, queues, cron, CLI, AI agents, and more.">
+    <Layout title="Features" description="Two concepts. Twelve wire types. Write your TypeScript backend once — Pikku wires it to HTTP, WebSocket, queues, cron, CLI, AI agents, gateways, and more.">
       <main className="bg-[#0a0a0f] text-white min-h-screen">
         <Hero />
         <CoreConceptsSection />

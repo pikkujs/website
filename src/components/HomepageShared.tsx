@@ -176,6 +176,7 @@ export const protocols = [
   { icon: 'bot',       label: 'AI Agent',   color: '#8b5cf6', hueRotate: 220, link: '/wires/bot' },
   { icon: 'workflow',  label: 'Workflow',   color: '#10b981', hueRotate: 115, link: '/wires/workflow' },
   { icon: 'trigger',   label: 'Trigger',    color: '#f59e0b', hueRotate: 0,   link: '/wires/trigger' },
+  { icon: 'gateway',   label: 'Gateway',    color: '#f43f5e', hueRotate: 320, link: '/wires/gateway' },
 ];
 
 /** Hero Section — shared between both pages */

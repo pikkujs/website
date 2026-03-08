@@ -10,7 +10,7 @@ import {
 } from '../components/HomepageShared';
 import {
   Zap, ShieldCheck, Plug, RefreshCw, Timer, Database,
-  Bot, Package, Blocks, KeyRound,
+  Bot, Package, Blocks, KeyRound, MessageSquare, Radio, Webhook,
 } from 'lucide-react';
 
 /** Before/After — visual contrast showing the problem vs. the Pikku solution */
@@ -140,8 +140,6 @@ function AhaMomentSection() {
     { title: 'RPC Call', icon: 'rpc', code: `// From another function:\nconst card = await rpc.invoke(\n  'getCard',\n  { cardId: '123' }\n)` },
     { title: 'MCP (AI Tools)', icon: 'mcp', code: `wireMCPResource({\n  uri: 'card/{cardId}',\n  func: getCard,\n  tags: ['cards', 'data']\n})` },
     { title: 'CLI', icon: 'cli', code: `wireCLI({\n  program: 'cards',\n  commands: {\n    get: pikkuCLICommand({\n      parameters: '<cardId>',\n      func: getCard\n    }),\n    manage: {\n      subcommands: {\n        get: pikkuCLICommand({\n          parameters: '<cardId>',\n          func: getCard\n        })\n      }\n    }\n  }\n})` },
-    { title: 'AI Agent', icon: 'bot', code: `addAIAgent('cardAgent', {\n  name: 'Card Assistant',\n  description: 'Helps users look up cards',\n  instructions: \`You help users manage\ntheir cards. Use the tools\nprovided to look up card info.\`,\n  model: 'claude-3-5-sonnet-20241022',\n  tools: [getCard],\n  maxSteps: 5,\n})` },
-    { title: 'Workflow', icon: 'workflow', code: `// Steps never re-execute on replay\nexport const processCardWorkflow = pikkuWorkflowFunc<\n  { cardId: string },\n  { card: Card }\n>(async ({}, { cardId }, { workflow }) => {\n  const card = await workflow.do(\n    'Fetch card',\n    'getCard',\n    { cardId }\n  )\n  await workflow.sleep('Wait', '5s')\n  await workflow.do(\n    'Notify owner',\n    'sendNotification',\n    { cardId: card.id }\n  )\n  return { card }\n})` },
     { title: 'Trigger', icon: 'trigger', code: `wireTrigger({\n  name: 'cardChanged',\n  func: getCard,\n})\n\n// Register the trigger source\nwireTriggerSource({\n  name: 'cardChanged',\n  func: webhookTrigger,\n  input: { secret: process.env.WEBHOOK_SECRET }\n})` },
   ];
 
@@ -467,6 +465,96 @@ const checkout = pikkuFunc({
   );
 }
 
+/** Gateway Section */
+function GatewaySection() {
+  return (
+    <section className="py-16 lg:py-24">
+      <div className="max-w-screen-xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">Gateway</span>
+            <span className="inline-block bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold px-2 py-0.5 rounded-full">New</span>
+          </div>
+          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
+            One handler for every<br />messaging platform
+          </Heading>
+          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+            WhatsApp, Slack, Telegram, WebChat — write one function. The adapter normalizes every platform into the same message format. Three transport types cover every integration pattern.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
+          <div className="space-y-4 min-w-0 overflow-hidden">
+            <CodeBlock language="typescript" title="src/gateway.wiring.ts">
+{`// Webhook — platform POSTs to you
+wireGateway({
+  name: 'whatsapp',
+  type: 'webhook',
+  route: '/webhooks/whatsapp',
+  adapter: whatsAppAdapter,
+  func: handleMessage,
+})
+
+// WebSocket — real-time web chat
+wireGateway({
+  name: 'webchat',
+  type: 'websocket',
+  route: '/chat',
+  adapter: webChatAdapter,
+  func: handleMessage,
+})
+
+// Listener — persistent connection (Baileys, Signal)
+wireGateway({
+  name: 'signal',
+  type: 'listener',
+  adapter: signalAdapter,
+  func: handleMessage,
+})`}
+            </CodeBlock>
+            <CodeBlock language="typescript" title="src/gateway.functions.ts">
+{`// One handler for all platforms
+const handleMessage = pikkuFunc({
+  func: async ({ db, logger }, { senderId, text, attachments }) => {
+    logger.info(\`[\${gateway.platform}] \${senderId}: \${text}\`)
+    await db.saveMessage(senderId, text)
+
+    // Return value is auto-sent via the adapter
+    return { text: \`Got it! You said: \${text}\` }
+  }
+})`}
+            </CodeBlock>
+          </div>
+
+          <div className="space-y-6">
+            {[
+              { icon: <Webhook className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Webhook with auto-verification', desc: 'Registers POST and GET routes automatically. WhatsApp challenges, Slack url_verification, Telegram tokens — handled by the adapter, invisible to your code.' },
+              { icon: <MessageSquare className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Normalized messages', desc: 'Every platform delivers the same GatewayInboundMessage — senderId, text, attachments, metadata. Your handler never knows which platform sent the message.' },
+              { icon: <Radio className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Three transport types', desc: 'Webhook for cloud APIs (WhatsApp, Slack, Telegram). WebSocket for browser chat widgets. Listener for persistent connections (Baileys, Signal CLI, Matrix).' },
+              { icon: <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Same middleware, same auth', desc: 'Rate limiting, logging, permissions — your existing middleware works on gateways. wire.gateway gives you platform, senderId, and send() in every handler.' },
+            ].map((d, i) => (
+              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
+                <div className="flex items-start gap-4">
+                  {d.icon}
+                  <div>
+                    <h3 className="text-lg font-bold mb-2">{d.title}</h3>
+                    <p className="text-neutral-400 text-sm leading-relaxed">{d.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div className="pt-2">
+              <Link to="/docs/wiring/gateway" className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm">
+                Read the Gateway docs →
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Developers() {
   return (
     <Layout
@@ -481,6 +569,7 @@ export default function Developers() {
         <AgentsSection />
         <WorkflowsSection />
         <AddonsSection />
+        <GatewaySection />
         <DeployAnywhereSection />
         <ProductionFeaturesSection />
         <ConsoleSection />

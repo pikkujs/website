@@ -49,7 +49,7 @@ Eliminate the copy-paste-drift cycle. Instead of writing separate handlers for e
 - Microservices with shared libraries (complex, brittle)
 
 ## Key Differentiators
-1. **Protocol-agnostic functions**: One function works across all 11 protocols — not just HTTP
+1. **Protocol-agnostic functions**: One function works across all 12 protocols — not just HTTP
 2. **Auth carries everywhere**: Permissions, sessions, middleware apply uniformly across all wirings
 3. **AI agents built-in**: Your existing functions become agent tools — no adapters, no schema re-writing, auth carries over
 4. **Durable workflows built-in**: Multi-step processes with persistence, retries, sleep — no separate engine

@@ -8,7 +8,7 @@ import {
   ConsoleSection, TestimonialsSection, CallToActionSection,
 } from '../components/HomepageShared';
 import {
-  Zap, Plug, Terminal, Bot, Workflow, Package, Copy, AlertTriangle, Lock,
+  Zap, Plug, Terminal, Bot, Workflow, Package, Copy, AlertTriangle, Lock, MessageSquare,
 } from 'lucide-react';
 
 /** The Problem — name the pain before showing the solution */
@@ -133,14 +133,14 @@ wireCLI({ program: 'cards', commands: { get: getCard } })`;
         </div>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {['+ SSE', '+ RPC', '+ MCP', '+ AI Agent', '+ Workflow', '+ Trigger'].map((label) => (
+          {['+ SSE', '+ RPC', '+ MCP', '+ AI Agent', '+ Workflow', '+ Trigger', '+ Gateway'].map((label) => (
             <span key={label} className="px-3 py-1.5 bg-primary/8 border border-primary/20 rounded-full text-xs font-medium text-primary/70">
               {label}
             </span>
           ))}
         </div>
         <p className="text-center text-sm text-neutral-500 mt-4">
-          11 protocols total — all with the same pattern.{' '}
+          12 protocols total — all with the same pattern.{' '}
           <Link to="/developers" className="text-primary hover:underline">
             See every wiring in action
           </Link>
@@ -160,8 +160,6 @@ function WhatYouGetSection() {
     { icon: 'rpc', title: 'Call server functions like local ones', outcome: 'Full type safety between client and server. No manual typing.', link: '/wires/rpc' },
     { icon: 'cli', title: 'Turn any function into a CLI', outcome: 'Argument parsing, help text, and validation — from your existing types.', link: '/wires/cli' },
     { icon: 'mcp', title: 'Expose functions to AI tools', outcome: 'MCP-compatible tools for Claude, Cursor, and other AI assistants.', link: '/wires/mcp' },
-    { icon: 'bot', title: 'AI agents use your existing functions', outcome: 'No adapters. No schema re-writing. Just pass your functions.', link: '/wires/bot', badge: 'Alpha' },
-    { icon: 'workflow', title: 'Multi-step processes that survive crashes', outcome: 'Persist state, retry on failure, sleep for days — then resume.', link: '/wires/workflow' },
     { icon: 'trigger', title: 'React to external events', outcome: 'Webhooks, database changes — trigger any function automatically.', link: '/wires/trigger' },
   ];
 
@@ -271,6 +269,29 @@ await rpc.invoke('stripe:checkoutCreate', { plan: 'pro' })`,
       ],
       link: '/features#addons',
       linkText: 'Learn about Addons',
+    },
+    {
+      icon: <MessageSquare className="w-6 h-6 text-rose-400" />,
+      tag: 'Gateway',
+      tagColor: 'text-rose-400',
+      borderColor: 'border-rose-500/20',
+      badge: 'New',
+      title: 'One handler for WhatsApp, Slack, and Telegram',
+      desc: 'Most messaging integrations mean a new SDK, a new webhook handler, and a new auth layer per platform. With Pikku, write one handler — the adapter normalizes every platform into the same message format.',
+      code: `wireGateway({
+  name: 'whatsapp',
+  type: 'webhook',
+  route: '/webhooks/whatsapp',
+  adapter: whatsAppAdapter,
+  func: handleMessage,
+})`,
+      benefits: [
+        'Normalized messages — same interface across all platforms',
+        'Auto webhook verification for WhatsApp, Slack, Telegram',
+        'Webhook, WebSocket, or listener — same handler function',
+      ],
+      link: '/wires/gateway',
+      linkText: 'Learn about Gateways',
     },
   ];
 

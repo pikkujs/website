@@ -584,6 +584,13 @@ a.no-underline:hover * {
     #0a0a0f;
 }
 
+.wire-hero-gateway {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(244, 63, 94, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(225, 29, 72, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
 .wire-hero-getting-started {
   background:
     radial-gradient(ellipse at 50% 40%, rgba(168, 99, 238, 0.18) 0%, transparent 50%),

@@ -195,6 +195,7 @@ const config: Config = {
             // AI & Orchestration
             { label: 'AI Agents', to: '/wires/bot' },
             { label: 'Workflows', to: '/wires/workflow' },
+            { label: 'Gateway', to: '/wires/gateway' },
             // Deployment
             { label: 'Tree-Shaking', to: '/core/treeshaking' },
             { label: 'Built-in Services', to: '/core/built-in-services' },

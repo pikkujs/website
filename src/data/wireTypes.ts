@@ -9,6 +9,7 @@ import {
   CLIIcon,
   BotIcon,
   WorkflowIcon,
+  GatewayIcon,
 } from '../components/WiringIcons';
 
 export type WireCategory = 'Protocols' | 'Scheduling & Processing' | 'AI & Orchestration';
@@ -116,6 +117,16 @@ export const wireTypes: WireType[] = [
     category: 'AI & Orchestration',
     icon: WorkflowIcon,
     snippet: `await workflow.do('Fetch', 'getCard', { cardId })`,
+  },
+  {
+    id: 'gateway',
+    label: 'Gateway',
+    description: 'Multi-platform messaging integrations',
+    url: '/wires/gateway',
+    category: 'AI & Orchestration',
+    icon: GatewayIcon,
+    badge: 'New',
+    snippet: `wireGateway({ name: 'whatsapp', type: 'webhook', ... })`,
   },
 ];
 
