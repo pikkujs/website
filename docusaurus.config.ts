@@ -195,6 +195,7 @@ const config: Config = {
             // AI & Orchestration
             { label: 'AI Agents', to: '/wires/bot' },
             { label: 'Workflows', to: '/wires/workflow' },
+            { label: 'Dynamic Workflows', to: '/dynamic-workflows' },
             { label: 'Gateway', to: '/wires/gateway' },
             // Deployment
             { label: 'Tree-Shaking', to: '/core/treeshaking' },

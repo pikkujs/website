@@ -219,17 +219,20 @@ function DifferentiatorsSection() {
       tagColor: 'text-violet-400',
       borderColor: 'border-violet-500/20',
       badge: 'Alpha',
-      title: 'Your functions are already agent tools',
-      desc: 'Most frameworks need adapters, schema re-definitions, and a separate auth layer for AI agents. With Pikku, pass your existing functions directly. Types, permissions, and middleware carry over.',
-      code: `const support = pikkuAgent({
-  instructions: 'You are a support agent...',
-  tools: [getCustomer, getOrders, createTicket],
-  model: 'claude-sonnet-4-5'
-})`,
+      title: 'Agents that build their own workflows',
+      desc: 'Other frameworks let AI call tools in a loop — burning tokens every run. Pikku agents design actual workflow graphs that run natively after the first pass. No AI in the loop. No token cost. And when you\'re ready, promote runtime workflows to version-controlled code.',
+      code: `const ops = pikkuAgent({
+  tools: [getMetrics, scaleService, notify],
+  model: 'claude-sonnet-4-5',
+  // Agent creates workflows from your functions
+  dynamicWorkflows: 'write',
+})
+// First run: AI designs the workflow
+// Every run after: native execution, zero tokens`,
       benefits: [
-        'Zero glue code — functions become tools automatically',
-        'Auth and permissions follow the agent',
-        'Any LLM provider — just swap the model name',
+        'Saved workflows — zero tokens on repeat tasks',
+        'Native execution — no AI in the loop',
+        'graph-to-dsl — promote to version-controlled code',
       ],
       link: '/wires/bot',
       linkText: 'Learn about AI Agents',

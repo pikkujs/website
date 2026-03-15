@@ -79,7 +79,7 @@ Use `channel.close()` when the stream has a defined end (like a fixed number of 
 ### Using EventSource API
 
 ```javascript
-const eventSource = new EventSource('/todos/progress', { withCredentials: true })
+const eventSource = new a'/todos/progress', { withCredentials: true })
 
 eventSource.onmessage = function(event) {
   const data = JSON.parse(event.data)

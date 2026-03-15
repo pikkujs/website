@@ -7,6 +7,9 @@ import { BotIcon } from '../../components/WiringIcons';
 import {
   Wrench, Brain, MessageSquare, ShieldCheck,
   Copy, Check, Database, Layers,
+  AlertTriangle, Lock, RefreshCw,
+  Headphones, BarChart3, Settings, PenTool,
+  Sparkles, Play, Code2, ArrowRight,
 } from 'lucide-react';
 
 /* ─────────────────────────────────────────────
@@ -88,7 +91,206 @@ function Hero() {
 }
 
 /* ─────────────────────────────────────────────
-   2. BASICS — "Define an agent"
+   2. PROBLEM — "The problem with building AI agents today"
+   ───────────────────────────────────────────── */
+
+function ProblemSection() {
+  const painPoints = [
+    {
+      icon: <RefreshCw className="w-6 h-6 text-violet-400" />,
+      title: 'Schema duplication',
+      desc: (
+        <>
+          With Vercel AI SDK or LangChain, you redefine your function's schema as a "tool" —
+          a separate <code className="text-violet-400/80 text-sm">z.object()</code> definition,
+          disconnected from your actual function. Two sources of truth that inevitably drift apart.
+        </>
+      ),
+    },
+    {
+      icon: <Lock className="w-6 h-6 text-violet-400" />,
+      title: 'Auth is an afterthought',
+      desc: 'Agent frameworks don\'t handle auth. Your agent can call tools, but who is the user? What can they access? You end up bolting on authorization checks per-tool, with no shared context.',
+    },
+    {
+      icon: <AlertTriangle className="w-6 h-6 text-violet-400" />,
+      title: 'New framework, new paradigm',
+      desc: 'Want agents? Learn a whole new SDK — LangChain\'s chains/agents/tools, Vercel AI SDK\'s tool() API. Your existing backend functions can\'t be reused. You\'re starting over.',
+    },
+  ];
+
+  return (
+    <section className="py-16 lg:py-24 relative">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="text-center mb-14">
+          <SectionLabel>The Problem</SectionLabel>
+          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
+            Building AI agents today is <span className="text-violet-400">broken</span>
+          </Heading>
+          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+            Existing frameworks force you to re-describe your functions, handle auth yourself, and learn an entirely new paradigm. Your backend code can't just work.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {painPoints.map((p, i) => (
+            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 relative group hover:border-violet-500/30 transition-colors">
+              <div className="w-12 h-12 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center mb-5">
+                {p.icon}
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2 font-jakarta">{p.title}</h3>
+              <p className="text-sm text-neutral-400 leading-relaxed">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   3. COMPARISON — Brief visual comparison
+   ───────────────────────────────────────────── */
+
+function ComparisonSection() {
+  const dimensions = [
+    { label: 'Tool definition', pikku: 'Your existing functions', vercel: 'Redefine with z.object()', mastra: 'createTool() with z.object()', langchain: 'Wrap in DynamicTool' },
+    { label: 'Auth & permissions', pikku: 'Inherited from function', vercel: 'Manual per-tool', mastra: 'Manual per-tool', langchain: 'Manual per-tool' },
+    { label: 'Streaming', pikku: 'Built-in via channels', vercel: 'Built-in', mastra: 'Built-in (Vercel AI)', langchain: 'Callback-based' },
+    { label: 'Multi-agent', pikku: 'Built-in delegation', vercel: 'Manual', mastra: 'Built-in agent network', langchain: 'AgentExecutor chains' },
+    { label: 'Memory', pikku: 'Thread-based, configurable', vercel: 'Manual', mastra: 'Built-in thread memory', langchain: 'BufferMemory / etc' },
+    { label: 'Workflows', pikku: 'Built-in durable workflows', vercel: 'Separate concern', mastra: 'Built-in step graphs', langchain: 'LangGraph' },
+  ];
+
+  return (
+    <section className="py-16 lg:py-24 relative">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="text-center mb-14">
+          <SectionLabel>How It Compares</SectionLabel>
+          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
+            Pikku vs the <span className="text-violet-400">alternatives</span>
+          </Heading>
+          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+            Vercel AI SDK, Mastra, and LangChain are excellent tools. Pikku's edge is simple: your functions are already tools — no translation layer needed.
+          </p>
+        </div>
+
+        <div className="max-w-5xl mx-auto overflow-x-auto">
+          <div className="bg-[#0a0a0a] border border-neutral-800 rounded-2xl overflow-hidden">
+            <table className="w-full text-left border-collapse min-w-[640px]">
+              <thead>
+                <tr className="border-b border-neutral-800">
+                  <th className="py-4 px-5 text-xs font-bold tracking-widest uppercase text-neutral-600 w-[18%]"></th>
+                  <th className="py-4 px-5 w-[20%]">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-violet-400" />
+                      <span className="text-sm font-bold text-violet-400 font-jakarta">Pikku</span>
+                    </div>
+                  </th>
+                  <th className="py-4 px-5 text-sm font-semibold text-neutral-500 w-[20%]">Vercel AI SDK</th>
+                  <th className="py-4 px-5 text-sm font-semibold text-neutral-500 w-[21%]">Mastra</th>
+                  <th className="py-4 px-5 text-sm font-semibold text-neutral-500 w-[21%]">LangChain</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dimensions.map((d, i) => (
+                  <tr key={i} className={`border-b border-neutral-800/50 ${i % 2 === 0 ? 'bg-white/[0.01]' : ''}`}>
+                    <td className="py-3.5 px-5 text-xs font-bold tracking-wider uppercase text-neutral-500">{d.label}</td>
+                    <td className="py-3.5 px-5 text-sm text-violet-300 font-medium">{d.pikku}</td>
+                    <td className="py-3.5 px-5 text-sm text-neutral-500">{d.vercel}</td>
+                    <td className="py-3.5 px-5 text-sm text-neutral-500">{d.mastra}</td>
+                    <td className="py-3.5 px-5 text-sm text-neutral-500">{d.langchain}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   4. USE CASES — "What you can build"
+   ───────────────────────────────────────────── */
+
+function UseCasesSection() {
+  const useCases = [
+    {
+      icon: <Headphones className="w-6 h-6 text-violet-400" />,
+      title: 'Customer support agent',
+      desc: 'Resolve tickets, look up orders, and escalate — all using functions you already have.',
+      functions: ['getCustomer', 'getOrders', 'createTicket'],
+    },
+    {
+      icon: <BarChart3 className="w-6 h-6 text-violet-400" />,
+      title: 'Data analyst agent',
+      desc: 'Query data, generate charts, and export reports on demand.',
+      functions: ['queryDatabase', 'generateChart', 'exportCSV'],
+    },
+    {
+      icon: <Settings className="w-6 h-6 text-violet-400" />,
+      title: 'Admin / ops agent',
+      desc: 'Monitor services, scale infrastructure, and deploy — with tool approval for safety.',
+      functions: ['getMetrics', 'scaleService', 'deployVersion'],
+    },
+    {
+      icon: <PenTool className="w-6 h-6 text-violet-400" />,
+      title: 'Content agent',
+      desc: 'Draft, review, and publish content through your existing content pipeline.',
+      functions: ['generateDraft', 'checkGrammar', 'publishPost'],
+    },
+  ];
+
+  return (
+    <section className="py-16 lg:py-24 relative">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="text-center mb-14">
+          <SectionLabel>Use Cases</SectionLabel>
+          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
+            What you can <span className="text-violet-400">build</span>
+          </Heading>
+          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+            Every function you've already written is an agent tool waiting to happen.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {useCases.map((uc, i) => (
+            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 hover:border-violet-500/30 transition-colors">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-11 h-11 rounded-lg bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shrink-0">
+                  {uc.icon}
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white mb-1 font-jakarta">{uc.title}</h3>
+                  <p className="text-sm text-neutral-400 leading-relaxed">{uc.desc}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 pl-[60px]">
+                {uc.functions.map((fn) => (
+                  <span key={fn} className="text-xs font-mono bg-violet-500/10 text-violet-300 border border-violet-500/20 px-2.5 py-1 rounded-md">
+                    {fn}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   5. BASICS — "Define an agent"
    ───────────────────────────────────────────── */
 
 const basicsCode = `const todoAssistant = pikkuAIAgent({
@@ -146,7 +348,7 @@ function BasicsSection() {
 }
 
 /* ─────────────────────────────────────────────
-   3. FEATURES — "Streaming, memory, approval"
+   6. FEATURES — "Streaming, memory, approval"
    ───────────────────────────────────────────── */
 
 function FeaturesSection() {
@@ -215,7 +417,107 @@ function FeaturesSection() {
 }
 
 /* ─────────────────────────────────────────────
-   4. INVOCATION — "Run or stream"
+   7. DYNAMIC WORKFLOWS — "Agents that build workflows"
+   ───────────────────────────────────────────── */
+
+const dynamicWorkflowCode = `const ops = pikkuAIAgent({
+  name: 'ops-agent',
+  tools: [getMetrics, scaleService, restartPod, notify],
+  model: 'anthropic/claude-sonnet',
+  // Agent can create and run workflows
+  dynamicWorkflows: 'write',
+})
+
+// Agent designs a workflow graph from your request,
+// asks for approval, then runs it natively — no AI in the loop.
+// Next time? It reuses the saved workflow. Zero tokens.`;
+
+function DynamicWorkflowsSection() {
+  const phases = [
+    {
+      icon: <Sparkles className="w-5 h-5 text-violet-400" />,
+      step: '1',
+      title: 'AI designs the workflow',
+      desc: 'The agent analyses your request and creates a workflow graph using your existing functions as steps. It proposes the workflow and waits for approval.',
+    },
+    {
+      icon: <Play className="w-5 h-5 text-violet-400" />,
+      step: '2',
+      title: 'Runs natively — no AI',
+      desc: 'Once approved, the workflow executes as a real durable workflow. No LLM in the loop. No token cost. Full retry, sleep, and replay guarantees.',
+    },
+    {
+      icon: <Code2 className="w-5 h-5 text-violet-400" />,
+      step: '3',
+      title: 'Promote to code',
+      desc: 'Use graph-to-dsl to pull runtime workflows into your codebase as real TypeScript. Version control, code review, and CI/CD — like any other code.',
+    },
+  ];
+
+  return (
+    <section className="py-16 lg:py-24 relative">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="text-center mb-14">
+          <SectionLabel>Dynamic Workflows</SectionLabel>
+          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
+            Agents that <span className="text-violet-400">build workflows</span>
+          </Heading>
+          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+            Other frameworks let AI call tools in a loop — burning tokens every time. Pikku agents design actual workflow graphs that run natively after the first pass.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-[2fr_3fr] gap-10 max-w-5xl mx-auto items-start">
+          {/* Left: the 3 phases */}
+          <div className="space-y-6">
+            {phases.map((phase, i) => (
+              <div key={i} className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center">
+                  {phase.icon}
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white mb-1 font-jakarta">{phase.title}</h3>
+                  <p className="text-sm text-neutral-400 leading-relaxed">{phase.desc}</p>
+                </div>
+              </div>
+            ))}
+
+            <div className="bg-violet-500/5 border border-violet-500/20 rounded-xl p-5 mt-4">
+              <p className="text-sm text-neutral-300 leading-relaxed">
+                <span className="text-violet-400 font-semibold">Why this matters:</span> Every other agent framework re-runs the full AI loop on repeat tasks. Pikku saves the workflow — so the second run costs zero tokens, has zero AI latency, and has zero security surface from LLM decisions.
+              </p>
+            </div>
+          </div>
+
+          {/* Right: code example */}
+          <div>
+            <CodeCard filename="ops-agent.ts" badge="dynamicWorkflows: 'write'" icon={<BotIcon size={15} />}>
+              <CodeBlock language="typescript">{dynamicWorkflowCode}</CodeBlock>
+            </CodeCard>
+
+            <div className="grid grid-cols-3 gap-4 mt-6">
+              {[
+                { label: 'Saved workflows', value: 'Less tokens on repeat tasks' },
+                { label: 'Native execution', value: 'No AI in the loop' },
+                { label: 'graph-to-dsl', value: 'Pull into your codebase' },
+              ].map((item, i) => (
+                <div key={i} className="text-center">
+                  <p className="text-xs font-bold text-violet-400 mb-1">{item.label}</p>
+                  <p className="text-[11px] text-neutral-500">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   8. INVOCATION — "Run or stream"
    ───────────────────────────────────────────── */
 
 const invokeCode = `// Non-streaming: get the full result
@@ -273,7 +575,7 @@ function InvocationSection() {
 }
 
 /* ─────────────────────────────────────────────
-   5. CTA
+   8. CTA
    ───────────────────────────────────────────── */
 
 function CTASection() {
@@ -314,11 +616,15 @@ function CTASection() {
 
 export default function AIAgentWirePage() {
   return (
-    <Layout title="AI Agent Wire — Pikku" description="Build AI agents that use your Pikku functions as tools — with memory, streaming, tool approval, and multi-agent delegation.">
+    <Layout title="AI Agent Wire — Pikku" description="TypeScript AI agent framework — build AI agents with your existing functions as tools. No schema duplication, built-in auth, streaming, and multi-agent delegation.">
       <Hero />
       <main>
+        <ProblemSection />
+        <ComparisonSection />
+        <UseCasesSection />
         <BasicsSection />
         <FeaturesSection />
+        <DynamicWorkflowsSection />
         <InvocationSection />
         <CTASection />
       </main>

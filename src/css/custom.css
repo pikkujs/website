@@ -662,6 +662,20 @@ a.no-underline:hover * {
     #0a0a0f;
 }
 
+.wire-hero-dynamic-workflows {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(245, 158, 11, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(251, 191, 36, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-instant-reload {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(16, 185, 129, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(52, 211, 153, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
 /* ─── Docs index navigation cards ─── */
 
 .doc-nav-card {
