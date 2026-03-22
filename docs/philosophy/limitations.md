@@ -18,7 +18,7 @@ Pikku functions primarily work with JSON-serializable data:
 
 ### File Uploads
 
-File uploads are not yet fully supported. See the [content service documentation](https://pikku.dev/content) for our planned approach to file handling.
+File uploads are not yet fully supported. See the [content service documentation](/docs/api/content-service) for our planned approach to file handling.
 
 ## Not a Standalone Server
 

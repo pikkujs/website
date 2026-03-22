@@ -16,7 +16,7 @@ import { Stackblitz } from '@site/src/components/Stackblitz';
 <Stackblitz repo="template-ws" initialFiles={['src/start.ts']} />
 
 :::note
-You need to pass in the HTTP server seperately in order
+You need to pass in the HTTP server separately in order
 to allow upgrades to correctly work. We can alter this in
 the future if needed by providing more than one access point
 to running channels.

@@ -22,7 +22,7 @@ Below is a **side-by-side comparison** to help you decide which one fits your us
 |--------------------------|-----------------------------------------|--------------------------------------|
 | **Core Philosophy**       | Lightweight, HTTP-focused router       | Event-driven, multi-transport framework |
 | **Primary Use Case**      | Fast, minimal APIs & microservices     | Full backend framework with built-in services |
-| **Transport Support**     | HTTP only                              | HTTP, WebSockets, and more (queues coming soon) |
+| **Transport Support**     | HTTP only                              | HTTP, WebSockets, and more (queues, CLI, MCP, workflows, AI agents) |
 | **Function Architecture** | Functions are tied to HTTP routes      | Functions are **transport-agnostic** (can be HTTP, WebSockets, etc.) |
 | **Performance**           | Ultrafast, optimized for edge & serverless | Fast, with slight overhead for built-in features |
 | **Authentication**        | Using middleware           | Using middleware + built-in session management |
@@ -54,7 +54,7 @@ Hono is a **minimalist, high-performance HTTP framework** that excels in edge co
 Pikku takes a **different approach**—it’s an **event-driven framework** that **removes transport concerns from functions**. You define business logic **without worrying about whether it’s an HTTP request, WebSocket event, or queue message**.
 
 - ✅ **Functions as endpoints (transport-agnostic architecture)**  
-- ✅ **Supports HTTP, WebSockets, and event queues (coming soon)**  
+- ✅ **Supports HTTP, WebSockets, queues, CLI, MCP, workflows, AI agents, and more**
 - ✅ **Batteries-included: auth, permissions, validation, testing**  
 - ✅ **Minimal boilerplate with auto-generated API clients & docs**  
 
@@ -88,7 +88,7 @@ Unlike Hono, which is **HTTP-only**, Pikku is **transport-agnostic**, meaning **
 | **HTTP**              | ✅ Built-in                    | ✅ Built-in |
 | **WebSockets**        | ❌ External libs needed        | ✅ **Native support with WebSocket wrapper** |
 | **Background Jobs**   | ❌ External scheduler needed   | ✅ Built-in task scheduling |
-| **Message Queues**    | ❌ Not supported               | 🔜 Coming soon |
+| **Message Queues**    | ❌ Not supported               | ✅ BullMQ, PG Boss, SQS |
 
 ### **🔑 Authentication & Permissions**
 Pikku **includes built-in authentication and role-based permissions**, while Hono requires external middleware.

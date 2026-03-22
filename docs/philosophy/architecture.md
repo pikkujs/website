@@ -14,9 +14,13 @@ At its core, Pikku treats all application logic as pure, testable functions. Whe
 const getUserProfile = pikkuFunc<
   { userId: string },
   { name: string; email: string }
->(async ({ database }, data) => {
-  const user = await database.getUser(data.userId)
-  return { name: user.name, email: user.email }
+>({
+  func: async ({ database }, data) => {
+    const user = await database.getUser(data.userId)
+    return { name: user.name, email: user.email }
+  },
+  title: 'Get user profile',
+  tags: ['users']
 })
 ```
 
@@ -291,8 +295,8 @@ Based on Inspector analysis, the CLI generates only what's actually needed throu
 
 Pikku only includes functions in the generated bundle if they meet specific criteria:
 
-1. **Exported Functions**: Automatically included and exposed via RPC (this will change to require `rpc: true` or `rpc: { expose: true }`)
-2. **Wired Functions**: Referenced by `addHTTPRoute()`, `addChannel()`, `addScheduler()`, etc.
+1. **Exported Functions**: Automatically included and exposed via RPC
+2. **Wired Functions**: Referenced by `wireHTTP()`, `wireChannel()`, `wireScheduler()`, etc.
 3. **Tag Filtering**: Functions can be filtered by tags during build time
 
 Functions that aren't exported AND aren't referenced by any wiring are considered unused. While the entire wiring file gets imported (so the function code exists in the bundle), only functions that are actually wired get registered with the runtime and become callable.
@@ -306,20 +310,20 @@ The `pikkuFuncId` serves as the universal identifier that connects your function
 
 ```typescript
 // Example 1: Exported function - included in bundle, exposed via RPC
-export const createUser = pikkuFunc<CreateUserInput, CreateUserOutput>(
-  async (services, data) => {
+export const createUser = pikkuFunc<CreateUserInput, CreateUserOutput>({
+  func: async (services, data) => {
     // Implementation
   }
-)
+})
 // ✅ Included: Exported function
 // ✅ Available via RPC
 
 // Example 2: Wired function - included in bundle
-const getUserProfile = pikkuFunc<GetUserInput, GetUserOutput>(
-  async (services, data) => {
+const getUserProfile = pikkuFunc<GetUserInput, GetUserOutput>({
+  func: async (services, data) => {
     // Implementation
   }
-)
+})
 
 wireHTTP({
   method: 'get',
@@ -331,11 +335,11 @@ wireHTTP({
 // are registered and callable at runtime
 
 // Example 3: Internal helper - tree-shaken out
-const validateUserData = pikkuFunc<ValidationInput, ValidationOutput>(
-  async (services, data) => {
+const validateUserData = pikkuFunc<ValidationInput, ValidationOutput>({
+  func: async (services, data) => {
     // Helper function not exported or wired
   }
-)
+})
 // ❌ Excluded: Not exported, not referenced by any wiring
 
 ```

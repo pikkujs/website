@@ -502,6 +502,27 @@ a.no-underline:hover * {
 }
 
 /* ========================================
+   Projection Diagram (aha moment)
+   ======================================== */
+
+@keyframes projection-slide-in {
+  from { opacity: 0; transform: translateX(var(--slide-from, -12px)); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.projection-node {
+  animation: projection-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Left side slides from left, right side from right */
+.projection-diagram > div:first-child .projection-node {
+  --slide-from: -16px;
+}
+.projection-diagram > div:last-child .projection-node {
+  --slide-from: 16px;
+}
+
+/* ========================================
    Wire Pages
    ======================================== */
 

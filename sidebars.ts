@@ -198,22 +198,6 @@ const sidebars: SidebarsConfig = {
       },
       {
         type: 'doc',
-        id: 'runtimes/azure-functions',
-        label: 'Azure Functions',
-        customProps: {
-          wirings: ['http', 'cron', 'queue']
-        }
-      },
-      {
-        type: 'doc',
-        id: 'runtimes/google-cloud-run-functions',
-        label: 'Google Cloud Functions',
-        customProps: {
-          wirings: ['http', 'cron', 'queue']
-        }
-      },
-      {
-        type: 'doc',
         id: 'runtimes/bullmq',
         label: 'BullMQ',
         customProps: {

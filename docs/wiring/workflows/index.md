@@ -1,3 +1,9 @@
+---
+sidebar_position: 0
+title: Introduction
+description: Durable multi-step workflows with deterministic replay
+---
+
 # Workflows
 
 Pikku workflows provide a powerful way to orchestrate multi-step processes with automatic state management, deterministic replay, and step caching. They're perfect for complex business processes that span multiple operations, need to handle failures gracefully, or require time-based delays.

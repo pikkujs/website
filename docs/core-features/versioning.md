@@ -11,7 +11,7 @@ Pikku tracks the "contract" of each function — its name and input/output schem
 ## How It Works
 
 1. Each function's contract is hashed (function key + input schema + output schema → 16-char hex hash)
-2. Hashes are stored in a **version manifest** (`versions.json`)
+2. Hashes are stored in a **version manifest** (`versions.pikku.json`)
 3. On each build, the CLI compares current contracts against the manifest
 4. If a contract changed without a version bump, the build fails
 
@@ -23,7 +23,7 @@ Pikku tracks the "contract" of each function — its name and input/output schem
 npx pikku versions init
 ```
 
-This creates `versions.json` with the current contract hashes for all your functions.
+This creates `versions.pikku.json` with the current contract hashes for all your functions.
 
 ### Check for breaking changes
 
@@ -45,7 +45,7 @@ Records the current contracts into the manifest. Run this after bumping function
 
 ## Version Manifest
 
-The manifest file (`versions.json`) tracks contract history:
+The manifest file (`versions.pikku.json`) tracks contract history:
 
 ```json
 {
@@ -122,4 +122,4 @@ If a function's input or output schema changed, the check fails and the develope
 2. **Check** — `npx pikku versions check` detects the contract change
 3. **Bump** — Increment the function's version number
 4. **Update** — `npx pikku versions update` records the new contract
-5. **Commit** — Check in the updated `versions.json`
+5. **Commit** — Check in the updated `versions.pikku.json`
