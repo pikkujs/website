@@ -208,7 +208,11 @@ function HowItWorks() {
 wireScheduler({ schedule: '0 9 * * 1', func: createInvoice })
 wireQueueWorker({ queue: 'billing', func: createInvoice })
 wireCLI({ program: 'billing', commands: { invoice: createInvoice } })
-wireBotTool({ func: createInvoice })`}</CodeBlock>
+pikkuAIAgent({
+  name: 'billing-assistant',
+  tools: [createInvoice],
+  model: 'anthropic/claude-sonnet-4-5',
+})`}</CodeBlock>
               </div>
             </div>
             <p className="mt-3 text-xs text-white/25">

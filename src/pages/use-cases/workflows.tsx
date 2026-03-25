@@ -182,7 +182,11 @@ wireQueueWorker({ queue: 'signups', func: onboardUser })
 wireScheduler({ schedule: '0 9 * * *', func: batchOnboard })
 
 // Via AI agent
-wireBotTool({ func: onboardUser })`}</CodeBlock>
+pikkuAIAgent({
+  name: 'ops-assistant',
+  tools: [onboardUser],
+  model: 'anthropic/claude-sonnet-4-5',
+})`}</CodeBlock>
             </div>
           </div>
 
