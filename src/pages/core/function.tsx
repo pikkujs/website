@@ -346,7 +346,7 @@ function VersioningSection() {
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Contracts are tracked automatically</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    Every function's name + input schema + output schema = a contract hash. The CLI stores these in a <code className="text-purple-400 text-xs">versions.json</code> manifest.
+                    Every function's name + input schema + output schema = a contract hash. The CLI stores these in a <code className="text-purple-400 text-xs">versions.pikku.json</code> manifest.
                   </p>
                 </div>
               </div>

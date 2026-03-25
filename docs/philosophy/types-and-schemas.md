@@ -11,8 +11,10 @@ Define input and output types directly on your function:
 ```typescript
 type Input = { sortBy: 'age' | 'name' }
 type Output = { users: Array<{ name: string, age: number }> }
-const myFunction = pikkuFunc<Input, Output>(async (services, data) => {
-  return await services.users.getUsers(data)
+const myFunction = pikkuFunc<Input, Output>({
+  func: async (services, data) => {
+    return await services.users.getUsers(data)
+  }
 })
 ```
 

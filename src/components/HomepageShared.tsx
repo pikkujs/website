@@ -123,7 +123,7 @@ export function NavbarPageToggle({ isDeveloperPage }: { isDeveloperPage: boolean
   if (!container) return null;
   return ReactDOM.createPortal(
     <Link
-      to={isDeveloperPage ? '/' : '/developers'}
+      to={isDeveloperPage ? '/framework' : '/developers'}
       className="no-underline cursor-pointer select-none"
       title={isDeveloperPage ? 'Switch to Overview' : 'Switch to Dev Mode'}
       style={{ display: 'inline-flex', alignItems: 'center' }}

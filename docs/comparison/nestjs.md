@@ -21,7 +21,7 @@ Below is a **side-by-side comparison** to help you decide which might fit your r
 |--------------------------|-------------------------------------------|------------------------------------------------|
 | **Core Philosophy**      | Structured, module-based architecture    | Event-driven, transport-agnostic functions     |
 | **Primary Use Case**     | Enterprise APIs, microservices, large apps | Lightweight, FaaS-style backend for rapid dev |
-| **Transport Support**    | HTTP, Microservices (via custom adapters) | HTTP, WebSockets, more (queues coming soon)    |
+| **Transport Support**    | HTTP, Microservices (via custom adapters) | HTTP, WebSockets, more (queues, CLI, MCP, workflows, AI agents)    |
 | **Function Architecture**| Controllers & Decorators                 | Plain TypeScript functions                    |
 | **Performance**          | Fast (server-based)                      | Fast, serverless/edge-friendly, lower cold start overhead |
 | **Authentication**       | Requires guard setup (Passport, etc.)    | Built-in session & role-based auth            |
@@ -87,7 +87,7 @@ Both frameworks are TypeScript-based and can be fast, but NestJS typically suits
 | **HTTP**             | ✅ Built-in (Express/Fastify)            | ✅ Built-in, minimal config                   |
 | **WebSockets**       | ✅ Official Gateway Module               | ✅ **Native** (automatically type-safe)       |
 | **Background Jobs**  | ❌ Custom microservice or third-party    | ✅ Built-in scheduling                        |
-| **Message Queues**   | ✅ Supported via Nest Microservices       | 🔜 Coming soon, with function-based approach |
+| **Message Queues**   | ✅ Supported via Nest Microservices       | ✅ Supported via BullMQ, PG Boss, SQS |
 
 ### **🔑 Authentication & Permissions**
 **NestJS** leaves auth up to **Passport.js** (or custom guards), whereas **Pikku** has an opinionated, built-in session and permission system.

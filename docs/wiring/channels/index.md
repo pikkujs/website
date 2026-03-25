@@ -40,7 +40,7 @@ export const authenticate = pikkuChannelFunc<
   { authenticated: boolean },
   { room: string }
 >({
-  func: async ({ jwt, setSession }, data) => {
+  func: async ({ jwt }, data, { setSession }) => {
     try {
       const payload = await jwt.verify(data.token)
 

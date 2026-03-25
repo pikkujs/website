@@ -163,7 +163,7 @@ function HowItWorksSection() {
     {
       icon: <FileJson className="w-6 h-6 text-purple-400" />,
       title: 'Track',
-      desc: 'Hashes are stored in a versions.json manifest, committed to Git alongside your code. Every version has its own hash.',
+      desc: 'Hashes are stored in a versions.pikku.json manifest, committed to Git alongside your code. Every version has its own hash.',
       color: 'border-t-purple-500',
     },
     {
@@ -207,9 +207,9 @@ function HowItWorksSection() {
           ))}
         </div>
 
-        {/* versions.json example */}
+        {/* versions.pikku.json example */}
         <div className="max-w-2xl mx-auto">
-          <CodeCard filename="versions.json" badge="manifest" icon={<FileJson className="w-4 h-4 text-purple-400" />}>
+          <CodeCard filename="versions.pikku.json" badge="manifest" icon={<FileJson className="w-4 h-4 text-purple-400" />}>
             <CodeBlock language="json">{versionsJsonCode}</CodeBlock>
           </CodeCard>
         </div>
