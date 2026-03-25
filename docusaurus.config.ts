@@ -207,6 +207,11 @@ const config: Config = {
           ],
         },
         {
+          to: '/pricing',
+          position: 'right',
+          label: 'Pricing',
+        },
+        {
           type: 'docSidebar',
           sidebarId: 'docs',
           position: 'right',
