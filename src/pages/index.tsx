@@ -2,21 +2,22 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import CodeBlock from '@theme/CodeBlock';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, RotateCcw } from 'lucide-react';
 
 /* ════════════════════════════════════════════════════════════════
    1. HERO
    ════════════════════════════════════════════════════════════════ */
 
 const planLines = [
-  { text: '+ POST /send-reminder',   surface: 'http',       color: '#34d399' },
-  { text: '+ billing-reminders',     surface: 'queue',      color: '#f87171' },
-  { text: '+ 0 9 * * * (daily)',     surface: 'cron',       color: '#fbbf24' },
-  { text: '+ reminder.sent',         surface: 'channel',    color: '#a78bfa' },
-  { text: '+ billing-assistant',     surface: 'agent tool', color: '#f472b6' },
+  { text: '+ POST /send-reminder',   surface: 'api',     color: '#34d399' },
+  { text: '+ billing-reminders',     surface: 'queue',   color: '#f87171' },
+  { text: '+ 0 9 * * * (daily)',     surface: 'cron',    color: '#fbbf24' },
+  { text: '+ reminder.sent',         surface: 'realtime', color: '#a78bfa' },
+  { text: '+ billing-assistant',     surface: 'agent',   color: '#f472b6' },
 ];
 
 function SystemCard() {
+  const [key, setKey] = React.useState(0);
   const [phase, setPhase] = React.useState<'idle' | 'plan' | 'deploy' | 'output' | 'done'>('done');
 
   React.useEffect(() => {
@@ -26,7 +27,9 @@ function SystemCard() {
     const t3 = setTimeout(() => setPhase('output'), 3000);
     const t4 = setTimeout(() => setPhase('done'), 3800);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
-  }, []);
+  }, [key]);
+
+  const replay = () => setKey((k) => k + 1);
 
   const showPlan = phase !== 'idle';
   const showDeploy = phase === 'deploy' || phase === 'output' || phase === 'done';
@@ -40,7 +43,16 @@ function SystemCard() {
         <span className="h-2 w-2 rounded-full bg-white/20" />
         <span className="h-2 w-2 rounded-full bg-white/12" />
         <span className="h-2 w-2 rounded-full bg-white/12" />
-        <span className="ml-3 text-[11px] text-white/20 font-mono tracking-wide">terminal</span>
+        <span className="ml-3 text-[11px] text-white/20 font-mono tracking-wide flex-1">terminal</span>
+        {isDone && (
+          <button
+            onClick={replay}
+            className="text-white/15 hover:text-white/40 transition-colors cursor-pointer bg-transparent border-0 p-0"
+            aria-label="Replay animation"
+          >
+            <RotateCcw className="w-3 h-3" />
+          </button>
+        )}
       </div>
 
       <div className="p-5 font-mono text-[13px] leading-[1.85] bg-[#08080d]">
@@ -114,8 +126,7 @@ function Hero() {
             </h1>
 
             <p className="mt-6 text-[1.05rem] text-white/40 max-w-[520px] leading-[1.7]">
-              APIs, queues, cron, realtime, MCP, and agents — all from the same Pikku functions.
-              Serverless by default. Runs on servers too when needed.
+              Write your functions once. Fabric deploys them as APIs, queues, cron jobs, realtime channels, and agents — serverless, scales to zero.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-4">
@@ -134,10 +145,10 @@ function Hero() {
             </div>
 
             <p className="mt-5 text-[0.8rem] text-white/20">
-              Built with the open-source{' '}
               <Link to="/framework" className="text-white/30 underline decoration-white/10 underline-offset-2 hover:text-white/50 transition-colors">
-                Pikku framework
-              </Link>.
+                Pikku
+              </Link>{' '}
+              is the open-source framework. Fabric is how you deploy it.
             </p>
           </div>
 
@@ -164,16 +175,24 @@ const steps = [
   {
     num: '01',
     title: 'Write functions',
-    desc: 'Typed inputs, outputs, permissions. Pure backend logic — no framework coupling.',
+    desc: 'Typed I/O, permissions, MCP exposure, approval gates — one declaration.',
     lang: 'typescript',
     code: `export const sendReminder = pikkuFunc({
-  input: z.object({ userId: z.string() }),
-  func: async ({ db, email }, { userId }) => {
+  title: 'Send a billing reminder',
+  description: 'Sends an email reminder to a user based on urgency level',
+  tags: ['billing', 'notifications'],
+  input: z.object({ userId: z.string(), urgency: z.enum(['low', 'high']) }),
+  output: z.object({ sent: z.boolean() }),
+  permissions: { user: isAuthenticated },  // enforced on every surface
+  mcp: true,                               // expose as MCP tool
+  approvalRequired: true,                  // agent must ask before calling
+  approvalDescription: async (_s, { userId }) =>  // shown to user for approval
+    \`Send billing reminder to user \${userId}\`,
+  func: async ({ db, email }, { userId, urgency }) => {
     const user = await db.users.find(userId)
-    await email.send({ to: user.email, template: 'reminder' })
+    await email.send({ to: user.email, template: 'reminder', urgency })
     return { sent: true }
   },
-  permissions: { user: isAuthenticated },
 })`,
   },
   {
@@ -184,9 +203,9 @@ const steps = [
     code: `wireHTTP({ method: 'post', route: '/send-reminder', func: sendReminder })
 wireQueue({ queue: 'billing-reminders', func: sendReminder })
 wireScheduler({ schedule: '0 9 * * *', func: sendReminder })
-wireMCP({ func: sendReminder })
 pikkuAIAgent({
   name: 'billing-assistant',
+  instruction: 'You help users manage billing reminders and invoices.',
   tools: [sendReminder],
 })`,
   },
@@ -198,7 +217,7 @@ pikkuAIAgent({
     code: `$ pikku deploy
 
 Deploying 12 functions...
-+ HTTP     /send-reminder         → worker
++ API      /send-reminder         → worker
 + Queue    billing-reminders      → worker
 + Cron     daily 09:00            → worker
 + MCP      sendReminder           → tool
@@ -244,53 +263,7 @@ function HowItWorks() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   3. WHAT DEPLOYS — surface grid
-   ════════════════════════════════════════════════════════════════ */
-
-const surfaces = [
-  { label: 'REST APIs',    desc: 'HTTP routes with typed request/response and OpenAPI generation.', color: '#34d399' },
-  { label: 'Queues',       desc: 'Background job processing with retries and dead-letter support.', color: '#f87171' },
-  { label: 'Cron',         desc: 'Scheduled execution with managed scheduling and history.', color: '#fbbf24' },
-  { label: 'Realtime',     desc: 'WebSocket and SSE channels with typed messages and auth.', color: '#a78bfa' },
-  { label: 'AI Agents',    desc: 'LLM-powered agents with your functions as tools.', color: '#f472b6' },
-  { label: 'MCP',          desc: 'Model Context Protocol server from your function metadata.', color: '#22d3ee' },
-];
-
-function Surfaces() {
-  return (
-    <section className="py-24 lg:py-32 border-t border-white/[0.05]">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="mb-14">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/25 mb-4">What deploys</p>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-white">
-            Every surface. One codebase.
-          </h2>
-          <p className="mt-4 text-base text-white/35 max-w-lg leading-relaxed">
-            Each function can serve any combination of these surfaces. Fabric deploys them all.
-          </p>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {surfaces.map((s) => (
-            <div
-              key={s.label}
-              className="group rounded-xl border border-white/[0.06] bg-white/[0.015] p-5 transition-all hover:bg-white/[0.03] hover:border-white/[0.1]"
-            >
-              <div className="flex items-center gap-2.5 mb-2.5">
-                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: s.color }} />
-                <h3 className="text-[0.875rem] font-semibold text-white">{s.label}</h3>
-              </div>
-              <p className="text-[0.8125rem] text-white/30 leading-relaxed">{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   4. SERVERLESS + SERVERS — deployment flexibility
+   3. SERVERLESS + SERVERS — deployment flexibility
    ════════════════════════════════════════════════════════════════ */
 
 function DeployModes() {
@@ -346,16 +319,16 @@ function DeployModes() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   5. BUILT ON PIKKU — framework + zero lock-in
+   4. BUILT ON PIKKU — framework + zero lock-in
    ════════════════════════════════════════════════════════════════ */
 
 const frameworkPoints = [
-  { title: 'Write once, wire anywhere', desc: 'One function definition serves REST, WebSocket, queues, cron, MCP, CLI, and AI agents.' },
-  { title: 'End-to-end type safety', desc: 'Zod schemas, typed services, auto-generated clients. Compile-time guarantees.' },
-  { title: 'Built-in auth and permissions', desc: 'Session management, JWT, and role-based access baked into every function.' },
-  { title: 'Auto-generated OpenAPI', desc: 'API spec stays in sync with your code. Always accurate.' },
-  { title: 'Any runtime', desc: 'Fastify, Express, Lambda, Cloudflare Workers, Bun. Same project.' },
-  { title: 'Zero lock-in', desc: 'Eject from Fabric anytime. Self-host on any cloud or your own servers.' },
+  { title: 'End-to-end type safety', desc: 'Zod schemas, typed services, auto-generated clients. Compile-time guarantees across the stack.' },
+  { title: 'Built-in auth and permissions', desc: 'Session management, JWT, and role-based access baked into every function invocation.' },
+  { title: 'Auto-generated OpenAPI', desc: 'API spec stays in sync with your code. Always accurate, never stale.' },
+  { title: 'Any runtime', desc: 'Fastify, Express, Lambda, Cloudflare Workers, Bun. Same project, your choice.' },
+  { title: 'Zero lock-in', desc: 'Eject from Fabric anytime. Self-host on any cloud or your own servers. The framework is yours.' },
+  { title: 'Typed clients', desc: 'Generated HTTP, WebSocket, and RPC clients. No manual typing, no drift.' },
 ];
 
 function BuiltOnPikku() {
@@ -395,7 +368,7 @@ function BuiltOnPikku() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   6. PRICING
+   5. PRICING
    ════════════════════════════════════════════════════════════════ */
 
 function Pricing() {
@@ -451,9 +424,6 @@ function Pricing() {
       <div className="mx-auto max-w-5xl px-6">
         <div className="mb-14 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-white">Pricing</h2>
-          <p className="mt-4 text-base text-white/35">
-            Start free. Upgrade to Fabric for managed serverless.
-          </p>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
           {tiers.map((tier) => (
@@ -499,7 +469,7 @@ function Pricing() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   7. WAITLIST
+   6. WAITLIST
    ════════════════════════════════════════════════════════════════ */
 
 function Waitlist() {
@@ -586,12 +556,11 @@ export default function HomePage() {
   return (
     <Layout
       title="Pikku Fabric — Deploy a complete backend from one codebase"
-      description="APIs, queues, cron, realtime, MCP, and agents — all from the same Pikku functions. Serverless by default. Runs on servers too."
+      description="Write your functions once. Fabric deploys them as APIs, queues, cron jobs, realtime channels, and agents — serverless, scales to zero."
     >
       <Hero />
       <main>
         <HowItWorks />
-        <Surfaces />
         <DeployModes />
         <BuiltOnPikku />
         <Pricing />
