@@ -2,182 +2,88 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import CodeBlock from '@theme/CodeBlock';
-import { ArrowRight, RotateCcw } from 'lucide-react';
+import { ArrowRight, Terminal } from 'lucide-react';
 
 /* ════════════════════════════════════════════════════════════════
-   1. HERO
+   1. HERO — name the pain, not the product
    ════════════════════════════════════════════════════════════════ */
-
-const planLines = [
-  { text: '+ POST /send-reminder',   surface: 'api',     color: '#34d399' },
-  { text: '+ billing-reminders',     surface: 'queue',   color: '#f87171' },
-  { text: '+ 0 9 * * * (daily)',     surface: 'cron',    color: '#fbbf24' },
-  { text: '+ reminder.sent',         surface: 'realtime', color: '#a78bfa' },
-  { text: '+ billing-assistant',     surface: 'agent',   color: '#f472b6' },
-];
-
-function SystemCard() {
-  const [key, setKey] = React.useState(0);
-  const [phase, setPhase] = React.useState<'idle' | 'plan' | 'deploy' | 'output' | 'done'>('done');
-
-  React.useEffect(() => {
-    setPhase('idle');
-    const t1 = setTimeout(() => setPhase('plan'), 300);
-    const t2 = setTimeout(() => setPhase('deploy'), 2200);
-    const t3 = setTimeout(() => setPhase('output'), 3000);
-    const t4 = setTimeout(() => setPhase('done'), 3800);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
-  }, [key]);
-
-  const replay = () => setKey((k) => k + 1);
-
-  const showPlan = phase !== 'idle';
-  const showDeploy = phase === 'deploy' || phase === 'output' || phase === 'done';
-  const showOutput = phase === 'output' || phase === 'done';
-  const isDone = phase === 'done';
-
-  return (
-    <div className={`system-card rounded-xl border overflow-hidden transition-all duration-700 ${isDone ? 'system-card-done border-white/[0.1]' : 'border-white/[0.08]'}`}>
-      {/* Title bar */}
-      <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5 bg-white/[0.02]">
-        <span className="h-2 w-2 rounded-full bg-white/20" />
-        <span className="h-2 w-2 rounded-full bg-white/12" />
-        <span className="h-2 w-2 rounded-full bg-white/12" />
-        <span className="ml-3 text-[11px] text-white/20 font-mono tracking-wide flex-1">terminal</span>
-        {isDone && (
-          <button
-            onClick={replay}
-            className="text-white/15 hover:text-white/40 transition-colors cursor-pointer bg-transparent border-0 p-0"
-            aria-label="Replay animation"
-          >
-            <RotateCcw className="w-3 h-3" />
-          </button>
-        )}
-      </div>
-
-      <div className="p-5 font-mono text-[13px] leading-[1.85] bg-[#08080d]">
-        {/* pikku plan command */}
-        <div className={`transition-opacity duration-300 ${showPlan ? 'opacity-100' : 'opacity-0'}`}>
-          <span className="text-white/25">$ </span><span className="text-white/50">pikku plan</span>
-        </div>
-
-        {/* Plan output — function + surfaces */}
-        {showPlan && (
-          <div className="mt-3">
-            <div className="deploy-line-enter text-white/70 font-semibold">  sendReminder</div>
-            {planLines.map((line, i) => (
-              <div
-                key={line.text}
-                className="deploy-line-enter flex justify-between gap-4"
-                style={{ animationDelay: `${(i + 1) * 80}ms` }}
-              >
-                <span style={{ color: line.color }} className="opacity-50">    {line.text}</span>
-                <span className="text-white/20">{line.surface}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* pikku deploy command */}
-        {showDeploy && (
-          <div className="mt-5 pt-4 border-t border-white/[0.05]">
-            <div className="deploy-line-enter">
-              <span className="text-white/25">$ </span><span className="text-white/50">pikku deploy</span>
-            </div>
-          </div>
-        )}
-
-        {/* Deploy output */}
-        {showOutput && (
-          <div className="mt-3">
-            <div className="deploy-line-enter" style={{ animationDelay: '0ms' }}>
-              <span className="text-emerald-400/80 font-semibold">  ✓ deployed to production</span>
-            </div>
-            <div className="deploy-line-enter" style={{ animationDelay: '120ms' }}>
-              <span className="text-white/25">    mode: serverless</span>
-            </div>
-            <div className="deploy-line-enter" style={{ animationDelay: '240ms' }}>
-              <span className="text-white/15">    scales to zero · $0 when idle</span>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 function Hero() {
   return (
-    <section className="hero-fabric relative overflow-hidden">
+    <section className="hero-framework relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-[55%] top-[35%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full bg-emerald-500/[0.06] blur-[120px]" />
-        <div className="absolute left-[35%] top-[65%] w-[400px] h-[300px] rounded-full bg-primary/[0.04] blur-[100px]" />
+        <div className="absolute left-[50%] top-[30%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-primary/[0.05] blur-[140px]" />
       </div>
 
-      <div className="relative mx-auto max-w-6xl px-6 pt-24 pb-16 lg:pt-32 lg:pb-24">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-20 items-center">
-          {/* Left: copy */}
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400/70 mb-5">
-              Pikku Fabric
-            </p>
-            <h1 className="text-[2.5rem] sm:text-5xl lg:text-[3.4rem] font-bold tracking-[-0.035em] leading-[1.1] text-white">
-              Deploy a complete backend from one codebase.
-            </h1>
+      <div className="relative mx-auto max-w-4xl px-6 pt-28 pb-12 lg:pt-36 lg:pb-16 text-center">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-primary/50 mb-6">
+          TypeScript backend framework
+        </p>
+        <h1 className="text-[2.75rem] sm:text-[3.5rem] lg:text-[4rem] font-bold tracking-[-0.04em] leading-[1.08] text-white">
+          Same logic. Different handler.
+          <br />
+          <span className="text-white/25">Every time.</span>
+        </h1>
 
-            <p className="mt-6 text-[1.05rem] text-white/40 max-w-[520px] leading-[1.7]">
-              Write your functions once. Fabric deploys them as APIs, queues, cron jobs, realtime channels, and agents — serverless, scales to zero.
-            </p>
+        <p className="mt-7 text-[1.1rem] text-white/35 max-w-[540px] mx-auto leading-[1.75]">
+          You write a function, then rewrite it as an API route, a queue consumer, a cron handler, an MCP tool. Each with its own validation, auth, and error handling. Pikku stops that.
+        </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Link
-                to="/getting-started"
-                className="inline-flex items-center gap-2.5 rounded-lg bg-white px-6 py-3 text-[0.875rem] font-semibold text-[#0a0a0f] transition hover:bg-white/90 no-underline"
-              >
-                Get started <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <Link
-                to="#how-it-works"
-                className="rounded-lg border border-white/[0.12] bg-white/[0.04] px-6 py-3 text-[0.875rem] font-semibold text-white/70 transition hover:bg-white/[0.08] hover:text-white/90 no-underline"
-              >
-                See how it works
-              </Link>
-            </div>
-
-            <p className="mt-5 text-[0.8rem] text-white/20">
-              <Link to="/framework" className="text-white/30 underline decoration-white/10 underline-offset-2 hover:text-white/50 transition-colors">
-                Pikku
-              </Link>{' '}
-              is the open-source framework. Fabric is how you deploy it.
-            </p>
-          </div>
-
-          {/* Right: system card */}
-          <div className="hidden lg:block">
-            <SystemCard />
-          </div>
-
-          {/* Mobile: compact system card */}
-          <div className="lg:hidden">
-            <SystemCard />
-          </div>
+        <div className="mt-10 flex flex-wrap justify-center items-center gap-4">
+          <Link
+            to="/getting-started"
+            className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-[0.875rem] font-semibold text-[#0a0a0f] transition hover:bg-white/90 no-underline"
+          >
+            <Terminal className="w-3.5 h-3.5" />
+            npx create-pikku
+          </Link>
+          <Link
+            to="#before-after"
+            className="rounded-lg border border-white/[0.12] bg-white/[0.04] px-6 py-3 text-[0.875rem] font-semibold text-white/60 transition hover:bg-white/[0.08] hover:text-white/80 no-underline"
+          >
+            See the difference
+          </Link>
         </div>
+
+        <p className="mt-4 text-[0.75rem] text-white/15">
+          Working app in under 5 minutes. TypeScript, open-source, zero lock-in.
+        </p>
       </div>
     </section>
   );
 }
 
 /* ════════════════════════════════════════════════════════════════
-   2. HOW IT WORKS — write → wire → deploy
+   2. BEFORE / AFTER — the conversion section
    ════════════════════════════════════════════════════════════════ */
 
-const steps = [
-  {
-    num: '01',
-    title: 'Write functions',
-    desc: 'Typed I/O, permissions, MCP exposure, approval gates — one declaration.',
-    lang: 'typescript',
-    code: `export const sendReminder = pikkuFunc({
+const withoutPikku = `// routes/send-reminder.ts
+app.post('/send-reminder', authMiddleware, async (req, res) => {
+  const { userId, urgency } = validateInput(req.body)
+  const user = await db.users.find(userId)
+  await email.send({ to: user.email, template: 'reminder', urgency })
+  res.json({ sent: true })
+})
+
+// workers/billing-reminders.ts
+queue.process('billing-reminders', async (job) => {
+  const { userId, urgency } = validateInput(job.data)
+  const session = await getSystemSession()
+  checkPermissions(session, 'sendReminder')
+  const user = await db.users.find(userId)
+  await email.send({ to: user.email, template: 'reminder', urgency })
+})
+
+// cron/daily-reminders.ts
+cron.schedule('0 9 * * *', async () => {
+  const { userId, urgency } = validateInput(config.dailyReminder)
+  const session = await getSystemSession()
+  checkPermissions(session, 'sendReminder')
+  const user = await db.users.find(userId)
+  await email.send({ to: user.email, template: 'reminder', urgency })
+})`;
+
+const withPikkuFunction = `export const sendReminder = pikkuFunc({
   title: 'Send a billing reminder',
   description: 'Sends an email reminder to a user based on urgency level',
   tags: ['billing', 'notifications'],
@@ -193,69 +99,190 @@ const steps = [
     await email.send({ to: user.email, template: 'reminder', urgency })
     return { sent: true }
   },
-})`,
-  },
-  {
-    num: '02',
-    title: 'Wire to surfaces',
-    desc: 'Same function. API, queue, cron, realtime, agent, MCP — any combination.',
-    lang: 'typescript',
-    code: `wireHTTP({ method: 'post', route: '/send-reminder', func: sendReminder })
+})`;
+
+const withPikkuWiring = `wireHTTP({ method: 'post', route: '/send-reminder', func: sendReminder })
 wireQueue({ queue: 'billing-reminders', func: sendReminder })
 wireScheduler({ schedule: '0 9 * * *', func: sendReminder })
 pikkuAIAgent({
   name: 'billing-assistant',
   instruction: 'You help users manage billing reminders and invoices.',
   tools: [sendReminder],
-})`,
-  },
-  {
-    num: '03',
-    title: 'Deploy with Fabric',
-    desc: 'One command. Every surface becomes a serverless worker. Or switch to server mode.',
-    lang: 'bash',
-    code: `$ pikku deploy
+})`;
 
-Deploying 12 functions...
-+ API      /send-reminder         → worker
-+ Queue    billing-reminders      → worker
-+ Cron     daily 09:00            → worker
-+ MCP      sendReminder           → tool
-+ Agent    billing-assistant      → worker
+function BeforeAfter() {
+  const [tab, setTab] = React.useState<'without' | 'function' | 'wiring'>('without');
 
-✓ deployed · serverless · production`,
-  },
+  return (
+    <section id="before-after" className="py-24 lg:py-32 border-t border-white/[0.05]">
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="max-w-2xl mb-12">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/25 mb-4">The difference</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-white">
+            One function instead of three handlers.
+          </h2>
+          <p className="mt-4 text-base text-white/35 leading-relaxed">
+            Without Pikku, the same business logic gets rewritten for every protocol — with separate validation, auth, and error handling each time. With Pikku, you write it once.
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 mb-1 border-b border-white/[0.06] pb-0">
+          <button
+            onClick={() => setTab('without')}
+            className={`px-4 py-2.5 text-[0.8125rem] font-medium transition-colors cursor-pointer bg-transparent border-0 border-b-2 -mb-[1px] ${
+              tab === 'without'
+                ? 'text-white/70 border-white/30'
+                : 'text-white/25 border-transparent hover:text-white/40'
+            }`}
+          >
+            Without Pikku <span className="text-white/15 ml-1.5">3 files</span>
+          </button>
+          <button
+            onClick={() => setTab('function')}
+            className={`px-4 py-2.5 text-[0.8125rem] font-medium transition-colors cursor-pointer bg-transparent border-0 border-b-2 -mb-[1px] ${
+              tab === 'function'
+                ? 'text-emerald-400/80 border-emerald-400/50'
+                : 'text-white/25 border-transparent hover:text-white/40'
+            }`}
+          >
+            With Pikku <span className="text-white/15 ml-1.5">1 function</span>
+          </button>
+          <button
+            onClick={() => setTab('wiring')}
+            className={`px-4 py-2.5 text-[0.8125rem] font-medium transition-colors cursor-pointer bg-transparent border-0 border-b-2 -mb-[1px] ${
+              tab === 'wiring'
+                ? 'text-emerald-400/80 border-emerald-400/50'
+                : 'text-white/25 border-transparent hover:text-white/40'
+            }`}
+          >
+            Wiring <span className="text-white/15 ml-1.5">4 lines</span>
+          </button>
+        </div>
+
+        <div className="rounded-b-xl border border-t-0 border-white/[0.06] bg-[#08080d] overflow-hidden [&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[13px] [&_pre]:!overflow-x-auto">
+          {tab === 'without' && <CodeBlock language="typescript">{withoutPikku}</CodeBlock>}
+          {tab === 'function' && <CodeBlock language="typescript">{withPikkuFunction}</CodeBlock>}
+          {tab === 'wiring' && <CodeBlock language="typescript">{withPikkuWiring}</CodeBlock>}
+        </div>
+
+        {tab === 'without' && (
+          <p className="mt-4 text-[0.8125rem] text-white/20">
+            Same validation, same auth checks, same logic — written three times. And this is only three protocols.
+          </p>
+        )}
+        {tab === 'function' && (
+          <p className="mt-4 text-[0.8125rem] text-emerald-400/40">
+            One function. Typed I/O, permissions, MCP exposure, and approval gates — declared once, enforced everywhere.
+          </p>
+        )}
+        {tab === 'wiring' && (
+          <p className="mt-4 text-[0.8125rem] text-emerald-400/40">
+            Wire the same function to any combination of surfaces. Add more anytime — the function doesn't change.
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   3. ESCAPE HATCH — direct trust statement
+   ════════════════════════════════════════════════════════════════ */
+
+function EscapeHatch() {
+  return (
+    <section className="py-20 lg:py-24">
+      <div className="mx-auto max-w-3xl px-6">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-8 lg:p-10">
+          <h2 className="text-xl font-bold text-white mb-4">
+            Your functions are just TypeScript.
+          </h2>
+          <div className="space-y-3 text-[0.9375rem] text-white/40 leading-relaxed">
+            <p>
+              Pikku is a wiring layer, not a runtime. Your function receives typed input and injected services. Inside it, use any npm package, any database driver, any API client.
+            </p>
+            <p>
+              Need raw request access? Escape hatches exist. Need to self-host? Run on Fastify, Express, Lambda, Cloudflare Workers, or Bun. The framework is open-source and MIT-licensed.
+            </p>
+            <p className="text-white/25">
+              If you stop using Pikku tomorrow, your business logic still works.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   4. HOW IT WORKS — compressed, scannable
+   ════════════════════════════════════════════════════════════════ */
+
+const capabilities = [
+  { label: 'HTTP APIs',    detail: 'REST routes with OpenAPI generation', color: '#34d399' },
+  { label: 'Queues',       detail: 'Background jobs with retries', color: '#f87171' },
+  { label: 'Cron',         detail: 'Managed scheduled execution', color: '#fbbf24' },
+  { label: 'WebSocket',    detail: 'Typed realtime channels', color: '#a78bfa' },
+  { label: 'AI Agents',    detail: 'LLM tools with approval gates', color: '#f472b6' },
+  { label: 'MCP',          detail: 'Model Context Protocol server', color: '#22d3ee' },
+  { label: 'CLI',          detail: 'Command-line interfaces', color: '#60a5fa' },
+  { label: 'RPC',          detail: 'Direct function calls', color: '#c084fc' },
 ];
 
 function HowItWorks() {
   return (
     <section id="how-it-works" className="py-24 lg:py-32 border-t border-white/[0.05]">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="mb-16">
+      <div className="mx-auto max-w-4xl px-6">
+        <div className="mb-14">
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/25 mb-4">How it works</p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-white">
-            Write. Wire. Deploy.
+            Write a function. Wire it to anything.
           </h2>
           <p className="mt-4 text-base text-white/35 max-w-lg leading-relaxed">
-            Define backend logic once. Wire it to any protocol. Deploy everything with one command.
+            Every function gets typed I/O, permissions, and services injected automatically. The function never knows which protocol called it.
           </p>
         </div>
 
-        <div className="space-y-12">
-          {steps.map((step) => (
-            <div key={step.num}>
-              <div className="flex items-baseline gap-4 mb-4">
-                <span className="text-[0.7rem] font-mono font-bold text-white/15 tracking-widest">{step.num}</span>
-                <div>
-                  <span className="text-[0.9375rem] font-semibold text-white">{step.title}</span>
-                  <span className="text-[0.8125rem] text-white/30 ml-3">{step.desc}</span>
-                </div>
+        {/* Capabilities as a compact grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-14">
+          {capabilities.map((c) => (
+            <div key={c.label} className="rounded-lg border border-white/[0.05] bg-white/[0.015] px-3.5 py-3">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="h-1.5 w-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: c.color, opacity: 0.6 }} />
+                <span className="text-[0.8125rem] font-semibold text-white/70">{c.label}</span>
               </div>
-              <div className="rounded-xl border border-white/[0.06] bg-[#08080d] overflow-hidden [&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[13px] [&_pre]:!overflow-x-auto">
-                <CodeBlock language={step.lang}>{step.code}</CodeBlock>
-              </div>
+              <p className="text-[0.6875rem] text-white/20 leading-snug">{c.detail}</p>
             </div>
           ))}
+        </div>
+
+        {/* Framework features — not a grid, a tight list */}
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <h3 className="text-[0.9375rem] font-semibold text-white mb-2">End-to-end type safety</h3>
+            <p className="text-[0.8125rem] text-white/30 leading-relaxed">
+              Zod schemas validate at runtime. TypeScript types flow from function definition to auto-generated clients. No drift.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-[0.9375rem] font-semibold text-white mb-2">Built-in auth and permissions</h3>
+            <p className="text-[0.8125rem] text-white/30 leading-relaxed">
+              Session management, JWT, and role-based access — declared once on the function, enforced on every surface.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-[0.9375rem] font-semibold text-white mb-2">Auto-generated OpenAPI</h3>
+            <p className="text-[0.8125rem] text-white/30 leading-relaxed">
+              Your API spec stays in sync with your code. Routes, schemas, and permissions — always accurate.
+            </p>
+          </div>
+          <div>
+            <h3 className="text-[0.9375rem] font-semibold text-white mb-2">Any runtime</h3>
+            <p className="text-[0.8125rem] text-white/30 leading-relaxed">
+              Fastify, Express, Lambda, Cloudflare Workers, Bun, Next.js. Same Pikku project, your infrastructure.
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -263,53 +290,58 @@ function HowItWorks() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   3. SERVERLESS + SERVERS — deployment flexibility
+   5. FABRIC — optional deployment, earns its place
    ════════════════════════════════════════════════════════════════ */
 
-function DeployModes() {
+function Fabric() {
   return (
     <section className="py-24 lg:py-32 border-t border-white/[0.05]">
       <div className="mx-auto max-w-5xl px-6">
         <div className="mb-14">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/25 mb-4">Deployment</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400/60 mb-4">Pikku Fabric</p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-white">
-            Serverless by default. Servers when you need them.
+            Deploy the whole backend with one command.
           </h2>
           <p className="mt-4 text-base text-white/35 max-w-lg leading-relaxed">
-            Fabric deploys each function as a serverless worker. Switch to server mode with one flag — same codebase, same deploy command.
+            Fabric reads your Pikku project and deploys each function as a serverless worker. Optional — you can always self-host.
           </p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* Serverless */}
-          <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.03] p-6">
-            <div className="flex items-center gap-2.5 mb-4">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              <p className="text-[0.8125rem] font-semibold uppercase tracking-widest text-emerald-400/80">Serverless</p>
+          {/* Terminal */}
+          <div className="rounded-xl border border-white/[0.08] bg-[#08080d] overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5">
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+              <span className="h-2 w-2 rounded-full bg-white/12" />
+              <span className="h-2 w-2 rounded-full bg-white/12" />
+              <span className="ml-3 text-[11px] text-white/20 font-mono">terminal</span>
             </div>
-            <p className="text-[0.875rem] text-white/40 leading-relaxed mb-4">
-              Default mode. Each function becomes an independent worker. Scales to zero. Pay only when functions execute.
-            </p>
-            <div className="rounded-lg bg-black/30 p-4 font-mono text-[12px] leading-[1.8] text-white/35">
-              <div>$ pikku deploy</div>
-              <div className="text-emerald-400/60 mt-1">✓ 12 functions → serverless workers</div>
-              <div className="text-white/20">scales to zero · $0 when idle</div>
+            <div className="p-5 font-mono text-[13px] leading-[1.85]">
+              <div><span className="text-white/25">$ </span><span className="text-white/50">pikku deploy</span></div>
+              <div className="mt-3 text-white/60 font-semibold">  sendReminder</div>
+              <div className="text-emerald-400/50">    + POST /send-reminder         api</div>
+              <div className="text-red-400/50">    + billing-reminders           queue</div>
+              <div className="text-yellow-400/50">    + 0 9 * * * (daily)           cron</div>
+              <div className="text-violet-400/50">    + billing-assistant           agent</div>
+              <div className="mt-3"><span className="text-emerald-400/80 font-semibold">  ✓ deployed to production</span></div>
+              <div className="text-white/25">    mode: serverless</div>
+              <div className="text-white/15">    scales to zero · $0 when idle</div>
             </div>
           </div>
 
-          {/* Server */}
-          <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-6">
-            <div className="flex items-center gap-2.5 mb-4">
-              <span className="h-2 w-2 rounded-full bg-white/40" />
-              <p className="text-[0.8125rem] font-semibold uppercase tracking-widest text-white/40">Server mode</p>
+          {/* Fabric features */}
+          <div className="space-y-4">
+            <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+              <h3 className="text-[0.875rem] font-semibold text-white mb-1">Serverless by default</h3>
+              <p className="text-[0.8125rem] text-white/30">Each function becomes an independent worker. Scales to zero. Pay only when functions execute.</p>
             </div>
-            <p className="text-[0.875rem] text-white/40 leading-relaxed mb-4">
-              Same project. One flag. Runs on Fastify, Express, or any Node/Bun runtime. Full control when you need it.
-            </p>
-            <div className="rounded-lg bg-black/30 p-4 font-mono text-[12px] leading-[1.8] text-white/35">
-              <div>$ pikku deploy --mode server</div>
-              <div className="text-white/40 mt-1">✓ 12 functions → fastify server</div>
-              <div className="text-white/20">port 3000 · your infrastructure</div>
+            <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+              <h3 className="text-[0.875rem] font-semibold text-white mb-1">Server mode when you need it</h3>
+              <p className="text-[0.8125rem] text-white/30">One flag: <code className="text-white/40 text-xs">--mode server</code>. Runs on Fastify, Express, or any Node/Bun runtime.</p>
+            </div>
+            <div className="rounded-lg border border-white/[0.06] bg-white/[0.015] p-4">
+              <h3 className="text-[0.875rem] font-semibold text-white mb-1">Eject anytime</h3>
+              <p className="text-[0.8125rem] text-white/30">Fabric is optional. Self-host on any cloud, any runtime. The framework is yours regardless.</p>
             </div>
           </div>
         </div>
@@ -319,106 +351,10 @@ function DeployModes() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   4. BUILT ON PIKKU — framework + zero lock-in
-   ════════════════════════════════════════════════════════════════ */
-
-const frameworkPoints = [
-  { title: 'End-to-end type safety', desc: 'Zod schemas, typed services, auto-generated clients. Compile-time guarantees across the stack.' },
-  { title: 'Built-in auth and permissions', desc: 'Session management, JWT, and role-based access baked into every function invocation.' },
-  { title: 'Auto-generated OpenAPI', desc: 'API spec stays in sync with your code. Always accurate, never stale.' },
-  { title: 'Any runtime', desc: 'Fastify, Express, Lambda, Cloudflare Workers, Bun. Same project, your choice.' },
-  { title: 'Zero lock-in', desc: 'Eject from Fabric anytime. Self-host on any cloud or your own servers. The framework is yours.' },
-  { title: 'Typed clients', desc: 'Generated HTTP, WebSocket, and RPC clients. No manual typing, no drift.' },
-];
-
-function BuiltOnPikku() {
-  return (
-    <section className="py-24 lg:py-32 border-t border-white/[0.05]">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="mb-14">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-primary/50 mb-4">Open-source framework</p>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-white">
-            Built on Pikku.
-          </h2>
-          <p className="mt-4 text-base text-white/35 max-w-lg leading-relaxed">
-            Fabric deploys what Pikku defines. The framework is open-source, runtime-agnostic, and yours to keep — regardless of how you deploy.
-          </p>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {frameworkPoints.map((p) => (
-            <div key={p.title} className="rounded-xl border border-white/[0.06] bg-white/[0.015] p-5">
-              <h3 className="text-[0.875rem] font-semibold text-white mb-1.5">{p.title}</h3>
-              <p className="text-[0.8125rem] text-white/30 leading-relaxed">{p.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 text-center">
-          <Link
-            to="/framework"
-            className="inline-flex items-center gap-2 text-[0.8125rem] font-medium text-white/30 hover:text-white/60 transition-colors no-underline"
-          >
-            Explore the framework <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   5. PRICING
+   6. PRICING + CTA
    ════════════════════════════════════════════════════════════════ */
 
 function Pricing() {
-  const tiers = [
-    {
-      name: 'Open Source',
-      price: 'Free',
-      sub: 'forever',
-      desc: 'The full framework. Self-host anywhere.',
-      features: [
-        'All wiring types (HTTP, WS, Queue, Cron, MCP, Agent)',
-        'Any runtime (Fastify, Lambda, Cloudflare, Bun)',
-        'CLI with plan/apply',
-        'Community support',
-      ],
-      cta: { label: 'Get started', to: '/getting-started' },
-      accent: true,
-    },
-    {
-      name: 'Fabric',
-      price: '$20/mo',
-      sub: 'scales to zero · $0 when idle',
-      desc: 'Serverless deployment platform.',
-      features: [
-        'Everything in Open Source',
-        'Per-function serverless workers',
-        'Metrics, logs, deployments dashboard',
-        'Smart versioning with auto-drain',
-        'Environments, previews, rollbacks',
-        'Eject anytime — zero lock-in',
-      ],
-      cta: { label: 'Join the waitlist', to: '#waitlist' },
-      accent: false,
-    },
-    {
-      name: 'Enterprise',
-      price: 'Custom',
-      sub: 'annual license',
-      desc: 'Deploy to your own cloud.',
-      features: [
-        'Everything in Fabric',
-        'BYOK — deploy to your Cloudflare, AWS, or GCP',
-        'SSO / SAML + SLAs',
-        'Dedicated support',
-      ],
-      cta: { label: 'Contact us', to: 'mailto:hello@pikku.dev' },
-      accent: false,
-    },
-  ];
-
   return (
     <section id="pricing" className="py-24 lg:py-32 border-t border-white/[0.05]">
       <div className="mx-auto max-w-5xl px-6">
@@ -426,42 +362,71 @@ function Pricing() {
           <h2 className="text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-white">Pricing</h2>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">
-          {tiers.map((tier) => (
-            <div
-              key={tier.name}
-              className={`rounded-xl p-6 flex flex-col ${
-                tier.accent
-                  ? 'border-2 border-primary/30 bg-primary/[0.03]'
-                  : 'border border-white/[0.06] bg-white/[0.015]'
-              }`}
-            >
-              <div className="mb-6">
-                <h3 className="text-base font-bold text-white">{tier.name}</h3>
-                <p className="text-2xl font-bold text-white mt-1">{tier.price}</p>
-                {tier.sub && <p className="text-xs text-white/25 mt-0.5">{tier.sub}</p>}
-                <p className="text-[0.8125rem] text-white/35 mt-2">{tier.desc}</p>
-              </div>
-              <div className="space-y-2.5 flex-1">
-                {tier.features.map((f) => (
-                  <div key={f} className="flex items-start gap-2.5 text-[0.8125rem] text-white/45">
-                    <span className="text-emerald-400/70 text-xs mt-0.5">✓</span>{f}
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6">
-                <Link
-                  to={tier.cta.to}
-                  className={`block text-center rounded-lg px-5 py-2.5 text-[0.875rem] font-semibold transition no-underline ${
-                    tier.accent
-                      ? 'bg-white text-[#0a0a0f] hover:bg-white/90'
-                      : 'border border-white/[0.12] bg-white/[0.04] text-white/70 hover:bg-white/[0.08]'
-                  }`}
-                >
-                  {tier.cta.label}
-                </Link>
-              </div>
+          {/* Open Source — visually dominant */}
+          <div className="rounded-xl p-6 flex flex-col border-2 border-primary/30 bg-primary/[0.03]">
+            <div className="mb-6">
+              <h3 className="text-base font-bold text-white">Open Source</h3>
+              <p className="text-2xl font-bold text-white mt-1">Free</p>
+              <p className="text-xs text-white/25 mt-0.5">forever</p>
+              <p className="text-[0.8125rem] text-white/35 mt-2">The full framework. Self-host anywhere.</p>
             </div>
-          ))}
+            <div className="space-y-2.5 flex-1">
+              {['All protocols (HTTP, WS, Queue, Cron, MCP, Agent)', 'Any runtime (Fastify, Lambda, Cloudflare, Bun)', 'CLI with plan/apply', 'Community support'].map((f) => (
+                <div key={f} className="flex items-start gap-2.5 text-[0.8125rem] text-white/45">
+                  <span className="text-emerald-400/70 text-xs mt-0.5">✓</span>{f}
+                </div>
+              ))}
+            </div>
+            <div className="mt-6">
+              <Link to="/getting-started" className="block text-center rounded-lg px-5 py-2.5 text-[0.875rem] font-semibold bg-white text-[#0a0a0f] hover:bg-white/90 transition no-underline">
+                Get started
+              </Link>
+            </div>
+          </div>
+
+          {/* Fabric */}
+          <div className="rounded-xl p-6 flex flex-col border border-white/[0.06] bg-white/[0.015]">
+            <div className="mb-6">
+              <h3 className="text-base font-bold text-white">Fabric</h3>
+              <p className="text-2xl font-bold text-white mt-1">$20/mo</p>
+              <p className="text-xs text-white/25 mt-0.5">scales to zero · $0 when idle</p>
+              <p className="text-[0.8125rem] text-white/35 mt-2">Serverless deployment platform.</p>
+            </div>
+            <div className="space-y-2.5 flex-1">
+              {['Everything in Open Source', 'Per-function serverless workers', 'Metrics, logs, deployments', 'Environments, previews, rollbacks', 'Eject anytime'].map((f) => (
+                <div key={f} className="flex items-start gap-2.5 text-[0.8125rem] text-white/45">
+                  <span className="text-emerald-400/70 text-xs mt-0.5">✓</span>{f}
+                </div>
+              ))}
+            </div>
+            <div className="mt-6">
+              <Link to="#waitlist" className="block text-center rounded-lg px-5 py-2.5 text-[0.875rem] font-semibold border border-white/[0.12] bg-white/[0.04] text-white/70 hover:bg-white/[0.08] transition no-underline">
+                Join the waitlist
+              </Link>
+            </div>
+          </div>
+
+          {/* Enterprise */}
+          <div className="rounded-xl p-6 flex flex-col border border-white/[0.06] bg-white/[0.015]">
+            <div className="mb-6">
+              <h3 className="text-base font-bold text-white">Enterprise</h3>
+              <p className="text-2xl font-bold text-white mt-1">Custom</p>
+              <p className="text-xs text-white/25 mt-0.5">annual license</p>
+              <p className="text-[0.8125rem] text-white/35 mt-2">Deploy to your own cloud.</p>
+            </div>
+            <div className="space-y-2.5 flex-1">
+              {['Everything in Fabric', 'BYOK — your Cloudflare, AWS, or GCP', 'SSO / SAML + SLAs', 'Dedicated support'].map((f) => (
+                <div key={f} className="flex items-start gap-2.5 text-[0.8125rem] text-white/45">
+                  <span className="text-emerald-400/70 text-xs mt-0.5">✓</span>{f}
+                </div>
+              ))}
+            </div>
+            <div className="mt-6">
+              <Link to="mailto:hello@pikku.dev" className="block text-center rounded-lg px-5 py-2.5 text-[0.875rem] font-semibold border border-white/[0.12] bg-white/[0.04] text-white/70 hover:bg-white/[0.08] transition no-underline">
+                Contact us
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -469,7 +434,7 @@ function Pricing() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   6. WAITLIST
+   7. WAITLIST — Fabric early access
    ════════════════════════════════════════════════════════════════ */
 
 function Waitlist() {
@@ -483,7 +448,7 @@ function Waitlist() {
   return (
     <section id="waitlist" className="relative overflow-hidden py-24 lg:py-32">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full bg-emerald-500/[0.05] blur-[120px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-emerald-500/[0.04] blur-[120px]" />
       </div>
       <div className="relative mx-auto max-w-lg px-6 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400/60 mb-4">Fabric</p>
@@ -502,7 +467,6 @@ function Waitlist() {
               </svg>
               You're on the list.
             </div>
-            <p className="mt-2 text-[0.8125rem] text-white/25">We'll be in touch when Fabric launches.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-10">
@@ -528,18 +492,12 @@ function Waitlist() {
 
         <div className="mt-14 pt-8 border-t border-white/[0.05]">
           <p className="text-[0.8125rem] text-white/25">The framework is available now.</p>
-          <div className="mt-4 flex flex-wrap justify-center gap-3">
+          <div className="mt-4">
             <Link
               to="/getting-started"
               className="inline-flex items-center gap-2 rounded-lg border border-primary/25 bg-primary/[0.06] px-4 py-2 text-xs font-medium text-primary/80 transition hover:bg-primary/[0.1] no-underline"
             >
               Get started with Pikku <ArrowRight className="w-3 h-3" />
-            </Link>
-            <Link
-              to="/docs"
-              className="rounded-lg border border-white/[0.08] bg-white/[0.02] px-4 py-2 text-xs font-medium text-white/40 transition hover:bg-white/[0.05] hover:text-white/60 no-underline"
-            >
-              Read the docs
             </Link>
           </div>
         </div>
@@ -555,14 +513,15 @@ function Waitlist() {
 export default function HomePage() {
   return (
     <Layout
-      title="Pikku Fabric — Deploy a complete backend from one codebase"
-      description="Write your functions once. Fabric deploys them as APIs, queues, cron jobs, realtime channels, and agents — serverless, scales to zero."
+      title="Pikku — Same logic. Different handler. Every time."
+      description="TypeScript backend framework. Write a function once, wire it to HTTP, queues, cron, WebSocket, MCP, and AI agents. Open-source, any runtime, zero lock-in."
     >
       <Hero />
       <main>
+        <BeforeAfter />
+        <EscapeHatch />
         <HowItWorks />
-        <DeployModes />
-        <BuiltOnPikku />
+        <Fabric />
         <Pricing />
         <Waitlist />
       </main>
