@@ -811,13 +811,23 @@ a.no-underline:hover * {
   animation: fabric-glow 1s ease-out;
 }
 
+/* Fabric mesh: pulsing active nodes */
+@keyframes fabric-node-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.fabric-node-pulse {
+  animation: fabric-node-pulse 3s ease-in-out infinite;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-count-land,
   .deploy-line-enter,
   .terminal-done,
   .fabric-card-glow,
-  .animate-blink {
+  .animate-blink,
+  .fabric-node-pulse {
     animation-duration: 0.01ms !important;
   }
   .surface-dim,

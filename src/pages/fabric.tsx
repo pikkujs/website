@@ -2,16 +2,247 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import { ArrowRight, Check } from 'lucide-react';
+import { WiringIcon } from '../components/WiringIcons';
 
 /* ════════════════════════════════════════════════════════════════
    Hero
    ════════════════════════════════════════════════════════════════ */
 
+const iconDefs = [
+  { icon: 'http',      color: '#34d399' },
+  { icon: 'queue',     color: '#f87171' },
+  { icon: 'cron',      color: '#fbbf24' },
+  { icon: 'bot',       color: '#f472b6' },
+  { icon: 'rpc',       color: '#c084fc' },
+  { icon: 'mcp',       color: '#22d3ee' },
+  { icon: 'cli',       color: '#60a5fa' },
+  { icon: 'websocket', color: '#a78bfa' },
+  { icon: 'trigger',   color: '#f59e0b' },
+  { icon: 'workflow',  color: '#2dd4bf' },
+];
+
+// Function nodes that connect to nearby wiring icons (by index in iconDefs)
+// Each function node connects to 2-3 surfaces
+const funcNodes = [
+  { connects: [0, 1] },     // ƒ → http, queue
+  { connects: [2, 3] },     // ƒ → cron, bot
+  { connects: [4, 5, 6] },  // ƒ → rpc, mcp, cli
+  { connects: [7, 8] },     // ƒ → websocket, trigger
+];
+
+type Pos = { col: number; row: number };
+
+function useRandomLayout(cols: number, rows: number) {
+  const [iconPositions, setIconPositions] = React.useState<Pos[]>([]);
+  const [funcPositions, setFuncPositions] = React.useState<Pos[]>([]);
+
+  React.useEffect(() => {
+    const centerColMin = Math.floor(cols * 0.3);
+    const centerColMax = Math.ceil(cols * 0.7);
+    const centerRowMin = Math.floor(rows * 0.2);
+    const centerRowMax = Math.ceil(rows * 0.75);
+
+    const isCenter = (c: number, r: number) =>
+      c >= centerColMin && c <= centerColMax && r >= centerRowMin && r <= centerRowMax;
+
+    const candidates: Pos[] = [];
+    for (let c = 1; c < cols; c++) {
+      for (let r = 1; r < rows; r++) {
+        if (!isCenter(c, r)) candidates.push({ col: c, row: r });
+      }
+    }
+
+    // Shuffle
+    for (let i = candidates.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+    }
+
+    // Pick icon positions with spacing
+    const allPicked: Pos[] = [];
+    const icons: Pos[] = [];
+    for (const c of candidates) {
+      if (icons.length >= iconDefs.length) break;
+      const tooClose = allPicked.some(
+        (p) => Math.abs(p.col - c.col) < 2 && Math.abs(p.row - c.row) < 2
+      );
+      if (!tooClose) { icons.push(c); allPicked.push(c); }
+    }
+
+    // For each funcNode, find a grid intersection near its connected icons
+    const funcs: Pos[] = [];
+    for (const fn of funcNodes) {
+      const connected = fn.connects.map((idx) => icons[idx]).filter(Boolean);
+      if (connected.length === 0) continue;
+
+      // Average position of connected icons
+      const avgCol = Math.round(connected.reduce((s, p) => s + p.col, 0) / connected.length);
+      const avgRow = Math.round(connected.reduce((s, p) => s + p.row, 0) / connected.length);
+
+      // Search nearby for a free spot
+      let best: Pos | null = null;
+      for (let dr = -2; dr <= 2; dr++) {
+        for (let dc = -2; dc <= 2; dc++) {
+          if (dc === 0 && dr === 0) continue;
+          const c = avgCol + dc;
+          const r = avgRow + dr;
+          if (c < 1 || c >= cols || r < 1 || r >= rows) continue;
+          if (isCenter(c, r)) continue;
+          const taken = allPicked.some((p) => p.col === c && p.row === r);
+          if (!taken) { best = { col: c, row: r }; break; }
+        }
+        if (best) break;
+      }
+
+      if (best) { funcs.push(best); allPicked.push(best); }
+      else funcs.push({ col: avgCol, row: avgRow }); // fallback
+    }
+
+    setIconPositions(icons);
+    setFuncPositions(funcs);
+  }, [cols, rows]);
+
+  return { iconPositions, funcPositions };
+}
+
+function FabricMesh() {
+  const cols = 16;
+  const rows = 8;
+  const { iconPositions, funcPositions } = useRandomLayout(cols, rows);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {/* CSS grid lines */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.055) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px)
+          `,
+          backgroundSize: `${100 / cols}% ${100 / rows}%`,
+        }}
+      />
+
+      {/* Intersection dots */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px)',
+          backgroundSize: `${100 / cols}% ${100 / rows}%`,
+        }}
+      />
+
+      {/* SVG layer for connecting lines (traces) */}
+      <svg className="absolute inset-0 w-full h-full">
+        {funcPositions.map((fPos, fi) => {
+          const fn = funcNodes[fi];
+          if (!fn) return null;
+          const fx = (fPos.col / cols) * 100;
+          const fy = (fPos.row / rows) * 100;
+          return fn.connects.map((iconIdx) => {
+            const iPos = iconPositions[iconIdx];
+            if (!iPos) return null;
+            const ix = (iPos.col / cols) * 100;
+            const iy = (iPos.row / rows) * 100;
+            const def = iconDefs[iconIdx];
+            return (
+              <line
+                key={`trace-${fi}-${iconIdx}`}
+                x1={`${fx}%`} y1={`${fy}%`}
+                x2={`${ix}%`} y2={`${iy}%`}
+                stroke={def?.color || '#fff'}
+                strokeOpacity={0.12}
+                strokeWidth={1}
+                strokeDasharray="3 3"
+              />
+            );
+          });
+        })}
+      </svg>
+
+      {/* Wiring icon nodes */}
+      {iconPositions.map((pos, i) => {
+        const def = iconDefs[i];
+        if (!def) return null;
+        const xPct = (pos.col / cols) * 100;
+        const yPct = (pos.row / rows) * 100;
+        return (
+          <div
+            key={def.icon}
+            className="absolute fabric-node-pulse"
+            style={{
+              left: `${xPct}%`,
+              top: `${yPct}%`,
+              transform: 'translate(-50%, -50%)',
+              animationDelay: `${i * 0.4}s`,
+            }}
+          >
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl"
+              style={{ width: 60, height: 60, backgroundColor: def.color, opacity: 0.1 }}
+            />
+            <div
+              className="relative flex items-center justify-center rounded-lg border bg-[#0c0c14] p-1.5"
+              style={{
+                borderColor: `${def.color}35`,
+                boxShadow: `0 0 16px -4px ${def.color}25`,
+              }}
+            >
+              <WiringIcon wiringId={def.icon} size={18} />
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Function (ƒ) nodes */}
+      {funcPositions.map((pos, i) => {
+        const xPct = (pos.col / cols) * 100;
+        const yPct = (pos.row / rows) * 100;
+        return (
+          <div
+            key={`func-${i}`}
+            className="absolute fabric-node-pulse"
+            style={{
+              left: `${xPct}%`,
+              top: `${yPct}%`,
+              transform: 'translate(-50%, -50%)',
+              animationDelay: `${(i + iconDefs.length) * 0.4}s`,
+            }}
+          >
+            <div
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl"
+              style={{ width: 50, height: 50, backgroundColor: '#a78bfa', opacity: 0.08 }}
+            />
+            <div
+              className="relative flex items-center justify-center rounded-lg border bg-[#0c0c14] w-7 h-7 text-[13px] font-bold"
+              style={{
+                borderColor: 'rgba(168, 99, 238, 0.3)',
+                color: 'rgba(168, 99, 238, 0.7)',
+                boxShadow: '0 0 16px -4px rgba(168, 99, 238, 0.2)',
+                fontFamily: 'Georgia, serif',
+                fontStyle: 'italic',
+              }}
+            >
+              ƒ
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Fade edges */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f]/30 via-transparent to-[#0a0a0f]/70" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0f]/40 via-transparent to-[#0a0a0f]/40" />
+    </div>
+  );
+}
+
 function Hero() {
   return (
-    <section className="hero-section relative overflow-hidden py-20 lg:py-28">
+    <section className="relative overflow-hidden py-20 lg:py-28">
+      {/* Fabric mesh background */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full bg-emerald-500/[0.06] blur-[120px]" />
+        <FabricMesh />
       </div>
       <div className="relative mx-auto max-w-3xl px-6 text-center">
         <p className="text-xs font-bold tracking-widest uppercase text-emerald-400/70 mb-5">Pikku Fabric</p>
