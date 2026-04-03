@@ -430,15 +430,28 @@ function WhyFabric() {
         <div className="mx-auto max-w-4xl px-6">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Observability</p>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
-            Traces across the full chain.
+            Logs and metrics per function.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
-            "sendReminder failed 3 times today." Follow a request from HTTP → queue → workflow → agent — per function, not per container. No Datadog setup, no OpenTelemetry config. Just deploy and it's there.
+            Every invocation is logged with a trace ID that follows the request across surfaces — HTTP, queue, workflow, agent. View logs and errors per function in the Fabric dashboard.
           </p>
         </div>
       </section>
 
-      {/* 5. Teams and environments */}
+      {/* 5. Workflows + Agents out of the box */}
+      <section className="py-20 lg:py-28 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-4xl px-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Built in</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
+            Workflows and AI agents. No extra infrastructure.
+          </h2>
+          <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
+            Self-hosting durable workflows means setting up a persistence layer, a replay engine, and failure recovery. Running AI agents means managing conversation state and tool execution. On Fabric, both work out of the box — wire them and they run. State persistence, retries, and conversation memory are managed for you.
+          </p>
+        </div>
+      </section>
+
+      {/* 6. Teams and environments */}
       <section className="py-20 lg:py-28 border-t border-white/[0.05]">
         <div className="mx-auto max-w-4xl px-6">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Teams</p>
