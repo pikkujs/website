@@ -252,7 +252,7 @@ function Hero() {
           <span className="text-emerald-400/80">Free to start.</span>
         </h1>
         <p className="mt-6 text-lg text-white/40 max-w-xl mx-auto leading-relaxed">
-          Push your code. Fabric deploys each function as a serverless worker — APIs, queues, cron, agents, all of it. No infrastructure to manage.
+          You wrote your functions, you wired them up. Fabric takes it from there — APIs, queues, cron, agents, all deployed to the edge. No cloud accounts, no infra to manage.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
@@ -312,7 +312,7 @@ function HowItWorks() {
               One command. Everything deploys.
             </h2>
             <p className="text-base text-white/40 leading-relaxed mb-6">
-              Fabric deploys each function as an independent serverless worker on Cloudflare's edge network. APIs, queues, cron, agents — all live in seconds.
+              Each function becomes its own serverless worker on Cloudflare's edge. APIs, queues, cron, agents — all live in seconds. You don't configure any of it.
             </p>
             <div className="space-y-3">
               {[
@@ -349,7 +349,7 @@ function WhyFabric() {
             Edge when you can. Server when you need to.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed mb-8">
-            Most functions run as serverless workers on Cloudflare's edge — fast, cheap, scales to zero. But some things don't fit: heavy compute, native addons, large dependencies. Fabric runs those on a managed server automatically.
+            Most of your functions run as serverless workers on Cloudflare's edge — fast, cheap, scales to zero. But sometimes you need heavy compute, native addons, or libraries that are just too big for Workers. Fabric spins up a managed server for those automatically.
           </p>
           <div className="rounded-xl border border-white/[0.06] bg-[#08080d] p-6 font-mono text-[13px] leading-[1.85] max-w-lg">
             <div className="text-white/30">{'// Fabric picks the right runtime'}</div>
@@ -370,9 +370,8 @@ function WhyFabric() {
             See functions, not infrastructure.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
-            Your dashboard shows <code className="text-white/50 text-sm">sendReminder</code> and its wirings — not worker IDs and queue ARNs.
-            Logs, errors, and metrics are per function, across HTTP, queues, cron, and agents.
-            When something fails, you see which function failed and why — not which container returned a 500.
+            Your dashboard shows <code className="text-white/50 text-sm">sendReminder</code> and what it's wired to — not worker IDs and queue ARNs.
+            When something breaks, you see which function failed and why. Not which container returned a 500.
           </p>
         </div>
       </section>
@@ -385,7 +384,7 @@ function WhyFabric() {
             Your session follows you everywhere.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed mb-8">
-            When a user triggers an action, their identity doesn't stop at the HTTP handler. Queue jobs, workflow steps, and AI agent tool calls all know who the user is — and enforce their permissions. No manual token threading, no re-authentication at every hop.
+            When a user triggers an action, their identity doesn't stop at the HTTP handler. Queue jobs, workflow steps, agent tool calls — they all know who the user is and what they're allowed to do. You don't have to manually thread tokens through message payloads or re-authenticate at every hop.
           </p>
           <div className="rounded-xl border border-white/[0.06] bg-[#08080d] p-6 font-mono text-[13px] leading-[1.85] max-w-lg">
             <div className="text-white/30">{'// User triggers an onboarding workflow'}</div>
@@ -406,7 +405,7 @@ function WhyFabric() {
             2,500+ API integrations from any OpenAPI spec.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
-            Point Fabric at an OpenAPI spec and it generates typed Pikku functions for every endpoint. Use them in workflows, expose them as agent tools, wire them to cron jobs. Stripe, GitHub, Slack, Notion — if it has an API spec, it's a Pikku function.
+            Point Fabric at any OpenAPI spec and it generates typed Pikku functions for every endpoint. Use them in workflows, expose them as agent tools, wire them to cron. Stripe, GitHub, Slack, Notion — if it has a spec, it's already a Pikku function.
           </p>
         </div>
       </section>
@@ -419,8 +418,7 @@ function WhyFabric() {
             Push code. Everything is live.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
-            No cloud accounts to configure. No tokens to rotate. No Wrangler configs to maintain. Git push and your entire backend — APIs, queues, cron jobs, agents — deploys to Cloudflare's edge network.
-            Staging, production, and branch previews are built in.
+            No Cloudflare account to set up. No API tokens to rotate. No Wrangler configs. Just push your code and your entire backend goes live — APIs, queues, cron, agents, all of it. Staging, production, and branch previews come for free.
           </p>
         </div>
       </section>
@@ -433,7 +431,7 @@ function WhyFabric() {
             Logs and metrics per function.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
-            Every invocation is logged with a trace ID that follows the request across surfaces — HTTP, queue, workflow, agent. View logs and errors per function in the Fabric dashboard.
+            Every invocation gets logged with a trace ID that follows the request across surfaces — HTTP, queue, workflow, agent. You can see what happened, per function, in the Fabric dashboard. No extra setup.
           </p>
         </div>
       </section>
@@ -446,7 +444,7 @@ function WhyFabric() {
             Workflows and AI agents. No extra infrastructure.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
-            Self-hosting durable workflows means setting up a persistence layer, a replay engine, and failure recovery. Running AI agents means managing conversation state and tool execution. On Fabric, both work out of the box — wire them and they run. State persistence, retries, and conversation memory are managed for you.
+            If you self-host, workflows need a persistence layer, a replay engine, failure recovery. Agents need conversation state storage and tool execution infra. On Fabric, you just write the function — state persistence, retries, conversation memory are all handled for you.
           </p>
         </div>
       </section>
@@ -459,7 +457,7 @@ function WhyFabric() {
             Environments, previews, access control.
           </h2>
           <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
-            Branch previews for your full multi-protocol backend — per push. Team members with scoped access. Shared secrets per environment. Rollbacks that drain in-flight work before switching.
+            Branch previews for your entire backend — not just the frontend. Team members with scoped access. Shared secrets per environment. Rollbacks that drain in-flight work before cutting over.
           </p>
         </div>
       </section>
@@ -471,7 +469,7 @@ function WhyFabric() {
             Zero lock-in.
           </h2>
           <p className="text-base text-white/35 max-w-xl mx-auto leading-relaxed">
-            Pikku is open-source and runs on any runtime. Your code works on Fabric, on your own Cloudflare account, on Fastify, Express, Lambda, or Bun. Same project, your choice.
+            Pikku is open-source and runs anywhere. Your code works on Fabric, on your own Cloudflare account, on Fastify, Express, Lambda, Bun — wherever you want. Same project, your call.
           </p>
         </div>
       </section>
