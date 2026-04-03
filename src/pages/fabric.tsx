@@ -449,7 +449,7 @@ function Pricing() {
               }`}
             >
               {tier.badge && (
-                <span className="absolute -top-2.5 right-4 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
+                <span className="absolute -top-2.5 right-4 bg-[#0a0a0f] border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
                   {tier.badge}
                 </span>
               )}
