@@ -312,14 +312,14 @@ function HowItWorks() {
               One command. Everything deploys.
             </h2>
             <p className="text-base text-white/40 leading-relaxed mb-6">
-              Fabric reads your Pikku project and deploys each function as an independent serverless worker. HTTP routes, queue consumers, cron jobs, AI agents — all deployed and wired automatically.
+              Fabric deploys each function as an independent serverless worker on Cloudflare's edge network. APIs, queues, cron, agents — all live in seconds.
             </p>
             <div className="space-y-3">
               {[
-                'Serverless by default — scales to zero, $0 when idle',
+                'Push code, entire backend deploys',
+                'Per-function logs, metrics, and error tracking',
                 'Environments, branch previews, rollbacks',
-                'Logs, metrics, and error tracking per function',
-                'Server mode available: --mode server',
+                'Scales to zero — $0 when idle',
               ].map((item) => (
                 <div key={item} className="flex items-center gap-2.5 text-sm text-white/45">
                   <Check className="w-3.5 h-3.5 text-emerald-400/60 flex-shrink-0" />
@@ -335,21 +335,134 @@ function HowItWorks() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   No lock-in
+   Why Fabric — full-width feature sections
    ════════════════════════════════════════════════════════════════ */
 
-function NoLockIn() {
+function WhyFabric() {
   return (
-    <section className="py-16 lg:py-20 border-t border-white/[0.05]">
-      <div className="mx-auto max-w-3xl px-6 text-center">
-        <h2 className="text-2xl font-bold text-white mb-4">
-          Fabric is optional. Your code is yours.
-        </h2>
-        <p className="text-base text-white/35 max-w-xl mx-auto leading-relaxed">
-          Pikku is open-source and runs on any runtime — Fastify, Express, Lambda, Cloudflare Workers, Bun. Fabric is the fastest way to deploy, but you can self-host the same code anytime.
-        </p>
-      </div>
-    </section>
+    <>
+      {/* 1. Edge + Server hybrid */}
+      <section className="py-20 lg:py-28 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-4xl px-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Hybrid Runtime</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
+            Edge when you can. Server when you need to.
+          </h2>
+          <p className="text-lg text-white/40 max-w-2xl leading-relaxed mb-8">
+            Most functions run as serverless workers on Cloudflare's edge — fast, cheap, scales to zero. But some things don't fit: heavy compute, native addons, large dependencies. Fabric runs those on a managed server automatically.
+          </p>
+          <div className="rounded-xl border border-white/[0.06] bg-[#08080d] p-6 font-mono text-[13px] leading-[1.85] max-w-lg">
+            <div className="text-white/30">{'// Fabric picks the right runtime'}</div>
+            <div className="mt-2 text-emerald-400/60">getUser        <span className="text-white/20">→ serverless  (edge)</span></div>
+            <div className="text-emerald-400/60">sendReminder   <span className="text-white/20">→ serverless  (edge)</span></div>
+            <div className="text-amber-400/60">generatePDF    <span className="text-white/20">→ server      (heavy compute)</span></div>
+            <div className="text-amber-400/60">processImage   <span className="text-white/20">→ server      (native addon)</span></div>
+            <div className="mt-3 text-white/20">{'// Or set it yourself: deploy: \'server\' | \'serverless\' | \'auto\''}</div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Functions, not infrastructure */}
+      <section className="py-20 lg:py-28 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-4xl px-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Dashboard</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
+            See functions, not infrastructure.
+          </h2>
+          <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
+            Your dashboard shows <code className="text-white/50 text-sm">sendReminder</code> and its wirings — not worker IDs and queue ARNs.
+            Logs, errors, and metrics are per function, across HTTP, queues, cron, and agents.
+            When something fails, you see which function failed and why — not which container returned a 500.
+          </p>
+        </div>
+      </section>
+
+      {/* 3. Your credentials, everywhere */}
+      <section className="py-20 lg:py-28 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-4xl px-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Credentials</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
+            Your session follows you everywhere.
+          </h2>
+          <p className="text-lg text-white/40 max-w-2xl leading-relaxed mb-8">
+            When a user triggers an action, their identity doesn't stop at the HTTP handler. Queue jobs, workflow steps, and AI agent tool calls all know who the user is — and enforce their permissions. No manual token threading, no re-authentication at every hop.
+          </p>
+          <div className="rounded-xl border border-white/[0.06] bg-[#08080d] p-6 font-mono text-[13px] leading-[1.85] max-w-lg">
+            <div className="text-white/30">{'// User triggers an onboarding workflow'}</div>
+            <div className="mt-2 text-white/50">POST /onboard-customer  <span className="text-white/20">← user session</span></div>
+            <div className="mt-2 text-emerald-400/50">  → queue: setup-billing    <span className="text-white/20">← knows who triggered it</span></div>
+            <div className="text-emerald-400/50">  → workflow: provision      <span className="text-white/20">← enforces user permissions</span></div>
+            <div className="text-emerald-400/50">  → agent: welcome-agent    <span className="text-white/20">← scoped to user context</span></div>
+            <div className="mt-2 text-white/20">{'// Same session, every surface. No re-auth.'}</div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. OpenAPI plugins */}
+      <section className="py-20 lg:py-28 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-4xl px-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Plugins</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
+            2,500+ API integrations from any OpenAPI spec.
+          </h2>
+          <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
+            Point Fabric at an OpenAPI spec and it generates typed Pikku functions for every endpoint. Use them in workflows, expose them as agent tools, wire them to cron jobs. Stripe, GitHub, Slack, Notion — if it has an API spec, it's a Pikku function.
+          </p>
+        </div>
+      </section>
+
+      {/* 5. Push and deploy */}
+      <section className="py-20 lg:py-28 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-4xl px-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Deploy</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
+            Push code. Everything is live.
+          </h2>
+          <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
+            No cloud accounts to configure. No tokens to rotate. No Wrangler configs to maintain. Git push and your entire backend — APIs, queues, cron jobs, agents — deploys to Cloudflare's edge network.
+            Staging, production, and branch previews are built in.
+          </p>
+        </div>
+      </section>
+
+      {/* 4. Observability */}
+      <section className="py-20 lg:py-28 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-4xl px-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Observability</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
+            Traces across the full chain.
+          </h2>
+          <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
+            "sendReminder failed 3 times today." Follow a request from HTTP → queue → workflow → agent — per function, not per container. No Datadog setup, no OpenTelemetry config. Just deploy and it's there.
+          </p>
+        </div>
+      </section>
+
+      {/* 5. Teams and environments */}
+      <section className="py-20 lg:py-28 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-4xl px-6">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Teams</p>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-6">
+            Environments, previews, access control.
+          </h2>
+          <p className="text-lg text-white/40 max-w-2xl leading-relaxed">
+            Branch previews for your full multi-protocol backend — per push. Team members with scoped access. Shared secrets per environment. Rollbacks that drain in-flight work before switching.
+          </p>
+        </div>
+      </section>
+
+      {/* Zero lock-in */}
+      <section className="py-16 lg:py-20 border-t border-white/[0.05]">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Zero lock-in.
+          </h2>
+          <p className="text-base text-white/35 max-w-xl mx-auto leading-relaxed">
+            Pikku is open-source and runs on any runtime. Your code works on Fabric, on your own Cloudflare account, on Fastify, Express, Lambda, or Bun. Same project, your choice.
+          </p>
+        </div>
+      </section>
+    </>
   );
 }
 
@@ -602,7 +715,7 @@ export default function FabricPage() {
       <Hero />
       <main>
         <HowItWorks />
-        <NoLockIn />
+        <WhyFabric />
         <Pricing />
         <FAQ />
         <Waitlist />
