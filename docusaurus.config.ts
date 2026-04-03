@@ -208,9 +208,9 @@ const config: Config = {
           ],
         },
         {
-          to: '/pricing',
+          to: '/fabric',
           position: 'right',
-          label: 'Pricing',
+          label: 'Fabric',
         },
         {
           type: 'docSidebar',
@@ -272,6 +272,7 @@ const config: Config = {
           title: 'Learn',
           items: [
             { label: 'Getting Started', to: '/getting-started' },
+            { label: 'Fabric (Deploy)', to: '/fabric' },
             { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },
             { label: 'Runtimes', to: '/docs/runtimes/fastify-plugin' },
             { label: 'CLI Reference', to: '/docs/pikku-cli' },
