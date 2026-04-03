@@ -263,6 +263,7 @@ wireCLI({ program: 'books', commands: {
     {
       id: 'workflows',
       label: 'Workflows',
+
       icon: <Workflow className="w-5 h-5" />,
       color: 'text-emerald-400',
       borderColor: 'border-emerald-500/30',
@@ -283,6 +284,7 @@ wireCLI({ program: 'books', commands: {
     {
       id: 'agents',
       label: 'Agents',
+
       icon: <Bot className="w-5 h-5" />,
       color: 'text-violet-400',
       borderColor: 'border-violet-500/30',
@@ -308,6 +310,7 @@ wireCLI({ program: 'books', commands: {
     {
       id: 'gateways',
       label: 'Gateways',
+
       icon: <Zap className="w-5 h-5" />,
       color: 'text-rose-500',
       borderColor: 'border-rose-600/30',
@@ -370,8 +373,8 @@ wireGateway({
           <div className="grid lg:grid-cols-[2fr_3fr] gap-8 items-start">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className={`${p.color}`}>{p.icon}</div>
-                <h3 className="text-xl font-bold text-white">{p.label}</h3>
+                <div className={`${p.color} flex-shrink-0`}>{p.icon}</div>
+                <h3 className="text-xl font-bold text-white leading-none">{p.label}</h3>
               </div>
               <p className="text-neutral-400 leading-relaxed mb-6">{p.summary}</p>
               <Link to={`/docs`} className="text-primary hover:underline font-medium text-sm">
@@ -400,7 +403,7 @@ function DifferentiatorsSection() {
       tag: 'AI Agents',
       tagColor: 'text-violet-400',
       borderColor: 'border-violet-500/20',
-      badge: 'Alpha',
+
       title: 'Your functions are already agent tools',
       desc: 'Most frameworks need adapters, schema re-definitions, and a separate auth layer for AI agents. With Pikku, pass your existing functions directly. Types, permissions, and middleware carry over.',
       code: `const support = pikkuAgent({
@@ -421,6 +424,7 @@ function DifferentiatorsSection() {
       tag: 'Workflows',
       tagColor: 'text-emerald-400',
       borderColor: 'border-emerald-500/20',
+
       title: 'Multi-step processes that survive restarts',
       desc: 'No separate workflow engine. Write sequential steps like normal code. Pikku persists each step, retries on failure, and resumes exactly where it left off.',
       code: `await workflow.do('Create profile', 'createProfile', { userId })
@@ -456,11 +460,6 @@ await workflow.do('Send welcome', 'sendEmail', { to: email })`,
               <div className="flex items-center gap-3 mb-4">
                 {feat.icon}
                 <span className={`text-xs font-bold tracking-widest uppercase ${feat.tagColor}`}>{feat.tag}</span>
-                {feat.badge && (
-                  <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-[10px] font-semibold px-1.5 py-0.5 rounded-full leading-none">
-                    {feat.badge}
-                  </span>
-                )}
               </div>
 
               <div className="grid lg:grid-cols-[3fr_2fr] gap-8">
@@ -495,7 +494,6 @@ await workflow.do('Send welcome', 'sendEmail', { to: email })`,
           <div className="text-center mb-6">
             <div className="inline-flex items-center gap-2 mb-3">
               <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">Pikku Console</span>
-              <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
             </div>
             <p className="text-neutral-400 text-sm">
               Browse functions, run agents, manage secrets, and trigger workflows — without writing tooling code.
