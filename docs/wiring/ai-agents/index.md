@@ -334,6 +334,155 @@ export const agent = pikkuAIAgent({
 })
 ```
 
+## Credential Integration
+
+When an agent calls a tool that belongs to an addon requiring a [credential](/docs/wiring/credentials/), Pikku automatically checks whether the current user has that credential connected. If not, the agent run suspends with a `ToolCredentialRequired` error and the stream emits a `credential-request` event:
+
+```json
+{
+  "type": "credential-request",
+  "credentialName": "google-sheets",
+  "credentialType": "oauth2",
+  "connectUrl": "/auth/oauth2/google-sheets/authorize"
+}
+```
+
+The client can then redirect the user to connect the credential. Once connected, resume the agent:
+
+```typescript
+await rpc.agent.resume(runId, { toolCallId, approved: true })
+```
+
+This is fully automatic — you don't write credential-checking logic in your tools or agent definitions.
+
+## Voice Support
+
+The `@pikku/ai-voice` package provides AI middleware for speech-to-text and text-to-speech, turning any agent into a voice assistant.
+
+```bash
+npm install @pikku/ai-voice
+```
+
+```typescript
+import { voiceInput, voiceOutput } from '@pikku/ai-voice'
+
+export const voiceAgent = pikkuAIAgent({
+  name: 'voice-assistant',
+  description: 'A voice-enabled assistant',
+  instructions: 'You help users via voice.',
+  model: 'fast',
+  tools: [listTodos],
+  aiMiddleware: [
+    voiceInput({ language: 'en' }),   // Transcribes audio attachments to text
+    voiceOutput({ voice: 'alloy' }),  // Synthesizes response text to audio
+  ],
+})
+```
+
+**`voiceInput(options?)`** — modifies incoming messages, transcribing any audio attachments using an `STTService` from your singleton services.
+
+**`voiceOutput(options?)`** — intercepts the output stream, synthesizing text into `audio-delta` events using a `TTSService` from your singleton services.
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `language` | `string` | Hint for speech-to-text transcription |
+| `voice` | `string` | Voice name for text-to-speech |
+| `format` | `string` | Audio format (default: `pcm16`) |
+
+Requires `stt` (STTService) and/or `tts` (TTSService) in your singleton services.
+
+## React UI (`@pikku/assistant-ui`)
+
+The `@pikku/assistant-ui` package provides React components and hooks for building agent chat interfaces, built on top of [assistant-ui](https://github.com/Yonom/assistant-ui).
+
+```bash
+npm install @pikku/assistant-ui @assistant-ui/react
+```
+
+### Drop-in Chat Component
+
+```tsx
+import { PikkuAgentChat } from '@pikku/assistant-ui'
+
+function App() {
+  return (
+    <PikkuAgentChat
+      api="/api/rpc"
+      agentName="my-agent"
+      threadId="thread-123"
+      resourceId="user-456"
+      emptyMessage="Ask me anything!"
+      dark={true}
+    />
+  )
+}
+```
+
+### Custom UI with Hooks
+
+For full control, use the runtime hook directly:
+
+```tsx
+import { usePikkuAgentRuntime, PikkuApprovalContext } from '@pikku/assistant-ui'
+import { AssistantRuntimeProvider, Thread } from '@assistant-ui/react'
+
+function CustomChat() {
+  const runtime = usePikkuAgentRuntime({
+    api: '/api/rpc',
+    agentName: 'my-agent',
+    threadId: 'thread-123',
+    resourceId: 'user-456',
+  })
+
+  return (
+    <AssistantRuntimeProvider runtime={runtime}>
+      <Thread />
+    </AssistantRuntimeProvider>
+  )
+}
+```
+
+### Tool Approval UI
+
+The approval context tracks pending tool approvals and credential requests:
+
+```tsx
+import { usePikkuApproval } from '@pikku/assistant-ui'
+
+function ApprovalPanel() {
+  const { pendingApprovals, handleApproval } = usePikkuApproval()
+
+  return pendingApprovals.map((approval) => (
+    <div key={approval.toolCallId}>
+      <p>Agent wants to call: {approval.toolName}</p>
+      {approval.type === 'credential-request' ? (
+        <a href={approval.connectUrl}>Connect {approval.credentialName}</a>
+      ) : (
+        <>
+          <button onClick={() => handleApproval(approval.toolCallId, true)}>Approve</button>
+          <button onClick={() => handleApproval(approval.toolCallId, false)}>Deny</button>
+        </>
+      )}
+    </div>
+  ))
+}
+```
+
+### Runtime Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `api` | `string` | RPC endpoint URL |
+| `agentName` | `string` | Agent to connect to |
+| `threadId` | `string` | Conversation thread ID |
+| `resourceId` | `string` | Resource scope (e.g., user ID) |
+| `credentials` | `RequestCredentials` | Fetch credentials mode |
+| `headers` | `Record<string, string>` | Extra headers for RPC calls |
+| `model` | `string` | Model override |
+| `temperature` | `number` | Temperature override |
+| `initialMessages` | `any[]` | Pre-populate the chat |
+| `onFinish` | `() => void` | Called when a response completes |
+
 ## Visualizing Agents in the Console
 
 The [Pikku Console](/docs/console) provides a built-in chat interface for your AI agents, displays agent metadata, and lets you test agents interactively. See [Console Features](/docs/console/features) for details.
@@ -341,5 +490,6 @@ The [Pikku Console](/docs/console) provides a built-in chat interface for your A
 ## Next Steps
 
 - **[Channels](/docs/wiring/channels/)**: Learn about the streaming transport used by agents
+- **[Credentials](/docs/wiring/credentials/)**: Per-user credentials and OAuth2 for agent tools
 - **[Functions](/docs/core-features/functions)**: Understand how Pikku functions work as agent tools
 - **[Middleware](/docs/core-features/middleware)**: Apply middleware to agent tool calls

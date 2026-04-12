@@ -3,59 +3,99 @@ title: Fastify
 description: Using Pikku with Fastify
 hide_title: true
 image: /img/logos/fastify-light.svg
+ai: true
 ---
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
-Pikku can be / is best used within fastify as a plugin.
+Pikku provides two Fastify packages:
 
-## Live Example
+- **`@pikku/fastify-plugin`** — drop Pikku into an existing Fastify app as a plugin
+- **`@pikku/fastify`** — full managed server with health checks and graceful shutdown
 
-import { Stackblitz } from '@site/src/components/Stackblitz';
+## Fastify Plugin
 
-<Stackblitz repo="template-fastify-plugin" initialFiles={['src/start.ts']} />
+Add Pikku to an existing Fastify app. Your non-Pikku routes and plugins work alongside it.
 
-```typescript title="Fastify plugin"
+```bash
+npm install @pikku/fastify-plugin
+```
+
+```typescript
+import Fastify from 'fastify'
 import pikkuFastifyPlugin from '@pikku/fastify-plugin'
 
-import { createSingletonServices, createWireServices } from 'path/to/pikku-bootstrap.ts'
+import './.pikku/pikku-bootstrap.gen.js'
 
-// The fastify server setup goes here...
+const app = Fastify()
 
-const singletonServices = await createSingletonServices()
+const singletonServices = await createSingletonServices(config)
+
 app.register(pikkuFastifyPlugin, {
-   pikku: {
-      singletonServices,
-      createWireServices,
-      respondWith404: true,
-      logRoutes: true,
-      loadSchemas: true
-   }
+  pikku: {
+    singletonServices,
+    createWireServices,
+    respondWith404: true,
+    logRoutes: true,
+    loadSchemas: true,
+  }
 })
+
+// Your own Fastify routes still work
+app.get('/custom', async () => ({ hello: 'world' }))
+
+await app.listen({ port: 3000 })
 ```
 
-## Using PikkuFastifyServer
+### Options
 
-:::note
-The setup process for Express, uWS, and Fastify servers are identical, except for using different constructors.
-:::
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `respondWith404` | `boolean` | `true` | Return 404 for routes not matched by Pikku |
+| `logRoutes` | `boolean` | `false` | Log registered Pikku routes on startup |
+| `loadSchemas` | `boolean` | `false` | Load JSON schemas for validation |
 
-PikkuFastifyServer is a quick way to get a fastify server started with pikku if you don't need to put in any custom configuration. 
+## Full Server (`PikkuFastifyServer`)
 
-```typescript reference title="Test"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/backends/fastify/bin/start.ts
+For projects where Pikku handles everything:
+
+```bash
+npm install @pikku/fastify
 ```
 
-This script does the following:
+```typescript
+import './.pikku/pikku-bootstrap.gen.js'
+import { PikkuFastifyServer } from '@pikku/fastify'
 
-1. Imports necessary modules from `@pikku/fastify` and your project's configuration and services.
-2. Defines an async function `runServer` that:
-   - Loads the Pikku configuration
-   - Creates singleton services
-   - Initializes a new `PikkuFastifyServer` instance
-   - Enables graceful shutdown on SIGINT
-   - Initializes and starts the server
-3. Handles any errors by logging them and exiting the process
-4. Calls the `runServer` function to start the server
+const config = await createConfig()
+const singletonServices = await createSingletonServices(config)
 
-By following this setup, you can easily integrate Pikku with a Fastify server, benefiting from both Pikku's features and Fastify's performance.
+const server = new PikkuFastifyServer(config, singletonServices.logger)
+
+// Access the underlying Fastify app if needed
+// server.app.register(myPlugin)
+
+await server.init({
+  singletonServices,
+  createWireServices,
+  logRoutes: true,
+  loadSchemas: true,
+})
+
+process.on('SIGINT', async () => {
+  await server.stop()
+  process.exit(0)
+})
+
+await server.start()
+```
+
+The full server config extends `CoreConfig` with:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `port` | `number` | Port to listen on |
+| `hostname` | `string` | Hostname to bind to |
+| `healthCheckPath` | `string` | Health check endpoint (default: `/health-check`) |
+
+The underlying Fastify `app` is exposed as `server.app` if you need to add custom plugins or routes.

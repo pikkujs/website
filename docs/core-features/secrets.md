@@ -55,40 +55,21 @@ export const chargeCard = pikkuSessionlessFunc<
 The CLI generates a `TypedSecretService` class that wraps your `SecretService` implementation. Use it when creating your singleton services to get typed access:
 
 ```typescript
-import { TypedSecretService } from '.pikku/pikku-types.gen.js'
+import { TypedSecretService } from './.pikku/secrets/pikku-secrets.gen.js'
 
-const secrets = new TypedSecretService(new LocalSecretService())
+const secrets = new TypedSecretService(baseSecretService)
 ```
 
-## OAuth2 Secrets
+## OAuth2 and Credentials
 
-For OAuth2 integrations, use `wireOAuth2Credential`:
-
-```typescript
-import { wireOAuth2Credential } from '#pikku'
-
-wireOAuth2Credential({
-  name: 'github',
-  displayName: 'GitHub OAuth',
-  description: 'GitHub OAuth2 integration',
-  secretId: 'GITHUB_OAUTH_APP',
-  tokenSecretId: 'GITHUB_OAUTH_TOKENS',
-  authorizationUrl: 'https://github.com/login/oauth/authorize',
-  tokenUrl: 'https://github.com/login/oauth/access_token',
-  scopes: ['read:user', 'repo'],
-})
-```
-
-OAuth2 secrets have two secret IDs:
-- `secretId` — Stores the OAuth app secrets (client ID, client secret)
-- `tokenSecretId` — Stores the access/refresh tokens
+For OAuth2 integrations and per-user credentials, see [Credentials](/docs/wiring/credentials/). Credentials build on top of secrets — the OAuth2 app credentials (client ID, client secret) are stored as secrets, while the credential system handles the authorization flow and token management.
 
 ## OAuth2 Client
 
-Use `OAuth2Client` to make authenticated requests with automatic token refresh:
+Use `OAuth2Client` from `@pikku/core/oauth2` to make authenticated requests with automatic token refresh:
 
 ```typescript
-import { OAuth2Client } from '#pikku'
+import { OAuth2Client } from '@pikku/core/oauth2'
 
 const github = new OAuth2Client({
   secretService: secrets,
@@ -117,6 +98,15 @@ The [Pikku Console](/docs/console) provides a visual interface for managing secr
 
 See [Console Features](/docs/console/features#configuration) for details.
 
+## Generated Files
+
+The CLI generates typed wrappers in `.pikku/secrets/`:
+
+- `pikku-secret-types.gen.ts` — re-exports `wireSecret` and types
+- `pikku-secrets.gen.ts` — `TypedSecretService` with your `CredentialsMap`
+- `pikku-secrets-meta.gen.json` — secret metadata for Console and deploy
+
 ## Next Steps
 
 - [Variables](./variables.md) — Non-sensitive configuration management
+- [Credentials](/docs/wiring/credentials/) — Per-user credentials and OAuth2 flows

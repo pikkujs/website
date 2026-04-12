@@ -5,14 +5,33 @@ description: Kysely-based storage backend for Pikku services with type-safe SQL
 ai: true
 ---
 
-# Kysely (`@pikku/kysely`)
+# Kysely
 
-The `@pikku/kysely` package provides storage implementations using the [Kysely](https://kysely.dev/) query builder, giving you type-safe SQL and support for the Kysely ecosystem. It currently uses PostgreSQL via `postgres.js`.
+The Kysely packages provide storage implementations using the [Kysely](https://kysely.dev/) query builder, giving you type-safe SQL across multiple databases.
+
+| Package | Database | Driver |
+|---------|----------|--------|
+| `@pikku/kysely` | PostgreSQL | `postgres.js` via `kysely-postgres-js` |
+| `@pikku/kysely-mysql` | MySQL | `mysql2` via `kysely` |
+| `@pikku/kysely-sqlite` | SQLite | `better-sqlite3` via `kysely` |
+
+All three packages export the same service interfaces — choose the one matching your database.
 
 ## Installation
 
+**PostgreSQL:**
 ```bash
 npm install @pikku/kysely kysely kysely-postgres-js postgres
+```
+
+**MySQL:**
+```bash
+npm install @pikku/kysely-mysql kysely mysql2
+```
+
+**SQLite:**
+```bash
+npm install @pikku/kysely-sqlite kysely better-sqlite3
 ```
 
 ## Services
@@ -104,6 +123,44 @@ const deploymentService = new KyselyDeploymentService(config, db.kysely)
 await deploymentService.init()
 ```
 
+### KyselySecretService
+
+Encrypted secret storage with envelope encryption and key rotation.
+
+```typescript
+import { KyselySecretService } from '@pikku/kysely'
+
+const secrets = new KyselySecretService(db.kysely, {
+  key: process.env.ENCRYPTION_KEY!,
+  keyVersion: 1,
+})
+await secrets.init()
+```
+
+### KyselyCredentialService
+
+Per-user credential storage.
+
+```typescript
+import { KyselyCredentialService } from '@pikku/kysely'
+
+const credentialService = new KyselyCredentialService(db.kysely, {
+  key: process.env.ENCRYPTION_KEY!,
+})
+await credentialService.init()
+```
+
+### KyselyEventHubStore
+
+Channel topic subscription tracking.
+
+```typescript
+import { KyselyEventHubStore } from '@pikku/kysely'
+
+const eventHubStore = new KyselyEventHubStore(db.kysely)
+await eventHubStore.init()
+```
+
 ## Type-Safe Queries
 
 The `KyselyPikkuDB` type provides full type safety for direct Kysely queries against Pikku tables:
@@ -154,6 +211,50 @@ const singletonServices = await createSingletonServices(config, {
   }),
 })
 ```
+
+## MySQL (`@pikku/kysely-mysql`)
+
+All services from `@pikku/kysely` have MySQL equivalents with the `MySQL` prefix:
+
+```typescript
+import {
+  MySQLKyselyAIStorageService,
+  MySQLKyselyAgentRunService,
+  MySQLKyselyWorkflowService,
+  MySQLKyselyWorkflowRunService,
+  MySQLKyselyChannelStore,
+  MySQLKyselyEventHubStore,
+  MySQLKyselyDeploymentService,
+  MySQLKyselySecretService,
+} from '@pikku/kysely-mysql'
+```
+
+Usage is identical to the PostgreSQL versions — pass a `Kysely<KyselyPikkuDB>` instance backed by a MySQL dialect.
+
+## SQLite (`@pikku/kysely-sqlite`)
+
+All services have SQLite equivalents with the `SQLite` prefix. The package also provides a helper for creating the Kysely instance:
+
+```typescript
+import { createSQLiteKysely } from '@pikku/kysely-sqlite'
+import {
+  SQLiteKyselyAIStorageService,
+  SQLiteKyselyAgentRunService,
+  SQLiteKyselyWorkflowService,
+  SQLiteKyselyWorkflowRunService,
+  SQLiteKyselyChannelStore,
+  SQLiteKyselyEventHubStore,
+  SQLiteKyselyDeploymentService,
+  SQLiteKyselySecretService,
+} from '@pikku/kysely-sqlite'
+
+const db = createSQLiteKysely('./pikku.db')
+
+const aiStorage = new SQLiteKyselyAIStorageService(db)
+await aiStorage.init()
+```
+
+SQLite is used by the Cloudflare D1 integration (`@pikku/cloudflare/d1`) under the hood.
 
 ## Cleanup
 

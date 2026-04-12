@@ -1,251 +1,95 @@
 ---
 title: AWS Lambda
-description: Using AWS Lambda with Pikku
+description: Deploy Pikku to AWS Lambda
 hide_title: true
 image: /img/logos/aws-light.svg
+ai: true
 ---
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
-AWS Lambda is a serverless compute platform by Amazon Web Services.
+AWS Lambda is a serverless compute platform by Amazon Web Services. Pikku supports Lambda through two paths:
 
-Pikku integrates with AWS Lambda using the Node.js 18+ runtime via the `@pikku/lambda` package. It supports WebSockets, HTTP, and scheduled tasks.
+1. **`pikku deploy --provider aws`** — automated deployment via the Serverless Framework (recommended)
+2. **`@pikku/lambda`** — handler adapters for manual Lambda integration with your own IaC
 
-There are multiple ways to deploy a Lambda function. If you prefer not to sign up for any services, [OpenTofu / Terraform](https://opentofu.org/) and [AWS CDK](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-cdk.html) are good options.
+## Recommended: Pikku Deploy
 
-Alternatively, [Serverless Framework](https://www.serverless.com/) can be used, though it requires an account.
+The deploy pipeline analyzes your project, generates Lambda entry points and `serverless.yml`, and provisions everything automatically.
 
-This guide assumes you are using Serverless Framework due to its robust offline development experience, but the core principles apply to any deployment method.
+### Setup
 
-## Live Example
-
-import { Stackblitz } from '@site/src/components/Stackblitz';
-
-<Stackblitz repo="template-aws-lambda" initialFiles={['src/main.ts', 'src/cold-start.ts']} />
-
-## Getting Started
-
-### 1. Setup
-
-To create a new Pikku project:
-
-```bash npm2yarn
-npm create pikku@latest
-```
-
-### 2. Run Locally
-
-Start a local development server:
-
-```bash npm2yarn
-npm run start
-```
-
-This compiles the `hello-world` example and runs a local server:
+Install the deploy adapter:
 
 ```bash
-Server ready: http://localhost:3000 🚀
+npm install @pikku/deploy-serverless
 ```
 
-To verify, run:
+Add to your `pikku.config.json`:
+
+```json
+{
+  "deploy": {
+    "providers": {
+      "aws": "@pikku/deploy-serverless"
+    },
+    "defaultProvider": "aws"
+  }
+}
+```
+
+### Deploy
 
 ```bash
-curl -v localhost:3000/production/hello-world
+# Preview what will be created
+npx pikku deploy plan --provider aws
+
+# Deploy
+npx pikku deploy apply --provider aws
+
+# Check current state
+npx pikku deploy info --provider aws
 ```
 
-## Deploying with Serverless
+The pipeline generates one Lambda per deployment unit with:
+- API Gateway HTTP routes
+- SQS queues and consumers
+- EventBridge rules for scheduled tasks
+- WebSocket API (if channels are used)
 
-Before deployment, update the `serverless.yml` file to specify your organization:
+See the [Deploy guide](/docs/deploy) for full documentation.
 
-```yaml
-org: your-org
-```
-
-Then deploy:
-
-```bash npm2yarn
-npm run deploy
-```
-
-Since Serverless Framework now requires authentication, you will be prompted to log in. Once authenticated, the deployment process will set up your stack and upload the code.
-
-If successful, the output should resemble:
-
-```bash
-Deploying "my-app" to stage "production" (us-east-1)
-
-✔ Service deployed to stack my-app-production (54s)
-
-endpoint: ANY - https://<domain-name>.execute-api.us-east-1.amazonaws.com/production/{proxy+}
-functions:
-  http: my-app-production-http (12 MB)
-  cron: my-app-production-cron (12 MB)
-```
-
-To verify the deployment, use the url prefix above, replace `{proxy+}` with `hello-world` and run via curl:
-
-```bash
-curl https://<domain name>.execute-api.us-east-1.amazonaws.com/production/hello-world
-```
-
-## How Pikku Works with AWS Lambda
-
-Pikku requires two key files for AWS Lambda integration:
-
-### 1. Cold Start
-
-```typescript reference title="cold-start.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/aws-lambda/src/cold-start.ts
-```
-
-This initializes singleton services and configurations the first time a function is invoked.
-
-### 2. Entry Point
-
-```typescript reference title="main.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/aws-lambda/src/main.ts
-```
-
-This file acts as the Lambda entry point and routes requests to the Pikku runtime.
-
-## HTTP API Options
-
-Pikku provides three ways to handle HTTP requests:
-
-### 1. `corsHandler`
-
-The `corsHandler` allows you to specify permitted origins.
-
-### 2. `corslessHTTP`
-
-The `corslessHTTP` method disables CORS and directly forwards requests to Pikku.
-
-### 3. `anywhereHTTP`
-
-The `anywhereHTTP` method dynamically sets the request origin as the CORS origin.
-
-:::danger
-Use `anywhereHTTP` with caution, as it permits requests from any domain. Only enable it if you understand the security implications.
+:::note Beta
+The Serverless Framework deploy provider is in beta. The core flow works, but some advanced features are still being finalized.
 :::
 
-## Scheduled Tasks
+## Manual Setup with `@pikku/lambda`
 
-To define a scheduled task:
+If you're using CDK, Terraform, SST, or any other IaC tool, you can use the `@pikku/lambda` package directly. It provides handler adapters that convert Lambda events into Pikku requests.
+
+### Installation
+
+```bash
+npm install @pikku/lambda
+```
+
+### Sub-path Exports
+
+| Import | Description |
+|--------|-------------|
+| `@pikku/lambda` | All exports |
+| `@pikku/lambda/http` | HTTP handler (API Gateway v1 and v2) |
+| `@pikku/lambda/websocket` | WebSocket handlers (connect, disconnect, message) |
+| `@pikku/lambda/queue` | SQS queue worker |
+| `@pikku/lambda/scheduled` | EventBridge scheduled handler |
+
+### Cold Start Pattern
+
+Cache singleton services at the module level so they persist across warm invocations:
 
 ```typescript
-import { ScheduledHandler } from 'aws-lambda'
+import './.pikku/pikku-bootstrap.gen.js'
 
-export const myScheduledTask: ScheduledHandler = async () => {
-  const singletonServices = await coldStart()
-  await runScheduledTask({
-    name: 'myScheduledTask',
-    singletonServices,
-  })
-}
-```
-
-Since this function is only triggered by AWS Lambda and does not rely on additional AWS-specific logic, no further configuration is needed.
-
-## SQS Queue Worker
-
-Process SQS messages as Pikku queue jobs using `runSQSQueueWorker`:
-
-```typescript
-import { SQSHandler } from 'aws-lambda'
-import { runSQSQueueWorker } from '@pikku/lambda'
-
-export const mySQSWorker: SQSHandler = async (event) => {
-  const singletonServices = await coldStart()
-  return await runSQSQueueWorker({
-    singletonServices,
-    createWireServices,
-    event,
-  })
-}
-```
-
-`runSQSQueueWorker` processes each SQS record as a queue job and returns an `SQSBatchResponse` with batch item failures, so failed messages are automatically retried.
-
-### Serverless Framework Configuration
-
-```yaml
-functions:
-  sqsWorker:
-    handler: src/main.mySQSWorker
-    events:
-      - sqs:
-          arn: !GetAtt MyQueue.Arn
-          batchSize: 10
-          functionResponseType: ReportBatchItemFailures
-```
-
-## WebSocket (API Gateway)
-
-Pikku supports WebSocket connections through API Gateway using three Lambda handlers:
-
-```typescript
-import {
-  connectWebsocket,
-  disconnectWebsocket,
-  processWebsocketMessage,
-} from '@pikku/lambda'
-import { PgChannelStore, PgEventHubStore } from '@pikku/pg'
-
-export const wsConnect = async (event) => {
-  const singletonServices = await coldStart()
-  return connectWebsocket(event, singletonServices)
-}
-
-export const wsDisconnect = async (event) => {
-  const singletonServices = await coldStart()
-  return disconnectWebsocket(event, singletonServices)
-}
-
-export const wsMessage = async (event) => {
-  const singletonServices = await coldStart()
-  return processWebsocketMessage(event, singletonServices, createWireServices)
-}
-```
-
-WebSocket support requires:
-- **API Gateway WebSocket API** — a separate API Gateway configured for WebSocket
-- **`PgChannelStore`** or equivalent — persists connection state across Lambda invocations
-- **`LambdaEventHubService`** — sends messages back to connected clients via API Gateway Management API
-
-### Serverless Framework Configuration
-
-```yaml
-functions:
-  wsConnect:
-    handler: src/websocket.wsConnect
-    events:
-      - websocket: $connect
-  wsDisconnect:
-    handler: src/websocket.wsDisconnect
-    events:
-      - websocket: $disconnect
-  wsMessage:
-    handler: src/websocket.wsMessage
-    events:
-      - websocket: $default
-```
-
-## Multi-Handler Pattern
-
-A single Lambda file can export multiple handlers for different event sources:
-
-```typescript
-// main.ts
-export { httpRoute } from './http-handler'
-export { myScheduledTask } from './scheduler-handler'
-export { mySQSWorker } from './sqs-handler'
-```
-
-## Cold Start Optimization
-
-The cold start pattern caches singleton services at the module level so they persist across invocations within the same Lambda container:
-
-```typescript
 let cachedServices: SingletonServices | undefined
 
 export const coldStart = async () => {
@@ -257,4 +101,92 @@ export const coldStart = async () => {
 }
 ```
 
-This avoids re-initializing database connections, JWT services, and other singletons on warm invocations.
+### HTTP Handler
+
+```typescript
+import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda'
+import { runFetchV2 } from '@pikku/lambda/http'
+
+export const handler = async (
+  event: APIGatewayProxyEventV2
+): Promise<APIGatewayProxyResultV2> => {
+  await coldStart()
+  return runFetchV2(event)
+}
+```
+
+### SQS Queue Worker
+
+Process SQS messages as Pikku queue jobs. Returns an `SQSBatchResponse` with batch item failures so failed messages are automatically retried.
+
+```typescript
+import type { SQSHandler } from 'aws-lambda'
+import { runSQSQueueWorker } from '@pikku/lambda/queue'
+
+export const handler: SQSHandler = async (event) => {
+  await coldStart()
+  return runSQSQueueWorker({ event })
+}
+```
+
+### Scheduled Tasks
+
+```typescript
+import type { ScheduledEvent } from 'aws-lambda'
+import { runLambdaScheduled } from '@pikku/lambda/scheduled'
+
+export const handler = async (event: ScheduledEvent) => {
+  await coldStart()
+  await runLambdaScheduled(event)
+}
+```
+
+### WebSocket (API Gateway)
+
+WebSocket connections require three separate Lambda handlers and a persistent store for connection state:
+
+```typescript
+import {
+  connectWebsocket,
+  disconnectWebsocket,
+  processWebsocketMessage,
+} from '@pikku/lambda/websocket'
+
+export const wsConnect = async (event) => {
+  await coldStart()
+  return connectWebsocket(event, singletonServices)
+}
+
+export const wsDisconnect = async (event) => {
+  await coldStart()
+  return disconnectWebsocket(event, singletonServices)
+}
+
+export const wsMessage = async (event) => {
+  await coldStart()
+  return processWebsocketMessage(event, singletonServices, createWireServices)
+}
+```
+
+WebSocket support requires:
+- **API Gateway WebSocket API** — a separate API Gateway configured for WebSocket
+- **`ChannelStore`** — persists connection state across Lambda invocations (e.g., `PgChannelStore`)
+- **`LambdaEventHubService`** — sends messages back to connected clients via API Gateway Management API
+
+### Other Exports
+
+| Export | Description |
+|--------|-------------|
+| `SQSQueueService` | Queue service that dispatches jobs via SQS |
+| `LambdaDeploymentService` | Deployment service for Lambda environments |
+
+### Multi-Handler Pattern
+
+A single Lambda file can export multiple handlers for different event sources:
+
+```typescript
+// main.ts
+export { httpHandler } from './http-handler.js'
+export { scheduledHandler } from './scheduler-handler.js'
+export { sqsHandler } from './sqs-handler.js'
+```

@@ -1,80 +1,120 @@
 ---
-title: NextJS
-description: Using Pikku with NextJS App Router
+title: Next.js
+description: Using Pikku with Next.js App Router
 hide_title: true
 image: /img/logos/nextjs-light.png
+ai: true
 ---
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
-:::info
-The pikku nextjs integration currently only supports nextJS version 15, as it introduced breaking changes when it comes to headers.
+Pikku integrates with Next.js App Router, letting you call Pikku functions from server components, server actions, and API routes — without running a separate server.
 
-The App Router is still in development, with some APIs having an `_unstable` prefix. As a result, certain features like caching may not function as intended yet.
+## Setup
 
-We can add support to version 14 if there's enough interest.
-:::
+Install the runtime package:
 
-Deploying Pikku with NextJS allows for code separation benefits without running a separate server, while also leveraging NextJS Server-Side Rendering (SSR) capabilities.
-
-## Live Example
-
-import { Stackblitz } from '@site/src/components/Stackblitz';
-
-<Stackblitz repo="template-nextjs" initialFiles={['src/http.functions.ts', 'app/page.tsx']} />
-
-### Setting up Pikku
-
-The pikku CLI can generate a `pikku-next.ts` file which would allow you to directly interact with your functions.
-
-In order to do so you can run `npx @pikku/cli all` or target it specifically with `npx @pikku/cli next`  and will need to have a `nextBackendFile` property set within your `pikku config`.
-
-For example:
-
-```json reference title="pikku.config.json"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/apps/next-app/pikku.config.json
+```bash
+npm install @pikku/next
 ```
 
-For additional functionality or feature requests, please submit an issue on the [Pikku repository](https://github.com/pikkujs/pikku).
+Configure the CLI to generate the Next.js integration files in `pikku.config.json`:
 
-### Server-side Actions
+```json
+{
+  "clientFiles": {
+    "nextBackendFile": "./pikku-next.gen.ts",
+    "nextHTTPFile": "./pikku-next-http.gen.ts"
+  }
+}
+```
 
-Invoke server-side actions by calling the Pikku action request with the method, route, and data.
+Then run the CLI:
+
+```bash
+npx pikku nextjs
+```
+
+This generates:
+- **`pikku-next.gen.ts`** — a `pikku()` helper for calling functions from server components and server actions
+- **`pikku-next-http.gen.ts`** — an HTTP route handler for API routes (requires `fetchFile` to also be configured)
+
+## Server-Side Usage
+
+The generated `pikku()` function gives you typed access to your Pikku functions from server components and actions:
+
+### Server Actions
 
 ```typescript
 async function addTodo(text: string) {
   'use server'
-  await pikku().post(
-    '/todo',
-    { text }
-  )
+  await pikku().post('/todo', { text })
 }
 ```
 
-### SSR Loading
+### SSR Data Loading
 
-Load data directly via the API within pages by referencing it in the function:
+Load data directly in server components:
 
 ```typescript
 export default async function TodoPage() {
-  const todos: Todos = await pikku().get(
-    '/todos'
-    null
-  )
-  return <TodosCard todos={todos} addTodo={addTodo} toggleTodo={toggleTodo} />
+  const todos: Todos = await pikku().get('/todos', null)
+  return <TodosCard todos={todos} />
 }
 ```
 
-### Static SSR Loading
+### Static SSR (No Session)
 
-For when your server side rendering isn't based on the user session (for example during build-time), you can use `staticGet`. This skips accessing the `headers`.
+For data loading that doesn't depend on the user session (e.g., build-time rendering), use `staticGet` to skip reading headers:
 
 ```typescript
-export default async function TodoPage() {
-  const todos: Todos = await pikku().staticGet(
-    '/todos',
-    null
-  )
-  return <TodosCard todos={todos} addTodo={addTodo} toggleTodo={toggleTodo} />
+export default async function PublicPage() {
+  const posts = await pikku().staticGet('/posts', null)
+  return <PostList posts={posts} />
 }
 ```
+
+## API Route Handler
+
+Mount Pikku as a Next.js API route handler for external HTTP access:
+
+```typescript
+// app/api/[...pikku]/route.ts
+import { pikkuNextHTTPHandler } from './pikku-next-http.gen'
+
+export const GET = pikkuNextHTTPHandler
+export const POST = pikkuNextHTTPHandler
+export const PUT = pikkuNextHTTPHandler
+export const DELETE = pikkuNextHTTPHandler
+```
+
+## Sub-path Exports
+
+| Import | Description |
+|--------|-------------|
+| `@pikku/next` | `PikkuNextJS` class — core integration |
+| `@pikku/next/pikku-next-request` | Next.js request adapters (action, SSR, static) |
+| `@pikku/next/pikku-session` | `getSession()` — extract user session from a Next.js request via middleware |
+
+### Session Extraction
+
+Use `getSession` to read the user session from a Next.js request (e.g., in middleware or API routes):
+
+```typescript
+import { getSession } from '@pikku/next/pikku-session'
+
+const session = await getSession(request, singletonServices, [
+  authBearerMiddleware(),
+])
+```
+
+## How It Works
+
+The `PikkuNextJS` class:
+
+1. Creates singleton services on first call (cached for subsequent requests)
+2. Converts Next.js requests to Pikku's internal request format
+3. Runs your function through the standard Pikku pipeline (middleware, validation, execution)
+4. Returns the typed result
+
+Server actions use `PikkuActionNextRequest` which reads headers from Next.js's `headers()` API. Static calls skip header reading entirely.

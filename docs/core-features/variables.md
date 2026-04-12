@@ -54,9 +54,9 @@ export const connectToDb = pikkuSessionlessFunc<void, { connected: boolean }>({
 The CLI generates a `TypedVariablesService` class that wraps your `VariablesService` implementation. Use it when creating your singleton services:
 
 ```typescript
-import { TypedVariablesService } from '.pikku/pikku-types.gen.js'
+import { TypedVariablesService } from './.pikku/variables/pikku-variables.gen.js'
 
-const variables = new TypedVariablesService(new LocalVariablesService())
+const variables = new TypedVariablesService(baseVariablesService)
 ```
 
 ## Variables vs Secrets
@@ -83,6 +83,14 @@ const redisConfigSchema = z.object({
   port: z.string().default('6379'),
 })
 ```
+
+## Generated Files
+
+The CLI generates typed wrappers in `.pikku/variables/`:
+
+- `pikku-variable-types.gen.ts` — re-exports `wireVariable` and types
+- `pikku-variables.gen.ts` — `TypedVariablesService` with your `VariablesMap`
+- `pikku-variables-meta.gen.json` — variable metadata for Console and deploy
 
 ## Managing Variables with the Console
 

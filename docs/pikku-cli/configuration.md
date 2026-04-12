@@ -18,9 +18,7 @@ The `pikku.config.json` file configures how the Pikku CLI scans your codebase an
 }
 ```
 
-## Configuration Options
-
-### Core Options
+## Core Options
 
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
@@ -28,84 +26,139 @@ The `pikku.config.json` file configures how the Pikku CLI scans your codebase an
 | `srcDirectories` | `string[]` | ✅ | Directories to scan for Pikku functions and wirings |
 | `outDir` | `string` | ✅ | Where generated files are written (default: `.pikku`) |
 | `rootDir` | `string` | ❌ | Root directory for resolving paths (default: config file directory) |
+| `extends` | `string` | ❌ | Path to another `pikku.config.json` to inherit from |
+| `ignoreFiles` | `string[]` | ❌ | Glob patterns to skip (default: `["**/*.test.ts", "**/*.spec.ts", "**/node_modules/**", "**/dist/**"]`) |
+| `globalHTTPPrefix` | `string` | ❌ | Prefix prepended to all HTTP routes (e.g., `/api/v1`) |
 | `$schema` | `string` | ❌ | JSON schema URL for editor autocomplete |
 
-### Client Generation
+## Client Generation
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `fetchFile` | `string` | Generate type-safe HTTP client (fetch-based) |
-| `websocketFile` | `string` | Generate type-safe WebSocket client |
-| `queueFile` | `string` | Generate type-safe queue client |
-| `rpcWiringsFile` | `string` | Generate type-safe RPC client |
-| `nextBackendFile` | `string` | Generate Next.js backend integration |
-| `nextHTTPFile` | `string` | Generate Next.js HTTP route handler |
+Client files can be specified under a `clientFiles` object. When set, the corresponding `pikku <command>` generates a type-safe client at that path.
 
-**Example:**
 ```json
 {
-  "fetchFile": "sdk/pikku-fetch.gen.ts",
-  "websocketFile": "sdk/pikku-websocket.gen.ts",
-  "queueFile": "sdk/pikku-queue.gen.ts",
-  "rpcWiringsFile": "sdk/pikku-rpc.gen.ts"
+  "clientFiles": {
+    "fetchFile": "sdk/pikku-fetch.gen.ts",
+    "websocketFile": "sdk/pikku-websocket.gen.ts",
+    "rpcWiringsFile": "sdk/pikku-rpc.gen.ts",
+    "queueWiringsFile": "sdk/pikku-queue.gen.ts",
+    "mcpJsonFile": "sdk/pikku-mcp.gen.json",
+    "nextBackendFile": "pikku-nextjs.ts",
+    "nextHTTPFile": "pikku-nextjs-http.ts"
+  }
 }
 ```
 
-### Workflows
+| Key | CLI Command | Description |
+|-----|-------------|-------------|
+| `fetchFile` | `pikku fetch` | Type-safe HTTP fetch client |
+| `websocketFile` | `pikku websocket` | Type-safe WebSocket client |
+| `rpcWiringsFile` | `pikku rpc` | RPC client wrappers |
+| `queueWiringsFile` | `pikku queue-service` | Queue service wrapper |
+| `mcpJsonFile` | — | MCP server JSON manifest |
+| `nextBackendFile` | `pikku nextjs` | Next.js backend integration |
+| `nextHTTPFile` | `pikku nextjs` | Next.js HTTP route handler |
 
-Configure workflow execution mode and queue settings.
+:::note Legacy format
+You can also specify these at the top level (e.g., `"fetchFile": "..."` instead of `"clientFiles": { "fetchFile": "..." }`). The `clientFiles` object is recommended because paths inside it are resolved relative to the config file directory.
+:::
 
-**Single Queue Mode:**
+## Scaffold
+
+The `scaffold` section controls where `pikku new` puts generated files and which features are enabled.
+
+```json
+{
+  "scaffold": {
+    "pikkuDir": "src/pikku",
+    "functionDir": "src/functions",
+    "wiringDir": "src/wirings",
+    "middlewareDir": "src/middleware",
+    "permissionDir": "src/permissions",
+    "addonDir": "packages/addons",
+    "rpc": "auth",
+    "console": "no-auth",
+    "agent": "auth",
+    "workflow": "auth"
+  }
+}
+```
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `workflows.singleQueue` | `true` | Use single queue for all workflows |
-| `workflows.path` | `string` | Output path for generated workflow types |
-| `workflows.orchestratorQueue` | `string` | Optional custom orchestrator queue name |
-| `workflows.workerQueue` | `string` | Optional custom worker queue name |
+| `pikkuDir` | `string` | Directory for auto-generated scaffold files (RPC endpoints, agent endpoints, console functions, workflow routes) |
+| `functionDir` | `string` | Where `pikku new function` puts files |
+| `wiringDir` | `string` | Where `pikku new wiring` puts files |
+| `middlewareDir` | `string` | Where `pikku new middleware` puts files |
+| `permissionDir` | `string` | Where `pikku new permission` puts files |
+| `addonDir` | `string` | Where `pikku new addon` puts addon packages |
 
-**Example (Single Queue):**
+**Feature flags** — set via `pikku enable <feature>` or directly in config:
+
+| Option | Values | Description |
+|--------|--------|-------------|
+| `rpc` | `"auth"` \| `"no-auth"` \| `false` | Generate public RPC endpoint |
+| `console` | `"auth"` \| `"no-auth"` \| `false` | Generate console functions |
+| `agent` | `"auth"` \| `"no-auth"` \| `false` | Generate public agent endpoints |
+| `workflow` | `"auth"` \| `"no-auth"` \| `false` | Generate workflow routes |
+
+## AI Agents
+
+Configure model aliases and defaults for AI agents.
+
+```json
+{
+  "models": {
+    "fast": "openai/gpt-4o-mini",
+    "smart": { "model": "anthropic/claude-sonnet-4-20250514", "temperature": 0.7, "maxSteps": 10 }
+  },
+  "agentDefaults": {
+    "temperature": 0.5,
+    "maxSteps": 5
+  },
+  "agentOverrides": {
+    "my-agent": { "model": "openai/gpt-4o", "temperature": 0.3 }
+  }
+}
+```
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `models` | `Record<string, string \| object>` | Named model aliases. Value is either a model string (`provider/model`) or `{ model, temperature?, maxSteps? }` |
+| `agentDefaults` | `object` | Default `temperature` and `maxSteps` for all agents |
+| `agentOverrides` | `Record<string, object>` | Per-agent overrides for `model`, `temperature`, `maxSteps` |
+
+## Workflows
+
 ```json
 {
   "workflows": {
-    "singleQueue": true,
-    "path": "src/workflows/pikku.workflows.gen.ts",
     "orchestratorQueue": "pikku-workflow-orchestrator",
     "workerQueue": "pikku-workflow-worker"
   }
 }
 ```
 
-### CLI
-
-Configure CLI entrypoints. Each CLI can have multiple execution modes: local (direct command-line), channel (remote via WebSocket), or a simple string path.
-
 | Option | Type | Description |
 |--------|------|-------------|
-| `cli.entrypoints` | `object` | Map of CLI names to their configuration(s) |
+| `orchestratorQueue` | `string` | Custom queue name for workflow orchestration |
+| `workerQueue` | `string` | Custom queue name for workflow step execution |
 
-**Entrypoint types:**
-- `string` - Simple path to wiring file
-- `{ type: 'local', path: string }` - Local CLI execution
-- `{ type: 'channel', wirePath: string, name?: string, route?: string, path?: string }` - Remote CLI via WebSocket
-- Array of any above types - Multiple execution modes for one CLI
+## CLI Entrypoints
 
-**Example:**
+Configure CLI tools built with Pikku's CLI wiring.
+
 ```json
 {
   "cli": {
     "entrypoints": {
       "my-cli": [
-        {
-          "type": "local",
-          "path": "src/cli-local.ts"
-        },
+        { "type": "local", "path": "src/cli-local.ts" },
         {
           "type": "channel",
           "wirePath": "src/cli-channel.ts",
           "name": "cli",
-          "route": "/cli",
-          "path": "src/cli-remote.ts"
+          "route": "/cli"
         }
       ],
       "simple-cli": "src/simple-cli.ts"
@@ -114,55 +167,60 @@ Configure CLI entrypoints. Each CLI can have multiple execution modes: local (di
 }
 ```
 
-### Filtering
+Each entrypoint can be:
+- A `string` — path to the wiring file
+- `{ type: "local", path }` — direct command-line execution
+- `{ type: "channel", wirePath, name?, route?, path? }` — remote execution via WebSocket
+- An array of the above for multiple execution modes
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `filters.tags` | `string[]` | Only include functions/wirings with these tags |
-| `filters.types` | `string[]` | Only include these wiring types: `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli` |
-| `filters.directories` | `string[]` | Only scan these directories |
+## Deploy
 
-**Example:**
+Configure deployment providers and settings.
+
 ```json
 {
-  "filters": {
-    "tags": ["api", "public"],
-    "types": ["http", "rpc"],
-    "directories": ["src/api"]
+  "deploy": {
+    "providers": {
+      "cloudflare": "@pikku/deploy-cloudflare",
+      "aws": "@pikku/deploy-serverless"
+    },
+    "defaultProvider": "cloudflare",
+    "serverlessIncompatible": ["heavy-compute-function"]
   }
 }
 ```
 
-### Monorepo Support
-
 | Option | Type | Description |
 |--------|------|-------------|
-| `packageMappings` | `object` | Map local paths to published package names |
+| `deploy.providers` | `Record<string, string>` | Map of provider names to adapter packages |
+| `deploy.defaultProvider` | `string` | Default provider for `pikku deploy` commands |
+| `deploy.serverlessIncompatible` | `string[]` | Function names that can't run in serverless (routed to server fallback) |
 
-**Example:**
+## Addon Mode
+
+When building a reusable addon package, set `addon` to enable addon-specific codegen.
+
 ```json
 {
-  "packageMappings": {
-    "packages/sdk": "@my-app/sdk",
-    "packages/functions": "@my-app/functions"
+  "addon": true
+}
+```
+
+Or with metadata for the addon registry:
+
+```json
+{
+  "addon": {
+    "displayName": "Slack Integration",
+    "description": "Slack API functions for Pikku",
+    "categories": ["Communication"],
+    "icon": "slack-icon.svg"
   }
 }
 ```
 
-This ensures generated imports use `@my-app/sdk` instead of relative paths like `../../packages/sdk`.
+## OpenAPI Generation
 
-### OpenAPI Generation
-
-| Option | Type | Description |
-|--------|------|-------------|
-| `openAPI.outputFile` | `string` | Where to write OpenAPI spec (`.yml` or `.json`) |
-| `openAPI.additionalInfo.info` | `object` | API metadata (title, version, description) |
-| `openAPI.additionalInfo.servers` | `array` | Server URLs |
-| `openAPI.additionalInfo.tags` | `array` | Tag descriptions |
-| `openAPI.additionalInfo.securitySchemes` | `object` | Security scheme definitions |
-| `openAPI.additionalInfo.security` | `array` | Global security requirements |
-
-**Example:**
 ```json
 {
   "openAPI": {
@@ -174,35 +232,113 @@ This ensures generated imports use `@my-app/sdk` instead of relative paths like 
         "description": "API documentation"
       },
       "servers": [
-        { "url": "https://api.example.com", "description": "Production" },
-        { "url": "http://localhost:3000", "description": "Development" }
-      ]
+        { "url": "https://api.example.com", "description": "Production" }
+      ],
+      "securitySchemes": {},
+      "security": []
     }
   }
 }
 ```
 
-### Advanced Options
+## Schema Options
+
+```json
+{
+  "schema": {
+    "additionalProperties": false,
+    "supportsImportAttributes": true
+  }
+}
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `additionalProperties` | `boolean` | `false` | Allow extra properties in generated JSON schemas |
+| `supportsImportAttributes` | `boolean` | `true` | Use import attributes for schema imports (TypeScript 5.3+) |
+
+## Monorepo Support
+
+```json
+{
+  "packageMappings": {
+    "packages/sdk": "@my-app/sdk",
+    "packages/functions": "@my-app/functions"
+  }
+}
+```
+
+Maps local directory paths to published package names so generated imports use the package name instead of relative paths.
+
+## Filtering
+
+Permanently filter which functions are included in codegen output. These are the config-file equivalent of the CLI `--tags`, `--types`, etc. flags.
+
+```json
+{
+  "filters": {
+    "tags": ["api", "public"],
+    "types": ["http", "rpc"],
+    "directories": ["src/api"]
+  }
+}
+```
+
+## Linting
+
+Configure lint rules for the inspector:
+
+```json
+{
+  "lint": {
+    "servicesNotDestructured": "warn",
+    "wiresNotDestructured": "error"
+  }
+}
+```
+
+| Rule | Values | Description |
+|------|--------|-------------|
+| `servicesNotDestructured` | `"off"` \| `"warn"` \| `"error"` | Warn when functions don't destructure services |
+| `wiresNotDestructured` | `"off"` \| `"warn"` \| `"error"` | Warn when functions don't destructure wires |
+
+## Advanced Options
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `extends` | `string` | Extend another Pikku config file |
-| `supportsImportAttributes` | `boolean` | Enable import attributes for schema imports (TypeScript 5.3+) |
+| `forceRequiredServices` | `string[]` | Service names that must always be available, even if not detected |
+| `schemasFromTypes` | `string[]` | Additional type names to generate schemas for |
+| `verboseMeta` | `boolean` | Include extra metadata in generated JSON files |
 
 ## Example Configurations
 
-### Monorepo with Shared SDK
+### Full-Featured App
 
 ```json
 {
   "tsconfig": "./tsconfig.json",
-  "srcDirectories": ["packages/functions/src"],
-  "outDir": "packages/functions/.pikku",
-  "fetchFile": "packages/sdk/.pikku/pikku-fetch.gen.ts",
-  "websocketFile": "packages/sdk/.pikku/pikku-websocket.gen.ts",
-  "packageMappings": {
-    "packages/sdk": "@my-app/sdk",
-    "packages/functions": "@my-app/functions"
+  "srcDirectories": ["src"],
+  "outDir": ".pikku",
+  "globalHTTPPrefix": "/api",
+  "clientFiles": {
+    "fetchFile": "sdk/pikku-fetch.gen.ts",
+    "websocketFile": "sdk/pikku-websocket.gen.ts"
+  },
+  "scaffold": {
+    "pikkuDir": "src/pikku",
+    "rpc": "auth",
+    "agent": "auth",
+    "workflow": "auth"
+  },
+  "models": {
+    "fast": "openai/gpt-4o-mini",
+    "smart": "anthropic/claude-sonnet-4-20250514"
+  },
+  "deploy": {
+    "providers": {
+      "cloudflare": "@pikku/deploy-cloudflare"
+    },
+    "defaultProvider": "cloudflare"
   }
 }
 ```
@@ -214,17 +350,45 @@ This ensures generated imports use `@my-app/sdk` instead of relative paths like 
   "tsconfig": "./tsconfig.json",
   "srcDirectories": ["./backend"],
   "outDir": "./backend/.pikku",
-  "nextBackendFile": "./pikku-nextjs.ts"
+  "clientFiles": {
+    "nextBackendFile": "./pikku-nextjs.ts"
+  }
 }
 ```
 
-### Filtered Build (Public API Only)
+### Monorepo with Shared SDK
 
 ```json
 {
   "tsconfig": "./tsconfig.json",
+  "srcDirectories": ["packages/functions/src"],
+  "outDir": "packages/functions/.pikku",
+  "clientFiles": {
+    "fetchFile": "packages/sdk/pikku-fetch.gen.ts",
+    "websocketFile": "packages/sdk/pikku-websocket.gen.ts"
+  },
+  "packageMappings": {
+    "packages/sdk": "@my-app/sdk",
+    "packages/functions": "@my-app/functions"
+  }
+}
+```
+
+### Config Inheritance
+
+Base config (`pikku.config.base.json`):
+```json
+{
+  "tsconfig": "./tsconfig.json",
   "srcDirectories": ["src"],
-  "outDir": ".pikku",
+  "outDir": ".pikku"
+}
+```
+
+Extended config (`pikku.config.json`):
+```json
+{
+  "extends": "./pikku.config.base.json",
   "filters": {
     "tags": ["public"],
     "types": ["http"]
@@ -234,5 +398,5 @@ This ensures generated imports use `@my-app/sdk` instead of relative paths like 
 
 ## Next Steps
 
-- [Getting Started](/docs/core-features) - Set up your first Pikku project
-- [Tree-Shaking](/docs/pikku-cli/tree-shaking) - Learn about filtering
+- [Pikku CLI Commands](/docs/pikku-cli) — Full CLI reference
+- [Tree-Shaking](/docs/pikku-cli/tree-shaking) — How filtering and tree-shaking work

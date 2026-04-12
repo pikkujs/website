@@ -1,42 +1,109 @@
 ---
 title: uWebSockets
-description: Using Pikku with uWS
+description: Using Pikku with uWebSockets.js
 hide_title: true
 image: /img/logos/uws-light.svg
+ai: true
 ---
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
-Pikku can be / is best used within uws as a handler.
+[uWebSockets.js](https://github.com/uNetworking/uWebSockets.js) is a high-performance HTTP and WebSocket server. Pikku provides two uWS packages:
 
-## Live Example
+- **`@pikku/uws-handler`** — HTTP and WebSocket handlers to plug into your own uWS app
+- **`@pikku/uws`** — full managed server with health checks and graceful shutdown
 
-import { Stackblitz } from '@site/src/components/Stackblitz';
+## uWS Handler
 
-<Stackblitz repo="template-uws-handler" initialFiles={['src/start.ts']} />
+Add Pikku handlers to an existing uWS app:
 
-## Using PikkuUWSServer
-
-:::note
-The setup process for Express, uWS, and Fastify servers are identical, except for using different constructors.
-:::
-
-PikkuUWSServer is a quick way to get a fastify server started with pikku if you don't need to put in any custom configuration. 
-
-```typescript reference title="Test"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/backends/uws/bin/start.ts
+```bash
+npm install @pikku/uws-handler
 ```
 
-This script does the following:
+```typescript
+import * as uWS from 'uWebSockets.js'
+import { pikkuHTTPHandler, pikkuWebsocketHandler } from '@pikku/uws-handler'
 
-1. Imports necessary modules from `@pikku/uws` and your project's configuration and services.
-2. Defines an async function `runServer` that:
-   - Loads the Pikku configuration
-   - Creates singleton services
-   - Initializes a new `PikkuUWSServer` instance
-   - Enables graceful shutdown on SIGINT
-   - Initializes and starts the server
-3. Handles any errors by logging them and exiting the process
-4. Calls the `runServer` function to start the server
+import './.pikku/pikku-bootstrap.gen.js'
 
-By following this setup, you can easily integrate Pikku with a uWS server, benefiting from both Pikku's features and uWS's performance.
+const app = uWS.App()
+const singletonServices = await createSingletonServices(config)
+
+// HTTP handler
+pikkuHTTPHandler({
+  app,
+  singletonServices,
+  createWireServices,
+  logRoutes: true,
+  loadSchemas: true,
+})
+
+// WebSocket handler (optional)
+pikkuWebsocketHandler({
+  app,
+  singletonServices,
+  createWireServices,
+})
+
+app.listen(3000, () => console.log('Listening on 3000'))
+```
+
+## Full Server (`PikkuUWSServer`)
+
+For projects where Pikku handles everything:
+
+```bash
+npm install @pikku/uws
+```
+
+```typescript
+import './.pikku/pikku-bootstrap.gen.js'
+import { PikkuUWSServer } from '@pikku/uws'
+
+const config = await createConfig()
+const singletonServices = await createSingletonServices(config)
+
+const server = new PikkuUWSServer(config, singletonServices.logger)
+
+// Access the underlying uWS app if needed
+// server.app.get('/custom', ...)
+
+await server.init({
+  singletonServices,
+  createWireServices,
+  logRoutes: true,
+  loadSchemas: true,
+})
+
+process.on('SIGINT', async () => {
+  await server.stop()
+  process.exit(0)
+})
+
+await server.start()
+```
+
+The full server config extends `CoreConfig` with:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `port` | `number` | Port to listen on |
+| `hostname` | `string` | Hostname to bind to |
+| `healthCheckPath` | `string` | Health check endpoint (default: `/health-check`) |
+
+The underlying uWS `app` is exposed as `server.app` if you need to add custom routes.
+
+## WS (WebSocket-only)
+
+The `@pikku/ws` package provides a standalone WebSocket server using the [`ws`](https://github.com/websockets/ws) library — useful when you want Pikku channels without a full HTTP server:
+
+```bash
+npm install @pikku/ws
+```
+
+```typescript
+import { PikkuWSServer } from '@pikku/ws'
+```
+
+This is a lighter alternative when you only need WebSocket support and are handling HTTP separately.

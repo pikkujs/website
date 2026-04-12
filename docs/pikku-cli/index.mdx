@@ -1,143 +1,242 @@
 ---
 sidebar_position: 0
 title: Pikku CLI
-description: Code generation and build-time optimization tool
+description: Code generation, scaffolding, and deployment tool
 ---
 
 # Pikku CLI
 
-The Pikku CLI is a type generation and build-time optimization tool that scans your codebase, analyzes your functions and wirings, and generates type-safe clients, entry points, and optimized bundles.
+The Pikku CLI scans your codebase, analyzes your functions and wirings, and generates type-safe clients, entry points, schemas, and optimized bundles. It also scaffolds new code, manages function versioning, and deploys your project to cloud providers.
 
 ## Quick Start
-
-Run Pikku to generate all necessary files:
 
 ```bash
 npx pikku
 ```
 
-This scans your `src/` directory (or directories specified in `pikku.config.json`), analyzes your functions and wirings, and generates:
-
-- Type-safe clients (HTTP, WebSocket, Queue, RPC)
-- Type definitions and schemas
-- Optimized entry points with tree-shaking
-- OpenAPI specifications (if configured)
+This reads your `pikku.config.json`, scans the configured source directories, and generates everything into your `.pikku/` output directory — types, schemas, wiring metadata, RPC maps, and more.
 
 ## Commands
 
-### `pikku` (default)
+### `pikku` / `pikku all`
 
-Generates all files once and exits.
+Generate all Pikku files (types, schemas, wirings, etc.). This is the default command.
 
 ```bash
 npx pikku
+npx pikku all
+```
+
+**Filtering flags** (apply to `all`):
+
+| Flag | Description |
+|------|-------------|
+| `--tags, -t` | Filter functions by tags (comma-separated) |
+| `--types` | Filter by wiring types (comma-separated): `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli`, `workflow` |
+| `--directories, -d` | Filter functions by directories (comma-separated) |
+| `--http-methods` | Filter HTTP routes by methods (comma-separated) |
+| `--http-routes` | Filter HTTP routes by route patterns (comma-separated) |
+| `--names, -n` | Filter functions by name patterns (supports wildcards) |
+
+```bash
+# Public HTTP API only
+npx pikku --tags public --types http
+
+# Background workers only
+npx pikku --types queue,scheduler
+
+# Specific routes
+npx pikku --http-routes /api/admin
+```
+
+### `pikku bootstrap`
+
+Generate only type files (setup phase). Useful when you need types before a full generation pass — for example, on first clone or in CI before the main build.
+
+```bash
+npx pikku bootstrap
 ```
 
 ### `pikku watch`
 
-Runs in watch mode, regenerating files when source code changes.
+Watch for file changes and regenerate automatically. Your generated types stay in sync as you write code.
 
 ```bash
 npx pikku watch
+npx pikku watch --hmr   # Enable hot module reload for registered functions
 ```
-
-Perfect for development - your generated types stay in sync as you write code.
 
 ### `pikku console`
 
-Launches the Pikku Console — a visual control plane for exploring your functions, wirings, workflows, agents, and configuration.
+Start the Pikku Console — a visual UI for exploring your functions, wirings, workflows, agents, and configuration with live file watching.
 
 ```bash
 npx pikku console
+npx pikku console --port 8080   # Custom port (default: 51442)
+npx pikku console --open         # Open in browser automatically
+npx pikku console --hmr          # Enable hot module reload
 ```
 
 See [The Console](/docs/console) for full documentation.
 
-### `pikku all`
+### `pikku schemas`
 
-Alias for the default `pikku` command.
-
-```bash
-npx pikku all
-```
-
-## Common Flags
-
-### `--silent`
-
-Suppresses all output except errors.
+Generate JSON schemas for function input/output types.
 
 ```bash
-npx pikku --silent
+npx pikku schemas
 ```
 
-Useful in CI/CD pipelines where you only want to see failures.
+### Client Generation
 
-### `--tags`
-
-Filter functions by tags. Only generate code for functions with matching tags.
+Generate type-safe clients for specific protocols:
 
 ```bash
-npx pikku --tags public,api
+npx pikku fetch       # HTTP fetch client
+npx pikku websocket   # WebSocket client
+npx pikku rpc         # RPC client wrappers
+npx pikku queue-service  # Queue service wrapper
+npx pikku openapi     # OpenAPI specification from HTTP routes
+npx pikku nextjs      # Next.js backend and HTTP wrappers
 ```
 
-### `--types`
+These require the corresponding file paths to be set in `pikku.config.json` (e.g., `fetchFile`, `websocketFile`).
 
-Filter by wiring types. Only include specific protocols.
+### `pikku new`
+
+Scaffold new files from templates:
 
 ```bash
-npx pikku --types http,rpc
+# Functions
+npx pikku new function myFunc                    # Default: sessionless
+npx pikku new function myFunc --type func        # Requires session
+npx pikku new function myFunc --type void        # No return value
+
+# Wirings
+npx pikku new wiring myRoute                     # Default: http
+npx pikku new wiring myRoute --type channel      # WebSocket channel
+npx pikku new wiring myRoute --type scheduler    # Cron job
+npx pikku new wiring myRoute --type queue        # Queue worker
+npx pikku new wiring myRoute --type mcp          # MCP resource
+npx pikku new wiring myRoute --type cli          # CLI command
+npx pikku new wiring myRoute --type trigger      # Event trigger
+
+# Middleware & Permissions
+npx pikku new middleware myAuth                   # Default: simple
+npx pikku new middleware myAuth --type factory    # Factory pattern
+npx pikku new permission myGuard                  # Default: simple
+npx pikku new permission myGuard --type factory   # Factory pattern
+
+# Addons
+npx pikku new addon my-integration
+npx pikku new addon my-integration --secret       # Include secret schema
+npx pikku new addon my-integration --variable     # Include variable definition
+npx pikku new addon my-integration --oauth        # OAuth2 credential + API service
+npx pikku new addon my-integration --credential apikey  # Per-user credential
+npx pikku new addon my-integration --openapi ./spec.yaml  # Generate from OpenAPI spec
+npx pikku new addon my-integration --mcp          # Expose functions as MCP tools
+npx pikku new addon my-integration --camelCase    # Convert snake_case to camelCase in schemas
 ```
 
-Available types: `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli`, `workflow`
+### `pikku enable`
 
-### `--http-routes`
-
-Filter HTTP functions by route pattern.
+Enable Pikku features by updating the `scaffold` section in `pikku.config.json`:
 
 ```bash
-npx pikku --http-routes /api
+npx pikku enable rpc          # Enable public RPC endpoint
+npx pikku enable console      # Enable console functions
+npx pikku enable agent        # Enable public agent endpoints
+npx pikku enable workflow     # Enable workflow workers
+
+# Disable auth requirement
+npx pikku enable rpc --no-auth
 ```
 
-Only includes HTTP routes starting with `/api`.
+### `pikku versions`
 
-### `--names`
-
-Filter functions by name pattern (supports wildcards).
+Manage function contract versioning. Tracks input/output schema hashes to detect breaking changes.
 
 ```bash
-npx pikku --names 'user*,auth*'
+npx pikku versions init      # Initialize version manifest (versions.pikku.json)
+npx pikku versions init --force  # Overwrite existing manifest
+npx pikku versions check     # Validate contracts against manifest
+npx pikku versions update    # Update manifest with current hashes
 ```
 
-### `--exclude-tags`
+### `pikku deploy`
 
-Exclude functions with specific tags.
+Deploy your Pikku project to cloud infrastructure.
 
 ```bash
-npx pikku --exclude-tags internal,deprecated
+npx pikku deploy plan                    # Show what will be created/updated/deleted
+npx pikku deploy plan --provider aws     # Use AWS provider (default: cloudflare)
+npx pikku deploy apply                   # Execute the deployment
+npx pikku deploy apply --from-plan       # Deploy from existing plan output
+npx pikku deploy info                    # Show current deployment state
 ```
+
+**Providers:** `cloudflare` (default), `aws`
+
+The deploy pipeline builds your project, tree-shakes per deployment unit, and provisions infrastructure (workers, queues, cron triggers, secrets) through the provider API.
+
+### `pikku info`
+
+Inspect your Pikku project:
+
+```bash
+npx pikku info                           # List all functions (default)
+npx pikku info functions                 # List all registered functions
+npx pikku info functions --verbose       # Include file paths, services, etc.
+npx pikku info tags                      # List all tags with associated functions
+npx pikku info middleware                # List all middleware definitions
+npx pikku info permissions               # List all permission definitions
+npx pikku info --limit 100              # Show more rows (default: 50)
+```
+
+## Global Options
+
+These flags work with any command:
+
+| Flag | Description |
+|------|-------------|
+| `--config, -c` | Path to `pikku.config.json` file |
+| `--log-level, -l` | Set log level (default: `info`) |
+| `--out-dir, -o` | Override output directory |
+| `--user-session-type` | Specify which UserSession type to use (when multiple exist) |
+| `--singleton-services-factory-type` | Specify which singleton services factory to use |
+| `--wire-services-factory-type` | Specify which wire services factory to use |
+| `--state-output` | Save inspector state to JSON file for reuse |
+| `--state-input` | Load inspector state from JSON (skips inspection) |
 
 ## Common Workflows
 
 ### Development
 
-Run in watch mode for live updates:
-
 ```bash
-npx pikku watch
+# Watch mode with hot reload
+npx pikku watch --hmr
+
+# Or use the console for visual exploration
+npx pikku console
 ```
 
-### Production Build
-
-Generate optimized code for production:
+### CI / Production Build
 
 ```bash
-npx pikku --silent
+npx pikku
+```
+
+### Deploy
+
+```bash
+# Preview what will change
+npx pikku deploy plan
+
+# Ship it
+npx pikku deploy apply
 ```
 
 ### Filter by Environment
-
-Generate different bundles for different deployments:
 
 ```bash
 # Public API only
@@ -152,18 +251,12 @@ npx pikku --types queue,scheduler
 
 ### Monorepo with Shared SDK
 
-Generate shared clients in a separate package:
-
-```bash
-npx pikku
-```
-
-With `pikku.config.json`:
-
 ```json
 {
-  "fetchFile": "packages/sdk/.pikku/pikku-fetch.gen.ts",
-  "websocketFile": "packages/sdk/.pikku/pikku-websocket.gen.ts",
+  "clientFiles": {
+    "fetchFile": "packages/sdk/pikku-fetch.gen.ts",
+    "websocketFile": "packages/sdk/pikku-websocket.gen.ts"
+  },
   "packageMappings": {
     "packages/sdk": "@my-app/sdk"
   }
@@ -172,5 +265,6 @@ With `pikku.config.json`:
 
 ## Next Steps
 
-- **[Configuration](./configuration)** - Configure `pikku.config.json` for your project
-- **[Tree-Shaking](./tree-shaking)** - Learn how filtering and tree-shaking work
+- **[Configuration](./configuration)** — Configure `pikku.config.json` for your project
+- **[Tree-Shaking](./tree-shaking)** — Learn how filtering and tree-shaking work
+- **[Errors](./errors)** — CLI error code reference

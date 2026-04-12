@@ -3,63 +3,97 @@ title: Express
 description: Using Pikku with Express
 hide_title: true
 image: /img/logos/express-light.svg
+ai: true
 ---
 
 <DocHeaderHero title={frontMatter.title} image={frontMatter.image} />
 
-Pikku can be added to an express server via `middleware`, or you can just use the `PikkuExpressServer` if everything is using pikku.
+Pikku provides two Express packages:
 
-## Live Example
+- **`@pikku/express-middleware`** — drop Pikku into an existing Express app as middleware
+- **`@pikku/express`** — full managed server with health checks, CORS, and graceful shutdown
 
-import { Stackblitz } from '@site/src/components/Stackblitz';
+## Express Middleware
 
-<Stackblitz repo="template-express-middleware" initialFiles={['src/start.ts', 'src/services.ts']} />
+Add Pikku to an existing Express app. Your non-Pikku routes and middleware work alongside it.
 
-## Using Express Middleware
+```bash
+npm install @pikku/express-middleware
+```
 
-Pikku can be / is best used within express as a middleware function.
-
-```typescript title="Express middleware"
+```typescript
+import express from 'express'
 import { pikkuExpressMiddleware } from '@pikku/express-middleware'
 
-import { createSingletonServices, createWireServices } from 'path/to/pikku-bootstrap.ts'
+import './.pikku/pikku-bootstrap.gen.js'
 
-// The express server setup goes here...
+const app = express()
 
-const singletonServices = await createSingletonServices()
-app.use(pikkuExpressMiddleware(
-   singletonServices,
-   createWireServices,
-   {
-      respondWith404: false,
-      logRoutes: true,
-      loadSchemas: true
-   }
-))
+const singletonServices = await createSingletonServices(config)
+
+app.use(pikkuExpressMiddleware(singletonServices, createWireServices, {
+  respondWith404: false,  // Let Express handle unmatched routes
+  logRoutes: true,
+  loadSchemas: true,
+}))
+
+// Your own Express routes still work
+app.get('/custom', (req, res) => res.json({ hello: 'world' }))
+
+app.listen(3000)
 ```
 
-# Using PikkuExpressServer 
+### Options
 
-:::note
-The setup process for Express, uWS, and Fastify servers are identical, except for using different constructors.
-:::
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `respondWith404` | `boolean` | `false` | Return 404 for routes not matched by Pikku (set `true` if Pikku handles all routes) |
+| `logRoutes` | `boolean` | `false` | Log registered Pikku routes on startup |
+| `loadSchemas` | `boolean` | `false` | Load JSON schemas for validation |
 
-PikkuExpressServer is a quick way to get an express server started with pikku if you don't need to put in any custom configuration. 
+## Full Server (`PikkuExpressServer`)
 
-```typescript reference title="Express start"
-https://raw.githubusercontent.com/pikkujs/workspace-starter/blob/main/backends/express/bin/start.ts
+For projects where Pikku handles everything, the full server provides a batteries-included setup:
+
+```bash
+npm install @pikku/express
 ```
 
-This script does the following:
+```typescript
+import './.pikku/pikku-bootstrap.gen.js'
+import { PikkuExpressServer } from '@pikku/express'
 
-1. Imports necessary modules from `@pikku/express` and your project's configuration and services.
-2. Defines an async function `runServer` that:
-   - Loads the Pikku configuration
-   - Creates singleton services
-   - Initializes a new `PikkuExpressServer` instance
-   - Enables graceful shutdown on SIGINT
-   - Initializes and starts the server
-3. Handles any errors by logging them and exiting the process
-4. Calls the `runServer` function to start the server
+const config = await createConfig()
+const singletonServices = await createSingletonServices(config)
 
-By following this setup, you can easily integrate Pikku with a Express server, benefiting from both Pikku's features and Express's ecosystem.
+const server = new PikkuExpressServer(config, singletonServices.logger)
+
+// Access the underlying Express app if needed
+// server.app.use(myCustomMiddleware)
+
+await server.init({
+  singletonServices,
+  createWireServices,
+  logRoutes: true,
+  loadSchemas: true,
+})
+
+process.on('SIGINT', async () => {
+  await server.stop()
+  process.exit(0)
+})
+
+await server.start()
+```
+
+The full server config extends `CoreConfig` with:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `port` | `number` | Port to listen on |
+| `hostname` | `string` | Hostname to bind to |
+| `healthCheckPath` | `string` | Health check endpoint (default: `/health-check`) |
+| `limits` | `Record<string, string>` | Request size limits |
+| `content` | `LocalContentConfig` | Static content serving config |
+
+The underlying Express `app` is exposed as `server.app` if you need to add custom middleware or routes.

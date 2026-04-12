@@ -252,6 +252,39 @@ export const myFunction = pikkuFunc({
 
 The trade-off: Pikku requires you to explicitly create your services in factory functions, but in exchange you get better tree-shaking, faster cold starts, and a simpler mental model.
 
+## Built-in Service Interfaces
+
+Pikku defines service interfaces for its core features. You provide implementations via storage packages like `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb`, or `@pikku/redis`.
+
+### Required by Feature
+
+| Service | Interface | Required For | Packages |
+|---------|-----------|-------------|----------|
+| `logger` | `Logger` | Always | Built-in (`ConsoleLogger`) |
+| `config` | `CoreConfig` | Always | Your own |
+| `schema` | `SchemaService` | Validation | `@pikku/schema-ajv`, `@pikku/schema-cfworker` |
+| `secrets` | `SecretService` | [Secrets](/docs/core-features/secrets) | `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb` |
+| `variables` | `VariablesService` | [Variables](/docs/core-features/variables) | Built-in (`LocalVariablesService`) |
+| `jwt` | `JWTService` | JWT auth | `@pikku/jose` |
+| `aiAgentRunner` | `AIAgentRunnerService` | [AI Agents](/docs/wiring/ai-agents/) | `@pikku/ai-vercel` |
+| `aiStorage` | `AIStorageService` | AI Agents | `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb` |
+| `aiRunState` | `AIRunStateService` | AI Agents | `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb` |
+| `agentRunService` | `AgentRunService` | Console (agent runs) | `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb` |
+| `workflowService` | `WorkflowService` | [Workflows](/docs/wiring/workflows/) | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `workflowRunService` | `WorkflowRunService` | Console (workflow runs) | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `queueService` | `QueueService` | [Queues](/docs/wiring/queue/) | `@pikku/queue-bullmq`, `@pikku/queue-pg-boss`, `CloudflareQueueService`, `SQSQueueService` |
+| `schedulerService` | `SchedulerService` | [Scheduled Tasks](/docs/wiring/scheduled-tasks) | Built-in |
+| `channelStore` | `ChannelStore` | [Channels](/docs/wiring/channels/) | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `eventHubStore` | `EventHubStore` | Channels (pub/sub) | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `credentialService` | `CredentialService` | [Credentials](/docs/wiring/credentials/) | `@pikku/kysely` |
+| `deploymentService` | `DeploymentService` | Multi-instance deploy | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `content` | `ContentService` | Static content serving | Built-in (`LocalContentService`) |
+| `triggerService` | `TriggerService` | [Triggers](/docs/wiring/triggers/) | Built-in (`PikkuTriggerService`) |
+| `gatewayService` | `GatewayService` | [Gateway](/docs/wiring/gateway/) | Your own |
+| `metaService` | `MetaService` | Console | Generated (`PikkuMetaService`) |
+
+You only need to provide the services your project uses. The CLI detects which services your functions reference and generates a `RequiredSingletonServices` type that makes unused services optional.
+
 ## Error Handling in Services
 
 Services can throw Pikku errors that are automatically mapped to HTTP status codes:
