@@ -198,17 +198,19 @@ const config: Config = {
             { label: 'Dynamic Workflows', to: '/dynamic-workflows' },
             { label: 'Gateway', to: '/wires/gateway' },
             // Deployment
+            { label: 'Cloudflare Workers', to: '/deploy/cloudflare' },
+            { label: 'AWS Serverless', to: '/deploy/serverless' },
+            { label: 'Azure Functions', to: '/deploy/azure' },
+            // Platform
             { label: 'Tree-Shaking', to: '/core/treeshaking' },
             { label: 'Built-in Services', to: '/core/built-in-services' },
-            // Platform
             { label: 'Console', to: '/core/console' },
-            { label: 'VS Code', to: '/core/vscode' },
             { label: 'Addons', to: '/core/addons' },
             { label: 'Benchmarks', to: '/benchmarks' },
           ],
         },
         {
-          to: '/fabric',
+          href: 'https://pikkufabric.com',
           position: 'right',
           label: 'Fabric',
         },
@@ -272,7 +274,7 @@ const config: Config = {
           title: 'Learn',
           items: [
             { label: 'Getting Started', to: '/getting-started' },
-            { label: 'Fabric (Deploy)', to: '/fabric' },
+            { label: 'Fabric (Deploy)', href: 'https://pikkufabric.com' },
             { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },
             { label: 'Runtimes', to: '/docs/runtimes/fastify-plugin' },
             { label: 'CLI Reference', to: '/docs/pikku-cli' },

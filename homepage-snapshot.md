@@ -1,0 +1,698 @@
+- generic [ref=e2]:
+  - region "Skip to main content":
+    - link "Skip to main content" [ref=e3] [cursor=pointer]:
+      - /url: "#__docusaurus_skipToContent_fallback"
+  - navigation "Main" [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - link "Pikku Pikku" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Pikku" [ref=e9]
+          - generic [ref=e10]: Pikku
+        - button "Search (Meta+k)" [ref=e12] [cursor=pointer]:
+          - generic [ref=e13]:
+            - img [ref=e14]
+            - generic [ref=e17]: Search
+          - generic [ref=e18]:
+            - generic [ref=e19]: ⌘
+            - generic [ref=e20]: K
+      - generic [ref=e21]:
+        - link "Switch to Dev Mode" [ref=e23] [cursor=pointer]:
+          - /url: /developers
+          - img [ref=e26]
+        - generic [ref=e30]:
+          - button "Features" [ref=e31] [cursor=pointer]: Features
+          - menu:
+            - generic:
+              - generic:
+                - generic: Core
+                - menuitem "Functions One signature, every protocol":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Functions
+                    - generic: One signature, every protocol
+                - menuitem "Services Injected toolbox with tree-shaking":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Services
+                    - generic: Injected toolbox with tree-shaking
+                - menuitem "Security Sessions, permissions & auth":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Security
+                    - generic: Sessions, permissions & auth
+                - menuitem "Versioning Contract hashing & CI enforcement":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Versioning
+                    - generic: Contract hashing & CI enforcement
+                - menuitem "Secrets & Variables Type-safe config with Zod":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Secrets & Variables
+                    - generic: Type-safe config with Zod
+              - generic:
+                - generic: Protocols
+                - menuitem "HTTP REST APIs and server-sent events":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: HTTP
+                    - generic: REST APIs and server-sent events
+                - menuitem "WebSocket Real-time bidirectional channels":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: WebSocket
+                    - generic: Real-time bidirectional channels
+                - menuitem "RPC Direct function-to-function calls":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: RPC
+                    - generic: Direct function-to-function calls
+                - menuitem "MCP Model Context Protocol for AI":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: MCP
+                    - generic: Model Context Protocol for AI
+              - generic:
+                - generic: Scheduling & Processing
+                - menuitem "Queue Background job processing":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: Queue
+                    - generic: Background job processing
+                - menuitem "Cron Scheduled recurring tasks":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: Cron
+                    - generic: Scheduled recurring tasks
+                - menuitem "Triggers Event-driven subscriptions":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: Triggers
+                    - generic: Event-driven subscriptions
+                - menuitem "CLI Command-line interface tools":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: CLI
+                    - generic: Command-line interface tools
+              - generic:
+                - generic: AI & Orchestration
+                - menuitem "AI Agents Conversational AI with tools":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: AI Agents
+                    - generic: Conversational AI with tools
+                - menuitem "Workflows Multi-step stateful processes":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: Workflows
+                    - generic: Multi-step stateful processes
+                - menuitem "Gateway Multi-platform messaging integrations":
+                  - generic:
+                    - generic:
+                      - img
+                  - generic:
+                    - generic: Gateway
+                    - generic: Multi-platform messaging integrations
+              - generic:
+                - generic: Deployment
+                - menuitem "Cloudflare Workers One-command deploy to the edge":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Cloudflare Workers
+                    - generic: One-command deploy to the edge
+                - menuitem "AWS Serverless Lambda + SQS + EventBridge":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: AWS Serverless
+                    - generic: Lambda + SQS + EventBridge
+                - menuitem "Azure Functions HTTP + Queue + Timer triggers":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Azure Functions
+                    - generic: HTTP + Queue + Timer triggers
+              - generic:
+                - generic: Platform
+                - menuitem "Tree-Shaking Filter & deploy only what you need":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Tree-Shaking
+                    - generic: Filter & deploy only what you need
+                - menuitem "Built-in Services Every interface & provider":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Built-in Services
+                    - generic: Every interface & provider
+                - menuitem "Console Visual control plane for your app":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Console
+                    - generic: Visual control plane for your app
+                - menuitem "Addons Extend with npm packages":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Addons
+                    - generic: Extend with npm packages
+                - menuitem "Benchmarks Real-world performance numbers":
+                  - generic:
+                    - img
+                  - generic:
+                    - generic: Benchmarks
+                    - generic: Real-world performance numbers
+            - generic:
+              - link "View all features →":
+                - /url: /features
+        - link "Fabric" [ref=e33] [cursor=pointer]:
+          - /url: /fabric
+        - link "Docs" [ref=e34] [cursor=pointer]:
+          - /url: /docs/
+        - link "Blog" [ref=e35] [cursor=pointer]:
+          - /url: /blog
+        - generic [ref=e36]: "|"
+        - link "Star on GitHub" [ref=e38] [cursor=pointer]:
+          - /url: https://github.com/pikkujs/pikku
+          - img [ref=e39]
+          - generic [ref=e41]: "56"
+        - link "X (Twitter) account" [ref=e42] [cursor=pointer]:
+          - /url: https://x.com/pikkujs
+        - link "Discord" [ref=e43] [cursor=pointer]:
+          - /url: https://discord.gg/z7r4rhwJ
+        - generic [ref=e44]: "|"
+  - generic [ref=e45]:
+    - generic [ref=e46]:
+      - banner [ref=e47]:
+        - generic [ref=e48]:
+          - generic [ref=e50]: TypeScript Function Framework
+          - heading "One function. Every wiring." [level=1] [ref=e51]:
+            - text: One function.
+            - text: Every wiring.
+          - paragraph [ref=e52]: Write your backend once. Pikku wires it to HTTP, WebSocket, queues, cron, AI agents, workflows, and more — same auth, same validation, zero rewrites.
+          - generic [ref=e53]:
+            - link "Get Started in 5 Minutes" [ref=e54] [cursor=pointer]:
+              - /url: /getting-started
+            - link "See How It Works" [ref=e55] [cursor=pointer]:
+              - /url: "#how-it-works"
+          - paragraph [ref=e56]: $ npm create pikku@latest · MIT Licensed · Open Source
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - img "Pikku" [ref=e61]
+            - generic [ref=e63]:
+              - link "HTTP" [ref=e66] [cursor=pointer]:
+                - /url: /wires/http
+                - generic [ref=e67]:
+                  - img [ref=e69]
+                  - generic [ref=e74]: HTTP
+              - link "WebSocket" [ref=e77] [cursor=pointer]:
+                - /url: /wires/websocket
+                - generic [ref=e78]:
+                  - img [ref=e80]
+                  - generic [ref=e82]: WebSocket
+              - generic [ref=e86]:
+                - img [ref=e88]
+                - generic [ref=e92]: SSE
+              - link "Queue" [ref=e95] [cursor=pointer]:
+                - /url: /wires/queue
+                - generic [ref=e96]:
+                  - img [ref=e98]
+                  - generic [ref=e105]: Queue
+              - link "Cron" [ref=e108] [cursor=pointer]:
+                - /url: /wires/cron
+                - generic [ref=e109]:
+                  - img [ref=e111]
+                  - generic [ref=e114]: Cron
+              - link "RPC" [ref=e117] [cursor=pointer]:
+                - /url: /wires/rpc
+                - generic [ref=e118]:
+                  - img [ref=e120]
+                  - generic [ref=e124]: RPC
+              - link "MCP" [ref=e127] [cursor=pointer]:
+                - /url: /wires/mcp
+                - generic [ref=e128]:
+                  - img [ref=e130]
+                  - generic [ref=e133]: MCP
+              - link "CLI" [ref=e136] [cursor=pointer]:
+                - /url: /wires/cli
+                - generic [ref=e137]:
+                  - img [ref=e139]
+                  - generic [ref=e142]: CLI
+              - link "AI Agent" [ref=e145] [cursor=pointer]:
+                - /url: /wires/bot
+                - generic [ref=e146]:
+                  - img [ref=e148]
+                  - generic [ref=e153]: AI Agent
+              - link "Workflow" [ref=e156] [cursor=pointer]:
+                - /url: /wires/workflow
+                - generic [ref=e157]:
+                  - img [ref=e159]
+                  - generic [ref=e164]: Workflow
+              - link "Trigger" [ref=e167] [cursor=pointer]:
+                - /url: /wires/trigger
+                - generic [ref=e168]:
+                  - img [ref=e170]
+                  - generic [ref=e172]: Trigger
+              - link "Gateway" [ref=e175] [cursor=pointer]:
+                - /url: /wires/gateway
+                - generic [ref=e176]:
+                  - img [ref=e178]
+                  - generic [ref=e181]: Gateway
+          - paragraph [ref=e182]: Like a chameleon adapts — your functions adapt
+      - generic [ref=e183]:
+        - paragraph [ref=e184]: Built with Pikku
+        - generic [ref=e185]:
+          - link "AgreeWe" [ref=e186] [cursor=pointer]:
+            - /url: https://www.agreewe.com
+            - img "AgreeWe" [ref=e187]
+          - link "HeyGermany" [ref=e188] [cursor=pointer]:
+            - /url: https://hey-germany.com
+            - img "HeyGermany" [ref=e189]
+          - link "marta" [ref=e190] [cursor=pointer]:
+            - /url: https://marta.de
+            - img "marta" [ref=e191]
+          - link "BambooRose" [ref=e192] [cursor=pointer]:
+            - /url: https://bamboorose.com
+            - img "BambooRose" [ref=e193]
+          - link "Calligraphy Cut" [ref=e194] [cursor=pointer]:
+            - /url: https://calligraphy-cut.com
+            - img "Calligraphy Cut" [ref=e195]
+    - main [ref=e196]:
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - paragraph [ref=e200]: Sound Familiar?
+          - heading "You've written this function more times than you'd admit." [level=2] [ref=e201]:
+            - text: You've written this function
+            - text: more times than you'd admit.
+          - paragraph [ref=e202]: Every time you add a protocol, you copy-paste, re-wire auth, and pray the handlers don't drift. It's not lazy engineering — it's a missing abstraction.
+          - paragraph [ref=e203]:
+            - text: "\"So many places in my code base have like three entry points: CLI, public HTTP API and internally from within the API. Would be so nice having everything just an invoke away.\""
+            - generic [ref=e204]: — Alex Harley, Co-founder @ Superbridge
+        - generic [ref=e205]:
+          - generic [ref=e206]:
+            - img [ref=e208]
+            - heading "Same logic, five handlers" [level=3] [ref=e211]
+            - paragraph [ref=e212]: Your getCard function lives in your HTTP handler, your WebSocket handler, your queue worker, and your CLI. They started as copies. Now they've drifted apart.
+          - generic [ref=e213]:
+            - img [ref=e215]
+            - heading "New protocol, new framework" [level=3] [ref=e217]
+            - paragraph [ref=e218]: Want AI agents? That's Vercel AI SDK. Workflows? Inngest or Temporal. MCP? Another adapter. Each one brings its own auth layer, schema format, and deploy pipeline.
+          - generic [ref=e219]:
+            - img [ref=e221]
+            - heading "Switching runtimes means rewriting" [level=3] [ref=e224]
+            - paragraph [ref=e225]: Moving from Express to Lambda touches every handler. Your business logic is tangled with framework APIs you never wanted to think about.
+      - generic [ref=e227]:
+        - generic [ref=e228]:
+          - paragraph [ref=e229]: The Fix
+          - heading "One function that doesn't drift. Fix a bug once, it's fixed everywhere." [level=2] [ref=e230]:
+            - text: One function that doesn't drift.
+            - text: Fix a bug once, it's fixed everywhere.
+        - generic [ref=e231]:
+          - generic [ref=e232]:
+            - generic [ref=e233]:
+              - generic [ref=e235]: Without Pikku
+              - generic [ref=e236]: 5 copies that drift
+            - generic [ref=e240]:
+              - code [ref=e242]:
+                - generic [ref=e243]: // HTTP
+                - generic [ref=e244]: "app.get('/cards/:id', auth, validate, async (req, res) => {"
+                - generic [ref=e245]: const card = await db.getCard(req.params.id)
+                - generic [ref=e246]: res.json(card)
+                - generic [ref=e247]: "})"
+                - generic [ref=e248]: // WebSocket
+                - generic [ref=e249]: "ws.on('getCard', auth, validate, async (msg, socket) => {"
+                - generic [ref=e250]: const card = await db.getCard(msg.cardId)
+                - generic [ref=e251]: socket.send(JSON.stringify(card))
+                - generic [ref=e252]: "})"
+                - generic [ref=e253]: // Queue worker — same logic, third copy
+                - generic [ref=e254]: // CLI command — same logic, fourth copy
+                - generic [ref=e255]: // AI agent tool — new SDK, new auth, fifth copy
+              - generic [ref=e256]:
+                - button "Toggle word wrap" [ref=e257] [cursor=pointer]:
+                  - img [ref=e258]
+                - button "Copy code to clipboard" [ref=e260] [cursor=pointer]:
+                  - generic [ref=e261]:
+                    - img [ref=e262]
+                    - img [ref=e264]
+          - generic [ref=e266]:
+            - generic [ref=e267]:
+              - generic [ref=e269]: With Pikku
+              - generic [ref=e270]: 1 function + wirings
+            - generic [ref=e274]:
+              - code [ref=e276]:
+                - generic [ref=e277]: // Write it once
+                - generic [ref=e278]: "const getCard = pikkuFunc({"
+                - generic [ref=e279]: "func: async ({ db }, { cardId }) => db.getCard(cardId),"
+                - generic [ref=e280]: "permissions: { user: isAuthenticated }"
+                - generic [ref=e281]: "})"
+                - generic [ref=e282]: // Wire it to everything — same auth, same validation
+                - generic [ref=e283]: "wireHTTP({ method: 'get', route: '/cards/:cardId', func: getCard })"
+                - generic [ref=e284]: "wireChannel({ name: 'cards', onMessage: { getCard } })"
+                - generic [ref=e285]: "wireQueueWorker({ queue: 'fetch-card', func: getCard })"
+                - generic [ref=e286]: "wireCLI({ program: 'cards', commands: { get: getCard } })"
+              - generic [ref=e287]:
+                - button "Toggle word wrap" [ref=e288] [cursor=pointer]:
+                  - img [ref=e289]
+                - button "Copy code to clipboard" [ref=e291] [cursor=pointer]:
+                  - generic [ref=e292]:
+                    - img [ref=e293]
+                    - img [ref=e295]
+        - generic [ref=e297]:
+          - generic [ref=e298]: + SSE
+          - generic [ref=e299]: + RPC
+          - generic [ref=e300]: + MCP
+          - generic [ref=e301]: + AI Agent
+          - generic [ref=e302]: + Workflow
+          - generic [ref=e303]: + Trigger
+          - generic [ref=e304]: + Gateway
+        - paragraph [ref=e305]:
+          - text: 12 protocols total — all with the same pattern.
+          - link "See every wiring in action" [ref=e306] [cursor=pointer]:
+            - /url: /developers
+      - generic [ref=e308]:
+        - generic [ref=e309]:
+          - paragraph [ref=e310]: The Mental Model
+          - heading "A lot of moving parts. One coherent system." [level=2] [ref=e311]:
+            - text: A lot of moving parts.
+            - text: One coherent system.
+          - paragraph [ref=e312]: Functions, services, auth, transports, workflows, agents, and gateways — all built from the same model.
+        - generic [ref=e313]:
+          - button "Functions" [ref=e314] [cursor=pointer]:
+            - img [ref=e315]
+            - text: Functions
+          - button "Services" [ref=e320] [cursor=pointer]:
+            - img [ref=e321]
+            - text: Services
+          - button "Auth & Middleware" [ref=e324] [cursor=pointer]:
+            - img [ref=e325]
+            - text: Auth & Middleware
+          - button "Wires" [ref=e328] [cursor=pointer]:
+            - img [ref=e329]
+            - text: Wires
+          - button "Workflows" [ref=e331] [cursor=pointer]:
+            - img [ref=e332]
+            - text: Workflows
+          - button "Agents" [ref=e336] [cursor=pointer]:
+            - img [ref=e337]
+            - text: Agents
+          - button "Gateways" [ref=e340] [cursor=pointer]:
+            - img [ref=e341]
+            - text: Gateways
+        - generic [ref=e344]:
+          - generic [ref=e345]:
+            - generic [ref=e346]:
+              - img [ref=e348]
+              - heading "Functions" [level=3] [ref=e353]
+            - paragraph [ref=e354]: Typed, testable units of business logic. No framework coupling.
+            - link "Learn more about functions →" [ref=e355] [cursor=pointer]:
+              - /url: /docs
+          - generic [ref=e359]:
+            - code [ref=e361]:
+              - generic [ref=e362]: "import { pikkuFunc } from '#pikku'"
+              - generic [ref=e363]: "export const getBook = pikkuFunc<{ bookId: string }, Book>({"
+              - generic [ref=e364]: "func: async ({ database }, data) => {"
+              - generic [ref=e365]: "return await database.query('book', { bookId: data.bookId })"
+              - generic [ref=e366]: "},"
+              - generic [ref=e367]: "title: 'Fetch a book by ID',"
+              - generic [ref=e368]: "description: 'Returns a book from the database',"
+              - generic [ref=e369]: "tags: ['books']"
+              - generic [ref=e370]: "})"
+            - generic [ref=e371]:
+              - button "Toggle word wrap" [ref=e372] [cursor=pointer]:
+                - img [ref=e373]
+              - button "Copy code to clipboard" [ref=e375] [cursor=pointer]:
+                - generic [ref=e376]:
+                  - img [ref=e377]
+                  - img [ref=e379]
+      - generic [ref=e382]:
+        - generic [ref=e383]:
+          - paragraph [ref=e384]: More Than a Router
+          - heading "AI agents and durable workflows — built in." [level=2] [ref=e385]:
+            - text: AI agents and durable workflows —
+            - text: built in.
+          - paragraph [ref=e386]: tRPC stops at HTTP. Hono gives you a fast router. NestJS buries you in decorators. Pikku gives you agents and workflows using the same functions you've already written.
+        - generic [ref=e387]:
+          - generic [ref=e388]:
+            - generic [ref=e389]:
+              - img [ref=e390]
+              - generic [ref=e393]: AI Agents
+            - generic [ref=e394]:
+              - generic [ref=e395]:
+                - heading "Your functions are already agent tools" [level=3] [ref=e396]
+                - paragraph [ref=e397]: Most frameworks need adapters, schema re-definitions, and a separate auth layer for AI agents. With Pikku, pass your existing functions directly. Types, permissions, and middleware carry over.
+                - generic [ref=e398]:
+                  - generic [ref=e399]:
+                    - generic [ref=e400]: ✓
+                    - generic [ref=e401]: Zero glue code — functions become tools automatically
+                  - generic [ref=e402]:
+                    - generic [ref=e403]: ✓
+                    - generic [ref=e404]: Auth and permissions follow the agent
+                  - generic [ref=e405]:
+                    - generic [ref=e406]: ✓
+                    - generic [ref=e407]: Any LLM provider — just swap the model name
+                - link "Learn about AI Agents →" [ref=e408] [cursor=pointer]:
+                  - /url: /wires/bot
+              - generic [ref=e412]:
+                - code [ref=e414]:
+                  - generic [ref=e415]: "const support = pikkuAgent({"
+                  - generic [ref=e416]: "instructions: 'You are a support agent...',"
+                  - generic [ref=e417]: "tools: [getCustomer, getOrders, createTicket],"
+                  - generic [ref=e418]: "model: 'claude-sonnet-4-5'"
+                  - generic [ref=e419]: "})"
+                - generic [ref=e420]:
+                  - button "Toggle word wrap" [ref=e421] [cursor=pointer]:
+                    - img [ref=e422]
+                  - button "Copy code to clipboard" [ref=e424] [cursor=pointer]:
+                    - generic [ref=e425]:
+                      - img [ref=e426]
+                      - img [ref=e428]
+          - generic [ref=e430]:
+            - generic [ref=e431]:
+              - img [ref=e432]
+              - generic [ref=e436]: Workflows
+            - generic [ref=e437]:
+              - generic [ref=e438]:
+                - heading "Multi-step processes that survive restarts" [level=3] [ref=e439]
+                - paragraph [ref=e440]: No separate workflow engine. Write sequential steps like normal code. Pikku persists each step, retries on failure, and resumes exactly where it left off.
+                - generic [ref=e441]:
+                  - generic [ref=e442]:
+                    - generic [ref=e443]: ✓
+                    - generic [ref=e444]: Deterministic replay from the exact failure point
+                  - generic [ref=e445]:
+                    - generic [ref=e446]: ✓
+                    - generic [ref=e447]: Sleep for minutes, hours, or weeks
+                  - generic [ref=e448]:
+                    - generic [ref=e449]: ✓
+                    - generic [ref=e450]: State persists to PostgreSQL or Redis
+                - link "Learn about Workflows →" [ref=e451] [cursor=pointer]:
+                  - /url: /wires/workflow
+              - generic [ref=e455]:
+                - code [ref=e457]:
+                  - generic [ref=e458]: "await workflow.do('Create profile', 'createProfile', { userId })"
+                  - generic [ref=e459]: await workflow.sleep('Wait', '5min')
+                  - generic [ref=e460]: "await workflow.do('Send welcome', 'sendEmail', { to: email })"
+                - generic [ref=e461]:
+                  - button "Toggle word wrap" [ref=e462] [cursor=pointer]:
+                    - img [ref=e463]
+                  - button "Copy code to clipboard" [ref=e465] [cursor=pointer]:
+                    - generic [ref=e466]:
+                      - img [ref=e467]
+                      - img [ref=e469]
+        - generic [ref=e471]:
+          - generic [ref=e472]:
+            - generic [ref=e474]: Pikku Console
+            - paragraph [ref=e475]: Browse functions, run agents, manage secrets, and trigger workflows — without writing tooling code.
+          - generic [ref=e476]:
+            - img "Pikku Console — browse and inspect all functions, wirings, and services"
+          - link "Learn about the Console →" [ref=e478] [cursor=pointer]:
+            - /url: /features#console
+      - generic [ref=e480]:
+        - generic [ref=e481]:
+          - generic [ref=e482]: Deploy Anywhere
+          - heading "Change your runtime. Keep your functions." [level=2] [ref=e483]
+          - paragraph [ref=e484]: Same code runs on Express, Fastify, AWS Lambda, Cloudflare Workers, Next.js, and more.
+          - generic [ref=e485]:
+            - link "AWS" [ref=e486] [cursor=pointer]:
+              - /url: /docs/runtimes/aws-lambda
+              - img [ref=e487]
+              - generic [ref=e488]: AWS
+            - link "Cloudflare" [ref=e489] [cursor=pointer]:
+              - /url: /docs/runtimes/cloudflare-functions
+              - img [ref=e490]
+              - generic [ref=e491]: Cloudflare
+            - link "Express" [ref=e492] [cursor=pointer]:
+              - /url: /docs/runtimes/express-middleware
+              - img [ref=e493]
+              - generic [ref=e494]: Express
+            - link "Fastify" [ref=e495] [cursor=pointer]:
+              - /url: /docs/runtimes/fastify-plugin
+              - img [ref=e496]
+              - generic [ref=e497]: Fastify
+            - link "uWS" [ref=e498] [cursor=pointer]:
+              - /url: /docs/runtimes/uws-handler
+              - img [ref=e499]
+              - generic [ref=e500]: uWS
+            - link "ws" [ref=e501] [cursor=pointer]:
+              - /url: /docs/runtimes/ws-handler
+              - img [ref=e502]
+              - generic [ref=e503]: ws
+            - link "nextJS" [ref=e504] [cursor=pointer]:
+              - /url: /docs/runtimes/nextjs-app
+              - img [ref=e505]
+              - generic [ref=e506]: nextJS
+            - link "MCP Server" [ref=e507] [cursor=pointer]:
+              - /url: /docs/runtimes/mcp-server
+              - img [ref=e508]
+              - generic [ref=e509]: MCP Server
+            - link "Custom" [ref=e510] [cursor=pointer]:
+              - /url: /docs/custom-runtimes/custom-http-runtime
+              - img [ref=e511]
+              - generic [ref=e512]: Custom
+          - paragraph [ref=e513]:
+            - text: Plus any custom runtime via the adapter interface.
+            - link "Build your own →" [ref=e514] [cursor=pointer]:
+              - /url: /docs/custom-runtimes/custom-http-runtime
+        - generic [ref=e515]:
+          - paragraph [ref=e516]: Built For Production
+          - generic [ref=e517]:
+            - generic [ref=e519]:
+              - img [ref=e521]
+              - heading "Type-Safe Clients" [level=3] [ref=e524]
+              - paragraph [ref=e525]: Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense.
+            - generic [ref=e527]:
+              - img [ref=e529]
+              - heading "Auth & Permissions" [level=3] [ref=e532]
+              - paragraph [ref=e533]: Cookie, bearer, API key auth with fine-grained permissions — built in.
+            - generic [ref=e535]:
+              - img [ref=e537]
+              - heading "Services" [level=3] [ref=e540]
+              - paragraph [ref=e541]: Singleton and per-request dependency injection, type-safe and testable.
+            - generic [ref=e543]:
+              - img [ref=e545]
+              - heading "Middleware" [level=3] [ref=e549]
+              - paragraph [ref=e550]: Before/after hooks for logging, metrics, tracing — work across all protocols.
+            - generic [ref=e552]:
+              - img [ref=e554]
+              - heading "Schema Validation" [level=3] [ref=e557]
+              - paragraph [ref=e558]: Runtime validation against TypeScript input schemas. Supports Zod.
+            - generic [ref=e560]:
+              - img [ref=e562]
+              - heading "Zero Lock-In" [level=3] [ref=e565]
+              - paragraph [ref=e566]: Standard TypeScript, tiny runtime, MIT licensed. Bring your own everything.
+          - paragraph [ref=e567]: MIT licensed. Standard TypeScript. No VC-backed lock-in.
+        - generic [ref=e568]:
+          - paragraph [ref=e569]: What Developers Say
+          - generic [ref=e570]:
+            - generic [ref=e571]:
+              - paragraph [ref=e572]: "\"So many places in my code base have like three entry points: CLI, public (sometimes protected) HTTP API and internally from within the API. Would be so nice having everything just an invoke away. With Nest it's a pain because you basically have to start the whole API up just to run CLI command.\""
+              - generic [ref=e573]:
+                - paragraph [ref=e574]: Alex Harley
+                - paragraph [ref=e575]: Co-founder @ Superbridge
+            - generic [ref=e576]:
+              - paragraph [ref=e577]: "\"Ever been annoyed at having to write your code different in a Lambda than in an express handler? Pikku fixes that.\""
+              - generic [ref=e578]:
+                - paragraph [ref=e579]: Christoph Sitter
+                - paragraph [ref=e580]: CTO @ spot
+      - generic [ref=e583]:
+        - paragraph [ref=e584]: Pikku Fabric
+        - heading "Don't want to manage infra?" [level=2] [ref=e585]
+        - paragraph [ref=e586]:
+          - text: Fabric is our deployment platform — push your code and every function deploys as a serverless worker. Getting its own home at
+          - strong [ref=e587]: pikkufabric.com
+          - text: soon.
+        - link "Join the Fabric waitlist" [ref=e589] [cursor=pointer]:
+          - /url: /fabric
+          - text: Join the Fabric waitlist
+          - img [ref=e590]
+      - generic [ref=e593]:
+        - heading "Stop copying functions across protocols." [level=2] [ref=e594]
+        - paragraph [ref=e595]: Write it once. Pikku wires it everywhere.
+        - generic [ref=e596] [cursor=pointer]:
+          - text: $ npm create pikku@latest
+          - button "Copy to clipboard" [ref=e597]:
+            - img [ref=e598]
+        - generic [ref=e600]:
+          - link "Build Your First API in 5 Minutes" [ref=e601] [cursor=pointer]:
+            - /url: /getting-started
+          - link "View on GitHub" [ref=e602] [cursor=pointer]:
+            - /url: https://github.com/pikkujs/pikku
+        - paragraph [ref=e603]: 5-minute setup · MIT Licensed · Open Source
+  - contentinfo [ref=e604]:
+    - generic [ref=e605]:
+      - generic [ref=e606]:
+        - generic [ref=e607]:
+          - generic [ref=e608]: Learn
+          - list [ref=e609]:
+            - listitem [ref=e610]:
+              - link "Getting Started" [ref=e611] [cursor=pointer]:
+                - /url: /getting-started
+            - listitem [ref=e612]:
+              - link "Fabric (Deploy)" [ref=e613] [cursor=pointer]:
+                - /url: /fabric
+            - listitem [ref=e614]:
+              - link "Wiring (HTTP, WS, Queues…)" [ref=e615] [cursor=pointer]:
+                - /url: /docs/wiring/http
+            - listitem [ref=e616]:
+              - link "Runtimes" [ref=e617] [cursor=pointer]:
+                - /url: /docs/runtimes/fastify-plugin
+            - listitem [ref=e618]:
+              - link "CLI Reference" [ref=e619] [cursor=pointer]:
+                - /url: /docs/pikku-cli
+            - listitem [ref=e620]:
+              - link "The Console" [ref=e621] [cursor=pointer]:
+                - /url: /docs/console
+        - generic [ref=e622]:
+          - generic [ref=e623]: Community
+          - list [ref=e624]:
+            - listitem [ref=e625]:
+              - link "GitHub(opens in new tab)" [ref=e626] [cursor=pointer]:
+                - /url: https://github.com/pikkujs/pikku
+                - text: GitHub
+                - img "(opens in new tab)" [ref=e627]
+            - listitem [ref=e629]:
+              - link "Discord(opens in new tab)" [ref=e630] [cursor=pointer]:
+                - /url: https://discord.gg/z7r4rhwJ
+                - text: Discord
+                - img "(opens in new tab)" [ref=e631]
+            - listitem [ref=e633]:
+              - link "X / Twitter(opens in new tab)" [ref=e634] [cursor=pointer]:
+                - /url: https://x.com/pikkujs
+                - text: X / Twitter
+                - img "(opens in new tab)" [ref=e635]
+            - listitem [ref=e637]:
+              - link "Blog" [ref=e638] [cursor=pointer]:
+                - /url: /blog
+      - generic [ref=e639]:
+        - link "Pikku" [ref=e641] [cursor=pointer]:
+          - /url: /
+          - img "Pikku" [ref=e642]
+        - generic [ref=e643]: MIT License · Copyright © 2020–2026 Yasser Fadl & Pikku Contributors.

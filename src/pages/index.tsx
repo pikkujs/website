@@ -634,14 +634,14 @@ function FabricCallout() {
         <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-8 lg:p-10 text-center">
           <p className="text-xs font-bold tracking-widest uppercase text-emerald-400/70 mb-4">Pikku Fabric</p>
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-            Deploy your Pikku backend for free.
+            Don't want to manage infra?
           </h2>
           <p className="text-base text-neutral-400 max-w-lg mx-auto mb-8 leading-relaxed">
-            Push your code. Fabric deploys every function as a serverless worker — APIs, queues, cron, agents. 100K invocations/month free.
+            Fabric is our deployment platform — push your code and every function deploys as a serverless worker. Getting its own home at <strong className="text-emerald-400/80">pikkufabric.com</strong> soon.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/fabric"
+              href="https://pikkufabric.com"
               className="inline-flex items-center justify-center gap-2 bg-white text-[#0a0a0f] hover:bg-white/90 px-6 py-3 rounded-lg font-semibold text-sm transition no-underline"
             >
               Learn about Fabric <ArrowRight className="w-3.5 h-3.5" />

@@ -648,6 +648,20 @@ a.no-underline:hover * {
     #0a0a0f;
 }
 
+.wire-hero-azure {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(59, 130, 246, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(14, 165, 233, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-cloudflare {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(249, 115, 22, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(245, 158, 11, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
 .wire-hero-builtins {
   background:
     radial-gradient(ellipse at 68% 50%, rgba(249, 115, 22, 0.18) 0%, transparent 55%),
@@ -694,6 +708,13 @@ a.no-underline:hover * {
   background:
     radial-gradient(ellipse at 68% 50%, rgba(16, 185, 129, 0.18) 0%, transparent 55%),
     radial-gradient(ellipse at 38% 65%, rgba(52, 211, 153, 0.06) 0%, transparent 48%),
+    #0a0a0f;
+}
+
+.wire-hero-serverless {
+  background:
+    radial-gradient(ellipse at 68% 50%, rgba(245, 158, 11, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 38% 65%, rgba(249, 115, 22, 0.06) 0%, transparent 48%),
     #0a0a0f;
 }
 

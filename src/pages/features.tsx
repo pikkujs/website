@@ -283,13 +283,6 @@ const platformCards = [
     icon: Monitor,
     accent: 'rose',
   },
-  {
-    title: 'VS Code Extension',
-    url: '/core/vscode',
-    description: 'Full project introspection — explore functions, browse wirings, generate code, and jump to definitions.',
-    icon: Blocks,
-    accent: 'teal',
-  },
 ];
 
 /* ─────────────────────────────────────────────
