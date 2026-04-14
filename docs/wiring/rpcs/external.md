@@ -102,4 +102,5 @@ See [Fetch Client](../http/fetch-client.md) for details.
 
 - [Internal RPCs](./internal.md) - Function-to-function calls
 - [Fetch Client](../http/fetch-client.md) - Type-safe HTTP client
+- [React Query Hooks](./react-query.md) - Auto-generated typed React Query hooks
 - [Functions](../../core-features/functions.md) - Understanding Pikku functions

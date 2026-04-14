@@ -125,3 +125,4 @@ See [Remote](./deployment.md) for details.
 - [Internal RPCs](./internal.md) - Function-to-function calls
 - [Exposed RPCs](./external.md) - Exposing functions to clients
 - [Remote](./deployment.md) - Cross-instance invocation
+- [React Query Hooks](./react-query.md) - Auto-generated typed hooks for your frontend
