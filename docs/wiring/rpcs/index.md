@@ -16,7 +16,7 @@ Internal RPCs are function-to-function calls within your application. Use `rpc.i
 
 ```typescript
 export const processOrder = pikkuFunc<OrderInput, OrderResult>({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     // Internal RPC - calls another function
     const totals = await rpc.invoke('calculateOrderTotal', {
       items: data.items
@@ -36,16 +36,19 @@ See [Internal RPCs](./internal.md) for details.
 
 ### Exposed RPCs
 
-Exposed RPCs expose your functions to external clients via HTTP POST endpoints. Clients can invoke any function directly:
+Exposed RPCs expose your functions to external clients via HTTP POST endpoints. A function is exposed by setting `expose: true` — non-exposed functions cannot be called from outside:
 
 ```typescript
-// Function is automatically available as external RPC
+// Set expose: true to make this callable as an external RPC
 export const calculateOrderTotal = pikkuSessionlessFunc<
   { items: Array<{ price: number }> },
   { total: number }
->(async ({ database }, data) => {
-  // Business logic
-  return { total: 100 }
+>({
+  expose: true,
+  func: async ({ database }, data) => {
+    // Business logic
+    return { total: 100 }
+  }
 })
 ```
 
@@ -73,7 +76,7 @@ Remote RPCs let you invoke functions hosted on other instances — across micros
 
 ```typescript
 export const processOrder = pikkuFunc<OrderInput, OrderResult>({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     // Remote RPC - calls a function on another instance
     const result = await rpc.remote('generateInvoice', {
       orderId: data.orderId

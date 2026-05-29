@@ -121,10 +121,9 @@ export interface SingletonServices extends CoreSingletonServices<Config> {
   database: DatabasePool
 }
 
-// Main services type (combines singleton and session services)
+// Main services type (combines singleton and wire services)
 export interface Services extends CoreServices<SingletonServices> {
-  // Session-specific services are added here
-  userSession: UserSessionService
+  // Wire-specific services are added here
   dbTransaction: DatabaseTransaction
 }
 ```
@@ -187,9 +186,10 @@ export const createSingletonServices = pikkuServices(
 export const createWireServices = pikkuWireServices(
   async (singletonServices, wire) => {
     // Return only the wire-specific services
-    // Pikku automatically merges these with singletonServices
+    // Pikku automatically merges these with singletonServices.
+    // Session management (session, setSession, clearSession) is built into
+    // the wire — you don't create it here.
     return {
-      userSession: createUserSessionService(wire),
       dbTransaction: new DatabaseTransaction(singletonServices.database),
     }
   }
@@ -254,7 +254,7 @@ The trade-off: Pikku requires you to explicitly create your services in factory 
 
 ## Built-in Service Interfaces
 
-Pikku defines service interfaces for its core features. You provide implementations via storage packages like `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb`, or `@pikku/redis`.
+Pikku defines service interfaces for its core features. You provide implementations via storage packages like `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`, or `@pikku/redis`.
 
 ### Required by Feature
 
@@ -263,21 +263,21 @@ Pikku defines service interfaces for its core features. You provide implementati
 | `logger` | `Logger` | Always | Built-in (`ConsoleLogger`) |
 | `config` | `CoreConfig` | Always | Your own |
 | `schema` | `SchemaService` | Validation | `@pikku/schema-ajv`, `@pikku/schema-cfworker` |
-| `secrets` | `SecretService` | [Secrets](/docs/core-features/secrets) | `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb` |
+| `secrets` | `SecretService` | [Secrets](/docs/core-features/secrets) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
 | `variables` | `VariablesService` | [Variables](/docs/core-features/variables) | Built-in (`LocalVariablesService`) |
 | `jwt` | `JWTService` | JWT auth | `@pikku/jose` |
 | `aiAgentRunner` | `AIAgentRunnerService` | [AI Agents](/docs/wiring/ai-agents/) | `@pikku/ai-vercel` |
-| `aiStorage` | `AIStorageService` | AI Agents | `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb` |
-| `aiRunState` | `AIRunStateService` | AI Agents | `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb` |
-| `agentRunService` | `AgentRunService` | Console (agent runs) | `@pikku/pg`, `@pikku/kysely`, `@pikku/mongodb` |
-| `workflowService` | `WorkflowService` | [Workflows](/docs/wiring/workflows/) | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
-| `workflowRunService` | `WorkflowRunService` | Console (workflow runs) | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `aiStorage` | `AIStorageService` | AI Agents | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
+| `aiRunState` | `AIRunStateService` | AI Agents | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
+| `agentRunService` | `AgentRunService` | Console (agent runs) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
+| `workflowService` | `WorkflowService` | [Workflows](/docs/wiring/workflows/) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `workflowRunService` | `WorkflowRunService` | Console (workflow runs) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
 | `queueService` | `QueueService` | [Queues](/docs/wiring/queue/) | `@pikku/queue-bullmq`, `@pikku/queue-pg-boss`, `CloudflareQueueService`, `SQSQueueService` |
 | `schedulerService` | `SchedulerService` | [Scheduled Tasks](/docs/wiring/scheduled-tasks) | Built-in |
-| `channelStore` | `ChannelStore` | [Channels](/docs/wiring/channels/) | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
-| `eventHubStore` | `EventHubStore` | Channels (pub/sub) | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `channelStore` | `ChannelStore` | [Channels](/docs/wiring/channels/) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `eventHubStore` | `EventHubStore` | Channels (pub/sub) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
 | `credentialService` | `CredentialService` | [Credentials](/docs/wiring/credentials/) | `@pikku/kysely` |
-| `deploymentService` | `DeploymentService` | Multi-instance deploy | `@pikku/pg`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
+| `deploymentService` | `DeploymentService` | Multi-instance deploy | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
 | `content` | `ContentService` | Static content serving | Built-in (`LocalContentService`) |
 | `triggerService` | `TriggerService` | [Triggers](/docs/wiring/triggers/) | Built-in (`PikkuTriggerService`) |
 | `gatewayService` | `GatewayService` | [Gateway](/docs/wiring/gateway/) | Your own |

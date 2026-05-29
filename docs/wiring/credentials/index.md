@@ -129,8 +129,8 @@ This happens automatically — you don't need to write any credential-checking l
 export const assistant = pikkuAIAgent({
   name: 'assistant',
   description: 'A helpful assistant with integrations',
-  instructions: 'Help the user with their integrations.',
-  model: 'fast',
+  goal: 'Help the user with their integrations.',
+  model: 'openai/gpt-4o-mini',
   tools: [listSheets, createSheet, sendSlackMessage],
   // If listSheets requires 'google-sheets' credential and the user
   // hasn't connected it, the agent pauses and asks the client to collect it.

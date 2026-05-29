@@ -12,52 +12,57 @@ This guide will walk you through setting up workflows in your Pikku project.
 
 ```bash
 # For PostgreSQL state storage
-npm install @pikku/pg
+npm install @pikku/kysely-postgres
 
 # For Redis state storage
 npm install @pikku/redis
 
 # Queue service (if not already installed)
-npm install @pikku/bullmq
+npm install @pikku/queue-bullmq
 # or
-npm install @pikku/pg-boss
+npm install @pikku/queue-pg-boss
 ```
 
 ## Configuration
 
-### 1. Add workflows to pikku.config.json
+### 1. (Optional) workflow queue names
+
+Workflows work with no extra `pikku.config.json` configuration. If you want to
+override the default queue names, add a `workflows` block:
 
 ```json
 {
   "workflows": {
-    "singleQueue": true,
-    "path": "src/workflows/pikku.workflows.gen.ts"
+    "orchestratorQueue": "pikku-workflow-orchestrator",
+    "workerQueue": "pikku-workflow-step-worker"
   }
 }
 ```
 
 ### 2. Set up workflow state service
 
-Add a `workflowService` service to your singleton services:
+Add a `workflowService` to your singleton services. The execution mode is
+decided automatically: if a `queueService` is also present, workflows run
+remotely via queue workers; otherwise they run inline.
 
-**PostgreSQL:**
+**PostgreSQL (Kysely):**
 ```typescript
-import { PgWorkflowService } from '@pikku/pg'
+import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 
-const workflowService = new PgWorkflowService(
-  'workflow_schema', // schema name
-  queueService
-)
+const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
+await pikkuKysely.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+await workflowService.init()
 ```
 
 **Redis:**
 ```typescript
 import { RedisWorkflowService } from '@pikku/redis'
 
-const workflowService = new RedisWorkflowService(
-  '.workflows', // key prefix
-  queueService
-)
+// (connection | RedisOptions | url | undefined, keyPrefix = 'workflows')
+const workflowService = new RedisWorkflowService(process.env.REDIS_URL)
 ```
 
 ### 3. Generate workflow types
@@ -74,13 +79,7 @@ Here's the workflow from the templates showing all three step types:
 https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/workflow.functions.ts
 ```
 
-Wire it via HTTP:
-
-```typescript reference title="workflow.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/workflow.wiring.ts
-```
-
-The execution mode (inline vs remote) is determined automatically based on whether a queue service is configured in your singleton services.
+Each `pikkuWorkflowFunc` exported from a `*.workflow.ts` / functions file is discovered and registered automatically by `npx pikku` — there is no separate wiring call. The execution mode (inline vs remote) is determined automatically based on whether a queue service is configured in your singleton services.
 
 ## Running Workflows
 
@@ -96,8 +95,10 @@ The CLI generates queue workers for:
 
 ### Trigger a workflow
 
+`rpc.startWorkflow` lives on the wire object (the 3rd function argument) and resolves to `{ runId }`:
+
 ```typescript
-const runId = await rpc.startWorkflow('onboarding', {
+const { runId } = await rpc.startWorkflow('onboarding', {
   email: 'user@example.com',
   userId: 'user-123'
 })
@@ -105,31 +106,21 @@ const runId = await rpc.startWorkflow('onboarding', {
 
 ## Testing with Inline Mode
 
-For testing, simply don't configure a queue service. When no queue service is available, workflows automatically run in inline mode:
+For testing, simply don't configure a queue service. When no `queueService` is available in your singleton services, workflows automatically run inline:
 
 ```typescript
-// In your services setup - don't include queueService for inline mode
-export const createSingletonServices = async () => {
-  const sql = postgres('postgresql://localhost:5432/myapp')
+// In your services setup - omit queueService for inline mode
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+await workflowService.init()
 
-  const workflowService = new PgWorkflowService(
-    sql,
-    undefined, // No queue service = inline mode
-    'workflows'
-  )
-
-  return {
-    workflowService,
-    // queueService: ... (omit for inline mode)
-  }
-}
-
-// Wire workflow (same for both modes)
-wireWorkflow({
-  name: 'onboarding',
-  func: onboardingWorkflow,
+const singletonServices = await createSingletonServices(config, {
+  logger,
+  workflowService,
+  // queueService: ... (omit for inline mode)
 })
 ```
+
+Workflows themselves need no wiring call — exporting a `pikkuWorkflowFunc` is enough for it to be registered.
 
 ## Next Steps
 

@@ -113,7 +113,7 @@ await eventHub.publish(
 export const joinRoom = pikkuChannelConnectionFunc<
   { welcome: string },
   { room: string }
->(async ({ eventHub, channel }) => {
+>(async ({ eventHub }, data, { channel }) => {
   const room = channel.openingData.room
   await eventHub.subscribe(`room:${room}`, channel.channelId)
   return { welcome: `Welcome to ${room}!` }
@@ -124,14 +124,14 @@ export const sendMessage = pikkuChannelFunc<
   { message: string },
   void,
   { room: string }
->(async ({ eventHub, channel, userSession }, data) => {
+>(async ({ eventHub }, data, { channel, session }) => {
   const room = channel.openingData.room
   await eventHub.publish(
     `room:${room}`,
     channel.channelId, // Don't echo back to sender
     {
       message: data.message,
-      userId: userSession.userId,
+      userId: session.userId,
       timestamp: Date.now()
     }
   )
@@ -139,8 +139,8 @@ export const sendMessage = pikkuChannelFunc<
 
 // Disconnect - cleanup (optional, happens automatically)
 export const leaveRoom = pikkuChannelDisconnectionFunc<{ room: string }>(
-  async ({ eventHub }, data) => {
-    await eventHub.unsubscribe(`room:${data.room}`, data.channelId)
+  async ({ eventHub }, data, { channel }) => {
+    await eventHub.unsubscribe(`room:${data.room}`, channel.channelId)
   }
 )
 ```
@@ -152,9 +152,9 @@ export const leaveRoom = pikkuChannelDisconnectionFunc<{ room: string }>(
 export const updatePresence = pikkuFunc<
   { status: 'online' | 'away' | 'offline' },
   void
->(async ({ eventHub, userSession }, data) => {
+>(async ({ eventHub }, data, { session }) => {
   await eventHub.publish('presence:updates', null, {
-    userId: userSession.userId,
+    userId: session.userId,
     status: data.status,
     timestamp: Date.now()
   })
@@ -162,7 +162,7 @@ export const updatePresence = pikkuFunc<
 
 // Subscribe to presence on connect
 export const watchPresence = pikkuChannelConnectionFunc(
-  async ({ eventHub, channel }) => {
+  async ({ eventHub }, data, { channel }) => {
     await eventHub.subscribe('presence:updates', channel.channelId)
   }
 )
@@ -175,7 +175,7 @@ export const watchPresence = pikkuChannelConnectionFunc(
 export const connectNotifications = pikkuChannelConnectionFunc<
   void,
   { userId: string }
->(async ({ eventHub, channel }) => {
+>(async ({ eventHub }, data, { channel }) => {
   const userId = channel.openingData.userId
   await eventHub.subscribe(`notifications:${userId}`, channel.channelId)
 })

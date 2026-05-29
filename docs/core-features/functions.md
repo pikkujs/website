@@ -185,7 +185,7 @@ Sometimes one function needs to call another. Use `rpc.invoke()` for this - it's
 
 ```typescript
 export const processOrder = pikkuFunc<{ orderId: string }, Order>({
-  func: async ({ database, rpc }, data) => {
+  func: async ({ database }, data, { rpc }) => {
     // Orchestrate multiple domain operations
     // Each invoke still enforces permissions and auth
     const invoice = await rpc.invoke('generateInvoice', {

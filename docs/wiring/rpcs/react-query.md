@@ -162,7 +162,7 @@ If a function's output doesn't have `nextCursor`, TypeScript won't let you use i
 
 ## Workflow Hooks
 
-If your project uses [Workflows](/docs/wiring/workflows), the generated file also includes:
+If your project uses [Workflows](../workflows/index.md), the generated file also includes:
 
 - **`useRunWorkflow(name)`** — mutation that runs a workflow to completion
 - **`useStartWorkflow(name)`** — mutation that starts a workflow and returns `{ runId }`
@@ -190,4 +190,4 @@ usePikkuInfiniteQuery('getUser', { userId: '123' })
 
 - [Exposed RPCs](./external.md) — How functions get exposed to clients
 - [Fetch Client](../http/fetch-client.md) — Lower-level type-safe HTTP client
-- [Workflows](../workflows) — Multi-step processes with React Query hooks
+- [Workflows](../workflows/index.md) — Multi-step processes with React Query hooks

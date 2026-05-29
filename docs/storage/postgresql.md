@@ -5,32 +5,53 @@ description: PostgreSQL storage backend for Pikku services
 ai: true
 ---
 
-# PostgreSQL (`@pikku/pg`)
+# PostgreSQL (`@pikku/kysely-postgres`)
 
-The `@pikku/pg` package provides PostgreSQL implementations for all Pikku storage interfaces. It uses the [`postgres`](https://github.com/porsager/postgres) (postgres.js) driver.
+The `@pikku/kysely-postgres` package provides PostgreSQL implementations for all Pikku storage interfaces. It is built on [Kysely](https://kysely.dev) with the [`postgres`](https://github.com/porsager/postgres) (postgres.js) driver.
 
 ## Installation
 
 ```bash
-npm install @pikku/pg postgres
+npm install @pikku/kysely-postgres
 ```
+
+## Connecting
+
+All services take a Kysely instance. Create one with `PikkuKysely`, then pass `pikkuKysely.kysely` to each service:
+
+```typescript
+import { PikkuKysely } from '@pikku/kysely-postgres'
+import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
+
+const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(
+  logger,
+  process.env.DATABASE_URL!
+)
+await pikkuKysely.init()
+```
+
+**Constructor:** `new PikkuKysely(logger, connectionOrConfig, defaultSchemaName?)`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `logger` | `Logger` | — | Logger instance |
+| `connectionOrConfig` | `postgres.Sql \| postgres.Options \| string` | — | Postgres connection, options, or connection string |
+| `defaultSchemaName` | `string` | — | Optional schema applied to all queries |
 
 ## Services
 
-### PgAIStorageService
+### PgKyselyAIStorageService
 
 Implements both `AIStorageService` and `AIRunStateService` for AI Agent persistence.
 
 ```typescript
-import { PgAIStorageService } from '@pikku/pg'
-import postgres from 'postgres'
+import { PgKyselyAIStorageService } from '@pikku/kysely-postgres'
 
-const sql = postgres(process.env.DATABASE_URL!)
-const aiStorage = new PgAIStorageService(sql)
+const aiStorage = new PgKyselyAIStorageService(pikkuKysely.kysely)
 await aiStorage.init() // Creates tables
 ```
 
-Register in your singleton services:
+Register in your singleton services — the same instance implements both interfaces:
 
 ```typescript
 const singletonServices = await createSingletonServices(config, {
@@ -38,13 +59,6 @@ const singletonServices = await createSingletonServices(config, {
   aiRunState: aiStorage, // Same instance implements both
 })
 ```
-
-**Constructor:** `new PgAIStorageService(connectionOrConfig, schemaName?)`
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `connectionOrConfig` | `postgres.Sql \| postgres.Options` | — | Postgres connection or config |
-| `schemaName` | `string` | `'pikku_ai'` | Database schema name |
 
 **AIStorageService methods:**
 
@@ -70,14 +84,14 @@ const singletonServices = await createSingletonServices(config, {
 | `findRunByToolCallId(toolCallId)` | Find a suspended run by tool call ID |
 | `resolveApproval(toolCallId, status)` | Approve or deny a pending tool call |
 
-### PgAgentRunService
+### PgKyselyAgentRunService
 
 Read-only service for querying agent runs (used by the [Console](/docs/console)).
 
 ```typescript
-import { PgAgentRunService } from '@pikku/pg'
+import { PgKyselyAgentRunService } from '@pikku/kysely-postgres'
 
-const agentRunService = new PgAgentRunService(sql, 'pikku_ai')
+const agentRunService = new PgKyselyAgentRunService(pikkuKysely.kysely)
 ```
 
 **Methods:**
@@ -91,69 +105,90 @@ const agentRunService = new PgAgentRunService(sql, 'pikku_ai')
 | `deleteThread(threadId)` | Delete a thread with cascade |
 | `getDistinctAgentNames()` | List all registered agent names |
 
-### PgWorkflowService
+### PgKyselyWorkflowService
 
 Workflow orchestration with PostgreSQL persistence.
 
 ```typescript
-import { PgWorkflowService } from '@pikku/pg'
+import { PgKyselyWorkflowService } from '@pikku/kysely-postgres'
 
-const workflowService = new PgWorkflowService(sql)
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
 await workflowService.init() // Creates tables
 ```
 
-### PgWorkflowRunService
+### PgKyselyWorkflowRunService
 
 Read-only service for querying workflow runs (used by the [Console](/docs/console)).
 
 ```typescript
-import { PgWorkflowRunService } from '@pikku/pg'
+import { PgKyselyWorkflowRunService } from '@pikku/kysely-postgres'
 
-const workflowRunService = new PgWorkflowRunService(sql, 'pikku_workflow')
+const workflowRunService = new PgKyselyWorkflowRunService(pikkuKysely.kysely)
 ```
 
-### PgChannelStore
+### PgKyselyChannelStore
 
 WebSocket channel and subscription persistence.
 
 ```typescript
-import { PgChannelStore } from '@pikku/pg'
+import { PgKyselyChannelStore } from '@pikku/kysely-postgres'
 
-const channelStore = new PgChannelStore(sql)
+const channelStore = new PgKyselyChannelStore(pikkuKysely.kysely)
 await channelStore.init() // Creates tables
 ```
 
-### PgDeploymentService
+### PgKyselyEventHubStore
+
+Tracks channel topic subscriptions for pub/sub across instances.
+
+```typescript
+import { PgKyselyEventHubStore } from '@pikku/kysely-postgres'
+
+const eventHubStore = new PgKyselyEventHubStore(pikkuKysely.kysely)
+```
+
+### PgKyselyDeploymentService
 
 Tracks multi-instance deployments with heartbeat monitoring.
 
 ```typescript
-import { PgDeploymentService } from '@pikku/pg'
+import { PgKyselyDeploymentService } from '@pikku/kysely-postgres'
 
-const deploymentService = new PgDeploymentService(config, sql)
+const deploymentService = new PgKyselyDeploymentService(
+  { heartbeatInterval: 5000, heartbeatTtl: 15000 },
+  pikkuKysely.kysely,
+  singletonServices.jwt,
+  singletonServices.secrets
+)
 await deploymentService.init()
 ```
 
 ## Full Example
 
 ```typescript
-import { PgAIStorageService, PgAgentRunService, PgWorkflowService } from '@pikku/pg'
+import {
+  PikkuKysely,
+  PgKyselyAIStorageService,
+  PgKyselyAgentRunService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
+import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 import { VercelAIAgentRunner } from '@pikku/ai-vercel'
 import { createOpenAI } from '@ai-sdk/openai'
-import postgres from 'postgres'
 
-const sql = postgres(process.env.DATABASE_URL!)
+const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
+await pikkuKysely.init()
 
-const aiStorage = new PgAIStorageService(sql)
+const aiStorage = new PgKyselyAIStorageService(pikkuKysely.kysely)
 await aiStorage.init()
 
-const workflowService = new PgWorkflowService(sql)
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
 await workflowService.init()
 
 const singletonServices = await createSingletonServices(config, {
   aiStorage,
   aiRunState: aiStorage,
-  agentRunService: new PgAgentRunService(sql),
+  agentRunService: new PgKyselyAgentRunService(pikkuKysely.kysely),
   workflowService,
   aiAgentRunner: new VercelAIAgentRunner({
     openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),
@@ -166,6 +201,5 @@ const singletonServices = await createSingletonServices(config, {
 Close the connection when shutting down:
 
 ```typescript
-await aiStorage.close()
-await sql.end()
+await pikkuKysely.close()
 ```

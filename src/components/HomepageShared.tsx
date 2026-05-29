@@ -182,7 +182,45 @@ export const protocols = [
 /** Hero Section — shared between both pages */
 export function Hero() {
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
-  const hovered = hoveredIndex !== null ? protocols[hoveredIndex] : null;
+  const [autoplayIndex, setAutoplayIndex] = React.useState<number | null>(null);
+  const autoplayTimers = React.useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  React.useEffect(() => {
+    // Autoplay: simulate hovering over different protocols so the chameleon changes color
+    // Each step is [protocolIndex | null, delay from start in ms]
+    // null = return to default (full-color chameleon)
+    // Picks maximally distinct colors: green → blue → red → purple
+    const sequence: [number | null, number][] = [
+      [0, 1800],    // HTTP (green, hue 80)
+      [null, 3000],  // back to normal
+      [5, 3800],    // RPC (blue, hue 180)
+      [null, 5000],  // back to normal
+      [3, 5800],    // Queue (red, hue -40)
+      [null, 7000],  // back to normal
+      [1, 7800],    // WebSocket (purple, hue 240)
+      [null, 9000],  // settle on default
+    ];
+    const timers = autoplayTimers.current;
+
+    for (const [protoIndex, delay] of sequence) {
+      timers.push(setTimeout(() => setAutoplayIndex(protoIndex), delay));
+    }
+
+    return () => { timers.forEach(clearTimeout); };
+  }, []);
+
+  // Hover takes priority over autoplay; cancel autoplay timers on first hover
+  const handleHover = (index: number | null) => {
+    if (index !== null && autoplayTimers.current.length > 0) {
+      autoplayTimers.current.forEach(clearTimeout);
+      autoplayTimers.current = [];
+      setAutoplayIndex(null);
+    }
+    setHoveredIndex(index);
+  };
+
+  const effectiveIndex = hoveredIndex ?? autoplayIndex;
+  const hovered = effectiveIndex !== null ? protocols[effectiveIndex] : null;
 
   return (
     <div className="hero-section w-full relative overflow-hidden">
@@ -231,8 +269,11 @@ export function Hero() {
               const content = (
                 <div
                   className="flex flex-col items-center gap-1.5 transition-transform duration-200 hover:scale-110"
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
+                  tabIndex={0}
+                  onMouseEnter={() => handleHover(index)}
+                  onMouseLeave={() => handleHover(null)}
+                  onFocus={() => handleHover(index)}
+                  onBlur={() => handleHover(null)}
                 >
                   <WiringIcon wiringId={item.icon} size={40} />
                   <span className="text-white/50 text-[11px] font-medium tracking-wide">{item.label}</span>

@@ -47,7 +47,7 @@ export const responseTime = pikkuMiddleware(async ({ logger }, wire, next) => {
 
   // For HTTP, you can set headers
   if (wire.http) {
-    wire.http.response.setHeader('X-Response-Time', `${duration}ms`)
+    wire.http.response.header('X-Response-Time', `${duration}ms`)
   }
 })
 ```
@@ -68,10 +68,10 @@ Pikku provides built-in middleware for common authentication and CORS patterns v
 import { authBearer } from '@pikku/core/middleware'
 
 // JWT mode (default) - decodes bearer tokens using the JWT service
-addHTTPMiddleware([authBearer()])
+addHTTPMiddleware('*', [authBearer()])
 
 // Static token mode - validates against a fixed token
-addHTTPMiddleware([
+addHTTPMiddleware('*', [
   authBearer({
     token: {
       value: process.env.API_TOKEN,
@@ -87,13 +87,13 @@ addHTTPMiddleware([
 import { authAPIKey } from '@pikku/core/middleware'
 
 // Look for API key in x-api-key header
-addHTTPMiddleware([authAPIKey({ source: 'header' })])
+addHTTPMiddleware('*', [authAPIKey({ source: 'header' })])
 
 // Look in query parameter
-addHTTPMiddleware([authAPIKey({ source: 'query' })])
+addHTTPMiddleware('*', [authAPIKey({ source: 'query' })])
 
 // Check both header and query
-addHTTPMiddleware([authAPIKey({ source: 'all' })])
+addHTTPMiddleware('*', [authAPIKey({ source: 'all' })])
 ```
 
 ### Cookie-Based Authentication
@@ -101,7 +101,7 @@ addHTTPMiddleware([authAPIKey({ source: 'all' })])
 ```typescript
 import { authCookie } from '@pikku/core/middleware'
 
-addHTTPMiddleware([
+addHTTPMiddleware('*', [
   authCookie({
     name: 'session',
     expiresIn: { value: 30, unit: 'day' },
@@ -121,10 +121,10 @@ addHTTPMiddleware([
 import { cors } from '@pikku/core/middleware'
 
 // Allow all origins
-addHTTPMiddleware([cors()])
+addHTTPMiddleware('*', [cors()])
 
 // Specific origin with credentials
-addHTTPMiddleware([
+addHTTPMiddleware('*', [
   cors({
     origin: 'https://app.example.com',
     credentials: true,
@@ -132,7 +132,7 @@ addHTTPMiddleware([
 ])
 
 // Multiple origins
-addHTTPMiddleware([
+addHTTPMiddleware('*', [
   cors({
     origin: ['https://app.example.com', 'https://admin.example.com'],
   })
@@ -200,7 +200,7 @@ export const authMiddleware = pikkuMiddleware(async ({ jwt }, { http, setSession
   let token = null
 
   if (http) {
-    token = http.request.getHeader('Authorization')?.replace('Bearer ', '')
+    token = http.request.header('Authorization')?.replace('Bearer ', '')
   }
 
   if (token) {
@@ -269,7 +269,7 @@ For HTTP routes specifically, you can apply middleware globally or per-prefix:
 import { addHTTPMiddleware } from '#pikku/http'
 
 // All HTTP routes will run this middleware
-addHTTPMiddleware([corsHeaders, securityHeaders])
+addHTTPMiddleware('*', [corsHeaders, securityHeaders])
 
 // All routes starting with /admin will run this middleware
 addHTTPMiddleware('/admin', [requireAuth, requireAdmin])
@@ -305,7 +305,7 @@ Use scheduler transport middleware for:
 
 Middleware executes from the broadest scope inward to the most specific. Think of it like layers of an onion - the outer layers run first:
 
-1. **Transport-specific middleware** - All HTTP (`addHTTPMiddleware([...])`) or all Schedulers (`addSchedulerMiddleware([...])`)
+1. **Transport-specific middleware** - All HTTP (`addHTTPMiddleware('*', [...])`) or all Schedulers (`addSchedulerMiddleware([...])`)
 2. **Prefix-based middleware** - HTTP routes matching prefix (`addHTTPMiddleware('/prefix', [...])`)
 3. **Wire-specific middleware** - Defined in `wireHTTP`/`wireChannel`/etc.
 4. **Function-level middleware** - Defined in function config
@@ -316,7 +316,7 @@ Example showing all scopes:
 
 ```typescript
 // Transport-specific - all HTTP routes
-addHTTPMiddleware([corsHeaders])
+addHTTPMiddleware('*', [corsHeaders])
 
 // Prefix-based - matches /api/v1
 addHTTPMiddleware('/api/v1', [apiKeyValidation])
@@ -359,8 +359,8 @@ Middleware receives a `wire` object that varies by transport:
 export const transportAware = pikkuMiddleware(async (services, wire, next) => {
   if (wire.http) {
     // HTTP-specific: request, response
-    const userAgent = wire.http.request.getHeader('User-Agent')
-    wire.http.response.setHeader('X-Custom', 'value')
+    const userAgent = wire.http.request.header('User-Agent')
+    wire.http.response.header('X-Custom', 'value')
   }
 
   if (wire.channel) {
@@ -399,8 +399,8 @@ export const errorHandler = pikkuMiddleware(async ({ logger }, wire, next) => {
 
     // For HTTP, you can set custom error responses
     if (wire.http) {
-      wire.http.response.setStatus(500)
-      wire.http.response.setHeader('X-Error-Id', generateErrorId())
+      wire.http.response.status(500)
+      wire.http.response.header('X-Error-Id', generateErrorId())
     }
 
     // Re-throw to let Pikku handle it
@@ -416,23 +416,20 @@ Sometimes you only want middleware to run in certain conditions:
 ```typescript
 export const conditionalCache = pikkuMiddleware(async ({ cache }, wire, next) => {
   // Only cache GET requests
-  if (wire.http?.request.method !== 'GET') {
+  if (wire.http?.request.method() !== 'get') {
     return await next()
   }
 
-  const cacheKey = wire.http.request.path
+  const cacheKey = wire.http.request.path()
   const cached = await cache.get(cacheKey)
 
   if (cached) {
-    // Short-circuit - don't call next()
-    wire.http.response.body = cached
+    // Short-circuit - serve the cached response without calling next()
+    wire.http.response.json(cached)
     return
   }
 
   await next()
-
-  // Cache the response after function completes
-  await cache.set(cacheKey, wire.http.response.body)
 })
 ```
 
@@ -470,7 +467,7 @@ export const cookieParser = pikkuMiddleware(async (services, wire, next) => {
 })
 
 // Apply only to HTTP routes
-addHTTPMiddleware([cookieParser, corsHeaders])
+addHTTPMiddleware('*', [cookieParser, corsHeaders])
 ```
 
 This ensures your middleware fails fast if accidentally used on the wrong transport, rather than silently doing nothing or causing subtle bugs.

@@ -13,7 +13,7 @@ Pikku analyzes your wirings at build time to generate optimized entry points. Th
 When you run `pikku`, the CLI:
 
 1. **Scans your codebase** for `pikkuFunc` definitions and wirings (`wireHTTP`, `wireChannel`, `wireQueueWorker`, etc.)
-2. **Applies filters** based on CLI arguments (`--http-routes`, `--tags`, `--types`)
+2. **Applies filters** based on CLI arguments (`--http-routes`, `--tags`, `--wires`)
 3. **Determines required services** by analyzing which services each filtered function uses
 4. **Generates an entry point** that imports only the needed functions and services
 
@@ -88,9 +88,9 @@ pikku --tags=reports
 ### By Protocol Type
 
 ```bash
-pikku --types=http        # Only HTTP handlers
-pikku --types=queue       # Only queue workers
-pikku --types=http,queue  # Multiple types
+pikku --wires=http        # Only HTTP handlers
+pikku --wires=queue       # Only queue workers
+pikku --wires=http,queue  # Multiple types
 ```
 
 ### Combining Filters
@@ -198,7 +198,7 @@ pikku --tags=public
 pikku --tags=admin
 
 # Background workers
-pikku --types=queue
+pikku --wires=queue
 ```
 
 Independent deployment and scaling per service.
@@ -207,7 +207,7 @@ Independent deployment and scaling per service.
 
 ```bash
 # One Lambda per critical endpoint
-pikku --http-routes=/users/:id --types=http
+pikku --http-routes=/users/:id --wires=http
 ```
 
 Maximum isolation and optimization.
@@ -218,18 +218,24 @@ Maximum isolation and optimization.
 
 Pikku generates entry points with filtered imports. You then use your bundler of choice (esbuild, webpack, etc.) to create the final bundle.
 
+The generated bootstrap (`#pikku/pikku-bootstrap.gen.js`) imports only the
+filtered functions and registers them in Pikku's state. Your runtime entry point
+imports that bootstrap and hands the wired services to a runtime server:
+
 ```typescript
-// .pikku/entry.ts (generated)
-import { getStatus } from '../src/functions/status'
-import { createServices } from './services'
-import { createHTTPHandler } from '@pikku/runtime-express'
+import { PikkuExpressServer } from '@pikku/express'
+import { createConfig, createSingletonServices } from './services.js'
+import './.pikku/pikku-bootstrap.gen.js' // only the filtered functions are registered
 
-const services = await createServices()
-const handler = createHTTPHandler([
-  { route: '/status', func: getStatus }
-], services)
+const config = await createConfig()
+const singletonServices = await createSingletonServices(config)
 
-export default handler
+const server = new PikkuExpressServer(
+  { ...config, port: 3000, hostname: 'localhost' },
+  singletonServices.logger
+)
+await server.init()
+await server.start()
 ```
 
 The generated code is readable and straightforward - no magic.

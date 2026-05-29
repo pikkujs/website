@@ -29,12 +29,12 @@ import './.pikku/pikku-bootstrap.gen.js'
 
 const app = Fastify()
 
+const config = await createConfig()
 const singletonServices = await createSingletonServices(config)
 
 app.register(pikkuFastifyPlugin, {
   pikku: {
-    singletonServices,
-    createWireServices,
+    logger: singletonServices.logger,
     respondWith404: true,
     logRoutes: true,
     loadSchemas: true,
@@ -46,6 +46,10 @@ app.get('/custom', async () => ({ hello: 'world' }))
 
 await app.listen({ port: 3000 })
 ```
+
+Calling `createSingletonServices` registers the services into Pikku's global
+state (the bootstrap import wires up the function and wire-service registry), so
+the plugin only needs a `logger`.
 
 ### Options
 
@@ -75,12 +79,7 @@ const server = new PikkuFastifyServer(config, singletonServices.logger)
 // Access the underlying Fastify app if needed
 // server.app.register(myPlugin)
 
-await server.init({
-  singletonServices,
-  createWireServices,
-  logRoutes: true,
-  loadSchemas: true,
-})
+await server.init()
 
 process.on('SIGINT', async () => {
   await server.stop()

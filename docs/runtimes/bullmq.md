@@ -108,9 +108,10 @@ The `BullServiceFactory` from `@pikku/queue-bullmq` manages the lifecycle of all
 ```typescript
 import { BullServiceFactory } from '@pikku/queue-bullmq'
 
-const bullFactory = new BullServiceFactory({
-  redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
-})
+// Connects to Redis via the REDIS_URL env var by default.
+// Pass ioredis ConnectionOptions to override (e.g. { host, port }).
+const bullFactory = new BullServiceFactory()
+await bullFactory.init()
 ```
 
 ### Key Methods
@@ -123,29 +124,30 @@ const bullFactory = new BullServiceFactory({
 
 ### Worker Registration
 
-Use `registerQueueWorkers()` to set up workers with the factory:
+Get the workers from the factory and call `registerQueues()`. The job runner is
+wired automatically when you import the generated bootstrap, so no extra setup is
+needed:
 
 ```typescript
-import { registerQueueWorkers } from '@pikku/core/queue'
+import './.pikku/pikku-bootstrap.gen.js'
 
 const queueWorkers = bullFactory.getQueueWorkers()
-registerQueueWorkers(queueWorkers, singletonServices, createWireServices)
+await queueWorkers.registerQueues()
 ```
 
-### Scheduler Handlers
+### Scheduler
 
-For scheduled tasks, use `createSchedulerRuntimeHandlers()`:
+For scheduled tasks, get the scheduler service from the factory, register it in
+your singleton services, and call `start()`:
 
 ```typescript
-import { createSchedulerRuntimeHandlers } from '@pikku/core/scheduler'
-
-const schedulerHandlers = createSchedulerRuntimeHandlers(
-  singletonServices,
-  createWireServices
-)
-
 const schedulerService = bullFactory.getSchedulerService()
-schedulerService.setHandlers(schedulerHandlers)
+
+const singletonServices = await createSingletonServices(config, {
+  queueService: bullFactory.getQueueService(),
+  schedulerService,
+})
+
 await schedulerService.start()
 ```
 
@@ -153,28 +155,25 @@ await schedulerService.start()
 
 ```typescript
 import { BullServiceFactory } from '@pikku/queue-bullmq'
-import { registerQueueWorkers } from '@pikku/core/queue'
-import { createSchedulerRuntimeHandlers } from '@pikku/core/scheduler'
+import { RedisWorkflowService } from '@pikku/redis'
+import './.pikku/pikku-bootstrap.gen.js'
 
-const bullFactory = new BullServiceFactory({
-  redisUrl: process.env.REDIS_URL!,
-})
+const bullFactory = new BullServiceFactory()
+await bullFactory.init()
+
+const schedulerService = bullFactory.getSchedulerService()
 
 const singletonServices = await createSingletonServices(config, {
   queueService: bullFactory.getQueueService(),
+  schedulerService,
+  workflowService: new RedisWorkflowService(process.env.REDIS_URL),
 })
 
-// Register queue workers
+// Register queue workers (includes the workflow queues)
 const queueWorkers = bullFactory.getQueueWorkers()
-registerQueueWorkers(queueWorkers, singletonServices, createWireServices)
+await queueWorkers.registerQueues()
 
-// Set up scheduler
-const schedulerHandlers = createSchedulerRuntimeHandlers(
-  singletonServices,
-  createWireServices
-)
-const schedulerService = bullFactory.getSchedulerService()
-schedulerService.setHandlers(schedulerHandlers)
+// Start the scheduler
 await schedulerService.start()
 ```
 

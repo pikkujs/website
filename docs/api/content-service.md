@@ -8,46 +8,62 @@ The ContentService provides file storage and management capabilities. It support
 Direct file uploads into Pikku functions (streaming multipart data) are not yet fully supported. The recommended pattern is to generate a signed upload URL client-side and have the client upload directly to storage.
 :::
 
+Every method takes a single arguments object that includes the `bucket` to
+operate on.
+
 ## Methods
 
-### `getUploadURL(fileKey: string, contentType: string): Promise<{ uploadUrl: string; assetKey: string }>`
+### `getUploadURL(args): Promise<UploadURLResult>`
 
 Generates a signed URL for uploading a file directly to storage.
 
-- **Parameters:**
-  - `fileKey`: The desired key/path of the uploaded file
-  - `contentType`: The MIME type of the file
-- **Returns:** An upload URL for the client to `PUT` to, and the finalized asset key
+- **`args`:** `{ bucket, fileKey, contentType, size? }`
+- **Returns:** `UploadURLResult` — `{ uploadUrl, assetKey, uploadHeaders?, uploadMethod? }`. The client `PUT`s (or `POST`s) the file to `uploadUrl`; `assetKey` is the finalized storage key.
 
-### `signContentKey(contentKey: string, dateLessThan: Date, dateGreaterThan?: Date): Promise<string>`
+### `signContentKey(args): Promise<string>`
 
 Signs a content key to produce a secure, time-limited access URL.
 
-- **Parameters:**
-  - `contentKey`: The key representing the stored object
+- **`args`:** `{ bucket, contentKey, dateLessThan, dateGreaterThan? }`
   - `dateLessThan`: Expiration time
   - `dateGreaterThan`: Optional earliest valid time
 - **Returns:** Signed URL
 
-### `signURL(url: string, dateLessThan: Date, dateGreaterThan?: Date): Promise<string>`
+### `signURL(args): Promise<string>`
 
 Signs an arbitrary URL to produce a time-limited access URL.
 
-### `deleteFile(fileName: string): Promise<boolean>`
+- **`args`:** `{ url, dateLessThan, dateGreaterThan? }`
+
+### `deleteFile(args): Promise<boolean>`
 
 Deletes a file from storage. Returns `true` on success.
 
-### `writeFile(assetKey: string, stream: ReadStream): Promise<boolean>`
+- **`args`:** `{ bucket, key }`
+
+### `writeFile(args): Promise<boolean>`
 
 Uploads a readable stream to storage under a given key.
 
-### `copyFile(assetKey: string, fromAbsolutePath: string): Promise<boolean>`
+- **`args`:** `{ bucket, key, stream }`
 
-Copies a file from a local path into storage.
+### `copyFile(args): Promise<boolean>`
 
-### `readFile(assetKey: string): Promise<ReadStream>`
+Copies a file from a local absolute path into storage.
+
+- **`args`:** `{ bucket, key, fromAbsolutePath }`
+
+### `readFile(args): Promise<ReadableStream | NodeJS.ReadableStream>`
 
 Returns a readable stream for a stored file.
+
+- **`args`:** `{ bucket, key }`
+
+### `readFileAsBuffer(args): Promise<Buffer>`
+
+Reads an entire file from storage into a `Buffer`.
+
+- **`args`:** `{ bucket, key }`
 
 ## Usage Example
 
@@ -66,14 +82,19 @@ interface RequestUploadOutput {
 export const requestUpload = pikkuFunc<RequestUploadInput, RequestUploadOutput>(
   async (services, data) => {
     // Generate a signed URL so the client can upload directly to storage
-    const { uploadUrl, assetKey } = await services.content.getUploadURL(
-      `uploads/${data.filename}`,
-      data.contentType
-    )
+    const { uploadUrl, assetKey } = await services.content.getUploadURL({
+      bucket: 'uploads',
+      fileKey: data.filename,
+      contentType: data.contentType,
+    })
 
     // Generate a time-limited download URL (expires in 1 hour)
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
-    const downloadUrl = await services.content.signContentKey(assetKey, expiresAt)
+    const downloadUrl = await services.content.signContentKey({
+      bucket: 'uploads',
+      contentKey: assetKey,
+      dateLessThan: expiresAt,
+    })
 
     return { uploadUrl, downloadUrl, assetKey }
   }

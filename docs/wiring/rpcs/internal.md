@@ -42,7 +42,7 @@ export const processOrder = pikkuFunc<
   { items: Array<{ price: number; quantity: number }> },
   { orderId: string; total: number }
 >({
-  func: async ({ rpc, database }, data, { session }) => {
+  func: async ({ database }, data, { rpc, session }) => {
     // Internal RPC call
     const totals = await rpc.invoke('calculateOrderTotal', {
       items: data.items
@@ -103,7 +103,7 @@ export const getUserInfoMCP = pikkuMCPResourceFunc<
   { userId: string },
   MCPResourceResponse
 >({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     // Call the function via RPC
     const user = await rpc.invoke('getUserInfo', data)
 
@@ -131,7 +131,7 @@ export const processNestedCategories = pikkuSessionlessFunc<
   { categoryId: string; depth?: number },
   { processed: number }
 >({
-  func: async ({ rpc, database, logger }, data) => {
+  func: async ({ database, logger }, data, { rpc }) => {
     logger.info('Processing category', {
       categoryId: data.categoryId,
       depth: rpc.depth
@@ -192,7 +192,7 @@ export const orchestrator = pikkuFunc<
   { resourceId: string },
   { complete: boolean }
 >({
-  func: async ({ rpc }, data, { session }) => {
+  func: async (services, data, { rpc, session }) => {
     // This RPC call inherits session from orchestrator
     // Auth and permissions are still checked
     await rpc.invoke('restrictedOperation', {
@@ -220,7 +220,7 @@ export const safeWorkflow = pikkuFunc<
   { orderId: string },
   { success: boolean; error?: string }
 >({
-  func: async ({ rpc, logger }, data) => {
+  func: async ({ logger }, data, { rpc }) => {
     try {
       await rpc.invoke('validateOrder', { orderId: data.orderId })
       await rpc.invoke('processPayment', { orderId: data.orderId })
@@ -251,7 +251,7 @@ export const safeWorkflow = pikkuFunc<
 ```typescript
 // ❌ Bad - wrapping simple service call in RPC
 export const getCard = pikkuFunc<{ cardId: string }, Card>({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     return await rpc.invoke('loadCard', { cardId: data.cardId })
   }
 })

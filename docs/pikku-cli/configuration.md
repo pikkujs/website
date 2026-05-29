@@ -54,10 +54,17 @@ Client files can be specified under a `clientFiles` object. When set, the corres
 | `fetchFile` | `pikku fetch` | Type-safe HTTP fetch client |
 | `websocketFile` | `pikku websocket` | Type-safe WebSocket client |
 | `rpcWiringsFile` | `pikku rpc` | RPC client wrappers |
+| `reactQueryFile` | `pikku react-query` | TanStack React Query hooks |
+| `realtimeFile` | `pikku realtime` | Typed realtime client (WebSocket + SSE) |
+| `startServerFnsFile` | `pikku tanstack-start` | TanStack Start server-function shim (`makeApi`) |
 | `queueWiringsFile` | `pikku queue-service` | Queue service wrapper |
 | `mcpJsonFile` | — | MCP server JSON manifest |
 | `nextBackendFile` | `pikku nextjs` | Next.js backend integration |
 | `nextHTTPFile` | `pikku nextjs` | Next.js HTTP route handler |
+
+`clientFiles` also accepts `nextBackendTransport` (`local` \| `worker-rpc` \|
+`http`), `nextBackendFetcherImport`, and `realtimeEventHubTopicsImport` for
+advanced Next.js / realtime setups.
 
 :::note Legacy format
 You can also specify these at the top level (e.g., `"fetchFile": "..."` instead of `"clientFiles": { "fetchFile": "..." }`). The `clientFiles` object is recommended because paths inside it are resolved relative to the config file directory.
@@ -101,32 +108,15 @@ The `scaffold` section controls where `pikku new` puts generated files and which
 | `console` | `"auth"` \| `"no-auth"` \| `false` | Generate console functions |
 | `agent` | `"auth"` \| `"no-auth"` \| `false` | Generate public agent endpoints |
 | `workflow` | `"auth"` \| `"no-auth"` \| `false` | Generate workflow routes |
+| `events` | `"auth"` \| `"no-auth"` \| `false` | Generate the realtime events channel + SSE stream (`events.gen.ts`) |
 
 ## AI Agents
 
-Configure model aliases and defaults for AI agents.
-
-```json
-{
-  "models": {
-    "fast": "openai/gpt-4o-mini",
-    "smart": { "model": "anthropic/claude-sonnet-4-20250514", "temperature": 0.7, "maxSteps": 10 }
-  },
-  "agentDefaults": {
-    "temperature": 0.5,
-    "maxSteps": 5
-  },
-  "agentOverrides": {
-    "my-agent": { "model": "openai/gpt-4o", "temperature": 0.3 }
-  }
-}
-```
-
-| Option | Type | Description |
-|--------|------|-------------|
-| `models` | `Record<string, string \| object>` | Named model aliases. Value is either a model string (`provider/model`) or `{ model, temperature?, maxSteps? }` |
-| `agentDefaults` | `object` | Default `temperature` and `maxSteps` for all agents |
-| `agentOverrides` | `Record<string, object>` | Per-agent overrides for `model`, `temperature`, `maxSteps` |
+AI agent models are declared **per-agent** using the provider-qualified
+`provider/model` form (e.g. `openai/gpt-5-mini`) on the agent definition itself —
+there is no config-level model alias map, defaults block, or per-agent override
+map in `pikku.config.json`. Request-time overrides are passed as `input.model`
+when the agent runs. See [AI Agents](/docs/wiring/ai-agents) for details.
 
 ## Workflows
 
@@ -272,17 +262,23 @@ Maps local directory paths to published package names so generated imports use t
 
 ## Filtering
 
-Permanently filter which functions are included in codegen output. These are the config-file equivalent of the CLI `--tags`, `--types`, etc. flags.
+Permanently filter which functions are included in codegen output. These are the config-file equivalent of the CLI `--tags`, `--wires`, etc. flags.
 
 ```json
 {
   "filters": {
     "tags": ["api", "public"],
-    "types": ["http", "rpc"],
+    "wires": ["http", "rpc"],
     "directories": ["src/api"]
   }
 }
 ```
+
+All `InspectorFilters` keys are supported: `names`, `tags`, `wires`,
+`directories`, `httpRoutes`, `httpMethods`, every `exclude*` variant
+(`excludeNames`, `excludeTags`, `excludeWires`, …), and `target` /
+`excludeTarget` (`serverless` | `server`). Named presets can be defined under
+`namedFilters` and selected with `pikku --filter <name>`.
 
 ## Linting
 
@@ -309,6 +305,24 @@ Configure lint rules for the inspector:
 | `forceRequiredServices` | `string[]` | Service names that must always be available, even if not detected |
 | `schemasFromTypes` | `string[]` | Additional type names to generate schemas for |
 | `verboseMeta` | `boolean` | Include extra metadata in generated JSON files |
+| `runtimeDir` | `string` | Runtime artifacts directory (dev.db, content, tmp). Resolved relative to `rootDir`. Default: `<rootDir>/.pikku-runtime` |
+| `namedFilters` | `Record<string, InspectorFilters>` | Named filter presets, selected via `pikku --filter <name>` |
+| `stateOutput` / `stateInput` | `string` | Save/load inspector state to/from JSON (skips re-inspection) |
+
+### Native Binary
+
+Compile a TypeScript entrypoint to a self-contained native binary with
+`pikku binary` (uses `bun build --compile`):
+
+```json
+{
+  "binary": {
+    "entrypoint": "src/start.ts",
+    "output": "dist/server",
+    "targets": ["bun-linux-x64", "bun-darwin-arm64"]
+  }
+}
+```
 
 ## Example Configurations
 
@@ -329,10 +343,6 @@ Configure lint rules for the inspector:
     "rpc": "auth",
     "agent": "auth",
     "workflow": "auth"
-  },
-  "models": {
-    "fast": "openai/gpt-4o-mini",
-    "smart": "anthropic/claude-sonnet-4-20250514"
   },
   "deploy": {
     "providers": {
@@ -391,7 +401,7 @@ Extended config (`pikku.config.json`):
   "extends": "./pikku.config.base.json",
   "filters": {
     "tags": ["public"],
-    "types": ["http"]
+    "wires": ["http"]
   }
 }
 ```

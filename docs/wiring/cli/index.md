@@ -142,7 +142,7 @@ For long-running operations, stream progress updates using `channel.send()`:
 
 ```typescript
 export const buildApp = pikkuSessionlessFunc({
-  func: async ({ channel }, data) => {
+  func: async (services, data, { channel }) => {
     if (channel) {
       await channel.send({ type: 'progress', step: 'Installing', percent: 0 })
     }

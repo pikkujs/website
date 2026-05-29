@@ -32,12 +32,7 @@ import { PikkuExpressServer } from '@pikku/express'
 import { BullServiceFactory } from '@pikku/queue-bullmq'
 import { RedisWorkflowService } from '@pikku/redis'
 import { InMemoryTriggerService } from '@pikku/core/services'
-import { createSchedulerRuntimeHandlers } from '@pikku/core/scheduler'
-import {
-  createConfig,
-  createWireServices,
-  createSingletonServices,
-} from './services.js'
+import { createConfig, createSingletonServices } from './services.js'
 import './.pikku/pikku-bootstrap.gen.js'
 
 async function main() {
@@ -48,47 +43,33 @@ async function main() {
   await bullFactory.init()
 
   // 2. Create workflow state store (Redis-backed)
-  const workflowService = new RedisWorkflowService(undefined)
+  const workflowService = new RedisWorkflowService(process.env.REDIS_URL)
 
   // 3. Create scheduler
   const schedulerService = bullFactory.getSchedulerService()
 
-  // 4. Build singleton services
+  // 4. Build singleton services (queue + scheduler + workflow are wired in here)
   const singletonServices = await createSingletonServices(config, {
     queueService: bullFactory.getQueueService(),
     schedulerService,
     workflowService,
   })
 
-  // 5. Wire scheduler and workflow services
-  schedulerService.setServices(
-    createSchedulerRuntimeHandlers({
-      singletonServices,
-      createWireServices,
-    })
-  )
-  workflowService.setServices(singletonServices, createWireServices, config)
-
-  // 6. Start HTTP server
+  // 5. Start HTTP server (config, logger)
   const appServer = new PikkuExpressServer(
     { ...config, port: 4002, hostname: 'localhost' },
-    singletonServices,
-    createWireServices
+    singletonServices.logger
   )
   appServer.enableExitOnSigInt()
   await appServer.init()
   await appServer.start()
 
-  // 7. Register and start queue workers
-  const bullQueueWorkers = bullFactory.getQueueWorkers(
-    singletonServices,
-    createWireServices
-  )
+  // 6. Register and start queue workers (includes the workflow queues)
+  const bullQueueWorkers = bullFactory.getQueueWorkers()
   await bullQueueWorkers.registerQueues()
 
-  // 8. Start triggers and scheduler
+  // 7. Start triggers and scheduler
   const triggerService = new InMemoryTriggerService()
-  triggerService.setServices(singletonServices)
   await schedulerService.start()
   await triggerService.start()
 }
@@ -102,24 +83,19 @@ BullMQ connects to Redis via the `REDIS_URL` environment variable (defaults to `
 
 ## PG Boss + PostgreSQL
 
-Use PG Boss with `PgWorkflowService` for PostgreSQL-backed workflow state:
+Use PG Boss with `PgKyselyWorkflowService` for PostgreSQL-backed workflow state:
 
 ```bash npm2yarn
-npm install @pikku/queue-pg-boss @pikku/pg postgres
+npm install @pikku/queue-pg-boss @pikku/kysely-postgres
 ```
 
 ```typescript
 import { PikkuExpressServer } from '@pikku/express'
 import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
-import { PgWorkflowService } from '@pikku/pg'
-import { InMemoryTriggerService } from '@pikku/core/services'
-import { createSchedulerRuntimeHandlers } from '@pikku/core/scheduler'
-import postgres from 'postgres'
-import {
-  createConfig,
-  createWireServices,
-  createSingletonServices,
-} from './services.js'
+import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
+import { InMemoryTriggerService, ConsoleLogger } from '@pikku/core/services'
+import { createConfig, createSingletonServices } from './services.js'
 import './.pikku/pikku-bootstrap.gen.js'
 
 const connectionString =
@@ -128,56 +104,46 @@ const connectionString =
 
 async function main() {
   const config = await createConfig()
+  const logger = new ConsoleLogger()
 
-  // 1. Initialize PG Boss
-  const sql = postgres(connectionString)
+  // 1. Initialize Kysely + PG Boss
+  const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, connectionString)
+  await pikkuKysely.init()
+
   const pgBossFactory = new PgBossServiceFactory(connectionString)
   await pgBossFactory.init()
 
-  // 2. Create workflow state store (PostgreSQL-backed)
-  const workflowService = new PgWorkflowService(sql)
-  await workflowService.init()
-
-  // 3. Create scheduler
+  // 2. Create scheduler
   const schedulerService = pgBossFactory.getSchedulerService()
+
+  // 3. Create workflow state store (PostgreSQL-backed); init() creates its tables
+  const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+  await workflowService.init()
 
   // 4. Build singleton services
   const singletonServices = await createSingletonServices(config, {
+    logger,
     queueService: pgBossFactory.getQueueService(),
     schedulerService,
     workflowService,
   })
 
-  // 5. Wire scheduler and workflow services
-  schedulerService.setServices(
-    createSchedulerRuntimeHandlers({
-      singletonServices,
-      createWireServices,
-    })
-  )
-  workflowService.setServices(singletonServices, createWireServices, config)
-
-  // 6. Start HTTP server
+  // 5. Start HTTP server (config, logger)
   const appServer = new PikkuExpressServer(
     { ...config, port: 4002, hostname: 'localhost' },
-    singletonServices,
-    createWireServices
+    singletonServices.logger
   )
   appServer.enableExitOnSigInt()
   await appServer.init()
   await appServer.start()
 
-  // 7. Register and start queue workers
-  const pgBossQueueWorkers = pgBossFactory.getQueueWorkers(
-    singletonServices,
-    createWireServices
-  )
+  // 6. Register and start queue workers (includes the workflow queues)
+  const pgBossQueueWorkers = pgBossFactory.getQueueWorkers()
   await pgBossQueueWorkers.registerQueues()
 
-  // 8. Start triggers and scheduler
+  // 7. Start triggers and scheduler
   await schedulerService.start()
   const triggerService = new InMemoryTriggerService()
-  triggerService.setServices(singletonServices)
   await triggerService.start()
 }
 
@@ -186,7 +152,7 @@ main()
 
 ### Database Setup
 
-PG Boss creates its tables automatically on `init()`. The `PgWorkflowService` also runs its schema setup on `init()`.
+PG Boss creates its tables automatically on `init()`. The `PgKyselyWorkflowService` also runs its schema setup on `init()`.
 
 Set `DATABASE_URL` to your PostgreSQL connection string.
 
@@ -217,7 +183,7 @@ These are registered automatically when you call `registerQueues()`. Your custom
 
 | | BullMQ + Redis | PG Boss + PostgreSQL |
 |---|---|---|
-| **State store** | `RedisWorkflowService` | `PgWorkflowService` |
+| **State store** | `RedisWorkflowService` (`@pikku/redis`) | `PgKyselyWorkflowService` (`@pikku/kysely-postgres`) |
 | **Infrastructure** | Requires Redis | Uses existing PostgreSQL |
 | **Performance** | Higher throughput | ACID transactions |
 | **Best for** | High-volume, low-latency jobs | When you already have PostgreSQL |

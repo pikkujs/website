@@ -31,19 +31,21 @@ npx pikku all
 
 | Flag | Description |
 |------|-------------|
-| `--tags, -t` | Filter functions by tags (comma-separated) |
-| `--types` | Filter by wiring types (comma-separated): `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli`, `workflow` |
-| `--directories, -d` | Filter functions by directories (comma-separated) |
-| `--http-methods` | Filter HTTP routes by methods (comma-separated) |
-| `--http-routes` | Filter HTTP routes by route patterns (comma-separated) |
-| `--names, -n` | Filter functions by name patterns (supports wildcards) |
+| `--filter` | Named filter preset(s) from the `filters` map in `pikku.config.json` (comma-separated) |
+| `--tags, -t` / `--exclude-tags` | Include/exclude functions by tags (comma-separated) |
+| `--wires` / `--exclude-wires` | Include/exclude wirings by category (comma-separated): `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli`, `workflow`, `trigger`, `agent` |
+| `--directories, -d` / `--exclude-directories` | Include/exclude functions by directories (comma-separated) |
+| `--http-methods` / `--exclude-http-methods` | Include/exclude HTTP routes by methods (comma-separated) |
+| `--http-routes` / `--exclude-http-routes` | Include/exclude HTTP routes by route patterns (comma-separated) |
+| `--names, -n` / `--exclude-names` | Include/exclude functions by name patterns (supports wildcards) |
+| `--target` / `--exclude-target` | Include/exclude by deploy target (`serverless`, `server`) |
 
 ```bash
 # Public HTTP API only
-npx pikku --tags public --types http
+npx pikku --tags public --wires http
 
 # Background workers only
-npx pikku --types queue,scheduler
+npx pikku --wires queue,scheduler
 
 # Specific routes
 npx pikku --http-routes /api/admin
@@ -92,15 +94,18 @@ npx pikku schemas
 Generate type-safe clients for specific protocols:
 
 ```bash
-npx pikku fetch       # HTTP fetch client
-npx pikku websocket   # WebSocket client
-npx pikku rpc         # RPC client wrappers
+npx pikku fetch          # HTTP fetch client
+npx pikku websocket      # WebSocket client
+npx pikku rpc            # RPC client wrappers
+npx pikku react-query    # TanStack React Query hooks from the RPC map
+npx pikku tanstack-start # TanStack Start server-function shim (makeApi)
+npx pikku realtime       # Typed realtime client (WebSocket + SSE helper)
 npx pikku queue-service  # Queue service wrapper
-npx pikku openapi     # OpenAPI specification from HTTP routes
-npx pikku nextjs      # Next.js backend and HTTP wrappers
+npx pikku openapi        # OpenAPI specification from HTTP routes
+npx pikku nextjs         # Next.js backend and HTTP wrappers
 ```
 
-These require the corresponding file paths to be set in `pikku.config.json` (e.g., `fetchFile`, `websocketFile`).
+These require the corresponding file paths to be set in `pikku.config.json` under `clientFiles` (e.g., `fetchFile`, `websocketFile`, `reactQueryFile`, `realtimeFile`, `startServerFnsFile`).
 
 ### `pikku new`
 
@@ -147,6 +152,7 @@ npx pikku enable rpc          # Enable public RPC endpoint
 npx pikku enable console      # Enable console functions
 npx pikku enable agent        # Enable public agent endpoints
 npx pikku enable workflow     # Enable workflow workers
+npx pikku enable events       # Enable the realtime events channel + SSE stream
 
 # Disable auth requirement
 npx pikku enable rpc --no-auth
@@ -193,6 +199,60 @@ npx pikku info permissions               # List all permission definitions
 npx pikku info --limit 100              # Show more rows (default: 50)
 ```
 
+### `pikku db`
+
+Local development database commands.
+
+```bash
+npx pikku db migrate   # Apply pending SQL migrations and regenerate db/schema.d.ts
+npx pikku db seed      # Apply db/seed.sql to the dev database
+npx pikku db reset     # Wipe and recreate the dev database (migrate + seed)
+```
+
+### `pikku tests`
+
+Manage function tests (the `ftest` Cucumber harness).
+
+```bash
+npx pikku tests init       # Scaffold the ftest Cucumber harness in your functions package
+npx pikku tests coverage   # Run the suite under c8 and emit function-coverage.json
+```
+
+### `pikku binary`
+
+Compile a TypeScript entrypoint to a self-contained native binary via `bun build --compile`. Configure `binary.entrypoint`, `binary.output`, and `binary.targets` in `pikku.config.json`.
+
+```bash
+npx pikku binary
+npx pikku binary --compile-target bun-linux-x64
+```
+
+### `pikku skills`
+
+Install bundled agent skills (Claude Code today; Codex/Gemini coming soon).
+
+```bash
+npx pikku skills list                 # List bundled skills and which are installed
+npx pikku skills install              # Copy bundled skills into the project
+npx pikku skills install --core       # Only skills tagged installGroups: [core]
+npx pikku skills install --fabric     # Only skills tagged installGroups: [fabric]
+```
+
+### `pikku meta`
+
+Inspect project metadata in machine-readable form (for planners and tooling).
+
+```bash
+npx pikku meta context     # Bulk project context in one call
+npx pikku meta clients     # Frontend-targeted metadata (exposed RPCs, workflows, channels)
+npx pikku meta functions list
+npx pikku meta wires list
+```
+
+### `pikku fabric`
+
+PikkuFabric commands (login, link, deploy, domains, secrets, logs, …). Run `npx pikku fabric` to see the subcommands.
+
 ## Global Options
 
 These flags work with any command:
@@ -201,6 +261,8 @@ These flags work with any command:
 |------|-------------|
 | `--config, -c` | Path to `pikku.config.json` file |
 | `--log-level, -l` | Set log level (default: `info`) |
+| `--output` | Output format: `text` (default) or `json` (emits NDJSON) |
+| `--json, -j` | Alias for `--output json` |
 | `--out-dir, -o` | Override output directory |
 | `--user-session-type` | Specify which UserSession type to use (when multiple exist) |
 | `--singleton-services-factory-type` | Specify which singleton services factory to use |
@@ -240,13 +302,13 @@ npx pikku deploy apply
 
 ```bash
 # Public API only
-npx pikku --tags public --types http
+npx pikku --tags public --wires http
 
 # Admin service
 npx pikku --tags admin --http-routes /admin
 
 # Background workers
-npx pikku --types queue,scheduler
+npx pikku --wires queue,scheduler
 ```
 
 ### Monorepo with Shared SDK

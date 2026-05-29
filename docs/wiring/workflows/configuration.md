@@ -4,26 +4,28 @@ This guide covers workflow configuration options for state storage and queue set
 
 ## pikku.config.json
 
-Add workflow configuration to your Pikku config:
+Workflows require no `pikku.config.json` configuration to work. All workflows
+share a single orchestrator queue and a single step-worker queue. You only need
+a `workflows` block if you want to override the default queue names:
 
 ```json
 {
   "workflows": {
-    "singleQueue": true,
-    "path": "src/workflows/pikku.workflows.gen.ts"
+    "orchestratorQueue": "pikku-workflow-orchestrator",
+    "workerQueue": "pikku-workflow-step-worker"
   }
 }
 ```
 
 ### Options
 
-- **`singleQueue`**: (boolean, required) Must be `true` during initial testing phase
-- **`path`**: (string) Output path for generated workflow types
+- **`orchestratorQueue`**: (string, optional) Custom queue name for workflow orchestration. Default: `pikku-workflow-orchestrator`
+- **`workerQueue`**: (string, optional) Custom queue name for step execution. Default: `pikku-workflow-step-worker`
 
 :::info Single Queue Mode
-Currently, only `singleQueue: true` is supported during initial testing. This means all workflows share a single orchestrator queue job and a single worker queue job to process them.
-
-In the future, we'll allow individual queue jobs to be created per workflow for more granular control, retries, and scaling.
+All workflows currently share one orchestrator queue job and one step-worker
+queue job. In the future, individual queue jobs may be created per workflow for
+more granular control, retries, and scaling.
 :::
 
 ## State Storage
@@ -32,83 +34,66 @@ Workflows require a `workflowService` service in your singleton services. Choose
 
 ### Option 1: PostgreSQL + pg-boss
 
-Use PostgreSQL for both state storage and queue:
+Use PostgreSQL for both state storage and queue. The `PgBossServiceFactory`
+provides the queue service; `PgKyselyWorkflowService` provides workflow state.
 
 ```typescript
-import { PgWorkflowService } from '@pikku/pg'
-import { PgBossQueueService } from '@pikku/queue-pg-boss'
-import postgres from 'postgres'
+import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
+import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
 
-export const createSingletonServices = async () => {
-  const sql = postgres('postgresql://localhost:5432/myapp')
+export const createSingletonServices = async (config, { logger }) => {
+  const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
+  await pikkuKysely.init()
 
-  const queueService = new PgBossQueueService('postgresql://localhost:5432/myapp')
+  const pgBossFactory = new PgBossServiceFactory(process.env.DATABASE_URL!)
+  await pgBossFactory.init()
 
-  const workflowService = new PgWorkflowService(
-    sql,
-    queueService,
-    'workflows' // schema name
-  )
+  const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+  await workflowService.init()
 
   return {
-    queueService,
+    queueService: pgBossFactory.getQueueService(),
     workflowService,
     // ... other services
   }
 }
 ```
 
-The PostgreSQL state service automatically creates:
-- `workflow_runs` table - stores workflow run metadata
-- `workflow_step` table - stores step results and status
+The PostgreSQL state service creates its run/step tables on `init()`.
 
-**For inline mode (testing)**, pass `undefined` as the queue service:
-```typescript
-const workflowService = new PgWorkflowService(
-  sql,
-  undefined, // No queue service = inline mode
-  'workflows'
-)
-```
+**For inline mode (testing)**, simply omit `queueService` from the returned
+services — no queue service means workflows run inline.
 
 ### Option 2: Redis + BullMQ
 
-Use Redis for both state storage and queue:
+Use Redis for both state storage and queue. The `BullServiceFactory` provides
+the queue service; `RedisWorkflowService(connection, keyPrefix = 'workflows')`
+provides workflow state.
 
 ```typescript
 import { RedisWorkflowService } from '@pikku/redis'
-import { BullQueueService } from '@pikku/queue-bullmq'
-import { Redis } from 'ioredis'
+import { BullServiceFactory } from '@pikku/queue-bullmq'
 
-export const createSingletonServices = async () => {
-  const redis = new Redis('redis://localhost:6379')
+export const createSingletonServices = async (config, { logger }) => {
+  const bullFactory = new BullServiceFactory()
+  await bullFactory.init()
 
-  const queueService = new BullQueueService('redis://localhost:6379')
-
-  const workflowService = new RedisWorkflowService(
-    redis,
-    queueService,
-    'workflows' // key prefix
-  )
+  // connection: Redis | RedisOptions | url | undefined
+  const workflowService = new RedisWorkflowService(process.env.REDIS_URL)
 
   return {
-    queueService,
+    queueService: bullFactory.getQueueService(),
     workflowService,
     // ... other services
   }
 }
 ```
 
-The Redis state service stores data in Redis hashes with the specified prefix.
+The Redis state service stores data in Redis hashes with the given key prefix.
 
-**For inline mode (testing)**, pass `undefined` as the queue service:
-```typescript
-const workflowService = new RedisWorkflowService(
-  redis,
-  undefined, // No queue service = inline mode
-  'workflows'
-)
-```
+**For inline mode (testing)**, simply omit `queueService` from the returned
+services — no queue service means workflows run inline.
 
 ## Execution Mode
 
@@ -177,7 +162,7 @@ Example of polling for workflow completion:
 export const triggerAndWait = pikkuSessionlessFunc<
   { input: any },
   any
->(async ({ rpc, workflowService, logger }, data) => {
+>(async ({ workflowService, logger }, data, { rpc }) => {
   // Start workflow
   const { runId } = await rpc.startWorkflow('myWorkflow', data.input)
 
@@ -213,7 +198,7 @@ export const triggerAndWait = pikkuSessionlessFunc<
 
 ## Running Workflow Workers
 
-Workflows require queue workers to execute orchestrator and step jobs. See the [workflows template](https://github.com/pikku-org/pikku-workflows/tree/main/templates/workflows) for a complete example of setting up workers.
+Workflows require queue workers to execute orchestrator and step jobs. See the [`workflows-pg-boss`](https://github.com/pikkujs/pikku/tree/main/templates/workflows-pg-boss) and [`workflows-bullmq`](https://github.com/pikkujs/pikku/tree/main/templates/workflows-bullmq) templates for complete worker setups.
 
 Pikku automatically generates workers for:
 - **`pikku-workflow-orchestrator`**: Executes workflow functions

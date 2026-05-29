@@ -56,7 +56,7 @@ export const processPayment = pikkuSessionlessFunc<
   { amount: number; userId: string },
   { success: boolean }
 >({
-  func: async ({ logger, workflowStep }, data) => {
+  func: async ({ logger }, data, { workflowStep }) => {
     // Access workflow context
     if (workflowStep) {
       const attempt = workflowStep.attemptCount  // Current attempt number (1, 2, 3, ...)
@@ -209,7 +209,7 @@ await workflow.cancel(reason)
 export const orderWorkflow = pikkuWorkflowFunc<
   { orderId: string; amount: number },
   { success: boolean }
->(async ({ workflow }, data) => {
+>(async (services, data, { workflow }) => {
   // Cancel if amount is invalid
   if (data.amount <= 0) {
     await workflow.cancel(`Invalid order amount: ${data.amount}`)
@@ -235,7 +235,7 @@ All step results are cached in the workflow state. When a workflow resumes (afte
 ### Example: Replay behavior
 
 ```typescript
-export const workflow = pikkuWorkflowFunc(async ({ workflow }, data) => {
+export const workflow = pikkuWorkflowFunc(async (services, data, { workflow }) => {
   // First execution
   const user = await workflow.do('Create user', 'createUser', data) // ✓ Executes
   const crm = await workflow.do('Add to CRM', async () => crmApi.create()) // ✓ Executes
@@ -283,14 +283,14 @@ Once a workflow starts, don't rearrange steps:
 
 ```typescript
 // ❌ WRONG: Adding step before completed steps
-export const workflow = pikkuWorkflowFunc(async ({ workflow }, data) => {
+export const workflow = pikkuWorkflowFunc(async (services, data, { workflow }) => {
   await workflow.do('New step', ...) // ← DON'T INSERT HERE if workflow already running
   await workflow.do('Existing step 1', ...)
   await workflow.do('Existing step 2', ...)
 })
 
 // ✓ CORRECT: Add new steps at end
-export const workflow = pikkuWorkflowFunc(async ({ workflow }, data) => {
+export const workflow = pikkuWorkflowFunc(async (services, data, { workflow }) => {
   await workflow.do('Existing step 1', ...)
   await workflow.do('Existing step 2', ...)
   await workflow.do('New step', ...) // ← Safe to add here

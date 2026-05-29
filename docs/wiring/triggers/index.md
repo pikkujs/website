@@ -203,8 +203,8 @@ const singletonServices = await createSingletonServices(config, {
   triggerService,
 })
 
-// After server startup, start triggers
-triggerService.setServices(singletonServices, createWireServices)
+// After server startup, start triggers. The trigger service reads its
+// singleton + wire services from the generated bootstrap automatically.
 await triggerService.start()
 
 // On shutdown
@@ -221,7 +221,6 @@ The `InMemoryTriggerService`:
 
 ```typescript
 interface TriggerService {
-  setServices(singletonServices, createWireServices?): void
   start(): Promise<void>
   stop(): Promise<void>
 }

@@ -52,7 +52,7 @@ export const createIssueMCP = pikkuMCPToolFunc<
   { title: string; description: string; priority: 'low' | 'medium' | 'high' },
   MCPToolResponse
 >({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     const issue = await rpc.invoke('createIssue', data)
 
     return [
@@ -92,7 +92,7 @@ export const processOrder = pikkuFunc<
   { orderId: string },
   { orderId: string; invoiceId: string; paymentId: string; status: string }
 >({
-  func: async ({ database, rpc, logger }, data) => {
+  func: async ({ database, logger }, data, { rpc }) => {
     logger.info('Processing order', { orderId: data.orderId })
 
     const invoice = await rpc.invoke('generateInvoice', {
@@ -131,7 +131,7 @@ export const processOrderMCP = pikkuMCPToolFunc<
   { orderId: string },
   MCPToolResponse
 >({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     const result = await rpc.invoke('processOrder', data)
 
     return [
@@ -175,7 +175,7 @@ export const generateChartMCP = pikkuMCPToolFunc<
   { datasetId: string },
   MCPToolResponse
 >({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     const chartData = await rpc.invoke('generateChart', data)
 
     return [

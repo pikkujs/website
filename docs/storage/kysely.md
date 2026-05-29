@@ -68,7 +68,7 @@ const aiStorage = new KyselyAIStorageService(db.kysely)
 await aiStorage.init()
 ```
 
-Provides the same methods as [`PgAIStorageService`](./postgresql#pgaistorageservice).
+Provides the same methods as [`PgKyselyAIStorageService`](./postgresql#pgkyselyaistorageservice).
 
 ### KyselyAgentRunService
 

@@ -65,7 +65,7 @@ export const sendMessage = pikkuChannelFunc<
   { message: string; timestamp: number },
   { room: string }
 >({
-  func: async ({ database, channel, session }, data) => {
+  func: async ({ database }, data, { channel, session }) => {
     // session is guaranteed to exist because auth: true
     const timestamp = Date.now()
 
@@ -124,7 +124,7 @@ export const onConnect = pikkuChannelConnectionFunc<
   { welcome: string },      // Output - sent to client
   { room: string }          // ChannelData - from URL params/query params/depends on source
 >({
-  func: async ({ logger, channel }) => {
+  func: async ({ logger }, data, { channel }) => {
     logger.info('User connected to room', { room: channel.openingData.room })
 
     // Return value is automatically sent
@@ -160,7 +160,7 @@ export const onMessage = pikkuChannelFunc<
   { message: string; timestamp: number },
   { room: string }
 >({
-  func: async ({ database, channel }, data) => {
+  func: async ({ database }, data, { channel }) => {
     const timestamp = Date.now()
 
     await database.insert('messages', {
@@ -214,7 +214,7 @@ export const onMessage = pikkuChannelFunc<
   { message: string; timestamp: number },
   { room: string }  // ChannelData type
 >({
-  func: async ({ channel }, data) => {
+  func: async (services, data, { channel }) => {
     // Access opening data throughout the connection
     const room = channel.openingData.room
 
@@ -230,7 +230,7 @@ This data is available in all lifecycle handlers and doesn't change during the c
 Inside channel functions, you have access to the `channel` object:
 
 ```typescript
-func: async ({ channel }, data) => {
+func: async (services, data, { channel }) => {
   channel.channelId          // Unique connection ID
   channel.openingData        // Data from connection URL
   channel.send(data)         // Send data to this client
@@ -275,7 +275,7 @@ export const onMessage = pikkuChannelFunc<
   { jobId: string },
   StatusUpdate
 >({
-  func: async ({ channel, database }, data) => {
+  func: async ({ database }, data, { channel }) => {
     // Send progress updates
     channel.send({ type: 'processing', step: 'Loading data' })
 
@@ -329,7 +329,7 @@ export const onConnect = pikkuChannelConnectionFunc<
   { welcome: string },
   { room: string }
 >({
-  func: async ({ eventHub, channel }) => {
+  func: async ({ eventHub }, data, { channel }) => {
     const room = channel.openingData.room
 
     // Subscribe this channel to the room's topic
@@ -346,8 +346,8 @@ Clean up subscriptions when clients disconnect:
 
 ```typescript
 export const onDisconnect = pikkuChannelDisconnectionFunc<{ room: string }>({
-  func: async ({ eventHub }, data) => {
-    await eventHub.unsubscribe(`room:${data.room}`, data.channelId)
+  func: async ({ eventHub }, data, { channel }) => {
+    await eventHub.unsubscribe(`room:${data.room}`, channel.channelId)
   }
 })
 ```
