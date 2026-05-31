@@ -5,6 +5,7 @@ description: Pikku documentation — guides, references, and API docs
 ---
 
 import Link from '@docusaurus/Link';
+import { Lightbulb, Layers, Terminal, LayoutDashboard, ShieldCheck, Database, Package, FlaskConical, BookOpen } from 'lucide-react';
 import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon, WorkflowIcon, TriggerIcon, RPCIcon } from '@site/src/components/WiringIcons';
 
 # Documentation
@@ -12,7 +13,7 @@ import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon
 <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'1rem',marginTop:'1.5rem'}}>
 
 <Link to="/docs/philosophy" className="doc-nav-card">
-  <div className="doc-nav-icon">📐</div>
+  <div className="doc-nav-icon"><Lightbulb size={24} /></div>
   <div>
     <div className="doc-nav-title">Philosophy</div>
     <div className="doc-nav-desc">Why Pikku exists and the problems it solves</div>
@@ -20,7 +21,7 @@ import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon
 </Link>
 
 <Link to="/docs/core-features" className="doc-nav-card">
-  <div className="doc-nav-icon">⚙️</div>
+  <div className="doc-nav-icon"><Layers size={24} /></div>
   <div>
     <div className="doc-nav-title">Core Features</div>
     <div className="doc-nav-desc">Functions, middleware, sessions, and error handling</div>
@@ -28,7 +29,7 @@ import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon
 </Link>
 
 <Link to="/docs/pikku-cli" className="doc-nav-card">
-  <div className="doc-nav-icon">🔧</div>
+  <div className="doc-nav-icon"><Terminal size={24} /></div>
   <div>
     <div className="doc-nav-title">Pikku CLI</div>
     <div className="doc-nav-desc">Code generation, filtering, and tree-shaking</div>
@@ -36,7 +37,7 @@ import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon
 </Link>
 
 <Link to="/docs/console" className="doc-nav-card">
-  <div className="doc-nav-icon">🖥️</div>
+  <div className="doc-nav-icon"><LayoutDashboard size={24} /></div>
   <div>
     <div className="doc-nav-title">The Console</div>
     <div className="doc-nav-desc">Visual control plane for exploring and managing your app</div>
@@ -182,7 +183,7 @@ Deploy to any platform.
 <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'1rem',marginTop:'0.75rem'}}>
 
 <Link to="/docs/middleware/auth-jwt" className="doc-nav-card">
-  <div className="doc-nav-icon">🔒</div>
+  <div className="doc-nav-icon"><ShieldCheck size={24} /></div>
   <div>
     <div className="doc-nav-title">Middleware</div>
     <div className="doc-nav-desc">Authentication and request processing</div>
@@ -190,7 +191,7 @@ Deploy to any platform.
 </Link>
 
 <Link to="/docs/storage" className="doc-nav-card">
-  <div className="doc-nav-icon">💾</div>
+  <div className="doc-nav-icon"><Database size={24} /></div>
   <div>
     <div className="doc-nav-title">Storage</div>
     <div className="doc-nav-desc">Database backends for AI, workflows, and channels</div>
@@ -198,7 +199,7 @@ Deploy to any platform.
 </Link>
 
 <Link to="/docs/addon" className="doc-nav-card">
-  <div className="doc-nav-icon">🧩</div>
+  <div className="doc-nav-icon"><Package size={24} /></div>
   <div>
     <div className="doc-nav-title">Addons</div>
     <div className="doc-nav-desc">Reusable function packages</div>
@@ -206,7 +207,7 @@ Deploy to any platform.
 </Link>
 
 <Link to="/docs/advanced/import-patterns" className="doc-nav-card">
-  <div className="doc-nav-icon">🔬</div>
+  <div className="doc-nav-icon"><FlaskConical size={24} /></div>
   <div>
     <div className="doc-nav-title">Advanced</div>
     <div className="doc-nav-desc">Custom runtimes and advanced topics</div>
@@ -214,7 +215,7 @@ Deploy to any platform.
 </Link>
 
 <Link to="/docs/api/jwt-service" className="doc-nav-card">
-  <div className="doc-nav-icon">📖</div>
+  <div className="doc-nav-icon"><BookOpen size={24} /></div>
   <div>
     <div className="doc-nav-title">API Reference</div>
     <div className="doc-nav-desc">Complete API documentation</div>

@@ -44,18 +44,18 @@ function Hero() {
   return (
     <div className="wire-hero-secrets w-full relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-amber-500/12 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-yellow-400/8 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
+        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
         <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-amber-400 border border-amber-400/40 bg-amber-400/10 px-3 py-1 rounded mb-6">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
             Core Concept
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">Type-safe config.</span><br />
-            <span className="text-amber-400">Zero guesswork.</span>
+            <span className="text-primary">Zero guesswork.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
             Declare secrets and variables with Zod schemas. Every value is validated, typed, and manageable from the Console or environment.
@@ -63,7 +63,7 @@ function Hero() {
           <div className="flex flex-row gap-4">
             <Link
               to="/docs/core-features/secrets"
-              className="bg-amber-500 text-white hover:bg-amber-600 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-amber-500/20"
+              className="bg-primary text-white hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-amber-500/20"
             >
               Secrets Docs
             </Link>
@@ -78,9 +78,9 @@ function Hero() {
 
         {/* Right: visual */}
         <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="bg-[#0d0d0d] border-2 border-amber-500/30 rounded-2xl p-8 font-mono text-sm leading-relaxed">
+          <div className="bg-[#0d0d0d] border-2 border-white/15 rounded-2xl p-8 font-mono text-sm leading-relaxed">
             <span className="text-neutral-500">// Declare a typed secret</span><br />
-            <span className="text-amber-400">wireSecret</span>
+            <span className="text-primary">wireSecret</span>
             <span className="text-white">{'({'}</span><br />
             <span className="text-neutral-300 ml-4">name: <span className="text-green-300">'DATABASE_CONFIG'</span>,</span><br />
             <span className="text-neutral-300 ml-4">schema: z.object({'{'}</span><br />
@@ -117,12 +117,12 @@ const config = await secrets.getSecretJSON('STRIPE_CONFIG')
 function SecretsSection() {
   const features = [
     {
-      icon: <Key className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />,
+      icon: <Key className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Schema-validated secrets',
       desc: 'Every secret is declared with a Zod schema. If a value is missing or the wrong shape, your app fails fast at startup — not at 3 AM.',
     },
     {
-      icon: <ShieldCheck className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />,
+      icon: <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'TypedSecretService',
       desc: 'The generated service knows every secret name and its shape. getSecretJSON returns the exact type — no casting, no as any.',
     },
@@ -133,17 +133,17 @@ function SecretsSection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Secrets</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Secrets with <span className="text-amber-400">superpowers</span>
+            Secrets with <span className="text-primary">superpowers</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Declare once with wireSecret. Read anywhere with full type safety and runtime validation.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           <div className="space-y-5">
             {features.map((feat, i) => (
               <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
@@ -196,17 +196,17 @@ function VariablesSection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Variables</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Config that <span className="text-amber-400">types itself</span>
+            Config that <span className="text-primary">types itself</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Same wireVariable pattern, same Zod schemas — but for non-sensitive configuration you can safely log and inspect.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           <CodeCard filename="variables.ts" badge="wireVariable">
             <CodeBlock language="typescript">{variablesCode}</CodeBlock>
           </CodeCard>
@@ -216,15 +216,15 @@ function VariablesSection() {
               <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
                 <h3 className="text-base font-bold mb-3 text-white flex items-center gap-2">
                   {i === 0
-                    ? <Key className="w-4 h-4 text-amber-400" />
-                    : <Variable className="w-4 h-4 text-amber-400" />
+                    ? <Key className="w-4 h-4 text-primary" />
+                    : <Variable className="w-4 h-4 text-primary" />
                   }
                   {group.label}
                 </h3>
                 <ul className="space-y-2">
                   {group.points.map((point, j) => (
                     <li key={j} className="flex items-center gap-2 text-sm text-neutral-400">
-                      <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-amber-500/60" />
+                      <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-primary/60" />
                       {point}
                     </li>
                   ))}
@@ -270,32 +270,32 @@ function OAuth2Section() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>OAuth2</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Managed <span className="text-amber-400">OAuth2 tokens</span>
+            Managed <span className="text-primary">OAuth2 tokens</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Declare credentials with wireOAuth2Credential — app secrets, token storage, authorization and token URLs. The OAuth2Client handles refresh, caching, and expiry automatically.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           <div className="space-y-5">
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <RefreshCw className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                <RefreshCw className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Two secrets, clear roles</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    <code className="text-amber-400 text-xs">secretId</code> holds your app's <code className="text-amber-400 text-xs">clientId</code> and <code className="text-amber-400 text-xs">clientSecret</code>. <code className="text-amber-400 text-xs">tokenSecretId</code> stores access and refresh tokens — updated automatically whenever a token is refreshed.
+                    <code className="text-primary text-xs">secretId</code> holds your app's <code className="text-primary text-xs">clientId</code> and <code className="text-primary text-xs">clientSecret</code>. <code className="text-primary text-xs">tokenSecretId</code> stores access and refresh tokens — updated automatically whenever a token is refreshed.
                   </p>
                 </div>
               </div>
             </div>
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <Monitor className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
+                <Monitor className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Console integration</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
@@ -323,21 +323,21 @@ function CTASection() {
   return (
     <section className="py-16 lg:py-24 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-amber-500/8 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
       </div>
 
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
           Config done right
         </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
           Type-safe secrets and variables with Zod validation. Manage everything from code or the Console.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Link
             to="/docs/core-features/secrets"
-            className="bg-amber-500 text-white hover:bg-amber-600 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-amber-500/20"
+            className="bg-primary text-white hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-amber-500/20"
           >
             Secrets Docs <ArrowRight className="inline w-4 h-4 ml-1" />
           </Link>

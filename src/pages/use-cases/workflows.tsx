@@ -15,10 +15,10 @@ function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-emerald-500/6 blur-[120px]" />
+        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-white/[0.04] blur-[120px]" />
       </div>
 
-      <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-16 lg:pt-28 lg:pb-20 text-center">
+      <div className="relative max-w-4xl px-6 pt-20 pb-16 lg:pt-28 lg:pb-20 ">
         <Link to="/" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50 no-underline hover:bg-white/[0.08] transition mb-6">
           Pikku Fabric use case
         </Link>
@@ -26,16 +26,16 @@ function Hero() {
         <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.1] text-white">
           Workflows that
           <br />
-          <span className="text-emerald-400">survive anything.</span>
+          <span className="text-primary">survive anything.</span>
         </h1>
 
-        <p className="mt-6 text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-lg text-white/50 max-w-2xl leading-relaxed">
           Write multi-step processes as sequential code. Pikku persists each step,
           retries on failure, and resumes exactly where it left off.
           No external workflow engine.
         </p>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        <div className="mt-8 flex flex-wrap gap-4">
           <Link to="/#waitlist" className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90 no-underline">
             Get early access <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -55,7 +55,7 @@ function Hero() {
 function Problem() {
   return (
     <section className="py-16 lg:py-20 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-3xl px-6 text-center">
+      <div className="max-w-3xl px-6 ">
         <p className="text-lg text-white/50 leading-relaxed">
           You need to onboard a user: create their profile, wait 5 minutes,
           send a welcome email, provision their workspace. If the email
@@ -75,12 +75,12 @@ function Problem() {
 function TheCode() {
   return (
     <section id="how-it-works" className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="text-center mb-14">
+      <div className="max-w-5xl px-6">
+        <div className="mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
             Sequential code. Durable execution.
           </h2>
-          <p className="mt-4 text-base text-white/40 max-w-lg mx-auto">
+          <p className="mt-4 text-base text-white/40 max-w-lg">
             Write it like normal async code. Pikku handles persistence,
             retries, and resumption.
           </p>
@@ -89,7 +89,7 @@ function TheCode() {
         <div className="grid gap-8 lg:grid-cols-2 items-start">
           {/* The workflow */}
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-emerald-400/60">You write this</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">You write this</p>
             <div className="rounded-xl border border-white/[0.06] bg-black/30 overflow-hidden">
               <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[13px] [&_pre]:!overflow-x-auto">
                 <CodeBlock language="typescript">{`export const onboardUser = pikkuWorkflow({
@@ -135,7 +135,7 @@ function TheCode() {
                 { icon: <Shield className="w-4 h-4" />, title: 'Same auth model', desc: 'Workflows use the same permissions as your functions. No separate auth layer.' },
               ].map((item, i) => (
                 <div key={i} className="flex gap-3 rounded-lg border border-white/[0.06] bg-white/[0.025] px-4 py-3">
-                  <div className="flex-shrink-0 mt-0.5 text-emerald-400/60">{item.icon}</div>
+                  <div className="flex-shrink-0 mt-0.5 text-white/45">{item.icon}</div>
                   <div>
                     <p className="text-sm font-semibold text-white/80">{item.title}</p>
                     <p className="text-xs text-white/35 leading-relaxed mt-0.5">{item.desc}</p>
@@ -157,12 +157,12 @@ function TheCode() {
 function HowTheyRun() {
   return (
     <section className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="text-center mb-14">
+      <div className="max-w-4xl px-6">
+        <div className="mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
             Trigger from anywhere. Watch it run.
           </h2>
-          <p className="mt-4 text-base text-white/40 max-w-lg mx-auto">
+          <p className="mt-4 text-base text-white/40 max-w-lg">
             Workflows are functions. Wire them to any surface.
           </p>
         </div>
@@ -199,14 +199,14 @@ pikkuAIAgent({
               <span className="ml-3 text-xs text-white/20 font-mono">workflow trace</span>
             </div>
             <div className="p-5 font-mono text-[12px] leading-6">
-              <div className="text-white/30">onboardUser — <span className="text-emerald-400">completed</span></div>
+              <div className="text-white/30">onboardUser — <span className="text-primary">completed</span></div>
               <div className="mt-2" />
-              <div className="text-emerald-400">  ✓ Create profile       <span className="text-white/20">12ms</span></div>
-              <div className="text-amber-400">  ◷ Wait before welcome  <span className="text-white/20">5m sleep</span></div>
-              <div className="text-emerald-400">  ✓ Send welcome email   <span className="text-white/20">340ms</span></div>
-              <div className="text-emerald-400">  ✓ Provision workspace  <span className="text-white/20">1.2s</span></div>
+              <div className="text-primary">  ✓ Create profile       <span className="text-white/20">12ms</span></div>
+              <div className="text-primary">  ◷ Wait before welcome  <span className="text-white/20">5m sleep</span></div>
+              <div className="text-primary">  ✓ Send welcome email   <span className="text-white/20">340ms</span></div>
+              <div className="text-primary">  ✓ Provision workspace  <span className="text-white/20">1.2s</span></div>
               <div className="mt-2" />
-              <div className="text-white/30">  Total: 5m 1.6s — <span className="text-emerald-400">success</span></div>
+              <div className="text-white/30">  Total: 5m 1.6s — <span className="text-primary">success</span></div>
               <div className="text-white/15">  Retries: 1 (sendEmail, attempt 2 succeeded)</div>
             </div>
           </div>
@@ -223,18 +223,18 @@ pikkuAIAgent({
 function VsAlternatives() {
   return (
     <section className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-3xl px-6 text-center">
+      <div className="max-w-3xl px-6 ">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-4">
           No YAML. No state machines. No separate engine.
         </h2>
-        <p className="text-base text-white/40 max-w-xl mx-auto leading-relaxed">
+        <p className="text-base text-white/40 max-w-xl leading-relaxed">
           Temporal requires a separate server and custom workers.
           Inngest needs event schemas and a webhook endpoint.
           Step Functions need JSON definitions and an AWS account.
           Pikku workflows are TypeScript functions — same as everything else in your codebase.
         </p>
 
-        <div className="mt-10 grid gap-3 sm:grid-cols-3 max-w-xl mx-auto text-left">
+        <div className="mt-10 grid gap-3 sm:grid-cols-3 max-w-xl text-left">
           {[
             { label: 'Temporal', issue: 'Separate server + workers' },
             { label: 'Inngest', issue: 'Event schemas + webhooks' },
@@ -248,7 +248,7 @@ function VsAlternatives() {
         </div>
 
         <p className="mt-6 text-sm text-white/50">
-          Pikku: <span className="text-emerald-400">just a function.</span> Same auth, same types, same deploy.
+          Pikku: <span className="text-primary">just a function.</span> Same auth, same types, same deploy.
         </p>
       </div>
     </section>
@@ -263,18 +263,18 @@ function CTA() {
   return (
     <section className="relative overflow-hidden py-20 lg:py-28">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-emerald-500/5 blur-[100px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-white/[0.04] blur-[100px]" />
       </div>
 
-      <div className="relative mx-auto max-w-2xl px-6 text-center">
+      <div className="relative max-w-2xl px-6 ">
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
           Ship your first workflow in 5 minutes.
         </h2>
-        <p className="mt-4 text-base text-white/40 max-w-md mx-auto">
+        <p className="mt-4 text-base text-white/40 max-w-md">
           Write a workflow. Deploy to Fabric. Watch it run with full traces.
         </p>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/#waitlist" className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90 no-underline">
             Get early access <ArrowRight className="w-3.5 h-3.5" />
           </Link>

@@ -7,7 +7,7 @@ interface WiringIconProps {
 
 export const HttpIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 32 32" className="text-green-600 dark:text-green-400" fill="currentColor">
+    <svg width={size} height={size} viewBox="0 0 32 32" className="text-white/55" fill="currentColor">
       <path d="M30,11H25V21h2V18h3a2.0027,2.0027,0,0,0,2-2V13A2.0023,2.0023,0,0,0,30,11Zm-3,5V13h3l.001,3Z"/>
       <polygon points="10 13 12 13 12 21 14 21 14 13 16 13 16 11 10 11 10 13"/>
       <polygon points="23 11 17 11 17 13 19 13 19 21 21 21 21 13 23 13 23 11"/>
@@ -18,7 +18,7 @@ export const HttpIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 
 
 export const WebSocketIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 -31.5 256 256" className="text-purple-600 dark:text-purple-400" fill="currentColor">
+    <svg width={size} height={size} viewBox="0 -31.5 256 256" className="text-white/55" fill="currentColor">
       <path d="M192.440223,144.644612 L224.220111,144.644612 L224.220111,68.3393384 L188.415329,32.5345562 L165.943007,55.0068785 L192.440223,81.5040943 L192.440223,144.644612 L192.440223,144.644612 Z M224.303963,160.576482 L178.017688,160.576482 L113.451687,160.576482 L86.954471,134.079266 L98.1906322,122.843105 L120.075991,144.728464 L165.104487,144.728464 L120.746806,100.286931 L132.06682,88.9669178 L176.4245,133.324599 L176.4245,88.2961022 L154.622994,66.4945955 L165.775303,55.3422863 L110.684573,0 L56.3485097,0 L56.3485097,0 L0,0 L31.6960367,31.6960367 L31.6960367,31.7798886 L31.8637406,31.7798886 L97.4359646,31.7798886 L120.662954,55.0068785 L86.7029152,88.9669178 L63.4759253,65.7399279 L63.4759253,47.7117589 L31.6960367,47.7117589 L31.6960367,78.9046839 L86.7029152,133.911562 L64.3144448,156.300033 L100.119227,192.104815 L154.45529,192.104815 L256,192.104815 L256,192.104815 L224.303963,160.576482 L224.303963,160.576482 Z"/>
     </svg>
   </div>
@@ -26,7 +26,7 @@ export const WebSocketIcon: React.FC<WiringIconProps> = ({ className = "", size 
 
 export const SSEIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 16 16" className="text-orange-600 dark:text-orange-400">
+    <svg width={size} height={size} viewBox="0 0 16 16" className="text-white/55">
       <rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
       <path d="M4 6h8M4 8h6M4 10h4" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
       <path d="M12 1l2 2-2 2M11 5V1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -36,7 +36,7 @@ export const SSEIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }
 
 export const CronIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" className="text-yellow-600 dark:text-yellow-400" fill="none">
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-white/55" fill="none">
       <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2"/>
       <path d="M12 7L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M21 4L20 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -46,7 +46,7 @@ export const CronIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 
 
 export const QueueIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 48 48" className="text-red-600 dark:text-red-400" fill="currentColor">
+    <svg width={size} height={size} viewBox="0 0 48 48" className="text-white/55" fill="currentColor">
       <path d="M16,36a2,2,0,0,1-2-2V6a2,2,0,0,1,2-2h0a2,2,0,0,1,2,2V34a2,2,0,0,1-2,2Z"/>
       <path d="M24,36a2,2,0,0,1-2-2V6a2,2,0,0,1,2-2h0a2,2,0,0,1,2,2V34a2,2,0,0,1-2,2Z"/>
       <path d="M32,36a2,2,0,0,1-2-2V6a2,2,0,0,1,2-2h0a2,2,0,0,1,2,2V34a2,2,0,0,1-2,2Z"/>
@@ -59,7 +59,7 @@ export const QueueIcon: React.FC<WiringIconProps> = ({ className = "", size = 16
 
 export const RPCIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 16 16" className="text-blue-600 dark:text-blue-400">
+    <svg width={size} height={size} viewBox="0 0 16 16" className="text-white/55">
       <rect x="1.5" y="6.5" width="5" height="3" rx="0.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
       <rect x="9.5" y="6.5" width="5" height="3" rx="0.5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
       <path d="M6.5 8h3" stroke="currentColor" strokeWidth="1.5"/>
@@ -70,7 +70,7 @@ export const RPCIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }
 
 export const MCPIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" className="text-pink-600 dark:text-pink-400" fill="currentColor">
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-white/55" fill="currentColor">
       <path d="M15.688 2.343a2.588 2.588 0 00-3.61 0l-9.626 9.44a.863.863 0 01-1.203 0 .823.823 0 010-1.18l9.626-9.44a4.313 4.313 0 016.016 0 4.116 4.116 0 011.204 3.54 4.3 4.3 0 013.609 1.18l.05.05a4.115 4.115 0 010 5.9l-8.706 8.537a.274.274 0 000 .393l1.788 1.754a.823.823 0 010 1.18.863.863 0 01-1.203 0l-1.788-1.753a1.92 1.92 0 010-2.754l8.706-8.538a2.47 2.47 0 000-3.54l-.05-.049a2.588 2.588 0 00-3.607-.003l-7.172 7.034-.002.002-.098.097a.863.863 0 01-1.204 0 .823.823 0 010-1.18l7.273-7.133a2.47 2.47 0 00-.003-3.537z"/>
       <path d="M14.485 4.703a.823.823 0 000-1.18.863.863 0 00-1.204 0l-7.119 6.982a4.115 4.115 0 000 5.9 4.314 4.314 0 006.016 0l7.12-6.982a.823.823 0 000-1.18.863.863 0 00-1.204 0l-7.119 6.982a2.588 2.588 0 01-3.61 0 2.47 2.47 0 010-3.54l7.12-6.982z"/>
     </svg>
@@ -79,7 +79,7 @@ export const MCPIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }
 
 export const TriggerIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" className="text-amber-600 dark:text-amber-400" fill="currentColor">
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-white/55" fill="currentColor">
       <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
     </svg>
   </div>
@@ -87,7 +87,7 @@ export const TriggerIcon: React.FC<WiringIconProps> = ({ className = "", size = 
 
 export const BotIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" className="text-violet-600 dark:text-violet-400" fill="none">
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-white/55" fill="none">
       <rect x="3" y="8" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
       <circle cx="9" cy="14" r="1.5" fill="currentColor"/>
       <circle cx="15" cy="14" r="1.5" fill="currentColor"/>
@@ -99,7 +99,7 @@ export const BotIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }
 
 export const WorkflowIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" className="text-teal-600 dark:text-teal-400" fill="none">
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-white/55" fill="none">
       <circle cx="7" cy="5" r="2.5" stroke="currentColor" strokeWidth="2"/>
       <circle cx="7" cy="19" r="2.5" stroke="currentColor" strokeWidth="2"/>
       <circle cx="17" cy="12" r="2.5" stroke="currentColor" strokeWidth="2"/>
@@ -110,7 +110,7 @@ export const WorkflowIcon: React.FC<WiringIconProps> = ({ className = "", size =
 
 export const GatewayIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" className="text-rose-600 dark:text-rose-400" fill="none">
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-white/55" fill="none">
       <path d="M12 3v4m0 10v4M5.5 7L8 10m8 4l2.5 3M3 12h4m10 0h4M5.5 17L8 14m8-4l2.5-3" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
       <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
     </svg>
@@ -119,7 +119,7 @@ export const GatewayIcon: React.FC<WiringIconProps> = ({ className = "", size = 
 
 export const CLIIcon: React.FC<WiringIconProps> = ({ className = "", size = 16 }) => (
   <div className={`inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-    <svg width={size} height={size} viewBox="0 0 24 24" className="text-cyan-600 dark:text-cyan-400" fill="none">
+    <svg width={size} height={size} viewBox="0 0 24 24" className="text-white/55" fill="none">
       <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" strokeWidth="2"/>
       <path d="M7 10l3 3-3 3M12 16h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>

@@ -46,18 +46,18 @@ function Hero() {
   return (
     <div className="wire-hero-security w-full relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-green-500/10 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-emerald-400/6 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/[0.06] blur-[100px]" />
+        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/[0.04] blur-[60px]" />
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
         <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-green-400 border border-green-400/40 bg-green-400/10 px-3 py-1 rounded mb-6">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
             Core Concept
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">One session API.</span><br />
-            <span className="text-green-400">Every transport.</span>
+            <span className="text-primary">Every transport.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
             Sessions, permissions, and auth middleware work the same across HTTP, WebSocket, CLI, MCP, and every other wire. Write your security logic once.
@@ -65,7 +65,7 @@ function Hero() {
           <div className="flex flex-row gap-4">
             <Link
               to="/docs/core-features/user-sessions"
-              className="bg-green-500 text-black hover:bg-green-400 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-green-500/20"
+              className="bg-primary text-black hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-black/20"
             >
               Read the Docs
             </Link>
@@ -80,9 +80,9 @@ function Hero() {
 
         {/* Right: visual — session lifecycle */}
         <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="bg-[#0d0d0d] border-2 border-green-500/30 rounded-2xl p-8 font-mono text-sm leading-relaxed">
+          <div className="bg-[#0d0d0d] border-2 border-white/15 rounded-2xl p-8 font-mono text-sm leading-relaxed">
             <span className="text-neutral-500">// Same API everywhere</span><br />
-            <span className="text-purple-400">async</span>{' '}
+            <span className="text-primary">async</span>{' '}
             <span className="text-white">(</span><br />
             <span className="text-neutral-300 ml-4">{'{ '}<span className="text-yellow-300">db</span>{' }'}</span>
             <span className="text-neutral-600 ml-2">// services</span><br />
@@ -146,21 +146,21 @@ function SessionSection() {
   return (
     <section id="sessions" className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Sessions</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Read, write, clear. <span className="text-green-400">That's the API.</span>
+            Read, write, clear. <span className="text-primary">That's the API.</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Whether the request arrives over HTTP, WebSocket, or CLI — your function reads and writes the session the same way.
           </p>
         </div>
 
         {/* Lifecycle steps */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mb-12">
           {lifecycle.map((item, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 text-center relative">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-green-500/20 text-green-400 text-xs font-bold mb-3">{i + 1}</span>
+            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 relative">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/10 text-primary text-xs font-bold mb-3">{i + 1}</span>
               <p className="text-sm font-semibold text-white mb-1">{item.step}</p>
               <p className="text-xs text-neutral-500">{item.desc}</p>
               {i < lifecycle.length - 1 && (
@@ -171,14 +171,14 @@ function SessionSection() {
         </div>
 
         {/* Code examples */}
-        <div className="grid lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <CodeCard filename="login.func.ts" badge="setSession" icon={<Lock className="w-4 h-4 text-green-400" />}>
+        <div className="grid lg:grid-cols-3 gap-6 max-w-5xl">
+          <CodeCard filename="login.func.ts" badge="setSession" icon={<Lock className="w-4 h-4 text-primary" />}>
             <CodeBlock language="typescript">{loginCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="getProfile.func.ts" badge="session" icon={<UserCheck className="w-4 h-4 text-green-400" />}>
+          <CodeCard filename="getProfile.func.ts" badge="session" icon={<UserCheck className="w-4 h-4 text-primary" />}>
             <CodeBlock language="typescript">{getProfileCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="logout.func.ts" badge="clearSession" icon={<KeyRound className="w-4 h-4 text-green-400" />}>
+          <CodeCard filename="logout.func.ts" badge="clearSession" icon={<KeyRound className="w-4 h-4 text-primary" />}>
             <CodeBlock language="typescript">{logoutCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -235,63 +235,63 @@ const usageCode = `export const deleteBook = pikkuFunc({
 function PermissionsSection() {
   return (
     <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Permissions</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Boolean checks. <span className="text-green-400">Composable logic.</span>
+            Boolean checks. <span className="text-primary">Composable logic.</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Permissions run before your function. Return <code className="text-green-400 text-base">true</code> to allow,{' '}
-            <code className="text-green-400 text-base">false</code> to reject. Group them with OR/AND logic.
+          <p className="text-lg text-neutral-400 max-w-2xl">
+            Permissions run before your function. Return <code className="text-primary text-base">true</code> to allow,{' '}
+            <code className="text-primary text-base">false</code> to reject. Group them with OR/AND logic.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           {/* Left: auth first, then permissions */}
           <div className="space-y-6">
-            <CodeCard filename="auth.ts" badge="pikkuAuth" icon={<ShieldCheck className="w-4 h-4 text-green-400" />}>
+            <CodeCard filename="auth.ts" badge="pikkuAuth" icon={<ShieldCheck className="w-4 h-4 text-primary" />}>
               <CodeBlock language="typescript">{authCode}</CodeBlock>
             </CodeCard>
-            <CodeCard filename="permissions.ts" badge="pikkuPermission" icon={<Shield className="w-4 h-4 text-green-400" />}>
+            <CodeCard filename="permissions.ts" badge="pikkuPermission" icon={<Shield className="w-4 h-4 text-primary" />}>
               <CodeBlock language="typescript">{permissionCode}</CodeBlock>
             </CodeCard>
           </div>
 
           {/* Right: usage + explanation */}
           <div className="space-y-6">
-            <CodeCard filename="deleteBook.func.ts" badge="func.ts" icon={<Lock className="w-4 h-4 text-green-400" />}>
+            <CodeCard filename="deleteBook.func.ts" badge="func.ts" icon={<Lock className="w-4 h-4 text-primary" />}>
               <CodeBlock language="typescript">{usageCode}</CodeBlock>
             </CodeCard>
 
             <div className="space-y-4">
               <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
                 <div className="flex items-start gap-4">
-                  <ShieldCheck className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+                  <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <div>
                     <h3 className="text-base font-bold mb-1.5 text-white">pikkuAuth</h3>
                     <p className="text-sm text-neutral-400 leading-relaxed">
-                      Session-only — receives <code className="text-green-400 text-xs">(services, session)</code>. Use for authentication gates, role checks, MCP tools, and AI agents.
+                      Session-only — receives <code className="text-primary text-xs">(services, session)</code>. Use for authentication gates, role checks, MCP tools, and AI agents.
                     </p>
                   </div>
                 </div>
               </div>
               <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
                 <div className="flex items-start gap-4">
-                  <Shield className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+                  <Shield className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <div>
                     <h3 className="text-base font-bold mb-1.5 text-white">pikkuPermission</h3>
                     <p className="text-sm text-neutral-400 leading-relaxed">
-                      Data-aware — receives <code className="text-green-400 text-xs">(services, data, wire)</code>. Use when authorization depends on request data, e.g. ownership or access checks.
+                      Data-aware — receives <code className="text-primary text-xs">(services, data, wire)</code>. Use when authorization depends on request data, e.g. ownership or access checks.
                     </p>
                   </div>
                 </div>
               </div>
               <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
                 <div className="flex items-start gap-4">
-                  <Layers className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+                  <Layers className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <div>
                     <h3 className="text-base font-bold mb-1.5 text-white">OR / AND composition</h3>
                     <p className="text-sm text-neutral-400 leading-relaxed">
@@ -352,17 +352,17 @@ wireHTTP({
 function MiddlewareSection() {
   const strategies = [
     {
-      icon: <Key className="w-5 h-5 text-green-400" />,
+      icon: <Key className="w-5 h-5 text-primary" />,
       title: 'authBearer',
       desc: 'JWT from the Authorization header. Decodes and sets session automatically.',
     },
     {
-      icon: <Cookie className="w-5 h-5 text-green-400" />,
+      icon: <Cookie className="w-5 h-5 text-primary" />,
       title: 'authCookie',
       desc: 'JWT-encoded cookie. Auto-refreshes on session change. Configurable expiry and options.',
     },
     {
-      icon: <Scan className="w-5 h-5 text-green-400" />,
+      icon: <Scan className="w-5 h-5 text-primary" />,
       title: 'authAPIKey',
       desc: 'Reads x-api-key header or apiKey query param. Decodes as JWT to set session.',
     },
@@ -370,21 +370,21 @@ function MiddlewareSection() {
 
   return (
     <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Auth Middleware</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Built-in strategies. <span className="text-green-400">Four scopes.</span>
+            Built-in strategies. <span className="text-primary">Four scopes.</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Bearer tokens, cookies, and API keys ship out of the box. Apply middleware globally, by route prefix, by tag, or per-wiring.
           </p>
         </div>
 
         {/* Strategy cards */}
-        <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto mb-12">
+        <div className="grid md:grid-cols-3 gap-5 max-w-4xl mb-12">
           {strategies.map((s, i) => (
             <div key={i} className="bg-[#0d0d0d] border border-neutral-800 border-t-2 border-t-green-500 rounded-lg p-5">
               <div className="flex items-start gap-3 mb-3">
@@ -397,17 +397,17 @@ function MiddlewareSection() {
         </div>
 
         {/* Code examples */}
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          <CodeCard filename="middleware.ts" badge="built-in" icon={<Shield className="w-4 h-4 text-green-400" />}>
+        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl">
+          <CodeCard filename="middleware.ts" badge="built-in" icon={<Shield className="w-4 h-4 text-primary" />}>
             <CodeBlock language="typescript">{middlewareCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="scopes.ts" badge="4 levels" icon={<Layers className="w-4 h-4 text-green-400" />}>
+          <CodeCard filename="scopes.ts" badge="4 levels" icon={<Layers className="w-4 h-4 text-primary" />}>
             <CodeBlock language="typescript">{scopeCode}</CodeBlock>
           </CodeCard>
         </div>
 
         {/* Four scopes highlight */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mt-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mt-10">
           {[
             { label: 'Global', desc: 'Applies to all wirings of a type' },
             { label: 'Prefix', desc: 'Route-pattern matching like /admin/*' },
@@ -415,7 +415,7 @@ function MiddlewareSection() {
             { label: 'Inline', desc: 'Directly on a single wiring' },
           ].map((scope, i) => (
             <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-[11px] font-bold mt-0.5">{i + 1}</span>
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">{i + 1}</span>
               <div>
                 <p className="text-sm font-semibold text-white mb-0.5">{scope.label}</p>
                 <p className="text-xs text-neutral-500">{scope.desc}</p>
@@ -444,38 +444,38 @@ function CTASection() {
   return (
     <section className="py-16 lg:py-24 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-green-500/6 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/[0.04] blur-[80px]" />
       </div>
 
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
           Secure by default
         </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
           Scaffold a project with auth middleware pre-configured. Sessions work across every protocol from day one.
         </p>
 
         <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-green-500/40 transition-all mb-10"
+          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
           onClick={copyToClipboard}
         >
-          <span className="text-green-400/70 select-none">$ </span>npm create pikku@latest
+          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
             onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
             title="Copy to clipboard"
           >
             {copied
-              ? <Check className="w-3.5 h-3.5 text-green-400" />
+              ? <Check className="w-3.5 h-3.5 text-primary" />
               : <Copy className="w-3.5 h-3.5 text-white/70" />
             }
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Link
             to="/docs/core-features/user-sessions"
-            className="bg-green-500 text-black hover:bg-green-400 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-green-500/20"
+            className="bg-primary text-black hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-black/20"
           >
             Session Docs
           </Link>

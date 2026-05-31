@@ -27,35 +27,35 @@ function ProblemSection() {
     {
       icon: <Copy className="w-6 h-6" />,
       title: 'Same logic, five handlers',
-      desc: 'Your getCard function lives in your HTTP handler, your WebSocket handler, your queue worker, and your CLI. They started as copies. Now they\'ve drifted apart.',
-      color: 'text-red-400',
+      desc: 'getCard exists in your HTTP handler, your WebSocket handler, your queue worker, and your CLI. They started as copies. Now they\'ve drifted — and only one of them has the bug fix.',
+      color: 'text-white/55',
     },
     {
       icon: <AlertTriangle className="w-6 h-6" />,
-      title: 'New protocol, new framework',
-      desc: 'Want AI agents? That\'s Vercel AI SDK. Workflows? Inngest or Temporal. MCP? Another adapter. Each one brings its own auth layer, schema format, and deploy pipeline.',
-      color: 'text-amber-400',
+      title: 'Every protocol brings its own world',
+      desc: 'AI agents mean Vercel AI SDK. Workflows mean Inngest or Temporal. MCP means yet another adapter. Each brings its own auth model, schema format, and deploy pipeline. None of them talk to each other.',
+      color: 'text-white/55',
     },
     {
       icon: <Lock className="w-6 h-6" />,
-      title: 'Switching runtimes means rewriting',
-      desc: 'Moving from Express to Lambda touches every handler. Your business logic is tangled with framework APIs you never wanted to think about.',
-      color: 'text-orange-400',
+      title: 'Runtime change = full rewrite',
+      desc: 'Moving from Express to Lambda touches every handler. Your business logic is fused to framework APIs you never wanted to own. There\'s no clean seam to cut along.',
+      color: 'text-white/55',
     },
   ];
 
   return (
-    <section id="how-it-works" className="py-16 lg:py-24">
-      <div className="max-w-screen-lg mx-auto px-6">
-        <div className="text-center mb-16">
+    <section id="how-it-works" className="py-10 lg:py-16">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="mb-8">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Sound Familiar?</p>
           <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
             You've written this function<br className="hidden md:block" /> more times than you'd admit.
           </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            Every time you add a protocol, you copy-paste, re-wire auth, and pray the handlers don't drift. It's not lazy engineering — it's a missing abstraction.
+          <p className="text-lg text-neutral-400 max-w-2xl leading-relaxed">
+            Every new protocol means another copy-paste, another auth re-wire, another handler that drifts from the last. That's not technical debt — that's a missing abstraction.
           </p>
-          <p className="text-sm text-neutral-500 italic max-w-xl mx-auto mt-4">
+          <p className="text-sm text-neutral-500 italic max-w-xl mt-4">
             "So many places in my code base have like three entry points: CLI, public HTTP API and internally from within the API. Would be so nice having everything just an invoke away."
             <span className="not-italic block mt-1 text-neutral-600">— Alex Harley, Co-founder @ Superbridge</span>
           </p>
@@ -108,22 +108,22 @@ wireCLI({ program: 'cards', commands: { get: getCard } })`;
   return (
     <section className="py-8 lg:py-16">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-10">
+        <div className="mb-6">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Fix</p>
           <h2 className="text-3xl md:text-4xl font-jakarta font-bold text-white leading-tight mb-4">
-            One function that doesn't drift.<br />
-            <span className="text-primary">Fix a bug once, it's fixed everywhere.</span>
+            One function. Every protocol.<br />
+            <span className="text-primary">Fix it once, it's fixed everywhere.</span>
           </h2>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <span className="w-2 h-2 rounded-full bg-red-500" />
               <span className="text-sm font-semibold text-red-400">Without Pikku</span>
               <span className="ml-auto text-xs text-neutral-600 font-mono">5 copies that drift</span>
             </div>
-            <div className="rounded-xl border border-red-500/20 overflow-hidden opacity-70">
+            <div className="rounded-xl border border-white/12 overflow-hidden opacity-70">
               <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
                 <CodeBlock language="typescript">{beforeCode}</CodeBlock>
               </div>
@@ -136,7 +136,7 @@ wireCLI({ program: 'cards', commands: { get: getCard } })`;
               <span className="text-sm font-semibold text-green-400">With Pikku</span>
               <span className="ml-auto text-xs text-neutral-600 font-mono">1 function + wirings</span>
             </div>
-            <div className="rounded-xl border border-green-500/20 overflow-hidden">
+            <div className="rounded-xl border border-white/12 overflow-hidden">
               <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
                 <CodeBlock language="typescript">{afterCode}</CodeBlock>
               </div>
@@ -144,14 +144,14 @@ wireCLI({ program: 'cards', commands: { get: getCard } })`;
           </div>
         </div>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           {['+ SSE', '+ RPC', '+ MCP', '+ AI Agent', '+ Workflow', '+ Trigger', '+ Gateway'].map((label) => (
-            <span key={label} className="px-3 py-1.5 bg-primary/8 border border-primary/20 rounded-full text-xs font-medium text-primary/70">
+            <span key={label} className="px-3 py-1.5 bg-white/5 border border-white/12 rounded-full text-xs font-medium text-white/55">
               {label}
             </span>
           ))}
         </div>
-        <p className="text-center text-sm text-neutral-500 mt-4">
+        <p className="text-sm text-neutral-500 mt-4">
           12 protocols total — all with the same pattern.{' '}
           <Link to="/developers" className="text-primary hover:underline">
             See every wiring in action
@@ -173,10 +173,10 @@ function SystemModelSection() {
       id: 'functions',
       label: 'Functions',
       icon: <FileCode className="w-5 h-5" />,
-      color: 'text-primary',
-      borderColor: 'border-primary/30',
-      bgColor: 'bg-primary/8',
-      summary: 'Typed, testable units of business logic. No framework coupling.',
+      color: 'text-white/55',
+      borderColor: 'border-white/15',
+      bgColor: 'bg-white/5',
+      summary: 'Typed, testable units of business logic. No framework coupling, no handler boilerplate.',
       code: `import { pikkuFunc } from '#pikku'
 
 export const getBook = pikkuFunc<{ bookId: string }, Book>({
@@ -192,10 +192,10 @@ export const getBook = pikkuFunc<{ bookId: string }, Book>({
       id: 'services',
       label: 'Services',
       icon: <Settings className="w-5 h-5" />,
-      color: 'text-amber-400',
-      borderColor: 'border-amber-500/30',
-      bgColor: 'bg-amber-500/8',
-      summary: 'Singleton and per-session dependency injection. Type-safe, testable, no decorators.',
+      color: 'text-white/55',
+      borderColor: 'border-white/15',
+      bgColor: 'bg-white/5',
+      summary: 'Singleton and per-session dependency injection. Type-safe, testable, zero decorators.',
       code: `// Singleton services — created once, shared across requests
 export const createSingletonServices = pikkuServices(
   async (config) => {
@@ -219,10 +219,10 @@ export const createWireServices = pikkuWireServices(
       id: 'security',
       label: 'Auth & Middleware',
       icon: <ShieldCheck className="w-5 h-5" />,
-      color: 'text-rose-400',
-      borderColor: 'border-rose-500/30',
-      bgColor: 'bg-rose-500/8',
-      summary: 'Permissions, session auth, and before/after hooks — defined once, enforced across every protocol.',
+      color: 'text-white/55',
+      borderColor: 'border-white/12',
+      bgColor: 'bg-white/8',
+      summary: 'Permissions, session auth, and before/after hooks — defined once, enforced across every protocol automatically.',
       code: `// Permission guards — session-only or data-aware
 export const requireAdmin = pikkuPermission(
   async (_services, _data, { session }) => session?.role === 'admin'
@@ -248,10 +248,10 @@ addHTTPMiddleware('/admin', [auditMiddleware])`,
       id: 'wires',
       label: 'Wires',
       icon: <Plug className="w-5 h-5" />,
-      color: 'text-green-400',
-      borderColor: 'border-green-500/30',
-      bgColor: 'bg-green-500/8',
-      summary: 'Project functions onto transports — HTTP, WebSocket, queues, cron, CLI, and more.',
+      color: 'text-white/55',
+      borderColor: 'border-white/12',
+      bgColor: 'bg-white/8',
+      summary: 'Map functions to transports: HTTP, WebSocket, queues, cron, CLI, and more. One line of config, not a rewrite.',
       code: `wireHTTP({ method: 'get', route: '/books/:bookId', func: getBook })
 wireChannel({ name: 'books', route: '/books', onMessage: getBook })
 wireQueueWorker({ queue: 'fetch-book', func: getBook })
@@ -265,10 +265,10 @@ wireCLI({ program: 'books', commands: {
       label: 'Workflows',
 
       icon: <Workflow className="w-5 h-5" />,
-      color: 'text-emerald-400',
-      borderColor: 'border-emerald-500/30',
-      bgColor: 'bg-emerald-500/8',
-      summary: 'Multi-step processes that survive restarts. Deterministic replay, durable sleep.',
+      color: 'text-white/55',
+      borderColor: 'border-white/12',
+      bgColor: 'bg-white/8',
+      summary: 'Multi-step processes that survive restarts. Deterministic replay, durable sleep, no separate engine.',
       code: `export const onboardingWorkflow = pikkuWorkflowFunc<
   { email: string; userId: string },
   { success: boolean }
@@ -286,10 +286,10 @@ wireCLI({ program: 'books', commands: {
       label: 'Agents',
 
       icon: <Bot className="w-5 h-5" />,
-      color: 'text-violet-400',
-      borderColor: 'border-violet-500/30',
-      bgColor: 'bg-violet-500/8',
-      summary: 'AI agents that use your existing functions as tools. Same auth, zero adapters.',
+      color: 'text-white/55',
+      borderColor: 'border-white/15',
+      bgColor: 'bg-white/5',
+      summary: 'AI agents that use your existing functions as tools. Auth, types, and middleware carry over. No adapters.',
       code: `export const retreatAssistant = pikkuAIAgent({
   name: 'retreat-assistant',
   description: 'Manages retreat operations',
@@ -312,10 +312,10 @@ wireCLI({ program: 'books', commands: {
       label: 'Gateways',
 
       icon: <Zap className="w-5 h-5" />,
-      color: 'text-rose-500',
-      borderColor: 'border-rose-600/30',
-      bgColor: 'bg-rose-600/8',
-      summary: 'One handler for WhatsApp, Slack, Telegram, and any messaging platform. Adapters normalize everything.',
+      color: 'text-white/55',
+      borderColor: 'border-white/12',
+      bgColor: 'bg-white/8',
+      summary: 'One handler for WhatsApp, Slack, Telegram, and any messaging platform. Adapters normalize the differences.',
       code: `wireGateway({
   name: 'whatsapp',
   type: 'webhook',
@@ -337,21 +337,21 @@ wireGateway({
   const p = primitives[active];
 
   return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-lg mx-auto px-6">
-        <div className="text-center mb-12">
+    <section className="py-10 lg:py-16">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="mb-6">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Mental Model</p>
           <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
             A lot of moving parts.<br className="hidden md:block" />
             <span className="text-primary">One coherent system.</span>
           </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Functions, services, auth, transports, workflows, agents, and gateways — all built from the same model.
+          <p className="text-lg text-neutral-400 max-w-2xl">
+            Functions, services, auth, transports, workflows, agents, gateways — all speaking the same language.
           </p>
         </div>
 
         {/* Tab bar */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-8">
           {primitives.map((prim, i) => (
             <button
               key={prim.id}
@@ -399,22 +399,22 @@ wireGateway({
 function DifferentiatorsSection() {
   const features = [
     {
-      icon: <Bot className="w-6 h-6 text-violet-400" />,
+      icon: <Bot className="w-6 h-6 text-primary" />,
       tag: 'AI Agents',
-      tagColor: 'text-violet-400',
-      borderColor: 'border-violet-500/20',
+      tagColor: 'text-primary',
+      borderColor: 'border-white/12',
 
       title: 'Your functions are already agent tools',
-      desc: 'Most frameworks need adapters, schema re-definitions, and a separate auth layer for AI agents. With Pikku, pass your existing functions directly. Types, permissions, and middleware carry over.',
+      desc: 'Other frameworks need adapters, re-defined schemas, and a separate auth layer before your functions can talk to an AI agent. With Pikku, they\'re already there — types, permissions, and middleware included.',
       code: `const support = pikkuAgent({
   instructions: 'You are a support agent...',
   tools: [getCustomer, getOrders, createTicket],
   model: 'claude-sonnet-4-5'
 })`,
       benefits: [
-        'Zero glue code — functions become tools automatically',
-        'Auth and permissions follow the agent',
-        'Any LLM provider — just swap the model name',
+        'Zero-cost tool registration',
+        'Auth and filters apply to the agent automatically',
+        'One CLI handler becomes one MCP tool',
       ],
       link: '/wires/bot',
       linkText: 'Learn about AI Agents',
@@ -423,10 +423,10 @@ function DifferentiatorsSection() {
       icon: <Workflow className="w-6 h-6 text-emerald-400" />,
       tag: 'Workflows',
       tagColor: 'text-emerald-400',
-      borderColor: 'border-emerald-500/20',
+      borderColor: 'border-white/12',
 
       title: 'Multi-step processes that survive restarts',
-      desc: 'No separate workflow engine. Write sequential steps like normal code. Pikku persists each step, retries on failure, and resumes exactly where it left off.',
+      desc: 'No separate workflow engine to run or operate. Write sequential steps like normal code — Pikku persists each step, retries on failure, and resumes exactly where it left off.',
       code: `await workflow.do('Create profile', 'createProfile', { userId })
 await workflow.sleep('Wait', '5min')
 await workflow.do('Send welcome', 'sendEmail', { to: email })`,
@@ -441,20 +441,20 @@ await workflow.do('Send welcome', 'sendEmail', { to: email })`,
   ];
 
   return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-lg mx-auto px-6">
-        <div className="text-center mb-16">
+    <section className="py-10 lg:py-16">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="mb-8">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">More Than a Router</p>
           <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
             AI agents and durable workflows —<br className="hidden md:block" />
-            <span className="text-primary">built in.</span>
+            <span className="text-primary">no extra engine required.</span>
           </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            tRPC stops at HTTP. Hono gives you a fast router. NestJS buries you in decorators. Pikku gives you agents and workflows using the same functions you've already written.
+          <p className="text-lg text-neutral-400 max-w-2xl">
+            tRPC stops at HTTP. Hono is a fast router and nothing more. NestJS buries you in decorators. Pikku gives you agents and workflows built on the same functions you've already written.
           </p>
         </div>
 
-        <div className="space-y-6 mb-16">
+        <div className="space-y-6 mb-8">
           {features.map((feat, i) => (
             <div key={i} className={`bg-[#0d0d0d] border ${feat.borderColor || 'border-neutral-800'} rounded-2xl p-8 md:p-10`}>
               <div className="flex items-center gap-3 mb-4">
@@ -469,7 +469,7 @@ await workflow.do('Send welcome', 'sendEmail', { to: email })`,
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
                     {feat.benefits.map((benefit, j) => (
                       <div key={j} className="flex items-start gap-2">
-                        <span className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-bold mt-0.5">&#10003;</span>
+                        <span className="flex-shrink-0 w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-white/55 text-[10px] font-bold mt-0.5">&#10003;</span>
                         <span className="text-sm text-neutral-400">{benefit}</span>
                       </div>
                     ))}
@@ -490,13 +490,13 @@ await workflow.do('Send welcome', 'sendEmail', { to: email })`,
         </div>
 
         {/* Console preview — visual proof */}
-        <div className="relative max-w-4xl mx-auto">
-          <div className="text-center mb-6">
+        <div className="relative max-w-4xl">
+          <div className="mb-6">
             <div className="inline-flex items-center gap-2 mb-3">
-              <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">Pikku Console</span>
+              <span className="text-xs font-semibold tracking-widest uppercase text-white/65">Pikku Console</span>
             </div>
             <p className="text-neutral-400 text-sm">
-              Browse functions, run agents, manage secrets, and trigger workflows — without writing tooling code.
+              Browse functions, run agents, manage secrets, and trigger workflows — no custom tooling code required.
             </p>
           </div>
           <div className="rounded-xl overflow-hidden border border-neutral-800 shadow-2xl">
@@ -507,7 +507,7 @@ await workflow.do('Send welcome', 'sendEmail', { to: email })`,
             />
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0a0f] to-transparent rounded-b-xl pointer-events-none" />
-          <div className="text-center mt-4">
+          <div className="mt-4">
             <Link to="/features#console" className="text-primary hover:underline font-medium text-sm">
               Learn about the Console →
             </Link>
@@ -526,29 +526,29 @@ function ProductionTrustSection() {
   const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom];
 
   const features = [
-    { title: 'Type-Safe Clients', desc: 'Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense.', icon: <Link2 className="w-5 h-5" />, iconBg: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-    { title: 'Auth & Permissions', desc: 'Cookie, bearer, API key auth with fine-grained permissions — built in.', icon: <ShieldCheck className="w-5 h-5" />, iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-    { title: 'Services', desc: 'Singleton and per-request dependency injection, type-safe and testable.', icon: <Settings className="w-5 h-5" />, iconBg: 'bg-violet-500/10 text-violet-400 border-violet-500/20' },
-    { title: 'Middleware', desc: 'Before/after hooks for logging, metrics, tracing — work across all protocols.', icon: <Layers className="w-5 h-5" />, iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
-    { title: 'Schema Validation', desc: 'Runtime validation against TypeScript input schemas. Supports Zod.', icon: <CheckCircle2 className="w-5 h-5" />, iconBg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
-    { title: 'Zero Lock-In', desc: 'Standard TypeScript, tiny runtime, MIT licensed. Bring your own everything.', icon: <Feather className="w-5 h-5" />, iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20' },
+    { title: 'Type-Safe Clients', desc: 'Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense. No schema drift between server and client.', icon: <Link2 className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Auth & Permissions', desc: 'Cookie, bearer, and API key auth with fine-grained permissions — wired across every protocol from day one.', icon: <ShieldCheck className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Services', desc: "Singleton and per-request dependency injection that's type-safe, testable, and decorator-free.", icon: <Settings className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Middleware', desc: 'Before/after hooks for logging, metrics, and tracing. Write once, works across all transports.', icon: <Layers className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Schema Validation', desc: 'Runtime validation against TypeScript input schemas. Zod supported out of the box.', icon: <CheckCircle2 className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Zero Lock-In', desc: 'Standard TypeScript, minimal runtime, MIT licensed. Bring your own everything — swap any piece at any time.', icon: <Feather className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
   ];
 
   return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-lg mx-auto px-6">
+    <section className="py-10 lg:py-16">
+      <div className="max-w-screen-xl mx-auto px-6">
 
         {/* Deploy Anywhere strip */}
-        <div className="text-center mb-16">
-          <span className="text-xs font-semibold tracking-widest uppercase text-primary/80 block mb-4">Deploy Anywhere</span>
+        <div className="mb-8">
+          <span className="text-xs font-semibold tracking-widest uppercase text-white/65 block mb-4">Deploy Anywhere</span>
           <h2 className="text-3xl md:text-4xl font-jakarta font-bold text-white mb-4">
             Change your runtime. Keep your functions.
           </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto mb-8">
-            Same code runs on Express, Fastify, AWS Lambda, Cloudflare Workers, Next.js, and more.
+          <p className="text-lg text-neutral-400 max-w-2xl mb-8">
+            The same code runs on Express, Fastify, AWS Lambda, Cloudflare Workers, Next.js, and more. Swap the adapter, not the logic.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto mb-4">
+          <div className="flex flex-wrap gap-3 max-w-3xl mb-4">
             {allRuntimes.map((runtime, idx) => (
               <Link
                 key={idx}
@@ -570,7 +570,7 @@ function ProductionTrustSection() {
             ))}
           </div>
           <p className="text-sm text-neutral-500">
-            Plus any custom runtime via the adapter interface.{' '}
+            Any custom runtime supported via the adapter interface.{' '}
             <Link to="/docs/custom-runtimes/custom-http-runtime" className="text-primary hover:underline">
               Build your own →
             </Link>
@@ -578,8 +578,8 @@ function ProductionTrustSection() {
         </div>
 
         {/* Production Features grid */}
-        <div className="mb-16">
-          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-6 text-center">Built For Production</p>
+        <div className="mb-8">
+          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-6">Built For Production</p>
           <div className="grid md:grid-cols-3 gap-4">
             {features.map((feature, idx) => (
               <div key={idx} className="group relative overflow-hidden rounded-xl border border-neutral-800 bg-[#0d0d0d] p-6 text-left transition-colors hover:border-neutral-700">
@@ -593,7 +593,7 @@ function ProductionTrustSection() {
               </div>
             ))}
           </div>
-          <p className="text-sm text-neutral-500 mt-4 text-center">
+          <p className="text-sm text-neutral-500 mt-4">
             MIT licensed. Standard TypeScript. No VC-backed lock-in.
           </p>
         </div>
@@ -601,8 +601,8 @@ function ProductionTrustSection() {
         {/* Testimonials */}
         {testimonials.length > 0 && (
           <div>
-            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-6 text-center">What Developers Say</p>
-            <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-6">What Developers Say</p>
+            <div className="grid md:grid-cols-2 gap-6 max-w-3xl">
               {testimonials.map((testimonial, idx) => (
                 <div key={idx} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6">
                   <p className="text-neutral-300 mb-4 italic leading-relaxed text-sm">
@@ -629,20 +629,23 @@ function ProductionTrustSection() {
    ════════════════════════════════════════════════════════════════ */
 function FabricCallout() {
   return (
-    <section className="py-16 lg:py-24 border-t border-neutral-800/50">
-      <div className="max-w-screen-md mx-auto px-6">
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-8 lg:p-10 text-center">
-          <p className="text-xs font-bold tracking-widest uppercase text-emerald-400/70 mb-4">Pikku Fabric</p>
+    <section className="py-10 lg:py-16 border-t border-neutral-800/50">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <img src="/img/fabric-logo.svg" width={48} height={48} alt="Fabric logo" />
+            <span className="text-2xl font-bold text-white tracking-tight">Fabric</span>
+          </div>
           <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-            Don't want to manage infra?
+            Rather not manage the infra?
           </h2>
-          <p className="text-base text-neutral-400 max-w-lg mx-auto mb-8 leading-relaxed">
-            Fabric is our deployment platform — push your code and every function deploys as a serverless worker. Getting its own home at <strong className="text-emerald-400/80">pikkufabric.com</strong> soon.
+          <p className="text-base text-neutral-400 max-w-lg mb-8 leading-relaxed">
+            Fabric is our deployment platform — push your code and every function deploys as a serverless worker. Getting its own home at <strong className="text-white/65">pikkufabric.com</strong> soon.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Link
               href="https://pikkufabric.com"
-              className="inline-flex items-center justify-center gap-2 bg-white text-[#0a0a0f] hover:bg-white/90 px-6 py-3 rounded-lg font-semibold text-sm transition no-underline"
+              className="inline-flex items-center gap-2 bg-white text-[#0a0a0f] hover:bg-white/90 px-6 py-3 rounded-lg font-semibold text-sm transition no-underline w-fit"
             >
               Learn about Fabric <ArrowRight className="w-3.5 h-3.5" />
             </Link>

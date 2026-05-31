@@ -77,7 +77,7 @@ const FULL_IDX = 3;
 
 const COLORS = {
   baseline: '#6b7280',
-  pikku: '#06b6d4',
+  pikku: 'var(--site-accent)',
   fetch: '#a78bfa',
 };
 
@@ -290,12 +290,12 @@ function Hero() {
         className="absolute inset-0 pointer-events-none"
         aria-hidden="true"
       >
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-cyan-500/12 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-blue-500/8 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
+        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/8 blur-[60px]" />
       </div>
 
       <header className="flex flex-col max-w-screen-xl mx-auto w-full pt-16 pb-12 lg:pt-20 lg:pb-16 px-6">
-        <span className="inline-block text-xs font-semibold tracking-widest uppercase text-cyan-400 border border-cyan-400/40 bg-cyan-500/10 px-3 py-1 rounded mb-6 w-fit">
+        <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6 w-fit">
           Performance
         </span>
 
@@ -347,35 +347,35 @@ function FullPostSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-10">
+        <div className="mb-10">
           <SectionLabel>Real-World Scenario</SectionLabel>
           <Heading
             as="h2"
             className="font-jakarta text-3xl md:text-4xl font-bold text-white mb-3"
           >
             Full pipeline:{' '}
-            <span className="text-cyan-400">POST with auth + validation</span>
+            <span className="text-primary">POST with auth + validation</span>
           </Heading>
-          <p className="text-base text-neutral-400 max-w-xl mx-auto">
+          <p className="text-base text-neutral-400 max-w-xl">
             The functions themselves are no-ops — this measures pure framework
             overhead: body parsing, schema validation, middleware, and
             permissions checks.
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl">
           <ChartCard>
             <FullPostChart />
           </ChartCard>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-4xl mx-auto mt-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-4xl mt-8">
           {stats.map((card) => (
             <div
               key={card.runtime}
-              className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 text-center"
+              className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 "
             >
-              <div className="text-2xl font-bold text-cyan-400 font-jakarta">
+              <div className="text-2xl font-bold text-primary font-jakarta">
                 {card.value}
               </div>
               <div className="text-sm font-semibold text-white mt-1">
@@ -398,21 +398,21 @@ function AllScenariosSection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-10">
+        <div className="mb-10">
           <SectionLabel>Full Breakdown</SectionLabel>
           <Heading
             as="h2"
             className="font-jakarta text-3xl md:text-4xl font-bold text-white mb-3"
           >
             Every scenario,{' '}
-            <span className="text-cyan-400">side by side</span>
+            <span className="text-primary">side by side</span>
           </Heading>
-          <p className="text-base text-neutral-400 max-w-2xl mx-auto mb-8">
+          <p className="text-base text-neutral-400 max-w-2xl mb-8">
             Five test scenarios from minimal to full pipeline. All numbers in
             requests per second.
           </p>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto text-left">
+          <div className="grid sm:grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl text-left">
             {[
               {
                 name: 'bare',
@@ -478,16 +478,16 @@ function FetchSection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-10">
+        <div className="mb-10">
           <SectionLabel>Pure Core Throughput</SectionLabel>
           <Heading
             as="h2"
             className="font-jakarta text-3xl md:text-4xl font-bold text-white mb-3"
           >
             In-process with{' '}
-            <span className="text-violet-400">fetch()</span>
+            <span className="text-primary">fetch()</span>
           </Heading>
-          <p className="text-base text-neutral-400 max-w-xl mx-auto">
+          <p className="text-base text-neutral-400 max-w-xl">
             No network, no HTTP server — just a direct{' '}
             <code className="text-violet-300 text-sm">fetch()</code> call into
             Pikku's core. This isolates the framework overhead from network
@@ -495,15 +495,15 @@ function FetchSection() {
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl">
           <ChartCard>
             <FetchChart />
           </ChartCard>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-5 max-w-xl mx-auto mt-8">
-          <div className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 text-center">
-            <div className="text-2xl font-bold text-violet-400 font-jakarta">
+        <div className="grid sm:grid-cols-2 gap-5 max-w-xl mt-8">
+          <div className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 ">
+            <div className="text-2xl font-bold text-primary font-jakarta">
               155,357
             </div>
             <div className="text-sm font-semibold text-white mt-1">
@@ -513,8 +513,8 @@ function FetchSection() {
               bare scenario (GET)
             </div>
           </div>
-          <div className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 text-center">
-            <div className="text-2xl font-bold text-violet-400 font-jakarta">
+          <div className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 ">
+            <div className="text-2xl font-bold text-primary font-jakarta">
               0.006ms
             </div>
             <div className="text-sm font-semibold text-white mt-1">
@@ -536,7 +536,7 @@ function MethodologySection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-700/30 to-transparent" />
 
       <div className="max-w-screen-lg mx-auto px-6">
-        <div className="text-center mb-10">
+        <div className="mb-10">
           <SectionLabel>Methodology</SectionLabel>
           <Heading
             as="h2"
@@ -553,21 +553,21 @@ function MethodologySection() {
             </h3>
             <ul className="space-y-2 text-sm text-neutral-400">
               <li className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-0.5">&bull;</span>
+                <span className="text-primary mt-0.5">&bull;</span>
                 <span>
                   <strong className="text-neutral-300">autocannon</strong> —
                   100 connections, 10-second runs, pipelining factor of 10
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-0.5">&bull;</span>
+                <span className="text-primary mt-0.5">&bull;</span>
                 <span>
                   Each runtime tested with identical Pikku function: body
                   parsing, session middleware, permissions check
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-cyan-400 mt-0.5">&bull;</span>
+                <span className="text-primary mt-0.5">&bull;</span>
                 <span>
                   Baselines use the same route logic implemented natively for
                   each framework
@@ -582,20 +582,20 @@ function MethodologySection() {
             </h3>
             <ul className="space-y-2 text-sm text-neutral-400">
               <li className="flex items-start gap-2">
-                <span className="text-violet-400 mt-0.5">&bull;</span>
+                <span className="text-primary mt-0.5">&bull;</span>
                 <span>
                   1,000 warmup iterations followed by 10,000 measured
                   iterations
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-violet-400 mt-0.5">&bull;</span>
+                <span className="text-primary mt-0.5">&bull;</span>
                 <span>
                   Direct in-process call — no network overhead, no HTTP server
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-violet-400 mt-0.5">&bull;</span>
+                <span className="text-primary mt-0.5">&bull;</span>
                 <span>
                   Measures pure Pikku core: routing, middleware, validation,
                   response serialization
@@ -605,9 +605,9 @@ function MethodologySection() {
           </div>
         </div>
 
-        <div className="mt-8 bg-amber-500/5 border border-amber-500/15 rounded-xl px-6 py-4 max-w-3xl mx-auto">
+        <div className="mt-8 bg-white/[0.04] border border-white/10 rounded-xl px-6 py-4 max-w-3xl">
           <p className="text-sm text-neutral-300 mb-0">
-            <strong className="text-amber-400">Note on Express:</strong> The{' '}
+            <strong className="text-primary">Note on Express:</strong> The{' '}
             <code className="text-amber-300 text-xs">express.json()</code>{' '}
             middleware is added upstream in the Pikku Express adapter (required
             for POST body parsing). This adds overhead to <em>all</em> routes
@@ -617,12 +617,12 @@ function MethodologySection() {
           </p>
         </div>
 
-        <div className="text-center mt-8">
+        <div className="mt-8">
           <a
             href="https://github.com/pikkujs/pikku/tree/main/benchmarks"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors no-underline"
+            className="text-sm text-primary hover:text-cyan-300 transition-colors no-underline"
           >
             View benchmark source on GitHub &rarr;
           </a>
@@ -649,27 +649,27 @@ function CTASection() {
         className="absolute inset-0 pointer-events-none"
         aria-hidden="true"
       >
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-cyan-500/8 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
       </div>
 
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading
           as="h2"
           className="font-jakarta text-3xl md:text-4xl font-bold mb-4 text-white leading-tight"
         >
           Write once. Deploy fast.
         </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
           One function, every runtime. Start building with Pikku in minutes.
         </p>
 
         <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-cyan-500/40 transition-all mb-10"
+          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
           onClick={copyToClipboard}
           role="button"
           tabIndex={0}
         >
-          <span className="text-cyan-400/70 select-none">$ </span>npm create
+          <span className="text-white/55 select-none">$ </span>npm create
           pikku@latest
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
@@ -682,10 +682,10 @@ function CTASection() {
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Link
             to="/getting-started"
-            className="bg-cyan-500 text-white hover:bg-cyan-600 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-cyan-500/20 no-underline hover:text-white hover:no-underline"
+            className="bg-primary text-white hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-cyan-500/20 no-underline hover:text-white hover:no-underline"
           >
             Get Started
           </Link>

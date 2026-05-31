@@ -47,26 +47,26 @@ function Hero() {
   return (
     <div className="wire-hero-queue w-full relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-red-500/12 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-orange-400/8 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
+        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
         <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-red-400 border border-red-400/40 bg-red-400/10 px-3 py-1 rounded mb-6">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
             Wire Type: Queue
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">Background jobs,</span><br />
-            <span className="text-red-400">same functions.</span>
+            <span className="text-primary">same functions.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            <code className="text-red-400 text-lg">wireQueueWorker</code> turns your Pikku functions into queue workers with retries, progress tracking, and dead-letter routing.
+            <code className="text-primary text-lg">wireQueueWorker</code> turns your Pikku functions into queue workers with retries, progress tracking, and dead-letter routing.
           </p>
           <div className="flex flex-row gap-4">
             <Link
               to="/docs/wiring/queue"
-              className="bg-red-500 text-white hover:bg-red-600 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-red-500/20"
+              className="bg-primary text-white hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-black/20"
             >
               Get Started
             </Link>
@@ -82,8 +82,8 @@ function Hero() {
         <div className="hidden md:flex md:w-1/2 items-center justify-center">
           <div className="relative">
             <div className="relative">
-              <div className="absolute inset-0 bg-red-500/20 rounded-full blur-[40px]" />
-              <div className="relative bg-[#0d0d0d] border-2 border-red-500/40 rounded-2xl p-6">
+              <div className="absolute inset-0 bg-white/10 rounded-full blur-[40px]" />
+              <div className="relative bg-[#0d0d0d] border-2 border-white/20 rounded-2xl p-6">
                 <QueueIcon size={120} />
               </div>
             </div>
@@ -116,17 +116,17 @@ function BasicsSection() {
   return (
     <section id="basics" className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>The Basics</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Define a worker in <span className="text-red-400">two lines</span>
+            Define a worker in <span className="text-primary">two lines</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Write your function, wire it to a queue name. Pikku handles deserialization, retries, and error routing.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl items-start">
           <CodeCard filename="processReminder.func.ts" badge="func.ts">
             <CodeBlock language="typescript">{basicsFunction}</CodeBlock>
           </CodeCard>
@@ -136,14 +136,14 @@ function BasicsSection() {
           </CodeCard>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-10">
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
           {[
             { label: 'Type-safe payloads', desc: 'Job data is validated and typed — your function receives exactly what you expect' },
             { label: 'Multi-backend', desc: 'Same wireQueueWorker works with BullMQ, PG Boss, or AWS SQS — swap the service, not the code' },
             { label: 'Middleware support', desc: 'Apply logging, metrics, or auth middleware per-worker or globally' },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-[11px] font-bold mt-0.5">✓</span>
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">✓</span>
               <div>
                 <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
                 <p className="text-xs text-neutral-500">{item.desc}</p>
@@ -186,17 +186,17 @@ const jobControlCode = `const processReminder = pikkuSessionlessFunc({
 function JobControlSection() {
   const controls = [
     {
-      icon: <BarChart3 className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />,
+      icon: <BarChart3 className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'updateProgress()',
       desc: 'Report progress (0–100 or custom). Consumers can poll job status and show progress bars.',
     },
     {
-      icon: <RefreshCw className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />,
+      icon: <RefreshCw className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'fail(reason)',
       desc: 'Fail the current job. If retries are configured, the job goes back in the queue with backoff.',
     },
     {
-      icon: <Zap className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />,
+      icon: <Zap className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'discard(reason)',
       desc: 'Permanently remove the job — no retry, no dead-letter queue. For invalid or irrelevant work.',
     },
@@ -205,17 +205,17 @@ function JobControlSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Job Control</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Progress, fail, <span className="text-red-400">discard</span>
+            Progress, fail, <span className="text-primary">discard</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
-            Every queue function gets a <code className="text-red-400">wire.queue</code> object to control the current job.
+          <p className="text-lg text-neutral-400 max-w-xl">
+            Every queue function gets a <code className="text-primary">wire.queue</code> object to control the current job.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           <div className="space-y-5">
             {controls.map((ctrl, i) => (
               <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
@@ -266,33 +266,33 @@ const jobId = await queue.add('todo-reminders', {
 function RetrySection() {
   return (
     <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Retries & Config</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Retry strategies <span className="text-red-400">built in</span>
+            Retry strategies <span className="text-primary">built in</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Configure worker-level concurrency and job-level retry, backoff, priority, and delay — based on the underlying queue system.
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl">
           <CodeCard filename="reminders.queue.ts" icon={<QueueIcon size={15} />} badge="config + publish">
             <CodeBlock language="typescript">{retryCode}</CodeBlock>
           </CodeCard>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto mt-10">
+        <div className="grid md:grid-cols-4 gap-4 max-w-4xl mt-10">
           {[
             { label: 'Priority', desc: 'Higher-priority jobs get processed first' },
             { label: 'Delay', desc: 'Schedule jobs to run after a delay' },
             { label: 'Backoff', desc: 'Linear, exponential, or fixed retry delay' },
             { label: 'Dead letter', desc: 'Route failed jobs to a dead-letter queue' },
           ].map((item, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 text-center">
+            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 ">
               <p className="text-sm font-bold text-white mb-1">{item.label}</p>
               <p className="text-xs text-neutral-500">{item.desc}</p>
             </div>
@@ -325,20 +325,20 @@ const result = await job.waitForCompletion(30_000)`;
 function TypeSafePublishSection() {
   return (
     <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Type-Safe Publishing</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Typed <span className="text-red-400">queue.add()</span>
+            Typed <span className="text-primary">queue.add()</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Pikku generates a typed queue client. Queue names, payloads, and results — all autocompleted.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-[3fr_2fr] gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-[3fr_2fr] gap-10 max-w-5xl items-start">
           <CodeCard filename="publish.ts" badge="auto-generated types">
             <CodeBlock language="typescript">{publishCode}</CodeBlock>
           </CodeCard>
@@ -346,18 +346,18 @@ function TypeSafePublishSection() {
           <div className="space-y-5">
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <ShieldCheck className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
+                <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Generated from wirings</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    <code className="text-red-400 text-xs">PikkuQueue</code> is auto-generated with typed overloads for every queue worker you've wired.
+                    <code className="text-primary text-xs">PikkuQueue</code> is auto-generated with typed overloads for every queue worker you've wired.
                   </p>
                 </div>
               </div>
             </div>
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <Clock className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
+                <Clock className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Job lifecycle</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
@@ -382,8 +382,8 @@ function BackendsSection() {
     {
       title: 'BullMQ / Redis',
       desc: 'High-performance, push-based. Job results, progress, priority, delays.',
-      border: 'border-red-500/30',
-      bg: 'bg-red-500/5',
+      border: 'border-white/15',
+      bg: 'bg-white/[0.04]',
     },
     {
       title: 'PG Boss / PostgreSQL',
@@ -401,30 +401,30 @@ function BackendsSection() {
 
   return (
     <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Backends</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            One wiring, <span className="text-red-400">many backends</span>
+            One wiring, <span className="text-primary">many backends</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Same wireQueueWorker code works across all backends. Swap the queue service, not your functions.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
           {backends.map((b, i) => (
-            <div key={i} className={`${b.bg} border ${b.border} rounded-xl p-6 text-center`}>
+            <div key={i} className={`${b.bg} border ${b.border} rounded-xl p-6 `}>
               <h3 className="text-lg font-bold text-white mb-2">{b.title}</h3>
               <p className="text-sm text-neutral-400 leading-relaxed">{b.desc}</p>
             </div>
           ))}
         </div>
 
-        <div className="max-w-4xl mx-auto mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
-          <Database className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
+        <div className="max-w-4xl mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
+          <Database className="w-5 h-5 text-primary mt-0.5 shrink-0" />
           <p className="text-sm text-neutral-400">
             <span className="text-white font-semibold">Config validation built in.</span>{' '}
             Pikku warns you at startup if you use a config option your backend doesn't support — no silent failures.
@@ -451,38 +451,38 @@ function CTASection() {
   return (
     <section className="py-16 lg:py-24 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-red-500/8 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
       </div>
 
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
           Start wiring queues in 5 minutes
         </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
           One command to scaffold a project with queue wiring already configured.
         </p>
 
         <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-red-500/40 transition-all mb-10"
+          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
           onClick={copyToClipboard}
         >
-          <span className="text-red-400/70 select-none">$ </span>npm create pikku@latest
+          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
             onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
             title="Copy to clipboard"
           >
             {copied
-              ? <Check className="w-3.5 h-3.5 text-red-400" />
+              ? <Check className="w-3.5 h-3.5 text-primary" />
               : <Copy className="w-3.5 h-3.5 text-white/70" />
             }
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Link
             to="/docs/wiring/queue"
-            className="bg-red-500 text-white hover:bg-red-600 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-red-500/20"
+            className="bg-primary text-white hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-black/20"
           >
             Read the Queue Docs
           </Link>

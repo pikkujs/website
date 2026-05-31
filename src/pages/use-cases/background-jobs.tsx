@@ -8,23 +8,23 @@ function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-red-500/5 blur-[120px]" />
+        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-white/[0.04] blur-[120px]" />
       </div>
-      <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-16 lg:pt-28 lg:pb-20 text-center">
+      <div className="relative max-w-4xl px-6 pt-20 pb-16 lg:pt-28 lg:pb-20 ">
         <Link to="/" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50 no-underline hover:bg-white/[0.08] transition mb-6">
           Pikku Fabric use case
         </Link>
         <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.1] text-white">
           Queues without
           <br />
-          <span className="text-red-400">the infrastructure.</span>
+          <span className="text-primary">the infrastructure.</span>
         </h1>
-        <p className="mt-6 text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-lg text-white/50 max-w-2xl leading-relaxed">
           Background job processing on Fabric. Write a function, wire it to a
           queue, deploy. Retries, dead-letter queues, and delivery guarantees
           included.
         </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        <div className="mt-8 flex flex-wrap gap-4">
           <Link to="/#waitlist" className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90 no-underline">
             Get early access <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -40,7 +40,7 @@ function Hero() {
 function Problem() {
   return (
     <section className="py-16 lg:py-20 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-3xl px-6 text-center">
+      <div className="max-w-3xl px-6 ">
         <p className="text-lg text-white/50 leading-relaxed">
           You need to send a welcome email after signup. Process a payment in the
           background. Generate a PDF and notify the user. So you set up Redis,
@@ -56,8 +56,8 @@ function Problem() {
 function HowItWorks() {
   return (
     <section id="how-it-works" className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="text-center mb-14">
+      <div className="max-w-5xl px-6">
+        <div className="mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
             Same function. Runs in the background.
           </h2>
@@ -65,7 +65,7 @@ function HowItWorks() {
 
         <div className="grid gap-8 lg:grid-cols-2 items-start">
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-red-400/60">You write this</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-white/45">You write this</p>
             <div className="rounded-xl border border-white/[0.06] bg-black/30 overflow-hidden">
               <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[13px] [&_pre]:!overflow-x-auto">
                 <CodeBlock language="typescript">{`const sendWelcomeEmail = pikkuFunc({
@@ -102,7 +102,7 @@ wireHTTP({ method: 'post', route: '/admin/send-welcome', func: sendWelcomeEmail 
                 { icon: <Shield className="w-4 h-4" />, title: 'Same auth model', desc: 'Queue workers enforce the same permissions as your API. No backdoor execution.' },
               ].map((item, i) => (
                 <div key={i} className="flex gap-3 rounded-lg border border-white/[0.06] bg-white/[0.025] px-4 py-3">
-                  <div className="flex-shrink-0 mt-0.5 text-red-400/60">{item.icon}</div>
+                  <div className="flex-shrink-0 mt-0.5 text-white/45">{item.icon}</div>
                   <div>
                     <p className="text-sm font-semibold text-white/80">{item.title}</p>
                     <p className="text-xs text-white/35 leading-relaxed mt-0.5">{item.desc}</p>
@@ -120,8 +120,8 @@ wireHTTP({ method: 'post', route: '/admin/send-welcome', func: sendWelcomeEmail 
 function Trace() {
   return (
     <section className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-3xl px-6">
-        <div className="text-center mb-10">
+      <div className="max-w-3xl px-6">
+        <div className="mb-10">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
             Every job is tracked.
           </h2>
@@ -134,12 +134,12 @@ function Trace() {
             <span className="ml-3 text-xs text-white/20 font-mono">queue: emails</span>
           </div>
           <div className="p-5 font-mono text-[12px] leading-6">
-            <div className="text-white/30">sendWelcomeEmail — <span className="text-red-400">emails</span></div>
+            <div className="text-white/30">sendWelcomeEmail — <span className="text-primary">emails</span></div>
             <div className="mt-2" />
-            <div className="text-emerald-400">  ✓ job-a3f1  <span className="text-white/20">userId: usr_281  340ms  success</span></div>
-            <div className="text-emerald-400">  ✓ job-b7e2  <span className="text-white/20">userId: usr_282  290ms  success</span></div>
-            <div className="text-amber-400">  ⟳ job-c9d3  <span className="text-white/20">userId: usr_283  retry 2 → 310ms  success</span></div>
-            <div className="text-emerald-400">  ✓ job-d1f4  <span className="text-white/20">userId: usr_284  280ms  success</span></div>
+            <div className="text-primary">  ✓ job-a3f1  <span className="text-white/20">userId: usr_281  340ms  success</span></div>
+            <div className="text-primary">  ✓ job-b7e2  <span className="text-white/20">userId: usr_282  290ms  success</span></div>
+            <div className="text-primary">  ⟳ job-c9d3  <span className="text-white/20">userId: usr_283  retry 2 → 310ms  success</span></div>
+            <div className="text-primary">  ✓ job-d1f4  <span className="text-white/20">userId: usr_284  280ms  success</span></div>
             <div className="text-white/15">  ◷ job-e5a5  <span className="text-white/10">userId: usr_285  pending</span></div>
           </div>
         </div>
@@ -152,14 +152,14 @@ function CTA() {
   return (
     <section className="relative overflow-hidden py-20 lg:py-28">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-red-500/4 blur-[100px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-white/[0.03] blur-[100px]" />
       </div>
-      <div className="relative mx-auto max-w-2xl px-6 text-center">
+      <div className="relative max-w-2xl px-6 ">
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
           Stop managing queue infrastructure.
         </h2>
         <p className="mt-4 text-base text-white/40">Write the function. Wire it to a queue. Deploy.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/#waitlist" className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90 no-underline">
             Get early access <ArrowRight className="w-3.5 h-3.5" />
           </Link>

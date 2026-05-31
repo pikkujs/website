@@ -22,9 +22,9 @@ function CodeCard({ filename, badge, children }: {
     <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
       <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
         <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
         </div>
         <span className="text-sm font-semibold text-neutral-200">{filename}</span>
         {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
@@ -41,9 +41,9 @@ function TerminalCard({ children }: { children: React.ReactNode }) {
     <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
       <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
         <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
         </div>
         <span className="text-sm font-semibold text-neutral-200">Terminal</span>
       </div>
@@ -57,7 +57,7 @@ function TerminalCard({ children }: { children: React.ReactNode }) {
 function StepHeader({ n, title }: { n: number; title: string }) {
   return (
     <div className="flex items-center gap-4 mb-6">
-      <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-400 text-base font-bold font-jakarta shrink-0">
+      <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/8 border border-white/15 text-primary text-base font-bold font-jakarta shrink-0">
         {n}
       </span>
       <Heading as="h2" className="font-jakarta text-3xl md:text-4xl font-bold text-white !mb-0">
@@ -72,12 +72,12 @@ function CopyCommand({ command }: { command: string }) {
   return (
     <button
       onClick={() => { navigator.clipboard.writeText(command); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-      className="group inline-flex items-center gap-3 bg-white/[0.04] border border-white/10 hover:border-purple-500/40 rounded-xl px-5 py-3.5 font-mono text-base text-neutral-200 cursor-pointer transition-all hover:bg-white/[0.06]"
+      className="group inline-flex items-center gap-3 bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-xl px-5 py-3.5 font-mono text-base text-neutral-200 cursor-pointer transition-all hover:bg-white/[0.06]"
     >
-      <Terminal className="w-4 h-4 text-purple-400/70" />
-      <span><span className="text-purple-400/70 select-none">$ </span>{command}</span>
+      <Terminal className="w-4 h-4 text-white/55" />
+      <span><span className="text-white/55 select-none">$ </span>{command}</span>
       {copied
-        ? <Check className="w-3.5 h-3.5 text-emerald-400 ml-1" />
+        ? <Check className="w-3.5 h-3.5 text-primary ml-1" />
         : <Copy className="w-3.5 h-3.5 text-neutral-600 group-hover:text-neutral-400 transition-colors ml-1" />
       }
     </button>
@@ -92,14 +92,14 @@ function Hero() {
   return (
     <div className="wire-hero-getting-started w-full relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] rounded-full bg-purple-500/10 blur-[120px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] rounded-full bg-white/[0.06] blur-[120px]" />
       </div>
 
-      <header className="relative max-w-screen-xl mx-auto w-full pt-14 pb-12 lg:pt-20 lg:pb-16 px-6 text-center">
+      <header className="relative max-w-screen-xl mx-auto w-full pt-14 pb-12 lg:pt-20 lg:pb-16 px-6 ">
         <Heading as="h1" className="font-jakarta text-5xl lg:text-6xl font-bold mb-5 leading-tight">
           <span className="text-white">Getting Started</span>
         </Heading>
-        <p className="text-xl font-medium leading-relaxed text-neutral-400 max-w-xl mx-auto mb-8">
+        <p className="text-xl font-medium leading-relaxed text-neutral-400 max-w-xl mb-8">
           From an empty folder to a working API in four steps.
         </p>
         <CopyCommand command="npm create pikku@latest" />
@@ -124,7 +124,7 @@ function StepCreate() {
 
         <TerminalCard>
           <div className="text-neutral-300 mb-3">
-            <span className="text-purple-400">$</span> npm create pikku@latest
+            <span className="text-primary">$</span> npm create pikku@latest
           </div>
           <pre className="text-neutral-500 whitespace-pre-wrap m-0">{
 ` ______ _ _     _
@@ -145,7 +145,7 @@ Welcome to the Pikku Project Generator!
   • 2 Scheduled tasks
   • 1 Trigger
   • 3 MCP endpoints`}</pre>
-          <pre className="text-emerald-400 whitespace-pre-wrap m-0 mt-3">{
+          <pre className="text-primary whitespace-pre-wrap m-0 mt-3">{
 `✅ Project setup complete!
 Run the following command to get started:
 
@@ -230,7 +230,7 @@ function StepWire() {
         </div>
 
         {/* Compact protocol list */}
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex flex-wrap gap-3">
           {[
             { icon: <HttpIcon size={16} />, name: 'HTTP' },
             { icon: <WebSocketIcon size={16} />, name: 'WebSocket' },
@@ -267,7 +267,7 @@ function StepRun() {
         <StepHeader n={4} title="Start the server" />
 
         <p className="text-base text-neutral-400 leading-relaxed mb-8 max-w-2xl">
-          Run <code className="text-purple-400 text-sm">pikku watch</code> to auto-regenerate types as you code, then start the server.
+          Run <code className="text-primary text-sm">pikku watch</code> to auto-regenerate types as you code, then start the server.
         </p>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -275,7 +275,7 @@ function StepRun() {
             <div className="space-y-3">
               <div className="text-neutral-500 text-xs uppercase tracking-wider mb-2">Terminal 1</div>
               <div>
-                <span className="text-purple-400">$</span> <span className="text-neutral-300">npx pikku watch</span>
+                <span className="text-primary">$</span> <span className="text-neutral-300">npx pikku watch</span>
               </div>
               <div className="text-neutral-500">
                 Watching for changes...
@@ -286,15 +286,15 @@ function StepRun() {
             <div className="space-y-3">
               <div className="text-neutral-500 text-xs uppercase tracking-wider mb-2">Terminal 2</div>
               <div>
-                <span className="text-purple-400">$</span> <span className="text-neutral-300">npm run start</span>
+                <span className="text-primary">$</span> <span className="text-neutral-300">npm run start</span>
               </div>
               <div className="text-neutral-500">
                 Server running at http://localhost:4002
               </div>
               <div className="border-t border-neutral-800 pt-3">
-                <span className="text-purple-400">$</span> <span className="text-neutral-300">curl http://localhost:4002/users/123</span>
+                <span className="text-primary">$</span> <span className="text-neutral-300">curl http://localhost:4002/users/123</span>
               </div>
-              <div className="text-emerald-400">
+              <div className="text-primary">
                 {'{"id":"123","name":"John Doe","email":"john@example.com"}'}
               </div>
             </div>
@@ -336,7 +336,7 @@ function NextSteps() {
             <Link
               key={i}
               to={path.link}
-              className="group flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 hover:border-purple-500/30 hover:bg-white/[0.04] transition-all no-underline"
+              className="group flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 hover:border-white/15 hover:bg-white/[0.04] transition-all no-underline"
             >
               <div className="w-9 h-9 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
                 {path.icon}
@@ -352,7 +352,7 @@ function NextSteps() {
         <div className="mt-10 flex flex-wrap gap-4">
           <Link
             to="/docs"
-            className="bg-purple-500 text-white hover:bg-purple-600 px-6 py-2.5 rounded-lg font-semibold text-sm transition-all no-underline"
+            className="bg-primary text-white hover:bg-primary px-6 py-2.5 rounded-lg font-semibold text-sm transition-all no-underline"
           >
             Full Documentation
           </Link>

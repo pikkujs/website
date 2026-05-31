@@ -48,27 +48,27 @@ function Hero() {
     <div className="wire-hero-websocket w-full relative overflow-hidden">
       {/* Glow orbs */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-purple-500/12 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-violet-400/8 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
+        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
         {/* Left: text */}
         <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-purple-400 border border-purple-400/40 bg-purple-400/10 px-3 py-1 rounded mb-6">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
             Wire Type: WebSocket
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">Real-time channels,</span><br />
-            <span className="text-purple-400">same functions.</span>
+            <span className="text-primary">same functions.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            <code className="text-purple-400 text-lg">wireChannel</code> gives bidirectional messaging with action routing, pub/sub, and per-message auth — all using your existing Pikku functions.
+            <code className="text-primary text-lg">wireChannel</code> gives bidirectional messaging with action routing, pub/sub, and per-message auth — all using your existing Pikku functions.
           </p>
           <div className="flex flex-row gap-4">
             <Link
               to="/docs/wiring/channels"
-              className="bg-purple-500 text-white hover:bg-purple-600 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-purple-500/20"
+              className="bg-primary text-white hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-purple-500/20"
             >
               Get Started
             </Link>
@@ -85,8 +85,8 @@ function Hero() {
         <div className="hidden md:flex md:w-1/2 items-center justify-center">
           <div className="relative">
             <div className="relative">
-              <div className="absolute inset-0 bg-purple-500/20 rounded-full blur-[40px]" />
-              <div className="relative bg-[#0d0d0d] border-2 border-purple-500/40 rounded-2xl p-6">
+              <div className="absolute inset-0 bg-white/10 rounded-full blur-[40px]" />
+              <div className="relative bg-[#0d0d0d] border-2 border-white/20 rounded-2xl p-6">
                 <WebSocketIcon size={120} />
               </div>
             </div>
@@ -125,17 +125,17 @@ function BasicsSection() {
   return (
     <section id="basics" className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>The Basics</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Connect, route, <span className="text-purple-400">respond</span>
+            Connect, route, <span className="text-primary">respond</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Define your functions once, wire them to a channel. Pikku routes incoming messages by action name.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl items-start">
           <CodeCard filename="createTodo.func.ts" badge="func.ts">
             <CodeBlock language="typescript">{basicsFunction}</CodeBlock>
           </CodeCard>
@@ -146,14 +146,14 @@ function BasicsSection() {
         </div>
 
         {/* Highlights */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-10">
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
           {[
             { label: 'Action-based routing', desc: 'Messages include an action key — Pikku routes to the right function automatically' },
             { label: 'Lifecycle hooks', desc: 'onConnect and onDisconnect let you set up and tear down per-connection state' },
             { label: 'Same auth system', desc: 'Permissions, sessions, and middleware work identically to HTTP wiring' },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 text-[11px] font-bold mt-0.5">✓</span>
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">✓</span>
               <div>
                 <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
                 <p className="text-xs text-neutral-500">{item.desc}</p>
@@ -184,29 +184,29 @@ const routingCode = `wireChannel({
 
 function ActionRoutingSection() {
   const steps = [
-    { label: 'Client sends', code: '{ action: "create", text: "Buy milk" }', color: 'text-purple-400' },
+    { label: 'Client sends', code: '{ action: "create", text: "Buy milk" }', color: 'text-white/55' },
     { label: 'Pikku routes to', code: 'createTodo({ text: "Buy milk" })', color: 'text-white' },
-    { label: 'Response sent', code: '{ action: "create", todo: { ... } }', color: 'text-purple-400' },
+    { label: 'Response sent', code: '{ action: "create", todo: { ... } }', color: 'text-white/55' },
   ];
 
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Action Routing</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            One channel, <span className="text-purple-400">many actions</span>
+            One channel, <span className="text-primary">many actions</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Every message carries an action key. Pikku strips it from the data, routes to the right function, and re-adds it to the response.
           </p>
         </div>
 
         {/* Visual: message flow */}
-        <div className="max-w-3xl mx-auto mb-10">
+        <div className="max-w-3xl mb-10">
           <div className="grid md:grid-cols-3 gap-4">
             {steps.map((step, i) => (
-              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 text-center">
+              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 ">
                 <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">{step.label}</p>
                 <code className={`text-sm font-mono ${step.color}`}>{step.code}</code>
               </div>
@@ -214,18 +214,18 @@ function ActionRoutingSection() {
           </div>
         </div>
 
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl">
           <CodeCard filename="todos.channel.ts" icon={<WebSocketIcon size={15} />}>
             <CodeBlock language="typescript">{routingCode}</CodeBlock>
           </CodeCard>
         </div>
 
         {/* Callout */}
-        <div className="max-w-2xl mx-auto mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
-          <span className="text-purple-400 text-lg mt-0.5">→</span>
+        <div className="max-w-2xl mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
+          <span className="text-primary text-lg mt-0.5">→</span>
           <p className="text-sm text-neutral-400">
             <span className="text-white font-semibold">Routing key stripped from data.</span>{' '}
-            Your function receives <code className="text-purple-400 text-xs">{'{ text: "Buy milk" }'}</code> — not the raw message. The action key is re-added to the response automatically.
+            Your function receives <code className="text-primary text-xs">{'{ text: "Buy milk" }'}</code> — not the raw message. The action key is re-added to the response automatically.
           </p>
         </div>
       </div>
@@ -262,17 +262,17 @@ wireChannel({
 function AuthSection() {
   const features = [
     {
-      icon: <Zap className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />,
+      icon: <Zap className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Session via setSession',
       desc: 'Call setSession() inside any action to establish an authenticated session for the connection.',
     },
     {
-      icon: <ShieldCheck className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />,
+      icon: <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Per-action auth override',
       desc: 'Set auth: false on individual actions like authenticate. Everything else requires a valid session by default.',
     },
     {
-      icon: <Lock className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />,
+      icon: <Lock className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Auto propagation',
       desc: 'Once the session is set, every subsequent message on that connection automatically carries the session — no re-auth needed.',
     },
@@ -281,17 +281,17 @@ function AuthSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Auth</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Authenticate once, <span className="text-purple-400">session everywhere</span>
+            Authenticate once, <span className="text-primary">session everywhere</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Send an auth message over the WebSocket, set the session, and every subsequent action has access to it.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           {/* Left: feature cards */}
           <div className="space-y-5">
             {features.map((feat, i) => (
@@ -354,29 +354,29 @@ function PubSubSection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Pub/Sub</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Broadcast with <span className="text-purple-400">EventHub</span>
+            Broadcast with <span className="text-primary">EventHub</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Subscribe connections to topics on connect. When one client publishes, all subscribers receive the update in real time.
           </p>
         </div>
 
         {/* Visual: pub/sub flow */}
-        <div className="max-w-3xl mx-auto mb-10">
+        <div className="max-w-3xl mb-10">
           <div className="grid grid-cols-3 gap-4">
             {[
               { label: 'Client A', action: 'subscribe("todos:updated")', role: 'subscriber' },
               { label: 'Client B', action: 'publish("todos:updated")', role: 'publisher' },
               { label: 'Client C', action: 'subscribe("todos:updated")', role: 'subscriber' },
             ].map((client, i) => (
-              <div key={i} className={`bg-[#0d0d0d] border ${client.role === 'publisher' ? 'border-purple-500/40 border-2' : 'border-neutral-800'} rounded-lg p-4 text-center`}>
+              <div key={i} className={`bg-[#0d0d0d] border ${client.role === 'publisher' ? 'border-white/20 border-2' : 'border-neutral-800'} rounded-lg p-4 `}>
                 <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">{client.label}</p>
-                <code className={`text-xs font-mono ${client.role === 'publisher' ? 'text-purple-400' : 'text-neutral-400'}`}>{client.action}</code>
+                <code className={`text-xs font-mono ${client.role === 'publisher' ? 'text-primary' : 'text-neutral-400'}`}>{client.action}</code>
                 <div className="mt-2">
-                  <span className={`text-[10px] px-2 py-0.5 rounded ${client.role === 'publisher' ? 'bg-purple-500/15 text-purple-400' : 'bg-neutral-800 text-neutral-500'}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded ${client.role === 'publisher' ? 'bg-white/8 text-primary' : 'bg-neutral-800 text-neutral-500'}`}>
                     {client.role === 'publisher' ? <Send className="w-3 h-3 inline mr-1" /> : <Radio className="w-3 h-3 inline mr-1" />}
                     {client.role}
                   </span>
@@ -386,15 +386,15 @@ function PubSubSection() {
           </div>
         </div>
 
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl">
           <CodeCard filename="todos.channel.ts" icon={<WebSocketIcon size={15} />}>
             <CodeBlock language="typescript">{pubsubCode}</CodeBlock>
           </CodeCard>
         </div>
 
         {/* Callout */}
-        <div className="max-w-3xl mx-auto mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
-          <span className="text-purple-400 text-lg mt-0.5">⚡</span>
+        <div className="max-w-3xl mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
+          <span className="text-primary text-lg mt-0.5">⚡</span>
           <p className="text-sm text-neutral-400">
             <span className="text-white font-semibold">Stateful or serverless.</span>{' '}
             EventHub works in-process for stateful servers (uWebSockets.js) and backs onto PostgreSQL for serverless deployments (AWS Lambda + API Gateway).
@@ -432,17 +432,17 @@ function TypeSafeClientSection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Type-Safe Client</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Full IntelliSense <span className="text-purple-400">on the wire</span>
+            Full IntelliSense <span className="text-primary">on the wire</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Pikku generates a typed WebSocket client from your channel wirings. Every action, every payload, every subscription — autocompleted.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-[3fr_2fr] gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-[3fr_2fr] gap-10 max-w-5xl items-start">
           {/* Left: code */}
           <CodeCard filename="client.ts" badge="auto-generated types">
             <CodeBlock language="typescript">{clientCode}</CodeBlock>
@@ -452,29 +452,29 @@ function TypeSafeClientSection() {
           <div className="space-y-5">
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <Wifi className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />
+                <Wifi className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Generated from wirings</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    <code className="text-purple-400 text-xs">PikkuWebSocket</code> is auto-generated with typed overloads for every channel action you've wired.
+                    <code className="text-primary text-xs">PikkuWebSocket</code> is auto-generated with typed overloads for every channel action you've wired.
                   </p>
                 </div>
               </div>
             </div>
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <Send className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />
+                <Send className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Typed send & subscribe</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    <code className="text-purple-400 text-xs">route.send()</code> infers input/output per action. <code className="text-purple-400 text-xs">route.subscribe()</code> types the callback payload from your EventHub events.
+                    <code className="text-primary text-xs">route.send()</code> infers input/output per action. <code className="text-primary text-xs">route.subscribe()</code> types the callback payload from your EventHub events.
                   </p>
                 </div>
               </div>
             </div>
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <Globe className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />
+                <Globe className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Works everywhere</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
@@ -527,13 +527,13 @@ wireChannel({
 function MiddlewareSection() {
   const types = [
     {
-      icon: <Layers className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />,
+      icon: <Layers className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Wire middleware',
       desc: 'Wraps each function call. Apply per-channel or per-action — rate limiting, audit logging, validation. Same model as HTTP middleware.',
       tag: 'func',
     },
     {
-      icon: <Radio className="w-5 h-5 text-purple-400 mt-0.5 shrink-0" />,
+      icon: <Radio className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Channel middleware',
       desc: 'Wraps channel.send() — intercepts every outbound event. Transform payloads, filter events (pass null to drop), or fan out (pass an array).',
       tag: 'send',
@@ -543,18 +543,18 @@ function MiddlewareSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Middleware</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Hooks at <span className="text-purple-400">every level</span>
+            Hooks at <span className="text-primary">every level</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Two types of middleware: wire middleware wraps function calls, channel middleware wraps outbound messages via <code className="text-purple-400">channel.send()</code>.
+          <p className="text-lg text-neutral-400 max-w-2xl">
+            Two types of middleware: wire middleware wraps function calls, channel middleware wraps outbound messages via <code className="text-primary">channel.send()</code>.
           </p>
         </div>
 
         {/* Type cards */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-10">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mb-10">
           {types.map((t, i) => (
             <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
@@ -562,7 +562,7 @@ function MiddlewareSection() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1.5">
                     <h3 className="text-base font-bold text-white">{t.title}</h3>
-                    <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-400">{t.tag}</span>
+                    <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-primary">{t.tag}</span>
                   </div>
                   <p className="text-sm text-neutral-400 leading-relaxed">{t.desc}</p>
                 </div>
@@ -572,18 +572,18 @@ function MiddlewareSection() {
         </div>
 
         {/* Code example */}
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl">
           <CodeCard filename="channel-middleware.ts" badge="channel middleware" icon={<WebSocketIcon size={15} />}>
             <CodeBlock language="typescript">{channelMiddlewareCode}</CodeBlock>
           </CodeCard>
         </div>
 
         {/* Callout */}
-        <div className="max-w-5xl mx-auto mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
-          <span className="text-purple-400 text-lg mt-0.5">→</span>
+        <div className="max-w-5xl mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
+          <span className="text-primary text-lg mt-0.5">→</span>
           <p className="text-sm text-neutral-400">
             <span className="text-white font-semibold">Channel middleware controls what the client sees.</span>{' '}
-            Pass a modified event to <code className="text-purple-400 text-xs">next()</code> to transform, <code className="text-purple-400 text-xs">null</code> to drop, or an array to fan out into multiple events. Both types run in onion order.
+            Pass a modified event to <code className="text-primary text-xs">next()</code> to transform, <code className="text-primary text-xs">null</code> to drop, or an array to fan out into multiple events. Both types run in onion order.
           </p>
         </div>
       </div>
@@ -601,8 +601,8 @@ function DeploySection() {
       title: 'Stateful',
       runtime: 'uWebSockets.js, ws',
       desc: 'In-process EventHub, persistent connections. Best for low-latency real-time apps.',
-      border: 'border-purple-500/30',
-      bg: 'bg-purple-500/5',
+      border: 'border-white/15',
+      bg: 'bg-white/[0.04]',
     },
     {
       title: 'Serverless',
@@ -618,21 +618,21 @@ function DeploySection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Deploy</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Stateful or <span className="text-purple-400">serverless</span>
+            Stateful or <span className="text-primary">serverless</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             The same wireChannel code runs on both. Your functions don't change — only the runtime does.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl">
           {modes.map((mode, i) => (
-            <div key={i} className={`${mode.bg} border ${mode.border} rounded-xl p-6 text-center`}>
+            <div key={i} className={`${mode.bg} border ${mode.border} rounded-xl p-6 `}>
               <h3 className="text-lg font-bold text-white mb-1">{mode.title}</h3>
-              <p className="text-sm font-mono text-purple-400 mb-3">{mode.runtime}</p>
+              <p className="text-sm font-mono text-primary mb-3">{mode.runtime}</p>
               <p className="text-sm text-neutral-400 leading-relaxed">{mode.desc}</p>
             </div>
           ))}
@@ -658,39 +658,39 @@ function CTASection() {
   return (
     <section className="py-16 lg:py-24 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-purple-500/8 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
       </div>
 
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
           Start wiring WebSockets in 5 minutes
         </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
           One command to scaffold a project with WebSocket wiring already configured.
         </p>
 
         {/* npm command with copy */}
         <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-purple-500/40 transition-all mb-10"
+          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
           onClick={copyToClipboard}
         >
-          <span className="text-purple-400/70 select-none">$ </span>npm create pikku@latest
+          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
             onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
             title="Copy to clipboard"
           >
             {copied
-              ? <Check className="w-3.5 h-3.5 text-purple-400" />
+              ? <Check className="w-3.5 h-3.5 text-primary" />
               : <Copy className="w-3.5 h-3.5 text-white/70" />
             }
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Link
             to="/docs/wiring/channels"
-            className="bg-purple-500 text-white hover:bg-purple-600 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-purple-500/20"
+            className="bg-primary text-white hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-purple-500/20"
           >
             Read the WebSocket Docs
           </Link>

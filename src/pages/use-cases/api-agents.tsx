@@ -15,10 +15,10 @@ function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-primary/8 blur-[120px]" />
+        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-white/5 blur-[120px]" />
       </div>
 
-      <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-16 lg:pt-28 lg:pb-20 text-center">
+      <div className="relative max-w-4xl px-6 pt-20 pb-16 lg:pt-28 lg:pb-20 ">
         <Link to="/" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50 no-underline hover:bg-white/[0.08] transition mb-6">
           Pikku Fabric use case
         </Link>
@@ -29,12 +29,12 @@ function Hero() {
           <span className="text-primary">a brain.</span>
         </h1>
 
-        <p className="mt-6 text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-lg text-white/50 max-w-2xl leading-relaxed">
           Turn any API into a chat assistant, CLI tools, and an MCP server
           your customers can use right away. No rebuilding required.
         </p>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        <div className="mt-8 flex flex-wrap gap-4">
           <Link to="/#waitlist" className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90 no-underline">
             Get early access <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -54,7 +54,7 @@ function Hero() {
 function Problem() {
   return (
     <section className="py-16 lg:py-20 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-3xl px-6 text-center">
+      <div className="max-w-3xl px-6 ">
         <p className="text-lg text-white/50 leading-relaxed">
           You've invested years building your API. Adding AI shouldn't mean
           starting over. Most of your API's power is locked behind UIs only
@@ -94,12 +94,12 @@ function WhatYouGet() {
 
   return (
     <section id="how-it-works" className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="text-center mb-14">
+      <div className="max-w-5xl px-6">
+        <div className="mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
             Three interfaces from one API spec.
           </h2>
-          <p className="mt-4 text-base text-white/40 max-w-lg mx-auto">
+          <p className="mt-4 text-base text-white/40 max-w-lg">
             Connect your OpenAPI spec. Pick your interfaces. Ship.
           </p>
         </div>
@@ -107,7 +107,7 @@ function WhatYouGet() {
         <div className="grid gap-6 lg:grid-cols-3">
           {interfaces.map((item, i) => (
             <div key={i} className="rounded-xl border border-white/[0.06] bg-white/[0.025] p-6 transition-all hover:bg-white/[0.04]">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 text-primary mb-4">
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white/[0.06] border border-white/12 text-primary mb-4">
                 {item.icon}
               </div>
               <p className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-2">{item.step}</p>
@@ -128,8 +128,8 @@ function WhatYouGet() {
 function HowItWorks() {
   return (
     <section className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-4xl px-6">
-        <div className="text-center mb-14">
+      <div className="max-w-4xl px-6">
+        <div className="mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
             From OpenAPI spec to working agent.
           </h2>
@@ -139,7 +139,7 @@ function HowItWorks() {
           {/* Step 1 */}
           <div className="grid gap-6 lg:grid-cols-[140px_1fr] items-start">
             <div className="flex items-center gap-3 lg:flex-col lg:items-start">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-xs font-bold text-primary">1</span>
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-xs font-bold text-primary">1</span>
               <div>
                 <p className="text-sm font-bold text-white">Connect your API</p>
                 <p className="text-xs text-white/30">Point it at your spec</p>
@@ -161,7 +161,7 @@ function HowItWorks() {
           {/* Step 2 */}
           <div className="grid gap-6 lg:grid-cols-[140px_1fr] items-start">
             <div className="flex items-center gap-3 lg:flex-col lg:items-start">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-xs font-bold text-primary">2</span>
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-xs font-bold text-primary">2</span>
               <div>
                 <p className="text-sm font-bold text-white">Pick your interfaces</p>
                 <p className="text-xs text-white/30">Chat, CLI, MCP — any combo</p>
@@ -187,7 +187,7 @@ wireMCP({ agent })`}</CodeBlock>
           {/* Step 3 */}
           <div className="grid gap-6 lg:grid-cols-[140px_1fr] items-start">
             <div className="flex items-center gap-3 lg:flex-col lg:items-start">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-xs font-bold text-primary">3</span>
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/[0.06] text-xs font-bold text-primary">3</span>
               <div>
                 <p className="text-sm font-bold text-white">Ship it</p>
                 <p className="text-xs text-white/30">Deploy to Fabric</p>
@@ -201,10 +201,10 @@ wireMCP({ agent })`}</CodeBlock>
               </div>
               <div className="p-5 font-mono text-[13px] leading-7">
                 <div className="text-white">$ pikku deploy</div>
-                <div className="mt-2 text-emerald-400">  ✓ Chat assistant   <span className="text-white/25">wss://chat.acme.dev</span></div>
-                <div className="text-emerald-400">  ✓ CLI published    <span className="text-white/25">npx @acme/cli</span></div>
-                <div className="text-emerald-400">  ✓ MCP server       <span className="text-white/25">mcp://acme.dev</span></div>
-                <div className="text-emerald-400">  ✓ 42 tools active  <span className="text-white/25">from your OpenAPI spec</span></div>
+                <div className="mt-2 text-primary">  ✓ Chat assistant   <span className="text-white/25">wss://chat.acme.dev</span></div>
+                <div className="text-primary">  ✓ CLI published    <span className="text-white/25">npx @acme/cli</span></div>
+                <div className="text-primary">  ✓ MCP server       <span className="text-white/25">mcp://acme.dev</span></div>
+                <div className="text-primary">  ✓ 42 tools active  <span className="text-white/25">from your OpenAPI spec</span></div>
                 <div className="mt-2 text-white font-semibold">  Live in 4.2s</div>
               </div>
             </div>
@@ -222,7 +222,7 @@ wireMCP({ agent })`}</CodeBlock>
 function CostAndTrust() {
   return (
     <section className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-5xl px-6">
+      <div className="max-w-5xl px-6">
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Cost */}
           <div>
@@ -236,14 +236,14 @@ function CostAndTrust() {
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border border-red-500/15 bg-red-500/[0.03] p-4">
-                <p className="text-xs text-red-400/60 font-semibold uppercase tracking-widest mb-1">LLM on every request</p>
-                <p className="text-2xl font-bold text-red-400/80">~$14,400<span className="text-sm font-normal text-red-400/40">/yr</span></p>
+              <div className="rounded-xl border border-white/10 bg-primary/[0.03] p-4">
+                <p className="text-xs text-white/45 font-semibold uppercase tracking-widest mb-1">LLM on every request</p>
+                <p className="text-2xl font-bold text-white/65">~$14,400<span className="text-sm font-normal text-primary/40">/yr</span></p>
                 <p className="text-xs text-white/25 mt-1">8-step workflow, 50x/day</p>
               </div>
-              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-4">
-                <p className="text-xs text-emerald-400/60 font-semibold uppercase tracking-widest mb-1">Pikku (AI designs once)</p>
-                <p className="text-2xl font-bold text-emerald-400">~$1.20<span className="text-sm font-normal text-emerald-400/50">/yr</span></p>
+              <div className="rounded-xl border border-white/12 bg-primary/[0.04] p-4">
+                <p className="text-xs text-white/45 font-semibold uppercase tracking-widest mb-1">Pikku (AI designs once)</p>
+                <p className="text-2xl font-bold text-primary">~$1.20<span className="text-sm font-normal text-primary/50">/yr</span></p>
                 <p className="text-xs text-white/25 mt-1">Same workflow, native execution</p>
               </div>
             </div>
@@ -288,19 +288,19 @@ function CTA() {
   return (
     <section className="relative overflow-hidden py-20 lg:py-28">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-primary/6 blur-[100px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-white/[0.04] blur-[100px]" />
       </div>
 
-      <div className="relative mx-auto max-w-2xl px-6 text-center">
+      <div className="relative max-w-2xl px-6 ">
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
           You built the API.<br />Let your customers use all of it.
         </h2>
-        <p className="mt-4 text-base text-white/40 max-w-md mx-auto">
+        <p className="mt-4 text-base text-white/40 max-w-md">
           Upload your OpenAPI spec. Get a chat assistant, CLI tools, and MCP
           server — deployed on Pikku Fabric.
         </p>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/#waitlist" className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90 no-underline">
             Get early access <ArrowRight className="w-3.5 h-3.5" />
           </Link>

@@ -47,32 +47,32 @@ function Hero() {
   return (
     <div className="wire-hero-mcp w-full relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-pink-500/12 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-rose-400/8 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
+        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
         <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-pink-400 border border-pink-400/40 bg-pink-400/10 px-3 py-1 rounded mb-6">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
             Wire Type: MCP
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">AI tools,</span><br />
-            <span className="text-pink-400">same functions.</span>
+            <span className="text-primary">same functions.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            Add <code className="text-pink-400 text-lg">mcp: true</code> to any Pikku function and it becomes an MCP tool. Resources and prompts use dedicated function types — all exposed automatically via the Model Context Protocol.
+            Add <code className="text-primary text-lg">mcp: true</code> to any Pikku function and it becomes an MCP tool. Resources and prompts use dedicated function types — all exposed automatically via the Model Context Protocol.
           </p>
           <div className="flex flex-row gap-4">
-            <Link to="/docs/wiring/mcp" className="bg-pink-500 text-white hover:bg-pink-600 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-pink-500/20">Get Started</Link>
+            <Link to="/docs/wiring/mcp" className="bg-primary text-white hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-pink-500/20">Get Started</Link>
             <a href="#tools" className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline">See the Code</a>
           </div>
         </div>
 
         <div className="hidden md:flex md:w-1/2 items-center justify-center">
           <div className="relative">
-            <div className="absolute inset-0 bg-pink-500/20 rounded-full blur-[40px]" />
-            <div className="relative bg-[#0d0d0d] border-2 border-pink-500/40 rounded-2xl p-6">
+            <div className="absolute inset-0 bg-white/10 rounded-full blur-[40px]" />
+            <div className="relative bg-[#0d0d0d] border-2 border-white/20 rounded-2xl p-6">
               <MCPIcon size={120} />
             </div>
           </div>
@@ -126,7 +126,7 @@ export const codeReview = pikkuMCPPromptFunc({
 function PrimitivesSection() {
   const primitives = [
     {
-      icon: <Wrench className="w-6 h-6 text-pink-400" />,
+      icon: <Wrench className="w-6 h-6 text-primary" />,
       title: 'Tools',
       desc: 'Any Pikku function becomes a tool — just add mcp: true.',
       code: toolCode,
@@ -134,7 +134,7 @@ function PrimitivesSection() {
       badge: 'mcp: true',
     },
     {
-      icon: <FileText className="w-6 h-6 text-pink-400" />,
+      icon: <FileText className="w-6 h-6 text-primary" />,
       title: 'Resources',
       desc: 'Data the AI can read. URI templates with typed parameters.',
       code: resourceCode,
@@ -142,7 +142,7 @@ function PrimitivesSection() {
       badge: 'pikkuMCPResourceFunc',
     },
     {
-      icon: <MessageSquare className="w-6 h-6 text-pink-400" />,
+      icon: <MessageSquare className="w-6 h-6 text-primary" />,
       title: 'Prompts',
       desc: 'Prompt templates the AI can use. Return structured message arrays.',
       code: promptCode,
@@ -154,17 +154,17 @@ function PrimitivesSection() {
   return (
     <section id="tools" className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Three Primitives</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Tools, resources, <span className="text-pink-400">prompts</span>
+            Tools, resources, <span className="text-primary">prompts</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             MCP defines three primitives for AI integration. Pikku exposes your functions automatically — no wiring code needed.
           </p>
         </div>
 
-        <div className="space-y-10 max-w-4xl mx-auto">
+        <div className="space-y-10 max-w-4xl">
           {primitives.map((p, i) => (
             <div key={i}>
               <div className="flex items-center gap-3 mb-4">
@@ -211,12 +211,12 @@ const wireObjectCode = `export const manageTodos = pikkuFunc({
 function WireObjectSection() {
   const features = [
     {
-      icon: <Zap className="w-5 h-5 text-pink-400 mt-0.5 shrink-0" />,
+      icon: <Zap className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'sendResourceUpdated(uri)',
       desc: 'Notify the AI that a resource changed — it can re-read it to get fresh data.',
     },
     {
-      icon: <Wrench className="w-5 h-5 text-pink-400 mt-0.5 shrink-0" />,
+      icon: <Wrench className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'enableTools / enableResources / enablePrompts',
       desc: 'Dynamically show or hide capabilities based on context. Pass a map of names to booleans.',
     },
@@ -227,17 +227,17 @@ function WireObjectSection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Wire Object</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Dynamic control <span className="text-pink-400">at runtime</span>
+            Dynamic control <span className="text-primary">at runtime</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
-            Every MCP function gets a <code className="text-pink-400">wire.mcp</code> object to notify resource changes and toggle capabilities.
+          <p className="text-lg text-neutral-400 max-w-xl">
+            Every MCP function gets a <code className="text-primary">wire.mcp</code> object to notify resource changes and toggle capabilities.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           <div className="space-y-5">
             {features.map((f, i) => (
               <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
@@ -276,19 +276,19 @@ function CTASection() {
   return (
     <section className="py-16 lg:py-24 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-pink-500/8 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
       </div>
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">Start wiring MCP in 5 minutes</Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">One command to scaffold a project with MCP wiring already configured.</p>
-        <div className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-pink-500/40 transition-all mb-10" onClick={copyToClipboard}>
-          <span className="text-pink-400/70 select-none">$ </span>npm create pikku@latest
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl">One command to scaffold a project with MCP wiring already configured.</p>
+        <div className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10" onClick={copyToClipboard}>
+          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
           <button className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5" onClick={(e) => { e.stopPropagation(); copyToClipboard(); }} title="Copy to clipboard">
-            {copied ? <Check className="w-3.5 h-3.5 text-pink-400" /> : <Copy className="w-3.5 h-3.5 text-white/70" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-white/70" />}
           </button>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/docs/wiring/mcp" className="bg-pink-500 text-white hover:bg-pink-600 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-pink-500/20">Read the MCP Docs</Link>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link to="/docs/wiring/mcp" className="bg-primary text-white hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-pink-500/20">Read the MCP Docs</Link>
           <Link to="https://github.com/pikkujs/pikku" className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105">View on GitHub</Link>
         </div>
         <p className="text-neutral-500 text-sm mt-8">MIT Licensed &nbsp;&middot;&nbsp; Tools, Resources &amp; Prompts</p>

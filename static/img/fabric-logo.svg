@@ -1,0 +1,14 @@
+<svg width="40" height="40" viewBox="0 0 240 240" aria-hidden="true" role="img" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(1 -16)" fill="none" stroke-width="10" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="2">
+    <path d="M103 30V101L90 114" stroke="rgba(255,255,255,0.9)"/>
+    <path d="M138 30V104L133 111" stroke="rgba(255,255,255,0.35)"/>
+    <path d="M17 121H75L111 156" stroke="rgba(255,255,255,0.35)"/>
+    <path d="M17 159H75L85 149" stroke="rgba(255,255,255,0.9)"/>
+    <path d="M221 121H163L152 132" stroke="rgba(255,255,255,0.9)"/>
+    <path d="M221 159H162L126 124" stroke="rgba(255,255,255,0.35)"/>
+    <path d="M103 241V172L105 168" stroke="rgba(255,255,255,0.35)"/>
+    <path d="M138 241V175L145 166" stroke="rgba(255,255,255,0.9)"/>
+    <path d="M119 110L103 130" stroke="rgba(255,255,255,0.9)"/>
+    <path d="M130 146L116 168" stroke="rgba(255,255,255,0.9)"/>
+  </g>
+</svg>

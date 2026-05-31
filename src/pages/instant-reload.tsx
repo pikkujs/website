@@ -28,43 +28,43 @@ function Hero() {
   return (
     <div className="wire-hero-instant-reload w-full relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-emerald-500/12 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-teal-400/8 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
+        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
         <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-emerald-400 border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 rounded mb-6">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
             Developer Experience
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">Your backend has never</span><br />
-            <span className="text-emerald-400">reloaded this fast.</span>
+            <span className="text-primary">reloaded this fast.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
             Frontend devs got instant feedback years ago. Backend devs are still restarting servers. Pikku changes that — edit, save, it's live. Across every protocol.
           </p>
           <div className="flex flex-row gap-4">
-            <a href="#the-restart-loop" className="bg-emerald-500 text-black hover:bg-emerald-400 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-emerald-500/20 no-underline">See the Problem</a>
+            <a href="#the-restart-loop" className="bg-primary text-black hover:bg-primary/90 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-black/20 no-underline">See the Problem</a>
             <a href="#how-it-works" className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline">How It Works</a>
           </div>
         </div>
 
         <div className="hidden md:flex md:w-1/2 items-center justify-center">
           <div className="relative">
-            <div className="absolute inset-0 bg-emerald-500/15 rounded-full blur-[50px]" />
+            <div className="absolute inset-0 bg-white/8 rounded-full blur-[50px]" />
             <div className="relative flex flex-col items-center gap-3">
               {/* Save → Live animation concept */}
               <div className="flex items-center gap-4">
                 <div className="bg-[#0d0d0d] border-2 border-neutral-600/40 rounded-2xl p-5">
                   <Save className="w-16 h-16 text-neutral-400" />
                 </div>
-                <ArrowRight className="w-8 h-8 text-emerald-400" />
-                <div className="bg-[#0d0d0d] border-2 border-emerald-500/40 rounded-2xl p-5">
-                  <Zap className="w-16 h-16 text-emerald-400" />
+                <ArrowRight className="w-8 h-8 text-primary" />
+                <div className="bg-[#0d0d0d] border-2 border-white/20 rounded-2xl p-5">
+                  <Zap className="w-16 h-16 text-primary" />
                 </div>
               </div>
-              <p className="text-xs font-bold tracking-widest uppercase text-emerald-400/60 mt-2">Save → Live</p>
+              <p className="text-xs font-bold tracking-widest uppercase text-white/45 mt-2">Save → Live</p>
             </div>
           </div>
         </div>
@@ -88,21 +88,21 @@ function RestartLoopSection() {
 
   return (
     <section id="the-restart-loop" className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-14">
+        <div className="mb-14">
           <SectionLabel>The Status Quo</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Backend development is <span className="text-emerald-400">restart-driven.</span>
+            Backend development is <span className="text-primary">restart-driven.</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             You know the loop. Every backend developer does. Edit. Save. Wait for the server to restart. Lose your WebSocket connections. Re-authenticate. Test again. Hundreds of times per day.
           </p>
         </div>
 
         {/* Loop visualization */}
-        <div className="max-w-lg mx-auto mb-14">
+        <div className="max-w-lg mb-14">
           <div className="relative aspect-square max-w-[400px] mx-auto">
             <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 400">
               <circle cx="200" cy="200" r="150" fill="none" stroke="rgba(16,185,129,0.12)" strokeWidth="1.5" strokeDasharray="6 4" />
@@ -111,7 +111,7 @@ function RestartLoopSection() {
               </path>
             </svg>
 
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
               <RefreshCw className="w-8 h-8 text-red-400/50 mx-auto mb-2 animate-spin" style={{ animationDuration: '8s' }} />
               <p className="text-xs font-bold tracking-widest uppercase text-red-400/60">Restart loop</p>
               <p className="text-[11px] text-neutral-600 mt-1">100+ times / day</p>
@@ -131,11 +131,11 @@ function RestartLoopSection() {
                 >
                   <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${
                     isSlow
-                      ? 'bg-red-500/8 border-red-500/25'
+                      ? 'bg-white/8 border-white/12'
                       : 'bg-[#0d0d0d] border-neutral-700/80'
                   }`}>
                     <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                      isSlow ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/15 text-emerald-400'
+                      isSlow ? 'bg-white/20 text-red-400' : 'bg-white/15 text-emerald-400'
                     }`}>
                       {step.icon}
                     </span>
@@ -149,26 +149,26 @@ function RestartLoopSection() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl">
           {[
             {
-              icon: <Clock className="w-6 h-6 text-emerald-400" />,
+              icon: <Clock className="w-6 h-6 text-primary" />,
               title: 'Death by a thousand restarts',
               desc: 'Each restart takes 2-5 seconds. At 100+ restarts per day, that\'s 5-10 minutes of pure waiting. But the real cost is the context switch — every restart breaks your flow.',
             },
             {
-              icon: <Wifi className="w-6 h-6 text-emerald-400" />,
+              icon: <Wifi className="w-6 h-6 text-primary" />,
               title: 'Connections drop',
               desc: 'WebSocket clients disconnect. Queue consumers stop. Cron timers reset. Every restart tears down your entire runtime state. Then you rebuild it manually to test again.',
             },
             {
-              icon: <Layers className="w-6 h-6 text-emerald-400" />,
+              icon: <Layers className="w-6 h-6 text-primary" />,
               title: 'Multiple protocols, multiple restarts',
               desc: 'If you\'re running HTTP, WebSocket, and a queue consumer, a single code change means restarting all of them. Different processes, different startup times, different headaches.',
             },
           ].map((pain, i) => (
             <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6">
-              <div className="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5">
+              <div className="w-12 h-12 rounded-lg bg-white/[0.06] border border-white/12 flex items-center justify-center mb-5">
                 {pain.icon}
               </div>
               <h3 className="text-lg font-bold text-white mb-2 font-jakarta">{pain.title}</h3>
@@ -211,28 +211,28 @@ function WhyItNeverWorkedSection() {
 
   return (
     <section className="py-20 lg:py-28 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-emerald-500/6 blur-[100px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-white/[0.04] blur-[100px]" />
       </div>
 
       <div className="max-w-screen-xl mx-auto px-6 relative">
-        <div className="text-center mb-14">
+        <div className="mb-14">
           <SectionLabel>Why Frontend Has HMR and Backend Doesn't</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
             Backend code is <span className="text-red-400/80">stateful.</span><br />
-            That's <span className="text-emerald-400">the whole problem.</span>
+            That's <span className="text-primary">the whole problem.</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             React components are pure functions of props and state — that's why React Fast Refresh works. Backend handlers? They're tangled with everything.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div className="grid sm:grid-cols-2 gap-6 max-w-3xl">
           {reasons.map((reason, i) => (
             <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-lg bg-white/10 border border-white/12 flex items-center justify-center">
                   {reason.icon}
                 </div>
                 <h3 className="text-base font-bold text-white font-jakarta">{reason.title}</h3>
@@ -242,7 +242,7 @@ function WhyItNeverWorkedSection() {
           ))}
         </div>
 
-        <div className="max-w-3xl mx-auto mt-10 bg-red-500/5 border border-red-500/20 rounded-xl p-6 text-center">
+        <div className="max-w-3xl mt-10 bg-white/5 border border-white/12 rounded-xl p-6 ">
           <p className="text-neutral-300 text-sm leading-relaxed">
             <span className="text-red-400 font-semibold">This is why nodemon exists.</span> It doesn't hot-reload your code. It kills the process and starts a new one. That's the best backend developers have had — until now.
           </p>
@@ -259,24 +259,24 @@ function WhyItNeverWorkedSection() {
 function TheDifferenceSection() {
   return (
     <section className="py-20 lg:py-32 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-emerald-500/8 blur-[100px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-white/5 blur-[100px]" />
       </div>
 
-      <div className="max-w-screen-lg mx-auto px-6 text-center relative">
+      <div className="max-w-screen-lg mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
           Pikku functions are<br />
-          <span className="text-emerald-400">stateless.</span>
+          <span className="text-primary">stateless.</span>
         </Heading>
-        <p className="text-xl text-neutral-400 max-w-2xl mx-auto leading-relaxed mb-10">
+        <p className="text-xl text-neutral-400 max-w-2xl leading-relaxed mb-10">
           No route registration. No middleware closures. No framework coupling. Just a pure function: services in, data in, result out. That makes them hot-swappable by nature.
         </p>
 
         {/* Before / After */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
-          <div className="bg-[#0d0d0d] border border-red-500/20 rounded-xl overflow-hidden">
-            <div className="px-5 py-3 border-b border-red-500/10 bg-red-500/5">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl text-left">
+          <div className="bg-[#0d0d0d] border border-white/12 rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-white/12 bg-white/5">
               <p className="text-xs font-bold tracking-widest uppercase text-red-400/70 mb-0">Traditional handler</p>
             </div>
             <pre className="text-sm text-neutral-300 p-5 overflow-x-auto mb-0"><code>{`// Coupled to Express
@@ -291,8 +291,8 @@ app.post('/api/greet',
 )`}</code></pre>
           </div>
 
-          <div className="bg-[#0d0d0d] border border-emerald-500/20 rounded-xl overflow-hidden">
-            <div className="px-5 py-3 border-b border-emerald-500/10 bg-emerald-500/5">
+          <div className="bg-[#0d0d0d] border border-white/12 rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-white/12 bg-white/5">
               <p className="text-xs font-bold tracking-widest uppercase text-emerald-400/70 mb-0">Pikku function</p>
             </div>
             <pre className="text-sm text-neutral-300 p-5 overflow-x-auto mb-0"><code>{`// Pure function — no framework, no state
@@ -308,9 +308,9 @@ const greet = async (
           </div>
         </div>
 
-        <div className="max-w-3xl mx-auto mt-10 bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-6">
+        <div className="max-w-3xl mt-10 bg-white/[0.04] border border-white/12 rounded-xl p-6">
           <p className="text-neutral-300 text-base leading-relaxed">
-            <span className="text-emerald-400 font-semibold">The function is just logic.</span> Auth, validation, permissions, and routing are declared as metadata — not wired into the handler. When the file changes, Pikku swaps the function and reloads the metadata. No restart. No state lost. No connections dropped.
+            <span className="text-primary font-semibold">The function is just logic.</span> Auth, validation, permissions, and routing are declared as metadata — not wired into the handler. When the file changes, Pikku swaps the function and reloads the metadata. No restart. No state lost. No connections dropped.
           </p>
         </div>
       </div>
@@ -325,21 +325,21 @@ const greet = async (
 function HowItWorksSection() {
   const steps = [
     {
-      icon: <FileCode className="w-6 h-6 text-emerald-400" />,
+      icon: <FileCode className="w-6 h-6 text-primary" />,
       step: '1',
       title: 'You save a file',
       desc: 'You edit a function — change the logic, add a field, update a return type. Just save.',
       detail: 'No restart command. No waiting.',
     },
     {
-      icon: <Cpu className="w-6 h-6 text-emerald-400" />,
+      icon: <Cpu className="w-6 h-6 text-primary" />,
       step: '2',
       title: 'Pikku reloads the metadata',
       desc: 'The CLI detects the change, regenerates route metadata, types, and validation schemas. The function module is swapped in-place.',
       detail: 'Sub-second. No process restart.',
     },
     {
-      icon: <Zap className="w-6 h-6 text-emerald-400" />,
+      icon: <Zap className="w-6 h-6 text-primary" />,
       step: '3',
       title: 'It\'s live. Everywhere.',
       desc: 'The updated function is immediately available on every protocol — HTTP, WebSocket, queue, cron, RPC, MCP, CLI. All at once. All in the same process.',
@@ -349,49 +349,49 @@ function HowItWorksSection() {
 
   return (
     <section id="how-it-works" className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-14">
+        <div className="mb-14">
           <SectionLabel>How It Works</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            <span className="text-emerald-400">Save.</span> That's it.
+            <span className="text-primary">Save.</span> That's it.
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            Run <code className="text-emerald-300 text-base">pikku watch</code> once. From then on, every file save is a live reload — across every protocol your function is wired to.
+          <p className="text-lg text-neutral-400 max-w-2xl">
+            Run <code className="text-primary text-base">pikku watch</code> once. From then on, every file save is a live reload — across every protocol your function is wired to.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-6 max-w-5xl">
           {steps.map((phase, i) => (
             <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-7 relative">
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/12 flex items-center justify-center">
                   {phase.icon}
                 </div>
-                <span className="text-xs font-bold tracking-widest uppercase text-emerald-400/60">Step {phase.step}</span>
+                <span className="text-xs font-bold tracking-widest uppercase text-white/45">Step {phase.step}</span>
               </div>
               <h3 className="text-lg font-bold text-white mb-3 font-jakarta">{phase.title}</h3>
               <p className="text-sm text-neutral-400 leading-relaxed mb-4">{phase.desc}</p>
-              <p className="text-xs text-emerald-400/70 font-medium">{phase.detail}</p>
+              <p className="text-xs text-white/55 font-medium">{phase.detail}</p>
             </div>
           ))}
         </div>
 
         {/* Terminal mock */}
-        <div className="max-w-2xl mx-auto mt-12 bg-[#0a0a0a] border border-neutral-800 rounded-xl overflow-hidden">
+        <div className="max-w-2xl mt-12 bg-[#0a0a0a] border border-neutral-800 rounded-xl overflow-hidden">
           <div className="flex items-center gap-2 px-4 py-3 border-b border-neutral-800/80 bg-neutral-900/30">
-            <div className="w-3 h-3 rounded-full bg-red-500/60" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-            <div className="w-3 h-3 rounded-full bg-green-500/60" />
+            <div className="w-3 h-3 rounded-full bg-white/60" />
+            <div className="w-3 h-3 rounded-full bg-primary/60" />
+            <div className="w-3 h-3 rounded-full bg-white/60" />
             <span className="text-xs text-neutral-600 ml-2 font-mono">terminal</span>
           </div>
           <pre className="text-sm p-5 overflow-x-auto mb-0"><code>
-            <span className="text-neutral-500">$</span> <span className="text-emerald-300">npx pikku watch</span>{'\n'}
+            <span className="text-neutral-500">$</span> <span className="text-primary">npx pikku watch</span>{'\n'}
             <span className="text-neutral-600">[pikku]</span> <span className="text-neutral-400">Watching for changes...</span>{'\n'}
-            <span className="text-neutral-600">[pikku]</span> <span className="text-emerald-400">✓</span> <span className="text-neutral-300">greet.ts changed — reloaded in 47ms</span>{'\n'}
-            <span className="text-neutral-600">[pikku]</span> <span className="text-emerald-400">✓</span> <span className="text-neutral-300">Types regenerated</span>{'\n'}
-            <span className="text-neutral-600">[pikku]</span> <span className="text-emerald-400">✓</span> <span className="text-neutral-300">Live on: HTTP, WebSocket, RPC, Cron</span>
+            <span className="text-neutral-600">[pikku]</span> <span className="text-primary">✓</span> <span className="text-neutral-300">greet.ts changed — reloaded in 47ms</span>{'\n'}
+            <span className="text-neutral-600">[pikku]</span> <span className="text-primary">✓</span> <span className="text-neutral-300">Types regenerated</span>{'\n'}
+            <span className="text-neutral-600">[pikku]</span> <span className="text-primary">✓</span> <span className="text-neutral-300">Live on: HTTP, WebSocket, RPC, Cron</span>
           </code></pre>
         </div>
       </div>
@@ -417,24 +417,24 @@ function EveryProtocolSection() {
 
   return (
     <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-14">
+        <div className="mb-14">
           <SectionLabel>Every Protocol</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            One save. <span className="text-emerald-400">Eight protocols.</span><br />
+            One save. <span className="text-primary">Eight protocols.</span><br />
             Zero restarts.
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Because Pikku functions are protocol-agnostic, a single file save updates the function everywhere it's wired. No per-protocol restart. No process juggling. One save and every consumer sees the new code.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl">
           {protocols.map((proto, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 text-center hover:border-emerald-500/30 transition-colors">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mx-auto mb-3 text-emerald-400">
+            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 hover:border-white/15 transition-colors">
+              <div className="w-10 h-10 rounded-lg bg-white/[0.06] border border-white/12 flex items-center justify-center mx-auto mb-3 text-primary">
                 {proto.icon}
               </div>
               <p className="text-sm font-bold text-white font-jakarta mb-1">{proto.name}</p>
@@ -443,9 +443,9 @@ function EveryProtocolSection() {
           ))}
         </div>
 
-        <div className="max-w-3xl mx-auto mt-10 bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-6 text-center">
+        <div className="max-w-3xl mt-10 bg-white/[0.04] border border-white/12 rounded-xl p-6 ">
           <p className="text-neutral-300 text-sm leading-relaxed">
-            <span className="text-emerald-400 font-semibold">Compare this to traditional setups:</span> HTTP on Express (restart), WebSocket on Socket.io (restart + reconnect), queue consumer on BullMQ (restart + re-subscribe), cron on node-cron (restart + re-schedule). Four processes. Four restarts. Four broken states. Pikku: one save.
+            <span className="text-primary font-semibold">Compare this to traditional setups:</span> HTTP on Express (restart), WebSocket on Socket.io (restart + reconnect), queue consumer on BullMQ (restart + re-subscribe), cron on node-cron (restart + re-schedule). Four processes. Four restarts. Four broken states. Pikku: one save.
           </p>
         </div>
       </div>
@@ -460,18 +460,18 @@ function EveryProtocolSection() {
 function ComparisonSection() {
   return (
     <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-14">
+        <div className="mb-14">
           <SectionLabel>The Dev Loop</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
             Traditional vs. Pikku<br />
-            <span className="text-emerald-400">side by side.</span>
+            <span className="text-primary">side by side.</span>
           </Heading>
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl">
           <div className="bg-[#0a0a0a] border border-neutral-800 rounded-2xl overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -480,8 +480,8 @@ function ComparisonSection() {
                   <th className="py-4 px-6 text-sm font-semibold text-red-400/80">nodemon / ts-node</th>
                   <th className="py-4 px-6">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                      <span className="text-sm font-bold text-emerald-400 font-jakarta">pikku watch</span>
+                      <span className="w-2 h-2 rounded-full bg-primary" />
+                      <span className="text-sm font-bold text-primary font-jakarta">pikku watch</span>
                     </div>
                   </th>
                 </tr>
@@ -498,7 +498,7 @@ function ComparisonSection() {
                   <tr key={i} className={`border-b border-neutral-800/50 ${i % 2 === 0 ? 'bg-white/[0.01]' : ''}`}>
                     <td className="py-3.5 px-6 text-xs font-bold tracking-wider uppercase text-neutral-500">{row.label}</td>
                     <td className="py-3.5 px-6 text-sm text-red-400/60">{row.traditional}</td>
-                    <td className="py-3.5 px-6 text-sm text-emerald-300 font-medium">{row.pikku}</td>
+                    <td className="py-3.5 px-6 text-sm text-primary font-medium">{row.pikku}</td>
                   </tr>
                 ))}
               </tbody>
@@ -506,14 +506,14 @@ function ComparisonSection() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto mt-12">
+        <div className="grid md:grid-cols-3 gap-6 max-w-3xl mt-12">
           {[
             { value: '< 50ms', label: 'Reload time', desc: 'Function swap + metadata reload' },
             { value: '0', label: 'Dropped connections', desc: 'WebSockets, queues, everything stays' },
             { value: '~40 hrs', label: 'Saved per year', desc: 'At 100 edits/day, 250 working days' },
           ].map((item, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 text-center">
-              <p className="text-2xl font-bold text-emerald-400 font-jakarta">{item.value}</p>
+            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 ">
+              <p className="text-2xl font-bold text-primary font-jakarta">{item.value}</p>
               <p className="text-sm font-semibold text-white mt-1">{item.label}</p>
               <p className="text-xs text-neutral-500 mt-1">{item.desc}</p>
             </div>
@@ -531,40 +531,40 @@ function ComparisonSection() {
 function TypesSection() {
   return (
     <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-14">
+        <div className="mb-14">
           <SectionLabel>Type Safety</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
             Types regenerate<br />
-            <span className="text-emerald-400">on every save.</span>
+            <span className="text-primary">on every save.</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
-            When you change a function's input or output shape, <code className="text-emerald-300 text-base">pikku watch</code> regenerates the TypeScript types, validation schemas, and client types — automatically. Your editor catches errors before you even switch to the browser.
+          <p className="text-lg text-neutral-400 max-w-2xl">
+            When you change a function's input or output shape, <code className="text-primary text-base">pikku watch</code> regenerates the TypeScript types, validation schemas, and client types — automatically. Your editor catches errors before you even switch to the browser.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl">
           {[
             {
-              icon: <FileCode className="w-6 h-6 text-emerald-400" />,
+              icon: <FileCode className="w-6 h-6 text-primary" />,
               title: 'Route metadata',
               desc: 'HTTP paths, methods, permissions, and middleware — all regenerated from your function decorators. No manual route files to keep in sync.',
             },
             {
-              icon: <Code className="w-6 h-6 text-emerald-400" />,
+              icon: <Code className="w-6 h-6 text-primary" />,
               title: 'Validation schemas',
               desc: 'Input/output schemas are derived from your TypeScript types. Change the type, the schema follows. Runtime validation matches compile-time checks.',
             },
             {
-              icon: <Zap className="w-6 h-6 text-emerald-400" />,
+              icon: <Zap className="w-6 h-6 text-primary" />,
               title: 'Client types',
               desc: 'Auto-generated type-safe client types stay in sync with your functions. Your frontend knows the exact shape of every API response — always.',
             },
           ].map((point, i) => (
             <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6">
-              <div className="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5">
+              <div className="w-12 h-12 rounded-lg bg-white/[0.06] border border-white/12 flex items-center justify-center mb-5">
                 {point.icon}
               </div>
               <h3 className="text-lg font-bold text-white mb-2 font-jakarta">{point.title}</h3>
@@ -591,25 +591,25 @@ function CTASection() {
 
   return (
     <section className="py-16 lg:py-24 relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-emerald-500/8 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
       </div>
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
           Stop restarting.<br />Start building.
         </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
           The fastest backend feedback loop you've ever had. Edit, save, it's live — across every protocol, with full type safety, in under 50 milliseconds.
         </p>
-        <div className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-emerald-500/40 transition-all mb-10" onClick={copyToClipboard}>
-          <span className="text-emerald-400/70 select-none">$ </span>npm create pikku@latest
+        <div className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10" onClick={copyToClipboard}>
+          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
           <button className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5" onClick={(e) => { e.stopPropagation(); copyToClipboard(); }} title="Copy to clipboard">
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-white/70" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-white/70" />}
           </button>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/getting-started" className="bg-emerald-500 text-black hover:bg-emerald-400 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-emerald-500/20 no-underline">Get Started</Link>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link to="/getting-started" className="bg-primary text-black hover:bg-primary/90 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-black/20 no-underline">Get Started</Link>
           <Link to="https://github.com/pikkujs/pikku" className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 no-underline">View on GitHub</Link>
         </div>
         <p className="text-neutral-500 text-sm mt-8">MIT Licensed &middot; Works with Express, Fastify, uWS, Bun &amp; more</p>

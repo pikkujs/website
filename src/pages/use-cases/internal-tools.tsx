@@ -8,23 +8,23 @@ function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-cyan-500/5 blur-[120px]" />
+        <div className="absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-white/[0.04] blur-[120px]" />
       </div>
-      <div className="relative mx-auto max-w-4xl px-6 pt-20 pb-16 lg:pt-28 lg:pb-20 text-center">
+      <div className="relative max-w-4xl px-6 pt-20 pb-16 lg:pt-28 lg:pb-20 ">
         <Link to="/" className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50 no-underline hover:bg-white/[0.08] transition mb-6">
           Pikku Fabric use case
         </Link>
         <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold tracking-tight leading-[1.1] text-white">
           CLI + API from
           <br />
-          <span className="text-cyan-400">the same function.</span>
+          <span className="text-primary">the same function.</span>
         </h1>
-        <p className="mt-6 text-lg text-white/50 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-6 text-lg text-white/50 max-w-2xl leading-relaxed">
           Write your business logic once. Get a REST API for your app, a CLI
           for your team, and an RPC client for internal services — all with
           the same auth and validation.
         </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        <div className="mt-8 flex flex-wrap gap-4">
           <Link to="/#waitlist" className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90 no-underline">
             Get early access <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -40,7 +40,7 @@ function Hero() {
 function Problem() {
   return (
     <section className="py-16 lg:py-20 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-3xl px-6 text-center">
+      <div className="max-w-3xl px-6 ">
         <p className="text-lg text-white/50 leading-relaxed">
           Your team needs a CLI to manage users. Your app needs an API for the
           same operations. Your internal service needs an RPC client. So you
@@ -55,8 +55,8 @@ function Problem() {
 function HowItWorks() {
   return (
     <section id="how-it-works" className="py-20 lg:py-28 border-t border-white/[0.06]">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="text-center mb-14">
+      <div className="max-w-5xl px-6">
+        <div className="mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
             One function. Three entry points.
           </h2>
@@ -104,11 +104,11 @@ wireRPC({ func: resetPassword })`}</CodeBlock>
             </div>
             <div className="p-5 font-mono text-[12px] leading-7">
               <div className="text-white/30"># API</div>
-              <div className="text-cyan-400">  curl -X POST /admin/reset-password <span className="text-white/20">-d '{"{"}"userId":"usr_1"{"}"}'</span></div>
+              <div className="text-primary">  curl -X POST /admin/reset-password <span className="text-white/20">-d '{"{"}"userId":"usr_1"{"}"}'</span></div>
               <div className="mt-3 text-white/30"># CLI</div>
-              <div className="text-cyan-400">  pikku admin reset-password usr_1 <span className="text-white/20">--no-notify</span></div>
+              <div className="text-primary">  pikku admin reset-password usr_1 <span className="text-white/20">--no-notify</span></div>
               <div className="mt-3 text-white/30"># RPC (from another service)</div>
-              <div className="text-cyan-400">  await client.resetPassword(<span className="text-white/20">{"{"} userId: 'usr_1' {"}"}</span>)</div>
+              <div className="text-primary">  await client.resetPassword(<span className="text-white/20">{"{"} userId: 'usr_1' {"}"}</span>)</div>
               <div className="mt-3 text-white/15">  Same function. Same auth check. Same result.</div>
             </div>
           </div>
@@ -122,7 +122,7 @@ wireRPC({ func: resetPassword })`}</CodeBlock>
             { icon: <FileCode className="w-4 h-4" />, label: 'Generated types', desc: 'One source of truth.' },
           ].map((item, i) => (
             <div key={i} className="rounded-lg border border-white/[0.06] bg-white/[0.025] px-4 py-3">
-              <div className="flex items-center gap-2 text-cyan-400/60 mb-1">{item.icon}<span className="text-sm font-semibold text-white/70">{item.label}</span></div>
+              <div className="flex items-center gap-2 text-white/45 mb-1">{item.icon}<span className="text-sm font-semibold text-white/70">{item.label}</span></div>
               <p className="text-xs text-white/30">{item.desc}</p>
             </div>
           ))}
@@ -136,14 +136,14 @@ function CTA() {
   return (
     <section className="relative overflow-hidden py-20 lg:py-28">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-cyan-500/4 blur-[100px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-white/[0.03] blur-[100px]" />
       </div>
-      <div className="relative mx-auto max-w-2xl px-6 text-center">
+      <div className="relative max-w-2xl px-6 ">
         <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
           Stop writing the same logic three times.
         </h2>
         <p className="mt-4 text-base text-white/40">One function. API, CLI, and RPC. Deploy.</p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/#waitlist" className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-black transition hover:bg-white/90 no-underline">
             Get early access <ArrowRight className="w-3.5 h-3.5" />
           </Link>

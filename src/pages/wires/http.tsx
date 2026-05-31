@@ -48,27 +48,27 @@ function Hero() {
     <div className="wire-hero-http w-full relative overflow-hidden">
       {/* Glow orbs */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-green-500/12 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-orange-400/8 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
+        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
         {/* Left: text */}
         <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-green-400 border border-green-400/40 bg-green-400/10 px-3 py-1 rounded mb-6">
+          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
             Wire Type: HTTP
           </span>
           <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
             <span className="text-white">Your functions, now</span><br />
-            <span className="text-green-400">REST endpoints.</span>
+            <span className="text-primary">REST endpoints.</span>
           </Heading>
           <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            <code className="text-green-400 text-lg">wireHTTP</code> maps your Pikku functions to type-safe HTTP routes — with automatic input merging, OpenAPI generation, and optional SSE streaming.
+            <code className="text-primary text-lg">wireHTTP</code> maps your Pikku functions to type-safe HTTP routes — with automatic input merging, OpenAPI generation, and optional SSE streaming.
           </p>
           <div className="flex flex-row gap-4">
             <Link
               to="/docs/wiring/http"
-              className="bg-green-500 text-white hover:bg-green-600 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-green-500/20"
+              className="bg-primary text-white hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-black/20"
             >
               Get Started
             </Link>
@@ -86,18 +86,18 @@ function Hero() {
           <div className="relative">
             {/* HTTP icon with green glow */}
             <div className="relative">
-              <div className="absolute inset-0 bg-green-500/20 rounded-full blur-[40px]" />
-              <div className="relative bg-[#0d0d0d] border-2 border-green-500/40 rounded-2xl p-6">
+              <div className="absolute inset-0 bg-white/10 rounded-full blur-[40px]" />
+              <div className="relative bg-[#0d0d0d] border-2 border-white/20 rounded-2xl p-6">
                 <HttpIcon size={120} />
               </div>
             </div>
             {/* SSE icon orbiting */}
             <div className="absolute -top-4 -right-10">
               <div className="relative">
-                <div className="absolute inset-0 bg-orange-400/20 rounded-full blur-[20px]" />
-                <div className="relative bg-[#0d0d0d] border border-orange-400/40 rounded-xl p-3">
+                <div className="absolute inset-0 bg-white/10 rounded-full blur-[20px]" />
+                <div className="relative bg-[#0d0d0d] border border-white/20 rounded-xl p-3">
                   <SSEIcon size={36} />
-                  <span className="block text-[10px] text-orange-400 font-semibold mt-1 text-center">SSE</span>
+                  <span className="block text-[10px] text-primary font-semibold mt-1 ">SSE</span>
                 </div>
               </div>
             </div>
@@ -131,17 +131,17 @@ function BasicsSection() {
   return (
     <section id="basics" className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>The Basics</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Function to endpoint in <span className="text-green-400">two lines</span>
+            Function to endpoint in <span className="text-primary">two lines</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Define your function once, wire it to a route. Pikku handles the rest.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl items-start">
           {/* Left: function */}
           <CodeCard filename="getBook.func.ts" badge="func.ts">
             <CodeBlock language="typescript">{basicsFunction}</CodeBlock>
@@ -154,14 +154,14 @@ function BasicsSection() {
         </div>
 
         {/* Highlights */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-10">
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
           {[
             { label: 'Path params extracted', desc: ':bookId becomes a typed input field automatically' },
             { label: 'Errors mapped to status codes', desc: 'Throw NotFoundError → 404, UnauthorizedError → 401' },
             { label: 'OpenAPI generated', desc: 'Every wired route appears in your OpenAPI spec for free' },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-[11px] font-bold mt-0.5">✓</span>
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">✓</span>
               <div>
                 <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
                 <p className="text-xs text-neutral-500">{item.desc}</p>
@@ -198,29 +198,29 @@ function DataFlowSection() {
   ];
 
   const colorMap: Record<string, { border: string; text: string; bg: string }> = {
-    green: { border: 'border-t-green-500', text: 'text-green-400', bg: 'bg-green-500/10' },
-    cyan: { border: 'border-t-cyan-500', text: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-    purple: { border: 'border-t-purple-500', text: 'text-purple-400', bg: 'bg-purple-500/10' },
+    green: { border: 'border-t-green-500', text: 'text-primary', bg: 'bg-white/[0.06]' },
+    cyan: { border: 'border-t-cyan-500', text: 'text-primary', bg: 'bg-white/[0.06]' },
+    purple: { border: 'border-t-purple-500', text: 'text-primary', bg: 'bg-white/[0.06]' },
   };
 
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Data Flow</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Everything merges into <span className="text-green-400">one typed input</span>
+            Everything merges into <span className="text-primary">one typed input</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Path params, query strings, and request bodies combine into a single object your function receives.
           </p>
         </div>
 
         {/* Visual: 3 sources → merged */}
-        <div className="max-w-3xl mx-auto mb-10">
+        <div className="max-w-3xl mb-10">
           <div className="grid grid-cols-3 gap-4 mb-6">
             {sources.map((src, i) => (
-              <div key={i} className={`bg-[#0d0d0d] border border-neutral-800 ${colorMap[src.color].border} border-t-2 rounded-lg p-4 text-center`}>
+              <div key={i} className={`bg-[#0d0d0d] border border-neutral-800 ${colorMap[src.color].border} border-t-2 rounded-lg p-4 `}>
                 <p className={`text-xs font-bold uppercase tracking-wider ${colorMap[src.color].text} mb-2`}>{src.label}</p>
                 <p className="text-sm text-neutral-400 font-mono">{src.example}</p>
               </div>
@@ -229,14 +229,14 @@ function DataFlowSection() {
 
           {/* Arrows converging */}
           <div className="flex justify-center gap-8 mb-6">
-            <ArrowDown className="w-5 h-5 text-green-500/60" />
-            <ArrowDown className="w-5 h-5 text-cyan-500/60" />
-            <ArrowDown className="w-5 h-5 text-purple-500/60" />
+            <ArrowDown className="w-5 h-5 text-white/45" />
+            <ArrowDown className="w-5 h-5 text-white/45" />
+            <ArrowDown className="w-5 h-5 text-white/45" />
           </div>
 
           {/* Merged input card */}
-          <div className="bg-[#0d0d0d] border-2 border-green-500/30 rounded-xl p-5 text-center max-w-sm mx-auto">
-            <p className="text-xs font-bold uppercase tracking-wider text-green-400 mb-2">Merged Input</p>
+          <div className="bg-[#0d0d0d] border-2 border-white/15 rounded-xl p-5 max-w-sm">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary mb-2">Merged Input</p>
             <code className="text-sm text-neutral-300 font-mono">
               {'{ bookId, format, title }'}
             </code>
@@ -244,15 +244,15 @@ function DataFlowSection() {
         </div>
 
         {/* Code example */}
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl">
           <CodeCard filename="books.wiring.ts" icon={<HttpIcon size={15} />}>
             <CodeBlock language="typescript">{dataFlowCode}</CodeBlock>
           </CodeCard>
         </div>
 
         {/* Callout */}
-        <div className="max-w-2xl mx-auto mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
-          <span className="text-yellow-400 text-lg mt-0.5">⚠</span>
+        <div className="max-w-2xl mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
+          <span className="text-primary text-lg mt-0.5">⚠</span>
           <p className="text-sm text-neutral-400">
             <span className="text-white font-semibold">Same key in multiple sources with different values?</span>{' '}
             Pikku throws a validation error — no silent overwrites.
@@ -294,17 +294,17 @@ addHTTPPermission(
 function AuthSection() {
   const features = [
     {
-      icon: <Globe className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />,
+      icon: <Globe className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Per-route auth control',
       desc: 'Set auth: false on public routes. Everything else requires a valid session by default.',
     },
     {
-      icon: <ShieldCheck className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />,
+      icon: <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Permission guards',
       desc: 'Attach permission checks to individual routes. Pikku rejects unauthorized requests before your function runs.',
     },
     {
-      icon: <Lock className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />,
+      icon: <Lock className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Global policies',
       desc: 'Use addHTTPPermission to apply rules to entire path prefixes — every route under /admin requires admin access.',
     },
@@ -313,17 +313,17 @@ function AuthSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Auth & Permissions</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Auth and permissions, <span className="text-green-400">everywhere</span>
+            Auth and permissions, <span className="text-primary">everywhere</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             Every HTTP route inherits Pikku's auth system. Override per-route or apply globally.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           {/* Left: feature cards */}
           <div className="space-y-5">
             {features.map((feat, i) => (
@@ -377,19 +377,19 @@ wireHTTP({
 function MiddlewareSection() {
   const levels = [
     {
-      icon: <Globe className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />,
+      icon: <Globe className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Global',
       desc: 'addHTTPMiddleware(\'*\', [...]) — runs on every HTTP request. CORS, logging, auth.',
       tag: '*',
     },
     {
-      icon: <FolderTree className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />,
+      icon: <FolderTree className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Prefix-based',
       desc: 'addHTTPMiddleware(\'/api/*\', [...]) — scoped to a path prefix. Rate limiting, admin guards.',
       tag: '/prefix',
     },
     {
-      icon: <Layers className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />,
+      icon: <Layers className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       title: 'Per-route',
       desc: 'middleware: [...] on a single wireHTTP call. Audit trails, special validation.',
       tag: 'route',
@@ -399,17 +399,17 @@ function MiddlewareSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Middleware</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Hooks at <span className="text-green-400">every level</span>
+            Hooks at <span className="text-primary">every level</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Apply middleware globally, by path prefix, or on individual routes. They run in onion order — outer middleware wraps inner.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
           {/* Left: level cards */}
           <div className="space-y-5">
             {levels.map((lvl, i) => (
@@ -419,7 +419,7 @@ function MiddlewareSection() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1.5">
                       <h3 className="text-base font-bold text-white">{lvl.title}</h3>
-                      <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-green-500/10 text-green-400">{lvl.tag}</span>
+                      <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-primary">{lvl.tag}</span>
                     </div>
                     <p className="text-sm text-neutral-400 leading-relaxed">{lvl.desc}</p>
                   </div>
@@ -431,10 +431,10 @@ function MiddlewareSection() {
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4">
               <p className="text-sm text-neutral-400">
                 <span className="text-white font-semibold">Built-in middleware:</span>{' '}
-                <code className="text-green-400 text-xs">cors</code>,{' '}
-                <code className="text-green-400 text-xs">authBearer</code>,{' '}
-                <code className="text-green-400 text-xs">authCookie</code>,{' '}
-                <code className="text-green-400 text-xs">authAPIKey</code>{' '}
+                <code className="text-primary text-xs">cors</code>,{' '}
+                <code className="text-primary text-xs">authBearer</code>,{' '}
+                <code className="text-primary text-xs">authCookie</code>,{' '}
+                <code className="text-primary text-xs">authAPIKey</code>{' '}
                 — all from <code className="text-neutral-500 text-xs">@pikku/core/middleware</code>.
               </p>
             </div>
@@ -490,31 +490,31 @@ function RouteGroupsSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Route Groups</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Organize routes with <span className="text-green-400">defineHTTPRoutes</span>
+            Organize routes with <span className="text-primary">defineHTTPRoutes</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Group related routes into contracts. Compose them with shared base paths, middleware, and auth settings — then wire them all at once.
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl">
           <CodeCard filename="http.wiring.ts" icon={<HttpIcon size={15} />} badge="wiring.ts">
             <CodeBlock language="typescript">{routeGroupsCode}</CodeBlock>
           </CodeCard>
         </div>
 
         {/* Highlights */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-10">
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
           {[
             { label: 'Config cascades down', desc: 'basePath, tags, and middleware from the group apply to every route inside it' },
             { label: 'Routes can override', desc: 'Set auth: false on a single route even if the group requires auth' },
             { label: 'Compose contracts', desc: 'Define route groups in separate files, import and compose them in one wireHTTPRoutes call' },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-[11px] font-bold mt-0.5">✓</span>
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">✓</span>
               <div>
                 <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
                 <p className="text-xs text-neutral-500">{item.desc}</p>
@@ -558,20 +558,20 @@ function FetchClientSection() {
   return (
     <section className="py-16 lg:py-24 relative">
       {/* Subtle divider */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-500/20 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Type-Safe Client</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Call your API with <span className="text-green-400">full IntelliSense</span>
+            Call your API with <span className="text-primary">full IntelliSense</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             Pikku generates a typed fetch client from your HTTP wirings. Every route, every input, every return type — autocompleted.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-[3fr_2fr] gap-10 max-w-5xl mx-auto items-start">
+        <div className="grid lg:grid-cols-[3fr_2fr] gap-10 max-w-5xl items-start">
           {/* Left: code */}
           <CodeCard filename="client.ts" badge="auto-generated types">
             <CodeBlock language="typescript">{fetchClientCode}</CodeBlock>
@@ -581,29 +581,29 @@ function FetchClientSection() {
           <div className="space-y-5">
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <Link2 className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+                <Link2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Generated from your wirings</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    Run <code className="text-green-400 text-xs">npx @pikku/cli fetch</code> and get a <code className="text-neutral-500 text-xs">PikkuFetch</code> class with typed overloads for every HTTP route you've wired.
+                    Run <code className="text-primary text-xs">npx @pikku/cli fetch</code> and get a <code className="text-neutral-500 text-xs">PikkuFetch</code> class with typed overloads for every HTTP route you've wired.
                   </p>
                 </div>
               </div>
             </div>
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <ShieldCheck className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+                <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Auth built in</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
-                    <code className="text-green-400 text-xs">setAuthorizationJWT()</code>, <code className="text-green-400 text-xs">setAPIKey()</code> — set once, included on every request.
+                    <code className="text-primary text-xs">setAuthorizationJWT()</code>, <code className="text-primary text-xs">setAPIKey()</code> — set once, included on every request.
                   </p>
                 </div>
               </div>
             </div>
             <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
               <div className="flex items-start gap-4">
-                <Globe className="w-5 h-5 text-green-400 mt-0.5 shrink-0" />
+                <Globe className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <h3 className="text-base font-bold mb-1.5 text-white">Works everywhere</h3>
                   <p className="text-sm text-neutral-400 leading-relaxed">
@@ -663,25 +663,25 @@ function SSESection() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/40 to-transparent" />
 
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-12">
+        <div className="mb-12">
           <SectionLabel>Server-Sent Events</SectionLabel>
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
             When you need streaming, just add{' '}
-            <span className="text-orange-400">sse: true</span>
+            <span className="text-primary">sse: true</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-2xl">
             The same route serves both regular HTTP clients and SSE clients. Non-SSE clients get a JSON response, SSE clients get a stream.
           </p>
         </div>
 
         {/* Dual panel: regular vs SSE response */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-10">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mb-10">
           {/* Regular HTTP */}
           <div className="bg-[#0d0d0d] border border-neutral-800 rounded-xl overflow-hidden">
             <div className="px-5 py-3 border-b border-neutral-800 flex items-center gap-2">
               <HttpIcon size={14} />
               <span className="text-sm font-semibold text-neutral-200">Regular HTTP Client</span>
-              <span className="ml-auto text-xs font-mono px-2 py-0.5 rounded bg-green-500/15 text-green-400">200 OK</span>
+              <span className="ml-auto text-xs font-mono px-2 py-0.5 rounded bg-white/8 text-primary">200 OK</span>
             </div>
             <div className="p-5 font-mono text-sm text-neutral-300 leading-relaxed">
               <span className="text-neutral-600">// Instant JSON response</span>
@@ -697,11 +697,11 @@ function SSESection() {
           </div>
 
           {/* SSE client */}
-          <div className="bg-[#0d0d0d] border border-orange-500/30 rounded-xl overflow-hidden">
+          <div className="bg-[#0d0d0d] border border-white/15 rounded-xl overflow-hidden">
             <div className="px-5 py-3 border-b border-neutral-800 flex items-center gap-2">
               <SSEIcon size={14} />
               <span className="text-sm font-semibold text-neutral-200">SSE Client</span>
-              <span className="ml-auto text-xs font-mono px-2 py-0.5 rounded bg-orange-500/15 text-orange-400">streaming</span>
+              <span className="ml-auto text-xs font-mono px-2 py-0.5 rounded bg-white/8 text-primary">streaming</span>
             </div>
             <div className="p-5 font-mono text-xs leading-relaxed">
               <span className="text-neutral-600">// Progressive streaming</span>
@@ -721,7 +721,7 @@ function SSESection() {
         </div>
 
         {/* Code examples */}
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl">
           <CodeCard filename="todos.wiring.ts" icon={<SSEIcon size={15} />} badge="sse: true">
             <CodeBlock language="typescript">{sseWiringCode}</CodeBlock>
           </CodeCard>
@@ -752,39 +752,39 @@ function CTASection() {
     <section className="py-16 lg:py-24 relative overflow-hidden">
       {/* Purple glow orb */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-green-500/8 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
       </div>
 
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
           Start wiring HTTP in 5 minutes
         </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
           One command to scaffold a project with HTTP wiring already configured.
         </p>
 
         {/* npm command with copy */}
         <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-green-500/40 transition-all mb-10"
+          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
           onClick={copyToClipboard}
         >
-          <span className="text-green-400/70 select-none">$ </span>npm create pikku@latest
+          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
             onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
             title="Copy to clipboard"
           >
             {copied
-              ? <Check className="w-3.5 h-3.5 text-green-400" />
+              ? <Check className="w-3.5 h-3.5 text-primary" />
               : <Copy className="w-3.5 h-3.5 text-white/70" />
             }
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Link
             to="/docs/wiring/http"
-            className="bg-green-500 text-white hover:bg-green-600 px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-green-500/20"
+            className="bg-primary text-white hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-black/20"
           >
             Read the HTTP Docs
           </Link>

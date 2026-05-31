@@ -77,7 +77,7 @@ const support = pikkuAgent({
   return (
     <section id="how-it-works" className="py-8 lg:py-16">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-10">
+        <div className="mb-10">
           <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Difference</p>
           <h2 className="text-3xl md:text-4xl font-jakarta font-bold text-white leading-tight mb-4">
             Four handlers that drift apart — or <span className="text-primary">one function that doesn't.</span>
@@ -91,7 +91,7 @@ const support = pikkuAgent({
               <span className="text-sm font-semibold text-red-400">Without Pikku</span>
               <span className="ml-auto text-xs text-neutral-600 font-mono">repeated + fragile</span>
             </div>
-            <div className="rounded-xl border border-red-500/20 overflow-hidden opacity-70">
+            <div className="rounded-xl border border-white/12 overflow-hidden opacity-70">
               <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
                 <CodeBlock language="typescript">{beforeCode}</CodeBlock>
               </div>
@@ -104,7 +104,7 @@ const support = pikkuAgent({
               <span className="text-sm font-semibold text-green-400">With Pikku</span>
               <span className="ml-auto text-xs text-neutral-600 font-mono">1 function + wirings</span>
             </div>
-            <div className="rounded-xl border border-green-500/20 overflow-hidden">
+            <div className="rounded-xl border border-white/12 overflow-hidden">
               <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
                 <CodeBlock language="typescript">{afterCode}</CodeBlock>
               </div>
@@ -146,11 +146,11 @@ function AhaMomentSection() {
   return (
     <section id="code-examples" className="py-8 lg:py-12 overflow-x-hidden">
       <div className="max-w-screen-xl mx-auto px-6">
-        <div className="text-center mb-6 lg:mb-14">
+        <div className="mb-6 lg:mb-14">
           <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
             Same function. <span className="text-primary">Any transport.</span>
           </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
+          <p className="text-lg text-neutral-400 max-w-xl">
             The function on the left works with every protocol on the right. Same auth, same validation, zero rewrites.
           </p>
         </div>
@@ -174,7 +174,7 @@ function AhaMomentSection() {
                 'Type-safe inputs and outputs everywhere',
               ].map((line, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm text-neutral-400">
-                  <span className="flex-shrink-0 w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px] font-bold">&#10003;</span>
+                  <span className="flex-shrink-0 w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-primary text-[10px] font-bold">&#10003;</span>
                   {line}
                 </div>
               ))}
@@ -192,7 +192,7 @@ function AhaMomentSection() {
                     onClick={() => setActiveProtocol(idx)}
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer border-2 ${
                       isActive
-                        ? 'border-primary bg-primary/15 scale-125 shadow-lg shadow-primary/20'
+                        ? 'border-primary bg-white/8 scale-125 shadow-lg shadow-black/20'
                         : 'border-neutral-800 bg-[#0d0d0d] hover:border-neutral-600 hover:scale-110'
                     }`}
                     title={example.title}
@@ -233,7 +233,7 @@ function AhaMomentSection() {
           </div>
         </div>
 
-        <div className="mt-10 text-center">
+        <div className="mt-10 ">
           <Link to="/docs" className="text-primary hover:underline font-medium text-sm">
             Read the full docs →
           </Link>
@@ -248,15 +248,15 @@ function AgentsSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-16">
+        <div className="mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
-            <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">AI Agents</span>
-            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
+            <span className="text-xs font-semibold tracking-widest uppercase text-white/65">AI Agents</span>
+            <span className="inline-block bg-white/[0.06] border border-white/15 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
           </div>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
             Your functions are already agent tools
           </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-400 max-w-2xl">
             No adapters. No schema writing. No separate auth layer. Pass your existing Pikku functions directly — the agent gets your full backend.
           </p>
         </div>
@@ -317,12 +317,12 @@ function WorkflowsSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <span className="text-xs font-semibold tracking-widest uppercase text-primary/80 block mb-4">Workflows</span>
+        <div className="mb-16">
+          <span className="text-xs font-semibold tracking-widest uppercase text-white/65 block mb-4">Workflows</span>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
             Multi-step processes that<br />survive anything
           </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-400 max-w-2xl">
             Write sequential logic like normal code. Pikku handles persistence, retries, and resumption — even across server restarts.
           </p>
         </div>
@@ -392,12 +392,12 @@ function AddonsSection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <span className="text-xs font-semibold tracking-widest uppercase text-primary/80 block mb-4">Addons</span>
+        <div className="mb-16">
+          <span className="text-xs font-semibold tracking-widest uppercase text-white/65 block mb-4">Addons</span>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
             Install a backend feature<br />in one line
           </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-400 max-w-2xl">
             Stripe billing. SendGrid emails. One <code className="text-primary text-lg">wireAddon()</code> call each. Install, configure secrets, call via namespaced RPC — fully typed.
           </p>
         </div>
@@ -470,15 +470,15 @@ function GatewaySection() {
   return (
     <section className="py-16 lg:py-24">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-16">
+        <div className="mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
-            <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">Gateway</span>
-            <span className="inline-block bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold px-2 py-0.5 rounded-full">New</span>
+            <span className="text-xs font-semibold tracking-widest uppercase text-white/65">Gateway</span>
+            <span className="inline-block bg-white/10 border border-white/12 text-green-400 text-xs font-semibold px-2 py-0.5 rounded-full">New</span>
           </div>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
             One handler for every<br />messaging platform
           </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-400 max-w-2xl">
             WhatsApp, Slack, Telegram, WebChat — write one function. The adapter normalizes every platform into the same message format. Three transport types cover every integration pattern.
           </p>
         </div>

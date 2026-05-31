@@ -15,7 +15,7 @@ const coreConcepts = [
     url: '/core/function',
     description: 'Your logic, nothing else. One function signature across every protocol.',
     icon: Code2,
-    accent: 'purple',
+    accent: 'from-white/5 to-transparent',
   },
   {
     title: 'Services',
@@ -29,7 +29,7 @@ const coreConcepts = [
     url: '/core/security',
     description: 'Sessions, permissions, and auth middleware — one API across every transport.',
     icon: Shield,
-    accent: 'green',
+    accent: 'from-white/5 to-transparent',
   },
   {
     title: 'Versioning',
@@ -43,7 +43,7 @@ const coreConcepts = [
     url: '/core/secrets',
     description: 'Type-safe config with Zod schemas — validated at startup, managed from code or Console.',
     icon: Key,
-    accent: 'amber',
+    accent: 'from-white/5 to-transparent',
   },
 ];
 
@@ -56,9 +56,9 @@ function CopyCommand({ command }: { command: string }) {
   return (
     <button
       onClick={() => { navigator.clipboard.writeText(command); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-      className="group flex items-center gap-3 bg-white/[0.04] border border-white/10 hover:border-purple-500/40 rounded-xl px-5 py-3.5 font-mono text-sm text-neutral-300 transition-all hover:bg-white/[0.06] cursor-pointer"
+      className="group flex items-center gap-3 bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-xl px-5 py-3.5 font-mono text-sm text-neutral-300 transition-all hover:bg-white/[0.06] cursor-pointer"
     >
-      <span className="text-purple-400">$</span>
+      <span className="text-primary">$</span>
       <span>{command}</span>
       {copied
         ? <Check size={14} className="ml-auto text-green-400" />
@@ -76,19 +76,19 @@ function Hero() {
   return (
     <div className="wire-hero-function w-full relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-purple-500/12 blur-[100px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
         <div className="absolute left-[10%] top-[30%] w-56 h-56 rounded-full bg-fuchsia-400/6 blur-[80px]" />
       </div>
 
-      <header className="relative max-w-screen-xl mx-auto w-full pt-16 pb-12 lg:pt-24 lg:pb-16 px-6 text-center">
-        <span className="inline-block text-xs font-semibold tracking-widest uppercase text-purple-400 border border-purple-400/40 bg-purple-400/10 px-3 py-1 rounded mb-6">
+      <header className="relative max-w-screen-xl mx-auto w-full pt-16 pb-12 lg:pt-24 lg:pb-16 px-6 ">
+        <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
           Features
         </span>
         <Heading as="h1" className="font-jakarta text-5xl lg:text-6xl font-bold mb-5 leading-tight">
           <span className="text-white">Two concepts. Twelve wires. </span>
-          <span className="text-purple-400">Ship faster.</span>
+          <span className="text-primary">Ship faster.</span>
         </Heading>
-        <p className="text-xl font-medium leading-relaxed text-neutral-400 max-w-2xl mx-auto">
+        <p className="text-xl font-medium leading-relaxed text-neutral-400 max-w-2xl">
           Most frameworks make you choose. Pikku doesn't — write once, connect everywhere.
         </p>
       </header>
@@ -111,11 +111,11 @@ function CoreConceptsSection() {
             <Link
               key={concept.title}
               to={concept.url}
-              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
+              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-white/15 hover:bg-white/[0.04] no-underline"
             >
               <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                  <Icon size={22} className="text-purple-400" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/[0.06] border border-white/12 flex items-center justify-center">
+                  <Icon size={22} className="text-primary" />
                 </div>
                 <div>
                   <h3 className="font-jakarta text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
@@ -126,7 +126,7 @@ function CoreConceptsSection() {
                   </p>
                 </div>
               </div>
-              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-white/45 group-hover:text-primary transition-colors">
                 Learn more &rarr;
               </span>
             </Link>
@@ -147,14 +147,14 @@ const deploymentCards = [
     url: '/core/treeshaking',
     description: 'Filter by routes, tags, or types — deploy only what each service needs.',
     icon: Scissors,
-    accent: 'cyan',
+    accent: 'from-white/5 to-transparent',
   },
   {
     title: 'Built-in Services',
     url: '/core/built-in-services',
     description: 'JWT, queues, workflows, AI storage, secrets — every interface and provider.',
     icon: Package,
-    accent: 'orange',
+    accent: 'from-white/5 to-transparent',
   },
 ];
 
@@ -186,11 +186,11 @@ function WiresSection() {
                   <Link
                     key={wire.id}
                     to={wire.url}
-                    className="group flex flex-col rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
+                    className="group flex flex-col rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 transition-all hover:border-white/15 hover:bg-white/[0.04] no-underline"
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
-                        <Icon size={18} className="text-neutral-300 group-hover:text-purple-400 transition-colors" />
+                        <Icon size={18} className="text-neutral-300 group-hover:text-primary transition-colors" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
@@ -200,8 +200,8 @@ function WiresSection() {
                           {wire.badge && (
                             <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
                               wire.badge === 'New'
-                                ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                                : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                                ? 'bg-white/10 text-green-400 border border-white/12'
+                                : 'bg-white/[0.06] text-primary border border-white/12'
                             }`}>
                               {wire.badge}
                             </span>
@@ -245,11 +245,11 @@ function DeploymentSection() {
             <Link
               key={card.title}
               to={card.url}
-              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
+              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-white/15 hover:bg-white/[0.04] no-underline"
             >
               <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                  <Icon size={22} className="text-purple-400" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/[0.06] border border-white/12 flex items-center justify-center">
+                  <Icon size={22} className="text-primary" />
                 </div>
                 <div>
                   <h3 className="font-jakarta text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
@@ -260,7 +260,7 @@ function DeploymentSection() {
                   </p>
                 </div>
               </div>
-              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-white/45 group-hover:text-primary transition-colors">
                 Learn more &rarr;
               </span>
             </Link>
@@ -281,7 +281,7 @@ const platformCards = [
     url: '/core/console',
     description: 'Visual control plane — explore functions, run workflows, test agents, and manage config.',
     icon: Monitor,
-    accent: 'rose',
+    accent: 'from-white/5 to-transparent',
   },
 ];
 
@@ -314,11 +314,11 @@ function PlatformSection() {
             <Link
               key={card.title}
               to={card.url}
-              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
+              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-white/15 hover:bg-white/[0.04] no-underline"
             >
               <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                  <Icon size={22} className="text-purple-400" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/[0.06] border border-white/12 flex items-center justify-center">
+                  <Icon size={22} className="text-primary" />
                 </div>
                 <div>
                   <h3 className="font-jakarta text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
@@ -329,7 +329,7 @@ function PlatformSection() {
                   </p>
                 </div>
               </div>
-              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-white/45 group-hover:text-primary transition-colors">
                 Learn more &rarr;
               </span>
             </Link>
@@ -355,11 +355,11 @@ function EcosystemSection() {
             <Link
               key={card.title}
               to={card.url}
-              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-purple-500/30 hover:bg-white/[0.04] no-underline"
+              className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:border-white/15 hover:bg-white/[0.04] no-underline"
             >
               <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                  <Icon size={22} className="text-purple-400" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-white/[0.06] border border-white/12 flex items-center justify-center">
+                  <Icon size={22} className="text-primary" />
                 </div>
                 <div>
                   <h3 className="font-jakarta text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
@@ -370,7 +370,7 @@ function EcosystemSection() {
                   </p>
                 </div>
               </div>
-              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-purple-500/60 group-hover:text-purple-400 transition-colors">
+              <span className="block mt-4 ml-[4.25rem] text-sm font-semibold text-white/45 group-hover:text-primary transition-colors">
                 Learn more &rarr;
               </span>
             </Link>
@@ -388,11 +388,11 @@ function EcosystemSection() {
 function CTASection() {
   return (
     <section className="max-w-screen-xl mx-auto px-6 pb-20 lg:pb-28">
-      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-10 lg:p-14 text-center">
+      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-10 lg:p-14 ">
         <Heading as="h2" className="font-jakarta text-3xl lg:text-4xl font-bold text-white mb-4">
           Pick a wire. Start building.
         </Heading>
-        <p className="text-lg text-neutral-400 mb-8 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-8 max-w-xl">
           Scaffold a new project in seconds — you'll have a function running across protocols in under 5 minutes.
         </p>
 
@@ -400,10 +400,10 @@ function CTASection() {
           <CopyCommand command="npm create pikku@latest" />
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap gap-4">
           <Link
             to="/getting-started"
-            className="bg-purple-500 text-white hover:bg-purple-600 px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-purple-500/20 no-underline"
+            className="bg-primary text-white hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-purple-500/20 no-underline"
           >
             Start Building
           </Link>

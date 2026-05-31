@@ -166,16 +166,16 @@ export function NavbarPageToggle({ isDeveloperPage }: { isDeveloperPage: boolean
 
 export const protocols = [
   { icon: 'http',      label: 'HTTP',       color: '#22c55e', hueRotate: 80,  link: '/wires/http' },
-  { icon: 'websocket', label: 'WebSocket',  color: '#a855f7', hueRotate: 240, link: '/wires/websocket' },
-  { icon: 'sse',       label: 'SSE',        color: '#f97316', hueRotate: -10, link: null },
+  { icon: 'websocket', label: 'WebSocket',  color: 'var(--site-accent)', hueRotate: 240, link: '/wires/websocket' },
+  { icon: 'sse',       label: 'SSE',        color: 'var(--site-accent)', hueRotate: -10, link: null },
   { icon: 'queue',     label: 'Queue',      color: '#ef4444', hueRotate: -40, link: '/wires/queue' },
-  { icon: 'cron',      label: 'Cron',       color: '#eab308', hueRotate: 20,  link: '/wires/cron' },
+  { icon: 'cron',      label: 'Cron',       color: 'var(--site-accent)', hueRotate: 20,  link: '/wires/cron' },
   { icon: 'rpc',       label: 'RPC',        color: '#3b82f6', hueRotate: 180, link: '/wires/rpc' },
-  { icon: 'mcp',       label: 'MCP',        color: '#ec4899', hueRotate: 290, link: '/wires/mcp' },
-  { icon: 'cli',       label: 'CLI',        color: '#06b6d4', hueRotate: 145, link: '/wires/cli' },
-  { icon: 'bot',       label: 'AI Agent',   color: '#8b5cf6', hueRotate: 220, link: '/wires/bot' },
+  { icon: 'mcp',       label: 'MCP',        color: 'var(--site-accent)', hueRotate: 290, link: '/wires/mcp' },
+  { icon: 'cli',       label: 'CLI',        color: 'var(--site-accent)', hueRotate: 145, link: '/wires/cli' },
+  { icon: 'bot',       label: 'AI Agent',   color: 'var(--site-accent)', hueRotate: 220, link: '/wires/bot' },
   { icon: 'workflow',  label: 'Workflow',   color: '#10b981', hueRotate: 115, link: '/wires/workflow' },
-  { icon: 'trigger',   label: 'Trigger',    color: '#f59e0b', hueRotate: 0,   link: '/wires/trigger' },
+  { icon: 'trigger',   label: 'Trigger',    color: 'var(--site-accent)', hueRotate: 0,   link: '/wires/trigger' },
   { icon: 'gateway',   label: 'Gateway',    color: '#f43f5e', hueRotate: 320, link: '/wires/gateway' },
 ];
 
@@ -187,14 +187,14 @@ export function Hero() {
   return (
     <div className="hero-section w-full relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full bg-primary/15 blur-[90px]" />
-        <div className="absolute right-[12%] top-[40%] w-52 h-52 rounded-full bg-cyan-400/10 blur-[60px]" />
+        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full bg-white/8 blur-[90px]" />
+        <div className="absolute right-[12%] top-[40%] w-52 h-52 rounded-full bg-white/[0.06] blur-[60px]" />
       </div>
 
       <header className="flex max-w-screen-xl mx-auto w-full pt-10 pb-8 lg:pt-12 lg:pb-8 px-6 gap-12 items-center">
         <div className="w-full md:w-1/2">
           <div className="flex items-center gap-3 mb-6">
-            <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-primary/40 bg-primary/10 px-3 py-1 rounded">
+            <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded">
               TypeScript Function Framework
             </span>
           </div>
@@ -208,19 +208,19 @@ export function Hero() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link
               to="/getting-started"
-              className="button button--primary button--lg hover:scale-105 transition-transform shadow-lg hover:shadow-xl"
+              className="bg-primary text-white hover:bg-primary-dark px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg no-underline"
             >
               Get Started in 5 Minutes
             </Link>
             <Link
               to="#how-it-works"
-              className="button button--secondary button--lg hover:scale-105 transition-transform"
+              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline"
             >
               See How It Works
             </Link>
           </div>
           <p className="mt-4 text-sm text-neutral-500 font-mono">
-            $ npm create pikku@latest &nbsp;·&nbsp; <span className="text-primary/70">MIT Licensed</span> &nbsp;·&nbsp; <span className="text-primary/70">Open Source</span>
+            $ npm create pikku@latest &nbsp;·&nbsp; <span className="text-white/55">MIT Licensed</span> &nbsp;·&nbsp; <span className="text-white/55">Open Source</span>
           </p>
         </div>
 
@@ -280,18 +280,19 @@ export function Hero() {
             animate
             orbitRotate
           />
-          <p className="text-white/30 text-xs font-medium tracking-widest uppercase text-center mt-6">
+          <p className="text-white/30 text-xs font-medium tracking-widest uppercase mt-6">
             Like a chameleon adapts — your functions adapt
           </p>
         </div>
       </header>
 
       <div className="max-w-screen-xl mx-auto w-full px-6 pb-8 pt-6">
-        <p className="text-center text-xs font-semibold tracking-widest uppercase text-white/20 mb-0">
+        <p className="text-xs font-semibold tracking-widest uppercase text-white/20 mb-0">
           Built with Pikku
         </p>
-        <div className="flex flex-wrap justify-center items-center gap-2 md:gap-6">
+        <div className="flex flex-wrap items-center gap-2 md:gap-6">
           {[
+            { name: 'Pikku Fabric',     logo: 'pikkufabric-dark.svg',     url: 'https://pikkufabric.com' },
             { name: 'AgreeWe',          logo: 'agreewe-dark.png',         url: 'https://www.agreewe.com' },
             { name: 'HeyGermany',       logo: 'heygermany-dark.svg',      url: 'https://hey-germany.com' },
             { name: 'marta',            logo: 'marta-light.svg',          url: 'https://marta.de' },
@@ -324,17 +325,17 @@ export function Hero() {
 export function DeployAnywhereSection() {
   const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom];
   return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-lg mx-auto px-4 text-center">
-        <span className="text-xs font-semibold tracking-widest uppercase text-primary/80 block mb-4">Deploy Anywhere</span>
+    <section className="py-10 lg:py-16">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <span className="text-xs font-semibold tracking-widest uppercase text-white/65 block mb-4">Deploy Anywhere</span>
         <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
           Change your runtime.<br />Keep your functions.
         </Heading>
-        <p className="text-xl text-neutral-400 max-w-2xl mx-auto mb-12">
+        <p className="text-xl text-neutral-400 max-w-2xl mb-6">
           Same code runs on Express, Fastify, AWS Lambda, Cloudflare Workers, Next.js, and more. Switching runtimes never requires touching your functions.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+        <div className="flex flex-wrap gap-3 max-w-3xl">
           {allRuntimes.map((runtime, idx) => (
             <Link
               key={idx}
@@ -370,25 +371,25 @@ export function DeployAnywhereSection() {
 /** Production Features */
 export function ProductionFeaturesSection() {
   const features = [
-    { title: 'Type-Safe Clients', desc: 'Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense.', icon: <Link2 className="w-5 h-5" />, accent: 'from-blue-500/20 to-transparent', iconBg: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-    { title: 'Auth & Permissions', desc: 'Cookie, bearer, API key auth with fine-grained permissions — built in.', icon: <ShieldCheck className="w-5 h-5" />, accent: 'from-emerald-500/20 to-transparent', iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-    { title: 'Services', desc: 'Singleton and per-request dependency injection, type-safe and testable.', icon: <Settings className="w-5 h-5" />, accent: 'from-violet-500/20 to-transparent', iconBg: 'bg-violet-500/10 text-violet-400 border-violet-500/20' },
-    { title: 'Middleware', desc: 'Before/after hooks for logging, metrics, tracing — work across all protocols.', icon: <Layers className="w-5 h-5" />, accent: 'from-amber-500/20 to-transparent', iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
-    { title: 'Schema Validation', desc: 'Runtime validation against TypeScript input schemas. Supports Zod.', icon: <CheckCircle2 className="w-5 h-5" />, accent: 'from-cyan-500/20 to-transparent', iconBg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
-    { title: 'Zero Lock-In', desc: 'Standard TypeScript, tiny runtime, MIT licensed. Bring your own everything.', icon: <Feather className="w-5 h-5" />, accent: 'from-rose-500/20 to-transparent', iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20' },
+    { title: 'Type-Safe Clients', desc: 'Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense.', icon: <Link2 className="w-5 h-5" />, accent: 'from-white/5 to-transparent', iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Auth & Permissions', desc: 'Cookie, bearer, API key auth with fine-grained permissions — built in.', icon: <ShieldCheck className="w-5 h-5" />, accent: 'from-white/5 to-transparent', iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Services', desc: 'Singleton and per-request dependency injection, type-safe and testable.', icon: <Settings className="w-5 h-5" />, accent: 'from-white/5 to-transparent', iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Middleware', desc: 'Before/after hooks for logging, metrics, tracing — work across all protocols.', icon: <Layers className="w-5 h-5" />, accent: 'from-white/5 to-transparent', iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Schema Validation', desc: 'Runtime validation against TypeScript input schemas. Supports Zod.', icon: <CheckCircle2 className="w-5 h-5" />, accent: 'from-white/5 to-transparent', iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
+    { title: 'Zero Lock-In', desc: 'Standard TypeScript, tiny runtime, MIT licensed. Bring your own everything.', icon: <Feather className="w-5 h-5" />, accent: 'from-white/5 to-transparent', iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
   ];
 
   return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-lg mx-auto px-4 text-left md:text-center">
+    <section className="py-10 lg:py-16">
+      <div className="max-w-screen-xl mx-auto px-6">
         <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Built For Production</p>
         <Heading as="h2" className="text-4xl font-bold mb-6">
           Production-grade out of the box
         </Heading>
-        <p className="text-lg text-neutral-400 mb-6 md:max-w-2xl md:mx-auto">
+        <p className="text-lg text-neutral-400 mb-6 max-w-2xl">
           Auth, validation, type-safe clients, middleware — all built in. No bolting on third-party packages for every new protocol.
         </p>
-        <p className="text-sm text-neutral-500 mb-12 md:max-w-2xl md:mx-auto">
+        <p className="text-sm text-neutral-500 mb-6 max-w-2xl">
           MIT licensed. Standard TypeScript. No VC-backed lock-in.
         </p>
 
@@ -414,22 +415,22 @@ export function ProductionFeaturesSection() {
 /** Console Section */
 export function ConsoleSection() {
   return (
-    <section className="py-16 lg:py-24">
+    <section className="py-10 lg:py-16">
       <div className="max-w-screen-xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="mb-6">
           <div className="inline-flex items-center gap-2 mb-4">
-            <span className="text-xs font-semibold tracking-widest uppercase text-primary/80">Visual Control Plane</span>
-            <span className="inline-block bg-primary/10 border border-primary/30 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
+            <span className="text-xs font-semibold tracking-widest uppercase text-white/65">Visual Control Plane</span>
+            <span className="inline-block bg-white/[0.06] border border-white/15 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
           </div>
           <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
             Every function, every wire,<br />every secret — one screen
           </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-400 max-w-2xl">
             Browse functions, run agents, manage secrets, and trigger workflows — without writing tooling code.
           </p>
         </div>
 
-        <div className="relative max-w-5xl mx-auto mb-10">
+        <div className="relative max-w-5xl mx-auto mb-6">
           <div className="rounded-xl overflow-hidden border border-neutral-800 shadow-2xl">
             <img
               src="/img/console-screenshot.webp" loading="lazy"
@@ -440,7 +441,7 @@ export function ConsoleSection() {
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0f] to-transparent rounded-b-xl pointer-events-none" />
         </div>
 
-        <div className="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+        <div className="flex flex-wrap gap-3 max-w-3xl">
           {[
             { icon: <Search className="w-3.5 h-3.5" />, label: 'Browse all functions & wirings' },
             { icon: <Bot className="w-3.5 h-3.5" />, label: 'Agent playground' },
@@ -455,7 +456,7 @@ export function ConsoleSection() {
           ))}
         </div>
 
-        <div className="text-center mt-6">
+        <div className="mt-6">
           <Link to="/features#console" className="text-primary hover:underline font-medium text-sm">
             Learn about the Console →
           </Link>
@@ -468,16 +469,16 @@ export function ConsoleSection() {
 /** What Developers Say */
 export function TestimonialsSection() {
   return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-lg mx-auto px-4">
-        <div className="text-center mb-12">
+    <section className="py-10 lg:py-16">
+      <div className="max-w-screen-xl mx-auto px-6">
+        <div className="mb-6">
           <Heading as="h2" className="text-3xl font-bold mb-3">
             Built for the problems developers actually have
           </Heading>
           <p className="text-neutral-500 text-base">From the teams who switched</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-3xl">
           {testimonials.map((testimonial, idx) => (
             <div key={idx} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6">
               <p className="text-neutral-300 mb-4 italic leading-relaxed">
@@ -504,23 +505,23 @@ export function CallToActionSection() {
   };
 
   return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
+    <section className="py-10 lg:py-16 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-primary/10 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-white/[0.06] blur-[80px]" />
       </div>
-      <div className="max-w-screen-md mx-auto px-6 text-center relative">
+      <div className="max-w-screen-xl mx-auto px-6 relative">
         <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
-          Stop copying functions across protocols.
+          Stop rewriting the same function.
         </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl mx-auto">
+        <p className="text-lg text-neutral-400 mb-6 max-w-xl">
           Write it once. Pikku wires it everywhere.
         </p>
 
         <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm mx-auto relative group cursor-pointer hover:bg-white/8 hover:border-primary/40 transition-all mb-10"
+          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-6"
           onClick={copyToClipboard}
         >
-          <span className="text-primary/70 select-none">$ </span>npm create pikku@latest
+          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
           <button
             className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
             onClick={copyToClipboard}
@@ -532,10 +533,10 @@ export function CallToActionSection() {
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Link
             to="/getting-started"
-            className="bg-primary text-white hover:bg-primary-dark px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-primary/20"
+            className="bg-primary text-white hover:bg-primary-dark px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-black/20"
           >
             Build Your First API in 5 Minutes
           </Link>

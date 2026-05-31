@@ -1,0 +1,149 @@
+/* ============================================================
+   Pikku Website — Design Tokens
+   Single source of truth for all colors. Import this first.
+
+   Structure:
+     1. Page / structure tokens
+     2. Primary accent (currently console-blue palette)
+     3. Wire-type protocol colors
+     4. Infima overrides (map to tokens above)
+     5. Mono accent mode override
+   ============================================================ */
+
+:root {
+  /* ── Page structure ──────────────────────────────────── */
+  --site-bg:          #0a0a0f;
+  --site-bg-surface:  #0f0f18;     /* slightly raised panel */
+  --site-bg-overlay:  #0d0d14;     /* mega-menu / popover bg */
+
+  /* ── Primary accent — console-blue palette ───────────── */
+  --site-accent:          #60a5fa; /* blue-400  */
+  --site-accent-dark:     #3b82f6; /* blue-500  */
+  --site-accent-darker:   #2563eb; /* blue-600  */
+  --site-accent-darkest:  #1d4ed8; /* blue-700  */
+  --site-accent-light:    #93c5fd; /* blue-300  */
+  --site-accent-lighter:  #bfdbfe; /* blue-200  */
+  --site-accent-lightest: #dbeafe; /* blue-100  */
+
+  /* Derived accent surfaces (used as tints / borders) */
+  --site-accent-border:     rgba(96, 165, 250, 0.18);
+  --site-accent-border-sm:  rgba(96, 165, 250, 0.12);
+  --site-accent-hover-bg:   rgba(96, 165, 250, 0.08);
+  --site-accent-active-bg:  rgba(96, 165, 250, 0.12);
+  --site-accent-focus:      rgba(96, 165, 250, 0.50);
+  --site-accent-text-dim:   rgba(96, 165, 250, 0.70);
+
+  /* Neutral overlays — white-on-dark at various opacities */
+  --site-overlay-xs:   rgba(255, 255, 255, 0.025);
+  --site-overlay-sm:   rgba(255, 255, 255, 0.04);
+  --site-overlay-md:   rgba(255, 255, 255, 0.06);
+  --site-overlay-lg:   rgba(255, 255, 255, 0.08);
+  --site-overlay-xl:   rgba(255, 255, 255, 0.12);
+  --site-overlay-2xl:  rgba(255, 255, 255, 0.15);
+  --site-overlay-text:    rgba(255, 255, 255, 0.35);
+  --site-overlay-muted:   rgba(255, 255, 255, 0.42);
+  --site-overlay-dim:     rgba(255, 255, 255, 0.92);
+  /* Single icon color — all non-wire UI icons use this */
+  --site-icon: rgba(255, 255, 255, 0.55);
+
+  /* Extended scale */
+  --site-overlay-surface: rgba(255, 255, 255, 0.16);
+  --site-overlay-border:  rgba(255, 255, 255, 0.28);
+  --site-overlay-hover:   rgba(255, 255, 255, 0.40);
+  --site-overlay-focus:   rgba(255, 255, 255, 0.45);
+  --site-overlay-half:    rgba(255, 255, 255, 0.50);
+  --site-overlay-body:    rgba(255, 255, 255, 0.70);
+  --site-overlay-label:   rgba(255, 255, 255, 0.80);
+  --site-overlay-strong:  rgba(255, 255, 255, 0.90);
+
+  /* Code highlight */
+  --site-code-highlight: rgba(37, 99, 235, 0.12);
+
+  /* ── Wire-type protocol colors ───────────────────────── */
+  --wire-http:      #22c55e;   /* green-500  */
+  --wire-websocket: #a855f7;   /* purple-500 */
+  --wire-sse:       #8b5cf6;   /* violet-500 */
+  --wire-queue:     #ef4444;   /* red-500    */
+  --wire-cron:      #eab308;   /* yellow-500 */
+  --wire-cli:       #06b6d4;   /* cyan-500   */
+  --wire-rpc:       #6366f1;   /* indigo-500 */
+  --wire-mcp:       #ec4899;   /* pink-500   */
+  --wire-workflow:  #10b981;   /* emerald-500*/
+  --wire-trigger:   #f59e0b;   /* amber-500  */
+  --wire-gateway:   #f43f5e;   /* rose-500   */
+  --wire-bot:       #8b5cf6;   /* violet-500 */
+  --wire-function:  #60a5fa;   /* = accent   */
+  --wire-security:  #22c55e;   /* = http     */
+  --wire-azure:     #3b82f6;   /* blue-500   */
+  --wire-cloudflare:#f97316;   /* orange-500 */
+  --wire-addons:    #6366f1;   /* indigo-500 */
+  --wire-console:   #f43f5e;   /* = gateway  */
+  --wire-secrets:   #f59e0b;   /* = trigger  */
+  --wire-benchmarks:#06b6d4;   /* = cli      */
+
+  /* ── Infima / Docusaurus token overrides ─────────────── */
+  /* These map Infima's built-in vars to our tokens so that
+     all Docusaurus components (buttons, links, badges, etc.)
+     automatically pick up the palette. */
+  --ifm-color-primary:          var(--site-accent);
+  --ifm-color-primary-dark:     var(--site-accent-dark);
+  --ifm-color-primary-darker:   var(--site-accent-darker);
+  --ifm-color-primary-darkest:  var(--site-accent-darkest);
+  --ifm-color-primary-light:    var(--site-accent-light);
+  --ifm-color-primary-lighter:  var(--site-accent-lighter);
+  --ifm-color-primary-lightest: var(--site-accent-lightest);
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: var(--site-code-highlight);
+
+  /* Dark-mode page background */
+  --ifm-background-color:         var(--site-bg);
+  --ifm-background-surface-color: var(--site-bg);
+  --ifm-navbar-background-color:  var(--site-bg);
+  --ifm-footer-background-color:  var(--site-bg);
+}
+
+/* ── Mono accent mode ─────────────────────────────────────────
+   Collapses all chromatic accent tokens to neutral grays.
+   Toggle by setting data-accent-mode="mono" on <html>.
+   Mirrors the AccentModeProvider pattern from Pikku Console.
+   ─────────────────────────────────────────────────────────── */
+html[data-accent-mode="mono"] {
+  --site-accent:          #888888;
+  --site-accent-dark:     #666666;
+  --site-accent-darker:   #555555;
+  --site-accent-darkest:  #444444;
+  --site-accent-light:    #aaaaaa;
+  --site-accent-lighter:  #bbbbbb;
+  --site-accent-lightest: #cccccc;
+
+  --site-accent-border:    rgba(128, 128, 128, 0.18);
+  --site-accent-border-sm: rgba(128, 128, 128, 0.12);
+  --site-accent-hover-bg:  rgba(128, 128, 128, 0.08);
+  --site-accent-active-bg: rgba(128, 128, 128, 0.12);
+  --site-accent-focus:     rgba(128, 128, 128, 0.40);
+  --site-accent-text-dim:  rgba(128, 128, 128, 0.70);
+
+  --site-code-highlight: rgba(128, 128, 128, 0.10);
+
+  /* Wire-type colors collapse to neutral */
+  --wire-http:      #888888;
+  --wire-websocket: #888888;
+  --wire-sse:       #888888;
+  --wire-queue:     #888888;
+  --wire-cron:      #888888;
+  --wire-cli:       #888888;
+  --wire-rpc:       #888888;
+  --wire-mcp:       #888888;
+  --wire-workflow:  #888888;
+  --wire-trigger:   #888888;
+  --wire-gateway:   #888888;
+  --wire-bot:       #888888;
+  --wire-function:  #888888;
+  --wire-security:  #888888;
+  --wire-azure:     #888888;
+  --wire-cloudflare:#888888;
+  --wire-addons:    #888888;
+  --wire-console:   #888888;
+  --wire-secrets:   #888888;
+  --wire-benchmarks:#888888;
+}

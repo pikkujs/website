@@ -1,0 +1,19 @@
+<svg width="140" height="40" viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <!-- icon: fabric weave, scaled from 240x240 to 32x32, offset by 4px top -->
+  <g transform="translate(4,4) scale(0.133)" stroke-width="10" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="2">
+    <g transform="translate(1 -16)">
+      <path d="M103 30V101L90 114" stroke="rgba(255,255,255,0.9)"/>
+      <path d="M138 30V104L133 111" stroke="rgba(255,255,255,0.4)"/>
+      <path d="M17 121H75L111 156" stroke="rgba(255,255,255,0.4)"/>
+      <path d="M17 159H75L85 149" stroke="rgba(255,255,255,0.9)"/>
+      <path d="M221 121H163L152 132" stroke="rgba(255,255,255,0.9)"/>
+      <path d="M221 159H162L126 124" stroke="rgba(255,255,255,0.4)"/>
+      <path d="M103 241V172L105 168" stroke="rgba(255,255,255,0.4)"/>
+      <path d="M138 241V175L145 166" stroke="rgba(255,255,255,0.9)"/>
+      <path d="M119 110L103 130" stroke="rgba(255,255,255,0.9)"/>
+      <path d="M130 146L116 168" stroke="rgba(255,255,255,0.9)"/>
+    </g>
+  </g>
+  <!-- wordmark -->
+  <text x="42" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="18" font-weight="700" fill="rgba(255,255,255,0.9)" letter-spacing="-0.3">Fabric</text>
+</svg>
