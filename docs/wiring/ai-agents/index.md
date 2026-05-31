@@ -32,7 +32,7 @@ import { listTodos, createTodo } from './todos.functions'
 export const todoAssistant = pikkuAIAgent({
   name: 'todo-assistant',
   description: 'A helpful assistant that manages todos',
-  instructions: 'You help users manage their todo lists.',
+  goal: 'You help users manage their todo lists.',
   model: 'openai/gpt-4o-mini',
   tools: [listTodos, createTodo],
   memory: { storage: 'aiStorage', lastMessages: 10 },
@@ -52,7 +52,7 @@ Every agent is defined with `pikkuAIAgent()` and requires at minimum:
 |----------|------|-------------|
 | `name` | `string` | Unique identifier for the agent |
 | `description` | `string` | Human-readable description (also shown to parent agents) |
-| `instructions` | `string \| string[]` | System prompt that guides the agent's behavior |
+| `goal` | `string` | System prompt that guides the agent's behavior |
 | `model` | `string` | Model identifier in `provider/model` format (e.g., `openai/gpt-4o-mini`) |
 
 Optional properties:
@@ -87,7 +87,7 @@ import { listTodos, createTodo, deleteTodo } from './todos.functions'
 export const assistant = pikkuAIAgent({
   name: 'assistant',
   description: 'Task manager',
-  instructions: 'Help users manage tasks.',
+  goal: 'Help users manage tasks.',
   model: 'openai/gpt-4o-mini',
   tools: [listTodos, createTodo, deleteTodo],
 })
@@ -101,7 +101,7 @@ Agents can delegate to sub-agents using the `agents` property. The parent agent 
 export const todoAssistant = pikkuAIAgent({
   name: 'todo-assistant',
   description: 'Manages todo lists',
-  instructions: 'You help users manage their todo lists.',
+  goal: 'You help users manage their todo lists.',
   model: 'openai/gpt-4o-mini',
   tools: [listTodos, createTodo],
 })
@@ -109,14 +109,14 @@ export const todoAssistant = pikkuAIAgent({
 export const dailyPlanner = pikkuAIAgent({
   name: 'daily-planner',
   description: 'Plans your day and suggests tasks',
-  instructions: 'You help users plan their day.',
+  goal: 'You help users plan their day.',
   model: 'openai/gpt-4o-mini',
 })
 
 export const mainRouter = pikkuAIAgent({
   name: 'main-router',
   description: 'Routes requests to specialized agents',
-  instructions: 'You coordinate between agents.',
+  goal: 'You coordinate between agents.',
   model: 'openai/gpt-4o-mini',
   agents: [todoAssistant, dailyPlanner],
   maxSteps: 5,
@@ -229,20 +229,22 @@ AI Agents require three services in your singleton services:
 | Service | Interface | Purpose |
 |---------|-----------|---------|
 | `aiAgentRunner` | `AIAgentRunnerService` | Executes the LLM (e.g., `VercelAIAgentRunner` from `@pikku/ai-vercel`) |
-| `aiStorage` | `AIStorageService` | Persists threads, messages, and working memory (e.g., `PgAIStorageService` from `@pikku/pg`) |
-| `aiRunState` | `AIRunStateService` | Tracks agent run status and pending approvals (e.g., `PgAIStorageService` also implements this) |
+| `aiStorage` | `AIStorageService` | Persists threads, messages, and working memory (e.g., `PgKyselyAIStorageService` from `@pikku/kysely-postgres`) |
+| `aiRunState` | `AIRunStateService` | Tracks agent run status and pending approvals (e.g., `PgKyselyAIStorageService` also implements this) |
 
 ### Setup Example
 
 ```typescript
-import { PgAIStorageService } from '@pikku/pg'
+import { PikkuKysely, PgKyselyAIStorageService } from '@pikku/kysely-postgres'
+import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 import { VercelAIAgentRunner } from '@pikku/ai-vercel'
 import { createOpenAI } from '@ai-sdk/openai'
 import { createAnthropic } from '@ai-sdk/anthropic'
-import postgres from 'postgres'
 
-const sql = postgres(process.env.DATABASE_URL!)
-const pgAiStorage = new PgAIStorageService(sql)
+const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
+await pikkuKysely.init()
+
+const pgAiStorage = new PgKyselyAIStorageService(pikkuKysely.kysely)
 await pgAiStorage.init()
 
 const providers = {
@@ -267,40 +269,23 @@ Model identifiers use `provider/model` format (e.g., `openai/gpt-4o-mini`, `anth
 
 ## Model Configuration
 
-You can configure model aliases and per-agent overrides centrally:
-
-```typescript
-// In your config
-const modelConfig = {
-  models: {
-    fast: 'openai/gpt-4o-mini',
-    smart: { model: 'anthropic/claude-sonnet-4-20250514', temperature: 0.7 },
-  },
-  agentDefaults: {
-    temperature: 0.5,
-    maxSteps: 8,
-  },
-  agentOverrides: {
-    'my-agent': {
-      model: 'anthropic/claude-sonnet-4-20250514',
-      temperature: 0.3,
-    },
-  },
-}
-```
-
-With model aliases, your agent definitions stay clean:
+Each agent declares its model and tuning options directly. Models use the
+provider-qualified `provider/model` form — there is no config-level alias map.
 
 ```typescript
 export const agent = pikkuAIAgent({
   name: 'my-agent',
-  instructions: '...',
-  model: 'fast', // Resolves to openai/gpt-4o-mini
+  goal: '...',
+  model: 'openai/gpt-4o-mini',
+  temperature: 0.3,
+  maxSteps: 8,
   // ...
 })
 ```
 
-Resolution order for model settings: agent override > model alias > agent defaults > agent definition.
+`temperature` and `maxSteps` are optional. The effective model can be overridden
+at request time by passing `model` in the agent's input — the run-time override
+takes precedence over the agent definition.
 
 ## AI Middleware
 
@@ -369,8 +354,8 @@ import { voiceInput, voiceOutput } from '@pikku/ai-voice'
 export const voiceAgent = pikkuAIAgent({
   name: 'voice-assistant',
   description: 'A voice-enabled assistant',
-  instructions: 'You help users via voice.',
-  model: 'fast',
+  goal: 'You help users via voice.',
+  model: 'openai/gpt-4o-mini',
   tools: [listTodos],
   aiMiddleware: [
     voiceInput({ language: 'en' }),   // Transcribes audio attachments to text

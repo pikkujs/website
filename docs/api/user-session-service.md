@@ -36,14 +36,17 @@ Returns the current session, or `undefined` if no session exists.
 
 ## Usage Example
 
+Functions don't access the `UserSessionService` directly — its operations are
+exposed on the **wire** (the 3rd function argument) as `session`, `getSession()`,
+`setSession()`, and `clearSession()`:
+
 ```typescript
 // Read and update the session
 export const touchSession = pikkuFunc<void, { ok: boolean }>(
-  async (services) => {
-    const session = await services.userSession.get()
+  async (services, data, { session, setSession }) => {
     if (!session) return { ok: false }
 
-    await services.userSession.set({
+    await setSession({
       ...session,
       lastActiveAt: new Date().toISOString()
     })
@@ -54,8 +57,8 @@ export const touchSession = pikkuFunc<void, { ok: boolean }>(
 
 // Log out
 export const logout = pikkuFunc<void, { success: boolean }>(
-  async (services) => {
-    await services.userSession.clear()
+  async (services, data, { clearSession }) => {
+    await clearSession()
     return { success: true }
   }
 )

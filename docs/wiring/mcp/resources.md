@@ -56,7 +56,7 @@ export const getUserInfoMCP = pikkuMCPResourceFunc<
   { userId: string },
   MCPResourceResponse
 >({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     const user = await rpc.invoke('getUserInfo', data)
 
     return [
@@ -114,7 +114,7 @@ export const getProjectReadmeMCP = pikkuMCPResourceFunc<
   void,
   MCPResourceResponse
 >({
-  func: async ({ rpc }) => {
+  func: async (services, data, { rpc }) => {
     const readme = await rpc.invoke('getProjectReadme', {})
 
     return [
@@ -158,7 +158,7 @@ export const searchDocsMCP = pikkuMCPResourceFunc<
   { query: string; limit?: number },
   MCPResourceResponse
 >({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     const results = await rpc.invoke('searchDocs', data)
 
     // Return multiple resource objects
@@ -261,7 +261,7 @@ export const getFileMCP = pikkuMCPResourceFunc<
   { path: string },
   MCPResourceResponse
 >({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     const file = await rpc.invoke('getFile', data)
 
     return [
@@ -311,7 +311,7 @@ export const getRelatedDocsMCP = pikkuMCPResourceFunc<
   { docId: string },
   MCPResourceResponse
 >({
-  func: async ({ rpc }, data) => {
+  func: async (services, data, { rpc }) => {
     const result = await rpc.invoke('getRelatedDocs', data)
 
     // Return the main doc and all related docs

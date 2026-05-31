@@ -158,40 +158,47 @@ await pgBossFactory.init()
 
 ### Worker Registration
 
+Get the workers from the factory and call `registerQueues()`. The job runner is
+wired automatically when you import the generated bootstrap, so no extra setup is
+needed (build singleton services before registering so the logger is available):
+
 ```typescript
-import { registerQueueWorkers } from '@pikku/core/queue'
+import './.pikku/pikku-bootstrap.gen.js'
 
 const queueWorkers = pgBossFactory.getQueueWorkers()
-registerQueueWorkers(queueWorkers, singletonServices, createWireServices)
+await queueWorkers.registerQueues()
 ```
 
 ### Full Setup with Workflows
 
 ```typescript
 import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
-import { registerQueueWorkers } from '@pikku/core/queue'
-import { createSchedulerRuntimeHandlers } from '@pikku/core/scheduler'
+import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
+import './.pikku/pikku-bootstrap.gen.js'
 
-const pgBossFactory = new PgBossServiceFactory({
-  connectionString: process.env.DATABASE_URL!,
-})
+const pgBossFactory = new PgBossServiceFactory(process.env.DATABASE_URL!)
 await pgBossFactory.init()
+
+const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
+await pikkuKysely.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+await workflowService.init()
+
+const schedulerService = pgBossFactory.getSchedulerService()
 
 const singletonServices = await createSingletonServices(config, {
   queueService: pgBossFactory.getQueueService(),
+  schedulerService,
+  workflowService,
 })
 
-// Register queue workers
+// Register queue workers (includes the workflow queues)
 const queueWorkers = pgBossFactory.getQueueWorkers()
-registerQueueWorkers(queueWorkers, singletonServices, createWireServices)
+await queueWorkers.registerQueues()
 
-// Set up scheduler
-const schedulerHandlers = createSchedulerRuntimeHandlers(
-  singletonServices,
-  createWireServices
-)
-const schedulerService = pgBossFactory.getSchedulerService()
-schedulerService.setHandlers(schedulerHandlers)
+// Start the scheduler
 await schedulerService.start()
 ```
 

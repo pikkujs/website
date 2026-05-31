@@ -144,7 +144,7 @@ export const checkInventory = pikkuSessionlessFunc<
   { productId: string },
   { available: boolean }
 >({
-  func: async ({ graph }, { productId }) => {
+  func: async (services, { productId }, { graph }) => {
     const stock = await getStock(productId)
 
     if (stock.discontinued) {
@@ -187,7 +187,7 @@ export const updateProgress = pikkuSessionlessFunc<
   { step: string },
   { updated: boolean }
 >({
-  func: async ({ graph }, { step }) => {
+  func: async (services, { step }, { graph }) => {
     const state = await graph.getState()
     const completedSteps = (state.completedSteps as string[]) || []
 
@@ -201,7 +201,7 @@ export const updateProgress = pikkuSessionlessFunc<
 
 ## Graph Wire Context
 
-Functions running in a graph workflow receive a `graph` object in their services:
+Functions running in a graph workflow receive a `graph` object on the **wire** (the 3rd function argument, alongside `rpc`/`http`/etc. — not a service):
 
 ```typescript
 interface PikkuGraphWire {
@@ -214,15 +214,13 @@ interface PikkuGraphWire {
 }
 ```
 
-## Wiring to HTTP
+## Starting a Graph Workflow
 
-Use `graphStart()` to wire a graph workflow to an HTTP endpoint:
-
-```typescript reference title="graph.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/graph.wiring.ts
-```
-
-`graphStart()` takes the workflow name and the entry node ID. It returns a function that starts the workflow and returns a `{ runId }` response.
+A `pikkuWorkflowGraph` exported from a `*.graph.ts` file is discovered and
+registered automatically by `npx pikku` — the CLI generates a `graphStarter`
+function and the route to start it. Start a run the same way as any workflow,
+via `rpc.startWorkflow(name, input)` (on the wire object), which resolves to
+`{ runId }`.
 
 ## Visualizing in the Console
 

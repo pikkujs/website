@@ -21,30 +21,39 @@ Add Pikku handlers to an existing uWS app:
 npm install @pikku/uws-handler
 ```
 
+`pikkuHTTPHandler` and `pikkuWebsocketHandler` each return a uWS handler that you
+mount onto your own app with `app.any` / `app.ws`. Services come from Pikku's
+global state, populated when you call `createSingletonServices` (and the bootstrap
+import), so the handlers only need a `logger`:
+
 ```typescript
 import * as uWS from 'uWebSockets.js'
 import { pikkuHTTPHandler, pikkuWebsocketHandler } from '@pikku/uws-handler'
 
 import './.pikku/pikku-bootstrap.gen.js'
 
-const app = uWS.App()
+const config = await createConfig()
 const singletonServices = await createSingletonServices(config)
 
+const app = uWS.App()
+
 // HTTP handler
-pikkuHTTPHandler({
-  app,
-  singletonServices,
-  createWireServices,
-  logRoutes: true,
-  loadSchemas: true,
-})
+app.any(
+  '/*',
+  pikkuHTTPHandler({
+    logger: singletonServices.logger,
+    logRoutes: true,
+    loadSchemas: true,
+  })
+)
 
 // WebSocket handler (optional)
-pikkuWebsocketHandler({
-  app,
-  singletonServices,
-  createWireServices,
-})
+app.ws(
+  '/*',
+  pikkuWebsocketHandler({
+    logger: singletonServices.logger,
+  })
+)
 
 app.listen(3000, () => console.log('Listening on 3000'))
 ```
@@ -69,12 +78,7 @@ const server = new PikkuUWSServer(config, singletonServices.logger)
 // Access the underlying uWS app if needed
 // server.app.get('/custom', ...)
 
-await server.init({
-  singletonServices,
-  createWireServices,
-  logRoutes: true,
-  loadSchemas: true,
-})
+await server.init()
 
 process.on('SIGINT', async () => {
   await server.stop()
@@ -96,14 +100,27 @@ The underlying uWS `app` is exposed as `server.app` if you need to add custom ro
 
 ## WS (WebSocket-only)
 
-The `@pikku/ws` package provides a standalone WebSocket server using the [`ws`](https://github.com/websockets/ws) library — useful when you want Pikku channels without a full HTTP server:
+The `@pikku/ws` package provides a WebSocket handler using the [`ws`](https://github.com/websockets/ws) library — attach it to your own Node HTTP server so channel upgrades work alongside your existing HTTP handling:
 
 ```bash
-npm install @pikku/ws
+npm install @pikku/ws ws
 ```
 
 ```typescript
-import { PikkuWSServer } from '@pikku/ws'
+import { pikkuWebsocketHandler } from '@pikku/ws'
+import { Server } from 'http'
+import { WebSocketServer } from 'ws'
+
+const server = new Server()
+const wss = new WebSocketServer({ noServer: true })
+
+pikkuWebsocketHandler({
+  server,
+  wss,
+  logger: singletonServices.logger,
+})
+
+server.listen(4002, 'localhost')
 ```
 
-This is a lighter alternative when you only need WebSocket support and are handling HTTP separately.
+See the [WebSocket runtime guide](./ws-handler) for the full setup.

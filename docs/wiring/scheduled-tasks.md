@@ -6,7 +6,7 @@ description: Run periodic background jobs with cron
 
 # Scheduled Tasks
 
-Scheduled tasks (cron jobs) let you run code on a regular schedule - daily reports, weekly cleanups, hourly health checks, or any time-based operation. Your functions work the same whether they're triggered by a runtime scheduler (Azure Timer, AWS EventBridge) or by the `@pikku/scheduler` package.
+Scheduled tasks (cron jobs) let you run code on a regular schedule - daily reports, weekly cleanups, hourly health checks, or any time-based operation. Your functions work the same whether they're triggered by a runtime scheduler (Azure Timer, AWS EventBridge) or by the `@pikku/schedule` package.
 
 Your domain functions don't need to know they're being called by a scheduler. They just run on schedule and do their work. Pikku handles all the scheduling details.
 
@@ -25,7 +25,7 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/sr
 That's it! Your functions will now run on their configured schedules.
 
 :::note
-If triggered by a serverless function like Lambda or Azure Timer, the platform's scheduler overrides this cron setting. The cron in `wireScheduler` is only for in-process scheduling (using `@pikku/scheduler`).
+If triggered by a serverless function like Lambda or Azure Timer, the platform's scheduler overrides this cron setting. The cron in `wireScheduler` is only for in-process scheduling (using `@pikku/schedule`).
 :::
 
 ## Scheduled Functions
@@ -288,7 +288,7 @@ For complex workflows, use `rpc.invoke()` to orchestrate multiple operations:
 
 ```typescript
 export const monthlyProcessing = pikkuVoidFunc({
-  func: async ({ rpc, logger }) => {
+  func: async ({ logger }, data, { rpc }) => {
     logger.info('Starting monthly processing')
 
     // Run multiple tasks in sequence

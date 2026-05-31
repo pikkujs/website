@@ -36,8 +36,8 @@ import { pikkuSessionlessFunc } from '#pikku'
 export const rpcCaller = pikkuSessionlessFunc<
   { name: string; data: unknown },
   unknown
->(async ({ rpc }, { name, data }) => {
-  return await rpc.invokeExposed(name, data)
+>(async (services, { name, data }, { rpc }) => {
+  return await rpc.exposed(name, data)
 })
 
 // Wire it to HTTP
@@ -74,15 +74,16 @@ Response:
 
 ## Type-Safe Client
 
-Pikku generates a type-safe client for calling external RPCs:
+Pikku generates a type-safe `PikkuRPC` client (`pikku rpc`) for calling exposed RPCs by name:
 
 ```typescript
-import { pikkuClient } from './pikku-fetch.gen.js'
+import { PikkuRPC } from './pikku-rpc.gen.js'
 
-const client = pikkuClient('https://api.example.com')
+const rpc = new PikkuRPC()
+rpc.setServerUrl('https://api.example.com')
 
-// Fully type-safe RPC calls
-const result = await client.greet({
+// Fully type-safe RPC calls — input and output are inferred from the function
+const result = await rpc.invoke('greet', {
   name: 'Alice',
   greeting: 'Hello'
 })
@@ -91,9 +92,9 @@ console.log(result.message)  // TypeScript knows the return type
 ```
 
 The client:
-- Enforces correct input types
+- Enforces correct input types per RPC name
 - Knows exact output types
-- Handles authentication
+- Handles authentication via `setAuthorizationJWT()` / `setAPIKey()`
 - Formats errors appropriately
 
 See [Fetch Client](../http/fetch-client.md) for details.

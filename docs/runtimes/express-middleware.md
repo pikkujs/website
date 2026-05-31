@@ -29,9 +29,11 @@ import './.pikku/pikku-bootstrap.gen.js'
 
 const app = express()
 
+const config = await createConfig()
 const singletonServices = await createSingletonServices(config)
 
-app.use(pikkuExpressMiddleware(singletonServices, createWireServices, {
+app.use(pikkuExpressMiddleware({
+  logger: singletonServices.logger,
   respondWith404: false,  // Let Express handle unmatched routes
   logRoutes: true,
   loadSchemas: true,
@@ -71,12 +73,7 @@ const server = new PikkuExpressServer(config, singletonServices.logger)
 // Access the underlying Express app if needed
 // server.app.use(myCustomMiddleware)
 
-await server.init({
-  singletonServices,
-  createWireServices,
-  logRoutes: true,
-  loadSchemas: true,
-})
+await server.init()
 
 process.on('SIGINT', async () => {
   await server.stop()

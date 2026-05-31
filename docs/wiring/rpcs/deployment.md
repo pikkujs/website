@@ -69,13 +69,15 @@ wireHTTP({
 Add a deployment service to your singleton services:
 
 ```typescript
-import { PgDeploymentService } from '@pikku/pg'
+import { PgKyselyDeploymentService } from '@pikku/kysely-postgres'
 // or
 import { RedisDeploymentService } from '@pikku/redis'
 
-const deploymentService = new PgDeploymentService(
+const deploymentService = new PgKyselyDeploymentService(
   { heartbeatInterval: 5000, heartbeatTtl: 15000 },
-  sql
+  pikkuKysely.kysely,        // a PikkuKysely instance's underlying kysely
+  singletonServices.jwt,     // used to sign forwarded sessions
+  singletonServices.secrets
 )
 await deploymentService.init()
 ```
@@ -142,11 +144,12 @@ interface DeploymentConfig {
 
 ## Available Backends
 
-| Backend | Package | Best For |
-|---------|---------|----------|
-| PostgreSQL | `@pikku/pg` | Shared PostgreSQL infrastructure |
-| Redis | `@pikku/redis` | Low-latency discovery with Redis |
-| Kysely | `@pikku/kysely` | Type-safe SQL with Kysely |
+| Backend | Package | Class | Best For |
+|---------|---------|-------|----------|
+| PostgreSQL (Kysely) | `@pikku/kysely-postgres` | `PgKyselyDeploymentService` | Shared PostgreSQL infrastructure |
+| Redis | `@pikku/redis` | `RedisDeploymentService` | Low-latency discovery with Redis |
+| MongoDB | `@pikku/mongodb` | `MongoDBDeploymentService` | MongoDB-backed discovery |
+| Kysely (generic) | `@pikku/kysely` | `KyselyDeploymentService` | Type-safe SQL with any Kysely dialect |
 
 See [Storage Backends](/docs/storage/) for setup details.
 
@@ -165,23 +168,39 @@ When `PIKKU_REMOTE_SECRET` is set, remote RPC calls automatically encrypt and fo
 ## Full Example
 
 ```typescript
-import { PgDeploymentService } from '@pikku/pg'
 import { PikkuExpressServer } from '@pikku/express'
+import { PikkuKysely, PgKyselyDeploymentService } from '@pikku/kysely-postgres'
+import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
+import { ConsoleLogger } from '@pikku/core/services'
+import { createConfig, createSingletonServices } from './services.js'
+import './.pikku/pikku-bootstrap.gen.js'
 
-const deploymentService = new PgDeploymentService(
+const config = await createConfig()
+const logger = new ConsoleLogger()
+
+const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
+await pikkuKysely.init()
+
+// Create singleton services first to get jwt + secrets
+const singletonServices = await createSingletonServices(config, { logger })
+
+const deploymentService = new PgKyselyDeploymentService(
   { heartbeatInterval: 5000, heartbeatTtl: 15000 },
-  sql
+  pikkuKysely.kysely,
+  singletonServices.jwt,
+  singletonServices.secrets
 )
 await deploymentService.init()
 
-const singletonServices = await createSingletonServices(config, {
+// Re-create with deploymentService included
+const services = await createSingletonServices(config, {
+  ...singletonServices,
   deploymentService,
 })
 
 const server = new PikkuExpressServer(
-  { port: 3001, hostname: 'localhost' },
-  singletonServices,
-  createWireServices
+  { ...config, port: 3001, hostname: 'localhost' },
+  services.logger
 )
 await server.init()
 await server.start()

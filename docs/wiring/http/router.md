@@ -19,7 +19,7 @@ import { addHTTPMiddleware } from '#pikku/http'
 import { corsMiddleware, responseTime } from './middleware.js'
 
 // All HTTP routes
-addHTTPMiddleware([corsMiddleware, responseTime])
+addHTTPMiddleware('*', [corsMiddleware, responseTime])
 
 // Routes starting with /admin
 addHTTPMiddleware('/admin', [requireAuth, auditLog])
@@ -27,9 +27,8 @@ addHTTPMiddleware('/admin', [requireAuth, auditLog])
 
 ### Parameters
 
-- **middleware** - Array of middleware functions when used globally
-- **route** (`string`) - Route prefix pattern (first parameter)
-- **middleware** - Array of middleware for the prefix (second parameter)
+- **route** (`string`) - Route prefix pattern, or `'*'` for global
+- **middleware** - Array of middleware to apply to matching routes
 
 ### Global HTTP Middleware
 
@@ -39,8 +38,8 @@ import { pikkuMiddleware } from '#pikku'
 
 const cors = pikkuMiddleware(async (_services, { http }, next) => {
   if (http) {
-    http.response.setHeader('Access-Control-Allow-Origin', '*')
-    http.response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+    http.response.header('Access-Control-Allow-Origin', '*')
+    http.response.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
   }
   await next()
 })
@@ -50,12 +49,12 @@ const responseTime = pikkuMiddleware(async (_services, { http }, next) => {
   await next()
   if (http) {
     const duration = Date.now() - start
-    http.response.setHeader('X-Response-Time', `${duration}ms`)
+    http.response.header('X-Response-Time', `${duration}ms`)
   }
 })
 
 // Apply to all HTTP routes
-addHTTPMiddleware([cors, responseTime])
+addHTTPMiddleware('*', [cors, responseTime])
 ```
 
 ### Prefix-Based Middleware
@@ -64,9 +63,9 @@ addHTTPMiddleware([cors, responseTime])
 const adminAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
   if (!http) return await next()
 
-  const token = http.request.getHeader('Authorization')
+  const token = http.request.header('Authorization')
   if (!token) {
-    http.response.setStatus(401).json({ error: 'Unauthorized' })
+    http.response.status(401).json({ error: 'Unauthorized' })
     return
   }
 
@@ -75,19 +74,19 @@ const adminAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) =>
     setSession(payload)
     await next()
   } catch (e) {
-    http.response.setStatus(401).json({ error: 'Invalid token' })
+    http.response.status(401).json({ error: 'Invalid token' })
   }
 })
 
 const rateLimit = pikkuMiddleware(async ({ cache }, { http }, next) => {
   if (!http) return await next()
 
-  const ip = http.request.getHeader('x-forwarded-for') || 'unknown'
+  const ip = http.request.header('x-forwarded-for') || 'unknown'
   const key = `ratelimit:${ip}`
   const count = (await cache.get(key)) || 0
 
   if (count > 100) {
-    http.response.setStatus(429).json({ error: 'Too many requests' })
+    http.response.status(429).json({ error: 'Too many requests' })
     return
   }
 
@@ -180,7 +179,7 @@ Note: These are prefix matches, not glob patterns. `/admin` matches `/admin/user
 See [Middleware](../../core-features/middleware.md#execution-order) for the complete execution order across all scopes.
 
 For HTTP routes, middleware runs in this order:
-1. **Global HTTP middleware** - `addHTTPMiddleware([...])`
+1. **Global HTTP middleware** - `addHTTPMiddleware('*', [...])`
 2. **Prefix HTTP middleware** - `addHTTPMiddleware('/prefix', [...])`
 3. **Wire-specific middleware** - `wireHTTP({ middleware: [...] })`
 4. **Function-level middleware** - `pikkuFunc({ middleware: [...] })`
@@ -195,7 +194,7 @@ Extract JWT tokens and set user session:
 const jwtAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
   if (!http) return await next()
 
-  const token = http.request.getHeader('Authorization')?.replace('Bearer ', '')
+  const token = http.request.header('Authorization')?.replace('Bearer ', '')
 
   if (token) {
     try {
@@ -226,20 +225,20 @@ const requestLogger = pikkuMiddleware(async ({ logger }, { http }, next) => {
   if (!http) return await next()
 
   const start = Date.now()
-  const method = http.request.method
-  const url = http.request.url
+  const method = http.request.method()
+  const url = http.request.path()
 
   logger.info(`${method} ${url} - Started`)
 
   await next()
 
   const duration = Date.now() - start
-  const status = http.response.status || 200
+  const status = http.response.statusCode || 200
   logger.info(`${method} ${url} - ${status} (${duration}ms)`)
 })
 
 // Log all HTTP requests
-addHTTPMiddleware([requestLogger])
+addHTTPMiddleware('*', [requestLogger])
 ```
 
 ### Security Headers
@@ -251,15 +250,15 @@ const securityHeaders = pikkuMiddleware(async (_services, { http }, next) => {
   await next()
 
   if (http) {
-    http.response.setHeader('X-Content-Type-Options', 'nosniff')
-    http.response.setHeader('X-Frame-Options', 'DENY')
-    http.response.setHeader('X-XSS-Protection', '1; mode=block')
-    http.response.setHeader('Strict-Transport-Security', 'max-age=31536000')
+    http.response.header('X-Content-Type-Options', 'nosniff')
+    http.response.header('X-Frame-Options', 'DENY')
+    http.response.header('X-XSS-Protection', '1; mode=block')
+    http.response.header('Strict-Transport-Security', 'max-age=31536000')
   }
 })
 
 // Apply to all routes
-addHTTPMiddleware([securityHeaders])
+addHTTPMiddleware('*', [securityHeaders])
 ```
 
 ## Next Steps

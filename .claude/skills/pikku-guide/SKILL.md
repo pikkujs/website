@@ -297,5 +297,6 @@ How to verify it works.
 - **Callouts:** `:::tip` for helpful insights, `:::info` for important context, `:::note` for caveats, `:::warning` for gotchas.
 - **npm commands:** Use `bash npm2yarn` code blocks so Docusaurus renders the npm/yarn/pnpm switcher.
 - **No over-engineering:** Don't add sections that have no content. Three sections of substance beats seven thin ones.
+- **Registration calls must be top-level in code examples:** `addTagPermission`, `addTagMiddleware`, `addGlobalMiddleware`, `addGlobalPermission`, and similar registration APIs MUST be shown as top-level statements with literal arguments — never wrapped in helper functions, factories, loops, or conditionals. The Pikku CLI inspector statically analyzes source via TS AST and does NOT execute code, so wrapped calls are invisible to codegen and silently produce no schemas/permissions/wirings. If an example has repetitive registrations, write them out flat — don't DRY them up with a helper.
 - **Frontmatter:** Always include `title`, `sidebar_position`, and `description`. Add `image` only for runtime pages. Never add `ai: true`.
 - **Sidebar position:** Look at sibling files to pick a sensible `sidebar_position` number.

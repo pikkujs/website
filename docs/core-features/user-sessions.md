@@ -38,12 +38,13 @@ This separation means you can use different session strategies per protocol whil
 
 ## Pikku Session Middleware
 
-Pikku provides session middleware for different protocols:
+Pikku ships session-aware middleware in `@pikku/core/middleware`:
 
-- **`@pikku/middleware-http-session`** – Cookie-based sessions for HTTP
-- **`@pikku/middleware-channel-session`** – Connection-based sessions for WebSocket channels
+- **[`authCookie`](/docs/middleware/auth-cookie)** – Cookie-based sessions for HTTP
+- **[`authBearer`](/docs/middleware/auth-jwt)** – Bearer/JWT token sessions
+- **[`authAPIKey`](/docs/middleware/auth-apikey)** – API-key based sessions
 
-These middleware handle loading sessions before your functions execute and persisting any changes afterward. You can customize the behavior or implement your own session middleware.
+These middleware handle loading sessions before your functions execute and persisting any changes afterward (the cookie middleware re-writes the cookie when the session changes). You can customize the behavior or implement your own session middleware.
 
 ## Defining Your Session Type
 

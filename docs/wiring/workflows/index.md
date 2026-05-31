@@ -141,7 +141,7 @@ import { pikkuWorkflowFunc } from './.pikku/workflow/pikku-workflow-types.gen'
 export const onboardingWorkflow = pikkuWorkflowFunc<
   { email: string; userId: string },
   { success: boolean }
->(async ({ workflow, rpc }, data) => {
+>(async (services, data, { workflow }) => {
   // Step 1: Create user profile (RPC step - runs in queue worker)
   await workflow.do(
     'Create user profile in database',
@@ -169,27 +169,14 @@ export const onboardingWorkflow = pikkuWorkflowFunc<
 })
 ```
 
-Wire it to your application:
-
-```typescript
-import { wireWorkflow } from './.pikku/workflow/pikku-workflow-types.gen'
-import { onboardingWorkflow } from './workflows.functions'
-
-wireWorkflow({
-  name: 'onboarding',
-  description: 'User onboarding workflow',
-  func: onboardingWorkflow,
-  tags: ['onboarding', 'users']
-})
-```
+That's it — there is no separate wiring call. Any `pikkuWorkflowFunc` exported from a `*.workflow.ts` file in your source directories is discovered and registered by the CLI; the workflow name is derived from the exported function. Run `npx pikku` to (re)generate the workflow types and registration.
 
 Note: Execution mode (inline vs remote) is determined automatically based on whether a queue service is configured.
 
-Start the workflow:
+Start a workflow via `rpc.startWorkflow` (available on the wire object). It resolves to `{ runId }`:
 
 ```typescript
-// Via RPC
-const runId = await rpc.startWorkflow('onboarding', {
+const { runId } = await rpc.startWorkflow('onboarding', {
   email: 'user@example.com',
   userId: 'user-123'
 })

@@ -191,7 +191,7 @@ import { addHTTPMiddleware } from '#pikku/http'
 import { corsMiddleware, loggingMiddleware, adminAuthMiddleware } from './middleware.js'
 
 // Global - applies to all HTTP routes
-addHTTPMiddleware([corsMiddleware, loggingMiddleware])
+addHTTPMiddleware('*', [corsMiddleware, loggingMiddleware])
 
 // Prefix - applies to routes starting with /admin
 addHTTPMiddleware('/admin', [adminAuthMiddleware])

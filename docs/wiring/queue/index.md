@@ -162,7 +162,7 @@ export const generateReport = pikkuSessionlessFunc<
   { reportId: string },
   void
 >({
-  func: async ({ database, queue }, data) => {
+  func: async ({ database }, data, { queue }) => {
     // Update progress if queue supports it
     if (queue?.updateProgress) {
       await queue.updateProgress(0)

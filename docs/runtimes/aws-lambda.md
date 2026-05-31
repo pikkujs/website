@@ -124,8 +124,8 @@ import type { SQSHandler } from 'aws-lambda'
 import { runSQSQueueWorker } from '@pikku/lambda/queue'
 
 export const handler: SQSHandler = async (event) => {
-  await coldStart()
-  return runSQSQueueWorker({ event })
+  const { logger } = await coldStart()
+  return runSQSQueueWorker(logger, event)
 }
 ```
 
@@ -145,6 +145,9 @@ export const handler = async (event: ScheduledEvent) => {
 
 WebSocket connections require three separate Lambda handlers and a persistent store for connection state:
 
+Each handler takes the Lambda event plus a `{ channelStore }` object — the store
+persists connection state across invocations:
+
 ```typescript
 import {
   connectWebsocket,
@@ -153,24 +156,24 @@ import {
 } from '@pikku/lambda/websocket'
 
 export const wsConnect = async (event) => {
-  await coldStart()
-  return connectWebsocket(event, singletonServices)
+  const { channelStore } = await coldStart()
+  return connectWebsocket(event, { channelStore })
 }
 
 export const wsDisconnect = async (event) => {
-  await coldStart()
-  return disconnectWebsocket(event, singletonServices)
+  const { channelStore } = await coldStart()
+  return disconnectWebsocket(event, { channelStore })
 }
 
 export const wsMessage = async (event) => {
-  await coldStart()
-  return processWebsocketMessage(event, singletonServices, createWireServices)
+  const { channelStore } = await coldStart()
+  return processWebsocketMessage(event, { channelStore })
 }
 ```
 
 WebSocket support requires:
 - **API Gateway WebSocket API** — a separate API Gateway configured for WebSocket
-- **`ChannelStore`** — persists connection state across Lambda invocations (e.g., `PgChannelStore`)
+- **`ChannelStore`** — persists connection state across Lambda invocations (e.g., `PgKyselyChannelStore`)
 - **`LambdaEventHubService`** — sends messages back to connected clients via API Gateway Management API
 
 ### Other Exports

@@ -10,7 +10,7 @@ ai: true
 The `@pikku/redis` package provides Redis implementations for workflow orchestration, channel state, and deployment tracking. It uses the [`ioredis`](https://github.com/redis/ioredis) driver.
 
 :::note
-Redis does **not** provide `AIStorageService` or `AIRunStateService`. For AI Agent persistence, use [`@pikku/pg`](./postgresql) or [`@pikku/kysely`](./kysely).
+Redis does **not** provide `AIStorageService` or `AIRunStateService`. For AI Agent persistence, use [`@pikku/kysely-postgres`](./postgresql) or [`@pikku/kysely`](./kysely).
 :::
 
 ## Installation

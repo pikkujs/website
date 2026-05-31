@@ -262,16 +262,14 @@ wireGateway({
 Middleware receives `wire.gateway`, so you can write gateway-aware middleware:
 
 ```typescript
-const rateLimitMiddleware = {
-  func: async (services, wire, next) => {
-    const { senderId, platform } = wire.gateway
-    const allowed = await services.rateLimit.check(`${platform}:${senderId}`)
-    if (!allowed) {
-      await wire.gateway.send({ text: 'Too many messages. Please wait.' })
-      return
-    }
-    await next()
+const rateLimitMiddleware = async (services, wire, next) => {
+  const { senderId, platform } = wire.gateway
+  const allowed = await services.rateLimit.check(`${platform}:${senderId}`)
+  if (!allowed) {
+    await wire.gateway.send({ text: 'Too many messages. Please wait.' })
+    return
   }
+  await next()
 }
 ```
 

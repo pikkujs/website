@@ -97,33 +97,35 @@ npm install @pikku/cloudflare
 A basic Worker entry point with HTTP and scheduled task support:
 
 ```typescript
-import './.pikku/pikku-bootstrap.gen.js'
+import '../../functions/.pikku/pikku-bootstrap.gen.js'
 import { runFetch, runScheduled } from '@pikku/cloudflare'
-import { LocalVariablesService } from '@pikku/core/services'
+import { LocalVariablesService, LocalSecretService } from '@pikku/core/services'
+import { createConfig, createSingletonServices } from '../../functions/src/services.js'
+import type { ExportedHandler, Response } from '@cloudflare/workers-types'
 
-let cachedServices: SingletonServices | undefined
-
-const setupServices = async (env: Record<string, string>) => {
-  if (!cachedServices) {
-    const variables = new LocalVariablesService(env)
-    const config = await createConfig(variables)
-    cachedServices = await createSingletonServices(config, { variables })
-  }
-  return cachedServices
+const setupServices = async (env: Record<string, string | undefined>) => {
+  const variables = new LocalVariablesService(env)
+  const config = await createConfig(variables)
+  const secrets = new LocalSecretService(variables)
+  return await createSingletonServices(config, { variables, secrets })
 }
 
 export default {
-  async fetch(request: Request, env: any) {
-    const services = await setupServices(env)
-    return runFetch(request, services, createWireServices)
+  async fetch(request, env): Promise<Response> {
+    await setupServices(env)
+    return await runFetch(request as unknown as Request)
   },
 
-  async scheduled(event: ScheduledEvent, env: any) {
-    const services = await setupServices(env)
-    await runScheduled(event, services)
+  async scheduled(controller, env) {
+    await setupServices(env)
+    await runScheduled(controller)
   },
-}
+} satisfies ExportedHandler<Record<string, string>>
 ```
+
+`setupServices` registers the singleton services into Pikku's runtime state (via
+the imported bootstrap), so `runFetch(request)` and `runScheduled(controller)`
+resolve them automatically — you don't pass services into the handlers.
 
 ### Environment Variables
 
@@ -144,20 +146,32 @@ Configure cron triggers in `wrangler.toml`:
 crons = ["*/5 * * * *", "0 9 * * 1"]
 ```
 
-`runScheduled` matches the cron pattern from the event against your registered scheduled tasks and executes the matching ones.
+`runScheduled(controller)` matches the cron pattern from the `ScheduledController` against your registered scheduled tasks and executes the matching ones.
 
 ### WebSocket with Durable Objects
 
 Cloudflare Workers support WebSocket via [Durable Objects](https://developers.cloudflare.com/durable-objects/) and WebSocket Hibernation:
 
-```typescript
-import { CloudflareWebSocketHibernationServer } from '@pikku/cloudflare/websocket'
+Extend `CloudflareWebSocketHibernationServer` and override `getParams()` to
+provide the singleton + wire services for each connection:
 
-export class WebSocketServer extends CloudflareWebSocketHibernationServer {
-  constructor(state: DurableObjectState, env: Env) {
-    super(state, env, async (env) => {
-      return setupServices(env)
-    }, createWireServices)
+```typescript
+import { CloudflareWebSocketHibernationServer, CloudflareEventHubService } from '@pikku/cloudflare'
+import { createWireServices } from '../../functions/src/services.js'
+import { setupServices } from './setup-services.js'
+
+export class WebSocketHibernationServer extends CloudflareWebSocketHibernationServer {
+  private singletonServices: SingletonServices | undefined
+
+  protected async getParams() {
+    if (!this.singletonServices) {
+      this.singletonServices = await setupServices(this.env)
+      this.singletonServices.eventHub = new CloudflareEventHubService(
+        this.singletonServices.logger,
+        this.ctx
+      )
+    }
+    return { singletonServices: this.singletonServices, createWireServices }
   }
 }
 ```
@@ -172,26 +186,24 @@ The `CloudflareWebSocketHibernationServer` handles:
 # wrangler.toml
 [durable_objects]
 bindings = [
-  { name = "WEBSOCKET_SERVER", class_name = "WebSocketServer" }
+  { name = "WEBSOCKET_HIBERNATION_SERVER", class_name = "WebSocketHibernationServer" }
 ]
 
 [[migrations]]
 tag = "v1"
-new_classes = ["WebSocketServer"]
+new_classes = ["WebSocketHibernationServer"]
 ```
 
-Route WebSocket upgrades in your fetch handler:
+Resolve the Durable Object stub and pass it to `runFetch` as the second argument
+— it detects WebSocket upgrade requests and routes them to the hibernation server:
 
 ```typescript
-async fetch(request: Request, env: any) {
-  if (request.headers.get('Upgrade') === 'websocket') {
-    const id = env.WEBSOCKET_SERVER.idFromName('default')
-    const stub = env.WEBSOCKET_SERVER.get(id)
-    return stub.fetch(request)
-  }
-
-  const services = await setupServices(env)
-  return runFetch(request, services, createWireServices)
+async fetch(request, env): Promise<Response> {
+  const singletonServices = await setupServices(env)
+  const durableObject: any = singletonServices.variables.get('WEBSOCKET_HIBERNATION_SERVER')
+  const id = durableObject.idFromName('channel-name-goes-here')
+  const webSocketHibernationServer = durableObject.get(id)
+  return await runFetch(request as unknown as Request, webSocketHibernationServer)
 }
 ```
 
@@ -200,11 +212,15 @@ async fetch(request: Request, env: any) {
 The `@pikku/cloudflare/d1` sub-path provides Kysely-backed services running on Cloudflare D1 (SQLite at the edge):
 
 ```typescript
-import { createD1Kysely, createD1WorkflowService, createD1AIStorageService } from '@pikku/cloudflare/d1'
+import {
+  createD1Kysely,
+  CloudflareWorkflowService,
+  CloudflareAIStorageService,
+} from '@pikku/cloudflare/d1'
 
 const kysely = createD1Kysely(env.MY_D1_DATABASE)
-const workflowService = createD1WorkflowService(kysely)
-const aiStorage = createD1AIStorageService(kysely)
+const workflowService = new CloudflareWorkflowService(kysely)
+const aiStorage = new CloudflareAIStorageService(kysely)
 ```
 
 ### Queue Service
