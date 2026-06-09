@@ -1,191 +1,5 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
-import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
-import CodeBlock from '@theme/CodeBlock';
-import {
-  ArrowRight, Cloud, Copy, Check, Terminal,
-  FileCode, Layers, Clock, Mail,
-  Package, Cog, Zap, Server,
-} from 'lucide-react';
-
-/* ─────────────────────────────────────────────
-   Reusable helpers
-   ───────────────────────────────────────────── */
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">{children}</p>
-  );
-}
-
-function CodeCard({ filename, badge, icon, children }: {
-  filename: string;
-  badge?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        {icon}
-        <span className="text-sm font-semibold text-neutral-200">{filename}</span>
-        {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
-      </div>
-      <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   1. HERO
-   ───────────────────────────────────────────── */
-
-function Hero() {
-  return (
-    <div className="wire-hero-serverless w-full relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/[0.06] blur-[100px]" />
-        <div className="absolute left-[12%] top-[35%] w-56 h-56 rounded-full bg-white/[0.04] blur-[80px]" />
-      </div>
-
-      <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
-        <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
-            Deployment
-          </span>
-          <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
-            <span className="text-white">Deploy to AWS.</span><br />
-            <span className="text-primary">Lambda + SQS + EventBridge.</span>
-          </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            Pikku generates a complete Serverless Framework config from your functions — Lambda for HTTP, SQS for queues, EventBridge for cron. You just run the deploy.
-          </p>
-          <div className="flex flex-row gap-4">
-            <Link
-              to="/docs/runtimes/aws-lambda"
-              className="bg-primary text-black hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-amber-500/20"
-            >
-              Read the Docs
-            </Link>
-            <a
-              href="#how-it-works"
-              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline"
-            >
-              How It Works
-            </a>
-          </div>
-        </div>
-
-        {/* Right: terminal — two-step deploy flow */}
-        <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="bg-[#0d0d0d] border-2 border-white/15 rounded-2xl p-8 font-mono text-sm leading-relaxed">
-            <span className="text-neutral-500"># Step 1: Generate serverless config</span><br />
-            <span className="text-primary">$</span>{' '}
-            <span className="text-white">pikku deploy apply</span>{' '}
-            <span className="text-amber-300">--provider serverless</span><br />
-            <span className="text-neutral-600">  writing .deploy/serverless/serverless.yml</span><br />
-            <span className="text-neutral-600">  bundling 12 functions...</span><br />
-            <span className="text-primary">  done.</span><br /><br />
-            <span className="text-neutral-500"># Step 2: Deploy with Serverless Framework</span><br />
-            <span className="text-primary">$</span>{' '}
-            <span className="text-white">cd .deploy/serverless</span><br />
-            <span className="text-primary">$</span>{' '}
-            <span className="text-white">npx serverless deploy</span><br />
-            <span className="text-neutral-600">  Deploying my-app to stage dev (us-east-1)</span><br />
-            <span className="text-primary">  Service deployed to stack my-app-dev</span>
-          </div>
-        </div>
-      </header>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   2. HOW IT WORKS
-   ───────────────────────────────────────────── */
-
-function HowItWorksSection() {
-  const steps = [
-    {
-      icon: <Cog className="w-6 h-6 text-primary" />,
-      title: 'Generate the config',
-      command: 'pikku deploy apply --provider serverless',
-      desc: 'Pikku scans your functions and generates a complete serverless.yml plus individually bundled entry points in .deploy/serverless/.',
-    },
-    {
-      icon: <Cloud className="w-6 h-6 text-primary" />,
-      title: 'Deploy to AWS',
-      command: 'cd .deploy/serverless && npx serverless deploy',
-      desc: 'Standard Serverless Framework deploy. Lambda functions, SQS queues, EventBridge rules — all created from the generated config.',
-    },
-    {
-      icon: <Terminal className="w-6 h-6 text-primary" />,
-      title: 'Local dev',
-      command: 'cd .deploy/serverless && npx serverless offline start',
-      desc: 'Run the full stack locally with serverless-offline. Hot reload your functions without touching AWS.',
-    },
-  ];
-
-  return (
-    <section id="how-it-works" className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-14">
-          <SectionLabel>How It Works</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Two steps. <span className="text-primary">That's it.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Pikku generates the Serverless Framework config. You deploy it. No hand-written YAML, no mapping routes to Lambda handlers manually.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mb-16">
-          {steps.map((step, i) => (
-            <div key={i} className="relative bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-white/8 border border-white/15 flex items-center justify-center text-xs font-bold text-primary">
-                  {i + 1}
-                </div>
-                <h3 className="text-base font-bold text-white">{step.title}</h3>
-              </div>
-              <div className="text-xs font-mono bg-neutral-900/60 border border-neutral-800 rounded-lg px-3 py-2 text-white/65 mb-3">
-                $ {step.command}
-              </div>
-              <p className="text-sm text-neutral-400 leading-relaxed">{step.desc}</p>
-              {i < steps.length - 1 && (
-                <div className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 z-10">
-                  <ArrowRight className="w-5 h-5 text-primary/40" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Key difference callout */}
-        <div className="max-w-3xl bg-white/[0.04] border border-white/12 rounded-xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-lg bg-white/8 border border-white/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <Layers className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h4 className="text-base font-bold text-white mb-1">Two-step flow by design</h4>
-              <p className="text-sm text-neutral-400 leading-relaxed">
-                Unlike single-command deploys, Pikku intentionally separates <strong className="text-primary">generation</strong> from <strong className="text-primary">deployment</strong>. You get full visibility into the generated serverless.yml before anything hits AWS. Inspect it, tweak it, commit it — then deploy when you're ready.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   3. WHAT GETS GENERATED
-   ───────────────────────────────────────────── */
+import { FeaturePage } from '../../components/FeaturePage';
+import type { PageData } from '../../components/FeaturePage/types';
 
 const serverlessYmlCode = `service: my-app
 
@@ -222,9 +36,7 @@ resources:
     OrdersQueue:
       Type: AWS::SQS::Queue`;
 
-const deployInfoOutput = `$ pikku deploy info --provider serverless
-
-Provider:     serverless
+const deployInfoOutput = `Provider:     serverless
 Output:       .deploy/serverless/
 Status:       generated
 
@@ -241,198 +53,124 @@ Environment:
   ORDERS_QUEUE_URL        → !Ref OrdersQueue
   NOTIFICATION_QUEUE_URL  → !Ref NotificationQueue`;
 
-function WhatGetsGeneratedSection() {
-  const items = [
-    { icon: <FileCode className="w-5 h-5 text-primary" />, label: 'serverless.yml', desc: 'Complete Serverless Framework config — functions, events, resources, environment' },
-    { icon: <Package className="w-5 h-5 text-primary" />, label: 'Per-function bundles', desc: 'Each function gets its own entry point and minimal bundle for fast cold starts' },
-    { icon: <Server className="w-5 h-5 text-primary" />, label: 'Lambda + HTTP API events', desc: 'HTTP routes become API Gateway events wired to individual Lambda handlers' },
-    { icon: <Mail className="w-5 h-5 text-primary" />, label: 'SQS queue definitions', desc: 'Queue consumers get SQS resources auto-created with proper ARN references' },
-    { icon: <Clock className="w-5 h-5 text-primary" />, label: 'EventBridge schedules', desc: 'Cron functions become EventBridge rules with the schedule expression from your code' },
-    { icon: <Zap className="w-5 h-5 text-primary" />, label: 'Auto-injected env vars', desc: 'Lambda ARNs, SQS URLs, and resource references wired into environment variables' },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>What Gets Generated</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            A full <span className="text-primary">serverless.yml</span> from your code.
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Pikku reads your function signatures — HTTP routes, queue consumers, cron schedules — and generates everything Serverless Framework needs.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mb-14">
-          {items.map((item, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5 hover:border-white/15 transition-colors">
-              <div className="flex items-center gap-3 mb-2">
-                {item.icon}
-                <span className="text-sm font-bold text-white">{item.label}</span>
-              </div>
-              <p className="text-xs text-neutral-500 leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl">
-          <CodeCard filename="serverless.yml" badge="generated" icon={<FileCode className="w-4 h-4 text-primary" />}>
-            <CodeBlock language="yaml">{serverlessYmlCode}</CodeBlock>
-          </CodeCard>
-          <CodeCard filename="Terminal" badge="inspect" icon={<Terminal className="w-4 h-4 text-primary" />}>
-            <CodeBlock language="bash">{deployInfoOutput}</CodeBlock>
-          </CodeCard>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   4. PREREQUISITES
-   ───────────────────────────────────────────── */
-
-function PrerequisitesSection() {
-  const prereqs = [
+const page: PageData = {
+  meta: {
+    title: 'Deploy to AWS — Lambda + SQS + EventBridge',
+    description: 'Pikku generates a complete Serverless Framework config from your functions — Lambda for HTTP, SQS for queues, EventBridge for cron. You just run the deploy.',
+  },
+  sections: [
     {
-      icon: <Package className="w-6 h-6 text-primary" />,
-      title: 'Install the deploy package',
-      command: 'npm install @pikku/deploy-serverless',
-      desc: 'Adds the Serverless Framework provider to your Pikku project.',
+      component: 'hero',
+      badge: 'Deployment',
+      h1: 'Deploy to AWS.\n_Lambda + SQS + EventBridge._',
+      lead: 'Pikku generates a complete Serverless Framework config from your functions — Lambda for HTTP, SQS for queues, EventBridge for cron. You just run the deploy.',
+      cta: [
+        { label: 'Read the Docs', to: '/docs/runtimes/aws-lambda' },
+        { label: 'How It Works', to: '#how-it-works', primary: false },
+      ],
+      right: {
+        type: 'code',
+        code: `# Step 1: Generate config
+$ pikku deploy apply --provider serverless
+  writing .deploy/serverless/serverless.yml
+  bundling 12 functions...
+  done.
+
+# Step 2: Deploy
+$ cd .deploy/serverless
+$ npx serverless deploy
+  Deploying my-app to stage dev (us-east-1)
+  Service deployed to stack my-app-dev`,
+      },
     },
     {
-      icon: <Server className="w-6 h-6 text-primary" />,
-      title: 'AWS credentials configured',
-      command: 'aws configure',
-      desc: 'Standard AWS SDK credentials — env vars, ~/.aws/credentials, or IAM role. Same setup you\'d use for any AWS deployment.',
+      component: 'step-cards',
+      id: 'how-it-works',
+      eyebrow: 'How It Works',
+      h2: 'Two steps. _That\'s it._',
+      lead: "Pikku generates the Serverless Framework config. You deploy it. No hand-written YAML, no mapping routes to Lambda handlers manually.",
+      steps: [
+        {
+          title: 'Generate the config',
+          desc: 'Pikku scans your functions and generates a complete serverless.yml plus individually bundled entry points in .deploy/serverless/.',
+          command: 'pikku deploy apply --provider serverless',
+        },
+        {
+          title: 'Deploy to AWS',
+          desc: 'Standard Serverless Framework deploy. Lambda functions, SQS queues, EventBridge rules — all created from the generated config.',
+          command: 'cd .deploy/serverless && npx serverless deploy',
+        },
+        {
+          title: 'Local dev',
+          desc: 'Run the full stack locally with serverless-offline. Hot reload your functions without touching AWS.',
+          command: 'cd .deploy/serverless && npx serverless offline start',
+        },
+      ],
+      below: {
+        type: 'note',
+        icon: 'layers',
+        title: 'Two-step flow by design.',
+        body: "Unlike single-command deploys, Pikku intentionally separates generation from deployment. You get full visibility into the generated serverless.yml before anything hits AWS. Inspect it, tweak it, commit it — then deploy when you're ready.",
+      },
     },
     {
-      icon: <Terminal className="w-6 h-6 text-primary" />,
-      title: 'Serverless Framework installed',
-      command: 'npm install -g serverless',
-      desc: 'The actual deployment runs through the Serverless Framework CLI. Pikku just generates the config it reads.',
+      component: 'feature-grid',
+      eyebrow: 'What Gets Generated',
+      h2: 'A full _serverless.yml_ from your code.',
+      lead: 'Pikku reads your function signatures — HTTP routes, queue consumers, cron schedules — and generates everything Serverless Framework needs.',
+      columns: 3,
+      cards: [
+        { icon: 'file-code', title: 'serverless.yml', body: 'Complete Serverless Framework config — functions, events, resources, environment.' },
+        { icon: 'package', title: 'Per-function bundles', body: 'Each function gets its own entry point and minimal bundle for fast cold starts.' },
+        { icon: 'server', title: 'Lambda + HTTP API events', body: 'HTTP routes become API Gateway events wired to individual Lambda handlers.' },
+        { icon: 'send', title: 'SQS queue definitions', body: 'Queue consumers get SQS resources auto-created with proper ARN references.' },
+        { icon: 'clock', title: 'EventBridge schedules', body: 'Cron functions become EventBridge rules with the schedule expression from your code.' },
+        { icon: 'zap', title: 'Auto-injected env vars', body: 'Lambda ARNs, SQS URLs, and resource references wired into environment variables.' },
+      ],
+      below: {
+        type: 'codes',
+        codes: [
+          { filename: 'serverless.yml', badge: 'generated', icon: 'file-code', code: serverlessYmlCode, language: 'yaml' },
+          { filename: 'pikku deploy info --provider serverless', badge: 'inspect', icon: 'terminal', code: deployInfoOutput, language: 'bash' },
+        ],
+      },
     },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Prerequisites</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Three things. <span className="text-primary">Five minutes.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            If you've deployed to AWS before, you probably already have two of these.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
-          {prereqs.map((prereq, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 hover:border-white/15 transition-colors">
-              <div className="flex justify-center mb-4">
-                <div className="w-14 h-14 rounded-xl bg-white/[0.06] border border-white/15 flex items-center justify-center">
-                  {prereq.icon}
-                </div>
-              </div>
-              <h3 className="font-jakarta text-lg font-bold text-white mb-2 ">{prereq.title}</h3>
-              <p className="text-sm text-neutral-400 mb-4 ">{prereq.desc}</p>
-              <div className="text-xs font-mono bg-neutral-900/60 border border-neutral-800 rounded-lg px-3 py-2 text-white/55 ">
-                $ {prereq.command}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   5. CTA
-   ───────────────────────────────────────────── */
-
-function CTASection() {
-  const [copied, setCopied] = React.useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText('npm install @pikku/deploy-serverless');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/[0.04] blur-[80px]" />
-      </div>
-
-      <div className="max-w-screen-xl mx-auto px-6 relative">
-        <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
-          Ship to Lambda in minutes
-        </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
-          No more hand-writing serverless.yml. Let Pikku generate it from your actual code.
-        </p>
-
-        <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-md relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
-          onClick={copyToClipboard}
-        >
-          <span className="text-white/55 select-none">$ </span>npm install @pikku/deploy-serverless
-          <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
-            onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
-            title="Copy to clipboard"
-          >
-            {copied
-              ? <Check className="w-3.5 h-3.5 text-primary" />
-              : <Copy className="w-3.5 h-3.5 text-white/70" />
-            }
-          </button>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/docs/runtimes/aws-lambda"
-            className="bg-primary text-black hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-amber-500/20"
-          >
-            Lambda Deployment Guide
-          </Link>
-          <Link
-            to="/features"
-            className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
-          >
-            All Features
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   PAGE
-   ───────────────────────────────────────────── */
+    {
+      component: 'step-cards',
+      eyebrow: 'Prerequisites',
+      h2: 'Three things. _Five minutes._',
+      lead: "If you've deployed to AWS before, you probably already have two of these.",
+      steps: [
+        {
+          title: 'Install the deploy package',
+          desc: 'Adds the Serverless Framework provider to your Pikku project.',
+          command: 'npm install @pikku/deploy-serverless',
+        },
+        {
+          title: 'AWS credentials configured',
+          desc: "Standard AWS SDK credentials — env vars, ~/.aws/credentials, or IAM role. Same setup you'd use for any AWS deployment.",
+          command: 'aws configure',
+        },
+        {
+          title: 'Serverless Framework installed',
+          desc: 'The actual deployment runs through the Serverless Framework CLI. Pikku just generates the config it reads.',
+          command: 'npm install -g serverless',
+        },
+      ],
+    },
+    {
+      component: 'cta',
+      h2: 'Ship to Lambda in minutes',
+      lead: "No more hand-writing serverless.yml. Let Pikku generate it from your actual code.",
+      cmd: 'npm install @pikku/deploy-serverless',
+      buttons: [
+        { label: 'Lambda Deployment Guide', to: '/docs/runtimes/aws-lambda' },
+        { label: 'All Features', to: '/features', primary: false },
+      ],
+    },
+  ],
+};
 
 export default function ServerlessDeployPage() {
-  return (
-    <Layout
-      title="Deploy to AWS — Lambda + SQS + EventBridge"
-      description="Pikku generates a complete Serverless Framework config from your functions — Lambda for HTTP, SQS for queues, EventBridge for cron. You just run the deploy."
-    >
-      <Hero />
-      <main>
-        <HowItWorksSection />
-        <WhatGetsGeneratedSection />
-        <PrerequisitesSection />
-        <CTASection />
-      </main>
-    </Layout>
-  );
+  return <FeaturePage data={page} />;
 }

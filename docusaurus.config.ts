@@ -216,11 +216,6 @@ const config: Config = {
           ],
         },
         {
-          href: 'https://pikkufabric.com',
-          position: 'right',
-          label: 'Fabric',
-        },
-        {
           type: 'docSidebar',
           sidebarId: 'docs',
           position: 'right',
@@ -241,6 +236,11 @@ const config: Config = {
           type: 'html',
           position: 'right',
           value: '<span>|</span>',
+        },
+        {
+          href: 'https://pikkufabric.com',
+          position: 'right',
+          label: 'Fabric',
         },
         {
           type: 'html',
