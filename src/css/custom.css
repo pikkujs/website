@@ -788,6 +788,9 @@ a.no-underline:hover * {
   --ifm-navbar-link-color: var(--paper-text-body);
   --ifm-navbar-link-hover-color: var(--paper-accent);
   --ifm-footer-background-color: var(--paper-bg-dark);
+  --ifm-background-color: var(--paper-bg);
+  --ifm-background-surface-color: var(--paper-bg-alt);
+  --ifm-font-color-base: var(--paper-text-body);
   --ifm-color-primary:          var(--paper-accent);
   --ifm-color-primary-dark:     var(--paper-accent-dark);
   --ifm-color-primary-darker:   var(--paper-accent-darker);
@@ -797,6 +800,14 @@ a.no-underline:hover * {
   --ifm-color-primary-lightest: var(--paper-accent-lightest);
   --site-accent-border:    var(--paper-accent-ring);
   --site-accent-border-sm: var(--paper-accent-ring-sm);
+}
+
+/* Body / main-wrapper background — covers all paper pages including 404 */
+:has([data-paper-page]) body,
+:has([data-paper-page]) .main-wrapper {
+  background-color: var(--paper-bg) !important;
+  color: var(--paper-text-body);
+  -webkit-font-smoothing: antialiased;
 }
 
 :has([data-paper-page]) .navbar {
@@ -881,6 +892,10 @@ a.no-underline:hover * {
 :has([data-paper-page]) .mega-menu-icon-box {
   background: var(--paper-bg);
   border-color: var(--paper-border);
+}
+
+:has([data-paper-page]) .mega-menu-icon-box svg {
+  color: var(--paper-text-muted) !important;
 }
 
 :has([data-paper-page]) .mega-menu-item-label {

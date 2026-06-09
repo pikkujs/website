@@ -65,10 +65,26 @@
   --paper-bg-alt:          #fffefb;   /* card / surface bg      */
   --paper-bg-dark:         #efece4;   /* footer / alt-section   */
 
-  /* Code / terminal backgrounds */
+  /* Terminal widget backgrounds (dark, intentional) */
   --paper-code-bg:         #16140f;
   --paper-code-bg-bar:     #1f1c16;
   --paper-code-border:     #2a2720;
+
+  /* Markdown code blocks (light theme) */
+  --paper-code-light-bg:       #f2efe7;   /* warm cream code bg         */
+  --paper-code-light-bar:      #e8e4da;   /* title bar                  */
+  --paper-code-light-border:   #d9d3c5;   /* block border               */
+  --paper-code-light-text:     #2c2825;   /* base text                  */
+  --paper-code-light-kw:       #b03000;   /* keywords / tags            */
+  --paper-code-light-str:      #1a5c3a;   /* strings / template lits    */
+  --paper-code-light-num:      #7a4800;   /* numbers / booleans         */
+  --paper-code-light-cmt:      #9a9387;   /* comments (italic)          */
+  --paper-code-light-fn:       #1e3a8a;   /* functions                  */
+  --paper-code-light-type:     #5c2d8a;   /* types / class names        */
+  --paper-code-light-prop:     #1a4a6b;   /* properties / attr-names    */
+  --paper-code-light-op:       #5a5248;   /* operators                  */
+  --paper-code-light-punct:    #6b6559;   /* punctuation                */
+  --paper-code-light-hl:       rgba(176, 48, 0, 0.08);  /* highlighted line */
 
   /* Text */
   --paper-text:            #1a1814;   /* headings               */

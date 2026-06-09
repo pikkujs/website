@@ -156,9 +156,35 @@ html.blog-wrapper .avatar__photo {
   padding: 0.15em 0.45em;
 }
 
+/* Code block container (wraps title bar + pre) */
+[data-paper-page] .markdown .theme-code-block {
+  border: 1px solid var(--paper-code-light-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px -4px var(--paper-shadow-sm);
+}
+
+/* Title bar (when code block has a filename) */
+[data-paper-page] .markdown [class*="codeBlockTitle"] {
+  background: var(--paper-code-light-bar) !important;
+  color: var(--paper-text-muted) !important;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--paper-code-light-border) !important;
+  padding: 8px 16px;
+}
+
+/* Remove border from pre when inside .theme-code-block (border is on container) */
+[data-paper-page] .markdown .theme-code-block pre {
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0;
+}
+
 [data-paper-page] .markdown pre {
-  background: var(--paper-code-bg) !important;
-  border: 1px solid var(--paper-code-border);
+  background: var(--paper-code-light-bg) !important;
+  border: 1px solid var(--paper-code-light-border);
   border-radius: 12px;
 }
 
@@ -166,8 +192,102 @@ html.blog-wrapper .avatar__photo {
   background: transparent;
   border: none;
   padding: 0;
-  color: var(--paper-code-text);
+  color: var(--paper-code-light-text);
   font-size: 13.5px;
+}
+
+/* Copy button */
+[data-paper-page] .markdown [class*="copyButton"],
+[data-paper-page] .markdown [class*="buttonGroup"] button {
+  background: var(--paper-code-light-bar) !important;
+  color: var(--paper-text-muted) !important;
+  border: 1px solid var(--paper-code-light-border) !important;
+}
+
+[data-paper-page] .markdown [class*="copyButton"]:hover,
+[data-paper-page] .markdown [class*="buttonGroup"] button:hover {
+  background: var(--paper-border) !important;
+  color: var(--paper-text) !important;
+}
+
+/* ── Prism token colours — light warm theme ──────────────── */
+[data-paper-page] .markdown .token.comment,
+[data-paper-page] .markdown .token.prolog,
+[data-paper-page] .markdown .token.doctype,
+[data-paper-page] .markdown .token.cdata {
+  color: var(--paper-code-light-cmt);
+  font-style: italic;
+}
+
+[data-paper-page] .markdown .token.keyword,
+[data-paper-page] .markdown .token.rule,
+[data-paper-page] .markdown .token.atrule,
+[data-paper-page] .markdown .token.important,
+[data-paper-page] .markdown .token.builtin,
+[data-paper-page] .markdown .token.tag {
+  color: var(--paper-code-light-kw);
+  font-weight: 500;
+}
+
+[data-paper-page] .markdown .token.string,
+[data-paper-page] .markdown .token.attr-value,
+[data-paper-page] .markdown .token.regex,
+[data-paper-page] .markdown .token.template-string,
+[data-paper-page] .markdown .token.template-punctuation {
+  color: var(--paper-code-light-str);
+}
+
+[data-paper-page] .markdown .token.number,
+[data-paper-page] .markdown .token.boolean,
+[data-paper-page] .markdown .token.constant,
+[data-paper-page] .markdown .token.symbol,
+[data-paper-page] .markdown .token.unit,
+[data-paper-page] .markdown .token.hexcode {
+  color: var(--paper-code-light-num);
+}
+
+[data-paper-page] .markdown .token.function,
+[data-paper-page] .markdown .token.function-variable,
+[data-paper-page] .markdown .token.method {
+  color: var(--paper-code-light-fn);
+}
+
+[data-paper-page] .markdown .token.class-name,
+[data-paper-page] .markdown .token.maybe-class-name {
+  color: var(--paper-code-light-type);
+}
+
+[data-paper-page] .markdown .token.property,
+[data-paper-page] .markdown .token.property-access,
+[data-paper-page] .markdown .token.attr-name,
+[data-paper-page] .markdown .token.parameter {
+  color: var(--paper-code-light-prop);
+}
+
+[data-paper-page] .markdown .token.operator,
+[data-paper-page] .markdown .token.entity,
+[data-paper-page] .markdown .token.url,
+[data-paper-page] .markdown .token.namespace {
+  color: var(--paper-code-light-op);
+}
+
+[data-paper-page] .markdown .token.punctuation {
+  color: var(--paper-code-light-punct);
+}
+
+[data-paper-page] .markdown .token.selector,
+[data-paper-page] .markdown .token.char {
+  color: var(--paper-code-light-str);
+}
+
+[data-paper-page] .markdown .token.inserted {
+  color: var(--paper-code-light-str);
+  background: rgba(26, 92, 58, 0.08);
+}
+
+[data-paper-page] .markdown .token.deleted {
+  color: var(--paper-code-light-kw);
+  background: rgba(176, 48, 0, 0.08);
 }
 
 [data-paper-page] .markdown blockquote {
@@ -361,7 +481,11 @@ html.blog-wrapper .hero__subtitle {
   color: var(--paper-text-muted);
 }
 
-/* ── Prism code highlight override (shared with docs) ───────── */
-[data-paper-page] .docusaurus-highlight-code-line {
-  background: rgba(194, 65, 12, 0.12);
+/* ── Prism code highlight (shared with docs) ────────────────── */
+[data-paper-page] .docusaurus-highlight-code-line,
+[data-paper-page] .markdown .theme-code-block-highlighted-line {
+  background: var(--paper-code-light-hl);
+  display: block;
+  margin: 0 -1.25rem;
+  padding: 0 1.25rem;
 }
