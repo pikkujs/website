@@ -1,0 +1,367 @@
+/* ============================================================
+   Blog — paper theme overrides
+   Applied via html.blog-wrapper (Docusaurus auto-class).
+   The BlogLayout swizzle also injects data-paper-page, which
+   activates navbar / footer / accent rules in custom.css.
+   All colour values reference CSS variables from tokens.css.
+   ============================================================ */
+
+/* ── Page shell ─────────────────────────────────────────── */
+/* Beats [data-theme='dark'] body (specificity 0,1,1) */
+html.blog-wrapper body,
+html.blog-wrapper .main-wrapper {
+  background-color: var(--paper-bg) !important;
+  color: var(--paper-text-body);
+  font-family: 'Geist', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Infima token overrides for content-area components */
+html.blog-wrapper {
+  --ifm-color-primary:          var(--paper-accent);
+  --ifm-color-primary-dark:     var(--paper-accent-dark);
+  --ifm-color-primary-darker:   var(--paper-accent-darker);
+  --ifm-color-primary-darkest:  var(--paper-accent-darkest);
+  --ifm-color-primary-light:    var(--paper-accent-light);
+  --ifm-color-primary-lighter:  var(--paper-accent-lighter);
+  --ifm-color-primary-lightest: var(--paper-accent-lightest);
+  --ifm-link-color:             var(--paper-accent);
+  --ifm-link-hover-color:       var(--paper-accent-dark);
+  --ifm-heading-color:          var(--paper-text);
+  --ifm-font-color-base:        var(--paper-text-body);
+  --ifm-background-color:       var(--paper-bg);
+  --ifm-background-surface-color: var(--paper-bg-alt);
+  --ifm-code-background:        var(--paper-bg-dark);
+  --ifm-hr-background-color:    var(--paper-border);
+  --ifm-blockquote-border-color: var(--paper-accent);
+  --ifm-toc-border-color:       var(--paper-border);
+  --ifm-pagination-border-radius: 8px;
+  --ifm-color-emphasis-200:     var(--paper-border);
+  --ifm-color-emphasis-300:     var(--paper-border-strong);
+  --ifm-table-border-color:     var(--paper-border);
+  --ifm-breadcrumb-color-active: var(--paper-accent);
+}
+
+/* ── Blog list — article cards ───────────────────────────── */
+html.blog-wrapper article {
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 14px;
+  padding: 36px 40px;
+  margin-bottom: 24px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+html.blog-wrapper article:hover {
+  border-color: var(--paper-border-strong);
+  box-shadow: 0 14px 40px -20px var(--paper-shadow-md);
+}
+
+/* ── Post title ──────────────────────────────────────────── */
+html.blog-wrapper article header h1,
+html.blog-wrapper article header h2 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.8px;
+  color: var(--paper-text);
+  margin-bottom: 12px;
+}
+
+html.blog-wrapper article header h1 { font-size: clamp(28px, 3.5vw, 44px); letter-spacing: -1.2px; }
+html.blog-wrapper article header h2 { font-size: clamp(22px, 2.5vw, 30px); }
+
+html.blog-wrapper article header h1 a,
+html.blog-wrapper article header h2 a {
+  color: var(--paper-text) !important;
+  text-decoration: none;
+}
+
+html.blog-wrapper article header h1 a:hover,
+html.blog-wrapper article header h2 a:hover {
+  color: var(--paper-accent) !important;
+}
+
+/* ── Post metadata (date, reading time) ──────────────────── */
+html.blog-wrapper article time,
+html.blog-wrapper article .margin-vert--md {
+  color: var(--paper-text-faint);
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+  letter-spacing: 0.3px;
+}
+
+html.blog-wrapper article time a {
+  color: var(--paper-text-faint) !important;
+}
+
+/* ── Author block ────────────────────────────────────────── */
+html.blog-wrapper .avatar__name a {
+  color: var(--paper-text-body) !important;
+  font-weight: 500;
+}
+
+html.blog-wrapper .avatar__subtitle {
+  color: var(--paper-text-faint);
+  font-size: 12px;
+}
+
+html.blog-wrapper .avatar__photo {
+  border: 2px solid var(--paper-border);
+}
+
+/* ── Markdown body ───────────────────────────────────────── */
+html.blog-wrapper .markdown {
+  font-size: 16.5px;
+  line-height: 1.75;
+  color: var(--paper-text-body);
+}
+
+html.blog-wrapper .markdown h2,
+html.blog-wrapper .markdown h3,
+html.blog-wrapper .markdown h4 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  color: var(--paper-text);
+  letter-spacing: -0.5px;
+}
+
+html.blog-wrapper .markdown h2 { font-size: clamp(22px, 2.5vw, 30px); margin-top: 2.2em; }
+html.blog-wrapper .markdown h3 { font-size: 21px; margin-top: 1.8em; }
+html.blog-wrapper .markdown h4 { font-size: 17px; font-family: 'Geist', sans-serif; }
+
+html.blog-wrapper .markdown p { margin-bottom: 1.4em; }
+
+html.blog-wrapper .markdown a {
+  color: var(--paper-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--paper-accent-border);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+
+html.blog-wrapper .markdown a:hover {
+  text-decoration-color: var(--paper-accent);
+}
+
+html.blog-wrapper .markdown strong { color: var(--paper-text); }
+
+html.blog-wrapper .markdown code {
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.875em;
+  background: var(--paper-bg-dark);
+  color: var(--paper-text-body);
+  border: 1px solid var(--paper-border);
+  border-radius: 4px;
+  padding: 0.15em 0.45em;
+}
+
+html.blog-wrapper .markdown pre {
+  background: var(--paper-code-bg) !important;
+  border: 1px solid var(--paper-code-border);
+  border-radius: 12px;
+}
+
+html.blog-wrapper .markdown pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--paper-code-text);
+  font-size: 13.5px;
+}
+
+html.blog-wrapper .markdown blockquote {
+  border-left: 3px solid var(--paper-accent);
+  background: var(--paper-accent-bg);
+  margin: 1.5em 0;
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  color: var(--paper-text-muted);
+  font-style: italic;
+}
+
+html.blog-wrapper .markdown blockquote p { margin: 0; }
+
+html.blog-wrapper .markdown hr {
+  border: none;
+  border-top: 1px solid var(--paper-border);
+  margin: 2.5em 0;
+}
+
+html.blog-wrapper .markdown img {
+  border-radius: 10px;
+  border: 1px solid var(--paper-border);
+}
+
+html.blog-wrapper .markdown table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5em 0;
+  font-size: 15px;
+}
+
+html.blog-wrapper .markdown table th {
+  background: var(--paper-bg-dark);
+  color: var(--paper-text);
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  padding: 10px 14px;
+  border: 1px solid var(--paper-border);
+  text-align: left;
+}
+
+html.blog-wrapper .markdown table td {
+  padding: 10px 14px;
+  border: 1px solid var(--paper-border);
+  color: var(--paper-text-body);
+}
+
+html.blog-wrapper .markdown table tr:nth-child(even) td {
+  background: var(--paper-bg-alt);
+}
+
+/* ── Tags ────────────────────────────────────────────────── */
+html.blog-wrapper article footer a[href^="/blog/tags"] {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--paper-accent) !important;
+  background: var(--paper-accent-bg);
+  border: 1px solid var(--paper-accent-border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  text-decoration: none !important;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+html.blog-wrapper article footer a[href^="/blog/tags"]:hover {
+  background: var(--paper-accent-border);
+  border-color: var(--paper-accent);
+}
+
+/* ── "Read more" link ────────────────────────────────────── */
+html.blog-wrapper article footer a:not([href^="/blog/tags"]) {
+  font-family: 'Geist', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--paper-accent) !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+html.blog-wrapper article footer a:not([href^="/blog/tags"]):hover {
+  text-decoration: underline;
+}
+
+/* ── Pagination ──────────────────────────────────────────── */
+html.blog-wrapper .pagination-nav {
+  margin-top: 48px;
+  border-top: 1px solid var(--paper-border);
+  padding-top: 32px;
+}
+
+html.blog-wrapper .pagination-nav__item a {
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 10px;
+  color: var(--paper-text-body) !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+html.blog-wrapper .pagination-nav__item a:hover {
+  border-color: var(--paper-accent);
+  box-shadow: 0 4px 16px -4px var(--paper-accent-ring);
+  text-decoration: none;
+}
+
+html.blog-wrapper .pagination-nav__label {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 17px;
+  color: var(--paper-text);
+}
+
+html.blog-wrapper .pagination-nav__sublabel {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: var(--paper-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Blog sidebar ────────────────────────────────────────── */
+html.blog-wrapper aside {
+  border-right: none;
+}
+
+html.blog-wrapper aside h3 {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--paper-text-faint);
+  margin-bottom: 16px;
+}
+
+html.blog-wrapper aside ul li a {
+  color: var(--paper-text-muted) !important;
+  font-size: 13.5px;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: color 0.15s;
+  display: block;
+  padding: 4px 0;
+}
+
+html.blog-wrapper aside ul li a:hover,
+html.blog-wrapper aside ul li a[aria-current="page"] {
+  color: var(--paper-accent) !important;
+}
+
+/* ── Table of contents ───────────────────────────────────── */
+html.blog-wrapper .table-of-contents {
+  border-left: 2px solid var(--paper-border);
+}
+
+html.blog-wrapper .table-of-contents__link {
+  color: var(--paper-text-muted) !important;
+  font-size: 13px;
+}
+
+html.blog-wrapper .table-of-contents__link:hover,
+html.blog-wrapper .table-of-contents__link--active {
+  color: var(--paper-accent) !important;
+}
+
+/* ── Blog tags page ──────────────────────────────────────── */
+html.blog-wrapper .tag_node_modules-\@docusaurus-theme-classic-lib-theme-Tag-styles-module {
+  color: var(--paper-accent) !important;
+  border-color: var(--paper-accent-border) !important;
+}
+
+/* ── Hero banner (if blog has one) ───────────────────────── */
+html.blog-wrapper .hero {
+  background: var(--paper-bg-dark);
+  border-bottom: 1px solid var(--paper-border);
+  padding: 48px 0;
+}
+
+html.blog-wrapper .hero__title {
+  color: var(--paper-text);
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -1px;
+}
+
+html.blog-wrapper .hero__subtitle {
+  color: var(--paper-text-muted);
+}
+
+/* ── Prism code highlight override ───────────────────────── */
+html.blog-wrapper .docusaurus-highlight-code-line {
+  background: rgba(194, 65, 12, 0.12);
+}

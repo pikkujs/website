@@ -59,6 +59,56 @@
   /* Code highlight */
   --site-code-highlight: rgba(37, 99, 235, 0.12);
 
+  /* ── Paper theme palette ─────────────────────────────── */
+  /* Backgrounds */
+  --paper-bg:              #f7f5f0;   /* main page bg           */
+  --paper-bg-alt:          #fffefb;   /* card / surface bg      */
+  --paper-bg-dark:         #efece4;   /* footer / alt-section   */
+
+  /* Code / terminal backgrounds */
+  --paper-code-bg:         #16140f;
+  --paper-code-bg-bar:     #1f1c16;
+  --paper-code-border:     #2a2720;
+
+  /* Text */
+  --paper-text:            #1a1814;   /* headings               */
+  --paper-text-body:       #3a362e;   /* body copy              */
+  --paper-text-muted:      #6b6559;   /* secondary / captions   */
+  --paper-text-faint:      #9a9387;   /* labels / timestamps    */
+
+  /* Accent — orange-red */
+  --paper-accent:          #c2410c;
+  --paper-accent-dark:     #a83a0b;
+  --paper-accent-darker:   #9a3409;
+  --paper-accent-darkest:  #7a2907;
+  --paper-accent-light:    #d45520;
+  --paper-accent-lighter:  #da6535;
+  --paper-accent-lightest: #e88560;
+  --paper-accent-bg:       #f4e6dd;   /* tinted accent surface  */
+  --paper-accent-border:   #e8cfc3;   /* solid accent border    */
+
+  /* Borders */
+  --paper-border:          #e3ddd0;   /* default border         */
+  --paper-border-strong:   #d4ccba;   /* hover / emphasis       */
+
+  /* Code syntax colours */
+  --paper-code-text:       #d8d2c4;
+  --paper-code-hl:         #e0a96b;   /* amber / numbers        */
+  --paper-code-teal:       #6fb3c0;   /* strings / urls         */
+  --paper-code-green:      #79b06a;   /* success / prompt       */
+  --paper-code-dim:        #8a8475;   /* comments               */
+  --paper-code-label:      #6f6a5e;   /* terminal tab label     */
+
+  /* Shadow + alpha helpers */
+  --paper-accent-ring:     rgba(194, 65, 12, 0.20);
+  --paper-accent-ring-sm:  rgba(194, 65, 12, 0.12);
+  --paper-shadow-sm:       rgba(26, 24, 20, 0.12);
+  --paper-shadow-md:       rgba(26, 24, 20, 0.20);
+  --paper-shadow-lg:       rgba(26, 24, 20, 0.30);
+  --paper-shadow-xl:       rgba(26, 24, 20, 0.35);
+  --paper-shadow-2xl:      rgba(26, 24, 20, 0.50);
+  --paper-shadow-3xl:      rgba(26, 24, 20, 0.55);
+
   /* ── Wire-type protocol colors ───────────────────────── */
   --wire-http:      #22c55e;   /* green-500  */
   --wire-websocket: #a855f7;   /* purple-500 */

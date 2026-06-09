@@ -1,6 +1,7 @@
 @import './tokens.css';
 @import './wiring-icons.css';
 @import './mega-menu.css';
+@import './blog.css';
 @import "tailwindcss/theme";
 
 /* Use Docusaurus theme toggle for dark: utilities instead of prefers-color-scheme */
@@ -771,6 +772,245 @@ a.no-underline:hover * {
   .surface-lit {
     transition: none !important;
   }
+}
+
+/* ========================================
+   Paper Theme — Navbar, Footer, Mega-Menu
+   Activated via CSS :has() when [data-paper-page] is present in DOM.
+   Uses :has() — supported in all current browsers (Chrome 105+, Safari 15.4+, FF 121+).
+   ======================================== */
+
+/* Override Infima vars at root so all components pick them up */
+:has([data-paper-page]),
+:has([data-paper-page]) .navbar {
+  --ifm-navbar-background-color: var(--paper-bg);
+  --ifm-navbar-link-color: var(--paper-text-body);
+  --ifm-navbar-link-hover-color: var(--paper-accent);
+  --ifm-footer-background-color: var(--paper-bg-dark);
+  --ifm-color-primary:          var(--paper-accent);
+  --ifm-color-primary-dark:     var(--paper-accent-dark);
+  --ifm-color-primary-darker:   var(--paper-accent-darker);
+  --ifm-color-primary-darkest:  var(--paper-accent-darkest);
+  --ifm-color-primary-light:    var(--paper-accent-light);
+  --ifm-color-primary-lighter:  var(--paper-accent-lighter);
+  --ifm-color-primary-lightest: var(--paper-accent-lightest);
+  --site-accent-border:    var(--paper-accent-ring);
+  --site-accent-border-sm: var(--paper-accent-ring-sm);
+}
+
+:has([data-paper-page]) .navbar {
+  background-color: var(--paper-bg) !important;
+  border-bottom: 1px solid var(--paper-border) !important;
+  box-shadow: none !important;
+}
+
+:has([data-paper-page]) .navbar__title {
+  color: var(--paper-text);
+  font-weight: 700;
+  font-family: 'Geist', -apple-system, sans-serif;
+}
+
+:has([data-paper-page]) .navbar__link {
+  color: var(--paper-text-body);
+  font-family: 'Geist', -apple-system, sans-serif;
+  font-weight: 500;
+}
+
+:has([data-paper-page]) .navbar__link:hover,
+:has([data-paper-page]) .navbar__link--active {
+  color: var(--paper-accent);
+  text-decoration: none;
+}
+
+/* Swap navbar logo to paper-themed version */
+:has([data-paper-page]) .navbar__logo {
+  content: url('/img/pikku-paper.svg');
+  height: 3.4rem;
+}
+
+/* GitHub stars badge */
+:has([data-paper-page]) .header-github-stars {
+  border-color: var(--paper-border-strong);
+  color: var(--paper-text-body);
+}
+
+:has([data-paper-page]) .header-github-stars:hover {
+  border-color: var(--paper-text);
+  color: var(--paper-text);
+}
+
+/* X and Discord icon links */
+:has([data-paper-page]) .header-x-link::before {
+  background: url("data:image/svg+xml,%3Csvg fill='%233a362e' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' %3E%3Cpath d='M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584l-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z'/%3E%3C/svg%3E") no-repeat;
+}
+
+:has([data-paper-page]) .header-discord-link::before {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' %3E%3Cpath fill='%233a362e' d='M20.317 4.37a19.8 19.8 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.3 18.3 0 0 0-5.487 0a13 13 0 0 0-.617-1.25a.08.08 0 0 0-.079-.037A19.7 19.7 0 0 0 3.677 4.37a.1.1 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.08.08 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.08.08 0 0 0 .084-.028a14 14 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13 13 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10 10 0 0 0 .372-.292a.07.07 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .078.01q.181.149.373.292a.077.077 0 0 1-.006.127a12.3 12.3 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.08.08 0 0 0 .084.028a19.8 19.8 0 0 0 6.002-3.03a.08.08 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03M8.02 15.33c-1.182 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418m7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* Mega-menu trigger */
+:has([data-paper-page]) .mega-menu-trigger {
+  color: var(--paper-text-body);
+}
+
+:has([data-paper-page]) .mega-menu-trigger:hover {
+  color: var(--paper-accent);
+}
+
+/* Mega-menu panel */
+:has([data-paper-page]) .mega-menu-panel {
+  background: var(--paper-bg-alt);
+  border-top: 1px solid var(--paper-border);
+  box-shadow: 0 8px 32px var(--paper-shadow-sm), 0 2px 8px var(--paper-shadow-md);
+}
+
+:has([data-paper-page]) .mega-menu-category-label {
+  color: var(--paper-text-faint);
+}
+
+:has([data-paper-page]) .mega-menu-item {
+  color: var(--paper-text);
+}
+
+:has([data-paper-page]) .mega-menu-item:hover {
+  background: var(--paper-accent-bg);
+  color: var(--paper-text);
+}
+
+:has([data-paper-page]) .mega-menu-icon-box {
+  background: var(--paper-bg);
+  border-color: var(--paper-border);
+}
+
+:has([data-paper-page]) .mega-menu-item-label {
+  color: var(--paper-text);
+}
+
+:has([data-paper-page]) .mega-menu-item-desc {
+  color: var(--paper-text-muted);
+}
+
+:has([data-paper-page]) .mega-menu-footer {
+  border-top-color: var(--paper-border);
+}
+
+:has([data-paper-page]) .mega-menu-footer a {
+  color: var(--paper-accent);
+  opacity: 0.75;
+}
+
+:has([data-paper-page]) .mega-menu-footer a:hover {
+  color: var(--paper-accent);
+  opacity: 1;
+}
+
+/* Mobile sidebar */
+:has([data-paper-page]) .navbar-sidebar {
+  background: var(--paper-bg);
+  border-right: 1px solid var(--paper-border);
+}
+
+:has([data-paper-page]) .navbar-sidebar .navbar-sidebar__brand {
+  border-bottom-color: var(--paper-border);
+}
+
+:has([data-paper-page]) .navbar-sidebar .menu__link {
+  color: var(--paper-text-body);
+}
+
+:has([data-paper-page]) .navbar-sidebar .menu__link:hover {
+  color: var(--paper-accent);
+  background: var(--paper-accent-bg);
+}
+
+:has([data-paper-page]) .navbar-sidebar .menu__link--active {
+  color: var(--paper-accent);
+  background: var(--paper-accent-bg);
+}
+
+/* Footer */
+:has([data-paper-page]) .footer,
+:has([data-paper-page]) .footer--dark {
+  background-color: var(--paper-bg-dark) !important;
+  border-top: 1px solid var(--paper-border);
+}
+
+:has([data-paper-page]) .footer__title {
+  color: var(--paper-text);
+  font-family: 'Geist', -apple-system, sans-serif;
+  font-weight: 700;
+}
+
+:has([data-paper-page]) .footer__link-item {
+  color: var(--paper-text-muted);
+  font-family: 'Geist', -apple-system, sans-serif;
+  font-size: 0.875rem;
+  transition: color 0.15s;
+}
+
+:has([data-paper-page]) .footer__link-item:hover {
+  color: var(--paper-accent);
+  text-decoration: none;
+}
+
+:has([data-paper-page]) .footer__copyright {
+  color: var(--paper-text-faint);
+  font-family: 'Geist', -apple-system, sans-serif;
+  font-size: 0.8rem;
+}
+
+:has([data-paper-page]) .footer__logo {
+  opacity: 0.75;
+  filter: none;
+}
+
+:has([data-paper-page]) .footer__logo:hover {
+  opacity: 1;
+}
+
+/* Accent toggle button */
+:has([data-paper-page]) .navbar__accent-toggle {
+  border-color: var(--paper-border-strong);
+  color: var(--paper-text-body);
+}
+
+:has([data-paper-page]) .navbar__accent-toggle:hover {
+  border-color: var(--paper-text);
+}
+
+/* DocSearch (Algolia) — paper theme */
+:has([data-paper-page]) .DocSearch-Button {
+  --docsearch-searchbox-background: #ede9e0;
+  --docsearch-searchbox-focus-background: #e6e0d4;
+  --docsearch-text-color: var(--paper-text-body);
+  --docsearch-muted-color: var(--paper-text-faint);
+  --docsearch-key-gradient: linear-gradient(to bottom, var(--paper-bg), #e6e0d4);
+  --docsearch-key-shadow: inset 0 -1px 0 0 #c8c0af, inset 0 0 0 1px var(--paper-border-strong), 0 1px 2px var(--paper-shadow-sm);
+  background: var(--docsearch-searchbox-background);
+  color: var(--docsearch-text-color);
+  border: 1px solid var(--paper-border-strong);
+  box-shadow: none;
+}
+
+:has([data-paper-page]) .DocSearch-Button:hover {
+  background: var(--docsearch-searchbox-focus-background);
+  box-shadow: none;
+  color: var(--paper-text);
+}
+
+:has([data-paper-page]) .DocSearch-Button .DocSearch-Button-Placeholder {
+  color: var(--paper-text-faint);
+}
+
+:has([data-paper-page]) .DocSearch-Button .DocSearch-Search-Icon {
+  color: var(--paper-text-faint);
+}
+
+:has([data-paper-page]) .DocSearch-Button-Keys .DocSearch-Button-Key {
+  background: var(--docsearch-key-gradient);
+  box-shadow: var(--docsearch-key-shadow);
+  color: var(--paper-text-muted);
+  border: none;
 }
 
 /* Accent toggle button in navbar */
