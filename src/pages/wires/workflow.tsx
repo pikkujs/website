@@ -1,291 +1,5 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
-import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
-import CodeBlock from '@theme/CodeBlock';
-import { WorkflowIcon } from '../../components/WiringIcons';
-import {
-  GitBranch, Clock, RefreshCw, Layers,
-  Copy, Check, Zap, Pause,
-  Server, BookOpen, Lock,
-  UserPlus, CreditCard, FileText, Database,
-  ArrowRight,
-} from 'lucide-react';
-
-/* ─────────────────────────────────────────────
-   Reusable helpers
-   ───────────────────────────────────────────── */
-
-function CodeCard({ filename, badge, icon, children }: {
-  filename: string;
-  badge?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        {icon}
-        <span className="text-sm font-semibold text-neutral-200">{filename}</span>
-        {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
-      </div>
-      <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">{children}</p>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   1. HERO
-   ───────────────────────────────────────────── */
-
-function Hero() {
-  return (
-    <div className="wire-hero-workflow w-full relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
-      </div>
-
-      <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
-        <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
-            Wire Type: Workflow
-          </span>
-          <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
-            <span className="text-white">Durable workflows,</span><br />
-            <span className="text-primary">plain TypeScript.</span>
-          </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            <code className="text-primary text-lg">wireWorkflow</code> orchestrates multi-step processes with durable execution, retries, sleep, and deterministic replay — all in plain TypeScript.
-          </p>
-          <div className="flex flex-row gap-4">
-            <Link to="/docs/wiring/workflows" className="bg-primary text-black hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-teal-500/20">Get Started</Link>
-            <a href="#basics" className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline">See the Code</a>
-          </div>
-        </div>
-
-        <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="relative">
-            <div className="absolute inset-0 bg-white/10 rounded-full blur-[40px]" />
-            <div className="relative bg-[#0d0d0d] border-2 border-white/20 rounded-2xl p-6">
-              <WorkflowIcon size={120} />
-            </div>
-          </div>
-        </div>
-      </header>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   2. PROBLEM — "The problem with workflow engines today"
-   ───────────────────────────────────────────── */
-
-function ProblemSection() {
-  const painPoints = [
-    {
-      icon: <Server className="w-6 h-6 text-primary" />,
-      title: 'Separate infrastructure',
-      desc: 'Temporal requires a cluster. Inngest needs their cloud or a self-hosted server. You\'re adding another service to manage, monitor, and pay for — before you write a single workflow.',
-    },
-    {
-      icon: <BookOpen className="w-6 h-6 text-primary" />,
-      title: 'New programming model',
-      desc: 'Temporal has activities, workflows, signals, and queries. Inngest has step.run, step.sleep, step.sendEvent. Each comes with its own SDK, its own patterns, its own testing story. Your existing functions can\'t be reused.',
-    },
-    {
-      icon: <Lock className="w-6 h-6 text-primary" />,
-      title: 'Vendor lock-in',
-      desc: 'Your workflow logic is coupled to the engine. Switching from Inngest to Temporal means rewriting everything. Your business logic lives inside their SDK.',
-    },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-14">
-          <SectionLabel>The Problem</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            The problem with workflow engines <span className="text-primary">today</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Existing tools solve durable execution well — but they come with trade-offs that compound as your system grows.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl">
-          {painPoints.map((point, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 relative group hover:border-neutral-700 transition-colors">
-              <div className="bg-white/[0.06] w-12 h-12 rounded-lg flex items-center justify-center mb-5">
-                {point.icon}
-              </div>
-              <h3 className="text-lg font-bold text-white mb-3 font-jakarta">{point.title}</h3>
-              <p className="text-sm text-neutral-400 leading-relaxed">{point.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="max-w-3xl mt-12 bg-white/[0.04] border border-white/12 rounded-xl p-6 ">
-          <p className="text-neutral-300 text-base leading-relaxed">
-            <span className="text-primary font-semibold">Pikku takes a different approach.</span> Your workflows use the same functions you already have, run on your existing infrastructure, and persist state to any storage backend. No new service. No new SDK. No lock-in.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   3. COMPARISON — "How Pikku compares"
-   ───────────────────────────────────────────── */
-
-function ComparisonSection() {
-  const dimensions = [
-    { label: 'Setup', pikku: 'Your existing app', temporal: 'Separate cluster + workers', inngest: 'Cloud service or self-host', mastra: 'Your existing app' },
-    { label: 'Step definition', pikku: 'workflow.do() with your functions', temporal: 'Activities + workflow code', inngest: 'step.run() callbacks', mastra: 'step() with z.object()' },
-    { label: 'Function reuse', pikku: 'Same Pikku functions', temporal: 'Wrap in activities', inngest: 'Inline or import', mastra: 'Inline or import' },
-    { label: 'Sleep / timers', pikku: 'workflow.sleep()', temporal: 'workflow.sleep()', inngest: 'step.sleep()', mastra: 'Not built-in' },
-    { label: 'State persistence', pikku: 'Any storage backend', temporal: 'Temporal server', inngest: 'Inngest cloud', mastra: 'In-memory or custom' },
-    { label: 'TypeScript-native', pikku: 'Yes, plain TS', temporal: 'SDK with decorators', inngest: 'Yes', mastra: 'Yes' },
-    { label: 'Graph workflows', pikku: 'Built-in DAGs', temporal: 'Manual orchestration', inngest: 'Fan-out only', mastra: 'Built-in step graphs' },
-    { label: 'AI agent integration', pikku: 'Same framework', temporal: 'Separate concern', inngest: 'Separate concern', mastra: 'Same framework' },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-14">
-          <SectionLabel>How It Compares</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Pikku vs the <span className="text-primary">alternatives</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Temporal, Inngest, and Mastra are excellent tools. Pikku's advantage is that workflows use the same functions and infrastructure you already have, with no separate service.
-          </p>
-        </div>
-        <div className="max-w-5xl overflow-x-auto">
-          <div className="bg-[#0a0a0a] border border-neutral-800 rounded-2xl overflow-hidden">
-            <table className="w-full text-left border-collapse min-w-[640px]">
-              <thead>
-                <tr className="border-b border-neutral-800">
-                  <th className="py-4 px-5 text-xs font-bold tracking-widest uppercase text-neutral-600 w-[18%]"></th>
-                  <th className="py-4 px-5 w-[20%]">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-primary" />
-                      <span className="text-sm font-bold text-primary font-jakarta">Pikku</span>
-                    </div>
-                  </th>
-                  <th className="py-4 px-5 text-sm font-semibold text-neutral-500 w-[20%]">Temporal</th>
-                  <th className="py-4 px-5 text-sm font-semibold text-neutral-500 w-[21%]">Inngest</th>
-                  <th className="py-4 px-5 text-sm font-semibold text-neutral-500 w-[21%]">Mastra</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dimensions.map((d, i) => (
-                  <tr key={i} className={`border-b border-neutral-800/50 ${i % 2 === 0 ? 'bg-white/[0.01]' : ''}`}>
-                    <td className="py-3.5 px-5 text-xs font-bold tracking-wider uppercase text-neutral-500">{d.label}</td>
-                    <td className="py-3.5 px-5 text-sm text-teal-300 font-medium">{d.pikku}</td>
-                    <td className="py-3.5 px-5 text-sm text-neutral-500">{d.temporal}</td>
-                    <td className="py-3.5 px-5 text-sm text-neutral-500">{d.inngest}</td>
-                    <td className="py-3.5 px-5 text-sm text-neutral-500">{d.mastra}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   4. USE CASES — "What you can build"
-   ───────────────────────────────────────────── */
-
-function UseCasesSection() {
-  const useCases = [
-    {
-      icon: <UserPlus className="w-5 h-5 text-primary" />,
-      title: 'User onboarding',
-      steps: ['createProfile', 'addToCRM', 'sleep(5min)', 'sendWelcomeEmail'],
-    },
-    {
-      icon: <CreditCard className="w-5 h-5 text-primary" />,
-      title: 'Payment processing',
-      steps: ['createCharge', 'waitForWebhook', 'generateInvoice', 'sendReceipt'],
-    },
-    {
-      icon: <FileText className="w-5 h-5 text-primary" />,
-      title: 'Content pipeline',
-      steps: ['generateDraft', 'humanReview', 'publishPost', 'notifySubscribers'],
-    },
-    {
-      icon: <Database className="w-5 h-5 text-primary" />,
-      title: 'Data migration',
-      steps: ['exportFromSource', 'transformRecords', 'importToTarget', 'verifyIntegrity'],
-    },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Use Cases</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            What you can <span className="text-primary">build</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Each step is a regular Pikku function — the same ones you use for HTTP, queues, and everything else.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
-          {useCases.map((uc, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 hover:border-neutral-700 transition-colors">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="bg-white/[0.06] w-9 h-9 rounded-lg flex items-center justify-center">
-                  {uc.icon}
-                </div>
-                <h3 className="text-base font-bold text-white font-jakarta">{uc.title}</h3>
-              </div>
-              <div className="flex items-center flex-wrap gap-1.5">
-                {uc.steps.map((step, j) => (
-                  <React.Fragment key={j}>
-                    <span className="text-xs font-mono px-2.5 py-1.5 rounded-md bg-white/[0.06] text-primary border border-white/12 whitespace-nowrap">
-                      {step}
-                    </span>
-                    {j < uc.steps.length - 1 && (
-                      <ArrowRight className="w-3.5 h-3.5 text-neutral-600 shrink-0" />
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   5. BASICS — "Orchestrate with workflow.do()"
-   ───────────────────────────────────────────── */
+import { FeaturePage } from '../../components/FeaturePage';
+import type { PageData } from '../../components/FeaturePage/types';
 
 const basicsCode = `const onboardUser = pikkuWorkflowFunc<
   { email: string; userId: string },
@@ -317,118 +31,6 @@ const basicsCode = `const onboardUser = pikkuWorkflowFunc<
   return { success: true }
 })`;
 
-function BasicsSection() {
-  return (
-    <section id="basics" className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>The Basics</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Orchestrate with <span className="text-primary">workflow.do()</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Each <code className="text-primary">workflow.do()</code> call is a durable step. RPC steps run as queue jobs. Inline steps execute immediately. Both are cached for replay.
-          </p>
-        </div>
-
-        <div className="max-w-3xl">
-          <CodeCard filename="onboarding.workflow.ts" icon={<WorkflowIcon size={15} />}>
-            <CodeBlock language="typescript">{basicsCode}</CodeBlock>
-          </CodeCard>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
-          {[
-            { label: 'Deterministic replay', desc: 'Completed steps are never re-executed. Results are cached and replayed on recovery.' },
-            { label: 'Plain TypeScript', desc: 'Loops, conditionals, Promise.all — use any TypeScript construct. No YAML, no DSL.' },
-            { label: 'Typed I/O', desc: 'Workflow input and output are fully typed. Each RPC step infers types from the target function.' },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">✓</span>
-              <div>
-                <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
-                <p className="text-xs text-neutral-500">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   3. STEP TYPES — "Four step primitives"
-   ───────────────────────────────────────────── */
-
-function StepTypesSection() {
-  const steps = [
-    {
-      icon: <Zap className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'workflow.do(name, rpcName, data, options?)',
-      desc: 'Execute a Pikku function as a queue job. Supports retries and retry delay.',
-      tag: 'RPC',
-    },
-    {
-      icon: <Layers className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'workflow.do(name, async () => value)',
-      desc: 'Inline step — runs immediately, result cached for replay. Great for transformations.',
-      tag: 'inline',
-    },
-    {
-      icon: <Clock className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'workflow.sleep(name, duration)',
-      desc: 'Durable sleep. Survives restarts — the workflow resumes after the duration.',
-      tag: 'sleep',
-    },
-    {
-      icon: <Pause className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'workflow.suspend(reason)',
-      desc: 'Pause the workflow until explicitly resumed. For human-in-the-loop approval flows.',
-      tag: 'suspend',
-    },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Step Types</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Four step <span className="text-primary">primitives</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Every workflow is built from these four building blocks.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl">
-          {steps.map((s, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-              <div className="flex items-start gap-4">
-                {s.icon}
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <h3 className="text-sm font-bold text-white font-mono">{s.title}</h3>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-primary">{s.tag}</span>
-                  </div>
-                  <p className="text-sm text-neutral-400 leading-relaxed">{s.desc}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   4. PATTERNS — "Fan-out, retry, branch"
-   ───────────────────────────────────────────── */
-
 const patternsCode = `// Fan-out: parallel steps with Promise.all
 const users = await Promise.all(
   data.userIds.map(async (userId) =>
@@ -449,36 +51,6 @@ if (user.plan === 'pro') {
   await workflow.do('Apply discount', 'applyDiscount', { userId })
 }`;
 
-function PatternsSection() {
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Patterns</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Fan-out, retry, <span className="text-primary">branch</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Use standard TypeScript for control flow. Promise.all for parallelism. if/else for branching. Retries via step options.
-          </p>
-        </div>
-
-        <div className="max-w-3xl">
-          <CodeCard filename="workflow-patterns.ts" icon={<WorkflowIcon size={15} />}>
-            <CodeBlock language="typescript">{patternsCode}</CodeBlock>
-          </CodeCard>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   5. GRAPH WORKFLOWS — "Visual DAGs"
-   ───────────────────────────────────────────── */
-
 const graphCode = `const userOnboarding = pikkuWorkflowGraph({
   description: 'Onboard a new user',
   nodes: {
@@ -498,59 +70,6 @@ const graphCode = `const userOnboarding = pikkuWorkflowGraph({
     },
   },
 })`;
-
-function GraphSection() {
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Graph Workflows</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Declarative <span className="text-primary">DAGs</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            For node-based workflows, use <code className="text-primary">pikkuWorkflowGraph</code>. Define nodes, edges, and input mappings — Pikku handles execution order and parallelism.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-[3fr_2fr] gap-10 max-w-5xl items-start">
-          <CodeCard filename="onboarding.graph.ts" icon={<WorkflowIcon size={15} />} badge="graph">
-            <CodeBlock language="typescript">{graphCode}</CodeBlock>
-          </CodeCard>
-
-          <div className="space-y-5">
-            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-              <div className="flex items-start gap-4">
-                <GitBranch className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="text-base font-bold mb-1.5 text-white">Branching</h3>
-                  <p className="text-sm text-neutral-400 leading-relaxed">
-                    Use <code className="text-primary text-xs">graph.branch('key')</code> inside a node to select which edge to follow. Record-based next config maps keys to nodes.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-              <div className="flex items-start gap-4">
-                <RefreshCw className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="text-base font-bold mb-1.5 text-white">ref() for data flow</h3>
-                  <p className="text-sm text-neutral-400 leading-relaxed">
-                    Use <code className="text-primary text-xs">ref('nodeId', 'path')</code> to reference output from previous nodes — resolved at runtime.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   6. HTTP WIRING — "Start, poll, resume"
-   ───────────────────────────────────────────── */
 
 const httpCode = `// Start a workflow (returns runId)
 wireHTTP({
@@ -573,87 +92,161 @@ wireHTTP({
   func: workflowStatus('userOnboarding'),
 })`;
 
-function HTTPWiringSection() {
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
+const page: PageData = {
+  meta: {
+    title: 'Workflow Wire — Pikku',
+    description: 'TypeScript durable workflows with no separate infrastructure. Pikku provides durable execution, retries, sleep, fan-out, and DAG-based graph workflows — using your existing functions and database.',
+  },
+  sections: [
+    {
+      component: 'hero',
+      badge: 'Wire Type: Workflow',
+      h1: 'Durable workflows,\n_plain TypeScript._',
+      lead: 'wireWorkflow orchestrates multi-step processes with durable execution, retries, sleep, and deterministic replay — all in plain TypeScript.',
+      cta: [
+        { label: 'Get Started', to: '/docs/wiring/workflows', primary: true },
+        { label: 'See the Code', to: '#basics', primary: false },
+      ],
+      right: { type: 'wire-icon', name: 'workflow' },
+    },
 
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>HTTP Wiring</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Start, poll, <span className="text-primary">resume</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Pikku provides helper functions to wire workflows to HTTP endpoints — start, run to completion, or poll status.
-          </p>
-        </div>
+    {
+      component: 'feature-grid',
+      eyebrow: 'The Problem',
+      h2: 'The problem with workflow engines _today_',
+      lead: 'Existing tools solve durable execution well — but they come with trade-offs that compound as your system grows.',
+      variant: 'default',
+      columns: 3,
+      cards: [
+        { icon: 'server', title: 'Separate infrastructure', body: 'Temporal requires a cluster. Inngest needs their cloud or a self-hosted server. You\'re adding another service to manage, monitor, and pay for — before you write a single workflow.' },
+        { icon: 'book-open', title: 'New programming model', body: 'Temporal has activities, workflows, signals, and queries. Inngest has step.run, step.sleep, step.sendEvent. Each comes with its own SDK, its own patterns, its own testing story.' },
+        { icon: 'lock', title: 'Vendor lock-in', body: 'Your workflow logic is coupled to the engine. Switching from Inngest to Temporal means rewriting everything. Your business logic lives inside their SDK.' },
+      ],
+      below: {
+        type: 'note',
+        icon: 'zap',
+        title: 'Pikku takes a different approach.',
+        body: 'Your workflows use the same functions you already have, run on your existing infrastructure, and persist state to any storage backend. No new service. No new SDK. No lock-in.',
+      },
+    },
 
-        <div className="max-w-2xl">
-          <CodeCard filename="workflow.wiring.ts" icon={<WorkflowIcon size={15} />}>
-            <CodeBlock language="typescript">{httpCode}</CodeBlock>
-          </CodeCard>
-        </div>
-      </div>
-    </section>
-  );
-}
+    {
+      component: 'feature-grid',
+      eyebrow: 'How It Compares',
+      h2: 'Pikku vs the _alternatives_',
+      lead: 'Temporal, Inngest, and Mastra are excellent tools. Pikku\'s advantage is that workflows use the same functions and infrastructure you already have, with no separate service.',
+      variant: 'alt',
+      columns: 3,
+      cards: [
+        { title: 'Setup', body: 'Pikku: your existing app. Temporal: separate cluster + workers. Inngest: cloud service or self-host. Mastra: your existing app.' },
+        { title: 'Function reuse', body: 'Pikku: same Pikku functions. Temporal: wrap in activities. Inngest: inline or import. Mastra: inline or import.' },
+        { title: 'State persistence', body: 'Pikku: any storage backend. Temporal: Temporal server. Inngest: Inngest cloud. Mastra: in-memory or custom.' },
+        { title: 'TypeScript-native', body: 'Pikku: yes, plain TypeScript. Temporal: SDK with decorators. Inngest: yes. Mastra: yes.' },
+        { title: 'Graph workflows', body: 'Pikku: built-in DAGs. Temporal: manual orchestration. Inngest: fan-out only. Mastra: built-in step graphs.' },
+        { title: 'AI agent integration', body: 'Pikku: same framework. Temporal: separate concern. Inngest: separate concern. Mastra: same framework.' },
+      ],
+    },
 
-/* ─────────────────────────────────────────────
-   7. CTA
-   ───────────────────────────────────────────── */
+    {
+      component: 'feature-grid',
+      eyebrow: 'Use Cases',
+      h2: 'What you can _build_',
+      lead: 'Each step is a regular Pikku function — the same ones you use for HTTP, queues, and everything else.',
+      variant: 'default',
+      columns: 2,
+      cards: [
+        { icon: 'user-plus', title: 'User onboarding', body: 'createProfile → addToCRM → sleep(5min) → sendWelcomeEmail' },
+        { icon: 'credit-card', title: 'Payment processing', body: 'createCharge → waitForWebhook → generateInvoice → sendReceipt' },
+        { icon: 'file-text', title: 'Content pipeline', body: 'generateDraft → humanReview → publishPost → notifySubscribers' },
+        { icon: 'database', title: 'Data migration', body: 'exportFromSource → transformRecords → importToTarget → verifyIntegrity' },
+      ],
+    },
 
-function CTASection() {
-  const [copied, setCopied] = React.useState(false);
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText('npm create pikku@latest');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+    {
+      component: 'wide-code',
+      id: 'basics',
+      eyebrow: 'The Basics',
+      h2: 'Orchestrate with _workflow.do()_',
+      lead: 'Each workflow.do() call is a durable step. RPC steps run as queue jobs. Inline steps execute immediately. Both are cached for replay.',
+      variant: 'default',
+      code: { filename: 'onboarding.workflow.ts', icon: 'workflow', code: basicsCode },
+      below: {
+        type: 'check-list',
+        items: [
+          { title: 'Deterministic replay', body: 'Completed steps are never re-executed. Results are cached and replayed on recovery.' },
+          { title: 'Plain TypeScript', body: 'Loops, conditionals, Promise.all — use any TypeScript construct. No YAML, no DSL.' },
+          { title: 'Typed I/O', body: 'Workflow input and output are fully typed. Each RPC step infers types from the target function.' },
+        ],
+      },
+    },
 
-  return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
-      </div>
-      <div className="max-w-screen-xl mx-auto px-6 relative">
-        <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">Start wiring workflows in 5 minutes</Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl">One command to scaffold a project with workflow wiring already configured.</p>
-        <div className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10" onClick={copyToClipboard}>
-          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
-          <button className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5" onClick={(e) => { e.stopPropagation(); copyToClipboard(); }} title="Copy to clipboard">
-            {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-white/70" />}
-          </button>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link to="/docs/wiring/workflows" className="bg-primary text-black hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-teal-500/20">Read the Workflow Docs</Link>
-          <Link to="https://github.com/pikkujs/pikku" className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105">View on GitHub</Link>
-        </div>
-        <p className="text-neutral-500 text-sm mt-8">MIT Licensed &nbsp;&middot;&nbsp; DSL &amp; graph workflows</p>
-      </div>
-    </section>
-  );
-}
+    {
+      component: 'feature-grid',
+      eyebrow: 'Step Types',
+      h2: 'Four step _primitives_',
+      lead: 'Every workflow is built from these four building blocks.',
+      variant: 'alt',
+      columns: 2,
+      cards: [
+        { icon: 'zap', title: 'workflow.do(name, rpcName, data, options?)', body: 'Execute a Pikku function as a queue job. Supports retries and retry delay.', mono: true },
+        { icon: 'layers', title: 'workflow.do(name, async () => value)', body: 'Inline step — runs immediately, result cached for replay. Great for transformations.', mono: true },
+        { icon: 'clock', title: 'workflow.sleep(name, duration)', body: 'Durable sleep. Survives restarts — the workflow resumes after the duration.', mono: true },
+        { icon: 'pause', title: 'workflow.suspend(reason)', body: 'Pause the workflow until explicitly resumed. For human-in-the-loop approval flows.', mono: true },
+      ],
+    },
 
-/* ─────────────────────────────────────────────
-   PAGE
-   ───────────────────────────────────────────── */
+    {
+      component: 'wide-code',
+      eyebrow: 'Patterns',
+      h2: 'Fan-out, retry, _branch_',
+      lead: 'Use standard TypeScript for control flow. Promise.all for parallelism. if/else for branching. Retries via step options.',
+      variant: 'default',
+      code: { filename: 'workflow-patterns.ts', icon: 'workflow', code: patternsCode },
+    },
+
+    {
+      component: 'two-col',
+      eyebrow: 'Graph Workflows',
+      h2: 'Declarative _DAGs_',
+      lead: 'For node-based workflows, use pikkuWorkflowGraph. Define nodes, edges, and input mappings — Pikku handles execution order and parallelism.',
+      variant: 'alt',
+      columns: '3fr 2fr',
+      left: {
+        type: 'code',
+        code: { filename: 'onboarding.graph.ts', badge: 'graph', icon: 'workflow', code: graphCode },
+      },
+      right: {
+        type: 'cards',
+        cards: [
+          { icon: 'git-branch', title: 'Branching', body: 'Use graph.branch(\'key\') inside a node to select which edge to follow. Record-based next config maps keys to nodes.' },
+          { icon: 'refresh-cw', title: 'ref() for data flow', body: 'Use ref(\'nodeId\', \'path\') to reference output from previous nodes — resolved at runtime.' },
+        ],
+      },
+    },
+
+    {
+      component: 'wide-code',
+      eyebrow: 'HTTP Wiring',
+      h2: 'Start, poll, _resume_',
+      lead: 'Pikku provides helper functions to wire workflows to HTTP endpoints — start, run to completion, or poll status.',
+      variant: 'default',
+      code: { filename: 'workflow.wiring.ts', icon: 'workflow', code: httpCode },
+    },
+
+    {
+      component: 'cta',
+      h2: 'Start wiring workflows in 5 minutes',
+      lead: 'One command to scaffold a project with workflow wiring already configured.',
+      cmd: 'npm create pikku@latest',
+      buttons: [
+        { label: 'Read the Workflow Docs', to: '/docs/wiring/workflows', primary: true },
+        { label: 'View on GitHub', to: 'https://github.com/pikkujs/pikku', primary: false },
+      ],
+      footnote: 'MIT Licensed · DSL & graph workflows',
+    },
+  ],
+};
 
 export default function WorkflowWirePage() {
-  return (
-    <Layout title="Workflow Wire — Pikku" description="TypeScript durable workflows with no separate infrastructure. Pikku is a workflow engine for TypeScript that provides durable execution, retries, sleep, fan-out, and DAG-based graph workflows — using your existing functions and database.">
-      <Hero />
-      <main>
-        <ProblemSection />
-        <ComparisonSection />
-        <UseCasesSection />
-        <BasicsSection />
-        <StepTypesSection />
-        <PatternsSection />
-        <GraphSection />
-        <HTTPWiringSection />
-        <CTASection />
-      </main>
-    </Layout>
-  );
+  return <FeaturePage data={page} />;
 }

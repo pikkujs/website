@@ -1,108 +1,10 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
 import CodeBlock from '@theme/CodeBlock';
-import {
-  Shield, Lock, KeyRound, UserCheck, Layers,
-  Copy, Check, ShieldCheck, Cookie, Key, Scan,
-} from 'lucide-react';
-
-/* ─────────────────────────────────────────────
-   Reusable helpers
-   ───────────────────────────────────────────── */
-
-function CodeCard({ filename, badge, icon, children }: {
-  filename: string;
-  badge?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        {icon}
-        <span className="text-sm font-semibold text-neutral-200">{filename}</span>
-        {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
-      </div>
-      <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">{children}</p>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   1. HERO
-   ───────────────────────────────────────────── */
-
-function Hero() {
-  return (
-    <div className="wire-hero-security w-full relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/[0.06] blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/[0.04] blur-[60px]" />
-      </div>
-
-      <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
-        <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
-            Core Concept
-          </span>
-          <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
-            <span className="text-white">One session API.</span><br />
-            <span className="text-primary">Every transport.</span>
-          </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            Sessions, permissions, and auth middleware work the same across HTTP, WebSocket, CLI, MCP, and every other wire. Write your security logic once.
-          </p>
-          <div className="flex flex-row gap-4">
-            <Link
-              to="/docs/core-features/user-sessions"
-              className="bg-primary text-black hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-black/20"
-            >
-              Read the Docs
-            </Link>
-            <a
-              href="#sessions"
-              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline"
-            >
-              See How It Works
-            </a>
-          </div>
-        </div>
-
-        {/* Right: visual — session lifecycle */}
-        <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="bg-[#0d0d0d] border-2 border-white/15 rounded-2xl p-8 font-mono text-sm leading-relaxed">
-            <span className="text-neutral-500">// Same API everywhere</span><br />
-            <span className="text-primary">async</span>{' '}
-            <span className="text-white">(</span><br />
-            <span className="text-neutral-300 ml-4">{'{ '}<span className="text-yellow-300">db</span>{' }'}</span>
-            <span className="text-neutral-600 ml-2">// services</span><br />
-            <span className="text-neutral-300 ml-4">{'{ '}<span className="text-cyan-300">bookId</span>{' }'}</span>
-            <span className="text-neutral-600 ml-2">// data</span><br />
-            <span className="text-neutral-300 ml-4">{'{ '}<span className="text-green-300">session</span>{', '}<span className="text-green-300">setSession</span>{' }'}</span>
-            <span className="text-neutral-600 ml-2">// wire</span><br />
-            <span className="text-white">{') => { ... }'}</span><br /><br />
-            <span className="text-neutral-500">// HTTP cookie, WebSocket token,</span><br />
-            <span className="text-neutral-500">// CLI auth, MCP — doesn't matter</span>
-          </div>
-        </div>
-      </header>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   2. SESSION LIFECYCLE
-   ───────────────────────────────────────────── */
+import { Shield, Lock, KeyRound, UserCheck, Layers, Copy, Check, ShieldCheck, Cookie, Key, Scan } from 'lucide-react';
+import { PaperPage, CodeCard } from '../../components/PaperLayout';
+import styles from './security.module.css';
 
 const loginCode = `export const login = pikkuFunc({
   auth: false,
@@ -134,62 +36,6 @@ const logoutCode = `export const logout = pikkuFunc({
     clearSession()
   }
 })`;
-
-function SessionSection() {
-  const lifecycle = [
-    { step: 'Middleware loads', desc: 'Session populated from cookie, bearer token, or connection state' },
-    { step: 'Function reads', desc: 'Access session via the wire parameter — userId, role, etc.' },
-    { step: 'Function modifies', desc: 'Call setSession() or clearSession() to update' },
-    { step: 'Middleware persists', desc: 'Changes saved back to the transport — cookie, store, etc.' },
-  ];
-
-  return (
-    <section id="sessions" className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Sessions</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Read, write, clear. <span className="text-primary">That's the API.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Whether the request arrives over HTTP, WebSocket, or CLI — your function reads and writes the session the same way.
-          </p>
-        </div>
-
-        {/* Lifecycle steps */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mb-12">
-          {lifecycle.map((item, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 relative">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/10 text-primary text-xs font-bold mb-3">{i + 1}</span>
-              <p className="text-sm font-semibold text-white mb-1">{item.step}</p>
-              <p className="text-xs text-neutral-500">{item.desc}</p>
-              {i < lifecycle.length - 1 && (
-                <div className="hidden lg:block absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 text-neutral-700 text-lg">&rarr;</div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Code examples */}
-        <div className="grid lg:grid-cols-3 gap-6 max-w-5xl">
-          <CodeCard filename="login.func.ts" badge="setSession" icon={<Lock className="w-4 h-4 text-primary" />}>
-            <CodeBlock language="typescript">{loginCode}</CodeBlock>
-          </CodeCard>
-          <CodeCard filename="getProfile.func.ts" badge="session" icon={<UserCheck className="w-4 h-4 text-primary" />}>
-            <CodeBlock language="typescript">{getProfileCode}</CodeBlock>
-          </CodeCard>
-          <CodeCard filename="logout.func.ts" badge="clearSession" icon={<KeyRound className="w-4 h-4 text-primary" />}>
-            <CodeBlock language="typescript">{logoutCode}</CodeBlock>
-          </CodeCard>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   3. PERMISSIONS
-   ───────────────────────────────────────────── */
 
 const authCode = `import { pikkuAuth } from '#pikku'
 
@@ -232,86 +78,6 @@ const usageCode = `export const deleteBook = pikkuFunc({
   }
 })`;
 
-function PermissionsSection() {
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Permissions</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Boolean checks. <span className="text-primary">Composable logic.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Permissions run before your function. Return <code className="text-primary text-base">true</code> to allow,{' '}
-            <code className="text-primary text-base">false</code> to reject. Group them with OR/AND logic.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
-          {/* Left: auth first, then permissions */}
-          <div className="space-y-6">
-            <CodeCard filename="auth.ts" badge="pikkuAuth" icon={<ShieldCheck className="w-4 h-4 text-primary" />}>
-              <CodeBlock language="typescript">{authCode}</CodeBlock>
-            </CodeCard>
-            <CodeCard filename="permissions.ts" badge="pikkuPermission" icon={<Shield className="w-4 h-4 text-primary" />}>
-              <CodeBlock language="typescript">{permissionCode}</CodeBlock>
-            </CodeCard>
-          </div>
-
-          {/* Right: usage + explanation */}
-          <div className="space-y-6">
-            <CodeCard filename="deleteBook.func.ts" badge="func.ts" icon={<Lock className="w-4 h-4 text-primary" />}>
-              <CodeBlock language="typescript">{usageCode}</CodeBlock>
-            </CodeCard>
-
-            <div className="space-y-4">
-              <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-                <div className="flex items-start gap-4">
-                  <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-bold mb-1.5 text-white">pikkuAuth</h3>
-                    <p className="text-sm text-neutral-400 leading-relaxed">
-                      Session-only — receives <code className="text-primary text-xs">(services, session)</code>. Use for authentication gates, role checks, MCP tools, and AI agents.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-                <div className="flex items-start gap-4">
-                  <Shield className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-bold mb-1.5 text-white">pikkuPermission</h3>
-                    <p className="text-sm text-neutral-400 leading-relaxed">
-                      Data-aware — receives <code className="text-primary text-xs">(services, data, wire)</code>. Use when authorization depends on request data, e.g. ownership or access checks.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-                <div className="flex items-start gap-4">
-                  <Layers className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <h3 className="text-base font-bold mb-1.5 text-white">OR / AND composition</h3>
-                    <p className="text-sm text-neutral-400 leading-relaxed">
-                      Each key in the permissions object is an OR group. Wrap in an array for AND logic. If <em>any</em> group passes, the request proceeds.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   4. AUTH MIDDLEWARE
-   ───────────────────────────────────────────── */
-
 const middlewareCode = `import { authBearer, authCookie, authAPIKey } from '@pikku/core/middleware'
 import { addHTTPMiddleware, addHTTPPermission } from '#pikku'
 
@@ -349,76 +115,190 @@ wireHTTP({
   permissions: { owner: requireOwnership },
 })`;
 
-function MiddlewareSection() {
-  const strategies = [
-    {
-      icon: <Key className="w-5 h-5 text-primary" />,
-      title: 'authBearer',
-      desc: 'JWT from the Authorization header. Decodes and sets session automatically.',
-    },
-    {
-      icon: <Cookie className="w-5 h-5 text-primary" />,
-      title: 'authCookie',
-      desc: 'JWT-encoded cookie. Auto-refreshes on session change. Configurable expiry and options.',
-    },
-    {
-      icon: <Scan className="w-5 h-5 text-primary" />,
-      title: 'authAPIKey',
-      desc: 'Reads x-api-key header or apiKey query param. Decodes as JWT to set session.',
-    },
+function Hero() {
+  return (
+    <div className={styles.hero}>
+      <div className={styles.heroInner}>
+        <div>
+          <span className={styles.badge}>Core Concept</span>
+          <h1 className={styles.h1}>One session API.<br /><em>Every transport.</em></h1>
+          <p className={styles.lead}>
+            Sessions, permissions, and auth middleware work the same across HTTP, WebSocket, CLI, MCP, and every other wire. Write your security logic once.
+          </p>
+          <div className={styles.heroActions}>
+            <Link to="/docs/core-features/user-sessions" className={styles.btnPrimary}>Read the Docs</Link>
+            <a href="#sessions" className={styles.btnGhost}>See How It Works</a>
+          </div>
+        </div>
+
+        <div className={styles.heroCode}>
+          <span className={styles.hcComment}>{'// Same API everywhere'}</span><br />
+          <span className={styles.hcKw}>async</span>{' ('}<br />
+          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcVar1}>db</span>{' }'}</span>
+          <span style={{ marginLeft: 8, color: '#8a8475' }}>{'// services'}</span><br />
+          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcVar2}>bookId</span>{' }'}</span>
+          <span style={{ marginLeft: 8, color: '#8a8475' }}>{'// data'}</span><br />
+          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcVar3}>session</span>{', '}<span className={styles.hcVar3}>setSession</span>{' }'}</span>
+          <span style={{ marginLeft: 8, color: '#8a8475' }}>{'// wire'}</span><br />
+          {') => { ... }'}<br /><br />
+          <span className={styles.hcComment}>{'// HTTP cookie, WebSocket token,'}</span><br />
+          <span className={styles.hcComment}>{"// CLI auth, MCP — doesn't matter"}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SessionSection() {
+  const lifecycle = [
+    { step: 'Middleware loads', desc: 'Session populated from cookie, bearer token, or connection state' },
+    { step: 'Function reads', desc: 'Access session via the wire parameter — userId, role, etc.' },
+    { step: 'Function modifies', desc: 'Call setSession() or clearSession() to update' },
+    { step: 'Middleware persists', desc: 'Changes saved back to the transport — cookie, store, etc.' },
   ];
 
   return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Auth Middleware</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Built-in strategies. <span className="text-primary">Four scopes.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Bearer tokens, cookies, and API keys ship out of the box. Apply middleware globally, by route prefix, by tag, or per-wiring.
-          </p>
+    <section id="sessions" className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Sessions</div>
+          <h2 className={styles.h2}>Read, write, clear. <em>That's the API.</em></h2>
+          <p className={styles.lead}>Whether the request arrives over HTTP, WebSocket, or CLI — your function reads and writes the session the same way.</p>
         </div>
 
-        {/* Strategy cards */}
-        <div className="grid md:grid-cols-3 gap-5 max-w-4xl mb-12">
-          {strategies.map((s, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 border-t-2 border-t-green-500 rounded-lg p-5">
-              <div className="flex items-start gap-3 mb-3">
-                {s.icon}
-                <h3 className="text-base font-bold text-white">{s.title}</h3>
-              </div>
-              <p className="text-sm text-neutral-400 leading-relaxed">{s.desc}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 40 }}>
+          {lifecycle.map((item, i) => (
+            <div key={i} className={styles.card} style={{ position: 'relative' }}>
+              <span className={styles.stepBadge} style={{ marginBottom: 12 }}>{i + 1}</span>
+              <div className={styles.cardTitle}>{item.step}</div>
+              <p className={styles.cardBody}>{item.desc}</p>
+              {i < lifecycle.length - 1 && (
+                <div style={{ display: 'none' }}>→</div>
+              )}
             </div>
           ))}
         </div>
 
-        {/* Code examples */}
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl">
-          <CodeCard filename="middleware.ts" badge="built-in" icon={<Shield className="w-4 h-4 text-primary" />}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          <CodeCard filename="login.func.ts" badge="setSession" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+            <CodeBlock language="typescript">{loginCode}</CodeBlock>
+          </CodeCard>
+          <CodeCard filename="getProfile.func.ts" badge="session" icon={<UserCheck size={13} style={{ color: '#c2410c' }} />}>
+            <CodeBlock language="typescript">{getProfileCode}</CodeBlock>
+          </CodeCard>
+          <CodeCard filename="logout.func.ts" badge="clearSession" icon={<KeyRound size={13} style={{ color: '#c2410c' }} />}>
+            <CodeBlock language="typescript">{logoutCode}</CodeBlock>
+          </CodeCard>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PermissionsSection() {
+  const explainers = [
+    { icon: <ShieldCheck size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'pikkuAuth', desc: 'Session-only — receives (services, session). Use for authentication gates, role checks, MCP tools, and AI agents.' },
+    { icon: <Shield size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'pikkuPermission', desc: 'Data-aware — receives (services, data, wire). Use when authorization depends on request data, e.g. ownership or access checks.' },
+    { icon: <Layers size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'OR / AND composition', desc: 'Each key in the permissions object is an OR group. Wrap in an array for AND logic. If any group passes, the request proceeds.' },
+  ];
+
+  return (
+    <section className={styles.sectionAlt}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Permissions</div>
+          <h2 className={styles.h2}>Boolean checks. <em>Composable logic.</em></h2>
+          <p className={styles.lead}>
+            Permissions run before your function. Return <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>true</code> to allow,{' '}
+            <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>false</code> to reject. Group them with OR/AND logic.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <CodeCard filename="auth.ts" badge="pikkuAuth" icon={<ShieldCheck size={13} style={{ color: '#c2410c' }} />}>
+              <CodeBlock language="typescript">{authCode}</CodeBlock>
+            </CodeCard>
+            <CodeCard filename="permissions.ts" badge="pikkuPermission" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
+              <CodeBlock language="typescript">{permissionCode}</CodeBlock>
+            </CodeCard>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <CodeCard filename="deleteBook.func.ts" badge="func.ts" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+              <CodeBlock language="typescript">{usageCode}</CodeBlock>
+            </CodeCard>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {explainers.map((e, i) => (
+                <div key={i} className={styles.card}>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                    {e.icon}
+                    <div>
+                      <div className={styles.cardTitle}>{e.title}</div>
+                      <p className={styles.cardBody}>{e.desc}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MiddlewareSection() {
+  const strategies = [
+    { icon: <Key size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'authBearer', desc: 'JWT from the Authorization header. Decodes and sets session automatically.' },
+    { icon: <Cookie size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'authCookie', desc: 'JWT-encoded cookie. Auto-refreshes on session change. Configurable expiry and options.' },
+    { icon: <Scan size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'authAPIKey', desc: 'Reads x-api-key header or apiKey query param. Decodes as JWT to set session.' },
+  ];
+
+  const scopes = [
+    { label: 'Global', desc: 'Applies to all wirings of a type' },
+    { label: 'Prefix', desc: 'Route-pattern matching like /admin/*' },
+    { label: 'Tag', desc: 'Any wiring tagged with a keyword' },
+    { label: 'Inline', desc: 'Directly on a single wiring' },
+  ];
+
+  return (
+    <section className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Auth Middleware</div>
+          <h2 className={styles.h2}>Built-in strategies. <em>Four scopes.</em></h2>
+          <p className={styles.lead}>Bearer tokens, cookies, and API keys ship out of the box. Apply middleware globally, by route prefix, by tag, or per-wiring.</p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
+          {strategies.map((s, i) => (
+            <div key={i} className={styles.card} style={{ borderTopWidth: 3, borderTopColor: '#2f6f4e' }}>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', marginBottom: 10 }}>
+                {s.icon}
+                <div className={styles.cardTitle} style={{ margin: 0 }}>{s.title}</div>
+              </div>
+              <p className={styles.cardBody}>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 32 }}>
+          <CodeCard filename="middleware.ts" badge="built-in" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{middlewareCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="scopes.ts" badge="4 levels" icon={<Layers className="w-4 h-4 text-primary" />}>
+          <CodeCard filename="scopes.ts" badge="4 levels" icon={<Layers size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{scopeCode}</CodeBlock>
           </CodeCard>
         </div>
 
-        {/* Four scopes highlight */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mt-10">
-          {[
-            { label: 'Global', desc: 'Applies to all wirings of a type' },
-            { label: 'Prefix', desc: 'Route-pattern matching like /admin/*' },
-            { label: 'Tag', desc: 'Any wiring tagged with a keyword' },
-            { label: 'Inline', desc: 'Directly on a single wiring' },
-          ].map((scope, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">{i + 1}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          {scopes.map((s, i) => (
+            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <span style={{ flexShrink: 0, width: 22, height: 22, borderRadius: '50%', background: '#f4e6dd', border: '1px solid #e8cfc3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c', fontSize: 10, fontWeight: 700, fontFamily: 'Geist Mono, monospace' }}>{i + 1}</span>
               <div>
-                <p className="text-sm font-semibold text-white mb-0.5">{scope.label}</p>
-                <p className="text-xs text-neutral-500">{scope.desc}</p>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1814', marginBottom: 2 }}>{s.label}</div>
+                <div style={{ fontSize: 12, color: '#9a9387' }}>{s.desc}</div>
               </div>
             </div>
           ))}
@@ -428,76 +308,32 @@ function MiddlewareSection() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   5. CTA
-   ───────────────────────────────────────────── */
-
 function CTASection() {
   const [copied, setCopied] = React.useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText('npm create pikku@latest');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const copy = () => { navigator.clipboard.writeText('npm create pikku@latest'); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/[0.04] blur-[80px]" />
-      </div>
-
-      <div className="max-w-screen-xl mx-auto px-6 relative">
-        <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
-          Secure by default
-        </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
+    <section className={styles.sectionDark}>
+      <div className={styles.wrap}>
+        <h2 className={styles.h2}>Secure by default.</h2>
+        <p className={styles.lead} style={{ marginBottom: 28 }}>
           Scaffold a project with auth middleware pre-configured. Sessions work across every protocol from day one.
         </p>
-
-        <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
-          onClick={copyToClipboard}
-        >
-          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
-          <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
-            onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
-            title="Copy to clipboard"
-          >
-            {copied
-              ? <Check className="w-3.5 h-3.5 text-primary" />
-              : <Copy className="w-3.5 h-3.5 text-white/70" />
-            }
+        <div className={styles.cmdBlock} onClick={copy}>
+          <span className={styles.cmdPrompt}>$ </span>npm create pikku@latest
+          <button className={styles.copyBtn} onClick={(e) => { e.stopPropagation(); copy(); }} title="Copy">
+            {copied ? <Check size={13} /> : <Copy size={13} />}
           </button>
         </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/docs/core-features/user-sessions"
-            className="bg-primary text-black hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-black/20"
-          >
-            Session Docs
-          </Link>
-          <Link
-            to="/docs/core-features/permission-guards"
-            className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
-          >
-            Permission Docs
-          </Link>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+          <Link to="/docs/core-features/user-sessions" className={styles.btnPrimary}>Session Docs</Link>
+          <Link to="/docs/core-features/permission-guards" className={styles.btnGhost}>Permission Docs</Link>
         </div>
-
-        <p className="text-neutral-500 text-sm mt-8">
-          MIT Licensed &nbsp;&middot;&nbsp; Works with Express, Fastify, Lambda &amp; Cloudflare
-        </p>
+        <p style={{ marginTop: 24, fontSize: 13, color: '#9a9387' }}>MIT Licensed · Works with Express, Fastify, Lambda &amp; Cloudflare</p>
       </div>
     </section>
   );
 }
-
-/* ─────────────────────────────────────────────
-   PAGE
-   ───────────────────────────────────────────── */
 
 export default function SecurityPage() {
   return (
@@ -505,13 +341,15 @@ export default function SecurityPage() {
       title="Sessions & Permissions — One Security API, Every Transport"
       description="Pikku sessions, permissions, and auth middleware work the same across HTTP, WebSocket, CLI, MCP, and every protocol. Write your security logic once."
     >
-      <Hero />
-      <main>
-        <SessionSection />
-        <PermissionsSection />
-        <MiddlewareSection />
-        <CTASection />
-      </main>
+      <PaperPage>
+        <Hero />
+        <main>
+          <SessionSection />
+          <PermissionsSection />
+          <MiddlewareSection />
+          <CTASection />
+        </main>
+      </PaperPage>
     </Layout>
   );
 }

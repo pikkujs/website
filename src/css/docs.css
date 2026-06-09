@@ -1,0 +1,412 @@
+/* ============================================================
+   Docs — paper theme overrides
+   Applied via html.docs-wrapper (Docusaurus auto-class on
+   all docs pages). DocsRoot swizzle injects data-paper-page,
+   activating navbar/footer/accent rules from custom.css.
+   Shared markdown body styles live in blog.css under
+   [data-paper-page] .markdown (matches both blog + docs).
+   All colour values reference CSS variables from tokens.css.
+   ============================================================ */
+
+/* ── Page shell ─────────────────────────────────────────── */
+html.docs-wrapper body,
+html.docs-wrapper .main-wrapper {
+  background-color: var(--paper-bg) !important;
+  color: var(--paper-text-body);
+  font-family: 'Geist', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Infima token overrides for content-area components */
+html.docs-wrapper {
+  --ifm-color-primary:          var(--paper-accent);
+  --ifm-color-primary-dark:     var(--paper-accent-dark);
+  --ifm-color-primary-darker:   var(--paper-accent-darker);
+  --ifm-color-primary-darkest:  var(--paper-accent-darkest);
+  --ifm-color-primary-light:    var(--paper-accent-light);
+  --ifm-color-primary-lighter:  var(--paper-accent-lighter);
+  --ifm-color-primary-lightest: var(--paper-accent-lightest);
+  --ifm-link-color:             var(--paper-accent);
+  --ifm-link-hover-color:       var(--paper-accent-dark);
+  --ifm-heading-color:          var(--paper-text);
+  --ifm-font-color-base:        var(--paper-text-body);
+  --ifm-background-color:       var(--paper-bg);
+  --ifm-background-surface-color: var(--paper-bg-alt);
+  --ifm-code-background:        var(--paper-bg-dark);
+  --ifm-hr-background-color:    var(--paper-border);
+  --ifm-blockquote-border-color: var(--paper-accent);
+  --ifm-toc-border-color:       var(--paper-border);
+  --ifm-color-emphasis-200:     var(--paper-border);
+  --ifm-color-emphasis-300:     var(--paper-border-strong);
+  --ifm-table-border-color:     var(--paper-border);
+  --ifm-breadcrumb-color-active: var(--paper-accent);
+  --ifm-menu-color:             var(--paper-text-muted);
+  --ifm-menu-color-active:      var(--paper-accent);
+  --ifm-menu-color-background-active: var(--paper-accent-bg);
+  --ifm-menu-color-background-hover: var(--paper-bg-dark);
+  --doc-sidebar-width:          280px;
+}
+
+/* ── Left sidebar container ─────────────────────────────── */
+html.docs-wrapper .theme-doc-sidebar-container {
+  background: var(--paper-bg-alt);
+  border-right: 1px solid var(--paper-border) !important;
+}
+
+html.docs-wrapper .theme-doc-sidebar-menu {
+  padding: 16px 8px;
+}
+
+/* ── Menu links ─────────────────────────────────────────── */
+html.docs-wrapper .menu__link {
+  font-size: 13.5px;
+  color: var(--paper-text-muted);
+  border-radius: 6px;
+  padding: 6px 10px;
+  transition: background 0.12s, color 0.12s;
+}
+
+html.docs-wrapper .menu__link:hover {
+  background: var(--paper-bg-dark);
+  color: var(--paper-text-body);
+  text-decoration: none;
+}
+
+html.docs-wrapper .menu__link--active {
+  color: var(--paper-accent) !important;
+  background: var(--paper-accent-bg);
+  font-weight: 500;
+}
+
+html.docs-wrapper .menu__link--active:hover {
+  background: var(--paper-accent-bg);
+}
+
+/* Category label */
+html.docs-wrapper .menu__list-item-collapsible > .menu__link--sublist,
+html.docs-wrapper .menu__link--sublist {
+  color: var(--paper-text-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+}
+
+html.docs-wrapper .menu__list-item-collapsible > .menu__link--sublist:hover {
+  background: var(--paper-bg-dark);
+}
+
+html.docs-wrapper .menu__list-item-collapsible--active > .menu__link--sublist {
+  color: var(--paper-accent) !important;
+}
+
+/* Caret (collapse toggle) */
+html.docs-wrapper .menu__caret::before {
+  filter: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236b6559' d='M6 4l4 4-4 4'/%3E%3C/svg%3E");
+}
+
+/* Nested list indentation */
+html.docs-wrapper .menu__list .menu__list {
+  border-left: 1px solid var(--paper-border);
+  margin-left: 14px;
+  padding-left: 8px;
+}
+
+/* ── Breadcrumbs ────────────────────────────────────────── */
+html.docs-wrapper .breadcrumbs__item {
+  font-size: 13px;
+  font-family: 'Geist Mono', monospace;
+}
+
+html.docs-wrapper .breadcrumbs__link {
+  color: var(--paper-text-muted) !important;
+  background: transparent !important;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color 0.12s;
+}
+
+html.docs-wrapper .breadcrumbs__link:hover {
+  color: var(--paper-accent) !important;
+  background: var(--paper-accent-bg) !important;
+}
+
+html.docs-wrapper .breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--paper-text-faint) !important;
+  background: transparent !important;
+}
+
+html.docs-wrapper .breadcrumbs__item:not(:first-child)::before {
+  color: var(--paper-border-strong);
+}
+
+/* ── Article heading ────────────────────────────────────── */
+html.docs-wrapper .theme-doc-markdown > header h1,
+html.docs-wrapper article > header h1,
+html.docs-wrapper h1.docTitle_node_modules-\@docusaurus-theme-classic-lib-theme-DocItem-styles-module {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -1px;
+  color: var(--paper-text);
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.05;
+  margin-bottom: 0.5em;
+}
+
+/* Catch-all for h1 inside doc article */
+html.docs-wrapper article h1:first-of-type {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -1px;
+  color: var(--paper-text);
+}
+
+/* ── Doc content area ───────────────────────────────────── */
+html.docs-wrapper .docItemContainer_node_modules-\@docusaurus-theme-classic-lib-theme-DocItem-Layout-styles-module,
+html.docs-wrapper .docItemCol_node_modules-\@docusaurus-theme-classic-lib-theme-DocItem-Layout-styles-module {
+  background: transparent;
+}
+
+/* Edit page / last updated row */
+html.docs-wrapper .theme-last-updated,
+html.docs-wrapper .theme-edit-this-page {
+  color: var(--paper-text-faint);
+  font-size: 13px;
+  font-family: 'Geist Mono', monospace;
+}
+
+html.docs-wrapper .theme-edit-this-page:hover {
+  color: var(--paper-accent);
+  text-decoration: none;
+}
+
+/* ── Right TOC ──────────────────────────────────────────── */
+html.docs-wrapper .table-of-contents {
+  border-left: 2px solid var(--paper-border);
+}
+
+html.docs-wrapper .table-of-contents__link {
+  color: var(--paper-text-muted) !important;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 3px 0;
+  transition: color 0.12s;
+}
+
+html.docs-wrapper .table-of-contents__link:hover,
+html.docs-wrapper .table-of-contents__link--active {
+  color: var(--paper-accent) !important;
+  font-weight: 500;
+}
+
+/* TOC heading label */
+html.docs-wrapper .tocCollapsibleButton_node_modules-\@docusaurus-theme-classic-lib-theme-TOCCollapsible-styles-module {
+  color: var(--paper-text-faint);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Pagination (prev / next doc) ───────────────────────── */
+html.docs-wrapper .pagination-nav {
+  margin-top: 48px;
+  border-top: 1px solid var(--paper-border);
+  padding-top: 32px;
+}
+
+html.docs-wrapper .pagination-nav__item a {
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 10px;
+  color: var(--paper-text-body) !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+html.docs-wrapper .pagination-nav__item a:hover {
+  border-color: var(--paper-accent);
+  box-shadow: 0 4px 16px -4px var(--paper-accent-ring);
+  text-decoration: none;
+}
+
+html.docs-wrapper .pagination-nav__label {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 17px;
+  color: var(--paper-text);
+}
+
+html.docs-wrapper .pagination-nav__sublabel {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: var(--paper-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Admonitions ────────────────────────────────────────── */
+html.docs-wrapper .theme-admonition,
+html.docs-wrapper .alert {
+  border-left-width: 3px;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 16px 20px;
+}
+
+/* Note / Info */
+html.docs-wrapper .alert--info {
+  background: color-mix(in srgb, #3b82f6 6%, var(--paper-bg));
+  border-color: #93c5fd;
+  color: var(--paper-text-body);
+}
+
+html.docs-wrapper .alert--info a { color: #2563eb; }
+html.docs-wrapper .alert--info .admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  color: #1e40af;
+}
+
+/* Tip / Success */
+html.docs-wrapper .alert--success {
+  background: color-mix(in srgb, #22c55e 6%, var(--paper-bg));
+  border-color: #86efac;
+  color: var(--paper-text-body);
+}
+
+html.docs-wrapper .alert--success a { color: #16a34a; }
+html.docs-wrapper .alert--success .admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  color: #15803d;
+}
+
+/* Warning / Caution */
+html.docs-wrapper .alert--warning {
+  background: color-mix(in srgb, #f59e0b 8%, var(--paper-bg));
+  border-color: #fcd34d;
+  color: var(--paper-text-body);
+}
+
+html.docs-wrapper .alert--warning a { color: #b45309; }
+html.docs-wrapper .alert--warning .admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  color: #92400e;
+}
+
+/* Danger */
+html.docs-wrapper .alert--danger {
+  background: color-mix(in srgb, #ef4444 6%, var(--paper-bg));
+  border-color: #fca5a5;
+  color: var(--paper-text-body);
+}
+
+html.docs-wrapper .alert--danger a { color: #dc2626; }
+html.docs-wrapper .alert--danger .admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  color: #991b1b;
+}
+
+/* Admonition title icons inherit nicely; adjust collapse button */
+html.docs-wrapper .alert .admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+/* ── Category index cards (DocCardList) ─────────────────── */
+html.docs-wrapper .row article.col {
+  padding: 8px;
+}
+
+html.docs-wrapper .row article.col a.card {
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 12px;
+  box-shadow: none;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  text-decoration: none !important;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+html.docs-wrapper .row article.col a.card:hover {
+  border-color: var(--paper-accent);
+  box-shadow: 0 8px 24px -8px var(--paper-accent-ring);
+  transform: translateY(-2px);
+}
+
+html.docs-wrapper .row article.col a.card .card__body {
+  padding: 20px 24px;
+}
+
+html.docs-wrapper .row article.col a.card h2 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 500;
+  font-size: 19px;
+  color: var(--paper-text);
+  margin: 0 0 8px;
+}
+
+html.docs-wrapper .row article.col a.card p {
+  font-size: 13.5px;
+  color: var(--paper-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Version badge / banner ─────────────────────────────── */
+html.docs-wrapper .docVersionBadge_node_modules-\@docusaurus-theme-classic-lib-theme-DocVersionBadge-styles-module,
+html.docs-wrapper .badge--secondary {
+  background: var(--paper-accent-bg);
+  border: 1px solid var(--paper-accent-border);
+  color: var(--paper-accent);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+html.docs-wrapper .docVersionBanner_node_modules-\@docusaurus-theme-classic-lib-theme-DocVersionBanner-styles-module,
+html.docs-wrapper .alert--warning:has(.docVersionBannerTip) {
+  background: color-mix(in srgb, var(--paper-accent) 6%, var(--paper-bg));
+  border-color: var(--paper-accent-border);
+}
+
+/* ── Doc tags ───────────────────────────────────────────── */
+html.docs-wrapper .docTagsListInline_node_modules-\@docusaurus-theme-classic-lib-theme-DocTagsListInline-styles-module a,
+html.docs-wrapper .tag_node_modules-\@docusaurus-theme-classic-lib-theme-Tag-styles-module {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--paper-accent) !important;
+  background: var(--paper-accent-bg);
+  border: 1px solid var(--paper-accent-border);
+  border-radius: 6px;
+  padding: 3px 9px;
+  text-decoration: none !important;
+  transition: background 0.12s;
+}
+
+html.docs-wrapper .docTagsListInline_node_modules-\@docusaurus-theme-classic-lib-theme-DocTagsListInline-styles-module a:hover,
+html.docs-wrapper .tag_node_modules-\@docusaurus-theme-classic-lib-theme-Tag-styles-module:hover {
+  background: var(--paper-accent-border);
+}
+
+/* ── Sidebar toggle (mobile) ────────────────────────────── */
+html.docs-wrapper .navbar-sidebar {
+  background: var(--paper-bg-alt);
+}
+
+html.docs-wrapper .navbar-sidebar__brand {
+  background: var(--paper-bg-alt);
+  border-bottom: 1px solid var(--paper-border);
+}
+
+/* ── Docs search highlight ──────────────────────────────── */
+html.docs-wrapper mark {
+  background: var(--paper-accent-bg);
+  color: var(--paper-text);
+}

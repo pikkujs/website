@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
 import CodeBlock from '@theme/CodeBlock';
 import {
   HttpIcon, WebSocketIcon, QueueIcon, CLIIcon, MCPIcon,
@@ -11,103 +10,50 @@ import {
   Copy, Check, RefreshCw, Lock,
   GitBranch, AlertTriangle, CheckCircle2,
 } from 'lucide-react';
+import { PaperPage, CodeCard, CheckItem, StepBadge } from '../../components/PaperLayout';
+import styles from './function.module.css';
 
-/* ─────────────────────────────────────────────
-   Reusable helpers
-   ───────────────────────────────────────────── */
-
-function CodeCard({ filename, badge, icon, children }: {
-  filename: string;
-  badge?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        {icon}
-        <span className="text-sm font-semibold text-neutral-200">{filename}</span>
-        {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
-      </div>
-      <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">{children}</p>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   1. HERO
-   ───────────────────────────────────────────── */
-
+/* ════════════════════════════════════════════════════════
+   1. Hero
+   ════════════════════════════════════════════════════════ */
 function Hero() {
   return (
-    <div className="wire-hero-function w-full relative overflow-hidden">
-      {/* Glow orbs */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-fuchsia-400/8 blur-[60px]" />
-      </div>
-
-      <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
-        {/* Left: text */}
-        <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
-            Core Concept
-          </span>
-          <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
-            <span className="text-white">Your logic.</span><br />
-            <span className="text-primary">Nothing else.</span>
-          </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            A Pikku function receives <code className="text-primary text-lg">(services, data, wire)</code> and works across every protocol — HTTP, WebSocket, queue, CLI, MCP, and more.
+    <div className={styles.hero}>
+      <div className={styles.heroInner}>
+        <div>
+          <span className={styles.badge}>Core Concept</span>
+          <h1 className={styles.h1}>
+            Your logic.<br /><em>Nothing else.</em>
+          </h1>
+          <p className={styles.lead}>
+            A Pikku function receives <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>(services, data, wire)</code> and
+            works across every protocol — HTTP, WebSocket, queue, CLI, MCP, and more.
           </p>
-          <div className="flex flex-row gap-4">
-            <Link
-              to="/docs/core-features/functions"
-              className="bg-primary text-white hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-purple-500/20"
-            >
-              Read the Docs
-            </Link>
-            <a
-              href="#three-params"
-              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline"
-            >
-              See How It Works
-            </a>
+          <div className={styles.heroActions}>
+            <Link to="/docs/core-features/functions" className={styles.btnPrimary}>Read the docs</Link>
+            <a href="#three-params" className={styles.btnGhost}>See how it works</a>
           </div>
         </div>
 
-        {/* Right: visual — function signature */}
-        <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="bg-[#0d0d0d] border-2 border-white/15 rounded-2xl p-8 font-mono text-sm leading-relaxed">
-            <span className="text-neutral-500">// Every Pikku function</span><br />
-            <span className="text-primary">async</span>{' '}
-            <span className="text-white">(</span><br />
-            <span className="text-neutral-300 ml-4">{'{ '}<span className="text-yellow-300">db</span>{', '}<span className="text-yellow-300">logger</span>{', '}<span className="text-yellow-300">jwt</span>{' }'}</span>
-            <span className="text-neutral-600 ml-2">// services</span><br />
-            <span className="text-neutral-300 ml-4">{'{ '}<span className="text-cyan-300">bookId</span>{', '}<span className="text-cyan-300">title</span>{' }'}</span>
-            <span className="text-neutral-600 ml-2">// data</span><br />
-            <span className="text-neutral-300 ml-4">{'{ '}<span className="text-green-300">session</span>{' }'}</span>
-            <span className="text-neutral-600 ml-2">// wire</span><br />
-            <span className="text-white">{') => { ... }'}</span>
-          </div>
+        <div className={styles.heroCoded}>
+          <span className={styles.hcComment}>{'// Every Pikku function'}</span><br />
+          <span className={styles.hcKeyword}>async</span>{' ('}  <br />
+          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcService}>db</span>{', '}<span className={styles.hcService}>logger</span>{', '}<span className={styles.hcService}>jwt</span>{' }'}</span>
+          <span className={styles.hcLabel}>{'// services'}</span><br />
+          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcData}>bookId</span>{', '}<span className={styles.hcData}>title</span>{' }'}</span>
+          <span className={styles.hcLabel}>{'// data'}</span><br />
+          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcWire}>session</span>{' }'}</span>
+          <span className={styles.hcLabel}>{'// wire'}</span><br />
+          {') => { ... }'}
         </div>
-      </header>
+      </div>
     </div>
   );
 }
 
-/* ─────────────────────────────────────────────
-   2. THE THREE PARAMETERS
-   ───────────────────────────────────────────── */
-
+/* ════════════════════════════════════════════════════════
+   2. Three parameters
+   ════════════════════════════════════════════════════════ */
 const threeParamsCode = `const getBook = pikkuFunc({
   title: 'Get Book',
   func: async (
@@ -124,70 +70,63 @@ const threeParamsCode = `const getBook = pikkuFunc({
 function ThreeParamsSection() {
   const params = [
     {
+      cls: styles.paramCardServices,
+      nameCls: styles.services,
+      icon: <Wrench className="w-5 h-5" style={{ color: '#9a6e1a', marginTop: 2, flexShrink: 0 }} />,
       name: 'Services',
-      color: 'yellow',
-      icon: <Wrench className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       desc: 'Your toolbox — database, logger, JWT, email, anything you register. Destructure only what you need.',
       example: '{ db, logger, jwt }',
     },
     {
+      cls: styles.paramCardData,
+      nameCls: styles.data,
+      icon: <Database className="w-5 h-5" style={{ color: '#1d6070', marginTop: 2, flexShrink: 0 }} />,
       name: 'Data',
-      color: 'cyan',
-      icon: <Database className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
       desc: 'Typed, validated input — normalized from any protocol. Path params, body, query, message payload — all merged.',
       example: '{ bookId, title }',
     },
     {
+      cls: styles.paramCardWire,
+      nameCls: styles.wire,
+      icon: <Zap className="w-5 h-5" style={{ color: '#2f6f4e', marginTop: 2, flexShrink: 0 }} />,
       name: 'Wire',
-      color: 'green',
-      icon: <Zap className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      desc: 'Session and optional protocol helpers. session works everywhere — protocol-specific fields like http or rpc only appear when relevant, and you never have to use them.',
+      desc: 'Session and optional protocol helpers. session works everywhere — protocol-specific fields like http or rpc only appear when relevant.',
       example: '{ session, setSession }',
     },
   ];
 
-  const colorMap: Record<string, { border: string; text: string; bg: string }> = {
-    yellow: { border: 'border-t-yellow-500', text: 'text-primary', bg: 'bg-white/[0.06]' },
-    cyan: { border: 'border-t-cyan-500', text: 'text-primary', bg: 'bg-white/[0.06]' },
-    green: { border: 'border-t-green-500', text: 'text-primary', bg: 'bg-white/[0.06]' },
-  };
-
   return (
-    <section id="three-params" className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>The Function Signature</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Three parameters. <span className="text-primary">That's it.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
+    <section id="three-params" className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>The Function Signature</div>
+          <h2 className={styles.h2}>Three parameters. <em>That's it.</em></h2>
+          <p className={styles.lead}>
             Every Pikku function receives the same three arguments — no matter which protocol triggers it.
           </p>
         </div>
 
-        {/* Three param cards */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mb-10">
-          {params.map((param, i) => (
-            <div key={i} className={`bg-[#0d0d0d] border border-neutral-800 ${colorMap[param.color].border} border-t-2 rounded-lg p-5`}>
-              <div className="flex items-start gap-3 mb-3">
-                {param.icon}
-                <h3 className={`text-base font-bold ${colorMap[param.color].text}`}>{param.name}</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, maxWidth: 820, marginBottom: 36 }}
+          className="max-w-2xl md:grid-cols-3 grid-cols-1">
+          {params.map((p) => (
+            <div key={p.name} className={`${styles.paramCard} ${p.cls}`}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 10 }}>
+                {p.icon}
+                <span className={`${styles.paramName} ${p.nameCls}`}>{p.name}</span>
               </div>
-              <p className="text-sm text-neutral-400 leading-relaxed mb-3">{param.desc}</p>
-              <code className={`text-xs font-mono ${colorMap[param.color].text}`}>{param.example}</code>
+              <p style={{ fontSize: 14, color: '#6b6559', lineHeight: 1.6, margin: '0 0 10px' }}>{p.desc}</p>
+              <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#9a9387' }}>{p.example}</code>
             </div>
           ))}
         </div>
 
-        {/* Arrows converging */}
-        <div className="flex justify-center gap-12 mb-6">
-          <ArrowDown className="w-5 h-5 text-white/45" />
-          <ArrowDown className="w-5 h-5 text-white/45" />
-          <ArrowDown className="w-5 h-5 text-white/45" />
+        <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 48, marginBottom: 20, maxWidth: 820 }}>
+          <ArrowDown className="w-5 h-5" style={{ color: '#d4ccba' }} />
+          <ArrowDown className="w-5 h-5" style={{ color: '#d4ccba' }} />
+          <ArrowDown className="w-5 h-5" style={{ color: '#d4ccba' }} />
         </div>
 
-        {/* Code example */}
-        <div className="max-w-2xl">
+        <div style={{ maxWidth: 580 }}>
           <CodeCard filename="getBook.func.ts" badge="func.ts">
             <CodeBlock language="typescript">{threeParamsCode}</CodeBlock>
           </CodeCard>
@@ -197,10 +136,9 @@ function ThreeParamsSection() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   3. SERVICES — singleton vs wire
-   ───────────────────────────────────────────── */
-
+/* ════════════════════════════════════════════════════════
+   3. Services
+   ════════════════════════════════════════════════════════ */
 const singletonServicesCode = `import { PikkuServiceMap } from '.pikku/pikku-types.gen.js'
 
 // Singleton services — created once at startup
@@ -221,56 +159,36 @@ const wireServices = {
 
 function ServicesSection() {
   const features = [
-    {
-      icon: <Database className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'Singleton services',
-      desc: 'Created once at startup, shared across all requests. Database connections, loggers, third-party clients.',
-    },
-    {
-      icon: <RefreshCw className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'Wire services',
-      desc: 'Created fresh per request. Session loaders, audit contexts, per-request caches. Lazily instantiated only when destructured.',
-    },
-    {
-      icon: <Wrench className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'Destructure what you need',
-      desc: 'Only pull the services your function actually uses. Keeps code clean and makes dependencies explicit.',
-    },
+    { icon: <Database className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Singleton services', desc: 'Created once at startup, shared across all requests. Database connections, loggers, third-party clients.' },
+    { icon: <RefreshCw className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Wire services', desc: 'Created fresh per request. Session loaders, audit contexts, per-request caches. Lazily instantiated only when destructured.' },
+    { icon: <Wrench className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Destructure what you need', desc: 'Only pull the services your function actually uses. Keeps code clean and makes dependencies explicit.' },
   ];
 
   return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Services</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Your toolbox, <span className="text-primary">injected</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Services are dependency-injected into every function. Register once, destructure anywhere.
-          </p>
+    <section className={styles.sectionAlt}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Services</div>
+          <h2 className={styles.h2}>Your toolbox, <em>injected</em></h2>
+          <p className={styles.lead}>Services are dependency-injected into every function. Register once, destructure anywhere.</p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
-          {/* Left: feature cards */}
-          <div className="space-y-5">
-            {features.map((feat, i) => (
-              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-                <div className="flex items-start gap-4">
-                  {feat.icon}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, maxWidth: 900, alignItems: 'start' }}
+          className="lg:grid-cols-2 grid-cols-1">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {features.map((f) => (
+              <div key={f.title} className={styles.card}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  {f.icon}
                   <div>
-                    <h3 className="text-base font-bold mb-1.5 text-white">{feat.title}</h3>
-                    <p className="text-sm text-neutral-400 leading-relaxed">{feat.desc}</p>
+                    <div className={styles.cardTitle}>{f.title}</div>
+                    <p className={styles.cardBody}>{f.desc}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-
-          {/* Right: code examples stacked */}
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             <CodeCard filename="services.ts" badge="startup">
               <CodeBlock language="typescript">{singletonServicesCode}</CodeBlock>
             </CodeCard>
@@ -284,10 +202,9 @@ function ServicesSection() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   4. VERSIONING — Ship without breaking clients
-   ───────────────────────────────────────────── */
-
+/* ════════════════════════════════════════════════════════
+   4. Versioning
+   ════════════════════════════════════════════════════════ */
 const versionedFuncCode = `// v1 — kept around for old clients
 const getBookV1 = pikkuFunc({
   title: 'Get Book',
@@ -321,96 +238,60 @@ $ npx pikku versions check
   after bumping to version 2`;
 
 function VersioningSection() {
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
+  const steps = [
+    { icon: <GitBranch className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Contracts are tracked automatically', desc: <>Every function's name + input schema + output schema = a contract hash. The CLI stores these in a <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>versions.pikku.json</code> manifest.</> },
+    { icon: <AlertTriangle className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Breaking changes fail the build', desc: <>If you change a published schema without bumping the version, <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>pikku versions check</code> fails. Add it to CI and breaking changes never ship by accident.</> },
+    { icon: <CheckCircle2 className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Version bumps are explicit', desc: <>Set <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>version: 2</code> on the function, run <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>pikku versions update</code>, commit. Old and new versions coexist.</> },
+  ];
 
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Contracts & Versioning</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Never accidentally <span className="text-primary">break a client</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Pikku hashes every function's input and output schema. Change a contract without bumping the version and the build fails — before it reaches production.
+  return (
+    <section className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Contracts & Versioning</div>
+          <h2 className={styles.h2}>Never accidentally <em>break a client</em></h2>
+          <p className={styles.lead}>
+            Pikku hashes every function's input and output schema. Change a contract without bumping the
+            version and the build fails — before it reaches production.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
-          {/* Left: how it works + CI terminal */}
-          <div className="space-y-5">
-            {/* Step cards */}
-            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-              <div className="flex items-start gap-4">
-                <GitBranch className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="text-base font-bold mb-1.5 text-white">Contracts are tracked automatically</h3>
-                  <p className="text-sm text-neutral-400 leading-relaxed">
-                    Every function's name + input schema + output schema = a contract hash. The CLI stores these in a <code className="text-primary text-xs">versions.pikku.json</code> manifest.
-                  </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, maxWidth: 900, alignItems: 'start' }}
+          className="lg:grid-cols-2 grid-cols-1">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {steps.map((s) => (
+              <div key={s.title} className={styles.card}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  {s.icon}
+                  <div>
+                    <div className={styles.cardTitle}>{s.title}</div>
+                    <p className={styles.cardBody}>{s.desc}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-              <div className="flex items-start gap-4">
-                <AlertTriangle className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="text-base font-bold mb-1.5 text-white">Breaking changes fail the build</h3>
-                  <p className="text-sm text-neutral-400 leading-relaxed">
-                    If you change a published schema without bumping the version, <code className="text-primary text-xs">pikku versions check</code> fails. Add it to CI and breaking changes never ship by accident.
-                  </p>
-                </div>
+            ))}
+            <div className={styles.ciTerminal}>
+              <div className={styles.ciTermBar}>
+                <span className={styles.ciTermDot} style={{ background: '#e06c5b' }} />
+                <span className={styles.ciTermDot} style={{ background: '#e0b34b' }} />
+                <span className={styles.ciTermDot} style={{ background: '#79b06a' }} />
+                <span className={styles.ciTermTitle}>CI Pipeline</span>
+                <span className={styles.ciTermFailed}>failed</span>
               </div>
-            </div>
-
-            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-              <div className="flex items-start gap-4">
-                <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="text-base font-bold mb-1.5 text-white">Version bumps are explicit</h3>
-                  <p className="text-sm text-neutral-400 leading-relaxed">
-                    Set <code className="text-primary text-xs">version: 2</code> on the function, run <code className="text-primary text-xs">pikku versions update</code>, commit. Old and new versions coexist — no migration needed.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* CI terminal output */}
-            <div className="rounded-xl border border-white/15 overflow-hidden">
-              <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-                </div>
-                <span className="text-sm font-semibold text-neutral-200">CI Pipeline</span>
-                <span className="ml-auto text-xs font-mono px-2 py-0.5 rounded bg-white/8 text-primary">failed</span>
-              </div>
-              <div className="p-5 bg-[#0a0a0f] font-mono text-xs leading-relaxed">
-                <pre className="text-neutral-400 whitespace-pre-wrap">{ciCheckCode}</pre>
+              <div className={styles.ciTermBody}>
+                <pre style={{ margin: 0, whiteSpace: 'pre-wrap', color: '#d8d2c4' }}>{ciCheckCode}</pre>
               </div>
             </div>
           </div>
 
-          {/* Right: code example */}
           <div>
             <CodeCard filename="getBook.func.ts" badge="version: 1 → 2">
               <CodeBlock language="typescript">{versionedFuncCode}</CodeBlock>
             </CodeCard>
-
-            {/* Highlights */}
-            <div className="mt-6 space-y-3">
-              {[
-                'Clients call the latest version by default — old versions stay available',
-                'Works across all wires: HTTP, RPC, WebSocket, MCP',
-                'Schema hashes are deterministic and diffable in Git',
-              ].map((line, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm text-neutral-400">
-                  <span className="flex-shrink-0 w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-primary text-[10px] font-bold">&#10003;</span>
-                  {line}
-                </div>
-              ))}
+            <div className={styles.checkList}>
+              <CheckItem>Clients call the latest version by default — old versions stay available</CheckItem>
+              <CheckItem>Works across all wires: HTTP, RPC, WebSocket, MCP</CheckItem>
+              <CheckItem>Schema hashes are deterministic and diffable in Git</CheckItem>
             </div>
           </div>
         </div>
@@ -419,10 +300,9 @@ function VersioningSection() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   5. SESSION & AUTH
-   ───────────────────────────────────────────── */
-
+/* ════════════════════════════════════════════════════════
+   5. Session & Auth
+   ════════════════════════════════════════════════════════ */
 const loginCode = `const login = pikkuFunc({
   title: 'Login',
   func: async (
@@ -433,8 +313,7 @@ const loginCode = `const login = pikkuFunc({
     const user = await db.verifyCredentials(email, password)
     const token = jwt.sign({ userId: user.id, role: user.role })
 
-    // Works the same whether it's an HTTP cookie,
-    // WebSocket connection, or CLI token
+    // Works the same whether it's HTTP, WebSocket, or CLI
     setSession({ userId: user.id, role: user.role })
 
     return { token }
@@ -460,40 +339,35 @@ function SessionSection() {
   ];
 
   return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Session & Auth</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            One session API, <span className="text-primary">every transport</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Whether the request arrives over HTTP, WebSocket, or CLI — your function reads and writes the session the same way.
+    <section className={styles.sectionAlt}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Session & Auth</div>
+          <h2 className={styles.h2}>One session API, <em>every transport</em></h2>
+          <p className={styles.lead}>
+            Whether the request arrives over HTTP, WebSocket, or CLI — your function reads and writes
+            the session the same way.
           </p>
         </div>
 
-        {/* Session lifecycle */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mb-12">
+        {/* Lifecycle */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, maxWidth: 860, marginBottom: 40 }}
+          className="sm:grid-cols-2 lg:grid-cols-4 grid-cols-1">
           {lifecycle.map((item, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 relative">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/10 text-primary text-xs font-bold mb-3">{i + 1}</span>
-              <p className="text-sm font-semibold text-white mb-1">{item.step}</p>
-              <p className="text-xs text-neutral-500">{item.desc}</p>
-              {i < lifecycle.length - 1 && (
-                <div className="hidden lg:block absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 text-neutral-700 text-lg">&rarr;</div>
-              )}
+            <div key={i} className={styles.lifecycleCard}>
+              <StepBadge n={i + 1} />
+              <div className={styles.lifecycleStep}>{item.step}</div>
+              <p className={styles.lifecycleDesc}>{item.desc}</p>
             </div>
           ))}
         </div>
 
-        {/* Code examples */}
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl">
-          <CodeCard filename="login.func.ts" badge="func.ts" icon={<Lock className="w-4 h-4 text-primary" />}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 900 }}
+          className="lg:grid-cols-2 grid-cols-1">
+          <CodeCard filename="login.func.ts" badge="func.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
             <CodeBlock language="typescript">{loginCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="getMe.func.ts" badge="func.ts" icon={<Shield className="w-4 h-4 text-primary" />}>
+          <CodeCard filename="getMe.func.ts" badge="func.ts" icon={<Shield className="w-4 h-4" style={{ color: '#8a8475' }} />}>
             <CodeBlock language="typescript">{getMeCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -502,10 +376,9 @@ function SessionSection() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   5. ONE FUNCTION, EVERY PROTOCOL
-   ───────────────────────────────────────────── */
-
+/* ════════════════════════════════════════════════════════
+   6. One function, every protocol
+   ════════════════════════════════════════════════════════ */
 const everyProtocolFunc = `// Define once
 const getBook = pikkuFunc({
   title: 'Get Book',
@@ -524,53 +397,45 @@ wireMCP({ tool: 'get_book', func: getBook })`;
 
 function EveryProtocolSection() {
   const protocols = [
-    { icon: <HttpIcon size={24} />, name: 'HTTP', color: 'text-white/55' },
-    { icon: <WebSocketIcon size={24} />, name: 'WebSocket', color: 'text-white/55' },
-    { icon: <QueueIcon size={24} />, name: 'Queue', color: 'text-white/55' },
-    { icon: <CLIIcon size={24} />, name: 'CLI', color: 'text-white/55' },
-    { icon: <MCPIcon size={24} />, name: 'MCP', color: 'text-white/55' },
+    { icon: <HttpIcon size={24} />, name: 'HTTP' },
+    { icon: <WebSocketIcon size={24} />, name: 'WebSocket' },
+    { icon: <QueueIcon size={24} />, name: 'Queue' },
+    { icon: <CLIIcon size={24} />, name: 'CLI' },
+    { icon: <MCPIcon size={24} />, name: 'MCP' },
   ];
 
   return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Write Once, Wire Everywhere</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            One function. <span className="text-primary">Every protocol.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            The same function handles HTTP requests, WebSocket messages, queue jobs, CLI commands, and MCP tools — zero duplication.
+    <section className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Write Once, Wire Everywhere</div>
+          <h2 className={styles.h2}>One function. <em>Every protocol.</em></h2>
+          <p className={styles.lead}>
+            The same function handles HTTP requests, WebSocket messages, queue jobs, CLI commands,
+            and MCP tools — zero duplication.
           </p>
         </div>
 
-        {/* Protocol icons row */}
-        <div className="flex justify-center gap-6 md:gap-8 mb-12">
-          {protocols.map((proto, i) => (
-            <div key={i} className="flex flex-col items-center gap-2">
-              <div className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-4 hover:border-white/15 transition-colors">
-                {proto.icon}
-              </div>
-              <span className={`text-xs font-semibold ${proto.color}`}>{proto.name}</span>
+        <div style={{ display: 'flex', gap: 16, marginBottom: 40, flexWrap: 'wrap' }}>
+          {protocols.map((p) => (
+            <div key={p.name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div className={styles.protoIcon}>{p.icon}</div>
+              <span className={styles.protoLabel}>{p.name}</span>
             </div>
           ))}
         </div>
 
-        {/* Arrows converging to center */}
-        <div className="flex justify-center mb-8">
-          <ArrowDown className="w-6 h-6 text-primary/50" />
+        <div style={{ display: 'flex', marginBottom: 24 }}>
+          <ArrowDown className="w-6 h-6" style={{ color: '#d4ccba' }} />
         </div>
 
-        {/* Central "same function" badge */}
-        <div className="bg-[#0d0d0d] border-2 border-white/15 rounded-xl p-4 text-center max-w-xs mx-auto mb-12">
-          <p className="text-xs font-bold uppercase tracking-wider text-primary mb-1">Same Function</p>
-          <code className="text-sm text-neutral-300 font-mono">getBook(services, data, wire)</code>
+        <div className={styles.protoCenter} style={{ marginLeft: 0, marginBottom: 40 }}>
+          <div className={styles.protoCenterLabel}>Same Function</div>
+          <code className={styles.protoCenterCode}>getBook(services, data, wire)</code>
         </div>
 
-        {/* Code examples */}
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl">
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 900 }}
+          className="lg:grid-cols-2 grid-cols-1">
           <CodeCard filename="getBook.func.ts" badge="func.ts">
             <CodeBlock language="typescript">{everyProtocolFunc}</CodeBlock>
           </CodeCard>
@@ -579,20 +444,19 @@ function EveryProtocolSection() {
           </CodeCard>
         </div>
 
-        {/* Highlights */}
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20, maxWidth: 700, marginTop: 36 }}
+          className="md:grid-cols-3 grid-cols-1">
           {[
             { label: 'Zero duplication', desc: 'Business logic lives in one place. Each wire adapts the protocol to your function.' },
             { label: 'Same permissions', desc: 'Auth and permission checks apply regardless of which wire triggers the function.' },
             { label: 'Same types', desc: 'Input and output types are shared. Change once, every wire gets the update.' },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">&#10003;</span>
-              <div>
-                <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
-                <p className="text-xs text-neutral-500">{item.desc}</p>
-              </div>
-            </div>
+          ].map((item) => (
+            <CheckItem key={item.label}>
+              <span>
+                <strong style={{ color: '#1a1814', fontWeight: 600 }}>{item.label}</strong>
+                {' — '}{item.desc}
+              </span>
+            </CheckItem>
           ))}
         </div>
       </div>
@@ -600,94 +464,59 @@ function EveryProtocolSection() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   6. CTA
-   ───────────────────────────────────────────── */
-
+/* ════════════════════════════════════════════════════════
+   7. CTA
+   ════════════════════════════════════════════════════════ */
 function CTASection() {
   const [copied, setCopied] = React.useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText('npm create pikku@latest');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const copy = () => { navigator.clipboard.writeText('npm create pikku@latest'); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
-      {/* Purple glow orb */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
-      </div>
-
-      <div className="max-w-screen-xl mx-auto px-6 relative">
-        <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
-          Start building in 5 minutes
-        </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
+    <section className={`${styles.sectionDark} ${styles.cta}`}>
+      <div className={styles.wrap}>
+        <h2 className={styles.h2}>Start building in <em>5 minutes</em></h2>
+        <p className={styles.lead} style={{ marginBottom: 32 }}>
           One command to scaffold a project. Your first function will work across every protocol from day one.
         </p>
 
-        {/* npm command with copy */}
-        <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
-          onClick={copyToClipboard}
-        >
-          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
-          <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
-            onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
-            title="Copy to clipboard"
-          >
-            {copied
-              ? <Check className="w-3.5 h-3.5 text-primary" />
-              : <Copy className="w-3.5 h-3.5 text-white/70" />
-            }
+        <div className={styles.cmdBlock} onClick={copy}>
+          <span className={styles.cmdPrompt}>$ </span>npm create pikku@latest
+          <button className={styles.copyBtn} onClick={(e) => { e.stopPropagation(); copy(); }} title="Copy">
+            {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/docs/core-features/functions"
-            className="bg-primary text-white hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-purple-500/20"
-          >
-            Read the Function Docs
-          </Link>
-          <Link
-            to="https://github.com/pikkujs/pikku"
-            className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
-          >
-            View on GitHub
-          </Link>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+          <Link to="/docs/core-features/functions" className={styles.btnPrimary}>Read the function docs</Link>
+          <Link to="https://github.com/pikkujs/pikku" className={styles.btnGhost}>View on GitHub</Link>
         </div>
 
-        <p className="text-neutral-500 text-sm mt-8">
-          MIT Licensed &nbsp;&middot;&nbsp; Works with Express, Fastify, Lambda &amp; Cloudflare
-        </p>
+        <p className={styles.ctaMeta}>MIT Licensed · Works with Express, Fastify, Lambda &amp; Cloudflare</p>
       </div>
     </section>
   );
 }
 
-/* ─────────────────────────────────────────────
-   PAGE
-   ───────────────────────────────────────────── */
-
+/* ════════════════════════════════════════════════════════
+   Page
+   ════════════════════════════════════════════════════════ */
 export default function FunctionPage() {
   return (
     <Layout
       title="Pikku Functions — Write Once, Wire Everywhere"
       description="A Pikku function receives services, data, and wire context — and works across HTTP, WebSocket, Queue, CLI, MCP, and every other protocol."
     >
-      <Hero />
-      <main>
-        <ThreeParamsSection />
-        <ServicesSection />
-        <VersioningSection />
-        <SessionSection />
-        <EveryProtocolSection />
-        <CTASection />
-      </main>
+      <PaperPage>
+        <Hero />
+        <main>
+          <ThreeParamsSection />
+          <ServicesSection />
+          <VersioningSection />
+          <SessionSection />
+          <EveryProtocolSection />
+          <CTASection />
+        </main>
+      </PaperPage>
     </Layout>
   );
 }

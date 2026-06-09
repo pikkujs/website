@@ -1,72 +1,155 @@
 import React from 'react';
-import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
-import CodeBlock from '@theme/CodeBlock';
-import Image from '@theme/ThemedImage';
-import { WiringIcon } from '../components/WiringIcons';
-import { runtimes } from '@site/data/homepage';
-import { testimonials } from '@site/data/testimonials';
-import {
-  Hero, NavbarPageToggle, CallToActionSection,
-} from '../components/HomepageShared';
-import {
-  Copy, AlertTriangle, Lock, Bot, Workflow, Zap, ShieldCheck,
-  Link2, Settings, Layers, CheckCircle2, Feather, RefreshCw, Timer, Database,
-  Plug, GitBranch, FileCode, ArrowRight,
-} from 'lucide-react';
+import Link from '@docusaurus/Link';
+import { NavbarPageToggle } from '../components/HomepageShared';
+import { PaperPage, Terminal } from '../components/PaperLayout';
+import styles from './index.module.css';
+
+// ─── Replace with your YouTube video ID when ready ──────────────
+const VIDEO_ID = '';
+// ────────────────────────────────────────────────────────────────
+
+/* ── Screenshot frame with browser chrome ────────────────────── */
+function ScreenshotFrame({ src, alt, addr, wide = false }: { src: string; alt: string; addr: string; wide?: boolean }) {
+  return (
+    <div className={`${styles.screenshotFrame} ${wide ? styles.wide : ''}`}>
+      <div className={styles.screenshotChrome}>
+        <span className={styles.termDot} style={{ background: '#e06c5b' }} />
+        <span className={styles.termDot} style={{ background: '#e0b34b' }} />
+        <span className={styles.termDot} style={{ background: '#79b06a' }} />
+        <span className={styles.screenshotAddr}>{addr}</span>
+      </div>
+      <img src={src} alt={alt} loading="lazy" />
+    </div>
+  );
+}
 
 /* ════════════════════════════════════════════════════════════════
-   Section 1 — Hero (imported from HomepageShared)
+   Hero
    ════════════════════════════════════════════════════════════════ */
+function Hero() {
+  return (
+    <header className={styles.hero}>
+      <div className={styles.wrap}>
+        <div className={styles.heroGrid}>
+          <div>
+            <div className={styles.kicker}>Open source · self-hostable · MIT</div>
+            <h1 className={styles.h1}>
+              Run a whole platform from <em>one command.</em>
+            </h1>
+            <p className={styles.lede}>
+              One command gives your team a complete backend on their machine — database, auth, content,
+              email, secrets, workflows — <strong>identical to what ships to production.</strong> No services to
+              install. No infrastructure to assemble. Deploy it anywhere, including fully managed.
+            </p>
+            <div className={styles.heroActions}>
+              <Link href="/getting-started" className={styles.btnPrimary}>Get started</Link>
+              <Link href="#platform" className={styles.btnGhost}>See how it works</Link>
+              <span className={styles.heroCmd}>npx pikku dev</span>
+            </div>
+          </div>
+          <Terminal />
+        </div>
+      </div>
+    </header>
+  );
+}
 
 /* ════════════════════════════════════════════════════════════════
-   Section 2 — Problem
+   Trust strip
    ════════════════════════════════════════════════════════════════ */
-function ProblemSection() {
-  const pains = [
-    {
-      icon: <Copy className="w-6 h-6" />,
-      title: 'Same logic, five handlers',
-      desc: 'getCard exists in your HTTP handler, your WebSocket handler, your queue worker, and your CLI. They started as copies. Now they\'ve drifted — and only one of them has the bug fix.',
-      color: 'text-white/55',
-    },
-    {
-      icon: <AlertTriangle className="w-6 h-6" />,
-      title: 'Every protocol brings its own world',
-      desc: 'AI agents mean Vercel AI SDK. Workflows mean Inngest or Temporal. MCP means yet another adapter. Each brings its own auth model, schema format, and deploy pipeline. None of them talk to each other.',
-      color: 'text-white/55',
-    },
-    {
-      icon: <Lock className="w-6 h-6" />,
-      title: 'Runtime change = full rewrite',
-      desc: 'Moving from Express to Lambda touches every handler. Your business logic is fused to framework APIs you never wanted to own. There\'s no clean seam to cut along.',
-      color: 'text-white/55',
-    },
+function TrustStrip() {
+  const logos = ['marta', 'BambooRose', 'AgreeWe', 'HeyGermany', 'Calligraphy Cut'];
+  return (
+    <div className={styles.trust}>
+      <div className={styles.wrap}>
+        <div className={styles.trustIn}>
+          <span className={styles.trustLabel}>Running in production at</span>
+          <div className={styles.trustLogos}>
+            {logos.map((name) => (
+              <span key={name} className={styles.trustLogo}>{name}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Video — "See it in 90 seconds"
+   ════════════════════════════════════════════════════════════════ */
+function VideoSection() {
+  return (
+    <section id="video" className={styles.sectionDark}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>See it in action</div>
+        <h2 className={styles.h2}>
+          From zero to a running platform in <em>90 seconds.</em>
+        </h2>
+        <p className={styles.secLede}>
+          Watch the full setup — local dev, the console, writing a function, and deploying to production.
+          No editing, no cuts.
+        </p>
+
+        <div className={styles.videoOuter}>
+          <div className={styles.videoFrame}>
+            {VIDEO_ID ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${VIDEO_ID}?rel=0&modestbranding=1`}
+                title="Pikku — 90 second demo"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <div className={styles.videoPlaceholder}>
+                <img src="/img/console-screenshot.webp" alt="" aria-hidden />
+                <div className={styles.playRing}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#f7f5f0', marginLeft: 3 }}>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+                <span className={styles.videoCaption}>Video coming soon — set VIDEO_ID in index.tsx</span>
+              </div>
+            )}
+          </div>
+          {!VIDEO_ID && (
+            <p className={styles.videoDuration}>~90 seconds · no cuts · no slides</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Platform — "The whole stack, the moment you start"
+   ════════════════════════════════════════════════════════════════ */
+function PlatformSection() {
+  const cells = [
+    { n: '01', title: 'Database & types', body: 'SQLite to start, or point it at Postgres — it reads your schema and generates end-to-end types automatically. No setup, no drift.' },
+    { n: '02', title: 'Authentication', body: 'Single sign-on with any provider out of the box. Add the credentials, and your team logs in. Nothing to build.' },
+    { n: '03', title: 'Content & secrets', body: 'A managed content layer and type-safe secrets, handled the same way on a laptop as in production.' },
+    { n: '04', title: 'Email, with previews', body: 'Generate transactional email and preview every message live in the console — before a single one is sent.' },
+    { n: '05', title: 'Workflows & agents', body: 'Durable, restart-proof workflows and AI agents run natively — no separate engine to operate.' },
+    { n: '06', title: 'One binary', body: 'The entire platform is a single command. No container orchestration to maintain just to run "hello world."' },
   ];
 
   return (
-    <section id="how-it-works" className="py-10 lg:py-16">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-8">
-          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Sound Familiar?</p>
-          <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
-            You've written this function<br className="hidden md:block" /> more times than you'd admit.
-          </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl leading-relaxed">
-            Every new protocol means another copy-paste, another auth re-wire, another handler that drifts from the last. That's not technical debt — that's a missing abstraction.
-          </p>
-          <p className="text-sm text-neutral-500 italic max-w-xl mt-4">
-            "So many places in my code base have like three entry points: CLI, public HTTP API and internally from within the API. Would be so nice having everything just an invoke away."
-            <span className="not-italic block mt-1 text-neutral-600">— Alex Harley, Co-founder @ Superbridge</span>
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {pains.map((pain, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-7">
-              <div className={`${pain.color} mb-5`}>{pain.icon}</div>
-              <h3 className="text-lg font-bold mb-3 text-white">{pain.title}</h3>
-              <p className="text-sm text-neutral-400 leading-relaxed">{pain.desc}</p>
+    <section id="platform" className={styles.sectionAlt}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>The whole stack, the moment you start</div>
+        <h2 className={styles.h2}>A production platform, <em>not a starter kit.</em></h2>
+        <p className={styles.secLede}>
+          Most frameworks hand you a router and a to-do list. Pikku boots the entire thing — and what
+          your engineers build against locally is exactly what runs live.
+        </p>
+        <div className={styles.platformGrid}>
+          {cells.map((c) => (
+            <div key={c.n} className={styles.cell}>
+              <div className={styles.cellNum}>{c.n}</div>
+              <h3>{c.title}</h3>
+              <p>{c.body}</p>
             </div>
           ))}
         </div>
@@ -76,86 +159,122 @@ function ProblemSection() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Section 3 — Solution (Before/After)
+   Parity — "Local equals production"
    ════════════════════════════════════════════════════════════════ */
-function SolutionSection() {
-  const beforeCode = `// HTTP
-app.get('/cards/:id', auth, validate, async (req, res) => {
-  const card = await db.getCard(req.params.id)
-  res.json(card)
-})
-// WebSocket
-ws.on('getCard', auth, validate, async (msg, socket) => {
-  const card = await db.getCard(msg.cardId)
-  socket.send(JSON.stringify(card))
-})
-// Queue worker — same logic, third copy
-// CLI command — same logic, fourth copy
-// AI agent tool — new SDK, new auth, fifth copy`;
+function ParitySection() {
+  return (
+    <section id="parity" className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>Local equals production</div>
+        <h2 className={styles.h2}>What your team builds is <em>what you ship.</em></h2>
+        <div className={styles.parityGrid}>
+          <div className={styles.parityVis}>
+            <div className={styles.envRow}>
+              <span className={styles.envLabel}>Local</span>
+              <span className={`${styles.envBar} ${styles.envLocal}`}>npx pikku dev · console · workflows · agents</span>
+            </div>
+            <div className={styles.parityEquals}>identical</div>
+            <div className={styles.envRow}>
+              <span className={styles.envLabel}>Production</span>
+              <span className={`${styles.envBar} ${styles.envProd}`}>pikku deploy · console · workflows · agents</span>
+            </div>
+          </div>
+          <ul className={styles.parityList}>
+            <li>The same auth, permissions and validation run in both places.</li>
+            <li>Move from SQLite to Postgres by <strong>pointing at it</strong> — nothing else changes.</li>
+            <li>The console you debug in is the console you operate with in production.</li>
+            <li>No "works on my machine." No environment you can't reproduce.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-  const afterCode = `// Write it once
-const getCard = pikkuFunc({
-  func: async ({ db }, { cardId }) => db.getCard(cardId),
-  permissions: { user: isAuthenticated }
-})
-
-// Wire it to everything — same auth, same validation
-wireHTTP({ method: 'get', route: '/cards/:cardId', func: getCard })
-wireChannel({ name: 'cards', onMessage: { getCard } })
-wireQueueWorker({ queue: 'fetch-card', func: getCard })
-wireCLI({ program: 'cards', commands: { get: getCard } })`;
+/* ════════════════════════════════════════════════════════════════
+   Enterprise — "From day one"
+   ════════════════════════════════════════════════════════════════ */
+function EnterpriseSection() {
+  const cards = [
+    {
+      title: 'SSO with any provider',
+      body: <>Built on standard OAuth and OIDC. Provide credentials for Google, Microsoft, Okta — or any provider — and your organization signs in. <strong>No authentication code to write or own.</strong></>,
+      code: <><span className={styles.mk}>auth</span>.provider(<span className={styles.mc}>'okta'</span>, {'{ clientId, secret }'}) <span className={styles.md}>// live</span></>,
+    },
+    {
+      title: 'Full audit trails',
+      body: <>Decide what to audit and Pikku records who did what, and when — across every entry point. <strong>Compliance-grade history without a separate system.</strong></>,
+      code: <><span className={styles.mk}>audited</span>: <span className={styles.mc}>true</span> <span className={styles.md}>// on any sensitive action</span></>,
+    },
+    {
+      title: 'Multitenancy & permissions',
+      body: <>Organizations and tenants are first-class — isolated data, scoped access, and fine-grained permissions wired through everything. <strong>Multi-tenant SaaS without the usual plumbing.</strong></>,
+      code: <><span className={styles.mk}>permissions</span>: {'{ '}<span className={styles.mc}>org</span>: isOrgAdmin{'}'} <span className={styles.md}>// per tenant</span></>,
+    },
+    {
+      title: 'Your own internal tools',
+      body: <>Turn any capability into a command-line tool for your ops and support teams — same auth, same permissions, same audit. <strong>Internal tooling that's safe by default.</strong></>,
+      code: <><span className={styles.mk}>cli</span>: {'{ migrate, seed, refund }'} <span className={styles.md}>// shipped to ops</span></>,
+    },
+  ];
 
   return (
-    <section className="py-8 lg:py-16">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-6">
-          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Fix</p>
-          <h2 className="text-3xl md:text-4xl font-jakarta font-bold text-white leading-tight mb-4">
-            One function. Every protocol.<br />
-            <span className="text-primary">Fix it once, it's fixed everywhere.</span>
-          </h2>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-red-500" />
-              <span className="text-sm font-semibold text-red-400">Without Pikku</span>
-              <span className="ml-auto text-xs text-neutral-600 font-mono">5 copies that drift</span>
+    <section id="enterprise" className={styles.sectionDark}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>Enterprise from day one</div>
+        <h2 className={styles.h2}>The requirements your board asks about — <em>already met.</em></h2>
+        <p className={styles.secLede}>
+          SSO, audit, multitenancy and granular permissions aren't a premium tier or a future quarter.
+          They ship in the open-source binary.
+        </p>
+        <div className={styles.entGrid}>
+          {cards.map((c) => (
+            <div key={c.title} className={styles.entCard}>
+              <h3>{c.title}</h3>
+              <p>{c.body}</p>
+              <div className={styles.miniCode}>{c.code}</div>
             </div>
-            <div className="rounded-xl border border-white/12 overflow-hidden opacity-70">
-              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
-                <CodeBlock language="typescript">{beforeCode}</CodeBlock>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-green-500" />
-              <span className="text-sm font-semibold text-green-400">With Pikku</span>
-              <span className="ml-auto text-xs text-neutral-600 font-mono">1 function + wirings</span>
-            </div>
-            <div className="rounded-xl border border-white/12 overflow-hidden">
-              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
-                <CodeBlock language="typescript">{afterCode}</CodeBlock>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 flex flex-wrap gap-3">
-          {['+ SSE', '+ RPC', '+ MCP', '+ AI Agent', '+ Workflow', '+ Trigger', '+ Gateway'].map((label) => (
-            <span key={label} className="px-3 py-1.5 bg-white/5 border border-white/12 rounded-full text-xs font-medium text-white/55">
-              {label}
-            </span>
           ))}
         </div>
-        <p className="text-sm text-neutral-500 mt-4">
-          12 protocols total — all with the same pattern.{' '}
-          <Link to="/developers" className="text-primary hover:underline">
-            See every wiring in action
-          </Link>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Console — screenshots
+   ════════════════════════════════════════════════════════════════ */
+function ConsoleSection() {
+  return (
+    <section id="console" className={styles.sectionAlt}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>The console</div>
+        <h2 className={styles.h2}>See everything running. <em>Nothing is a black box.</em></h2>
+        <p className={styles.secLede}>
+          The operating console ships with the platform. Inspect functions, watch queues, replay workflows,
+          preview email, review tests and permissions — for the exact system in front of you.
+        </p>
+
+        <div className={styles.consoleGrid}>
+          <ScreenshotFrame
+            src="/img/console-screenshot.webp"
+            alt="Pikku Console — browse and run functions, inspect wirings"
+            addr="localhost:4173 — Pikku Console"
+            wide
+          />
+          <ScreenshotFrame
+            src="/img/console-screenshot.png"
+            alt="Pikku Console — function detail view"
+            addr="localhost:4173 — Functions"
+          />
+          <ScreenshotFrame
+            src="/img/last-slide.webp"
+            alt="Pikku Console — workflows and queue overview"
+            addr="localhost:4173 — Workflows"
+          />
+        </div>
+        <p className={styles.consoleCaption}>
+          Browse functions · watch queues · replay workflows · preview email · inspect permissions
         </p>
       </div>
     </section>
@@ -163,230 +282,67 @@ wireCLI({ program: 'cards', commands: { get: getCard } })`;
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Section 4 — System Model (Five Primitives)
+   Deploy — "You choose the destination"
    ════════════════════════════════════════════════════════════════ */
-function SystemModelSection() {
-  const [active, setActive] = React.useState(0);
-
-  const primitives = [
+function DeploySection() {
+  const tiers: {
+    step: string;
+    title: string;
+    who: string;
+    body: string;
+    cmd: React.ReactNode;
+    pill: 'oss' | 'managed';
+    featured?: boolean;
+  }[] = [
     {
-      id: 'functions',
-      label: 'Functions',
-      icon: <FileCode className="w-5 h-5" />,
-      color: 'text-white/55',
-      borderColor: 'border-white/15',
-      bgColor: 'bg-white/5',
-      summary: 'Typed, testable units of business logic. No framework coupling, no handler boilerplate.',
-      code: `import { pikkuFunc } from '#pikku'
-
-export const getBook = pikkuFunc<{ bookId: string }, Book>({
-  func: async ({ database }, data) => {
-    return await database.query('book', { bookId: data.bookId })
-  },
-  title: 'Fetch a book by ID',
-  description: 'Returns a book from the database',
-  tags: ['books']
-})`,
+      step: 'OPTION 01',
+      title: 'Standalone',
+      who: 'Run it anywhere you control.',
+      body: 'Bundle the entire platform into a single executable and run it on your own infrastructure. A complete server in one file.',
+      cmd: <><span className={styles.thl}>pikku</span> deploy standalone</>,
+      pill: 'oss',
     },
     {
-      id: 'services',
-      label: 'Services',
-      icon: <Settings className="w-5 h-5" />,
-      color: 'text-white/55',
-      borderColor: 'border-white/15',
-      bgColor: 'bg-white/5',
-      summary: 'Singleton and per-session dependency injection. Type-safe, testable, zero decorators.',
-      code: `// Singleton services — created once, shared across requests
-export const createSingletonServices = pikkuServices(
-  async (config) => {
-    const logger = new ConsoleLogger()
-    const jwt = new JoseJWTService(async () => [
-      { id: 'my-key', value: process.env.JWT_SECRET! }
-    ], logger)
-    const database = new DatabasePool(config.database)
-    return { config, logger, jwt, database }
-  }
-)
-
-// Per-wire services — created per request
-export const createWireServices = pikkuWireServices(
-  async (singletonServices, wire) => ({
-    userSession: createUserSessionService(wire),
-  })
-)`,
+      step: 'OPTION 02',
+      title: 'Your cloud',
+      who: 'Your account, your bill.',
+      body: 'Deploy the open-source way to AWS or Cloudflare. Same application, your infrastructure, no lock-in.',
+      cmd: <><span className={styles.thl}>pikku</span> deploy aws · cloudflare</>,
+      pill: 'oss',
     },
     {
-      id: 'security',
-      label: 'Auth & Middleware',
-      icon: <ShieldCheck className="w-5 h-5" />,
-      color: 'text-white/55',
-      borderColor: 'border-white/12',
-      bgColor: 'bg-white/8',
-      summary: 'Permissions, session auth, and before/after hooks — defined once, enforced across every protocol automatically.',
-      code: `// Permission guards — session-only or data-aware
-export const requireAdmin = pikkuPermission(
-  async (_services, _data, { session }) => session?.role === 'admin'
-)
-export const requireOwnership = pikkuPermission<{ bookId: string }>(
-  async ({ database }, data, { session }) => {
-    const book = await database.query('books', { id: data.bookId })
-    return book?.ownerId === session?.userId
-  }
-)
-
-// Compose — OR between keys, AND within arrays
-const deleteBook = pikkuFunc({
-  func: async ({ database }, { bookId }) => database.delete('books', bookId),
-  permissions: { admin: requireAdmin, owner: requireOwnership }
-})
-
-// Global middleware — bearer auth, CORS, scoped routes
-addHTTPMiddleware([authBearer(), cors()])
-addHTTPMiddleware('/admin', [auditMiddleware])`,
-    },
-    {
-      id: 'wires',
-      label: 'Wires',
-      icon: <Plug className="w-5 h-5" />,
-      color: 'text-white/55',
-      borderColor: 'border-white/12',
-      bgColor: 'bg-white/8',
-      summary: 'Map functions to transports: HTTP, WebSocket, queues, cron, CLI, and more. One line of config, not a rewrite.',
-      code: `wireHTTP({ method: 'get', route: '/books/:bookId', func: getBook })
-wireChannel({ name: 'books', route: '/books', onMessage: getBook })
-wireQueueWorker({ queue: 'fetch-book', func: getBook })
-wireScheduler({ schedule: '0 3 * * *', func: generateReport })
-wireCLI({ program: 'books', commands: {
-  get: pikkuCLICommand({ parameters: '<bookId>', func: getBook })
-}})`,
-    },
-    {
-      id: 'workflows',
-      label: 'Workflows',
-
-      icon: <Workflow className="w-5 h-5" />,
-      color: 'text-white/55',
-      borderColor: 'border-white/12',
-      bgColor: 'bg-white/8',
-      summary: 'Multi-step processes that survive restarts. Deterministic replay, durable sleep, no separate engine.',
-      code: `export const onboardingWorkflow = pikkuWorkflowFunc<
-  { email: string; userId: string },
-  { success: boolean }
->(async ({ workflow, rpc }, data) => {
-  await workflow.do('Create profile', 'createUserProfile', data)
-  await workflow.sleep('Wait before welcome email', '5min')
-  await workflow.do('Send welcome', 'sendEmail', {
-    to: data.email, template: 'welcome'
-  })
-  return { success: true }
-})`,
-    },
-    {
-      id: 'agents',
-      label: 'Agents',
-
-      icon: <Bot className="w-5 h-5" />,
-      color: 'text-white/55',
-      borderColor: 'border-white/15',
-      bgColor: 'bg-white/5',
-      summary: 'AI agents that use your existing functions as tools. Auth, types, and middleware carry over. No adapters.',
-      code: `export const retreatAssistant = pikkuAIAgent({
-  name: 'retreat-assistant',
-  description: 'Manages retreat operations',
-  instructions: 'You help manage retreat stays, tasks, and meals.',
-  model: 'anthropic/claude-sonnet-4-5',
-  tools: [
-    // Stays
-    requestStay, approveStayRequest, createStayFromRequest,
-    // Tasks
-    createTaskInstance, assignTask, completeTask, listTasks,
-    // Kitchen
-    createMealService, listRetreatMeals, upsertDietaryProfile,
-  ],
-  memory: { storage: 'aiStorage', lastMessages: 10 },
-  maxSteps: 5,
-})`,
-    },
-    {
-      id: 'gateways',
-      label: 'Gateways',
-
-      icon: <Zap className="w-5 h-5" />,
-      color: 'text-white/55',
-      borderColor: 'border-white/12',
-      bgColor: 'bg-white/8',
-      summary: 'One handler for WhatsApp, Slack, Telegram, and any messaging platform. Adapters normalize the differences.',
-      code: `wireGateway({
-  name: 'whatsapp',
-  type: 'webhook',
-  route: '/webhooks/whatsapp',
-  adapter: whatsAppAdapter,
-  func: handleMessage,
-})
-
-wireGateway({
-  name: 'webchat',
-  type: 'websocket',
-  route: '/chat',
-  adapter: webChatAdapter,
-  func: handleMessage, // same handler, different platform
-})`,
+      step: 'OPTION 03',
+      title: 'Fabric',
+      who: 'Managed, with an AI that knows your system.',
+      body: 'Push and forget. Every function becomes a serverless worker, fully observable — and you can talk to your platform in plain language.',
+      cmd: <><span className={styles.thl}>pikku</span> deploy fabric</>,
+      pill: 'managed',
+      featured: true,
     },
   ];
 
-  const p = primitives[active];
-
   return (
-    <section className="py-10 lg:py-16">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-6">
-          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Mental Model</p>
-          <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
-            A lot of moving parts.<br className="hidden md:block" />
-            <span className="text-primary">One coherent system.</span>
-          </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Functions, services, auth, transports, workflows, agents, gateways — all speaking the same language.
-          </p>
-        </div>
-
-        {/* Tab bar */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {primitives.map((prim, i) => (
-            <button
-              key={prim.id}
-              onClick={() => setActive(i)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer border ${
-                active === i
-                  ? `${prim.bgColor} ${prim.borderColor} ${prim.color}`
-                  : 'border-neutral-800 bg-[#0d0d0d] text-neutral-400 hover:border-neutral-600 hover:text-neutral-300'
-              }`}
-            >
-              {prim.icon}
-              {prim.label}
-            </button>
+    <section id="deploy" className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>When you're ready to ship</div>
+        <h2 className={styles.h2}>One command to deploy. <em>You choose the destination.</em></h2>
+        <p className={styles.secLede}>
+          The same application ships three ways. Stay fully in control, run it in your own cloud,
+          or hand operations to us — without rewriting anything.
+        </p>
+        <div className={styles.tiers}>
+          {tiers.map((t) => (
+            <div key={t.title} className={`${styles.tier} ${t.featured ? styles.tierFeatured : ''}`}>
+              <div className={styles.tierStep}>{t.step}</div>
+              <h3>{t.title}</h3>
+              <div className={styles.tierWho}>{t.who}</div>
+              <p>{t.body}</p>
+              <code className={styles.tierCode}>{t.cmd}</code>
+              <span className={t.pill === 'oss' ? styles.pillOss : styles.pillManaged}>
+                {t.pill === 'oss' ? 'open source' : 'managed'}
+              </span>
+            </div>
           ))}
-        </div>
-
-        {/* Active primitive content */}
-        <div className={`rounded-2xl border ${p.borderColor} bg-[#0d0d0d] p-6 md:p-8 transition-all`}>
-          <div className="grid lg:grid-cols-[2fr_3fr] gap-8 items-start">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`${p.color} flex-shrink-0`}>{p.icon}</div>
-                <h3 className="text-xl font-bold text-white leading-none">{p.label}</h3>
-              </div>
-              <p className="text-neutral-400 leading-relaxed mb-6">{p.summary}</p>
-              <Link to={`/docs`} className="text-primary hover:underline font-medium text-sm">
-                Learn more about {p.label.toLowerCase()} →
-              </Link>
-            </div>
-            <div className="rounded-xl border border-neutral-700/60 overflow-hidden">
-              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
-                <CodeBlock language="typescript">{p.code}</CodeBlock>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -394,261 +350,51 @@ wireGateway({
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Section 5 — Differentiators (AI Agents + Workflows + Console)
+   Fabric — "Talk to your platform"
    ════════════════════════════════════════════════════════════════ */
-function DifferentiatorsSection() {
-  const features = [
-    {
-      icon: <Bot className="w-6 h-6 text-primary" />,
-      tag: 'AI Agents',
-      tagColor: 'text-primary',
-      borderColor: 'border-white/12',
-
-      title: 'Your functions are already agent tools',
-      desc: 'Other frameworks need adapters, re-defined schemas, and a separate auth layer before your functions can talk to an AI agent. With Pikku, they\'re already there — types, permissions, and middleware included.',
-      code: `const support = pikkuAgent({
-  instructions: 'You are a support agent...',
-  tools: [getCustomer, getOrders, createTicket],
-  model: 'claude-sonnet-4-5'
-})`,
-      benefits: [
-        'Zero-cost tool registration',
-        'Auth and filters apply to the agent automatically',
-        'One CLI handler becomes one MCP tool',
-      ],
-      link: '/wires/bot',
-      linkText: 'Learn about AI Agents',
-    },
-    {
-      icon: <Workflow className="w-6 h-6 text-emerald-400" />,
-      tag: 'Workflows',
-      tagColor: 'text-emerald-400',
-      borderColor: 'border-white/12',
-
-      title: 'Multi-step processes that survive restarts',
-      desc: 'No separate workflow engine to run or operate. Write sequential steps like normal code — Pikku persists each step, retries on failure, and resumes exactly where it left off.',
-      code: `await workflow.do('Create profile', 'createProfile', { userId })
-await workflow.sleep('Wait', '5min')
-await workflow.do('Send welcome', 'sendEmail', { to: email })`,
-      benefits: [
-        'Deterministic replay from the exact failure point',
-        'Sleep for minutes, hours, or weeks',
-        'State persists to PostgreSQL or Redis',
-      ],
-      link: '/wires/workflow',
-      linkText: 'Learn about Workflows',
-    },
-  ];
-
+function FabricSection() {
   return (
-    <section className="py-10 lg:py-16">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-8">
-          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">More Than a Router</p>
-          <h2 className="text-4xl md:text-5xl font-jakarta font-bold text-white leading-tight mb-5">
-            AI agents and durable workflows —<br className="hidden md:block" />
-            <span className="text-primary">no extra engine required.</span>
-          </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            tRPC stops at HTTP. Hono is a fast router and nothing more. NestJS buries you in decorators. Pikku gives you agents and workflows built on the same functions you've already written.
-          </p>
-        </div>
-
-        <div className="space-y-6 mb-8">
-          {features.map((feat, i) => (
-            <div key={i} className={`bg-[#0d0d0d] border ${feat.borderColor || 'border-neutral-800'} rounded-2xl p-8 md:p-10`}>
-              <div className="flex items-center gap-3 mb-4">
-                {feat.icon}
-                <span className={`text-xs font-bold tracking-widest uppercase ${feat.tagColor}`}>{feat.tag}</span>
-              </div>
-
-              <div className="grid lg:grid-cols-[3fr_2fr] gap-8">
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-3">{feat.title}</h3>
-                  <p className="text-neutral-400 leading-relaxed mb-6">{feat.desc}</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
-                    {feat.benefits.map((benefit, j) => (
-                      <div key={j} className="flex items-start gap-2">
-                        <span className="flex-shrink-0 w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-white/55 text-[10px] font-bold mt-0.5">&#10003;</span>
-                        <span className="text-sm text-neutral-400">{benefit}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <Link to={feat.link} className="text-primary hover:underline font-medium text-sm">
-                    {feat.linkText} →
-                  </Link>
-                </div>
-
-                <div className="rounded-xl border border-neutral-700/80 overflow-hidden self-start max-w-full">
-                  <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-[11px] sm:text-sm [&_pre]:!overflow-x-auto [&_pre]:max-w-[calc(100vw-4rem)]">
-                    <CodeBlock language="typescript">{feat.code}</CodeBlock>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Console preview — visual proof */}
-        <div className="relative max-w-4xl">
-          <div className="mb-6">
-            <div className="inline-flex items-center gap-2 mb-3">
-              <span className="text-xs font-semibold tracking-widest uppercase text-white/65">Pikku Console</span>
-            </div>
-            <p className="text-neutral-400 text-sm">
-              Browse functions, run agents, manage secrets, and trigger workflows — no custom tooling code required.
-            </p>
-          </div>
-          <div className="rounded-xl overflow-hidden border border-neutral-800 shadow-2xl">
-            <img
-              src="/img/console-screenshot.webp" loading="lazy"
-              alt="Pikku Console — browse and inspect all functions, wirings, and services"
-              className="w-full block"
-            />
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0a0f] to-transparent rounded-b-xl pointer-events-none" />
-          <div className="mt-4">
-            <Link to="/features#console" className="text-primary hover:underline font-medium text-sm">
-              Learn about the Console →
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   Section 6 — Production + Trust
-   (Deploy Anywhere + Production Features + Testimonials merged)
-   ════════════════════════════════════════════════════════════════ */
-function ProductionTrustSection() {
-  const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom];
-
-  const features = [
-    { title: 'Type-Safe Clients', desc: 'Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense. No schema drift between server and client.', icon: <Link2 className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
-    { title: 'Auth & Permissions', desc: 'Cookie, bearer, and API key auth with fine-grained permissions — wired across every protocol from day one.', icon: <ShieldCheck className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
-    { title: 'Services', desc: "Singleton and per-request dependency injection that's type-safe, testable, and decorator-free.", icon: <Settings className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
-    { title: 'Middleware', desc: 'Before/after hooks for logging, metrics, and tracing. Write once, works across all transports.', icon: <Layers className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
-    { title: 'Schema Validation', desc: 'Runtime validation against TypeScript input schemas. Zod supported out of the box.', icon: <CheckCircle2 className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
-    { title: 'Zero Lock-In', desc: 'Standard TypeScript, minimal runtime, MIT licensed. Bring your own everything — swap any piece at any time.', icon: <Feather className="w-5 h-5" />, iconBg: 'bg-white/[0.06] text-white/55 border-white/12' },
-  ];
-
-  return (
-    <section className="py-10 lg:py-16">
-      <div className="max-w-screen-xl mx-auto px-6">
-
-        {/* Deploy Anywhere strip */}
-        <div className="mb-8">
-          <span className="text-xs font-semibold tracking-widest uppercase text-white/65 block mb-4">Deploy Anywhere</span>
-          <h2 className="text-3xl md:text-4xl font-jakarta font-bold text-white mb-4">
-            Change your runtime. Keep your functions.
-          </h2>
-          <p className="text-lg text-neutral-400 max-w-2xl mb-8">
-            The same code runs on Express, Fastify, AWS Lambda, Cloudflare Workers, Next.js, and more. Swap the adapter, not the logic.
-          </p>
-
-          <div className="flex flex-wrap gap-3 max-w-3xl mb-4">
-            {allRuntimes.map((runtime, idx) => (
-              <Link
-                key={idx}
-                to={runtime.docs}
-                className="flex items-center gap-2.5 px-4 py-2.5 bg-[#0d0d0d] border border-neutral-800 rounded-lg hover:border-neutral-600 transition-colors duration-200 no-underline"
-                title={`Deploy to ${runtime.name}`}
-              >
-                <Image
-                  width={20}
-                  height={20}
-                  className="flex-shrink-0"
-                  sources={{
-                    light: `img/logos/${runtime.img.light}`,
-                    dark: `img/logos/${runtime.img.dark}`
-                  }}
-                />
-                <span className="text-sm font-medium text-neutral-300">{runtime.name}</span>
-              </Link>
-            ))}
-          </div>
-          <p className="text-sm text-neutral-500">
-            Any custom runtime supported via the adapter interface.{' '}
-            <Link to="/docs/custom-runtimes/custom-http-runtime" className="text-primary hover:underline">
-              Build your own →
-            </Link>
-          </p>
-        </div>
-
-        {/* Production Features grid */}
-        <div className="mb-8">
-          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-6">Built For Production</p>
-          <div className="grid md:grid-cols-3 gap-4">
-            {features.map((feature, idx) => (
-              <div key={idx} className="group relative overflow-hidden rounded-xl border border-neutral-800 bg-[#0d0d0d] p-6 text-left transition-colors hover:border-neutral-700">
-                <div className="relative">
-                  <div className={`inline-flex items-center justify-center w-10 h-10 rounded-lg border ${feature.iconBg} mb-4`}>
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-base font-bold mb-2 text-white">{feature.title}</h3>
-                  <p className="text-sm text-neutral-400 leading-relaxed">{feature.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-sm text-neutral-500 mt-4">
-            MIT licensed. Standard TypeScript. No VC-backed lock-in.
-          </p>
-        </div>
-
-        {/* Testimonials */}
-        {testimonials.length > 0 && (
+    <section id="fabric" className={styles.section} style={{ paddingTop: 0 }}>
+      <div className={styles.wrap}>
+        <div className={styles.fabricCard}>
           <div>
-            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-6">What Developers Say</p>
-            <div className="grid md:grid-cols-2 gap-6 max-w-3xl">
-              {testimonials.map((testimonial, idx) => (
-                <div key={idx} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6">
-                  <p className="text-neutral-300 mb-4 italic leading-relaxed text-sm">
-                    "{testimonial.quote}"
-                  </p>
-                  <div className="text-sm">
-                    <p className="font-semibold text-neutral-100">{testimonial.author}</p>
-                    <p className="text-neutral-500">
-                      {testimonial.role}{testimonial.company ? ` @ ${testimonial.company}` : ''}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   Fabric Callout
-   ════════════════════════════════════════════════════════════════ */
-function FabricCallout() {
-  return (
-    <section className="py-10 lg:py-16 border-t border-neutral-800/50">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="max-w-2xl">
-          <div className="flex items-center gap-3 mb-6">
-            <img src="/img/fabric-logo.svg" width={48} height={48} alt="Fabric logo" />
-            <span className="text-2xl font-bold text-white tracking-tight">Fabric</span>
-          </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-            Rather not manage the infra?
-          </h2>
-          <p className="text-base text-neutral-400 max-w-lg mb-8 leading-relaxed">
-            Fabric is our deployment platform — push your code and every function deploys as a serverless worker. Getting its own home at <strong className="text-white/65">pikkufabric.com</strong> soon.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="https://pikkufabric.com"
-              className="inline-flex items-center gap-2 bg-white text-[#0a0a0f] hover:bg-white/90 px-6 py-3 rounded-lg font-semibold text-sm transition no-underline w-fit"
-            >
-              Learn about Fabric <ArrowRight className="w-3.5 h-3.5" />
+            <div className={styles.fabricEyebrow}>Fabric — the managed home for Pikku</div>
+            <h2 className={styles.fabricH2}>
+              Talk to your platform. <em>It already understands it.</em>
+            </h2>
+            <p className={styles.fabricP}>
+              Because Pikku knows your entire system, Fabric gives you an assistant that understands your
+              data, your logic and your operations. Ask for a change in plain language — and watch it
+              happen, live.
+            </p>
+            <p className={styles.fabricP}>
+              It's the same application your team ran locally, now hosted, observable, and conversational.
+            </p>
+            <Link href="https://pikkufabric.com" className={styles.fabricBtn}>
+              Explore Fabric
             </Link>
+          </div>
+          <div className={styles.fabricChat}>
+            <div className={styles.fmsg}>
+              <div className={`${styles.fav} ${styles.favU}`}>You</div>
+              <div className={styles.fbub}>Add a weekly summary email for active customers.</div>
+            </div>
+            <div className={styles.fmsg}>
+              <div className={`${styles.fav} ${styles.favA}`}>✦</div>
+              <div className={`${styles.fbub} ${styles.fbubAi}`}>
+                Done — created the job, scheduled it weekly, and built the email. Preview it in the console.
+              </div>
+            </div>
+            <div className={styles.fmsg}>
+              <div className={`${styles.fav} ${styles.favU}`}>You</div>
+              <div className={styles.fbub}>Ship it.</div>
+            </div>
+            <div className={styles.fmsg}>
+              <div className={`${styles.fav} ${styles.favA}`}>✦</div>
+              <div className={`${styles.fbub} ${styles.fbubAi}`}>
+                <span className={styles.fbubMono}>✓ live</span> — deployed as a serverless worker.
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -657,25 +403,81 @@ function FabricCallout() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Page Assembly
+   Non-dev
+   ════════════════════════════════════════════════════════════════ */
+function NonDevSection() {
+  return (
+    <section id="nondev" className={`${styles.sectionDark} ${styles.nondev}`}>
+      <div className={styles.wrap}>
+        <div className={styles.nondevCard}>
+          <div className={styles.eyebrow}>Not a developer?</div>
+          <h2 className={styles.h2} style={{ margin: '0 auto 18px' }}>You can still use all of this.</h2>
+          <p className={styles.secLede} style={{ margin: '0 auto 30px' }}>
+            Open Fabric and an assistant builds the whole thing for you — the data, the screens, the emails,
+            the deployment. You describe the product you want; it ships a real one. No terminal, no code.
+          </p>
+          <Link href="https://pikkufabric.com" className={styles.btnPrimary}>
+            Start without code
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CTA
+   ════════════════════════════════════════════════════════════════ */
+function CTASection() {
+  return (
+    <section id="start" className={`${styles.section} ${styles.cta}`}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow} style={{ textAlign: 'center' }}>Try it now</div>
+        <h2 className={styles.h2} style={{ margin: '0 auto 22px', textAlign: 'center' }}>
+          A complete platform is one command away.
+        </h2>
+        <p className={styles.secLede} style={{ margin: '0 auto', textAlign: 'center' }}>
+          No account. No installation. No setup. Run it and watch the whole system come up.
+        </p>
+        <div className={styles.ctaTerm}>
+          <Terminal />
+        </div>
+        <div className={styles.ctaActions}>
+          <Link href="/getting-started" className={styles.btnPrimary}>Read the quick start</Link>
+          <Link href="https://github.com/pikkujs/pikku" className={styles.btnGhost}>Star on GitHub</Link>
+        </div>
+        <p className={styles.engNote}>
+          Engineers — curious how it works underneath?{' '}
+          <Link href="/docs/core/function">Read the framework docs →</Link>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Page assembly
    ════════════════════════════════════════════════════════════════ */
 export default function Home() {
   return (
     <Layout
-      title="Pikku - One Function, Every Protocol"
-      description="Write backend logic once and wire it to HTTP, WebSockets, queues, cron jobs, AI agents, and more. Deploy anywhere — Express, Lambda, Cloudflare Workers, and beyond."
+      title="Pikku — Run a whole platform from one command."
+      description="One command gives your team a complete backend — database, auth, email, workflows, agents — identical to what ships to production. Deploy anywhere, including fully managed."
     >
       <NavbarPageToggle isDeveloperPage={false} />
-      <Hero />
-      <main>
-        <ProblemSection />
-        <SolutionSection />
-        <SystemModelSection />
-        <DifferentiatorsSection />
-        <ProductionTrustSection />
-        <FabricCallout />
-        <CallToActionSection />
-      </main>
+      <PaperPage>
+        <Hero />
+        <TrustStrip />
+        <VideoSection />
+        <PlatformSection />
+        <ParitySection />
+        <EnterpriseSection />
+        <ConsoleSection />
+        <DeploySection />
+        <FabricSection />
+        <NonDevSection />
+        <CTASection />
+      </PaperPage>
     </Layout>
   );
 }

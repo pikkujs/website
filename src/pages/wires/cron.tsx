@@ -1,102 +1,5 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
-import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
-import CodeBlock from '@theme/CodeBlock';
-import { CronIcon } from '../../components/WiringIcons';
-import {
-  ShieldCheck, Layers, Clock, Calendar,
-  Copy, Check, SkipForward, Zap,
-} from 'lucide-react';
-
-/* ─────────────────────────────────────────────
-   Reusable helpers
-   ───────────────────────────────────────────── */
-
-function CodeCard({ filename, badge, icon, children }: {
-  filename: string;
-  badge?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        {icon}
-        <span className="text-sm font-semibold text-neutral-200">{filename}</span>
-        {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
-      </div>
-      <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">{children}</p>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   1. HERO
-   ───────────────────────────────────────────── */
-
-function Hero() {
-  return (
-    <div className="wire-hero-cron w-full relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
-      </div>
-
-      <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
-        <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
-            Wire Type: Scheduled Task
-          </span>
-          <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
-            <span className="text-white">Cron jobs,</span><br />
-            <span className="text-primary">same functions.</span>
-          </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            <code className="text-primary text-lg">wireScheduler</code> turns your Pikku functions into scheduled tasks with standard cron expressions and middleware support.
-          </p>
-          <div className="flex flex-row gap-4">
-            <Link
-              to="/docs/wiring/scheduled-tasks"
-              className="bg-primary text-black hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-yellow-500/20"
-            >
-              Get Started
-            </Link>
-            <a
-              href="#basics"
-              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline"
-            >
-              See the Code
-            </a>
-          </div>
-        </div>
-
-        <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="relative">
-            <div className="relative">
-              <div className="absolute inset-0 bg-white/10 rounded-full blur-[40px]" />
-              <div className="relative bg-[#0d0d0d] border-2 border-white/20 rounded-2xl p-6">
-                <CronIcon size={120} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   2. BASICS — "Schedule in two lines"
-   ───────────────────────────────────────────── */
+import { FeaturePage } from '../../components/FeaturePage';
+import type { PageData } from '../../components/FeaturePage/types';
 
 const basicsFunction = `const dailySummary = pikkuVoidFunc({
   title: 'Daily Summary',
@@ -113,109 +16,13 @@ const basicsWiring = `wireScheduler({
   func: dailySummary,
 })`;
 
-function BasicsSection() {
-  return (
-    <section id="basics" className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>The Basics</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Schedule in <span className="text-primary">two lines</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Write a void function, add a cron expression. Pikku calls it on schedule.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl items-start">
-          <CodeCard filename="dailySummary.func.ts" badge="func.ts">
-            <CodeBlock language="typescript">{basicsFunction}</CodeBlock>
-          </CodeCard>
-
-          <CodeCard filename="scheduled.wiring.ts" badge="wiring.ts" icon={<CronIcon size={15} />}>
-            <CodeBlock language="typescript">{basicsWiring}</CodeBlock>
-          </CodeCard>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
-          {[
-            { label: 'Standard cron format', desc: 'Five-field Unix cron expressions — nothing proprietary to learn' },
-            { label: 'No input, no output', desc: 'Scheduled functions use pikkuVoidFunc — they run on a timer, not on demand' },
-            { label: 'Service injection', desc: 'Access databases, email, logging, and any other service via dependency injection' },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">✓</span>
-              <div>
-                <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
-                <p className="text-xs text-neutral-500">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   3. CRON FORMAT — "Standard five-field cron"
-   ───────────────────────────────────────────── */
-
-function CronFormatSection() {
-  const examples = [
-    { expression: '*/5 * * * *', meaning: 'Every 5 minutes' },
-    { expression: '0 9 * * *', meaning: 'Daily at 9:00 AM' },
-    { expression: '0 9 * * 1', meaning: 'Every Monday at 9:00 AM' },
-    { expression: '0 0 1 * *', meaning: 'First of month at midnight' },
-    { expression: '0 */6 * * *', meaning: 'Every 6 hours' },
-    { expression: '30 2 * * 0', meaning: 'Sundays at 2:30 AM' },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Cron Format</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Standard <span className="text-primary">five-field cron</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Nothing proprietary. If you know cron, you know Pikku scheduling.
-          </p>
-        </div>
-
-        {/* Cron field diagram */}
-        <div className="max-w-xl mb-10">
-          <div className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 font-mono ">
-            <div className="text-sm text-neutral-500 mb-4 whitespace-pre">{`┌─── minute (0-59)
+const cronDiagram = `┌─── minute (0-59)
 │ ┌─── hour (0-23)
 │ │ ┌─── day of month (1-31)
 │ │ │ ┌─── month (1-12)
 │ │ │ │ ┌─── day of week (0-6)
-│ │ │ │ │`}</div>
-            <div className="text-2xl text-primary font-bold tracking-[0.3em]">* * * * *</div>
-          </div>
-        </div>
-
-        {/* Example table */}
-        <div className="max-w-2xl">
-          <div className="grid grid-cols-2 gap-px bg-neutral-800 rounded-xl overflow-hidden">
-            {examples.map((ex, i) => (
-              <div key={i} className="bg-[#0d0d0d] p-4 flex items-center gap-4">
-                <code className="text-sm text-primary font-mono font-bold min-w-[120px]">{ex.expression}</code>
-                <span className="text-sm text-neutral-400">{ex.meaning}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   4. WIRE OBJECT — "Runtime context per execution"
-   ───────────────────────────────────────────── */
+│ │ │ │ │
+* * * * *`;
 
 const wireObjectCode = `const weeklyCleanup = pikkuVoidFunc({
   title: 'Weekly Cleanup',
@@ -235,68 +42,6 @@ const wireObjectCode = `const weeklyCleanup = pikkuVoidFunc({
     logger.info(\`Cleaned \${staleCount} stale todos\`)
   }
 })`;
-
-function WireObjectSection() {
-  const props = [
-    {
-      icon: <Calendar className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'name & schedule',
-      desc: 'Access the task name and cron expression at runtime — useful for logging and metrics.',
-    },
-    {
-      icon: <Clock className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'executionTime',
-      desc: 'The timestamp of the current execution. Use it for time-windowed queries and audit trails.',
-    },
-    {
-      icon: <SkipForward className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'skip(reason?)',
-      desc: 'Skip the current execution with an optional reason. The task stays scheduled — only this run is skipped.',
-    },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Wire Object</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Runtime context <span className="text-primary">per execution</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Every scheduled function gets a <code className="text-primary">wire.scheduledTask</code> object with metadata and control methods.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
-          <div className="space-y-5">
-            {props.map((prop, i) => (
-              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-                <div className="flex items-start gap-4">
-                  {prop.icon}
-                  <div>
-                    <h3 className="text-base font-bold mb-1.5 text-white font-mono">{prop.title}</h3>
-                    <p className="text-sm text-neutral-400 leading-relaxed">{prop.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <CodeCard filename="weeklyCleanup.func.ts" icon={<CronIcon size={15} />}>
-            <CodeBlock language="typescript">{wireObjectCode}</CodeBlock>
-          </CodeCard>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   5. MIDDLEWARE — "Observe every execution"
-   ───────────────────────────────────────────── */
 
 const middlewareCode = `const schedulerMetrics = pikkuMiddleware(
   async ({ logger }, { scheduledTask }, next) => {
@@ -325,180 +70,134 @@ wireScheduler({
   middleware: [schedulerMetrics],
 })`;
 
-function MiddlewareSection() {
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Middleware</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Observe <span className="text-primary">every execution</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Wrap scheduled tasks with middleware for logging, metrics, error alerting, or anything else. Per-task or global.
-          </p>
-        </div>
-
-        <div className="max-w-3xl">
-          <CodeCard filename="scheduler-middleware.ts" icon={<CronIcon size={15} />}>
-            <CodeBlock language="typescript">{middlewareCode}</CodeBlock>
-          </CodeCard>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
-          {[
-            { label: 'Per-task middleware', desc: 'Attach middleware to individual scheduled tasks via the middleware array' },
-            { label: 'Access wire context', desc: 'Middleware receives scheduledTask with name, schedule, and executionTime' },
-            { label: 'Same model as HTTP', desc: 'Onion-order execution — the same middleware patterns you already know' },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">✓</span>
-              <div>
-                <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
-                <p className="text-xs text-neutral-500">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   6. DEPLOY — "Runs anywhere"
-   ───────────────────────────────────────────── */
-
-function DeploySection() {
-  const runtimes = [
+const page: PageData = {
+  meta: {
+    title: 'Scheduled Tasks Wire — Pikku',
+    description: 'Wire your Pikku functions to cron schedules with standard five-field expressions, middleware, skip control, and multi-runtime support.',
+  },
+  sections: [
     {
-      title: 'In-process',
-      desc: 'InMemorySchedulerService — cron jobs run inside your server process.',
-      border: 'border-white/15',
-      bg: 'bg-white/[0.04]',
+      component: 'hero',
+      badge: 'Wire Type: Scheduled Task',
+      h1: 'Cron jobs,\n_same functions._',
+      lead: 'wireScheduler turns your Pikku functions into scheduled tasks with standard cron expressions and middleware support.',
+      cta: [
+        { label: 'Get Started', to: '/docs/wiring/scheduled-tasks', primary: true },
+        { label: 'See the Code', to: '#basics', primary: false },
+      ],
+      right: { type: 'wire-icon', name: 'cron' },
     },
+
     {
-      title: 'Serverless',
-      desc: 'AWS Lambda, Azure Timer, Cloudflare — same function, triggered by the platform.',
-      border: 'border-neutral-700',
-      bg: 'bg-neutral-900/50',
+      component: 'two-col',
+      id: 'basics',
+      eyebrow: 'The Basics',
+      h2: 'Schedule in _two lines_',
+      lead: 'Write a void function, add a cron expression. Pikku calls it on schedule.',
+      variant: 'default',
+      left: {
+        type: 'code',
+        code: { filename: 'dailySummary.func.ts', badge: 'func.ts', code: basicsFunction },
+      },
+      right: {
+        type: 'code',
+        code: { filename: 'scheduled.wiring.ts', badge: 'wiring.ts', icon: 'cron', code: basicsWiring },
+      },
+      below: {
+        type: 'check-list',
+        items: [
+          { title: 'Standard cron format', body: 'Five-field Unix cron expressions — nothing proprietary to learn.' },
+          { title: 'No input, no output', body: 'Scheduled functions use pikkuVoidFunc — they run on a timer, not on demand.' },
+          { title: 'Service injection', body: 'Access databases, email, logging, and any other service via dependency injection.' },
+        ],
+      },
     },
-  ];
 
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
+    {
+      component: 'wide-code',
+      eyebrow: 'Cron Format',
+      h2: 'Standard _five-field cron_',
+      lead: 'Nothing proprietary. If you know cron, you know Pikku scheduling.',
+      variant: 'alt',
+      code: { filename: 'cron format', language: 'text', code: cronDiagram },
+      below: {
+        type: 'cards',
+        columns: 3,
+        cards: [
+          { title: '*/5 * * * *', body: 'Every 5 minutes', mono: true },
+          { title: '0 9 * * *', body: 'Daily at 9:00 AM', mono: true },
+          { title: '0 9 * * 1', body: 'Every Monday at 9:00 AM', mono: true },
+          { title: '0 0 1 * *', body: 'First of month at midnight', mono: true },
+          { title: '0 */6 * * *', body: 'Every 6 hours', mono: true },
+          { title: '30 2 * * 0', body: 'Sundays at 2:30 AM', mono: true },
+        ],
+      },
+    },
 
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Deploy</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Runs <span className="text-primary">anywhere</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Same wireScheduler code works in-process or serverless. Your functions don't change — only the runtime does.
-          </p>
-        </div>
+    {
+      component: 'two-col',
+      eyebrow: 'Wire Object',
+      h2: 'Runtime context _per execution_',
+      lead: 'Every scheduled function gets a wire.scheduledTask object with metadata and control methods.',
+      variant: 'default',
+      left: {
+        type: 'cards',
+        cards: [
+          { icon: 'calendar', title: 'name & schedule', body: 'Access the task name and cron expression at runtime — useful for logging and metrics.', mono: true },
+          { icon: 'clock', title: 'executionTime', body: 'The timestamp of the current execution. Use it for time-windowed queries and audit trails.', mono: true },
+          { icon: 'skip-forward', title: 'skip(reason?)', body: 'Skip the current execution with an optional reason. The task stays scheduled — only this run is skipped.', mono: true },
+        ],
+      },
+      right: {
+        type: 'code',
+        code: { filename: 'weeklyCleanup.func.ts', icon: 'cron', code: wireObjectCode },
+      },
+    },
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl">
-          {runtimes.map((r, i) => (
-            <div key={i} className={`${r.bg} border ${r.border} rounded-xl p-6 `}>
-              <h3 className="text-lg font-bold text-white mb-2">{r.title}</h3>
-              <p className="text-sm text-neutral-400 leading-relaxed">{r.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+    {
+      component: 'wide-code',
+      eyebrow: 'Middleware',
+      h2: 'Observe _every execution_',
+      lead: 'Wrap scheduled tasks with middleware for logging, metrics, error alerting, or anything else. Per-task or global.',
+      variant: 'alt',
+      code: { filename: 'scheduler-middleware.ts', icon: 'cron', code: middlewareCode },
+      below: {
+        type: 'check-list',
+        items: [
+          { title: 'Per-task middleware', body: 'Attach middleware to individual scheduled tasks via the middleware array.' },
+          { title: 'Access wire context', body: 'Middleware receives scheduledTask with name, schedule, and executionTime.' },
+          { title: 'Same model as HTTP', body: 'Onion-order execution — the same middleware patterns you already know.' },
+        ],
+      },
+    },
 
-/* ─────────────────────────────────────────────
-   7. CTA
-   ───────────────────────────────────────────── */
+    {
+      component: 'feature-grid',
+      eyebrow: 'Deploy',
+      h2: 'Runs _anywhere_',
+      lead: 'Same wireScheduler code works in-process or serverless. Your functions don\'t change — only the runtime does.',
+      variant: 'default',
+      columns: 2,
+      cards: [
+        { title: 'In-process', body: 'InMemorySchedulerService — cron jobs run inside your server process.' },
+        { title: 'Serverless', body: 'AWS Lambda, Azure Timer, Cloudflare — same function, triggered by the platform.' },
+      ],
+    },
 
-function CTASection() {
-  const [copied, setCopied] = React.useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText('npm create pikku@latest');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
-      </div>
-
-      <div className="max-w-screen-xl mx-auto px-6 relative">
-        <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
-          Start wiring cron jobs in 5 minutes
-        </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
-          One command to scaffold a project with scheduled tasks already configured.
-        </p>
-
-        <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
-          onClick={copyToClipboard}
-        >
-          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
-          <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
-            onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
-            title="Copy to clipboard"
-          >
-            {copied
-              ? <Check className="w-3.5 h-3.5 text-primary" />
-              : <Copy className="w-3.5 h-3.5 text-white/70" />
-            }
-          </button>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/docs/wiring/scheduled-tasks"
-            className="bg-primary text-black hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-yellow-500/20"
-          >
-            Read the Scheduler Docs
-          </Link>
-          <Link
-            to="https://github.com/pikkujs/pikku"
-            className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
-          >
-            View on GitHub
-          </Link>
-        </div>
-
-        <p className="text-neutral-500 text-sm mt-8">
-          MIT Licensed &nbsp;&middot;&nbsp; Works with Lambda, Azure Timer, Cloudflare &amp; in-process
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   PAGE
-   ───────────────────────────────────────────── */
+    {
+      component: 'cta',
+      h2: 'Start wiring cron jobs in 5 minutes',
+      lead: 'One command to scaffold a project with scheduled tasks already configured.',
+      cmd: 'npm create pikku@latest',
+      buttons: [
+        { label: 'Read the Scheduler Docs', to: '/docs/wiring/scheduled-tasks', primary: true },
+        { label: 'View on GitHub', to: 'https://github.com/pikkujs/pikku', primary: false },
+      ],
+      footnote: 'MIT Licensed · Works with Lambda, Azure Timer, Cloudflare & in-process',
+    },
+  ],
+};
 
 export default function CronWirePage() {
-  return (
-    <Layout
-      title="Scheduled Tasks Wire — Pikku"
-      description="Wire your Pikku functions to cron schedules with standard five-field expressions, middleware, skip control, and multi-runtime support."
-    >
-      <Hero />
-      <main>
-        <BasicsSection />
-        <CronFormatSection />
-        <WireObjectSection />
-        <MiddlewareSection />
-        <DeploySection />
-        <CTASection />
-      </main>
-    </Layout>
-  );
+  return <FeaturePage data={page} />;
 }

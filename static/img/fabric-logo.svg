@@ -1,14 +1,1 @@
-<svg width="40" height="40" viewBox="0 0 240 240" aria-hidden="true" role="img" xmlns="http://www.w3.org/2000/svg">
-  <g transform="translate(1 -16)" fill="none" stroke-width="10" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="2">
-    <path d="M103 30V101L90 114" stroke="rgba(255,255,255,0.9)"/>
-    <path d="M138 30V104L133 111" stroke="rgba(255,255,255,0.35)"/>
-    <path d="M17 121H75L111 156" stroke="rgba(255,255,255,0.35)"/>
-    <path d="M17 159H75L85 149" stroke="rgba(255,255,255,0.9)"/>
-    <path d="M221 121H163L152 132" stroke="rgba(255,255,255,0.9)"/>
-    <path d="M221 159H162L126 124" stroke="rgba(255,255,255,0.35)"/>
-    <path d="M103 241V172L105 168" stroke="rgba(255,255,255,0.35)"/>
-    <path d="M138 241V175L145 166" stroke="rgba(255,255,255,0.9)"/>
-    <path d="M119 110L103 130" stroke="rgba(255,255,255,0.9)"/>
-    <path d="M130 146L116 168" stroke="rgba(255,255,255,0.9)"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="186" height="186" role="img" aria-label="Woven thread mark"><defs><clipPath id="tpu2gm-0"><rect x="50.3" y="0" width="38" height="256"></rect></clipPath><clipPath id="tpu2gm-2"><rect x="167.7" y="0" width="38" height="256"></rect></clipPath></defs><path d="M21.226666666666667 128 C29.2 123.0 51.5 93.0 69.33333333333333 98 C87.1 103.0 108.4 158.0 128 158 C147.6 158.0 168.9 103.0 186.66666666666666 98 C204.5 93.0 226.8 123.0 234.7733333333333 128" fill="none" stroke="#2f6df0" stroke-width="28" stroke-linecap="round"></path><rect x="56.3" y="60" width="26" height="136" rx="12" fill="#15171a"></rect><rect x="115.0" y="60" width="26" height="136" rx="12" fill="#15171a"></rect><rect x="173.7" y="60" width="26" height="136" rx="12" fill="#15171a"></rect><g clip-path="url(#tpu2gm-0)"><path d="M21.226666666666667 128 C29.2 123.0 51.5 93.0 69.33333333333333 98 C87.1 103.0 108.4 158.0 128 158 C147.6 158.0 168.9 103.0 186.66666666666666 98 C204.5 93.0 226.8 123.0 234.7733333333333 128" fill="none" stroke="#f6f6f4" stroke-width="36" stroke-linecap="round"></path><path d="M21.226666666666667 128 C29.2 123.0 51.5 93.0 69.33333333333333 98 C87.1 103.0 108.4 158.0 128 158 C147.6 158.0 168.9 103.0 186.66666666666666 98 C204.5 93.0 226.8 123.0 234.7733333333333 128" fill="none" stroke="#2f6df0" stroke-width="28" stroke-linecap="round"></path></g><g clip-path="url(#tpu2gm-2)"><path d="M21.226666666666667 128 C29.2 123.0 51.5 93.0 69.33333333333333 98 C87.1 103.0 108.4 158.0 128 158 C147.6 158.0 168.9 103.0 186.66666666666666 98 C204.5 93.0 226.8 123.0 234.7733333333333 128" fill="none" stroke="#f6f6f4" stroke-width="36" stroke-linecap="round"></path><path d="M21.226666666666667 128 C29.2 123.0 51.5 93.0 69.33333333333333 98 C87.1 103.0 108.4 158.0 128 158 C147.6 158.0 168.9 103.0 186.66666666666666 98 C204.5 93.0 226.8 123.0 234.7733333333333 128" fill="none" stroke="#2f6df0" stroke-width="28" stroke-linecap="round"></path></g></svg>

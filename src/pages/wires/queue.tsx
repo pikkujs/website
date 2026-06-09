@@ -1,104 +1,7 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
-import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
-import CodeBlock from '@theme/CodeBlock';
-import { QueueIcon } from '../../components/WiringIcons';
-import {
-  ShieldCheck, Layers, RefreshCw, Clock,
-  Copy, Check, BarChart3, Zap, Database,
-} from 'lucide-react';
+import { FeaturePage } from '../../components/FeaturePage';
+import type { PageData } from '../../components/FeaturePage/types';
 
-/* ─────────────────────────────────────────────
-   Reusable helpers
-   ───────────────────────────────────────────── */
-
-function CodeCard({ filename, badge, icon, children }: {
-  filename: string;
-  badge?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        {icon}
-        <span className="text-sm font-semibold text-neutral-200">{filename}</span>
-        {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
-      </div>
-      <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">{children}</p>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   1. HERO
-   ───────────────────────────────────────────── */
-
-function Hero() {
-  return (
-    <div className="wire-hero-queue w-full relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/8 blur-[100px]" />
-        <div className="absolute right-[28%] top-[35%] w-44 h-44 rounded-full bg-white/5 blur-[60px]" />
-      </div>
-
-      <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
-        <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
-            Wire Type: Queue
-          </span>
-          <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
-            <span className="text-white">Background jobs,</span><br />
-            <span className="text-primary">same functions.</span>
-          </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            <code className="text-primary text-lg">wireQueueWorker</code> turns your Pikku functions into queue workers with retries, progress tracking, and dead-letter routing.
-          </p>
-          <div className="flex flex-row gap-4">
-            <Link
-              to="/docs/wiring/queue"
-              className="bg-primary text-white hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-black/20"
-            >
-              Get Started
-            </Link>
-            <a
-              href="#basics"
-              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline"
-            >
-              See the Code
-            </a>
-          </div>
-        </div>
-
-        <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="relative">
-            <div className="relative">
-              <div className="absolute inset-0 bg-white/10 rounded-full blur-[40px]" />
-              <div className="relative bg-[#0d0d0d] border-2 border-white/20 rounded-2xl p-6">
-                <QueueIcon size={120} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   2. BASICS — "Define a worker in two lines"
-   ───────────────────────────────────────────── */
-
-const basicsFunction = `const processReminder = pikkuSessionlessFunc({
+const basicsFunc = `const processReminder = pikkuSessionlessFunc({
   title: 'Process Reminder',
   func: async ({ db, emailService }, { todoId, userId }) => {
     const todo = await db.getTodo(todoId)
@@ -111,54 +14,6 @@ const basicsWiring = `wireQueueWorker({
   name: 'todo-reminders',
   func: processReminder,
 })`;
-
-function BasicsSection() {
-  return (
-    <section id="basics" className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>The Basics</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Define a worker in <span className="text-primary">two lines</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Write your function, wire it to a queue name. Pikku handles deserialization, retries, and error routing.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl items-start">
-          <CodeCard filename="processReminder.func.ts" badge="func.ts">
-            <CodeBlock language="typescript">{basicsFunction}</CodeBlock>
-          </CodeCard>
-
-          <CodeCard filename="reminders.queue.ts" badge="queue.ts" icon={<QueueIcon size={15} />}>
-            <CodeBlock language="typescript">{basicsWiring}</CodeBlock>
-          </CodeCard>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mt-10">
-          {[
-            { label: 'Type-safe payloads', desc: 'Job data is validated and typed — your function receives exactly what you expect' },
-            { label: 'Multi-backend', desc: 'Same wireQueueWorker works with BullMQ, PG Boss, or AWS SQS — swap the service, not the code' },
-            { label: 'Middleware support', desc: 'Apply logging, metrics, or auth middleware per-worker or globally' },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">✓</span>
-              <div>
-                <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
-                <p className="text-xs text-neutral-500">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   3. JOB CONTROL — "Progress, fail, discard"
-   ───────────────────────────────────────────── */
 
 const jobControlCode = `const processReminder = pikkuSessionlessFunc({
   title: 'Process Reminder',
@@ -183,66 +38,6 @@ const jobControlCode = `const processReminder = pikkuSessionlessFunc({
   }
 })`;
 
-function JobControlSection() {
-  const controls = [
-    {
-      icon: <BarChart3 className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'updateProgress()',
-      desc: 'Report progress (0–100 or custom). Consumers can poll job status and show progress bars.',
-    },
-    {
-      icon: <RefreshCw className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'fail(reason)',
-      desc: 'Fail the current job. If retries are configured, the job goes back in the queue with backoff.',
-    },
-    {
-      icon: <Zap className="w-5 h-5 text-primary mt-0.5 shrink-0" />,
-      title: 'discard(reason)',
-      desc: 'Permanently remove the job — no retry, no dead-letter queue. For invalid or irrelevant work.',
-    },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Job Control</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Progress, fail, <span className="text-primary">discard</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Every queue function gets a <code className="text-primary">wire.queue</code> object to control the current job.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-10 max-w-5xl items-start">
-          <div className="space-y-5">
-            {controls.map((ctrl, i) => (
-              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-                <div className="flex items-start gap-4">
-                  {ctrl.icon}
-                  <div>
-                    <h3 className="text-base font-bold mb-1.5 text-white font-mono">{ctrl.title}</h3>
-                    <p className="text-sm text-neutral-400 leading-relaxed">{ctrl.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <CodeCard filename="processReminder.func.ts" icon={<QueueIcon size={15} />}>
-            <CodeBlock language="typescript">{jobControlCode}</CodeBlock>
-          </CodeCard>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   4. RETRIES & DLQ — "Retry strategies built in"
-   ───────────────────────────────────────────── */
-
 const retryCode = `wireQueueWorker({
   name: 'todo-reminders',
   func: processReminder,
@@ -263,50 +58,6 @@ const jobId = await queue.add('todo-reminders', {
   backoff: { type: 'exponential', delay: 1000 },
 })`;
 
-function RetrySection() {
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Retries & Config</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Retry strategies <span className="text-primary">built in</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Configure worker-level concurrency and job-level retry, backoff, priority, and delay — based on the underlying queue system.
-          </p>
-        </div>
-
-        <div className="max-w-3xl">
-          <CodeCard filename="reminders.queue.ts" icon={<QueueIcon size={15} />} badge="config + publish">
-            <CodeBlock language="typescript">{retryCode}</CodeBlock>
-          </CodeCard>
-        </div>
-
-        <div className="grid md:grid-cols-4 gap-4 max-w-4xl mt-10">
-          {[
-            { label: 'Priority', desc: 'Higher-priority jobs get processed first' },
-            { label: 'Delay', desc: 'Schedule jobs to run after a delay' },
-            { label: 'Backoff', desc: 'Linear, exponential, or fixed retry delay' },
-            { label: 'Dead letter', desc: 'Route failed jobs to a dead-letter queue' },
-          ].map((item, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 ">
-              <p className="text-sm font-bold text-white mb-1">{item.label}</p>
-              <p className="text-xs text-neutral-500">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   5. TYPE-SAFE PUBLISHING — "Typed queue.add()"
-   ───────────────────────────────────────────── */
-
 const publishCode = `import { PikkuQueue } from '.pikku/pikku-queue.gen.js'
 
 const queue = new PikkuQueue(queueService)
@@ -322,205 +73,143 @@ const job = await queue.getJob('todo-reminders', jobId)
 const status = await job.status()  // 'waiting' | 'active' | 'completed' | 'failed'
 const result = await job.waitForCompletion(30_000)`;
 
-function TypeSafePublishSection() {
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Type-Safe Publishing</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Typed <span className="text-primary">queue.add()</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            Pikku generates a typed queue client. Queue names, payloads, and results — all autocompleted.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-[3fr_2fr] gap-10 max-w-5xl items-start">
-          <CodeCard filename="publish.ts" badge="auto-generated types">
-            <CodeBlock language="typescript">{publishCode}</CodeBlock>
-          </CodeCard>
-
-          <div className="space-y-5">
-            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-              <div className="flex items-start gap-4">
-                <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="text-base font-bold mb-1.5 text-white">Generated from wirings</h3>
-                  <p className="text-sm text-neutral-400 leading-relaxed">
-                    <code className="text-primary text-xs">PikkuQueue</code> is auto-generated with typed overloads for every queue worker you've wired.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-5">
-              <div className="flex items-start gap-4">
-                <Clock className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="text-base font-bold mb-1.5 text-white">Job lifecycle</h3>
-                  <p className="text-sm text-neutral-400 leading-relaxed">
-                    Poll status, wait for completion with timeout, and retrieve typed results — all from the same job handle.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   6. BACKENDS — "One wiring, many backends"
-   ───────────────────────────────────────────── */
-
-function BackendsSection() {
-  const backends = [
+const page: PageData = {
+  meta: {
+    title: 'Queue Wire — Pikku',
+    description: 'Wire your Pikku functions to queue workers with retries, progress tracking, dead-letter routing, and multi-backend support.',
+  },
+  sections: [
     {
-      title: 'BullMQ / Redis',
-      desc: 'High-performance, push-based. Job results, progress, priority, delays.',
-      border: 'border-white/15',
-      bg: 'bg-white/[0.04]',
+      component: 'hero',
+      badge: 'Wire Type: Queue',
+      h1: 'Background jobs,\n_same functions._',
+      lead: 'wireQueueWorker turns your Pikku functions into queue workers with retries, progress tracking, and dead-letter routing.',
+      cta: [
+        { label: 'Get Started', to: '/docs/wiring/queue', primary: true },
+        { label: 'See the Code', to: '#basics', primary: false },
+      ],
+      right: { type: 'wire-icon', name: 'queue' },
     },
+
     {
-      title: 'PG Boss / PostgreSQL',
-      desc: 'Database-backed, persistent. No extra infra if you already use Postgres.',
-      border: 'border-neutral-700',
-      bg: 'bg-neutral-900/50',
+      component: 'two-col',
+      id: 'basics',
+      eyebrow: 'The Basics',
+      h2: 'Define a worker in _two lines_',
+      lead: 'Write your function, wire it to a queue name. Pikku handles deserialization, retries, and error routing.',
+      variant: 'default',
+      left: {
+        type: 'code',
+        code: { filename: 'processReminder.func.ts', badge: 'func.ts', code: basicsFunc },
+      },
+      right: {
+        type: 'code',
+        code: { filename: 'reminders.queue.ts', badge: 'queue.ts', icon: 'queue', code: basicsWiring },
+      },
+      below: {
+        type: 'check-list',
+        items: [
+          { title: 'Type-safe payloads', body: 'Job data is validated and typed — your function receives exactly what you expect.' },
+          { title: 'Multi-backend', body: 'Same wireQueueWorker works with BullMQ, PG Boss, or AWS SQS — swap the service, not the code.' },
+          { title: 'Middleware support', body: 'Apply logging, metrics, or auth middleware per-worker or globally.' },
+        ],
+      },
     },
+
     {
-      title: 'AWS SQS',
-      desc: 'Serverless, fire-and-forget. Scales to zero, no servers to manage.',
-      border: 'border-neutral-700',
-      bg: 'bg-neutral-900/50',
+      component: 'two-col',
+      eyebrow: 'Job Control',
+      h2: 'Progress, fail, _discard_',
+      lead: 'Every queue function gets a wire.queue object to control the current job.',
+      variant: 'alt',
+      columns: '1fr 1fr',
+      left: {
+        type: 'cards',
+        cards: [
+          { icon: 'bar-chart-3', title: 'updateProgress()', body: 'Report progress (0–100 or custom). Consumers can poll job status and show progress bars.', mono: true },
+          { icon: 'refresh-cw',  title: 'fail(reason)',     body: 'Fail the current job. If retries are configured, the job goes back in the queue with backoff.', mono: true },
+          { icon: 'zap',         title: 'discard(reason)',  body: 'Permanently remove the job — no retry, no dead-letter queue. For invalid or irrelevant work.', mono: true },
+        ],
+      },
+      right: {
+        type: 'code',
+        code: { filename: 'processReminder.func.ts', icon: 'queue', code: jobControlCode },
+      },
     },
-  ];
 
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+    {
+      component: 'wide-code',
+      eyebrow: 'Retries & Config',
+      h2: 'Retry strategies _built in_',
+      lead: 'Configure worker-level concurrency and job-level retry, backoff, priority, and delay — based on the underlying queue system.',
+      variant: 'default',
+      code: { filename: 'reminders.queue.ts', icon: 'queue', badge: 'config + publish', code: retryCode },
+      below: {
+        type: 'cards',
+        columns: 4,
+        cards: [
+          { title: 'Priority',    body: 'Higher-priority jobs get processed first.' },
+          { title: 'Delay',       body: 'Schedule jobs to run after a delay.' },
+          { title: 'Backoff',     body: 'Linear, exponential, or fixed retry delay.' },
+          { title: 'Dead letter', body: 'Route failed jobs to a dead-letter queue.' },
+        ],
+      },
+    },
 
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Backends</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            One wiring, <span className="text-primary">many backends</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            Same wireQueueWorker code works across all backends. Swap the queue service, not your functions.
-          </p>
-        </div>
+    {
+      component: 'two-col',
+      eyebrow: 'Type-Safe Publishing',
+      h2: 'Typed _queue.add()_',
+      lead: 'Pikku generates a typed queue client. Queue names, payloads, and results — all autocompleted.',
+      variant: 'alt',
+      columns: '3fr 2fr',
+      left: {
+        type: 'code',
+        code: { filename: 'publish.ts', badge: 'auto-generated types', code: publishCode },
+      },
+      right: {
+        type: 'cards',
+        cards: [
+          { icon: 'shield-check', title: 'Generated from wirings', body: 'PikkuQueue is auto-generated with typed overloads for every queue worker you\'ve wired.' },
+          { icon: 'clock',        title: 'Job lifecycle',           body: 'Poll status, wait for completion with timeout, and retrieve typed results — all from the same job handle.' },
+        ],
+      },
+    },
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
-          {backends.map((b, i) => (
-            <div key={i} className={`${b.bg} border ${b.border} rounded-xl p-6 `}>
-              <h3 className="text-lg font-bold text-white mb-2">{b.title}</h3>
-              <p className="text-sm text-neutral-400 leading-relaxed">{b.desc}</p>
-            </div>
-          ))}
-        </div>
+    {
+      component: 'feature-grid',
+      eyebrow: 'Backends',
+      h2: 'One wiring, _many backends_',
+      lead: 'Same wireQueueWorker code works across all backends. Swap the queue service, not your functions.',
+      variant: 'default',
+      columns: 3,
+      cards: [
+        { title: 'BullMQ / Redis',      body: 'High-performance, push-based. Job results, progress, priority, delays.' },
+        { title: 'PG Boss / PostgreSQL', body: 'Database-backed, persistent. No extra infra if you already use Postgres.' },
+        { title: 'AWS SQS',             body: 'Serverless, fire-and-forget. Scales to zero, no servers to manage.' },
+      ],
+      below: {
+        type: 'note',
+        icon: 'database',
+        title: 'Config validation built in.',
+        body: 'Pikku warns you at startup if you use a config option your backend doesn\'t support — no silent failures.',
+      },
+    },
 
-        <div className="max-w-4xl mt-6 bg-[#0d0d0d] border border-neutral-800 rounded-lg p-4 flex items-start gap-3">
-          <Database className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-          <p className="text-sm text-neutral-400">
-            <span className="text-white font-semibold">Config validation built in.</span>{' '}
-            Pikku warns you at startup if you use a config option your backend doesn't support — no silent failures.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   7. CTA
-   ───────────────────────────────────────────── */
-
-function CTASection() {
-  const [copied, setCopied] = React.useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText('npm create pikku@latest');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/5 blur-[80px]" />
-      </div>
-
-      <div className="max-w-screen-xl mx-auto px-6 relative">
-        <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
-          Start wiring queues in 5 minutes
-        </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
-          One command to scaffold a project with queue wiring already configured.
-        </p>
-
-        <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
-          onClick={copyToClipboard}
-        >
-          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
-          <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
-            onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
-            title="Copy to clipboard"
-          >
-            {copied
-              ? <Check className="w-3.5 h-3.5 text-primary" />
-              : <Copy className="w-3.5 h-3.5 text-white/70" />
-            }
-          </button>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/docs/wiring/queue"
-            className="bg-primary text-white hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-black/20"
-          >
-            Read the Queue Docs
-          </Link>
-          <Link
-            to="https://github.com/pikkujs/pikku"
-            className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
-          >
-            View on GitHub
-          </Link>
-        </div>
-
-        <p className="text-neutral-500 text-sm mt-8">
-          MIT Licensed &nbsp;&middot;&nbsp; Works with BullMQ, PG Boss &amp; AWS SQS
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   PAGE
-   ───────────────────────────────────────────── */
+    {
+      component: 'cta',
+      h2: 'Start wiring queues in 5 minutes',
+      lead: 'One command to scaffold a project with queue wiring already configured.',
+      cmd: 'npm create pikku@latest',
+      buttons: [
+        { label: 'Read the Queue Docs', to: '/docs/wiring/queue', primary: true },
+        { label: 'View on GitHub',      to: 'https://github.com/pikkujs/pikku', primary: false },
+      ],
+      footnote: 'MIT Licensed · Works with BullMQ, PG Boss & AWS SQS',
+    },
+  ],
+};
 
 export default function QueueWirePage() {
-  return (
-    <Layout
-      title="Queue Wire — Pikku"
-      description="Wire your Pikku functions to queue workers with retries, progress tracking, dead-letter routing, and multi-backend support."
-    >
-      <Hero />
-      <main>
-        <BasicsSection />
-        <JobControlSection />
-        <RetrySection />
-        <TypeSafePublishSection />
-        <BackendsSection />
-        <CTASection />
-      </main>
-    </Layout>
-  );
+  return <FeaturePage data={page} />;
 }

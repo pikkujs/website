@@ -1,263 +1,10 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
 import CodeBlock from '@theme/CodeBlock';
-import {
-  Scissors, Filter, FileCode, Zap,
-  Server, Layers, FunctionSquare, Copy, Check,
-  ArrowRight, Package,
-} from 'lucide-react';
-
-/* ─────────────────────────────────────────────
-   Reusable helpers
-   ───────────────────────────────────────────── */
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">{children}</p>
-  );
-}
-
-function CodeCard({ filename, badge, icon, children }: {
-  filename: string;
-  badge?: string;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        {icon}
-        <span className="text-sm font-semibold text-neutral-200">{filename}</span>
-        {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
-      </div>
-      <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   1. HERO
-   ───────────────────────────────────────────── */
-
-function Hero() {
-  return (
-    <div className="wire-hero-treeshaking w-full relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute right-[18%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-white/[0.06] blur-[100px]" />
-        <div className="absolute left-[12%] top-[35%] w-56 h-56 rounded-full bg-white/[0.04] blur-[80px]" />
-      </div>
-
-      <header className="flex max-w-screen-xl mx-auto w-full pt-12 pb-10 lg:pt-16 lg:pb-14 px-6 gap-12 items-center">
-        <div className="md:w-1/2">
-          <span className="inline-block text-xs font-semibold tracking-widest uppercase text-primary border border-white/20 bg-white/[0.06] px-3 py-1 rounded mb-6">
-            Deployment
-          </span>
-          <Heading as="h1" className="font-jakarta text-5xl font-bold mb-4 leading-tight">
-            <span className="text-white">Same codebase.</span><br />
-            <span className="text-primary">Any deployment.</span>
-          </Heading>
-          <p className="text-xl font-medium leading-relaxed mb-8 text-neutral-300 max-w-lg">
-            Pikku's CLI scans your function signatures and filters by routes, tags, or types — generating
-            entry points with only the functions and services each deployment needs.
-          </p>
-          <div className="flex flex-row gap-4">
-            <Link
-              to="/docs/pikku-cli/tree-shaking"
-              className="bg-primary text-black hover:bg-primary px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 shadow-lg shadow-cyan-500/20"
-            >
-              Read the Docs
-            </Link>
-            <a
-              href="#how-it-works"
-              className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-6 py-3 rounded-lg font-semibold text-base transition-all hover:scale-105 no-underline"
-            >
-              How It Works
-            </a>
-          </div>
-        </div>
-
-        {/* Right: visual — CLI filter */}
-        <div className="hidden md:flex md:w-1/2 items-center justify-center">
-          <div className="bg-[#0d0d0d] border-2 border-white/15 rounded-2xl p-8 font-mono text-sm leading-relaxed">
-            <span className="text-neutral-500"># Deploy only admin routes</span><br />
-            <span className="text-primary">$</span>{' '}
-            <span className="text-white">pikku</span>{' '}
-            <span className="text-cyan-300">--http-routes=/admin</span><br /><br />
-            <span className="text-neutral-500"># Deploy by tag</span><br />
-            <span className="text-primary">$</span>{' '}
-            <span className="text-white">pikku</span>{' '}
-            <span className="text-cyan-300">--tags=payments</span><br /><br />
-            <span className="text-neutral-500"># Deploy only HTTP wire</span><br />
-            <span className="text-primary">$</span>{' '}
-            <span className="text-white">pikku</span>{' '}
-            <span className="text-cyan-300">--types=http</span>
-          </div>
-        </div>
-      </header>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   2. HOW IT WORKS
-   ───────────────────────────────────────────── */
-
-function HowItWorksSection() {
-  const steps = [
-    {
-      icon: <Scissors className="w-6 h-6 text-primary" />,
-      title: 'CLI scans destructuring',
-      desc: 'Pikku analyzes which services each function, middleware, and permission actually destructures from the services parameter.',
-    },
-    {
-      icon: <Filter className="w-6 h-6 text-primary" />,
-      title: 'Filter with CLI flags',
-      desc: 'Use --http-routes, --tags, or --types to include only the functions your deployment needs. Everything else is excluded.',
-    },
-    {
-      icon: <FileCode className="w-6 h-6 text-primary" />,
-      title: 'Generates entry points',
-      desc: 'The CLI produces typed entry files with only the needed functions, routes, and services — ready to deploy.',
-    },
-  ];
-
-  return (
-    <section id="how-it-works" className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-14">
-          <SectionLabel>How It Works</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Three flags. <span className="text-primary">Infinite architectures.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            The same source code becomes a monolith, microservices, or individual functions — just by changing CLI flags.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mb-16">
-          {steps.map((step, i) => (
-            <div key={i} className="relative bg-[#0d0d0d] border border-neutral-800 border-t-2 border-t-cyan-500 rounded-lg p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-white/8 border border-white/15 flex items-center justify-center text-xs font-bold text-primary">
-                  {i + 1}
-                </div>
-                <h3 className="text-base font-bold text-white">{step.title}</h3>
-              </div>
-              <p className="text-sm text-neutral-400 leading-relaxed">{step.desc}</p>
-              {i < steps.length - 1 && (
-                <div className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 z-10">
-                  <ArrowRight className="w-5 h-5 text-primary/40" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* CLI flag examples */}
-        <div className="grid lg:grid-cols-3 gap-5 max-w-5xl">
-          {[
-            { flag: '--http-routes=/admin', desc: 'Only include functions mapped to admin routes', example: 'pikku --http-routes=/admin --http-routes=/auth' },
-            { flag: '--tags=payments', desc: 'Only include functions tagged "payments"', example: 'pikku --tags=payments --tags=billing' },
-            { flag: '--types=http', desc: 'Only include HTTP wire functions', example: 'pikku --types=http --types=cron' },
-          ].map((item, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-5">
-              <code className="text-primary text-sm font-bold">{item.flag}</code>
-              <p className="text-sm text-neutral-400 mt-2 mb-3">{item.desc}</p>
-              <div className="text-xs font-mono bg-neutral-900/60 border border-neutral-800 rounded-lg px-3 py-2 text-neutral-500">
-                $ {item.example}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   3. THREE ARCHITECTURES
-   ───────────────────────────────────────────── */
-
-function ArchitecturesSection() {
-  const architectures = [
-    {
-      icon: <Server className="w-7 h-7 text-primary" />,
-      name: 'Monolith',
-      description: 'Run everything in one process',
-      command: 'pikku',
-      bundleSize: '~2.8 MB',
-      includes: 'All functions, all protocols',
-    },
-    {
-      icon: <Layers className="w-7 h-7 text-primary" />,
-      name: 'Microservices',
-      description: 'Split by domain or feature',
-      command: 'pikku --http-routes=/admin',
-      altCommand: 'pikku --tags=admin',
-      bundleSize: '~180 KB',
-      includes: 'Only admin routes + dependencies',
-    },
-    {
-      icon: <FunctionSquare className="w-7 h-7 text-primary" />,
-      name: 'Functions',
-      description: 'One function per deployment',
-      command: 'pikku --http-routes=/users/:id --types=http',
-      bundleSize: '~50 KB',
-      includes: 'Single endpoint + minimal runtime',
-    },
-  ];
-
-  return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Architectures</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            One codebase, <span className="text-primary">three shapes.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            No code changes. Just different CLI flags for different deployments.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl">
-          {architectures.map((arch, i) => (
-            <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-xl p-6 hover:border-white/15 transition-colors">
-              <div className="flex justify-center mb-4">
-                <div className="w-14 h-14 rounded-xl bg-white/[0.06] border border-white/15 flex items-center justify-center">
-                  {arch.icon}
-                </div>
-              </div>
-              <h3 className="font-jakarta text-xl font-bold text-white mb-2">{arch.name}</h3>
-              <p className="text-sm text-neutral-400 mb-4">{arch.description}</p>
-              <div className="text-xs font-mono bg-neutral-900/60 border border-neutral-800 rounded-lg px-3 py-2 text-neutral-500 mb-1">
-                $ {arch.command}
-              </div>
-              {arch.altCommand && (
-                <div className="text-xs font-mono bg-neutral-900/60 border border-neutral-800 rounded-lg px-3 py-2 text-neutral-500 mb-1 mt-1">
-                  $ {arch.altCommand}
-                </div>
-              )}
-              <div className="mt-4 pt-4 border-t border-neutral-800">
-                <div className="text-sm font-bold text-primary mb-1">{arch.bundleSize}</div>
-                <div className="text-xs text-neutral-500">{arch.includes}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   4. SERVICE LOADING
-   ───────────────────────────────────────────── */
+import { Scissors, Filter, FileCode, Zap, Server, Layers, FunctionSquare, Copy, Check, ArrowRight, Package } from 'lucide-react';
+import { PaperPage, CodeCard } from '../../components/PaperLayout';
+import styles from './treeshaking.module.css';
 
 const requiredServicesCode = `// .pikku/pikku-services.gen.ts  (auto-generated)
 export const requiredSingletonServices = {
@@ -284,44 +31,84 @@ export const createSingletonServices = pikkuServices(
   }
 )`;
 
-function ServiceLoadingSection() {
+function Hero() {
   return (
-    <section className="py-16 lg:py-24 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
-
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-12">
-          <SectionLabel>Service Loading</SectionLabel>
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Only load what you <span className="text-primary">actually use.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-2xl">
-            The CLI generates a <code className="text-primary text-base">requiredSingletonServices</code> map. Guard
-            heavy imports with dynamic <code className="text-primary text-base">import()</code> — unused services
-            never load.
+    <div className={styles.hero}>
+      <div className={styles.heroInner}>
+        <div>
+          <span className={styles.badge}>Deployment</span>
+          <h1 className={styles.h1}>Same codebase.<br /><em>Any deployment.</em></h1>
+          <p className={styles.lead}>
+            Pikku's CLI scans your function signatures and filters by routes, tags, or types — generating entry points with only the functions and services each deployment needs.
           </p>
+          <div className={styles.heroActions}>
+            <Link to="/docs/pikku-cli/tree-shaking" className={styles.btnPrimary}>Read the Docs</Link>
+            <a href="#how-it-works" className={styles.btnGhost}>How It Works</a>
+          </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl mb-10">
-          <CodeCard filename=".pikku/pikku-services.gen.ts" badge="auto-generated" icon={<Zap className="w-4 h-4 text-primary" />}>
-            <CodeBlock language="typescript">{requiredServicesCode}</CodeBlock>
-          </CodeCard>
-          <CodeCard filename="services.ts" badge="your code" icon={<Package className="w-4 h-4 text-primary" />}>
-            <CodeBlock language="typescript">{dynamicImportCode}</CodeBlock>
-          </CodeCard>
+        <div className={styles.heroCode}>
+          <span className={styles.hcComment}>{'# Deploy only admin routes'}</span><br />
+          <span className={styles.hcPrompt}>$</span>{' pikku '}
+          <span className={styles.hcFlag}>--http-routes=/admin</span><br /><br />
+          <span className={styles.hcComment}>{'# Deploy by tag'}</span><br />
+          <span className={styles.hcPrompt}>$</span>{' pikku '}
+          <span className={styles.hcFlag}>--tags=payments</span><br /><br />
+          <span className={styles.hcComment}>{'# Deploy only HTTP wire'}</span><br />
+          <span className={styles.hcPrompt}>$</span>{' pikku '}
+          <span className={styles.hcFlag}>--types=http</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HowItWorksSection() {
+  const steps = [
+    { icon: <Scissors size={20} style={{ color: '#c2410c' }} />, title: 'CLI scans destructuring', desc: 'Pikku analyzes which services each function, middleware, and permission actually destructures from the services parameter.' },
+    { icon: <Filter size={20} style={{ color: '#c2410c' }} />, title: 'Filter with CLI flags', desc: 'Use --http-routes, --tags, or --types to include only the functions your deployment needs. Everything else is excluded.' },
+    { icon: <FileCode size={20} style={{ color: '#c2410c' }} />, title: 'Generates entry points', desc: 'The CLI produces typed entry files with only the needed functions, routes, and services — ready to deploy.' },
+  ];
+
+  const flags = [
+    { flag: '--http-routes=/admin', desc: 'Only include functions mapped to admin routes', example: 'pikku --http-routes=/admin --http-routes=/auth' },
+    { flag: '--tags=payments', desc: 'Only include functions tagged "payments"', example: 'pikku --tags=payments --tags=billing' },
+    { flag: '--types=http', desc: 'Only include HTTP wire functions', example: 'pikku --types=http --types=cron' },
+  ];
+
+  return (
+    <section id="how-it-works" className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>How It Works</div>
+          <h2 className={styles.h2}>Three flags. <em>Infinite architectures.</em></h2>
+          <p className={styles.lead}>The same source code becomes a monolith, microservices, or individual functions — just by changing CLI flags.</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
-          {[
-            { label: 'Faster cold starts', desc: 'Health-check endpoints don\'t load your database driver. Payment endpoints don\'t load your email SDK.' },
-            { label: 'Same codebase', desc: 'Deploy as monolith, microservices, or individual functions — filter with CLI flags, no code changes.' },
-            { label: 'Type-safe', desc: 'RequiredSingletonServices narrows your factory return type so TypeScript catches missing services at compile time.' },
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-primary text-[11px] font-bold mt-0.5">&#10003;</span>
-              <div>
-                <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
-                <p className="text-xs text-neutral-500">{item.desc}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
+          {steps.map((step, i) => (
+            <div key={i} className={styles.card} style={{ borderTopWidth: 3, borderTopColor: '#1d6070', position: 'relative' }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
+                <span style={{ flexShrink: 0, width: 30, height: 30, borderRadius: '50%', background: '#f4e6dd', border: '1px solid #e8cfc3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c', fontSize: 11, fontWeight: 700, fontFamily: 'Geist Mono, monospace' }}>{i + 1}</span>
+                <div className={styles.cardTitle} style={{ margin: 0 }}>{step.title}</div>
+              </div>
+              <p className={styles.cardBody}>{step.desc}</p>
+              {i < steps.length - 1 && (
+                <div style={{ position: 'absolute', right: -10, top: '50%', transform: 'translateY(-50%)', color: '#d4ccba', display: 'none' }}>
+                  <ArrowRight size={16} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          {flags.map((item, i) => (
+            <div key={i} className={styles.card}>
+              <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 13, fontWeight: 700, color: '#c2410c' }}>{item.flag}</code>
+              <p className={styles.cardBody} style={{ margin: '8px 0 12px' }}>{item.desc}</p>
+              <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '6px 10px', color: '#6b6559' }}>
+                $ {item.example}
               </div>
             </div>
           ))}
@@ -331,72 +118,120 @@ function ServiceLoadingSection() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   5. CTA
-   ───────────────────────────────────────────── */
-
-function CTASection() {
-  const [copied, setCopied] = React.useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText('npm create pikku@latest');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+function ArchitecturesSection() {
+  const architectures = [
+    { icon: <Server size={24} style={{ color: '#c2410c' }} />, name: 'Monolith', description: 'Run everything in one process', command: 'pikku', bundleSize: '~2.8 MB', includes: 'All functions, all protocols' },
+    { icon: <Layers size={24} style={{ color: '#c2410c' }} />, name: 'Microservices', description: 'Split by domain or feature', command: 'pikku --http-routes=/admin', altCommand: 'pikku --tags=admin', bundleSize: '~180 KB', includes: 'Only admin routes + dependencies' },
+    { icon: <FunctionSquare size={24} style={{ color: '#c2410c' }} />, name: 'Functions', description: 'One function per deployment', command: 'pikku --http-routes=/users/:id --types=http', bundleSize: '~50 KB', includes: 'Single endpoint + minimal runtime' },
+  ];
 
   return (
-    <section className="py-16 lg:py-24 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full bg-white/[0.04] blur-[80px]" />
-      </div>
-
-      <div className="max-w-screen-xl mx-auto px-6 relative">
-        <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold mb-4 text-white leading-tight">
-          Deploy your way
-        </Heading>
-        <p className="text-lg text-neutral-400 mb-10 max-w-xl">
-          One codebase, any architecture. Start building with tree-shaking from day one.
-        </p>
-
-        <div
-          className="bg-white/5 border border-white/10 text-white p-4 rounded-xl font-mono text-base max-w-sm relative group cursor-pointer hover:bg-white/8 hover:border-white/20 transition-all mb-10"
-          onClick={copyToClipboard}
-        >
-          <span className="text-white/55 select-none">$ </span>npm create pikku@latest
-          <button
-            className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-white/10 hover:bg-white/20 rounded p-1.5"
-            onClick={(e) => { e.stopPropagation(); copyToClipboard(); }}
-            title="Copy to clipboard"
-          >
-            {copied
-              ? <Check className="w-3.5 h-3.5 text-primary" />
-              : <Copy className="w-3.5 h-3.5 text-white/70" />
-            }
-          </button>
+    <section className={styles.sectionAlt}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Architectures</div>
+          <h2 className={styles.h2}>One codebase, <em>three shapes.</em></h2>
+          <p className={styles.lead}>No code changes. Just different CLI flags for different deployments.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/docs/pikku-cli/tree-shaking"
-            className="bg-primary text-black hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-cyan-500/20"
-          >
-            Tree-Shaking Guide
-          </Link>
-          <Link
-            to="/features"
-            className="border border-white/20 text-white/80 hover:bg-white/10 hover:text-white px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105"
-          >
-            All Features
-          </Link>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          {architectures.map((arch, i) => (
+            <div key={i} className={styles.card}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+                <div style={{ width: 52, height: 52, borderRadius: 12, background: '#f4e6dd', border: '1px solid #e8cfc3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {arch.icon}
+                </div>
+              </div>
+              <div className={styles.cardTitle} style={{ fontSize: 18, textAlign: 'center', marginBottom: 6 }}>{arch.name}</div>
+              <p className={styles.cardBody} style={{ textAlign: 'center', marginBottom: 16 }}>{arch.description}</p>
+              <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '5px 9px', color: '#6b6559', marginBottom: 4 }}>
+                $ {arch.command}
+              </div>
+              {arch.altCommand && (
+                <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '5px 9px', color: '#6b6559', marginBottom: 4 }}>
+                  $ {arch.altCommand}
+                </div>
+              )}
+              <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #e3ddd0' }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#c2410c', marginBottom: 3 }}>{arch.bundleSize}</div>
+                <div style={{ fontSize: 12, color: '#9a9387' }}>{arch.includes}</div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-/* ─────────────────────────────────────────────
-   PAGE
-   ───────────────────────────────────────────── */
+function ServiceLoadingSection() {
+  const highlights = [
+    { label: 'Faster cold starts', desc: "Health-check endpoints don't load your database driver. Payment endpoints don't load your email SDK." },
+    { label: 'Same codebase', desc: 'Deploy as monolith, microservices, or individual functions — filter with CLI flags, no code changes.' },
+    { label: 'Type-safe', desc: 'RequiredSingletonServices narrows your factory return type so TypeScript catches missing services at compile time.' },
+  ];
+
+  return (
+    <section className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.sectionHead}>
+          <div className={styles.eyebrow}>Service Loading</div>
+          <h2 className={styles.h2}>Only load what you <em>actually use.</em></h2>
+          <p className={styles.lead}>
+            The CLI generates a <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>requiredSingletonServices</code> map. Guard heavy imports with dynamic <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>import()</code> — unused services never load.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 32 }}>
+          <CodeCard filename=".pikku/pikku-services.gen.ts" badge="auto-generated" icon={<Zap size={13} style={{ color: '#c2410c' }} />}>
+            <CodeBlock language="typescript">{requiredServicesCode}</CodeBlock>
+          </CodeCard>
+          <CodeCard filename="services.ts" badge="your code" icon={<Package size={13} style={{ color: '#c2410c' }} />}>
+            <CodeBlock language="typescript">{dynamicImportCode}</CodeBlock>
+          </CodeCard>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          {highlights.map((h, i) => (
+            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+              <span style={{ flexShrink: 0, width: 20, height: 20, borderRadius: '50%', background: '#f4e6dd', border: '1px solid #e8cfc3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c', fontSize: 10, fontWeight: 700 }}>✓</span>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1814', marginBottom: 2 }}>{h.label}</div>
+                <div style={{ fontSize: 12, color: '#9a9387' }}>{h.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CTASection() {
+  const [copied, setCopied] = React.useState(false);
+  const copy = () => { navigator.clipboard.writeText('npm create pikku@latest'); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+
+  return (
+    <section className={styles.sectionDark}>
+      <div className={styles.wrap}>
+        <h2 className={styles.h2}>Deploy your way.</h2>
+        <p className={styles.lead} style={{ marginBottom: 28 }}>
+          One codebase, any architecture. Start building with tree-shaking from day one.
+        </p>
+        <div className={styles.cmdBlock} onClick={copy}>
+          <span className={styles.cmdPrompt}>$ </span>npm create pikku@latest
+          <button className={styles.copyBtn} onClick={(e) => { e.stopPropagation(); copy(); }} title="Copy">
+            {copied ? <Check size={13} /> : <Copy size={13} />}
+          </button>
+        </div>
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+          <Link to="/docs/pikku-cli/tree-shaking" className={styles.btnPrimary}>Tree-Shaking Guide</Link>
+          <Link to="/features" className={styles.btnGhost}>All Features</Link>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function TreeShakingPage() {
   return (
@@ -404,13 +239,15 @@ export default function TreeShakingPage() {
       title="Tree-Shaking — Same Codebase, Any Deployment"
       description="Pikku's CLI scans your function signatures, filters by routes, tags, or types, and generates entry points with only what each deployment needs."
     >
-      <Hero />
-      <main>
-        <HowItWorksSection />
-        <ArchitecturesSection />
-        <ServiceLoadingSection />
-        <CTASection />
-      </main>
+      <PaperPage>
+        <Hero />
+        <main>
+          <HowItWorksSection />
+          <ArchitecturesSection />
+          <ServiceLoadingSection />
+          <CTASection />
+        </main>
+      </PaperPage>
     </Layout>
   );
 }
