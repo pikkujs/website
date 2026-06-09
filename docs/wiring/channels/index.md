@@ -388,6 +388,15 @@ Event-driven connections via serverless platforms (AWS API Gateway, Azure Functi
 
 Use `eventHub` to handle pub/sub in stateless environments - it offloads subscription management to a separate service.
 
+## Real-World Example: Order Status Channel
+
+From the [online shop template](https://github.com/pikkujs/fabric/tree/main/templates/online-shop-template) — a WebSocket channel that streams live order status updates to the browser after checkout.
+
+```typescript @snippet orderStatusChannel
+```
+
+The channel uses `auth: true` so only the logged-in user can subscribe to their order updates. The `onMessage` handler accepts a discriminated union — here a single `subscribe` message type — so the client can tell the server which order to watch.
+
 ## Next Steps
 
 - [Wiring Channels](./channel-route.md)

@@ -182,6 +182,15 @@ const { runId } = await rpc.startWorkflow('onboarding', {
 })
 ```
 
+## Real-World Example: Checkout Workflow
+
+From the [online shop template](https://github.com/pikkujs/fabric/tree/main/templates/online-shop-template) — a 4-step checkout workflow that validates the basket, creates an order, processes payment, and finalises everything atomically.
+
+```typescript @snippet checkoutWorkflow
+```
+
+Each step's result is cached by name (`ctx.steps['validate-basket']`, `ctx.steps['create-order']`), so if the workflow restarts after a failure the completed steps are replayed from the store — no duplicate charges, no duplicate orders.
+
 ## Visualizing Workflows in the Console
 
 The [Pikku Console](/docs/console) renders your workflows as interactive visual graphs, lets you start workflow runs with custom input, and streams execution progress in real time. See [Console Features](/docs/console/features#workflows) for details.

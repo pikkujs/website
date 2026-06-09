@@ -79,6 +79,15 @@ wireHTTPRoutes({
 })
 ```
 
+## Real-World Example: Shop Routes
+
+From the [online shop template](https://github.com/pikkujs/fabric/tree/main/templates/online-shop-template) — a full catalogue and basket API defined as a single route group, with `auth: false` as the group default and individual routes overriding it where authentication is needed.
+
+```typescript @snippet shopRoutes
+```
+
+All 13 routes share the `auth: false` default. Admin routes (`createCategory`, `createItem`, `updateItem`) override that with `auth: true`. The whole group registers with a single `wireHTTPRoutes` call.
+
 ## When to Use What
 
 | Function | Purpose |

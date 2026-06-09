@@ -305,6 +305,25 @@ export const monthlyProcessing = pikkuVoidFunc({
 })
 ```
 
+## Real-World Example: Shop Maintenance Jobs
+
+From the [online shop template](https://github.com/pikkujs/fabric/tree/main/templates/online-shop-template) — a daily sales report and a nightly basket cleanup.
+
+**Daily sales report (runs at 06:00 UTC):**
+
+```typescript @snippet dailySalesReport
+```
+
+**Abandoned basket cleanup (runs at 03:00 UTC):**
+
+```typescript @snippet cleanupAbandonedBaskets
+```
+
+**Wiring both tasks:**
+
+```typescript @snippet cronWirings
+```
+
 ## Next Steps
 
 - [Middleware](../core-features/middleware.md) - Adding observability to scheduled tasks

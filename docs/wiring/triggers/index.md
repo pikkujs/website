@@ -228,6 +228,15 @@ interface TriggerService {
 
 For workflows that use both queues and triggers, initialize the trigger service after the queue and workflow services are ready.
 
+## Real-World Example: Low-Stock Alert
+
+From the [online shop template](https://github.com/pikkujs/fabric/tree/main/templates/online-shop-template) — the `updateItem` function fires a low-stock trigger when item stock drops below a threshold, and this handler reacts to it.
+
+```typescript @snippet lowStockTrigger
+```
+
+In production you'd replace the `logger.warn` with a Slack notification, a restocking ticket, or any side-effect you need.
+
 ## Use Cases
 
 - **Message queues** — Redis pub/sub, AMQP, MQTT

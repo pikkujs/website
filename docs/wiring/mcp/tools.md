@@ -228,6 +228,15 @@ Keeping MCP tools as thin adapters has several benefits:
 
 The MCP function's only job is to format the response for AI agents. All the real work happens in your reusable domain functions.
 
+## Real-World Example: Shop Catalogue Tools
+
+From the [online shop template](https://github.com/pikkujs/fabric/tree/main/templates/online-shop-template) — the same HTTP route functions wired as MCP tools so AI agents can browse and manage the catalogue.
+
+```typescript @snippet mcpTools
+```
+
+Note that `listCategories`, `listItems`, `getItem`, `getBasket`, and `addToBasket` are the exact same functions already wired to HTTP routes — no duplication of business logic.
+
 ## Next Steps
 
 - [MCP Resources](./resources.md) - Provide data sources for AI agents

@@ -208,6 +208,25 @@ Pikku supports multiple queue backends:
 - Auto-scaling
 - Pay per message
 
+## Real-World Example: Order Notifications
+
+From the [online shop template](https://github.com/pikkujs/fabric/tree/main/templates/online-shop-template) — two queue workers: one sends order confirmation emails after payment, the other writes structured audit events.
+
+**Order confirmation worker:**
+
+```typescript @snippet sendOrderConfirmation
+```
+
+**Audit event worker:**
+
+```typescript @snippet writeAuditEvent
+```
+
+**Wiring both workers:**
+
+```typescript @snippet queueWirings
+```
+
 ## Next Steps
 
 - [Queue Client](./client.md) - Adding and monitoring jobs with type safety
