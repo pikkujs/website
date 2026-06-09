@@ -1,35 +1,8 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
-const basicsCode = `const onboardUser = pikkuWorkflowFunc<
-  { email: string; userId: string },
-  { success: boolean }
->(async ({}, data, { workflow }) => {
-  // Step 1: RPC call (executed as queue job)
-  const user = await workflow.do(
-    'Create profile',
-    'createUserProfile',
-    { email: data.email, userId: data.userId }
-  )
-
-  // Step 2: Inline step (immediate, cached)
-  const message = await workflow.do(
-    'Generate welcome',
-    async () => \`Welcome, \${data.email}!\`
-  )
-
-  // Step 3: Durable sleep
-  await workflow.sleep('Wait 5 minutes', '5min')
-
-  // Step 4: Another RPC call
-  await workflow.do('Send email', 'sendEmail', {
-    to: data.email,
-    subject: 'Welcome!',
-    body: message,
-  })
-
-  return { success: true }
-})`;
+const basicsCode = snippets.checkoutWorkflow;
 
 const patternsCode = `// Fan-out: parallel steps with Promise.all
 const users = await Promise.all(
@@ -166,16 +139,16 @@ const page: PageData = {
       component: 'wide-code',
       id: 'basics',
       eyebrow: 'The Basics',
-      h2: 'Orchestrate with _workflow.do()_',
-      lead: 'Each workflow.do() call is a durable step. RPC steps run as queue jobs. Inline steps execute immediately. Both are cached for replay.',
+      h2: 'Define steps with _defineWorkflow_',
+      lead: 'Each step in a defineWorkflow is a durable unit. Steps can read prior results via ctx.steps. All results are cached for deterministic replay.',
       variant: 'default',
-      code: { filename: 'onboarding.workflow.ts', icon: 'workflow', code: basicsCode },
+      code: { filename: 'checkout.workflow.ts', icon: 'workflow', code: basicsCode },
       below: {
         type: 'check-list',
         items: [
           { title: 'Deterministic replay', body: 'Completed steps are never re-executed. Results are cached and replayed on recovery.' },
-          { title: 'Plain TypeScript', body: 'Loops, conditionals, Promise.all — use any TypeScript construct. No YAML, no DSL.' },
-          { title: 'Typed I/O', body: 'Workflow input and output are fully typed. Each RPC step infers types from the target function.' },
+          { title: 'Step context', body: 'Each step receives ctx.steps with the results of all previous steps — fully typed.' },
+          { title: 'Typed I/O', body: 'Workflow input and output are fully typed via Zod schemas on input and output fields.' },
         ],
       },
     },

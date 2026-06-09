@@ -1,5 +1,6 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
 const toolCode = `// Any Pikku function becomes an MCP tool with mcp: true
 export const createTodo = pikkuFunc({
@@ -128,6 +129,15 @@ const page: PageData = {
         type: 'code',
         code: { filename: 'mcp.functions.ts', icon: 'mcp', code: wireObjectCode },
       },
+    },
+
+    {
+      component: 'wide-code',
+      eyebrow: 'Real-World Example',
+      h2: 'Shop catalogue _as MCP tools_',
+      lead: 'From the online shop template — the same functions wired to HTTP routes also exposed as MCP tools with wireMCPTool. One function, every protocol.',
+      variant: 'default',
+      code: { filename: 'shop.mcp.ts', icon: 'mcp', code: snippets.mcpTools },
     },
 
     {

@@ -1,19 +1,10 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
-const basicsFunc = `const processReminder = pikkuSessionlessFunc({
-  title: 'Process Reminder',
-  func: async ({ db, emailService }, { todoId, userId }) => {
-    const todo = await db.getTodo(todoId)
-    await emailService.sendReminder(userId, todo)
-    return { sent: true }
-  }
-})`;
+const basicsFunc = snippets.sendOrderConfirmation;
 
-const basicsWiring = `wireQueueWorker({
-  name: 'todo-reminders',
-  func: processReminder,
-})`;
+const basicsWiring = snippets.queueWirings;
 
 const jobControlCode = `const processReminder = pikkuSessionlessFunc({
   title: 'Process Reminder',
@@ -100,11 +91,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'processReminder.func.ts', badge: 'func.ts', code: basicsFunc },
+        code: { filename: 'queue.functions.ts', badge: 'func.ts', code: basicsFunc },
       },
       right: {
         type: 'code',
-        code: { filename: 'reminders.queue.ts', badge: 'queue.ts', icon: 'queue', code: basicsWiring },
+        code: { filename: 'queue.wiring.ts', badge: 'queue.ts', icon: 'queue', code: basicsWiring },
       },
       below: {
         type: 'check-list',

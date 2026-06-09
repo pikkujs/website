@@ -1,20 +1,10 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
-const basicsFunction = `const dailySummary = pikkuVoidFunc({
-  title: 'Daily Summary',
-  func: async ({ db, emailService, logger }) => {
-    logger.info('Generating daily summary')
-    const stats = await db.getDailyStats()
-    await emailService.sendSummary(stats)
-  }
-})`;
+const basicsFunction = snippets.dailySalesReport;
 
-const basicsWiring = `wireScheduler({
-  name: 'dailySummary',
-  schedule: '0 9 * * *',  // Every day at 9:00 AM
-  func: dailySummary,
-})`;
+const basicsWiring = snippets.cronWirings;
 
 const cronDiagram = `┌─── minute (0-59)
 │ ┌─── hour (0-23)
@@ -97,7 +87,7 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'dailySummary.func.ts', badge: 'func.ts', code: basicsFunction },
+        code: { filename: 'scheduled.functions.ts', badge: 'func.ts', code: basicsFunction },
       },
       right: {
         type: 'code',

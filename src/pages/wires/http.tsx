@@ -1,5 +1,6 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
 const basicsFunction = `const getBook = pikkuFunc({
   title: 'Get Book',
@@ -73,37 +74,7 @@ wireHTTP({
   middleware: [auditLog]
 })`;
 
-const routeGroupsCode = `import { defineHTTPRoutes, wireHTTPRoutes } from '.pikku/pikku-types.gen.js'
-
-const booksRoutes = defineHTTPRoutes({
-  tags: ['books'],
-  routes: {
-    list:   { method: 'get',    route: '/books',          func: listBooks, auth: false },
-    get:    { method: 'get',    route: '/books/:bookId',  func: getBook },
-    create: { method: 'post',   route: '/books',          func: createBook },
-    delete: { method: 'delete', route: '/books/:bookId',  func: deleteBook },
-  },
-})
-
-const todosRoutes = defineHTTPRoutes({
-  auth: false,
-  tags: ['todos'],
-  routes: {
-    list:   { method: 'get',  route: '/todos',     func: listTodos },
-    create: { method: 'post', route: '/todos',     func: createTodo },
-    get:    { method: 'get',  route: '/todos/:id', func: getTodo },
-  },
-})
-
-// Compose everything under /api/v1
-wireHTTPRoutes({
-  basePath: '/api/v1',
-  middleware: [cors()],
-  routes: {
-    books: booksRoutes,
-    todos: todosRoutes,
-  },
-})`;
+const routeGroupsCode = snippets.shopRoutes;
 
 const fetchClientCode = `import { pikkuFetch } from '.pikku/pikku-fetch.gen.js'
 
@@ -254,7 +225,7 @@ const page: PageData = {
       h2: 'Organize routes with _defineHTTPRoutes_',
       lead: 'Group related routes into contracts. Compose them with shared base paths, middleware, and auth settings — then wire them all at once.',
       variant: 'default',
-      code: { filename: 'http.wiring.ts', badge: 'wiring.ts', icon: 'http', code: routeGroupsCode },
+      code: { filename: 'shop.http.ts', badge: 'wiring.ts', icon: 'http', code: routeGroupsCode },
       below: {
         type: 'check-list',
         items: [

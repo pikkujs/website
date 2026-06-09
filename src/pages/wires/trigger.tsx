@@ -1,5 +1,6 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
 const sourceCode = `// 1. Define the trigger source — how to subscribe
 const redisSubscribe = pikkuTriggerFunc<
@@ -22,17 +23,7 @@ const redisSubscribe = pikkuTriggerFunc<
   }
 })`;
 
-const wiringCode = `// 2. Wire source to target
-wireTrigger({
-  name: 'order-events',
-  func: onOrderEvent,   // Target: your Pikku function
-})
-
-wireTriggerSource({
-  name: 'order-events',
-  func: redisSubscribe,  // Source: the subscription
-  input: { channels: ['orders:created', 'orders:updated'] },
-})`;
+const wiringCode = snippets.lowStockTrigger;
 
 const page: PageData = {
   meta: {
@@ -65,7 +56,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'trigger.wiring.ts', badge: 'wiring', icon: 'trigger', code: wiringCode },
+        code: { filename: 'trigger.wiring.ts', badge: 'target + wiring', icon: 'trigger', code: wiringCode },
       },
       below: {
         type: 'check-list',

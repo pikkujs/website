@@ -1,5 +1,6 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
 const basicsFunction = `const createTodo = pikkuFunc({
   title: 'Create Todo',
@@ -257,6 +258,15 @@ const page: PageData = {
         title: 'Channel middleware controls what the client sees.',
         body: 'Pass a modified event to next() to transform, null to drop, or an array to fan out into multiple events. Both types run in onion order.',
       },
+    },
+
+    {
+      component: 'wide-code',
+      eyebrow: 'Real-World Example',
+      h2: 'Order status _channel_',
+      lead: 'From the online shop template — a defineChannel that streams live order status updates after checkout. Auth required, typed onMessage discriminated union.',
+      variant: 'default',
+      code: { filename: 'order-status.channel.ts', icon: 'websocket', code: snippets.orderStatusChannel },
     },
 
     {
