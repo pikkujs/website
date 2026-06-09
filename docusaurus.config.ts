@@ -106,16 +106,16 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/pikkujs/website/tree/main/',
-          remarkPlugins: [[
-            require('@docusaurus/remark-plugin-npm2yarn'),
-            npm2YarnConfig
-          ]],
+          remarkPlugins: [
+            require('./plugins/remark-snippets.cjs'),
+            [require('@docusaurus/remark-plugin-npm2yarn'), npm2YarnConfig],
+          ],
         },
         pages: {
-          remarkPlugins: [[
-            require('@docusaurus/remark-plugin-npm2yarn'),
-            npm2YarnConfig
-          ]],
+          remarkPlugins: [
+            require('./plugins/remark-snippets.cjs'),
+            [require('@docusaurus/remark-plugin-npm2yarn'), npm2YarnConfig],
+          ],
         },
         blog: {
           blogSidebarCount: 'ALL',
@@ -133,10 +133,8 @@ const config: Config = {
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
           remarkPlugins: [
-            [
-              require('@docusaurus/remark-plugin-npm2yarn'),
-              npm2YarnConfig
-            ],
+            require('./plugins/remark-snippets.cjs'),
+            [require('@docusaurus/remark-plugin-npm2yarn'), npm2YarnConfig],
           ],
         },
         theme: {
