@@ -8,9 +8,6 @@
 .docusaurus
 .cache-loader
 
-# Cloned template repo (for snippet extraction)
-/.template-online-shop
-
 # Synced from pikku repo
 /docs/skills
 /skills

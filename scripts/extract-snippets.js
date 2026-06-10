@@ -10,16 +10,13 @@
  *
  * Run via:  npm run sync-snippets
  *
- * Safe to run when the fabric repo is absent — just prints a warning.
+ * The template source lives in the .template-online-shop git submodule.
+ * Update it with:  git submodule update --remote .template-online-shop
  */
 
 const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
-
-const SHOP_REPO_SSH   = 'git@github.com:pikkujs/template-online-shop.git'
-const SHOP_REPO_HTTPS = 'https://github.com/pikkujs/template-online-shop.git'
-const CLONED_DIR      = path.resolve(__dirname, '../.template-online-shop')
 
 const PRETTIER_BIN = path.resolve(__dirname, '../node_modules/.bin/prettier')
 
@@ -35,44 +32,14 @@ function formatSnippet(code) {
   }
 }
 
-const LOCAL_TEMPLATE_SRC = path.resolve(
-  __dirname,
-  '../../fabric/templates/online-shop-template/packages/functions/src'
-)
+const SUBMODULE_SRC = path.resolve(__dirname, '../.template-online-shop/packages/functions/src')
 const OUTPUT_FILE      = path.resolve(__dirname, '../src/data/snippets.json')
 const OUTPUT_META_FILE = path.resolve(__dirname, '../src/data/snippets-meta.json')
 
-function resolveTemplateSrc() {
-  if (fs.existsSync(LOCAL_TEMPLATE_SRC)) return LOCAL_TEMPLATE_SRC
-
-  // Local fabric repo not found — clone from GitHub
-  const clonedSrc = path.join(CLONED_DIR, 'packages/functions/src')
-  if (fs.existsSync(clonedSrc)) {
-    console.log('[extract-snippets] Using cached clone at', CLONED_DIR)
-    return clonedSrc
-  }
-
-  console.log('[extract-snippets] Cloning template-online-shop from GitHub...')
-  fs.mkdirSync(CLONED_DIR, { recursive: true })
-  fs.rmdirSync(CLONED_DIR) // let git clone create it
-
-  // Try SSH first (local dev with keys), fall back to HTTPS (CI with token)
-  try {
-    execSync(`git clone --depth 1 ${SHOP_REPO_SSH} ${CLONED_DIR}`, { stdio: 'inherit' })
-  } catch {
-    console.log('[extract-snippets] SSH clone failed, trying HTTPS...')
-    execSync(`git clone --depth 1 ${SHOP_REPO_HTTPS} ${CLONED_DIR}`, { stdio: 'inherit' })
-  }
-
-  if (!fs.existsSync(clonedSrc)) {
-    console.error('[extract-snippets] Clone succeeded but src dir not found:', clonedSrc)
-    process.exit(1)
-  }
-
-  return clonedSrc
+if (!fs.existsSync(SUBMODULE_SRC)) {
+  console.error('[extract-snippets] Submodule not initialised. Run: git submodule update --init')
+  process.exit(1)
 }
-
-const TEMPLATE_SRC = resolveTemplateSrc()
 
 // ── Recursive TS file scanner ──────────────────────────────
 
@@ -126,14 +93,14 @@ function extractSnippets(content) {
 
 // ── Main ───────────────────────────────────────────────────
 
-const files   = findTsFiles(TEMPLATE_SRC)
+const files   = findTsFiles(SUBMODULE_SRC)
 const all     = {}
 const origins = {} // snippet name → file path (for collision warnings)
 
 for (const file of files) {
   const content  = fs.readFileSync(file, 'utf8')
   const snippets = extractSnippets(content)
-  const rel      = path.relative(TEMPLATE_SRC, file)
+  const rel      = path.relative(SUBMODULE_SRC, file)
 
   for (const [name, code] of Object.entries(snippets)) {
     if (origins[name]) {
