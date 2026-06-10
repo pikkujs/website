@@ -129,11 +129,12 @@ function VideoSection() {
 function PlatformSection() {
   const cells = [
     { n: '01', title: 'Database & types', body: 'SQLite to start, or point it at Postgres — it reads your schema and generates end-to-end types automatically. No setup, no drift.' },
-    { n: '02', title: 'Authentication', body: 'Single sign-on with any provider out of the box. Add the credentials, and your team logs in. Nothing to build.' },
+    { n: '02', title: 'SSO', body: 'Standard OAuth and OIDC out of the box. Point it at Google, Microsoft, Okta — or any provider — and your team signs in. Nothing to build.' },
     { n: '03', title: 'Content & secrets', body: 'A managed content layer and type-safe secrets, handled the same way on a laptop as in production.' },
     { n: '04', title: 'Email, with previews', body: 'Generate transactional email and preview every message live in the console — before a single one is sent.' },
     { n: '05', title: 'Workflows & agents', body: 'Durable, restart-proof workflows and AI agents run natively — no separate engine to operate.' },
     { n: '06', title: 'One binary', body: 'The entire platform is a single command. No container orchestration to maintain just to run "hello world."' },
+    { n: '07', title: 'Audit trails', body: 'Decide what to audit and Pikku records who did what, and when — across every entry point. Compliance-grade history without a separate system.', wide: true },
   ];
 
   return (
@@ -147,7 +148,7 @@ function PlatformSection() {
         </p>
         <div className={styles.platformGrid}>
           {cells.map((c) => (
-            <div key={c.n} className={styles.cell}>
+            <div key={c.n} className={`${styles.cell}${c.wide ? ` ${styles.cellWide}` : ''}`}>
               <div className={styles.cellNum}>{c.n}</div>
               <h3>{c.title}</h3>
               <p>{c.body}</p>
