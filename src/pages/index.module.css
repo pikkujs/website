@@ -199,7 +199,7 @@
 .entGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 50px; }
 @media (max-width: 760px) { .entGrid { grid-template-columns: 1fr; } }
 
-.entCard { border: 1px solid var(--paper-border); border-radius: 14px; padding: 32px 30px; background: var(--paper-bg-alt); transition: all 0.2s; }
+.entCard { border: 1px solid var(--paper-border); border-radius: 14px; padding: 32px 30px; background: var(--paper-bg-alt); transition: all 0.2s; min-width: 0; }
 .entCard:hover { border-color: var(--paper-border-strong); box-shadow: 0 14px 40px -24px var(--paper-shadow-lg); }
 .entCard h3 { font-family: 'Newsreader', Georgia, serif; font-size: 23px; font-weight: 500; margin-bottom: 10px; letter-spacing: -0.5px; color: var(--paper-text); }
 .entCard p  { color: var(--paper-text-muted); font-size: 15.5px; line-height: 1.6; margin: 0; }

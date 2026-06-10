@@ -234,7 +234,7 @@ function EnterpriseSection() {
     <section id="enterprise" className={styles.sectionDark}>
       <div className={styles.wrap}>
         <div className={styles.eyebrow}>Enterprise from day one</div>
-        <h2 className={styles.h2}>The requirements your board asks about — <em>already met.</em></h2>
+        <h2 className={styles.h2}>The requirements your platform needs — <em>already met.</em></h2>
         <p className={styles.secLede}>
           SSO, audit, multitenancy and granular permissions aren't a premium tier or a future quarter.
           They ship in the open-source binary.
