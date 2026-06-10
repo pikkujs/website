@@ -2,124 +2,23 @@ import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
 import snippets from '../../data/snippets.json';
 
-const basicsFunction = `const getBook = pikkuFunc({
-  title: 'Get Book',
-  description: 'Retrieve a book by ID',
-  func: async ({ db }, { bookId }) => {
-    return await db.getBook(bookId)
-  },
-  permissions: { user: isAuthenticated }
-})`;
+const basicsFunction = snippets.getItem;
 
-const basicsWiring = `wireHTTP({
-  method: 'get',
-  route: '/books/:bookId',
-  func: getBook
-})`;
+const basicsWiring = snippets.httpSingleRoute;
 
-const dataFlowCode = `wireHTTP({
-  method: 'post',
-  route: '/books/:bookId',
-  func: updateBook
-})
+const dataFlowCode = snippets.httpSingleRoute;
 
-// POST /books/42?format=pdf
-// Body: { title: "New Title" }
-//
-// → updateBook receives:
-//   { bookId: "42", format: "pdf", title: "New Title" }`;
+const authCode = snippets.httpAuthRoute;
 
-const authCode = `// Public route — no auth required
-wireHTTP({
-  method: 'get',
-  route: '/books',
-  func: listBooks,
-  auth: false
-})
-
-// Protected with permissions
-wireHTTP({
-  method: 'delete',
-  route: '/books/:bookId',
-  func: deleteBook,
-  permissions: {
-    admin: isAdmin
-  }
-})
-
-// Global route-level permission
-addHTTPPermission(
-  '/admin/*',
-  { admin: isAdmin }
-)`;
-
-const middlewareCode = `import { cors, authBearer } from '@pikku/core/middleware'
-
-// Global: CORS + bearer auth on every route
-addHTTPMiddleware('*', [
-  cors({ origin: 'https://app.example.com', credentials: true }),
-  authBearer()
-])
-
-// Prefix: rate limiting on API routes only
-addHTTPMiddleware('/api/*', [
-  rateLimit({ maxRequests: 100, windowMs: 60_000 })
-])
-
-// Per-route: audit logging on a single wire
-wireHTTP({
-  method: 'delete',
-  route: '/books/:bookId',
-  func: deleteBook,
-  middleware: [auditLog]
-})`;
+const middlewareCode = snippets.httpMiddleware;
 
 const routeGroupsCode = snippets.shopRoutes;
 
-const fetchClientCode = `import { pikkuFetch } from '.pikku/pikku-fetch.gen.js'
+const fetchClientCode = snippets.fetchClient;
 
-pikkuFetch.setServerUrl('http://localhost:4002')
+const sseWiringCode = snippets.httpSingleRoute;
 
-// Fully typed — route, input, and output are inferred
-const books = await pikkuFetch.get('/api/v1/books', {})
-
-const book = await pikkuFetch.get('/api/v1/books/:bookId', {
-  bookId: '42'
-})
-
-const created = await pikkuFetch.post('/api/v1/books', {
-  title: 'The Pikku Guide',
-  author: 'You'
-})
-
-// Auth: set a JWT and all subsequent requests include it
-pikkuFetch.setAuthorizationJWT(token)`;
-
-const sseWiringCode = `wireHTTP({
-  method: 'get',
-  route: '/todos',
-  func: getTodos,
-  sse: true      // ← that's it
-})`;
-
-const sseFunctionCode = `const getTodos = pikkuFunc({
-  title: 'Get Todos',
-  func: async ({ db, channel }, {}) => {
-    const todos = await db.getTodos()
-
-    // If client supports SSE, stream them
-    if (channel) {
-      for (const todo of todos) {
-        channel.send({ todo })
-        await sleep(100)
-      }
-      return
-    }
-
-    // Otherwise, return the full list
-    return { todos }
-  }
-})`;
+const sseFunctionCode = snippets.getItem;
 
 const page: PageData = {
   meta: {
@@ -148,11 +47,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'getBook.func.ts', badge: 'func.ts', code: basicsFunction },
+        code: { filename: 'getBook.func.ts', badge: 'func.ts', code: basicsFunction, snippetKey: 'getItem' },
       },
       right: {
         type: 'code',
-        code: { filename: 'books.wiring.ts', badge: 'wiring.ts', icon: 'http', code: basicsWiring },
+        code: { filename: 'books.wiring.ts', badge: 'wiring.ts', icon: 'http', code: basicsWiring, snippetKey: 'httpSingleRoute' },
       },
       below: {
         type: 'check-list',
@@ -170,7 +69,7 @@ const page: PageData = {
       h2: 'Everything merges into _one typed input_',
       lead: 'Path params, query strings, and request bodies combine into a single object your function receives.',
       variant: 'alt',
-      code: { filename: 'books.wiring.ts', icon: 'http', code: dataFlowCode },
+      code: { filename: 'books.wiring.ts', icon: 'http', code: dataFlowCode, snippetKey: 'httpSingleRoute' },
       below: {
         type: 'note',
         icon: 'alert-triangle',
@@ -195,7 +94,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'books.wiring.ts', icon: 'http', code: authCode },
+        code: { filename: 'books.wiring.ts', icon: 'http', code: authCode, snippetKey: 'httpAuthRoute' },
       },
     },
 
@@ -215,7 +114,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'middleware.ts', icon: 'http', code: middlewareCode },
+        code: { filename: 'middleware.ts', icon: 'http', code: middlewareCode, snippetKey: 'httpMiddleware' },
       },
     },
 
@@ -225,7 +124,7 @@ const page: PageData = {
       h2: 'Organize routes with _defineHTTPRoutes_',
       lead: 'Group related routes into contracts. Compose them with shared base paths, middleware, and auth settings — then wire them all at once.',
       variant: 'default',
-      code: { filename: 'shop.http.ts', badge: 'wiring.ts', icon: 'http', code: routeGroupsCode },
+      code: { filename: 'shop.http.ts', badge: 'wiring.ts', icon: 'http', code: routeGroupsCode, snippetKey: 'shopRoutes' },
       below: {
         type: 'check-list',
         items: [
@@ -245,7 +144,7 @@ const page: PageData = {
       columns: '3fr 2fr',
       left: {
         type: 'code',
-        code: { filename: 'client.ts', badge: 'auto-generated types', code: fetchClientCode },
+        code: { filename: 'client.ts', badge: 'auto-generated types', code: fetchClientCode, snippetKey: 'fetchClient' },
       },
       right: {
         type: 'cards',
@@ -265,11 +164,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'todos.wiring.ts', badge: 'sse: true', icon: 'sse', code: sseWiringCode },
+        code: { filename: 'todos.wiring.ts', badge: 'sse: true', icon: 'sse', code: sseWiringCode, snippetKey: 'httpSingleRoute' },
       },
       right: {
         type: 'code',
-        code: { filename: 'getTodos.func.ts', badge: 'func.ts', code: sseFunctionCode },
+        code: { filename: 'getTodos.func.ts', badge: 'func.ts', code: sseFunctionCode, snippetKey: 'getItem' },
       },
       below: {
         type: 'note',

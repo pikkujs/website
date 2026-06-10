@@ -1,44 +1,16 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
-const wiringCode = `wireGateway({
-  name: 'whatsapp',
-  type: 'webhook',
-  route: '/webhooks/whatsapp',
-  adapter: whatsAppAdapter,
-  func: handleMessage,
-})`;
+const wiringCode = snippets.gatewayWiring;
 
-const handlerCode = `const handleMessage = pikkuFunc({
-  func: async ({ database, logger }, { senderId, text }) => {
-    logger.info(\`Message from \${senderId}: \${text}\`)
-    await database.saveMessage(senderId, text)
-    return { text: \`Got it! You said: \${text}\` }
-  }
-})`;
+const handlerCode = snippets.gatewayHandler;
 
-const webhookCode = `wireGateway({
-  name: 'slack',
-  type: 'webhook',
-  route: '/webhooks/slack',
-  adapter: slackAdapter,
-  func: handleMessage,
-})`;
+const webhookCode = snippets.gatewayWiring;
 
-const websocketCode = `wireGateway({
-  name: 'webchat',
-  type: 'websocket',
-  route: '/chat',
-  adapter: webChatAdapter,
-  func: handleMessage,
-})`;
+const websocketCode = snippets.gatewayWebsocket;
 
-const listenerCode = `wireGateway({
-  name: 'signal',
-  type: 'listener',
-  adapter: signalAdapter,
-  func: handleMessage,
-})`;
+const listenerCode = snippets.gatewayAdapter;
 
 const page: PageData = {
   meta: {
@@ -67,11 +39,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'gateway.wiring.ts', badge: 'wireGateway', icon: 'gateway', code: wiringCode },
+        code: { filename: 'gateway.wiring.ts', badge: 'wireGateway', icon: 'gateway', code: wiringCode, snippetKey: 'gatewayWiring' },
       },
       right: {
         type: 'code',
-        code: { filename: 'gateway.functions.ts', badge: 'handler', icon: 'gateway', code: handlerCode },
+        code: { filename: 'gateway.functions.ts', badge: 'handler', icon: 'gateway', code: handlerCode, snippetKey: 'gatewayHandler' },
       },
       below: {
         type: 'check-list',
@@ -92,9 +64,9 @@ const page: PageData = {
       left: {
         type: 'codes',
         codes: [
-          { filename: 'webhook gateway', badge: 'webhook', icon: 'gateway', code: webhookCode },
-          { filename: 'websocket gateway', badge: 'websocket', icon: 'gateway', code: websocketCode },
-          { filename: 'listener gateway', badge: 'listener', icon: 'gateway', code: listenerCode },
+          { filename: 'webhook gateway', badge: 'webhook', icon: 'gateway', code: webhookCode, snippetKey: 'gatewayWiring' },
+          { filename: 'websocket gateway', badge: 'websocket', icon: 'gateway', code: websocketCode, snippetKey: 'gatewayWebsocket' },
+          { filename: 'listener gateway', badge: 'listener', icon: 'gateway', code: listenerCode, snippetKey: 'gatewayAdapter' },
         ],
       },
       right: {

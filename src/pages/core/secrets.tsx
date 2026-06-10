@@ -5,52 +5,12 @@ import CodeBlock from '@theme/CodeBlock';
 import { Key, Variable, ShieldCheck, RefreshCw, ArrowRight, BookOpen, Monitor } from 'lucide-react';
 import { PaperPage, CodeCard } from '../../components/PaperLayout';
 import styles from './secrets.module.css';
+import snippets from '../../data/snippets.json';
+import { snippetSourceUrl } from '../../utils/snippets';
 
-const secretsCode = `// Declare a secret with a Zod schema
-wireSecret({
-  name: 'STRIPE_CONFIG',
-  schema: z.object({
-    apiKey: z.string().startsWith('sk_'),
-    webhookSecret: z.string()
-  })
-})
-
-// In your function — fully typed
-const config = await secrets.getSecretJSON('STRIPE_CONFIG')
-// config.apiKey   → string (autocompleted)
-// config.webhookSecret → string (autocompleted)`;
-
-const variablesCode = `// Declare a variable
-wireVariable({
-  name: 'FEATURE_FLAGS',
-  schema: z.object({
-    darkMode: z.boolean(),
-    maxUploadMB: z.number().default(10)
-  })
-})
-
-// Read it — typed and validated
-const flags = await variables.getVariableJSON('FEATURE_FLAGS')
-// flags.darkMode    → boolean
-// flags.maxUploadMB → number`;
-
-const oauth2Code = `wireOAuth2Credential({
-  name: 'slackOAuth',
-  displayName: 'Slack OAuth',
-  // Holds { clientId, clientSecret }
-  secretId: 'SLACK_OAUTH_APP',
-  // Updated automatically on token refresh
-  tokenSecretId: 'SLACK_OAUTH_TOKENS',
-  authorizationUrl: 'https://slack.com/oauth/v2/authorize',
-  tokenUrl: 'https://slack.com/api/oauth.v2.access',
-  scopes: ['chat:write', 'channels:read'],
-})
-
-// In your function — tokens refresh automatically
-const response = await slackOAuth.request(
-  'https://slack.com/api/chat.postMessage',
-  { method: 'POST', body: JSON.stringify({ channel, text }) }
-)`;
+const secretsCode = snippets.secrets;
+const variablesCode = snippets.variables;
+const oauth2Code = snippets.shopSecretUsage;
 
 function Hero() {
   return (
@@ -113,7 +73,7 @@ function SecretsSection() {
               </div>
             ))}
           </div>
-          <CodeCard filename="secrets.ts" badge="wireSecret">
+          <CodeCard sourceUrl={snippetSourceUrl('secrets')} filename="secrets.ts" badge="wireSecret">
             <CodeBlock language="typescript">{secretsCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -138,7 +98,7 @@ function VariablesSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
-          <CodeCard filename="variables.ts" badge="wireVariable">
+          <CodeCard sourceUrl={snippetSourceUrl('variables')} filename="variables.ts" badge="wireVariable">
             <CodeBlock language="typescript">{variablesCode}</CodeBlock>
           </CodeCard>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -198,7 +158,7 @@ function OAuth2Section() {
               </div>
             </div>
           </div>
-          <CodeCard filename="oauth2.ts" badge="wireOAuth2Credential">
+          <CodeCard sourceUrl={snippetSourceUrl('shopSecretUsage')} filename="oauth2.ts" badge="wireOAuth2Credential">
             <CodeBlock language="typescript">{oauth2Code}</CodeBlock>
           </CodeCard>
         </div>

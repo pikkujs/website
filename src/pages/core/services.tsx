@@ -6,79 +6,25 @@ import { Wrench, Database, RefreshCw, TreePine, Copy, Check, Zap, Package } from
 import { PaperPage, CodeCard } from '../../components/PaperLayout';
 import styles from './services.module.css';
 
-const singletonCode = `import { pikkuServices } from '#pikku'
+import snippets from '../../data/snippets.json';
+import { snippetSourceUrl } from '../../utils/snippets';
 
-export const createSingletonServices = pikkuServices(
-  async (config, existingServices) => {
-    const logger = new ConsoleLogger()
-    const database = new DatabasePool(config.database)
-    await database.connect()
-
-    const jwt = new JoseJWTService(
-      async () => [{ id: 'my-key', value: JWT_SECRET }],
-      logger
-    )
-
-    return {
-      config,
-      logger,
-      database,
-      jwt,
-      books: new BookService(),
-    }
-  }
-)`;
-
-const wireCode = `import { pikkuWireServices } from '#pikku'
-
-export const createWireServices = pikkuWireServices(
-  async (singletonServices, wire) => {
-    // Created fresh per request / queue job / CLI command
-    // Pikku merges these with singleton services automatically
-    return {
-      userSession: createUserSessionService(wire),
-      dbTransaction: new DatabaseTransaction(
-        singletonServices.database
-      ),
-    }
-  }
-)`;
+const singletonCode = snippets.shopServices;
+const wireCode = snippets.shopWireServices;
 
 const requiredServicesCode = `// .pikku/pikku-services.gen.ts  (auto-generated)
 export const requiredSingletonServices = {
-  'database': true,     // used by getUser, deleteUser
-  'audit': true,        // used by deleteUser
-  'cache': false,       // not used by any wired function
-  'jwt': true,          // used by auth middleware
+  'kysely': true,        // used by getItem, createOrder, etc.
+  'paymentService': true, // used by processPayment
+  'logger': true,        // used everywhere
+  'secrets': false,      // not used by any wired function
 } as const
 
 export type RequiredSingletonServices =
-  Pick<SingletonServices, 'database' | 'audit' | 'jwt'>
-  & Partial<Omit<SingletonServices, 'database' | 'audit' | 'jwt'>>`;
+  Pick<SingletonServices, 'kysely' | 'paymentService' | 'logger'>
+  & Partial<Omit<SingletonServices, 'kysely' | 'paymentService' | 'logger'>>`;
 
-const dynamicImportCode = `import { requiredSingletonServices } from '.pikku/pikku-services.gen.js'
-import { pikkuServices } from '#pikku'
-
-export const createSingletonServices = pikkuServices(
-  async (config) => {
-    const logger = new ConsoleLogger()
-
-    // Only create JWT if wired functions actually need it
-    let jwt: JWTService | undefined
-    if (requiredSingletonServices.jwt) {
-      const { JoseJWTService } = await import('@pikku/jose')
-      jwt = new JoseJWTService(keys, logger)
-    }
-
-    // Only connect to database if needed
-    let database: Database | undefined
-    if (requiredSingletonServices.database) {
-      database = await createDatabase(config.databaseUrl)
-    }
-
-    return { config, logger, jwt, database }
-  }
-)`;
+const dynamicImportCode = snippets.shopDynamicImport;
 
 function Hero() {
   return (
@@ -146,10 +92,10 @@ function TwoFactoriesSection() {
             ))}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard filename="services.ts" badge="startup" icon={<Database size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard sourceUrl={snippetSourceUrl('shopServices')} filename="services.ts" badge="startup" icon={<Database size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{singletonCode}</CodeBlock>
             </CodeCard>
-            <CodeCard filename="services.ts" badge="per-request" icon={<RefreshCw size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard sourceUrl={snippetSourceUrl('shopWireServices')} filename="services.ts" badge="per-request" icon={<RefreshCw size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{wireCode}</CodeBlock>
             </CodeCard>
           </div>
@@ -199,7 +145,7 @@ function TreeShakingSection() {
           <CodeCard filename=".pikku/pikku-services.gen.ts" badge="auto-generated" icon={<Zap size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{requiredServicesCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="services.ts" badge="your code" icon={<TreePine size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopDynamicImport')} filename="services.ts" badge="your code" icon={<TreePine size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{dynamicImportCode}</CodeBlock>
           </CodeCard>
         </div>

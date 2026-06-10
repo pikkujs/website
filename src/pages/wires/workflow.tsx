@@ -4,66 +4,11 @@ import snippets from '../../data/snippets.json';
 
 const basicsCode = snippets.checkoutWorkflow;
 
-const patternsCode = `// Fan-out: parallel steps with Promise.all
-const users = await Promise.all(
-  data.userIds.map(async (userId) =>
-    await workflow.do(\`Get user \${userId}\`, 'userGet', { userId })
-  )
-)
+const patternsCode = snippets.workflowPatterns;
 
-// Retry: automatic retry with backoff
-const payment = await workflow.do(
-  'Process payment',
-  'processPayment',
-  { amount: 100 },
-  { retries: 3, retryDelay: '1s' }
-)
+const graphCode = snippets.workflowPatterns;
 
-// Branch: standard TypeScript conditionals
-if (user.plan === 'pro') {
-  await workflow.do('Apply discount', 'applyDiscount', { userId })
-}`;
-
-const graphCode = `const userOnboarding = pikkuWorkflowGraph({
-  description: 'Onboard a new user',
-  nodes: {
-    createProfile: 'createUserProfile',
-    sendWelcome:   'sendEmail',
-    setupDefaults: 'createDefaultTodos',
-  },
-  config: {
-    createProfile: {
-      next: ['sendWelcome', 'setupDefaults'],  // Parallel
-    },
-    sendWelcome: {
-      input: (ref) => ({
-        to: ref('createProfile', 'email'),
-        subject: 'Welcome!',
-      }),
-    },
-  },
-})`;
-
-const httpCode = `// Start a workflow (returns runId)
-wireHTTP({
-  method: 'post',
-  route: '/workflow/onboard',
-  func: workflowStart('userOnboarding'),
-})
-
-// Run to completion (synchronous)
-wireHTTP({
-  method: 'post',
-  route: '/workflow/onboard/run',
-  func: workflow('userOnboarding'),
-})
-
-// Check status
-wireHTTP({
-  method: 'get',
-  route: '/workflow/status/:runId',
-  func: workflowStatus('userOnboarding'),
-})`;
+const httpCode = snippets.workflowHTTPWiring;
 
 const page: PageData = {
   meta: {
@@ -142,7 +87,7 @@ const page: PageData = {
       h2: 'Define steps with _defineWorkflow_',
       lead: 'Each step in a defineWorkflow is a durable unit. Steps can read prior results via ctx.steps. All results are cached for deterministic replay.',
       variant: 'default',
-      code: { filename: 'checkout.workflow.ts', icon: 'workflow', code: basicsCode },
+      code: { filename: 'checkout.workflow.ts', icon: 'workflow', code: basicsCode, snippetKey: 'checkoutWorkflow' },
       below: {
         type: 'check-list',
         items: [
@@ -174,7 +119,7 @@ const page: PageData = {
       h2: 'Fan-out, retry, _branch_',
       lead: 'Use standard TypeScript for control flow. Promise.all for parallelism. if/else for branching. Retries via step options.',
       variant: 'default',
-      code: { filename: 'workflow-patterns.ts', icon: 'workflow', code: patternsCode },
+      code: { filename: 'workflow-patterns.ts', icon: 'workflow', code: patternsCode, snippetKey: 'workflowPatterns' },
     },
 
     {
@@ -186,7 +131,7 @@ const page: PageData = {
       columns: '3fr 2fr',
       left: {
         type: 'code',
-        code: { filename: 'onboarding.graph.ts', badge: 'graph', icon: 'workflow', code: graphCode },
+        code: { filename: 'onboarding.graph.ts', badge: 'graph', icon: 'workflow', code: graphCode, snippetKey: 'workflowPatterns' },
       },
       right: {
         type: 'cards',
@@ -203,7 +148,7 @@ const page: PageData = {
       h2: 'Start, poll, _resume_',
       lead: 'Pikku provides helper functions to wire workflows to HTTP endpoints — start, run to completion, or poll status.',
       variant: 'default',
-      code: { filename: 'workflow.wiring.ts', icon: 'workflow', code: httpCode },
+      code: { filename: 'workflow.wiring.ts', icon: 'workflow', code: httpCode, snippetKey: 'workflowHTTPWiring' },
     },
 
     {

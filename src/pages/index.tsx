@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import { NavbarPageToggle } from '../components/HomepageShared';
 import { PaperPage, Terminal } from '../components/PaperLayout';
 import styles from './index.module.css';
+import snippets from '../data/snippets.json';
 
 // ─── Replace with your YouTube video ID when ready ──────────────
 const VIDEO_ID = '';
@@ -161,6 +162,8 @@ function PlatformSection() {
 /* ════════════════════════════════════════════════════════════════
    Parity — "Local equals production"
    ════════════════════════════════════════════════════════════════ */
+const PARITY_FEATURES = ['Console', 'Workflows', 'Agents', 'Auth', 'Queues', 'Schedules', 'MCP'];
+
 function ParitySection() {
   return (
     <section id="parity" className={styles.section}>
@@ -169,19 +172,27 @@ function ParitySection() {
         <h2 className={styles.h2}>What your team builds is <em>what you ship.</em></h2>
         <div className={styles.parityGrid}>
           <div className={styles.parityVis}>
-            <div className={styles.envRow}>
-              <span className={styles.envLabel}>Local</span>
-              <span className={`${styles.envBar} ${styles.envLocal}`}>npx pikku dev · console · workflows · agents</span>
-            </div>
-            <div className={styles.parityEquals}>identical</div>
-            <div className={styles.envRow}>
-              <span className={styles.envLabel}>Production</span>
-              <span className={`${styles.envBar} ${styles.envProd}`}>pikku deploy · console · workflows · agents</span>
+            <div className={styles.envCards}>
+              <div className={`${styles.envCard} ${styles.envCardLocal}`}>
+                <span className={styles.envCardLabel}>Local</span>
+                <code className={styles.envCardCmd}>npx pikku dev</code>
+                <div className={styles.envPills}>
+                  {PARITY_FEATURES.map(f => <span key={f} className={styles.envPill}>{f}</span>)}
+                </div>
+              </div>
+              <div className={styles.envCardEq}>=</div>
+              <div className={`${styles.envCard} ${styles.envCardProd}`}>
+                <span className={styles.envCardLabel}>Production</span>
+                <code className={styles.envCardCmd}>pikku deploy</code>
+                <div className={styles.envPills}>
+                  {PARITY_FEATURES.map(f => <span key={f} className={styles.envPill}>{f}</span>)}
+                </div>
+              </div>
             </div>
           </div>
           <ul className={styles.parityList}>
             <li>The same auth, permissions and validation run in both places.</li>
-            <li>Move from SQLite to Postgres by <strong>pointing at it</strong> — nothing else changes.</li>
+            <li>Switch from SQLite to Postgres by swapping the connection string and running migrations — your functions stay untouched.</li>
             <li>The console you debug in is the console you operate with in production.</li>
             <li>No "works on my machine." No environment you can't reproduce.</li>
           </ul>
@@ -195,26 +206,26 @@ function ParitySection() {
    Enterprise — "From day one"
    ════════════════════════════════════════════════════════════════ */
 function EnterpriseSection() {
-  const cards = [
+  const cards: Array<{ title: string; body: React.ReactNode; code: string }> = [
     {
       title: 'SSO with any provider',
       body: <>Built on standard OAuth and OIDC. Provide credentials for Google, Microsoft, Okta — or any provider — and your organization signs in. <strong>No authentication code to write or own.</strong></>,
-      code: <><span className={styles.mk}>auth</span>.provider(<span className={styles.mc}>'okta'</span>, {'{ clientId, secret }'}) <span className={styles.md}>// live</span></>,
+      code: snippets.authProviders,
     },
     {
       title: 'Full audit trails',
       body: <>Decide what to audit and Pikku records who did what, and when — across every entry point. <strong>Compliance-grade history without a separate system.</strong></>,
-      code: <><span className={styles.mk}>audited</span>: <span className={styles.mc}>true</span> <span className={styles.md}>// on any sensitive action</span></>,
+      code: snippets.auditDispatch,
     },
     {
       title: 'Multitenancy & permissions',
       body: <>Organizations and tenants are first-class — isolated data, scoped access, and fine-grained permissions wired through everything. <strong>Multi-tenant SaaS without the usual plumbing.</strong></>,
-      code: <><span className={styles.mk}>permissions</span>: {'{ '}<span className={styles.mc}>org</span>: isOrgAdmin{'}'} <span className={styles.md}>// per tenant</span></>,
+      code: snippets.permissionsCompact,
     },
     {
       title: 'Your own internal tools',
       body: <>Turn any capability into a command-line tool for your ops and support teams — same auth, same permissions, same audit. <strong>Internal tooling that's safe by default.</strong></>,
-      code: <><span className={styles.mk}>cli</span>: {'{ migrate, seed, refund }'} <span className={styles.md}>// shipped to ops</span></>,
+      code: snippets.cliSubcommands,
     },
   ];
 
@@ -232,7 +243,7 @@ function EnterpriseSection() {
             <div key={c.title} className={styles.entCard}>
               <h3>{c.title}</h3>
               <p>{c.body}</p>
-              <div className={styles.miniCode}>{c.code}</div>
+              <pre className={styles.miniCode}>{c.code}</pre>
             </div>
           ))}
         </div>

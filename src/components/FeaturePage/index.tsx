@@ -20,11 +20,19 @@ import {
 } from '../WiringIcons';
 import { PaperPage, CodeCard } from '../PaperLayout';
 import styles from './feature-page.module.css';
+import snippetsMeta from '../../data/snippets-meta.json';
 import type {
   PageData, Section, ColContent, CardItem, CodeSpec,
   HeroSection, TwoColSection, FeatureGridSection,
   WideCodeSection, StepCardsSection, CtaSection,
 } from './types';
+
+const GITHUB_BASE = 'https://github.com/pikkujs/template-online-shop/blob/main/packages/functions/src/';
+function snippetSourceUrl(key: string | undefined): string | undefined {
+  if (!key) return undefined;
+  const file = (snippetsMeta as Record<string, string>)[key];
+  return file ? GITHUB_BASE + file : undefined;
+}
 
 /* ── Icon resolution ─────────────────────────────────────── */
 
@@ -65,6 +73,33 @@ function resolveIcon(name: string | undefined, size = 16, style?: React.CSSPrope
   return null;
 }
 
+/* ── collapseFunc: trim func: async body to // ... ──────── */
+
+function collapseFunc(code: string): string {
+  const lines = code.split('\n');
+  const out: string[] = [];
+  let inBody = false;
+  let depth = 0;
+
+  for (const line of lines) {
+    if (!inBody) {
+      out.push(line);
+      if (/func:\s*async/.test(line)) {
+        inBody = true;
+        depth = (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length;
+        if (depth > 0) out.push('    // ...');
+      }
+    } else {
+      depth += (line.match(/\{/g) ?? []).length - (line.match(/\}/g) ?? []).length;
+      if (depth <= 0) {
+        out.push(line);
+        inBody = false;
+      }
+    }
+  }
+  return out.join('\n');
+}
+
 /* ── Text parser: _italic_ → <em> ───────────────────────── */
 
 function parseText(text: string): React.ReactNode {
@@ -79,6 +114,24 @@ function parseText(text: string): React.ReactNode {
 /* ── ColContent renderer ─────────────────────────────────── */
 
 function renderCards(cards: CardItem[], columns = 3): React.ReactNode {
+  // Single-column lists (e.g. "Runtime context" wire-object cards) render as
+  // a compact def-list — icon + mono label + description — not boxed cards.
+  if (columns === 1) {
+    return (
+      <dl className={styles.defList}>
+        {cards.map((c, i) => (
+          <div key={i} className={styles.defItem}>
+            <dt className={styles.defTerm}>
+              {c.icon && <span className={styles.defIcon}>{resolveIcon(c.icon, 14)}</span>}
+              <code className={styles.defLabel}>{c.title}</code>
+            </dt>
+            <dd className={styles.defDesc}>{c.body}</dd>
+          </div>
+        ))}
+      </dl>
+    );
+  }
+
   return (
     <div style={{ display: 'grid', gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: 16 }}>
       {cards.map((c, i) => (
@@ -95,13 +148,15 @@ function renderCards(cards: CardItem[], columns = 3): React.ReactNode {
 }
 
 function renderCodeSpec(spec: CodeSpec): React.ReactNode {
+  const code = spec.collapse ? collapseFunc(spec.code) : spec.code;
   return (
     <CodeCard
       filename={spec.filename}
       badge={spec.badge}
       icon={spec.icon ? resolveIcon(spec.icon, 13) : undefined}
+      sourceUrl={snippetSourceUrl(spec.snippetKey)}
     >
-      <CodeBlock language={spec.language ?? 'typescript'}>{spec.code}</CodeBlock>
+      <CodeBlock language={spec.language ?? 'typescript'}>{code}</CodeBlock>
     </CodeCard>
   );
 }
@@ -208,8 +263,8 @@ function TwoColRenderer({ s }: { s: TwoColSection }) {
       <div className={styles.wrap}>
         <SectionHeader eyebrow={s.eyebrow} h2={s.h2} lead={s.lead} />
         <div style={{ display: 'grid', gridTemplateColumns: s.columns ?? '1fr 1fr', gap: 40, alignItems: 'start' }}>
-          <div>{renderCol(s.left)}</div>
-          <div>{renderCol(s.right)}</div>
+          <div style={{ minWidth: 0 }}>{renderCol(s.left)}</div>
+          <div style={{ minWidth: 0 }}>{renderCol(s.right)}</div>
         </div>
         {s.below && <div style={{ marginTop: 32 }}>{renderCol(s.below)}</div>}
       </div>
@@ -233,13 +288,26 @@ function FeatureGridRenderer({ s }: { s: FeatureGridSection }) {
 
 /* ── Wide code ───────────────────────────────────────────── */
 
-function WideCodeRenderer({ s }: { s: WideCodeSection }) {
+function WideCodeRenderer({ s, flip = false }: { s: WideCodeSection; flip?: boolean }) {
+  // Split: prose (eyebrow + h2 + lead) left, code right.
+  // When `flip` is true, code moves left and prose moves right via CSS order.
+  const hasHeader = !!(s.eyebrow || s.h2 || s.lead);
   return (
     <section id={s.id} className={sectionClass(s.variant)}>
       <div className={styles.wrap}>
-        <SectionHeader eyebrow={s.eyebrow} h2={s.h2} lead={s.lead} />
-        <div style={{ maxWidth: 760 }}>{renderCodeSpec(s.code)}</div>
-        {s.below && <div style={{ marginTop: 32 }}>{renderCol(s.below)}</div>}
+        {hasHeader ? (
+          <div className={`${styles.wideSplit} ${flip ? styles.wideSplitFlip : ''}`}>
+            <div className={styles.wideSplitProse}>
+              <SectionHeader eyebrow={s.eyebrow} h2={s.h2} lead={s.lead} />
+            </div>
+            <div className={styles.wideSplitCode}>
+              {renderCodeSpec(s.code)}
+            </div>
+          </div>
+        ) : (
+          <div style={{ maxWidth: 760 }}>{renderCodeSpec(s.code)}</div>
+        )}
+        {s.below && <div className={styles.wideBelow}>{renderCol(s.below)}</div>}
       </div>
     </section>
   );
@@ -313,12 +381,12 @@ function CtaRenderer({ s }: { s: CtaSection }) {
 
 /* ── Section dispatcher ──────────────────────────────────── */
 
-function renderSection(s: Section, i: number): React.ReactNode {
+function renderSection(s: Section, i: number, wideCodeIndex: number): React.ReactNode {
   switch (s.component) {
     case 'hero':          return <HeroRenderer key={i} s={s} />;
     case 'two-col':       return <TwoColRenderer key={i} s={s} />;
     case 'feature-grid':  return <FeatureGridRenderer key={i} s={s} />;
-    case 'wide-code':     return <WideCodeRenderer key={i} s={s} />;
+    case 'wide-code':     return <WideCodeRenderer key={i} s={s} flip={wideCodeIndex % 2 !== 0} />;
     case 'step-cards':    return <StepCardsRenderer key={i} s={s} />;
     case 'cta':           return <CtaRenderer key={i} s={s} />;
     default:              return null;
@@ -328,10 +396,18 @@ function renderSection(s: Section, i: number): React.ReactNode {
 /* ── FeaturePage entry point ─────────────────────────────── */
 
 export function FeaturePage({ data }: { data: PageData }) {
+  let wideCodeIndex = 0;
   return (
     <Layout title={data.meta.title} description={data.meta.description}>
       <PaperPage>
-        {data.sections.map((s, i) => renderSection(s, i))}
+        {data.sections.map((s, i) => {
+          if (s.component === 'wide-code') {
+            const node = renderSection(s, i, wideCodeIndex);
+            wideCodeIndex++;
+            return node;
+          }
+          return renderSection(s, i, 0);
+        })}
       </PaperPage>
     </Layout>
   );

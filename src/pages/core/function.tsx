@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { PaperPage, CodeCard, CheckItem, StepBadge } from '../../components/PaperLayout';
 import styles from './function.module.css';
+import snippets from '../../data/snippets.json';
+import { snippetSourceUrl } from '../../utils/snippets';
 
 /* ════════════════════════════════════════════════════════
    1. Hero
@@ -54,18 +56,7 @@ function Hero() {
 /* ════════════════════════════════════════════════════════
    2. Three parameters
    ════════════════════════════════════════════════════════ */
-const threeParamsCode = `const getBook = pikkuFunc({
-  title: 'Get Book',
-  func: async (
-    { db, logger },          // services — your toolbox
-    { bookId },              // data — typed input
-    { session }              // wire — protocol context
-  ) => {
-    logger.info(\`Fetching book \${bookId}\`)
-    const book = await db.getBook(bookId)
-    return { book, reader: session.userId }
-  }
-})`;
+const threeParamsCode = snippets.funcThreeParams;
 
 function ThreeParamsSection() {
   const params = [
@@ -127,7 +118,7 @@ function ThreeParamsSection() {
         </div>
 
         <div style={{ maxWidth: 580 }}>
-          <CodeCard filename="getBook.func.ts" badge="func.ts">
+          <CodeCard sourceUrl={snippetSourceUrl('funcThreeParams')} filename="getBook.func.ts" badge="func.ts">
             <CodeBlock language="typescript">{threeParamsCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -139,23 +130,8 @@ function ThreeParamsSection() {
 /* ════════════════════════════════════════════════════════
    3. Services
    ════════════════════════════════════════════════════════ */
-const singletonServicesCode = `import { PikkuServiceMap } from '.pikku/pikku-types.gen.js'
-
-// Singleton services — created once at startup
-const singletonServices: PikkuServiceMap = {
-  db: new DatabaseClient(DATABASE_URL),
-  logger: createLogger({ level: 'info' }),
-  jwt: new JWTService(JWT_SECRET),
-  email: new EmailClient(SMTP_CONFIG),
-}`;
-
-const wireServicesCode = `// Wire services — created fresh per request
-const wireServices = {
-  // Each request gets its own session loader
-  session: (services, wire) => loadSession(wire),
-  // Per-request audit context
-  audit: (services, wire) => new AuditLog(wire.requestId),
-}`;
+const singletonServicesCode = snippets.shopServices;
+const wireServicesCode = snippets.shopWireServices;
 
 function ServicesSection() {
   const features = [
@@ -189,10 +165,10 @@ function ServicesSection() {
             ))}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard filename="services.ts" badge="startup">
+            <CodeCard sourceUrl={snippetSourceUrl('shopServices')} filename="services.ts" badge="startup">
               <CodeBlock language="typescript">{singletonServicesCode}</CodeBlock>
             </CodeCard>
-            <CodeCard filename="wire-services.ts" badge="per-request">
+            <CodeCard sourceUrl={snippetSourceUrl('shopWireServices')} filename="wire-services.ts" badge="per-request">
               <CodeBlock language="typescript">{wireServicesCode}</CodeBlock>
             </CodeCard>
           </div>
@@ -205,32 +181,11 @@ function ServicesSection() {
 /* ════════════════════════════════════════════════════════
    4. Versioning
    ════════════════════════════════════════════════════════ */
-const versionedFuncCode = `// v1 — kept around for old clients
-const getBookV1 = pikkuFunc({
-  title: 'Get Book',
-  version: 1,
-  input: z.object({ bookId: z.string() }),
-  output: z.object({ title: z.string() }),
-  func: async ({ db }, { bookId }) => {
-    return await db.getBook(bookId)
-  }
-})
+const versionedFuncCode = snippets.shopVersionedItem;
 
-// v2 — the latest version, called by default
-const getBook = pikkuFunc({
-  title: 'Get Book',
-  version: 2,
-  input: z.object({ bookId: z.string(), format: z.enum(['full', 'summary']) }),
-  output: z.object({ title: z.string(), author: z.string(), isbn: z.string() }),
-  func: async ({ db }, { bookId, format }) => {
-    return await db.getBook(bookId, format)
-  }
-})`;
+const ciCheckCode = `$ npx pikku versions check
 
-const ciCheckCode = `# CI catches breaking changes before deploy
-$ npx pikku versions check
-
-✗ getBook — contract changed without version bump
+✗ getItem — contract changed without version bump
   Input schema hash:  a1b2c3d4 → f9e8d7c6
   Output schema hash: i9j0k1l2 → z5y4x3w2
 
@@ -285,7 +240,7 @@ function VersioningSection() {
           </div>
 
           <div>
-            <CodeCard filename="getBook.func.ts" badge="version: 1 → 2">
+            <CodeCard sourceUrl={snippetSourceUrl('shopVersionedItem')} filename="getBook.func.ts" badge="version: 1 → 2">
               <CodeBlock language="typescript">{versionedFuncCode}</CodeBlock>
             </CodeCard>
             <div className={styles.checkList}>
@@ -303,32 +258,8 @@ function VersioningSection() {
 /* ════════════════════════════════════════════════════════
    5. Session & Auth
    ════════════════════════════════════════════════════════ */
-const loginCode = `const login = pikkuFunc({
-  title: 'Login',
-  func: async (
-    { jwt, db },
-    { email, password },
-    { setSession }
-  ) => {
-    const user = await db.verifyCredentials(email, password)
-    const token = jwt.sign({ userId: user.id, role: user.role })
-
-    // Works the same whether it's HTTP, WebSocket, or CLI
-    setSession({ userId: user.id, role: user.role })
-
-    return { token }
-  }
-})`;
-
-const getMeCode = `const getMe = pikkuFunc({
-  title: 'Get Current User',
-  func: async ({ db }, {}, { session }) => {
-    // session is loaded by middleware before
-    // your function runs — same API everywhere
-    return await db.getUser(session.userId)
-  },
-  permissions: { user: isAuthenticated }
-})`;
+const loginCode = snippets.shopLogin;
+const getMeCode = snippets.shopGetProfile;
 
 function SessionSection() {
   const lifecycle = [
@@ -364,10 +295,10 @@ function SessionSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 900 }}
           className="lg:grid-cols-2 grid-cols-1">
-          <CodeCard filename="login.func.ts" badge="func.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopLogin')} filename="login.func.ts" badge="func.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
             <CodeBlock language="typescript">{loginCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="getMe.func.ts" badge="func.ts" icon={<Shield className="w-4 h-4" style={{ color: '#8a8475' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopGetProfile')} filename="getMe.func.ts" badge="func.ts" icon={<Shield className="w-4 h-4" style={{ color: '#8a8475' }} />}>
             <CodeBlock language="typescript">{getMeCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -379,21 +310,8 @@ function SessionSection() {
 /* ════════════════════════════════════════════════════════
    6. One function, every protocol
    ════════════════════════════════════════════════════════ */
-const everyProtocolFunc = `// Define once
-const getBook = pikkuFunc({
-  title: 'Get Book',
-  func: async ({ db }, { bookId }, { session }) => {
-    return await db.getBook(bookId)
-  },
-  permissions: { user: isAuthenticated }
-})`;
-
-const everyProtocolWirings = `// Wire to everything
-wireHTTP({ method: 'get', route: '/books/:bookId', func: getBook })
-wireWebSocket({ channel: 'books', func: getBook })
-wireQueue({ queue: 'book-requests', func: getBook })
-wireCLI({ command: 'get-book', func: getBook })
-wireMCP({ tool: 'get_book', func: getBook })`;
+const everyProtocolFunc = snippets.getItem;
+const everyProtocolWirings = snippets.funcMultiWire;
 
 function EveryProtocolSection() {
   const protocols = [
@@ -436,10 +354,10 @@ function EveryProtocolSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 900 }}
           className="lg:grid-cols-2 grid-cols-1">
-          <CodeCard filename="getBook.func.ts" badge="func.ts">
+          <CodeCard sourceUrl={snippetSourceUrl('getItem')} filename="getBook.func.ts" badge="func.ts">
             <CodeBlock language="typescript">{everyProtocolFunc}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="wirings.ts" badge="wiring.ts">
+          <CodeCard sourceUrl={snippetSourceUrl('funcMultiWire')} filename="wirings.ts" badge="wiring.ts">
             <CodeBlock language="typescript">{everyProtocolWirings}</CodeBlock>
           </CodeCard>
         </div>

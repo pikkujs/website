@@ -15,12 +15,32 @@
 
 const fs = require('fs')
 const path = require('path')
+const { execSync } = require('child_process')
+
+// Prettier binary — prefer the one in the fabric monorepo
+const PRETTIER_BIN = [
+  path.resolve(__dirname, '../../fabric/node_modules/.bin/prettier'),
+  path.resolve(__dirname, '../node_modules/.bin/prettier'),
+].find(p => fs.existsSync(p))
+
+function formatSnippet(code) {
+  if (!PRETTIER_BIN) return code
+  try {
+    return execSync(
+      `${PRETTIER_BIN} --parser typescript --print-width 68 --tab-width 2 --single-quote --trailing-comma all`,
+      { input: code, encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] }
+    ).trimEnd()
+  } catch {
+    return code
+  }
+}
 
 const TEMPLATE_SRC = path.resolve(
   __dirname,
   '../../fabric/templates/online-shop-template/packages/functions/src'
 )
-const OUTPUT_FILE = path.resolve(__dirname, '../src/data/snippets.json')
+const OUTPUT_FILE      = path.resolve(__dirname, '../src/data/snippets.json')
+const OUTPUT_META_FILE = path.resolve(__dirname, '../src/data/snippets-meta.json')
 
 if (!fs.existsSync(TEMPLATE_SRC)) {
   console.warn(
@@ -65,10 +85,11 @@ function extractSnippets(content) {
       const minIndent = nonEmpty.length
         ? Math.min(...nonEmpty.map((l) => l.match(/^(\s*)/)[1].length))
         : 0
-      snippets[currentName] = currentLines
+      const raw = currentLines
         .map((l) => l.slice(minIndent))
         .join('\n')
         .trim()
+      snippets[currentName] = formatSnippet(raw)
       currentName  = null
       currentLines = []
     } else if (currentName !== null) {
@@ -101,6 +122,7 @@ for (const file of files) {
 
 fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true })
 fs.writeFileSync(OUTPUT_FILE, JSON.stringify(all, null, 2) + '\n')
+fs.writeFileSync(OUTPUT_META_FILE, JSON.stringify(origins, null, 2) + '\n')
 
 const count = Object.keys(all).length
 console.log(`[extract-snippets] Wrote ${count} snippet${count !== 1 ? 's' : ''} → src/data/snippets.json`)

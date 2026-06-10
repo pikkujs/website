@@ -2,63 +2,13 @@ import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
 import snippets from '../../data/snippets.json';
 
-const toolCode = `// Any Pikku function becomes an MCP tool with mcp: true
-export const createTodo = pikkuFunc({
-  description: 'Create a new todo item',
-  input: CreateTodoInput,
-  output: CreateTodoOutput,
-  mcp: true, // ← That's it. Now it's an MCP tool.
-  func: async ({ db }, { text, priority }) => {
-    return await db.createTodo({ text, priority })
-  },
-})`;
+const toolCode = snippets.mcpSingleTool;
 
-const resourceCode = `// MCP resources use a dedicated function type
-export const getTodo = pikkuMCPResourceFunc({
-  uri: 'todos/{id}',
-  title: 'Todo Details',
-  description: 'Get a todo by ID',
-  func: async ({ db }, { id }, { mcp }) => {
-    const todo = await db.getTodo(id)
-    return [{ uri: mcp.uri!, text: JSON.stringify(todo) }]
-  },
-})`;
+const resourceCode = snippets.mcpResource;
 
-const promptCode = `// MCP prompts use a dedicated function type
-export const codeReview = pikkuMCPPromptFunc({
-  name: 'codeReview',
-  description: 'Generate a code review prompt',
-  func: async ({}, { filePath, context }) => {
-    return [{
-      role: 'user',
-      content: {
-        type: 'text',
-        text: \`Review \${filePath}. Context: \${context}\`
-      }
-    }]
-  },
-})`;
+const promptCode = snippets.mcpPrompt;
 
-const wireObjectCode = `export const manageTodos = pikkuFunc({
-  description: 'Manage todo items',
-  input: ManageTodosInput,
-  output: ManageTodosOutput,
-  mcp: true,
-  func: async ({ db }, { action, id }, { mcp }) => {
-    if (action === 'delete') {
-      await db.deleteTodo(id)
-
-      // Notify AI that the resource changed
-      mcp.sendResourceUpdated(\`todos/\${id}\`)
-
-      // Dynamically enable/disable tools
-      await mcp.enableTools({ archiveTodos: true })
-
-      return { deleted: true }
-    }
-    // ...
-  },
-})`;
+const wireObjectCode = snippets.mcpWireObject;
 
 const page: PageData = {
   meta: {
@@ -85,13 +35,13 @@ const page: PageData = {
       h2: 'Tools, resources, _prompts_',
       lead: 'MCP defines three primitives for AI integration. Pikku exposes your functions automatically — no wiring code needed.',
       variant: 'default',
-      code: { filename: 'todo.functions.ts', badge: 'mcp: true', icon: 'mcp', code: toolCode },
+      code: { filename: 'todo.functions.ts', badge: 'mcp: true', icon: 'mcp', code: toolCode, snippetKey: 'mcpSingleTool' },
     },
 
     {
       component: 'wide-code',
       variant: 'alt',
-      code: { filename: 'mcp.functions.ts', badge: 'pikkuMCPResourceFunc', icon: 'mcp', code: resourceCode },
+      code: { filename: 'mcp.functions.ts', badge: 'pikkuMCPResourceFunc', icon: 'mcp', code: resourceCode, snippetKey: 'mcpResource' },
       below: {
         type: 'note',
         icon: 'file-text',
@@ -103,7 +53,7 @@ const page: PageData = {
     {
       component: 'wide-code',
       variant: 'default',
-      code: { filename: 'mcp.functions.ts', badge: 'pikkuMCPPromptFunc', icon: 'mcp', code: promptCode },
+      code: { filename: 'mcp.functions.ts', badge: 'pikkuMCPPromptFunc', icon: 'mcp', code: promptCode, snippetKey: 'mcpPrompt' },
       below: {
         type: 'note',
         icon: 'message-square',
@@ -127,7 +77,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'mcp.functions.ts', icon: 'mcp', code: wireObjectCode },
+        code: { filename: 'mcp.functions.ts', icon: 'mcp', code: wireObjectCode, snippetKey: 'mcpWireObject' },
       },
     },
 
@@ -137,7 +87,7 @@ const page: PageData = {
       h2: 'Shop catalogue _as MCP tools_',
       lead: 'From the online shop template — the same functions wired to HTTP routes also exposed as MCP tools with wireMCPTool. One function, every protocol.',
       variant: 'default',
-      code: { filename: 'shop.mcp.ts', icon: 'mcp', code: snippets.mcpTools },
+      code: { filename: 'shop.mcp.ts', icon: 'mcp', code: snippets.mcpTools, snippetKey: 'mcpTools' },
     },
 
     {

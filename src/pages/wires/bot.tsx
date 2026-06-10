@@ -1,55 +1,14 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
-const basicsCode = `const todoAssistant = pikkuAIAgent({
-  name: 'todo-assistant',
-  description: 'A helpful assistant that manages todos',
-  instructions: 'You help users manage their todo lists.',
-  model: 'openai/gpt-4o-mini',
-  tools: [listTodos, createTodo, completeTodo],
-  memory: {
-    storage: 'aiStorage',
-    lastMessages: 20,
-  },
-  maxSteps: 5,
-  temperature: 0.7,
-})`;
+const basicsCode = snippets.aiAgent;
 
-const dynamicWorkflowCode = `const ops = pikkuAIAgent({
-  name: 'ops-agent',
-  tools: [getMetrics, scaleService, restartPod, notify],
-  model: 'anthropic/claude-sonnet',
-  // Agent can create and run workflows
-  dynamicWorkflows: 'write',
-})
+const dynamicWorkflowCode = snippets.aiAgentDynamic;
 
-// Agent designs a workflow graph from your request,
-// asks for approval, then runs it natively — no AI in the loop.
-// Next time? It reuses the saved workflow. Zero tokens.`;
+const invokeCode = snippets.aiAgentInvoke;
 
-const invokeCode = `// Non-streaming: get the full result
-const result = await rpc.agent.run('todo-assistant', {
-  message: 'Create a task for tomorrow',
-  threadId: 'thread-123',
-  resourceId: 'user-456'
-})
-
-console.log(result.result)   // Agent response
-console.log(result.usage)    // Token usage`;
-
-const streamCode = `// Streaming: real-time events
-await rpc.agent.stream('todo-assistant', {
-  message: 'Create a task',
-  threadId: 'thread-123',
-  resourceId: 'user-456'
-})
-
-// Channel receives events:
-// { type: 'text-delta', text: '...' }
-// { type: 'tool-call', toolName: 'createTodo', args: {...} }
-// { type: 'tool-result', result: {...} }
-// { type: 'usage', tokens: { input: 150, output: 42 } }
-// { type: 'done' }`;
+const streamCode = snippets.aiAgentStream;
 
 const page: PageData = {
   meta: {
@@ -119,7 +78,7 @@ const page: PageData = {
       h2: 'Define an _agent_',
       lead: 'Give it a name, instructions, a model, and your Pikku functions as tools. The agent calls them automatically.',
       variant: 'default',
-      code: { filename: 'agent.functions.ts', icon: 'bot', code: basicsCode },
+      code: { filename: 'agent.functions.ts', icon: 'bot', code: basicsCode, snippetKey: 'aiAgent' },
       below: {
         type: 'check-list',
         items: [
@@ -153,7 +112,7 @@ const page: PageData = {
       h2: 'Agents that _build workflows_',
       lead: 'Other frameworks let AI call tools in a loop — burning tokens every time. Pikku agents design actual workflow graphs that run natively after the first pass.',
       variant: 'default',
-      columns: '2fr 3fr',
+      columns: '1fr 1fr',
       left: {
         type: 'cards',
         cards: [
@@ -164,7 +123,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'ops-agent.ts', badge: "dynamicWorkflows: 'write'", icon: 'bot', code: dynamicWorkflowCode },
+        code: { filename: 'ops-agent.ts', badge: "dynamicWorkflows: 'write'", icon: 'bot', code: dynamicWorkflowCode, snippetKey: 'aiAgentDynamic' },
       },
       below: {
         type: 'note',
@@ -182,11 +141,11 @@ const page: PageData = {
       variant: 'alt',
       left: {
         type: 'code',
-        code: { filename: 'run.ts', badge: 'non-streaming', icon: 'bot', code: invokeCode },
+        code: { filename: 'run.ts', badge: 'non-streaming', icon: 'bot', code: invokeCode, snippetKey: 'aiAgentInvoke' },
       },
       right: {
         type: 'code',
-        code: { filename: 'stream.ts', badge: 'streaming', icon: 'bot', code: streamCode },
+        code: { filename: 'stream.ts', badge: 'streaming', icon: 'bot', code: streamCode, snippetKey: 'aiAgentStream' },
       },
     },
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
+import { ExternalLink } from 'lucide-react';
 import styles from './paper.module.css';
 
 export { styles as paper };
@@ -71,10 +72,11 @@ export function CardBody({ children }: { children: React.ReactNode }) {
 }
 
 /* ── Code card ─────────────────────────────────────────── */
-export function CodeCard({ filename, badge, icon, children }: {
+export function CodeCard({ filename, badge, icon, sourceUrl, children }: {
   filename: string;
   badge?: string;
   icon?: React.ReactNode;
+  sourceUrl?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -83,6 +85,18 @@ export function CodeCard({ filename, badge, icon, children }: {
         {icon}
         <span className={styles.codeCardFilename}>{filename}</span>
         {badge && <span className={styles.codeCardBadge}>{badge}</span>}
+        <span style={{ flex: 1 }} />
+        {sourceUrl && (
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.codeCardSourceLink}
+            title="View source on GitHub"
+          >
+            <ExternalLink size={11} />
+          </a>
+        )}
       </div>
       <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
         {children}

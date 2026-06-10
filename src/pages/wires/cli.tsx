@@ -1,114 +1,14 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
-const basicsCode = `wireCLI({
-  program: 'todos',
-  commands: {
-    add: pikkuCLICommand({
-      parameters: '<text>',
-      func: createTodo,
-      description: 'Add a new todo',
-      render: todoRenderer,
-      options: {
-        priority: {
-          description: 'Set priority',
-          short: 'p',
-          default: 'normal',
-          choices: ['low', 'normal', 'high'],
-        }
-      }
-    }),
-    list: pikkuCLICommand({
-      func: listTodos,
-      description: 'List all todos',
-      render: todosRenderer,
-      options: {
-        completed: {
-          description: 'Show completed only',
-          short: 'c',
-          default: false,
-        }
-      }
-    }),
-  }
-})`;
+const basicsCode = snippets.cliWiring;
 
-const basicsUsage = `$ todos add "Buy milk" --priority high
-✓ Created: Buy milk (priority: high)
+const basicsUsage = snippets.cliUsage;
 
-$ todos list --completed
-  1. Write docs     ✓
-  2. Ship feature   ✓
+const subcommandsCode = snippets.cliSubcommands;
 
-$ todos --help
-Usage: todos <command> [options]
-
-Commands:
-  add <text>   Add a new todo
-  list         List all todos`;
-
-const subcommandsCode = `wireCLI({
-  program: 'app',
-  options: {
-    verbose: { description: 'Verbose output', short: 'v', default: false },
-  },
-  commands: {
-    greet: pikkuCLICommand({
-      parameters: '<name>',
-      func: greetUser,
-      render: greetRenderer,
-    }),
-
-    // Nested subcommands
-    user: {
-      description: 'User management',
-      subcommands: {
-        create: pikkuCLICommand({
-          parameters: '<username> <email>',
-          func: createUser,
-          render: userRenderer,
-          options: {
-            admin: { description: 'Admin role', short: 'a', default: false }
-          }
-        }),
-        list: pikkuCLICommand({
-          func: listUsers,
-          render: usersRenderer,
-          options: {
-            limit: { description: 'Max results', short: 'l' },
-          }
-        }),
-      }
-    },
-  }
-})`;
-
-const rendererCode = `const todoRenderer = pikkuCLIRender<{ todo: Todo }>(
-  (_services, { todo }) => {
-    console.log(\`✓ Created: \${todo.text} (priority: \${todo.priority})\`)
-  }
-)
-
-const todosRenderer = pikkuCLIRender<{ todos: Todo[] }>(
-  (_services, { todos }) => {
-    todos.forEach((t, i) => {
-      const check = t.completed ? '✓' : ' '
-      console.log(\`  \${i + 1}. \${t.text}  \${check}\`)
-    })
-  }
-)
-
-// Fallback: JSON renderer for commands without custom render
-wireCLI({
-  program: 'todos',
-  render: jsonRenderer,  // Default for all commands
-  commands: {
-    add: pikkuCLICommand({
-      func: createTodo,
-      render: todoRenderer,  // Override per command
-    }),
-  }
-})`;
+const rendererCode = snippets.cliRenderer;
 
 const page: PageData = {
   meta: {
@@ -137,11 +37,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'cli.wiring.ts', badge: 'wiring.ts', icon: 'cli', code: basicsCode },
+        code: { filename: 'cli.wiring.ts', badge: 'wiring.ts', icon: 'cli', code: basicsCode, snippetKey: 'cliWiring' },
       },
       right: {
         type: 'code',
-        code: { filename: 'Terminal', badge: 'output', language: 'bash', code: basicsUsage },
+        code: { filename: 'Terminal', badge: 'output', language: 'bash', code: basicsUsage, snippetKey: 'cliUsage' },
       },
       below: {
         type: 'check-list',
@@ -159,7 +59,7 @@ const page: PageData = {
       h2: 'Nested _command trees_',
       lead: 'Group related commands under namespaces. Global options cascade down to every subcommand.',
       variant: 'alt',
-      code: { filename: 'cli.wiring.ts', icon: 'cli', code: subcommandsCode },
+      code: { filename: 'cli.wiring.ts', icon: 'cli', code: subcommandsCode, snippetKey: 'cliSubcommands' },
       below: {
         type: 'note',
         icon: 'git-branch',
@@ -177,7 +77,7 @@ const page: PageData = {
       columns: '3fr 2fr',
       left: {
         type: 'code',
-        code: { filename: 'renderers.ts', icon: 'cli', code: rendererCode },
+        code: { filename: 'renderers.ts', icon: 'cli', code: rendererCode, snippetKey: 'cliRenderer' },
       },
       right: {
         type: 'cards',

@@ -5,115 +5,17 @@ import CodeBlock from '@theme/CodeBlock';
 import { Shield, Lock, KeyRound, UserCheck, Layers, Copy, Check, ShieldCheck, Cookie, Key, Scan } from 'lucide-react';
 import { PaperPage, CodeCard } from '../../components/PaperLayout';
 import styles from './security.module.css';
+import snippets from '../../data/snippets.json';
+import { snippetSourceUrl } from '../../utils/snippets';
 
-const loginCode = `export const login = pikkuFunc({
-  auth: false,
-  func: async (
-    { jwt, db },
-    { email, password },
-    { setSession }
-  ) => {
-    const user = await db.verifyCredentials(email, password)
-
-    // Works the same whether it's an HTTP cookie,
-    // WebSocket connection, or CLI token
-    setSession({ userId: user.id, role: user.role })
-
-    return { token: jwt.sign({ userId: user.id }) }
-  }
-})`;
-
-const getProfileCode = `export const getProfile = pikkuFunc({
-  func: async ({ db }, _data, { session }) => {
-    // session is loaded by middleware before
-    // your function runs — same API everywhere
-    return await db.getUser(session.userId)
-  }
-})`;
-
-const logoutCode = `export const logout = pikkuFunc({
-  func: async ({}, _data, { clearSession }) => {
-    clearSession()
-  }
-})`;
-
-const authCode = `import { pikkuAuth } from '#pikku'
-
-// Session-only checks — receives (services, session)
-// Use for authentication gates, role checks, MCP tools, AI agents
-export const isAuthenticated = pikkuAuth(
-  async (_services, session) => !!session
-)
-
-export const isAdmin = pikkuAuth(
-  async (_services, session) => session?.role === 'admin'
-)`;
-
-const permissionCode = `import { pikkuPermission } from '#pikku'
-
-// Data-aware checks — receives (services, data, wire)
-// Use when authorization depends on the actual request data
-export const isOwner = pikkuPermission(
-  async ({ db }, { bookId }, { session }) => {
-    const book = await db.getBook(bookId)
-    return book?.authorId === session?.userId
-  }
-)
-
-export const hasBookAccess = pikkuPermission(
-  async ({ db }, { bookId }, { session }) => {
-    return await db.hasAccess(session?.userId, bookId)
-  }
-)`;
-
-const usageCode = `export const deleteBook = pikkuFunc({
-  func: async ({ db }, { bookId }) => {
-    await db.deleteBook(bookId)
-  },
-  // OR logic across keys, AND within arrays
-  permissions: {
-    admin: isAdmin,                // OR: admins can delete
-    owner: isOwner,                // OR: book author can delete
-    reviewer: [isAuthenticated, hasBookAccess]  // AND: both must pass
-  }
-})`;
-
-const middlewareCode = `import { authBearer, authCookie, authAPIKey } from '@pikku/core/middleware'
-import { addHTTPMiddleware, addHTTPPermission } from '#pikku'
-
-// JWT bearer token — reads Authorization header
-addHTTPMiddleware([authBearer()])
-
-// Cookie-based sessions — auto-refreshes JWT
-addHTTPMiddleware([
-  authCookie({
-    name: 'session',
-    expiresIn: { value: 30, unit: 'day' },
-    options: { httpOnly: true, secure: true },
-  })
-])
-
-// API key — from x-api-key header or ?apiKey= query
-addHTTPMiddleware([authAPIKey({ source: 'all' })])`;
-
-const scopeCode = `// Global: all HTTP routes
-addHTTPMiddleware('*', [authBearer()])
-
-// Prefix-based: only /admin/* routes
-addHTTPMiddleware('/admin/*', [auditLog])
-addHTTPPermission('/admin/*', { admin: requireAdmin })
-
-// Tag-based: applies to any wiring with 'api' tag
-addMiddleware('api', [rateLimiter])
-addPermission('api', { auth: requireAuth })
-
-// Inline: per-wiring
-wireHTTP({
-  route: '/books/:id',
-  func: getBook,
-  middleware: [cacheControl],
-  permissions: { owner: requireOwnership },
-})`;
+const loginCode = snippets.shopLogin;
+const getProfileCode = snippets.shopGetProfile;
+const logoutCode = snippets.shopLogout;
+const authCode = snippets.shopIsAuthenticated;
+const permissionCode = snippets.shopIsOrderOwner;
+const usageCode = snippets.shopPermissions;
+const middlewareCode = snippets.shopAuthMiddleware;
+const scopeCode = snippets.shopAuthScope;
 
 function Hero() {
   return (
@@ -180,13 +82,13 @@ function SessionSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-          <CodeCard filename="login.func.ts" badge="setSession" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopLogin')} filename="login.func.ts" badge="setSession" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{loginCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="getProfile.func.ts" badge="session" icon={<UserCheck size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopGetProfile')} filename="getProfile.func.ts" badge="session" icon={<UserCheck size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{getProfileCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="logout.func.ts" badge="clearSession" icon={<KeyRound size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopLogout')} filename="logout.func.ts" badge="clearSession" icon={<KeyRound size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{logoutCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -216,16 +118,16 @@ function PermissionsSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard filename="auth.ts" badge="pikkuAuth" icon={<ShieldCheck size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard sourceUrl={snippetSourceUrl('shopIsAuthenticated')} filename="auth.ts" badge="pikkuAuth" icon={<ShieldCheck size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{authCode}</CodeBlock>
             </CodeCard>
-            <CodeCard filename="permissions.ts" badge="pikkuPermission" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard sourceUrl={snippetSourceUrl('shopIsOrderOwner')} filename="permissions.ts" badge="pikkuPermission" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{permissionCode}</CodeBlock>
             </CodeCard>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard filename="deleteBook.func.ts" badge="func.ts" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard sourceUrl={snippetSourceUrl('shopPermissions')} filename="deleteBook.func.ts" badge="func.ts" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{usageCode}</CodeBlock>
             </CodeCard>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -284,10 +186,10 @@ function MiddlewareSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 32 }}>
-          <CodeCard filename="middleware.ts" badge="built-in" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopAuthMiddleware')} filename="middleware.ts" badge="built-in" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{middlewareCode}</CodeBlock>
           </CodeCard>
-          <CodeCard filename="scopes.ts" badge="4 levels" icon={<Layers size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopAuthScope')} filename="scopes.ts" badge="4 levels" icon={<Layers size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{scopeCode}</CodeBlock>
           </CodeCard>
         </div>

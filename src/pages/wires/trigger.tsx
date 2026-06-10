@@ -2,26 +2,7 @@ import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
 import snippets from '../../data/snippets.json';
 
-const sourceCode = `// 1. Define the trigger source — how to subscribe
-const redisSubscribe = pikkuTriggerFunc<
-  { channels: string[] },
-  { channel: string; message: any }
->(async ({ redis }, { channels }, { trigger }) => {
-  const subscriber = redis.duplicate()
-
-  subscriber.on('message', (channel, message) => {
-    // Fire the trigger with typed data
-    trigger.invoke({ channel, message: JSON.parse(message) })
-  })
-
-  await subscriber.subscribe(...channels)
-
-  // Return a teardown function for cleanup
-  return async () => {
-    await subscriber.unsubscribe()
-    await subscriber.quit()
-  }
-})`;
+const sourceCode = snippets.triggerSource;
 
 const wiringCode = snippets.lowStockTrigger;
 
@@ -52,11 +33,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'trigger.functions.ts', badge: 'source', icon: 'trigger', code: sourceCode },
+        code: { filename: 'trigger.functions.ts', badge: 'source', icon: 'trigger', code: sourceCode, snippetKey: 'triggerSource' },
       },
       right: {
         type: 'code',
-        code: { filename: 'trigger.wiring.ts', badge: 'target + wiring', icon: 'trigger', code: wiringCode },
+        code: { filename: 'trigger.wiring.ts', badge: 'target + wiring', icon: 'trigger', code: wiringCode, snippetKey: 'lowStockTrigger' },
       },
       below: {
         type: 'check-list',

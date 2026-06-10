@@ -5,17 +5,19 @@ import CodeBlock from '@theme/CodeBlock';
 import { ArrowRight, Hash, FileJson, ShieldCheck, Lock, Search, Copy, Check, GitCommit } from 'lucide-react';
 import { PaperPage, CodeCard } from '../../components/PaperLayout';
 import styles from './versioning.module.css';
+import snippets from '../../data/snippets.json';
+import { snippetSourceUrl } from '../../utils/snippets';
 
 const versionsJsonCode = `{
   "manifestVersion": 1,
   "contracts": {
-    "createTodo": {
+    "getItem": {
       "latest": 1,
       "versions": {
         "1": "a1b2c3d4e5f6g7h8"
       }
     },
-    "getTodos": {
+    "listItems": {
       "latest": 2,
       "versions": {
         "1": "i9j0k1l2m3n4o5p6",
@@ -27,7 +29,7 @@ const versionsJsonCode = `{
 
 const ciTerminalOutput = `$ npx pikku versions check
 
-✗ getBook — contract changed without version bump
+✗ getItem — contract changed without version bump
   Input schema hash:  a1b2c3d4 → f9e8d7c6
   Output schema hash: i9j0k1l2 → z5y4x3w2
 
@@ -46,33 +48,7 @@ jobs:
       - run: npm ci
       - run: npx pikku versions check`;
 
-const versionedFuncCode = `// v1 — kept for running workflows and agents
-const getBookV1 = pikkuFunc({
-  title: 'Get Book',
-  version: 1,
-  input: z.object({ bookId: z.string() }),
-  output: z.object({ title: z.string() }),
-  func: async ({ db }, { bookId }) => {
-    return await db.getBook(bookId)
-  }
-})
-
-// v2 — the latest version, called by default
-const getBook = pikkuFunc({
-  title: 'Get Book',
-  input: z.object({
-    bookId: z.string(),
-    format: z.enum(['full', 'summary'])
-  }),
-  output: z.object({
-    title: z.string(),
-    author: z.string(),
-    isbn: z.string()
-  }),
-  func: async ({ db }, { bookId, format }) => {
-    return await db.getBook(bookId, format)
-  }
-})`;
+const versionedFuncCode = snippets.shopVersionedItem;
 
 function Hero() {
   return (
@@ -205,7 +181,7 @@ function VersionedFunctionsSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 32, alignItems: 'start' }}>
-          <CodeCard filename="getBook.func.ts" badge="version: 1 → 2">
+          <CodeCard sourceUrl={snippetSourceUrl('shopVersionedItem')} filename="getBook.func.ts" badge="version: 1 → 2">
             <CodeBlock language="typescript">{versionedFuncCode}</CodeBlock>
           </CodeCard>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

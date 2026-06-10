@@ -6,63 +6,11 @@ const basicsFunc = snippets.sendOrderConfirmation;
 
 const basicsWiring = snippets.queueWirings;
 
-const jobControlCode = `const processReminder = pikkuSessionlessFunc({
-  title: 'Process Reminder',
-  func: async ({ db }, { todoId }, wire) => {
-    await wire.queue.updateProgress(25)
+const jobControlCode = snippets.queueJobControl;
 
-    const todo = await db.getTodo(todoId)
-    if (!todo) {
-      // Permanently remove — no retry
-      await wire.queue.discard('Todo not found')
-      return
-    }
+const retryCode = snippets.queueConfig;
 
-    if (todo.completed) {
-      // Fail with reason — will retry
-      await wire.queue.fail('Todo already completed')
-      return
-    }
-
-    await wire.queue.updateProgress(100)
-    return { sent: true }
-  }
-})`;
-
-const retryCode = `wireQueueWorker({
-  name: 'todo-reminders',
-  func: processReminder,
-  config: {
-    batchSize: 5,            // Process 5 jobs in parallel
-    removeOnComplete: 100,   // Keep last 100 completed jobs
-  }
-})
-
-// Publishing with job-level options
-const jobId = await queue.add('todo-reminders', {
-  todoId: 'abc-123',
-  userId: 'user-456'
-}, {
-  priority: 10,              // Higher = processed first
-  delay: 5000,               // Wait 5s before processing
-  attempts: 3,               // Retry up to 3 times
-  backoff: { type: 'exponential', delay: 1000 },
-})`;
-
-const publishCode = `import { PikkuQueue } from '.pikku/pikku-queue.gen.js'
-
-const queue = new PikkuQueue(queueService)
-
-// Fully typed — queue name and payload are inferred
-const jobId = await queue.add('todo-reminders', {
-  todoId: 'abc-123',
-  userId: 'user-456'
-})
-
-// Get job status and result
-const job = await queue.getJob('todo-reminders', jobId)
-const status = await job.status()  // 'waiting' | 'active' | 'completed' | 'failed'
-const result = await job.waitForCompletion(30_000)`;
+const publishCode = snippets.queuePublish;
 
 const page: PageData = {
   meta: {
@@ -91,11 +39,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'queue.functions.ts', badge: 'func.ts', code: basicsFunc },
+        code: { filename: 'queue.functions.ts', badge: 'func.ts', code: basicsFunc, snippetKey: 'sendOrderConfirmation', collapse: true },
       },
       right: {
         type: 'code',
-        code: { filename: 'queue.wiring.ts', badge: 'queue.ts', icon: 'queue', code: basicsWiring },
+        code: { filename: 'queue.wiring.ts', badge: 'queue.ts', icon: 'queue', code: basicsWiring, snippetKey: 'queueWirings' },
       },
       below: {
         type: 'check-list',
@@ -124,7 +72,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'processReminder.func.ts', icon: 'queue', code: jobControlCode },
+        code: { filename: 'processReminder.func.ts', icon: 'queue', code: jobControlCode, snippetKey: 'queueJobControl' },
       },
     },
 
@@ -134,7 +82,7 @@ const page: PageData = {
       h2: 'Retry strategies _built in_',
       lead: 'Configure worker-level concurrency and job-level retry, backoff, priority, and delay — based on the underlying queue system.',
       variant: 'default',
-      code: { filename: 'reminders.queue.ts', icon: 'queue', badge: 'config + publish', code: retryCode },
+      code: { filename: 'reminders.queue.ts', icon: 'queue', badge: 'config + publish', code: retryCode, snippetKey: 'queueConfig' },
       below: {
         type: 'cards',
         columns: 4,
@@ -156,7 +104,7 @@ const page: PageData = {
       columns: '3fr 2fr',
       left: {
         type: 'code',
-        code: { filename: 'publish.ts', badge: 'auto-generated types', code: publishCode },
+        code: { filename: 'publish.ts', badge: 'auto-generated types', code: publishCode, snippetKey: 'queuePublish' },
       },
       right: {
         type: 'cards',

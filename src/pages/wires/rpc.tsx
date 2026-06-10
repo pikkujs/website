@@ -1,58 +1,12 @@
 import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
+import snippets from '../../data/snippets.json';
 
-const basicsCode = `const calculateTax = pikkuSessionlessFunc({
-  title: 'Calculate Tax',
-  func: async ({}, { amount, rate }) => {
-    return { tax: amount * rate }
-  }
-})
+const basicsCode = snippets.rpcInternalCall;
 
-const processOrder = pikkuFunc({
-  title: 'Process Order',
-  func: async ({ db }, { orderId }, { rpc }) => {
-    const order = await db.getOrder(orderId)
+const exposeCode = snippets.rpcFunc;
 
-    // Type-safe — input and output inferred
-    const { tax } = await rpc.invoke('calculateTax', {
-      amount: order.total,
-      rate: 0.08
-    })
-
-    return { orderId, total: order.total + tax }
-  }
-})`;
-
-const exposeCode = `// Expose a function for external RPC calls
-const greet = pikkuSessionlessFunc({
-  title: 'Greet',
-  expose: true,  // ← makes it callable via rpc.exposed()
-  func: async ({}, { name }) => {
-    return { message: \`Hello, \${name}!\` }
-  }
-})
-
-// Public HTTP endpoint for RPC
-wireHTTP({
-  route: '/rpc/:rpcName',
-  method: 'post',
-  auth: false,
-  func: rpcCaller,
-})`;
-
-const clientCode = `import { pikkuRPC } from '.pikku/pikku-rpc.gen.js'
-
-pikkuRPC.setServerUrl('http://localhost:4002')
-
-// Fully typed — name, input, and output inferred
-const result = await pikkuRPC.invoke('calculateTax', {
-  amount: 100,
-  rate: 0.08
-})
-// result.tax → number
-
-// Auth: set a JWT for authenticated calls
-pikkuRPC.setAuthorizationJWT(token)`;
+const clientCode = snippets.rpcClient;
 
 const page: PageData = {
   meta: {
@@ -79,7 +33,7 @@ const page: PageData = {
       h2: 'Call any function from _any function_',
       lead: 'rpc.invoke() calls another Pikku function by name — fully typed, with session inheritance.',
       variant: 'default',
-      code: { filename: 'order.functions.ts', icon: 'rpc', code: basicsCode },
+      code: { filename: 'order.functions.ts', icon: 'rpc', code: basicsCode, snippetKey: 'rpcInternalCall' },
       below: {
         type: 'check-list',
         items: [
@@ -107,7 +61,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'rpc.wiring.ts', badge: 'expose: true', icon: 'rpc', code: exposeCode },
+        code: { filename: 'rpc.wiring.ts', badge: 'expose: true', icon: 'rpc', code: exposeCode, snippetKey: 'rpcFunc' },
       },
     },
 
@@ -120,7 +74,7 @@ const page: PageData = {
       columns: '3fr 2fr',
       left: {
         type: 'code',
-        code: { filename: 'client.ts', badge: 'auto-generated types', code: clientCode },
+        code: { filename: 'client.ts', badge: 'auto-generated types', code: clientCode, snippetKey: 'rpcClient' },
       },
       right: {
         type: 'cards',

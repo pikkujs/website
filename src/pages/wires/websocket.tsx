@@ -2,124 +2,19 @@ import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
 import snippets from '../../data/snippets.json';
 
-const basicsFunction = `const createTodo = pikkuFunc({
-  title: 'Create Todo',
-  description: 'Create a new todo item',
-  func: async ({ db }, { text }) => {
-    const todo = await db.createTodo({ text })
-    return { todo }
-  },
-  permissions: { user: isAuthenticated }
-})`;
+const basicsFunction = snippets.orderStatusChannel;
 
-const basicsWiring = `wireChannel({
-  domain: 'todos',
-  onConnect: async () => {},
-  onDisconnect: async () => {},
-  onMessageWiring: {
-    create: { func: createTodo },
-    list:   { func: listTodos, auth: false },
-  }
-})`;
+const basicsWiring = snippets.channelWiring;
 
-const routingCode = `wireChannel({
-  domain: 'todos',
-  onConnect: async () => {},
-  onDisconnect: async () => {},
-  onMessageWiring: {
-    auth:      { func: authenticate, auth: false },
-    subscribe: { func: subscribeTodos },
-    list:      { func: listTodos },
-    create:    { func: createTodo },
-  }
-})`;
+const routingCode = snippets.channelWiring;
 
-const authCode = `const authenticate = pikkuFunc({
-  title: 'Authenticate',
-  func: async ({ setSession }, { token }) => {
-    const session = await verifyJWT(token)
-    setSession(session)
-    return { success: true }
-  }
-})
+const authCode = snippets.channelWiring;
 
-wireChannel({
-  domain: 'todos',
-  onConnect: async () => {},
-  onDisconnect: async () => {},
-  onMessageWiring: {
-    // No auth required — this is how you log in
-    auth:      { func: authenticate, auth: false },
-    // These require a session (default)
-    subscribe: { func: subscribeTodos },
-    create:    { func: createTodo },
-  }
-})`;
+const pubsubCode = snippets.channelPubSub;
 
-const pubsubCode = `wireChannel({
-  domain: 'todos',
-  onConnect: async ({ eventHub, channel }) => {
-    // Subscribe this connection to a topic
-    eventHub.subscribe('todos:updated', (data) => {
-      channel.send(data)
-    })
-  },
-  onDisconnect: async () => {},
-  onMessageWiring: {
-    create: {
-      func: pikkuFunc({
-        title: 'Create Todo',
-        func: async ({ db, eventHub }, { text }) => {
-          const todo = await db.createTodo({ text })
-          // Broadcast to all subscribers
-          eventHub.publish('todos:updated', {
-            event: 'created',
-            todo
-          })
-          return { todo }
-        }
-      })
-    },
-  }
-})`;
+const clientCode = snippets.channelPubSub;
 
-const clientCode = `import { PikkuWebSocket } from '.pikku/pikku-websocket.gen.js'
-
-const pikku = new PikkuWebSocket(ws)
-
-// Get a typed route — action name is autocompleted
-const todosRoute = pikku.getRoute('todos')
-
-// Typed send — input and output inferred from your func
-const result = await todosRoute.send('create', {
-  text: 'Buy milk'
-})
-
-// Typed subscribe — callback payload matches publish type
-todosRoute.subscribe('todos:updated', (data) => {
-  console.log(data.event, data.todo)
-})`;
-
-const channelMiddlewareCode = `import { pikkuChannelMiddleware } from '@pikku/core'
-
-// Channel middleware intercepts channel.send()
-const addTimestamp = pikkuChannelMiddleware(
-  async ({ logger }, event, next) => {
-    logger.info({ phase: 'before-send', event })
-    await next({ ...event, sentAt: Date.now() })
-  }
-)
-
-// Drop events by passing null to next()
-const filterSensitive = pikkuChannelMiddleware(
-  async (_services, event, next) => {
-    if (event.internal) return await next(null)
-    await next(event)
-  }
-)
-
-// Apply to channel via tag or inline
-addChannelMiddleware('todos', [addTimestamp, filterSensitive])`;
+const channelMiddlewareCode = snippets.channelPubSub;
 
 const page: PageData = {
   meta: {
@@ -148,11 +43,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'createTodo.func.ts', badge: 'func.ts', code: basicsFunction },
+        code: { filename: 'createTodo.func.ts', badge: 'func.ts', code: basicsFunction, snippetKey: 'orderStatusChannel' },
       },
       right: {
         type: 'code',
-        code: { filename: 'todos.channel.ts', badge: 'channel.ts', icon: 'websocket', code: basicsWiring },
+        code: { filename: 'todos.channel.ts', badge: 'channel.ts', icon: 'websocket', code: basicsWiring, snippetKey: 'channelWiring' },
       },
       below: {
         type: 'check-list',
@@ -170,7 +65,7 @@ const page: PageData = {
       h2: 'One channel, _many actions_',
       lead: 'Every message carries an action key. Pikku strips it from the data, routes to the right function, and re-adds it to the response.',
       variant: 'alt',
-      code: { filename: 'todos.channel.ts', icon: 'websocket', code: routingCode },
+      code: { filename: 'todos.channel.ts', icon: 'websocket', code: routingCode, snippetKey: 'channelWiring' },
       below: {
         type: 'note',
         icon: 'arrow-right',
@@ -195,7 +90,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'todos.channel.ts', icon: 'websocket', code: authCode },
+        code: { filename: 'todos.channel.ts', icon: 'websocket', code: authCode, snippetKey: 'channelWiring' },
       },
     },
 
@@ -205,7 +100,7 @@ const page: PageData = {
       h2: 'Broadcast with _EventHub_',
       lead: 'Subscribe connections to topics on connect. When one client publishes, all subscribers receive the update in real time.',
       variant: 'alt',
-      code: { filename: 'todos.channel.ts', icon: 'websocket', code: pubsubCode },
+      code: { filename: 'todos.channel.ts', icon: 'websocket', code: pubsubCode, snippetKey: 'channelPubSub' },
       below: {
         type: 'note',
         icon: 'zap',
@@ -223,7 +118,7 @@ const page: PageData = {
       columns: '3fr 2fr',
       left: {
         type: 'code',
-        code: { filename: 'client.ts', badge: 'auto-generated types', code: clientCode },
+        code: { filename: 'client.ts', badge: 'auto-generated types', code: clientCode, snippetKey: 'channelPubSub' },
       },
       right: {
         type: 'cards',
@@ -250,7 +145,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'channel-middleware.ts', badge: 'channel middleware', icon: 'websocket', code: channelMiddlewareCode },
+        code: { filename: 'channel-middleware.ts', badge: 'channel middleware', icon: 'websocket', code: channelMiddlewareCode, snippetKey: 'channelPubSub' },
       },
       below: {
         type: 'note',
@@ -266,7 +161,7 @@ const page: PageData = {
       h2: 'Order status _channel_',
       lead: 'From the online shop template — a defineChannel that streams live order status updates after checkout. Auth required, typed onMessage discriminated union.',
       variant: 'default',
-      code: { filename: 'order-status.channel.ts', icon: 'websocket', code: snippets.orderStatusChannel },
+      code: { filename: 'order-status.channel.ts', icon: 'websocket', code: snippets.orderStatusChannel, snippetKey: 'orderStatusChannel' },
     },
 
     {

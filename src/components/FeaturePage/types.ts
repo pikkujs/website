@@ -25,6 +25,8 @@ export type CodeSpec = {
   icon?: string;        // lucide or wire icon name
   code: string;
   language?: string;
+  snippetKey?: string;  // key in snippets.json — auto-links to source file on GitHub
+  collapse?: boolean;   // collapse func: async body to // ... (show wrapper only)
 };
 
 export type ColContent =

@@ -14,51 +14,9 @@ const cronDiagram = `┌─── minute (0-59)
 │ │ │ │ │
 * * * * *`;
 
-const wireObjectCode = `const weeklyCleanup = pikkuVoidFunc({
-  title: 'Weekly Cleanup',
-  func: async ({ db, logger }, _input, wire) => {
-    logger.info(\`Running: \${wire.scheduledTask.name}\`)
-    logger.info(\`Schedule: \${wire.scheduledTask.schedule}\`)
-    logger.info(\`Execution time: \${wire.scheduledTask.executionTime}\`)
+const wireObjectCode = snippets.cronSkip;
 
-    const staleCount = await db.countStaleTodos()
-    if (staleCount === 0) {
-      // Skip this execution — nothing to clean
-      wire.scheduledTask.skip('No stale todos found')
-      return
-    }
-
-    await db.deleteCompletedTodos({ olderThan: '30d' })
-    logger.info(\`Cleaned \${staleCount} stale todos\`)
-  }
-})`;
-
-const middlewareCode = `const schedulerMetrics = pikkuMiddleware(
-  async ({ logger }, { scheduledTask }, next) => {
-    const start = Date.now()
-    logger.info(\`Task started: \${scheduledTask.name}\`)
-
-    try {
-      await next()
-      logger.info(\`Task completed: \${scheduledTask.name}\`, {
-        duration: Date.now() - start
-      })
-    } catch (error) {
-      logger.error(\`Task failed: \${scheduledTask.name}\`, {
-        error: error.message,
-        duration: Date.now() - start
-      })
-      throw error
-    }
-  }
-)
-
-wireScheduler({
-  name: 'dailySummary',
-  schedule: '0 9 * * *',
-  func: dailySummary,
-  middleware: [schedulerMetrics],
-})`;
+const middlewareCode = snippets.cronMiddleware;
 
 const page: PageData = {
   meta: {
@@ -87,11 +45,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'scheduled.functions.ts', badge: 'func.ts', code: basicsFunction },
+        code: { filename: 'scheduled.functions.ts', badge: 'func.ts', code: basicsFunction, snippetKey: 'dailySalesReport' },
       },
       right: {
         type: 'code',
-        code: { filename: 'scheduled.wiring.ts', badge: 'wiring.ts', icon: 'cron', code: basicsWiring },
+        code: { filename: 'scheduled.wiring.ts', badge: 'wiring.ts', icon: 'cron', code: basicsWiring, snippetKey: 'cronWirings' },
       },
       below: {
         type: 'check-list',
@@ -140,7 +98,7 @@ const page: PageData = {
       },
       right: {
         type: 'code',
-        code: { filename: 'weeklyCleanup.func.ts', icon: 'cron', code: wireObjectCode },
+        code: { filename: 'weeklyCleanup.func.ts', icon: 'cron', code: wireObjectCode, snippetKey: 'cronSkip' },
       },
     },
 
@@ -150,7 +108,7 @@ const page: PageData = {
       h2: 'Observe _every execution_',
       lead: 'Wrap scheduled tasks with middleware for logging, metrics, error alerting, or anything else. Per-task or global.',
       variant: 'alt',
-      code: { filename: 'scheduler-middleware.ts', icon: 'cron', code: middlewareCode },
+      code: { filename: 'scheduler-middleware.ts', icon: 'cron', code: middlewareCode, snippetKey: 'cronMiddleware' },
       below: {
         type: 'check-list',
         items: [

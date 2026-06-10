@@ -156,6 +156,118 @@
   line-height: 1.55;
 }
 
+/* ── Wide-code split layout ──────────────────────────────── */
+
+.wideSplit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+/* Flip: code left, prose right — swap visual order only */
+.wideSplitFlip .wideSplitProse { order: 2; }
+.wideSplitFlip .wideSplitCode  { order: 1; }
+
+.wideSplitProse {
+  /* SectionHead normally has margin-bottom: 48px.
+     In the split layout the grid gap handles spacing — strip it. */
+}
+
+/* Override the composed sectionHead margin when inside the split prose column.
+   We target the first child div (SectionHead renders a plain div). */
+.wideSplitProse > div {
+  margin-bottom: 0;
+}
+
+.wideSplitCode {
+  min-width: 0; /* prevent grid blowout on narrow code blocks */
+}
+
+/* Below the split — full width */
+.wideBelow {
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--paper-border);
+}
+
+@media (max-width: 768px) {
+  .wideSplit {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Restore natural DOM order on mobile — prose always first */
+  .wideSplitFlip .wideSplitProse { order: 0; }
+  .wideSplitFlip .wideSplitCode  { order: 0; }
+
+  .wideBelow {
+    margin-top: 32px;
+    padding-top: 32px;
+  }
+}
+
+/* ── Def-list (single-column cards) ─────────────────────── */
+
+.defList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.defItem {
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--paper-border);
+  gap: 4px;
+}
+
+.defItem:first-child {
+  padding-top: 0;
+}
+
+.defItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.defTerm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.defIcon {
+  display: flex;
+  align-items: center;
+  color: var(--paper-accent);
+  flex-shrink: 0;
+}
+
+.defLabel {
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper-text-head, var(--paper-text));
+  background: var(--paper-accent-bg);
+  border: 1px solid var(--paper-accent-border);
+  padding: 2px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.defDesc {
+  font-size: 13.5px;
+  color: var(--paper-text-muted, var(--paper-text-body));
+  line-height: 1.6;
+  margin: 0;
+  padding-left: 22px; /* align under the label text, past the icon */
+}
+
 /* ── ColContent: note ────────────────────────────────────── */
 
 .note {
