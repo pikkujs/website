@@ -460,7 +460,7 @@ function CTASection() {
         </div>
         <p className={styles.engNote}>
           Engineers — curious how it works underneath?{' '}
-          <Link href="/docs/core/function">Read the framework docs →</Link>
+          <Link href="/docs/core-features/functions">Read the framework docs →</Link>
         </p>
       </div>
     </section>
