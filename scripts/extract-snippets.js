@@ -17,7 +17,11 @@ const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
 
-// Prettier binary — prefer the one in the fabric monorepo
+const SHOP_REPO_SSH   = 'git@github.com:pikkujs/template-online-shop.git'
+const SHOP_REPO_HTTPS = 'https://github.com/pikkujs/template-online-shop.git'
+const CLONED_DIR      = path.resolve(__dirname, '../.template-online-shop')
+
+// Prettier binary — prefer fabric monorepo, then website node_modules
 const PRETTIER_BIN = [
   path.resolve(__dirname, '../../fabric/node_modules/.bin/prettier'),
   path.resolve(__dirname, '../node_modules/.bin/prettier'),
@@ -35,20 +39,44 @@ function formatSnippet(code) {
   }
 }
 
-const TEMPLATE_SRC = path.resolve(
+const LOCAL_TEMPLATE_SRC = path.resolve(
   __dirname,
   '../../fabric/templates/online-shop-template/packages/functions/src'
 )
 const OUTPUT_FILE      = path.resolve(__dirname, '../src/data/snippets.json')
 const OUTPUT_META_FILE = path.resolve(__dirname, '../src/data/snippets-meta.json')
 
-if (!fs.existsSync(TEMPLATE_SRC)) {
-  console.warn(
-    `[extract-snippets] Template not found at:\n  ${TEMPLATE_SRC}\n` +
-    `  Skipping — snippets.json will not be updated.`
-  )
-  process.exit(0)
+function resolveTemplateSrc() {
+  if (fs.existsSync(LOCAL_TEMPLATE_SRC)) return LOCAL_TEMPLATE_SRC
+
+  // Local fabric repo not found — clone from GitHub
+  const clonedSrc = path.join(CLONED_DIR, 'packages/functions/src')
+  if (fs.existsSync(clonedSrc)) {
+    console.log('[extract-snippets] Using cached clone at', CLONED_DIR)
+    return clonedSrc
+  }
+
+  console.log('[extract-snippets] Cloning template-online-shop from GitHub...')
+  fs.mkdirSync(CLONED_DIR, { recursive: true })
+  fs.rmdirSync(CLONED_DIR) // let git clone create it
+
+  // Try SSH first (local dev with keys), fall back to HTTPS (CI with token)
+  try {
+    execSync(`git clone --depth 1 ${SHOP_REPO_SSH} ${CLONED_DIR}`, { stdio: 'inherit' })
+  } catch {
+    console.log('[extract-snippets] SSH clone failed, trying HTTPS...')
+    execSync(`git clone --depth 1 ${SHOP_REPO_HTTPS} ${CLONED_DIR}`, { stdio: 'inherit' })
+  }
+
+  if (!fs.existsSync(clonedSrc)) {
+    console.error('[extract-snippets] Clone succeeded but src dir not found:', clonedSrc)
+    process.exit(1)
+  }
+
+  return clonedSrc
 }
+
+const TEMPLATE_SRC = resolveTemplateSrc()
 
 // ── Recursive TS file scanner ──────────────────────────────
 
