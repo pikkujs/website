@@ -21,11 +21,7 @@ const SHOP_REPO_SSH   = 'git@github.com:pikkujs/template-online-shop.git'
 const SHOP_REPO_HTTPS = 'https://github.com/pikkujs/template-online-shop.git'
 const CLONED_DIR      = path.resolve(__dirname, '../.template-online-shop')
 
-// Prettier binary — prefer fabric monorepo, then website node_modules
-const PRETTIER_BIN = [
-  path.resolve(__dirname, '../../fabric/node_modules/.bin/prettier'),
-  path.resolve(__dirname, '../node_modules/.bin/prettier'),
-].find(p => fs.existsSync(p))
+const PRETTIER_BIN = path.resolve(__dirname, '../node_modules/.bin/prettier')
 
 function formatSnippet(code) {
   if (!PRETTIER_BIN) return code
