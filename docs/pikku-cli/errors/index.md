@@ -34,6 +34,16 @@ Errors related to Pikku configuration and schema generation.
 | PKU456 | Schema Generation Error | [View](./pku456.md)  |
 | PKU488 | Schema Load Error       | Coming soon          |
 
+## Workflow Errors
+
+Errors related to DSL workflow definitions and orchestration.
+
+| Code   | Description                       | Link                 |
+| ------ | --------------------------------- | -------------------- |
+| PKU529 | Dynamic Step Name                 | [View](./pku529.md)  |
+| PKU600 | Workflow Orchestrator Not Configured | [View](./pku600.md) |
+| PKU641 | Invalid DSL Workflow              | [View](./pku641.md)  |
+
 ## Function Errors
 
 Errors related to Pikku function definitions and metadata.
