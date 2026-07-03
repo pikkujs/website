@@ -121,18 +121,24 @@ The `mutate` callback is typed — it only accepts your function's input type an
 
 ### `usePikkuInfiniteQuery`
 
-For paginated data. Only available for functions whose output includes `nextCursor`:
+For paginated data. Only available for functions whose output includes `nextCursor` — the codegen detects this structurally, so any function shaped that way qualifies, not just ones built with a specific factory.
+
+The recommended way to build one is `pikkuListFunc` (from `@pikku/core`), which bakes in the standard `ListInput`/`ListOutput` cursor contract (`cursor`/`limit`/`sort`/`filter`/`search` in, `{ rows, nextCursor, totalCount }` out) so every paginated RPC in your app shares one shape:
 
 ```typescript
-// This function qualifies for infinite query because its output has nextCursor
-export const listItems = pikkuSessionlessFunc<
-  { limit: number; nextCursor?: string },
-  { items: string[]; nextCursor?: string }
->({
-  func: async (_services, data) => ({ items: [...], nextCursor: '...' }),
+import { pikkuListFunc } from '#pikku'
+
+// Qualifies for infinite query because ListOutput always includes nextCursor
+export const listItems = pikkuListFunc<{ status?: string }, { id: string; label: string }>({
+  func: async ({ kysely }, input) => {
+    // input.cursor / input.limit / input.filter / input.sort / input.search are typed
+    return { rows: [...], nextCursor: '...', totalCount: 42 }
+  },
   expose: true,
 })
 ```
+
+A plain `pikkuFunc`/`pikkuSessionlessFunc` with an ad-hoc output containing `nextCursor` also works — `pikkuListFunc` just gives you the shared shape for free instead of hand-rolling it each time.
 
 ```tsx
 import { usePikkuInfiniteQuery } from '.pikku/pikku-react-query.gen'
@@ -145,8 +151,8 @@ function ItemList() {
 
   return (
     <>
-      {data?.pages.flatMap(page => page.items).map(item => (
-        <div key={item}>{item}</div>
+      {data?.pages.flatMap(page => page.rows).map(item => (
+        <div key={item.id}>{item.label}</div>
       ))}
       {hasNextPage && (
         <button onClick={() => fetchNextPage()}>Load more</button>
