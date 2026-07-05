@@ -46,7 +46,7 @@ After creating your project, you'll have these key files:
 Define your job processing logic (same as other queue systems):
 
 ```typescript reference title="queue.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/queue.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/queue.functions.ts
 ```
 
 ### Queue Worker Registration
@@ -54,7 +54,7 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/sr
 Register workers with specific queues:
 
 ```typescript reference title="queue.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/queue.wiring.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/queue.wiring.ts
 ```
 
 ### pg-boss Runtime Server
@@ -62,7 +62,7 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/sr
 The main server that processes jobs using PostgreSQL:
 
 ```typescript reference title="start.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/pg-boss/src/start.ts
+https://github.com/pikkujs/pikku/blob/main/templates/pg-boss/src/start.ts
 ```
 
 ### Setup Guide
@@ -70,7 +70,7 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/pg-boss/src/
 Complete setup instructions:
 
 ```markdown reference title="README.md"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/pg-boss/README.md
+https://github.com/pikkujs/pikku/blob/main/templates/pg-boss/README.md
 ```
 
 ## How It Works

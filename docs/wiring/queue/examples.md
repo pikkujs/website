@@ -31,8 +31,8 @@ interface EmailResult {
 }
 
 export const sendEmail = pikkuSessionlessFunc<EmailJob, EmailResult>(
-  async (context, jobData) => {
-    const { logger, services } = context
+  async (services, jobData) => {
+    const { logger } = services
     
     logger.info('Sending email', { to: jobData.to, subject: jobData.subject })
     
@@ -64,17 +64,16 @@ export const sendEmail = pikkuSessionlessFunc<EmailJob, EmailResult>(
 
 ```typescript
 // email-worker.wiring.ts
-import { wireQueueWorker } from '#pikku/queue'
+import { wireQueueWorker } from '#pikku'
 import { sendEmail } from './email-worker.functions.js'
 
 wireQueueWorker({
-  queue: 'email-queue',
+  name: 'email-queue',
   func: sendEmail,
   config: {
-    concurrency: 5,
-    retries: 3,
-    retryDelay: 10000,
-    timeout: 30000
+    batchSize: 5,           // Process up to 5 messages in parallel
+    removeOnComplete: 100,  // Keep last 100 completed jobs
+    removeOnFail: 50        // Keep last 50 failed jobs
   }
 })
 ```
@@ -109,8 +108,8 @@ async function sendPasswordReset(userEmail: string, resetToken: string) {
     template: 'password-reset',
     data: { resetToken }
   }, {
-    priority: 'high',  // High priority for security-related emails
-    retries: 5         // More retries for important emails
+    priority: 1,   // High priority for security-related emails
+    attempts: 5    // More retries for important emails
   })
 }
 ```
@@ -140,8 +139,8 @@ interface ImageResult {
 }
 
 export const processImage = pikkuSessionlessFunc<ImageJob, ImageResult>(
-  async (context, jobData) => {
-    const { logger, services } = context
+  async (services, jobData) => {
+    const { logger } = services
     
     logger.info('Processing image', { 
       imageUrl: jobData.imageUrl, 
@@ -192,17 +191,16 @@ export const processImage = pikkuSessionlessFunc<ImageJob, ImageResult>(
 
 ```typescript
 // image-worker.wiring.ts
-import { wireQueueWorker } from '#pikku/queue'
+import { wireQueueWorker } from '#pikku'
 import { processImage } from './image-worker.functions.js'
 
 wireQueueWorker({
-  queue: 'image-processing',
+  name: 'image-processing',
   func: processImage,
   config: {
-    concurrency: 2,     // CPU-intensive, limit concurrency
-    retries: 2,         // Fewer retries for expensive operations
-    timeout: 300000,    // 5 minute timeout for large images
-    pollingInterval: 2000
+    batchSize: 2,           // CPU-intensive, limit parallelism
+    lockDuration: 300000,   // 5 minute lock for large images
+    pollInterval: 2000
   }
 })
 ```
@@ -223,11 +221,8 @@ async function processUserImage(userId: string, imageUrl: string) {
   
   // Wait for processing to complete
   try {
-    const result = await queueClient.waitForCompletion(
-      'image-processing', 
-      jobId,
-      { timeout: 300000 }
-    )
+    const job = await queueClient.getJob('image-processing', jobId)
+    const result = await job.waitForCompletion?.(300000)
     
     return {
       originalUrl: imageUrl,
@@ -268,8 +263,8 @@ interface ExportResult {
 }
 
 export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
-  async (context, jobData) => {
-    const { logger, services } = context
+  async (services, jobData) => {
+    const { logger } = services
     
     logger.info('Starting data export', { 
       dataType: jobData.dataType,
@@ -321,17 +316,16 @@ export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
 
 ```typescript
 // export-worker.wiring.ts
-import { wireQueueWorker } from '#pikku/queue'
+import { wireQueueWorker } from '#pikku'
 import { exportData } from './export-worker.functions.js'
 
 wireQueueWorker({
-  queue: 'data-export',
+  name: 'data-export',
   func: exportData,
   config: {
-    concurrency: 1,      // Sequential processing for large exports
-    retries: 2,          // Limited retries for expensive operations
-    timeout: 1800000,    // 30 minute timeout
-    pollingInterval: 10000
+    batchSize: 1,           // Sequential processing for large exports
+    lockDuration: 1800000,  // 30 minute lock for long exports
+    pollInterval: 10000
   }
 })
 ```
@@ -400,8 +394,8 @@ export const sendNotification = pikkuSessionlessFunc<
   NotificationJob,
   NotificationResult[]
 >(
-  async (context, jobData) => {
-    const { logger, services } = context
+  async (services, jobData) => {
+    const { logger } = services
     
     logger.info('Processing notification', {
       userId: jobData.userId,
@@ -470,42 +464,39 @@ export const sendNotification = pikkuSessionlessFunc<
 
 ```typescript
 // notification-worker.wiring.ts
-import { wireQueueWorker } from '#pikku/queue'
+import { wireQueueWorker } from '#pikku'
 import { sendNotification } from './notification-worker.functions.js'
 
 // High priority notifications
 wireQueueWorker({
-  queue: 'notifications-urgent',
+  name: 'notifications-urgent',
   func: sendNotification,
   config: {
-    concurrency: 10,
-    retries: 5,
-    timeout: 15000,
-    pollingInterval: 1000
+    batchSize: 10,
+    lockDuration: 15000,
+    pollInterval: 1000
   }
 })
 
 // Normal priority notifications
 wireQueueWorker({
-  queue: 'notifications-normal',
+  name: 'notifications-normal',
   func: sendNotification,
   config: {
-    concurrency: 5,
-    retries: 3,
-    timeout: 30000,
-    pollingInterval: 5000
+    batchSize: 5,
+    lockDuration: 30000,
+    pollInterval: 5000
   }
 })
 
 // Low priority notifications
 wireQueueWorker({
-  queue: 'notifications-low',
+  name: 'notifications-low',
   func: sendNotification,
   config: {
-    concurrency: 2,
-    retries: 2,
-    timeout: 60000,
-    pollingInterval: 30000
+    batchSize: 2,
+    lockDuration: 60000,
+    pollInterval: 30000
   }
 })
 ```
@@ -577,8 +568,8 @@ interface CleanupResult {
 }
 
 export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
-  async (context, jobData) => {
-    const { logger, services } = context
+  async (services, jobData) => {
+    const { logger } = services
     const startTime = Date.now()
     
     logger.info('Starting cleanup', {
@@ -657,17 +648,16 @@ export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
 
 ```typescript
 // cleanup-worker.wiring.ts
-import { wireQueueWorker } from '#pikku/queue'
+import { wireQueueWorker } from '#pikku'
 import { runCleanup } from './cleanup-worker.functions.js'
 
 wireQueueWorker({
-  queue: 'cleanup-tasks',
+  name: 'cleanup-tasks',
   func: runCleanup,
   config: {
-    concurrency: 1,      // Sequential cleanup to avoid conflicts
-    retries: 1,          // Limited retries for cleanup tasks
-    timeout: 3600000,    // 1 hour timeout
-    pollingInterval: 60000
+    batchSize: 1,           // Sequential cleanup to avoid conflicts
+    lockDuration: 3600000,  // 1 hour lock for long cleanup runs
+    pollInterval: 60000
   }
 })
 ```
@@ -710,10 +700,7 @@ async function runCleanupWithMonitoring(type: string) {
   // Monitor progress
   const job = await queueClient.getJob('cleanup-tasks', jobId)
   
-  const result = await job.waitForCompletion?.({
-    timeout: 3600000, // 1 hour
-    pollInterval: 10000 // Check every 10 seconds
-  })
+  const result = await job.waitForCompletion?.(3600000) // Wait up to 1 hour
   
   return result
 }

@@ -22,4 +22,4 @@ While we aimed to adhere closely to the original specifications, we made subtle 
 
 ### Customization and Extensibility
 
-You have the flexibility to create your own clients tailored to your specific needs. Pikku clients utilize the generated `routes.map.ts` and `channels.map.ts` files, which drive the APIs themselves. This structure allows you to extend and customize the clients while maintaining consistency and type safety across your application.
+You have the flexibility to create your own clients tailored to your specific needs. Pikku clients utilize the generated files (`pikku-fetch.gen.ts`, `pikku-websocket.gen.ts`, `pikku-rpc.gen.ts`), which drive the APIs themselves. This structure allows you to extend and customize the clients while maintaining consistency and type safety across your application.

@@ -52,7 +52,18 @@
   border: 1px solid var(--paper-border);
   border-radius: 7px;
   padding: 9px 14px;
+  cursor: pointer;
+  min-width: 132px;
+  text-align: center;
+  transition: border-color 0.2s, color 0.2s;
 }
+
+.heroCmd:hover {
+  border-color: var(--paper-text-muted);
+  color: var(--paper-text);
+}
+
+.heroCmd::before { content: '$ '; color: var(--paper-text-faint); }
 
 /* ── Trust strip ───────────────────────────────────────────── */
 .trust { border-top: 1px solid var(--paper-border); border-bottom: 1px solid var(--paper-border); background: var(--paper-bg-dark); }
@@ -87,58 +98,22 @@
 
 .trustLogo:hover { color: var(--paper-text); }
 
-/* ── Video ─────────────────────────────────────────────────── */
-.videoOuter { margin-top: 48px; max-width: 900px; }
-
-.videoFrame {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  background: var(--paper-code-bg);
-  border: 1px solid var(--paper-code-border);
-  box-shadow: 0 40px 80px -40px var(--paper-shadow-2xl);
-}
-
-.videoFrame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-
-.videoPlaceholder {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-}
-
-.videoPlaceholder img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; }
-
-.playRing {
-  position: relative;
-  z-index: 1;
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: rgba(247, 245, 240, 0.1);
-  border: 2px solid rgba(247, 245, 240, 0.3);
+.trustLogoLink {
   display: flex;
   align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(4px);
+  opacity: 0.55;
+  transition: opacity 0.2s;
 }
 
-.videoCaption {
-  position: relative;
-  z-index: 1;
-  font-family: 'Geist Mono', monospace;
-  font-size: 13px;
-  color: rgba(247, 245, 240, 0.45);
-  text-align: center;
-  padding: 0 24px;
-}
+.trustLogoLink:hover { opacity: 0.9; }
 
-.videoDuration { margin-top: 16px; font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--paper-text-faint); }
+.trustLogoLink img {
+  height: 26px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+  filter: grayscale(1);
+}
 
 /* ── Platform grid ─────────────────────────────────────────── */
 .platformGrid {

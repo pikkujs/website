@@ -10,20 +10,30 @@ Pikku provides built-in OAuth2 support for managing access tokens to third-party
 
 ## Defining an OAuth2 Credential
 
-Use `wireOAuth2Credential` to register an OAuth2 integration:
+Use `wireCredential` with an `oauth2` block to register an OAuth2 integration:
 
 ```typescript
-import { wireOAuth2Credential } from '@pikku/core/oauth2'
+import { z } from 'zod'
+import { wireCredential } from '@pikku/core/credential'
 
-wireOAuth2Credential({
+export const githubTokenSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string().optional(),
+})
+
+wireCredential({
   name: 'github',
   displayName: 'GitHub',
   description: 'GitHub API access for repository operations',
-  secretId: 'github-app-credentials',
-  tokenSecretId: 'github-oauth-token',
-  authorizationUrl: 'https://github.com/login/oauth/authorize',
-  tokenUrl: 'https://github.com/login/oauth/access_token',
-  scopes: ['repo', 'read:user'],
+  type: 'wire',
+  schema: githubTokenSchema,
+  oauth2: {
+    appCredentialSecretId: 'GITHUB_OAUTH_APP',
+    tokenSecretId: 'GITHUB_OAUTH_TOKENS',
+    authorizationUrl: 'https://github.com/login/oauth/authorize',
+    tokenUrl: 'https://github.com/login/oauth/access_token',
+    scopes: ['repo', 'read:user'],
+  },
 })
 ```
 
@@ -32,25 +42,28 @@ wireOAuth2Credential({
 | `name` | `string` | Unique identifier for this credential |
 | `displayName` | `string` | Human-readable name (shown in Console) |
 | `description` | `string` | What this credential is used for |
-| `secretId` | `string` | Secret containing the OAuth2 app credentials (`clientId`, `clientSecret`) |
-| `tokenSecretId` | `string` | Secret where access/refresh tokens are stored |
-| `authorizationUrl` | `string` | OAuth2 authorization endpoint |
-| `tokenUrl` | `string` | OAuth2 token exchange endpoint |
-| `scopes` | `string[]` | Requested permission scopes |
-| `pkce` | `boolean` | Enable PKCE flow (for public clients without a client secret) |
-| `additionalParams` | `Record<string, string>` | Extra parameters for the authorization URL |
+| `type` | `'singleton' \| 'wire'` | `'singleton'` for one platform-level credential, `'wire'` for per-user credentials |
+| `schema` | Zod schema | Shape of the stored token/credential value |
+| `oauth2.appCredentialSecretId` | `string` | Secret containing the OAuth2 app credentials (`clientId`, `clientSecret`) |
+| `oauth2.tokenSecretId` | `string` | Secret where access/refresh tokens are stored |
+| `oauth2.authorizationUrl` | `string` | OAuth2 authorization endpoint |
+| `oauth2.tokenUrl` | `string` | OAuth2 token exchange endpoint |
+| `oauth2.scopes` | `string[]` | Requested permission scopes |
+| `oauth2.pkce` | `boolean` | Enable PKCE flow (for public clients without a client secret) |
+| `oauth2.additionalParams` | `Record<string, string>` | Extra parameters for the authorization URL |
 
 ## OAuth2 App Credentials
 
-The `secretId` references a secret containing your OAuth2 application credentials:
+The `appCredentialSecretId` references a secret containing your OAuth2 application credentials:
 
 ```typescript
 import { wireSecret } from '@pikku/core/secret'
 
 wireSecret({
-  name: 'github-app-credentials',
-  displayName: 'GitHub App',
+  name: 'githubOAuthApp',
+  displayName: 'GitHub OAuth App',
   description: 'GitHub OAuth application credentials',
+  secretId: 'GITHUB_OAUTH_APP',
   schema: z.object({
     clientId: z.string(),
     clientSecret: z.string().optional(), // Optional for PKCE flows
@@ -68,10 +81,9 @@ The `OAuth2Client` class manages token lifecycle:
 import { OAuth2Client } from '@pikku/core/oauth2'
 
 const client = new OAuth2Client(
-  appCredentials,  // { clientId, clientSecret }
-  oauthConfig,     // { tokenUrl, scopes, ... }
-  secretService,   // For reading/writing tokens
-  tokenSecretId    // Where tokens are stored
+  oauth2Config,           // { tokenSecretId, authorizationUrl, tokenUrl, scopes, ... }
+  appCredentialSecretId,  // Secret holding { clientId, clientSecret }
+  secretService           // For reading/writing tokens
 )
 ```
 

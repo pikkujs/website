@@ -24,7 +24,7 @@ Graph workflows define multi-step processes declaratively as a graph of nodes. I
 ## Basic Example
 
 ```typescript reference title="graph.graph.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/graph.graph.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/graph.graph.ts
 ```
 
 ## Structure

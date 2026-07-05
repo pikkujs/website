@@ -6,21 +6,33 @@ The SecretService provides secure access to secrets and sensitive configuration 
 
 ## Methods
 
-### `getSecret(key: string): Promise<string>`
+### `getSecret<T = string>(key: string): Promise<T>`
 
-Retrieves a secret value as a string.
-
-- **Parameters:**
-  - `key`: The key/name of the secret
-- **Returns:** Promise resolving to the secret value
-
-### `getSecretJSON<T>(key: string): Promise<T>`
-
-Retrieves a secret and parses it as JSON.
+Retrieves a secret by key, typed as `T` (defaults to `string`). Throws if the secret is not found.
 
 - **Parameters:**
   - `key`: The key/name of the secret
-- **Returns:** Promise resolving to the parsed object typed as `T`
+- **Returns:** Promise resolving to the secret value typed as `T`
+
+### `hasSecret(key: string): Promise<boolean>`
+
+Checks if a secret exists without throwing.
+
+### `setSecret(key: string, value: unknown): Promise<void>`
+
+Stores a secret value.
+
+### `deleteSecret(key: string): Promise<void>`
+
+Deletes a secret by key.
+
+### `getSecrets<T extends Record<string, unknown>>(keys: (keyof T & string)[]): Promise<Partial<T>>`
+
+Retrieves multiple secrets in a single batch operation. Returns a map of key → value for successfully fetched secrets; missing keys are omitted rather than throwing, so callers must handle keys that may be absent at runtime.
+
+```typescript
+const { FOO, BAR } = await secrets.getSecrets<{ FOO: string; BAR: { id: string } }>(['FOO', 'BAR'])
+```
 
 ## Usage Example
 
@@ -34,7 +46,7 @@ interface DatabaseConfig {
 
 export const connectToDatabase = pikkuFunc<void, { status: string }>(
   async (services) => {
-    const dbConfig = await services.secrets.getSecretJSON<DatabaseConfig>('DATABASE_CONFIG')
+    const dbConfig = await services.secrets.getSecret<DatabaseConfig>('DATABASE_CONFIG')
 
     const connection = await createConnection({
       host: dbConfig.host,
@@ -55,17 +67,17 @@ export const connectToDatabase = pikkuFunc<void, { status: string }>(
 Reads from a local `.secrets` file or environment variables:
 
 ```typescript reference title="local-secrets.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/local-secrets.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-secrets.ts
 ```
 
 ### AWS Secrets Manager
 
 ```typescript reference title="aws-secrets.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/aws-secrets.ts
+https://github.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/aws-secrets.ts
 ```
 
 ## Interface
 
 ```typescript reference title="secret-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/secret-service.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/secret-service.ts
 ```

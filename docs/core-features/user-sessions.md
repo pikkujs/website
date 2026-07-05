@@ -69,7 +69,8 @@ Now your session type is available throughout your application with full type sa
 Use `setSession()` to create or update a session. This typically happens in a login function:
 
 ```typescript
-import { pikkuSessionlessFunc, UnauthorizedError } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku'
+import { UnauthorizedError } from '@pikku/core/errors'
 
 type LoginInput = {
   email: string
@@ -101,7 +102,7 @@ export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
     // Optionally return a JWT for client-side storage
     // (useful for mobile apps or when cookies aren't available)
     return {
-      token: await jwt.sign({ userId: user.id }),
+      token: await jwt.encode({ value: 30, unit: 'day' }, { userId: user.id }),
       user: {
         id: user.id,
         email: user.email,

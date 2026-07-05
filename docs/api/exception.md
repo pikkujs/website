@@ -187,11 +187,11 @@ addError(CustomBusinessError, {
 ## Interface
 
 ```typescript reference title="error-handler.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/errors/error-handler.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/errors/error-handler.ts
 ```
 
 ## Complete Error List
 
 ```typescript reference title="errors.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/errors/errors.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/errors/errors.ts
 ```

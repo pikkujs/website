@@ -213,7 +213,7 @@ Errors are automatically adapted to the protocol being used:
 
 1. **Use specific errors** – Prefer `NotFoundError` over generic `BadRequestError`
 
-2. **Document expected errors** – List them in the HTTP route `docs.errors` so API consumers know what to handle
+2. **Document expected errors** – List them in the function's `errors` array so API consumers know what to handle
 
 3. **Provide context** – Customize error messages to help users understand what went wrong
 

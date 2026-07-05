@@ -30,13 +30,36 @@ const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(
 await pikkuKysely.init()
 ```
 
-**Constructor:** `new PikkuKysely(logger, connectionOrConfig, defaultSchemaName?)`
+**Constructor:** `new PikkuKysely(logger, connectionOrConfig, defaultSchemaName?, poolConfig?)`
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `logger` | `Logger` | — | Logger instance |
 | `connectionOrConfig` | `postgres.Sql \| postgres.Options \| string` | — | Postgres connection, options, or connection string |
 | `defaultSchemaName` | `string` | — | Optional schema applied to all queries |
+| `poolConfig` | `PostgresConfig` | — | Pool sizing and timeout options (see below) |
+
+### Pool configuration
+
+`poolConfig` maps to the `postgres` key of your Pikku config (`CoreConfig['postgres']`) and tunes the postgres.js pool. It only applies when `PikkuKysely` creates the connection itself (a connection string or options object) — if you pass an existing `postgres.Sql` instance, pool options are already fixed.
+
+| Option | Description |
+|--------|-------------|
+| `maxPool` | Max connections in the pool (postgres.js default: 10) |
+| `connectTimeout` | Seconds to wait establishing a new connection before failing |
+| `idleTimeout` | Close a pooled connection after this many idle seconds |
+| `maxLifetime` | Recycle a connection after this many seconds (guards against stale TCP connections) |
+| `statementTimeout` | Server-side `statement_timeout` in ms — cancels runaway queries so they can't pin the pool |
+| `prepare` | Set `false` behind a transaction-mode pooler (pgBouncer, Supabase pooler) that can't use prepared statements |
+
+```typescript
+const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(
+  logger,
+  process.env.DATABASE_URL!,
+  undefined,
+  { maxPool: 20, statementTimeout: 30_000, prepare: false }
+)
+```
 
 ## Services
 
@@ -145,6 +168,34 @@ Tracks channel topic subscriptions for pub/sub across instances.
 import { PgKyselyEventHubStore } from '@pikku/kysely-postgres'
 
 const eventHubStore = new PgKyselyEventHubStore(pikkuKysely.kysely)
+```
+
+### PgEventHubService
+
+A full `EventHubService` implementation backed by Postgres LISTEN/NOTIFY — real-time pub/sub across multiple server instances without Redis. Each process holds one dedicated LISTEN connection; publishes fan out locally first, then NOTIFY delivers the event to every other instance's connected WebSocket clients.
+
+```typescript
+import { PgEventHubService } from '@pikku/kysely-postgres'
+
+const eventHub = new PgEventHubService(process.env.DATABASE_URL!)
+await eventHub.init()
+```
+
+:::info
+Postgres caps NOTIFY payloads at 8 kB. Keep event data small — for large payloads publish an ID and fetch the full record on the receiving side.
+:::
+
+### KyselyCredentialService
+
+Encrypted per-user credential storage (OAuth tokens, per-user API keys), re-exported from `@pikku/kysely`.
+
+```typescript
+import { KyselyCredentialService } from '@pikku/kysely-postgres'
+
+const credentialService = new KyselyCredentialService(pikkuKysely.kysely, {
+  key: process.env.ENCRYPTION_KEY!,
+})
+await credentialService.init()
 ```
 
 ### PgKyselyDeploymentService

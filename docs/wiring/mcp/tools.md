@@ -2,16 +2,18 @@
 
 Tools let AI agents perform actions in your application. They can create records, modify state, trigger operations, or orchestrate complex workflows.
 
-:::warning Always Specify Output Types
-MCP functions must **always specify the output type explicitly**. TypeScript's type inference doesn't work reliably for MCP responses, so you need to be explicit:
+:::info Single Type Parameter
+MCP tool functions take a **single input type parameter** — the output is always `MCPToolResponse`:
 
 ```typescript
-// ✅ Correct - explicit type
-pikkuMCPToolFunc<InputType, MCPToolResponse>
-
-// ❌ Wrong - will cause type issues
+// ✅ Correct - input type only
 pikkuMCPToolFunc<InputType>
+
+// ❌ Wrong - there is no output type parameter
+pikkuMCPToolFunc<InputType, MCPToolResponse>
 ```
+
+Alternatively, pass a schema as `input` (e.g. Zod) and the input type is inferred.
 :::
 
 **Recommended Pattern**: Keep your MCP tools thin. Use RPC to invoke your existing domain functions, then format the response for MCP. This keeps your business logic reusable and your codebase clean.
@@ -23,7 +25,6 @@ Let's create a tool that creates issues. Both the domain function and MCP adapte
 ```typescript
 // issues.function.ts
 import { pikkuFunc, pikkuMCPToolFunc } from '#pikku'
-import type { MCPToolResponse } from '#pikku'
 
 // Domain function - reusable across all transports
 export const createIssue = pikkuFunc<
@@ -49,9 +50,9 @@ export const createIssue = pikkuFunc<
 
 // MCP adapter - just formats the response for AI agents
 export const createIssueMCP = pikkuMCPToolFunc<
-  { title: string; description: string; priority: 'low' | 'medium' | 'high' },
-  MCPToolResponse
+  { title: string; description: string; priority: 'low' | 'medium' | 'high' }
 >({
+  description: 'Create a new issue in the tracker',
   func: async (services, data, { rpc }) => {
     const issue = await rpc.invoke('createIssue', data)
 
@@ -67,20 +68,28 @@ export const createIssueMCP = pikkuMCPToolFunc<
 })
 ```
 
-```typescript
-// issues.mcp.ts
-import { wireMCPTool } from '#pikku/mcp'
-import { createIssueMCP } from './functions/issues.function.js'
+There's no separate wiring step for tools — exporting a `pikkuMCPToolFunc` registers it. The tool name comes from the export name (override it with the `name` option).
 
-wireMCPTool({
-  name: 'createIssue',
-  description: 'Create a new issue in the tracker',
-  func: createIssueMCP,
-  tags: ['issues', 'write']
+Now your business logic in `createIssue` can be used from HTTP, WebSocket, queues, or MCP - and `createIssueMCP` just makes it MCP-compatible.
+
+## Exposing Any Function with `mcp: true`
+
+When you don't need a custom MCP response format, skip the adapter entirely: setting `mcp: true` on any Pikku function registers it as an MCP tool directly, with its input schema and description carried over:
+
+```typescript
+export const listIssues = pikkuFunc<
+  { status?: 'open' | 'closed' },
+  { issues: Issue[] }
+>({
+  func: async ({ database }, data) => {
+    return { issues: await database.select('issues', data) }
+  },
+  description: 'List issues, optionally filtered by status',
+  mcp: true,
 })
 ```
 
-Now your business logic in `createIssue` can be used from HTTP, WebSocket, queues, or MCP - and `createIssueMCP` just makes it MCP-compatible.
+Give the function a `description` — it's what the AI agent sees when deciding whether to call the tool (the inspector warns if it's missing). Use the `pikkuMCPToolFunc` adapter pattern instead when you want to control the tool's text output or combine multiple domain calls into one tool.
 
 ## Complex Operations
 
@@ -127,10 +136,8 @@ export const processOrder = pikkuFunc<
 
 ```typescript
 // MCP adapter
-export const processOrderMCP = pikkuMCPToolFunc<
-  { orderId: string },
-  MCPToolResponse
->({
+export const processOrderMCP = pikkuMCPToolFunc<{ orderId: string }>({
+  description: 'Process an order end-to-end',
   func: async (services, data, { rpc }) => {
     const result = await rpc.invoke('processOrder', data)
 
@@ -171,10 +178,8 @@ return [
 For operations with visual output, you can return images (base64-encoded):
 
 ```typescript
-export const generateChartMCP = pikkuMCPToolFunc<
-  { datasetId: string },
-  MCPToolResponse
->({
+export const generateChartMCP = pikkuMCPToolFunc<{ datasetId: string }>({
+  description: 'Generate a chart from a dataset',
   func: async (services, data, { rpc }) => {
     const chartData = await rpc.invoke('generateChart', data)
 
@@ -194,23 +199,27 @@ export const generateChartMCP = pikkuMCPToolFunc<
 })
 ```
 
-## Wiring Configuration
+## Tool Configuration
 
-Wire your tool functions with these options:
+All tool options live on `pikkuMCPToolFunc` itself — there is no separate wiring call:
 
 ```typescript
-import { wireMCPTool } from '#pikku/mcp'
-import { processOrderMCP } from './functions/orders.mcp-function.js'
+import { pikkuMCPToolFunc } from '#pikku'
 import { requireAdmin } from './permissions.js'
 import { auditMiddleware } from './middleware.js'
 
-wireMCPTool({
+export const processOrder = pikkuMCPToolFunc<{ orderId: string }>({
   // Required
-  name: 'processOrder',
   description: 'Process an order end-to-end',
-  func: processOrderMCP,
+  func: async (services, data, { rpc }) => {
+    const result = await rpc.invoke('processOrder', data)
+    return [{ type: 'text', text: `Processed order ${result.orderId}` }]
+  },
 
   // Optional
+  name: 'processOrder',   // defaults to the export name
+  title: 'Process Order',
+  summary: 'Runs invoicing, payment, and confirmation',
   middleware: [auditMiddleware],
   permissions: { admin: requireAdmin },
   tags: ['orders', 'admin']

@@ -108,17 +108,42 @@ export const requestUpload = pikkuFunc<RequestUploadInput, RequestUploadOutput>(
 Reads and writes from the local file system:
 
 ```typescript reference title="local-content.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/local-content.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-content.ts
 ```
 
 ### AWS S3
 
 ```typescript reference title="s3-content.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/s3-content.ts
+https://github.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/s3-content.ts
+```
+
+### Backblaze B2
+
+```bash npm2yarn
+npm install @pikku/backblaze
+```
+
+`B2Content` talks to the Backblaze B2 native API. It uses a single underlying B2 bucket — logical buckets passed via the ContentService API are stored as path prefixes within it.
+
+```typescript
+import { B2Content } from '@pikku/backblaze'
+
+const content = new B2Content(
+  {
+    applicationKeyId: await secrets.getSecret('B2_KEY_ID'),
+    applicationKey: await secrets.getSecret('B2_APP_KEY'),
+    bucketId: 'your-b2-bucket-id',
+  },
+  logger
+)
+```
+
+```typescript reference title="b2-content.ts"
+https://github.com/pikkujs/pikku/blob/main/packages/services/backblaze/src/b2-content.ts
 ```
 
 ## Interface
 
 ```typescript reference title="content-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/content-service.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/content-service.ts
 ```

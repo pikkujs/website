@@ -1,391 +1,239 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
 import CodeBlock from '@theme/CodeBlock';
 import {
-  HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon,
-  MCPIcon, BotIcon, WorkflowIcon, TriggerIcon, RPCIcon,
-} from '../components/WiringIcons';
-import { Copy, Check, Terminal } from 'lucide-react';
+  PaperPage, Section, Wrap, Eyebrow, H1, H2, Lead,
+  BtnPrimary, BtnGhost, CodeCard, Terminal, CheckItem, StepBadge,
+} from '../components/PaperLayout';
+import { WiringIcon } from '../components/WiringIcons';
+import snippets from '../data/snippets.json';
+import styles from './getting-started.module.css';
 
-/* ─────────────────────────────────────────────
-   Helpers
-   ───────────────────────────────────────────── */
-
-function CodeCard({ filename, badge, children }: {
-  filename: string;
-  badge?: string;
-  children: React.ReactNode;
-}) {
+/* ── Step heading ────────────────────────────────────────── */
+function StepHead({ n, title }: { n: number; title: string }) {
   return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-        </div>
-        <span className="text-sm font-semibold text-neutral-200">{filename}</span>
-        {badge && <span className="ml-auto text-xs text-neutral-600 font-mono">{badge}</span>}
-      </div>
-      <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-        {children}
-      </div>
+    <div className={styles.stepHead}>
+      <StepBadge n={n} />
+      <H2 style={{ margin: 0 }}>{title}</H2>
     </div>
   );
 }
 
-function TerminalCard({ children }: { children: React.ReactNode }) {
+/* ── Simple terminal card for one-off commands ───────────── */
+function Cmd({ lines }: { lines: React.ReactNode[] }) {
   return (
-    <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-      <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-primary/60" />
-        </div>
-        <span className="text-sm font-semibold text-neutral-200">Terminal</span>
-      </div>
-      <div className="p-5 bg-[#0a0a0f] font-mono text-sm leading-relaxed">
-        {children}
-      </div>
+    <div className={styles.cmd}>
+      {lines.map((l, i) => <div key={i}>{l}</div>)}
     </div>
   );
 }
 
-function StepHeader({ n, title }: { n: number; title: string }) {
-  return (
-    <div className="flex items-center gap-4 mb-6">
-      <span className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/8 border border-white/15 text-primary text-base font-bold font-jakarta shrink-0">
-        {n}
-      </span>
-      <Heading as="h2" className="font-jakarta text-3xl md:text-4xl font-bold text-white !mb-0">
-        {title}
-      </Heading>
-    </div>
-  );
-}
-
-function CopyCommand({ command }: { command: string }) {
-  const [copied, setCopied] = React.useState(false);
-  return (
-    <button
-      onClick={() => { navigator.clipboard.writeText(command); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-      className="group inline-flex items-center gap-3 bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-xl px-5 py-3.5 font-mono text-base text-neutral-200 cursor-pointer transition-all hover:bg-white/[0.06]"
-    >
-      <Terminal className="w-4 h-4 text-white/55" />
-      <span><span className="text-white/55 select-none">$ </span>{command}</span>
-      {copied
-        ? <Check className="w-3.5 h-3.5 text-primary ml-1" />
-        : <Copy className="w-3.5 h-3.5 text-neutral-600 group-hover:text-neutral-400 transition-colors ml-1" />
-      }
-    </button>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   1. HERO
-   ───────────────────────────────────────────── */
-
+/* ─────────────────────────────────────────────────────────
+   Hero
+   ───────────────────────────────────────────────────────── */
 function Hero() {
   return (
-    <div className="wire-hero-getting-started w-full relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] rounded-full bg-white/[0.06] blur-[120px]" />
-      </div>
-
-      <header className="relative max-w-screen-xl mx-auto w-full pt-14 pb-12 lg:pt-20 lg:pb-16 px-6 ">
-        <Heading as="h1" className="font-jakarta text-5xl lg:text-6xl font-bold mb-5 leading-tight">
-          <span className="text-white">Getting Started</span>
-        </Heading>
-        <p className="text-xl font-medium leading-relaxed text-neutral-400 max-w-xl mb-8">
-          From an empty folder to a working API in four steps.
-        </p>
-        <CopyCommand command="npm create pikku@latest" />
-      </header>
-    </div>
+    <header className={styles.hero}>
+      <Wrap>
+        <Eyebrow>Getting started</Eyebrow>
+        <H1>From an empty folder to a <em>running platform.</em></H1>
+        <Lead>
+          Two commands stand between you and a complete backend — database, auth, content,
+          email, workflows and the console, running locally and ready to deploy.
+        </Lead>
+      </Wrap>
+    </header>
   );
 }
 
-/* ─────────────────────────────────────────────
-   2. STEP 1 — CREATE
-   ───────────────────────────────────────────── */
-
+/* ─────────────────────────────────────────────────────────
+   Step 1 — Create
+   ───────────────────────────────────────────────────────── */
 function StepCreate() {
   return (
-    <section className="py-14 lg:py-20">
-      <div className="max-w-screen-lg mx-auto px-6">
-        <StepHeader n={1} title="Create your project" />
-
-        <p className="text-base text-neutral-400 leading-relaxed mb-8 max-w-2xl">
-          The CLI scaffolds a working project with your choice of runtime, example functions, and auto-generated types.
+    <Section>
+      <Wrap>
+        <StepHead n={1} title="Create your project" />
+        <p className={styles.stepBody}>
+          The generator scaffolds a working project — pick a template, and you get example
+          functions, wirings, and a local database schema to start from.
         </p>
-
-        <TerminalCard>
-          <div className="text-neutral-300 mb-3">
-            <span className="text-primary">$</span> npm create pikku@latest
-          </div>
-          <pre className="text-neutral-500 whitespace-pre-wrap m-0">{
-` ______ _ _     _
-(_____ (_) |   | |
- _____) )| |  _| |  _ _   _
-|  ____/ | |_/ ) |_/ ) | | |
-| |    | |  _ (|  _ (| |_| |
-|_|    |_|_| _)_| _)____/
-
-Welcome to the Pikku Project Generator!
-
-- Downloading template...
-✔ Downloading template...
-📦 Installing dependencies...`}</pre>
-          <pre className="text-neutral-400 whitespace-pre-wrap m-0 mt-2">{
-`pikku all (completed in 0ms)
-  • 18 HTTP routes
-  • 2 Scheduled tasks
-  • 1 Trigger
-  • 3 MCP endpoints`}</pre>
-          <pre className="text-primary whitespace-pre-wrap m-0 mt-3">{
-`✅ Project setup complete!
-Run the following command to get started:
-
-cd my-app`}</pre>
-        </TerminalCard>
-      </div>
-    </section>
+        <Cmd lines={[
+          <><span className={styles.prompt}>$</span> npm create pikku@latest</>,
+          <span className={styles.dim}>✔ template downloaded · dependencies installed</span>,
+          <span className={styles.dim}>→ cd my-app</span>,
+        ]} />
+      </Wrap>
+    </Section>
   );
 }
 
-/* ─────────────────────────────────────────────
-   3. STEP 2 — WRITE A FUNCTION
-   ───────────────────────────────────────────── */
-
-const functionCode = `import { pikkuFunc } from '@pikku/core'
-
-export const getUser = pikkuFunc(
-  async ({ db, logger }, { userId }) => {
-    logger.info(\`Fetching user \${userId}\`)
-    return await db.findUser(userId)
-  }
-)`;
-
-function StepFunction() {
-  return (
-    <section className="py-14 lg:py-20 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-800 to-transparent" />
-
-      <div className="max-w-screen-lg mx-auto px-6">
-        <StepHeader n={2} title="Write a function" />
-
-        <p className="text-base text-neutral-400 leading-relaxed mb-8 max-w-2xl">
-          A Pikku function receives <strong className="text-neutral-200">services</strong> (your dependencies) and <strong className="text-neutral-200">data</strong> (typed input). No decorators, no classes — just an async function.
-        </p>
-
-        <CodeCard filename="src/functions.ts">
-          <CodeBlock language="typescript">{functionCode}</CodeBlock>
-        </CodeCard>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   4. STEP 3 — WIRE IT
-   ───────────────────────────────────────────── */
-
-const wireHTTPCode = `import { getUser } from './functions'
-
-wireHTTP({
-  method: 'get',
-  route: '/users/:userId',
-  func: getUser
-})`;
-
-const wireMoreCode = `// Same function, more protocols
-wireHTTP({ method: 'get', route: '/users/:userId', func: getUser })
-wireWebSocket({ channel: 'users', func: getUser })
-wireRPC({ func: getUser })
-wireMCP({ tool: 'get_user', func: getUser })
-wireCLI({ command: 'get-user', func: getUser })`;
-
-function StepWire() {
-  return (
-    <section className="py-14 lg:py-20 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-800 to-transparent" />
-
-      <div className="max-w-screen-lg mx-auto px-6">
-        <StepHeader n={3} title="Wire it up" />
-
-        <p className="text-base text-neutral-400 leading-relaxed mb-8 max-w-2xl">
-          Connect your function to a protocol. Start with HTTP — you can always add more later without touching the function.
-        </p>
-
-        <div className="grid lg:grid-cols-2 gap-6 mb-10">
-          <CodeCard filename="src/wiring.ts" badge="start here">
-            <CodeBlock language="typescript">{wireHTTPCode}</CodeBlock>
-          </CodeCard>
-          <CodeCard filename="src/wiring.ts" badge="add more anytime">
-            <CodeBlock language="typescript">{wireMoreCode}</CodeBlock>
-          </CodeCard>
-        </div>
-
-        {/* Compact protocol list */}
-        <div className="flex flex-wrap gap-3">
-          {[
-            { icon: <HttpIcon size={16} />, name: 'HTTP' },
-            { icon: <WebSocketIcon size={16} />, name: 'WebSocket' },
-            { icon: <RPCIcon size={16} />, name: 'RPC' },
-            { icon: <MCPIcon size={16} />, name: 'MCP' },
-            { icon: <QueueIcon size={16} />, name: 'Queue' },
-            { icon: <CronIcon size={16} />, name: 'Cron' },
-            { icon: <CLIIcon size={16} />, name: 'CLI' },
-            { icon: <TriggerIcon size={16} />, name: 'Trigger' },
-            { icon: <BotIcon size={16} />, name: 'AI Agent' },
-            { icon: <WorkflowIcon size={16} />, name: 'Workflow' },
-          ].map((p, i) => (
-            <span key={i} className="inline-flex items-center gap-2 text-xs text-neutral-500 bg-white/[0.03] border border-white/[0.06] rounded-lg px-3 py-1.5">
-              {p.icon}
-              {p.name}
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   5. STEP 4 — RUN IT
-   ───────────────────────────────────────────── */
-
+/* ─────────────────────────────────────────────────────────
+   Step 2 — Run the platform
+   ───────────────────────────────────────────────────────── */
 function StepRun() {
   return (
-    <section className="py-14 lg:py-20 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-800 to-transparent" />
-
-      <div className="max-w-screen-lg mx-auto px-6">
-        <StepHeader n={4} title="Start the server" />
-
-        <p className="text-base text-neutral-400 leading-relaxed mb-8 max-w-2xl">
-          Run <code className="text-primary text-sm">pikku watch</code> to auto-regenerate types as you code, then start the server.
+    <Section variant="alt">
+      <Wrap>
+        <StepHead n={2} title="Start the whole platform" />
+        <p className={styles.stepBody}>
+          One command boots everything. Not just an HTTP server — the database is introspected
+          and typed, auth and content are live, email previews work, and the console is watching
+          all of it.
         </p>
-
-        <div className="grid lg:grid-cols-2 gap-6">
-          <TerminalCard>
-            <div className="space-y-3">
-              <div className="text-neutral-500 text-xs uppercase tracking-wider mb-2">Terminal 1</div>
-              <div>
-                <span className="text-primary">$</span> <span className="text-neutral-300">npx pikku watch</span>
-              </div>
-              <div className="text-neutral-500">
-                Watching for changes...
-              </div>
-            </div>
-          </TerminalCard>
-          <TerminalCard>
-            <div className="space-y-3">
-              <div className="text-neutral-500 text-xs uppercase tracking-wider mb-2">Terminal 2</div>
-              <div>
-                <span className="text-primary">$</span> <span className="text-neutral-300">npm run start</span>
-              </div>
-              <div className="text-neutral-500">
-                Server running at http://localhost:4002
-              </div>
-              <div className="border-t border-neutral-800 pt-3">
-                <span className="text-primary">$</span> <span className="text-neutral-300">curl http://localhost:4002/users/123</span>
-              </div>
-              <div className="text-primary">
-                {'{"id":"123","name":"John Doe","email":"john@example.com"}'}
-              </div>
-            </div>
-          </TerminalCard>
+        <div className={styles.runGrid}>
+          <Terminal />
+          <div className={styles.runChecks}>
+            <CheckItem>Database up, schema introspected, end-to-end types generated</CheckItem>
+            <CheckItem>Auth, content, secrets and email previews — already working</CheckItem>
+            <CheckItem>The console at <code>localhost:3000/console</code> shows every function, wire and workflow</CheckItem>
+            <CheckItem>Exactly what runs in production — no separate local setup to maintain</CheckItem>
+          </div>
         </div>
-      </div>
-    </section>
+      </Wrap>
+    </Section>
   );
 }
 
-/* ─────────────────────────────────────────────
-   6. WHAT'S NEXT
-   ───────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────
+   Step 3 — Write & wire a function
+   ───────────────────────────────────────────────────────── */
+const WIRE_CHIPS = [
+  { icon: 'http', label: 'HTTP', link: '/docs/wiring/http' },
+  { icon: 'websocket', label: 'WebSocket', link: '/docs/wiring/channels' },
+  { icon: 'rpc', label: 'RPC', link: '/docs/wiring/rpcs' },
+  { icon: 'queue', label: 'Queue', link: '/docs/wiring/queue' },
+  { icon: 'cron', label: 'Cron', link: '/docs/wiring/scheduled-tasks' },
+  { icon: 'workflow', label: 'Workflow', link: '/docs/wiring/workflows' },
+  { icon: 'bot', label: 'AI Agent', link: '/docs/wiring/ai-agents' },
+  { icon: 'mcp', label: 'MCP', link: '/docs/wiring/mcp' },
+  { icon: 'cli', label: 'CLI', link: '/docs/wiring/cli' },
+];
 
-function NextSteps() {
-  const paths = [
-    { icon: <HttpIcon size={20} />, title: 'Core Features', desc: 'Functions, middleware, sessions, errors', link: '/docs/core-features' },
-    { icon: <WebSocketIcon size={20} />, title: 'Channels', desc: 'Real-time with WebSocket', link: '/docs/wiring/channels' },
-    { icon: <QueueIcon size={20} />, title: 'Queues', desc: 'Background job processing', link: '/docs/wiring/queue' },
-    { icon: <BotIcon size={20} />, title: 'AI Agents', desc: 'Conversational AI with tools', link: '/docs/wiring/ai-agents' },
-    { icon: <WorkflowIcon size={20} />, title: 'Workflows', desc: 'Multi-step stateful processes', link: '/docs/wiring/workflows' },
-    { icon: <MCPIcon size={20} />, title: 'MCP', desc: 'Expose functions to AI models', link: '/docs/wiring/mcp' },
-  ];
-
+function StepWrite() {
   return (
-    <section className="py-14 lg:py-20 relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-800 to-transparent" />
-
-      <div className="max-w-screen-lg mx-auto px-6">
-        <Heading as="h2" className="font-jakarta text-3xl md:text-4xl font-bold text-white mb-3">
-          What's next
-        </Heading>
-        <p className="text-base text-neutral-400 mb-8">
-          You have a working API. Here's where to go from here.
+    <Section>
+      <Wrap>
+        <StepHead n={3} title="Write a function, wire it up" />
+        <p className={styles.stepBody}>
+          A Pikku function receives your services and typed input — no decorators, no classes.
+          Wiring connects it to the outside world. Add more wires whenever you like; the
+          function never changes.
         </p>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {paths.map((path, i) => (
-            <Link
-              key={i}
-              to={path.link}
-              className="group flex items-start gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 hover:border-white/15 hover:bg-white/[0.04] transition-all no-underline"
-            >
-              <div className="w-9 h-9 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
-                {path.icon}
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-white mb-0.5 group-hover:text-purple-300 transition-colors">{path.title}</h3>
-                <p className="text-xs text-neutral-500 leading-relaxed m-0">{path.desc}</p>
-              </div>
+        <div className={styles.codeGrid}>
+          <CodeCard filename="src/items.functions.ts">
+            <CodeBlock language="typescript">{snippets.listCategories}</CodeBlock>
+          </CodeCard>
+          <CodeCard filename="src/items.http.ts" badge="add more anytime">
+            <CodeBlock language="typescript">{snippets.httpSingleRoute}</CodeBlock>
+          </CodeCard>
+        </div>
+        <div className={styles.chips}>
+          {WIRE_CHIPS.map((c) => (
+            <Link key={c.label} to={c.link} className={styles.chip}>
+              <WiringIcon wiringId={c.icon} size={15} />
+              {c.label}
             </Link>
           ))}
         </div>
-
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Link
-            to="/docs"
-            className="bg-primary text-white hover:bg-primary px-6 py-2.5 rounded-lg font-semibold text-sm transition-all no-underline"
-          >
-            Full Documentation
-          </Link>
-          <Link
-            to="/features"
-            className="border border-white/15 text-white/70 hover:bg-white/5 hover:text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-all no-underline"
-          >
-            All Features
-          </Link>
-        </div>
-      </div>
-    </section>
+      </Wrap>
+    </Section>
   );
 }
 
-/* ─────────────────────────────────────────────
-   PAGE
-   ───────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────
+   Step 4 — Ship it
+   ───────────────────────────────────────────────────────── */
+function StepShip() {
+  return (
+    <Section variant="alt">
+      <Wrap>
+        <StepHead n={4} title="Ship it" />
+        <p className={styles.stepBody}>
+          The same application deploys three ways — a standalone binary you run anywhere,
+          your own cloud, or fully managed on Fabric.
+        </p>
+        <div className={styles.shipGrid}>
+          <div className={styles.shipCard}>
+            <h3>Standalone</h3>
+            <p>One self-contained server you run on infrastructure you control.</p>
+            <code>npx pikku deploy apply -p standalone</code>
+          </div>
+          <div className={styles.shipCard}>
+            <h3>Your cloud</h3>
+            <p>Deploy to Cloudflare or AWS. Your account, your bill, no lock-in.</p>
+            <code>npx pikku deploy apply -p cloudflare</code>
+          </div>
+          <div className={styles.shipCard}>
+            <h3>Fabric</h3>
+            <p>Managed hosting with observability and an assistant that knows your system.</p>
+            <code>npx pikku fabric deploy apply</code>
+          </div>
+        </div>
+        <p className={styles.shipNote}>
+          Run <code>npx pikku deploy plan</code> first to see exactly what will be created.
+        </p>
+      </Wrap>
+    </Section>
+  );
+}
 
+/* ─────────────────────────────────────────────────────────
+   What's next
+   ───────────────────────────────────────────────────────── */
+const NEXT = [
+  { icon: 'http', title: 'Core Features', desc: 'Functions, services, middleware, permissions', link: '/docs/core-features' },
+  { icon: 'websocket', title: 'Channels', desc: 'Real-time with WebSocket', link: '/docs/wiring/channels' },
+  { icon: 'queue', title: 'Queues', desc: 'Background job processing', link: '/docs/wiring/queue' },
+  { icon: 'bot', title: 'AI Agents', desc: 'Conversational AI with tools', link: '/docs/wiring/ai-agents' },
+  { icon: 'workflow', title: 'Workflows', desc: 'Durable multi-step processes', link: '/docs/wiring/workflows' },
+  { icon: 'mcp', title: 'MCP', desc: 'Expose functions to AI models', link: '/docs/wiring/mcp' },
+];
+
+function NextSteps() {
+  return (
+    <Section>
+      <Wrap>
+        <Eyebrow>What's next</Eyebrow>
+        <H2>You have a running platform. <em>Here's where to go.</em></H2>
+        <div className={styles.nextGrid}>
+          {NEXT.map((n) => (
+            <Link key={n.title} to={n.link} className={styles.nextCard}>
+              <span className={styles.nextIcon}><WiringIcon wiringId={n.icon} size={20} /></span>
+              <span>
+                <span className={styles.nextTitle}>{n.title}</span>
+                <span className={styles.nextDesc}>{n.desc}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+        <div className={styles.nextActions}>
+          <BtnPrimary to="/docs">Full documentation</BtnPrimary>
+          <BtnGhost to="/developers">Pikku for developers</BtnGhost>
+        </div>
+      </Wrap>
+    </Section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────
+   Page
+   ───────────────────────────────────────────────────────── */
 export default function GettingStartedPage() {
   return (
     <Layout
       title="Getting Started"
-      description="Get up and running with Pikku — create a TypeScript API with one command and wire functions to any protocol."
+      description="From an empty folder to a running platform — create a project, run npx pikku dev, and get a complete backend with database, auth, email, workflows and the console."
     >
-      <main className="bg-[#0a0a0f] text-white min-h-screen">
+      <PaperPage>
         <Hero />
         <StepCreate />
-        <StepFunction />
-        <StepWire />
         <StepRun />
+        <StepWrite />
+        <StepShip />
         <NextSteps />
-      </main>
+      </PaperPage>
     </Layout>
   );
 }

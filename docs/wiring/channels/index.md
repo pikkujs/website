@@ -15,11 +15,11 @@ Your domain functions don't need to know they're being called through a WebSocke
 Here's a complete channel example from the templates. It handles connection lifecycle events and uses action-based message routing:
 
 ```typescript reference title="channel.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/channel.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/channel.functions.ts
 ```
 
 ```typescript reference title="channel.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/channel.wiring.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/channel.wiring.ts
 ```
 
 Clients send action-based messages like `{ action: 'subscribe', topic: 'todo-created' }` to interact with the channel. Pikku automatically:
@@ -181,7 +181,7 @@ export const onMessage = pikkuChannelFunc<
 Wire your channel functions together with `wireChannel`:
 
 ```typescript
-import { wireChannel } from '#pikku/channel'
+import { wireChannel } from '#pikku'
 import { onConnect, onDisconnect, onMessage } from './functions/chat.function.js'
 
 wireChannel({

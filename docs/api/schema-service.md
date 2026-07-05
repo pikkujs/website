@@ -97,7 +97,7 @@ Returns the top-level property keys of a compiled schema. Useful for CLI argumen
 ## Interface
 
 ```typescript reference title="schema-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/schema-service.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/schema-service.ts
 ```
 
 ## Source
@@ -105,11 +105,11 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/serv
 ### AJV Schema Service
 
 ```typescript reference title="ajv-schema-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/schema-ajv/src/ajv-schema-service.ts
+https://github.com/pikkujs/pikku/blob/main/packages/services/schema-ajv/src/ajv-schema-service.ts
 ```
 
 ### Cloudflare Worker Schema Service
 
 ```typescript reference title="cfworker-json-schema.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/schema-cfworker/src/cfworker-json-schema.ts
+https://github.com/pikkujs/pikku/blob/main/packages/services/schema-cfworker/src/cfworker-json-schema.ts
 ```

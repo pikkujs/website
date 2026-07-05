@@ -205,7 +205,7 @@ Key points:
 - Don't spread `...singletonServices` – Pikku handles that for you
 
 ```typescript reference title="services.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/services.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/services.ts
 ```
 
 ## Service Management Philosophy

@@ -7,7 +7,7 @@ The UserSessionService manages user session data within a single request or conn
 ## Interface
 
 ```typescript reference title="user-session-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/user-session-service.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/user-session-service.ts
 ```
 
 ## Properties

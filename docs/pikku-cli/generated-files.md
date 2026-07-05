@@ -76,6 +76,7 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 │   ├── pikku-workflow-wirings.gen.ts   # Workflow registration
 │   ├── pikku-workflow-wirings-meta.gen.ts
 │   ├── pikku-workflow-map.gen.d.ts     # Typed workflow map
+│   ├── pikku-scenario-actors.gen.ts    # Typed createScenarioActors factory (from scenarios.actors)
 │   └── meta/                           # Per-workflow JSON metadata
 │       ├── myWorkflow.gen.json
 │       └── myWorkflow-verbose.gen.json
@@ -132,6 +133,13 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 │   ├── pikku-credentials.gen.ts       # Typed credential wrappers
 │   └── pikku-credentials-meta.gen.json
 │
+├── auth/                              # Better Auth (when authFile is set)
+│   ├── auth.types.ts                  # Typed pikkuBetterAuth re-export
+│   └── pikku-auth-meta.gen.json       # Enabled social providers/plugins (read by the Console)
+│
+├── email/                             # When emailTemplatesDir is set
+│   └── pikku-emails.gen.ts            # Typed email renderers (from pikku emails generate)
+│
 ├── addon/
 │   ├── pikku-package.gen.ts           # Addon package registration
 │   └── pikku-addon-types.gen.ts       # Addon config/service types
@@ -142,6 +150,8 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 ```
 
 Not every directory is generated for every project — only the ones relevant to your wirings. If you don't use workflows, there's no `workflow/` directory.
+
+A few generated files live **outside** `outDir`, in your source tree, because the inspector needs to scan them like regular code: the Better Auth wiring (`auth.gen.ts`, plus `auth-secrets.gen.ts` and `auth-middleware.gen.ts` beside it) at the `authFile` path, and the feature scaffold files (`rpc-public.gen.ts`, `console.gen.ts`, `agent.gen.ts`, `workflow-routes.gen.ts`, `events.gen.ts`, `rpc-remote.gen.ts`) under `scaffold.pikkuDir`.
 
 ## Key Files
 

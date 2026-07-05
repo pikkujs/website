@@ -26,99 +26,127 @@ This will guide you through setting up a project:
 
 <AsciinemaPlayer type="installing" autoPlay />
 
-The starter project includes example functions and routes so you can immediately see Pikku in action.
+The starter project is a small **todos app** with functions already wired to the transports you picked during setup, so you can immediately see Pikku in action.
 
 ## Run and Verify
 
 After installation completes, navigate to your project directory and start the development server:
 
 ```bash npm2yarn
-npm start
+npm run dev
 ```
 
-The server will start on `http://localhost:3000`. You can verify it's working by testing the example endpoint:
+You can verify it's working by testing one of the example endpoints:
 
 ```bash
-curl http://localhost:3000/api/hello-world
+curl http://localhost:4002/todos
 ```
 
-You should see a response from your first Pikku function!
+You should see a JSON list of todos coming back from your first Pikku function!
 
 ## Your First Function
 
-Let's look at the Hello World function that came with the starter. Open `functions/hello-world.function.ts`:
+Let's look at the functions that came with the starter. Open `src/functions/todos.functions.ts`:
 
 ```typescript
-import { pikkuFunc } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku'
+import { ListTodosWithUserInputSchema, TodoListResponseSchema } from '../schemas.js'
 
-export const helloWorld = pikkuFunc({
-  func: async () => {
-    return { message: 'Hello from Pikku!' }
-  }
+/**
+ * List todos for a user with optional filters.
+ */
+export const listTodos = pikkuSessionlessFunc({
+  input: ListTodosWithUserInputSchema,
+  output: TodoListResponseSchema,
+  func: async ({ logger, todoStore }, { userId, completed, priority, tag }) => {
+    const uid = userId || 'user1'
+    const todos = todoStore.getTodosByUser(uid, { completed, priority, tag })
+    logger.info(`Listed ${todos.length} todos for user ${uid}`)
+    return { todos, total: todos.length }
+  },
 })
 ```
 
-This function is wired to an HTTP route in `http.ts`:
+The function receives your **services** (like `logger` and `todoStore`) as its first argument and validated **input data** as its second. It knows nothing about HTTP.
+
+The wiring lives separately, in `src/wirings/todos.http.ts`:
 
 ```typescript
-import { wireHTTP } from '#pikku/http'
-import { helloWorld } from './functions/hello-world.function'
+import { defineHTTPRoutes, wireHTTPRoutes } from '#pikku'
+import { listTodos, getTodo, createTodo, updateTodo, deleteTodo, completeTodo } from '../functions/todos.functions.js'
 
-wireHTTP({ route: '/api/hello-world', func: helloWorld })
+const todosRoutes = defineHTTPRoutes({
+  auth: false,
+  tags: ['todos'],
+  routes: {
+    list: { method: 'get', route: '/todos', func: listTodos },
+    get: { method: 'get', route: '/todos/:id', func: getTodo },
+    create: { method: 'post', route: '/todos', func: createTodo },
+    update: { method: 'put', route: '/todos/:id', func: updateTodo },
+    delete: { method: 'delete', route: '/todos/:id', func: deleteTodo },
+    complete: { method: 'post', route: '/todos/:id/complete', func: completeTodo },
+  },
+})
+
+wireHTTPRoutes({ routes: { todos: todosRoutes } })
 ```
 
-That's it! The same function could also be wired to WebSockets, queues, or scheduled tasks without changing its implementation. This is Pikku's core philosophy: **write once, run anywhere**.
+You can also wire a single route with `wireHTTP({ method: 'get', route: '/todos', func: listTodos })` — route groups just make shared config (like `auth` and `tags`) easier.
+
+That's it! The same functions are also wired to MCP, CLI, and WebSocket in the starter (depending on the features you selected) without changing their implementation. That's Pikku's core philosophy: **write once, run anywhere**.
 
 ## Understanding the CLI
 
-Pikku includes a CLI tool that generates code as you work. When you modify your functions or wirings, run:
+Pikku includes a CLI that generates code as you work. It runs automatically after install (`postinstall: pikku all`), and you can rerun it any time:
 
-```bash npm2yarn
-npm run pikku watch
+```bash
+npx pikku all
 ```
 
-This runs the CLI in watch mode, which:
+Or keep it running alongside your server during development:
 
-1. Scans your codebase for `pikkuFunc` definitions and wirings
+```bash
+npx pikku dev
+```
+
+The CLI:
+
+1. Scans your codebase for function definitions and wirings
 2. Generates type definitions to provide autocomplete and type safety
 3. Creates validation schemas for your functions
-4. Indexes routes and channels for fast lookup
+4. Indexes routes, channels, queues, and commands for fast lookup
 
-The CLI generates type definitions and bootstrap code that you'll import in your code using path aliases:
+Everything it produces lands in the `.pikku/` directory, and you import it via the `#pikku` alias:
 
-- **`#pikku`** – Core types (pikkuFunc, pikkuMiddleware, etc.)
-- **`#pikku/http`** – HTTP wiring functions (wireHTTP, addHTTPMiddleware, etc.)
-- **`#pikku/channel`** – Channel wiring functions (wireChannel, addChannelMiddleware, etc.)
-- **`#pikku/cli`** – CLI wiring functions (wireCLI, pikkuCLICommand, etc.)
-- **`#pikku/queue`** – Queue wiring functions (wireQueueWorker, etc.)
-- **`#pikku/scheduler`** – Scheduler wiring functions (wireScheduler, etc.)
-- **`#pikku/mcp`** – MCP wiring functions (wireMCPTool, wireMCPResource, wireMCPPrompt)
+```typescript
+import { pikkuFunc, wireHTTP, wireScheduler } from '#pikku'
+```
 
-These files are regenerated whenever you change your functions or wirings. Don't edit them manually – they're automatically kept in sync with your source code.
+Function types and wiring functions all come from that single alias. These files are regenerated whenever you change your functions or wirings — don't edit them manually.
 
-For more details on import patterns and path aliases, see [Import Patterns](/docs/advanced/import-patterns).
+For more details, see [Import Patterns](/docs/advanced/import-patterns) and [Generated Files](/docs/pikku-cli/generated-files).
 
 ## Project Structure
 
-Here's a brief overview of the core files:
+Here's a brief overview of the core files in a scaffolded project:
 
-| **File**                    | **Description**                                                                                             |
-|-----------------------------|-------------------------------------------------------------------------------------------------------------|
-| `start.ts`                   | Server entry point that initializes your runtime and imports the bootstrap                                  |
-| `services.ts`               | Centralized management of services (database, cache, auth, etc.) available to all functions                 |
-| `channels.ts`               | WebSocket channel definitions – where you wire functions to real-time channels                              |
-| `http.ts`                   | HTTP endpoint definitions – where you wire functions to HTTP routes                                          |
-| `scheduled-tasks.ts`        | Cron job definitions – where you wire functions to run on schedules                                          |
-| `types/application-types.d.ts` | TypeScript type extensions for your application's services and session                                   |
+| **File**                        | **Description**                                                                                    |
+|---------------------------------|----------------------------------------------------------------------------------------------------|
+| `src/start.ts`                  | Server entry point that initializes your runtime and imports the generated bootstrap               |
+| `src/services.ts`               | Centralized management of services (database, cache, auth, etc.) available to all functions        |
+| `src/schemas.ts`                | Zod schemas shared between functions for input/output validation                                    |
+| `src/functions/`                | Your business logic — `todos.functions.ts` and friends                                              |
+| `src/wirings/`                  | Where functions meet transports — `todos.http.ts`, `scheduled.wiring.ts`, `mcp.wiring.ts`, etc.     |
+| `types/application-types.d.ts`  | TypeScript type extensions for your application's services and session                              |
 
-When you define wirings in `http.ts`, `channels.ts`, etc., the Pikku CLI automatically includes them in the generated bootstrap file. Your `start.ts` only needs to import the bootstrap – everything else is handled for you.
+When you add wirings under `src/wirings/`, the Pikku CLI automatically includes them in the generated bootstrap file. Your `start.ts` only needs to import the bootstrap – everything else is handled for you.
 
 ### The Config File
 
-The `pikku.config.json` file configures the Pikku CLI. It tells the CLI where to find your functions, where to generate output files, and how to process your code.
+The `pikku.config.json` file configures the Pikku CLI. It tells the CLI where to find your functions (`srcDirectories`), where to generate output files, and which clients to produce.
 
 ```json reference
-https://raw.githubusercontent.com/pikkujs/yarn-workspace-starter/blob/main/pikku.config.json
+https://github.com/pikkujs/pikku/blob/main/templates/functions/pikku.config.json
 ```
 
 ## Next Steps

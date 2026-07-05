@@ -59,6 +59,28 @@ Generate only type files (setup phase). Useful when you need types before a full
 npx pikku bootstrap
 ```
 
+### `pikku dev`
+
+Start a local development server with all services wired. Watch mode and hot module reload are on by default, and the [Console](/docs/console) is available at `http://localhost:3000/console`.
+
+```bash
+npx pikku dev
+npx pikku dev --port 8080        # Custom port (default: 3000)
+npx pikku dev --no-watch         # Disable file watching
+npx pikku dev --coverage         # Collect V8 precise coverage in-process
+npx pikku dev --test             # Test mode: record service calls for scenario assertions
+```
+
+### `pikku serve`
+
+Start a server using the bundled bun or node runner — no watch, no codegen. For running a built project.
+
+```bash
+npx pikku serve
+npx pikku serve --port 8080
+npx pikku serve --console        # Also serve the Console same-origin at /console
+```
+
 ### `pikku watch`
 
 Watch for file changes and regenerate automatically. Your generated types stay in sync as you write code.
@@ -67,19 +89,6 @@ Watch for file changes and regenerate automatically. Your generated types stay i
 npx pikku watch
 npx pikku watch --hmr   # Enable hot module reload for registered functions
 ```
-
-### `pikku console`
-
-Start the Pikku Console — a visual UI for exploring your functions, wirings, workflows, agents, and configuration with live file watching.
-
-```bash
-npx pikku console
-npx pikku console --port 8080   # Custom port (default: 51442)
-npx pikku console --open         # Open in browser automatically
-npx pikku console --hmr          # Enable hot module reload
-```
-
-See [The Console](/docs/console) for full documentation.
 
 ### `pikku schemas`
 
@@ -150,9 +159,11 @@ Enable Pikku features by updating the `scaffold` section in `pikku.config.json`:
 ```bash
 npx pikku enable rpc          # Enable public RPC endpoint
 npx pikku enable console      # Enable console functions
+npx pikku enable scenarios    # Enable scenario instrumentation functions
 npx pikku enable agent        # Enable public agent endpoints
 npx pikku enable workflow     # Enable workflow workers
 npx pikku enable events       # Enable the realtime events channel + SSE stream
+npx pikku enable remote-rpc   # Enable the remote internal RPC queue worker + HTTP endpoint
 
 # Disable auth requirement
 npx pikku enable rpc --no-auth
@@ -181,7 +192,9 @@ npx pikku deploy apply --from-plan       # Deploy from existing plan output
 npx pikku deploy info                    # Show current deployment state
 ```
 
-**Providers:** `cloudflare` (default), `aws`
+Both `plan` and `apply` accept `--runtime node|bun` for the standalone provider (bundle.js vs compiled executable) and `--result-file <path>` to write a structured JSON result.
+
+**Providers:** `cloudflare` (default), `serverless`, `azure`, `standalone` — extendable via the `deploy.providers` map in `pikku.config.json`
 
 The deploy pipeline builds your project, tree-shakes per deployment unit, and provisions infrastructure (workers, queues, cron triggers, secrets) through the provider API.
 
@@ -204,19 +217,13 @@ npx pikku info --limit 100              # Show more rows (default: 50)
 Local development database commands.
 
 ```bash
-npx pikku db migrate   # Apply pending SQL migrations and regenerate db/schema.d.ts
-npx pikku db seed      # Apply db/seed.sql to the dev database
-npx pikku db reset     # Wipe and recreate the dev database (migrate + seed)
+npx pikku db migrate    # Apply pending SQL migrations and regenerate db/schema.gen.ts
+npx pikku db generate   # Generate SQL migrations from detected schema changes
+npx pikku db seed       # Apply db/seed.sql to the dev database
+npx pikku db reset      # Wipe and recreate the dev database (migrate + seed)
+npx pikku db audit      # Report column classifications and flag columns with no anonymize strategy
 ```
 
-### `pikku tests`
-
-Manage function tests (the `ftest` Cucumber harness).
-
-```bash
-npx pikku tests init       # Scaffold the ftest Cucumber harness in your functions package
-npx pikku tests coverage   # Run the suite under c8 and emit function-coverage.json
-```
 
 ### `pikku binary`
 
@@ -249,6 +256,57 @@ npx pikku meta functions list
 npx pikku meta wires list
 ```
 
+### `pikku emails`
+
+Typed email template generation.
+
+```bash
+npx pikku emails init       # Scaffold emailTemplatesDir with starter locales, theme, partials
+npx pikku emails generate   # Generate typed email renderers and metadata
+```
+
+Requires `emailTemplatesDir` in `pikku.config.json`.
+
+### `pikku scenario`
+
+Run and inspect scenarios (`pikkuScenario`) against a configured environment. Environments live under `scenarios.environments` in `pikku.config.json`; the actor secret comes from the `SCENARIO_ACTOR_SECRET` environment variable.
+
+```bash
+npx pikku scenario list                    # List scenarios with names and descriptions
+npx pikku scenario run staging             # Run all scenarios against the staging environment
+npx pikku scenario run staging --flows onboarding,checkout
+npx pikku scenario run staging --tags smoke
+npx pikku scenario run local --coverage    # Per-scenario server coverage (target must run with --coverage)
+```
+
+### `pikku audit`
+
+Audit dependencies for security advisories (always) and available updates (`--outdated`); writes `.pikku/audit.json`.
+
+```bash
+npx pikku audit
+npx pikku audit --outdated
+```
+
+### `pikku workspace`
+
+Workspace-level validation and maintenance.
+
+```bash
+npx pikku workspace validate   # Check the project structure for Pikku workspace compatibility
+```
+
+### `pikku login` / `pikku logout` / `pikku whoami`
+
+Authenticate the CLI against a Pikku server (device-authorization flow). Used by commands that talk to a running server.
+
+```bash
+npx pikku login                          # Default: http://localhost:3000
+npx pikku login --url https://api.example.com
+npx pikku whoami                         # Show the current CLI session
+npx pikku logout                         # Remove a stored CLI session
+```
+
 ### `pikku fabric`
 
 PikkuFabric commands (login, link, deploy, domains, secrets, logs, …). Run `npx pikku fabric` to see the subcommands.
@@ -269,17 +327,22 @@ These flags work with any command:
 | `--wire-services-factory-type` | Specify which wire services factory to use |
 | `--state-output` | Save inspector state to JSON file for reuse |
 | `--state-input` | Load inspector state from JSON (skips inspection) |
+| `--security` | Run the data-classification security lint (scans function return types for Private/Pii/Secret leaks). Off by default |
+| `--fail-on-error` | Fail the build on error-severity diagnostics (default: only critical fail) |
+| `--fail-on-warn` | Fail the build on warn-severity diagnostics (implies `--fail-on-error`) |
+| `--tsc` | After codegen, run a real `tsc --noEmit` and fail on type errors (full diagnostics with code frames) |
+| `--tsc-summary` | Like `--tsc` but prints a compact one-line-per-error summary — cheap for CI and AI agents |
 
 ## Common Workflows
 
 ### Development
 
 ```bash
-# Watch mode with hot reload
-npx pikku watch --hmr
+# Run the whole platform locally, Console included
+npx pikku dev
 
-# Or use the console for visual exploration
-npx pikku console
+# Or just watch mode with hot reload, no server
+npx pikku watch --hmr
 ```
 
 ### CI / Production Build

@@ -74,45 +74,69 @@
   font-size: 20px;
 }
 
-.header-github-stars {
-  display: flex;
+/* Overview ↔ For developers navbar pill (portal-injected by NavbarPageToggle) */
+.navbar-dev-pill {
+  display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.6rem;
+  gap: 7px;
+  padding: 7px 14px;
+  margin-right: 6px;
+  border-radius: 999px;
   border: 1px solid var(--site-overlay-2xl);
-  border-radius: 6px;
   color: var(--site-overlay-body);
-  font-size: 0.8rem;
+  font-size: 13px;
   font-weight: 500;
-  text-decoration: none !important;
-  transition: border-color 0.2s, color 0.2s;
   line-height: 1;
+  white-space: nowrap;
+  text-decoration: none !important;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
-.header-github-stars:hover {
+
+.navbar-dev-pill:hover {
   border-color: var(--site-overlay-hover);
   color: #fff;
-  text-decoration: none !important;
+  background: rgba(255, 255, 255, 0.06);
 }
-.header-github-stars svg {
-  color: #e3b341;
+
+:has([data-paper-page]) .navbar-dev-pill {
+  border-color: var(--paper-border-strong);
+  color: var(--paper-text-body);
+}
+
+:has([data-paper-page]) .navbar-dev-pill:hover {
+  border-color: var(--paper-accent);
+  color: var(--paper-accent);
+  background: transparent;
+}
+
+@media (max-width: 996px) {
+  .navbar-dev-pill {
+    padding: 5px 10px;
+    font-size: 12px;
+    gap: 5px;
+    margin-left: 8px;
+    margin-right: 0;
+  }
+
+  /* Logo-only brand when the pill needs the space */
+  .navbar:has(.navbar-dev-toggle) .navbar__title {
+    display: none;
+  }
+}
+
+.header-github-link {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.5rem;
+  color: var(--site-overlay-body);
+  transition: color 0.2s;
+}
+.header-github-link:hover {
+  color: #fff;
+}
+.header-github-link svg {
+  display: block;
   flex-shrink: 0;
-}
-.github-star-count:empty::after {
-  content: "\00a0\00a0";
-}
-
-.header-x-link::before {
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' %3E%3Cpath d='M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584l-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z'/%3E%3C/svg%3E") no-repeat;
-}
-[data-theme='dark'] .header-x-link::before {
-  background: url("data:image/svg+xml,%3Csvg fill='white' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' %3E%3Cpath d='M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584l-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z'/%3E%3C/svg%3E") no-repeat;
-}
-
-.header-discord-link::before {
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' %3E%3Cpath fill='black' d='M20.317 4.37a19.8 19.8 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.3 18.3 0 0 0-5.487 0a13 13 0 0 0-.617-1.25a.08.08 0 0 0-.079-.037A19.7 19.7 0 0 0 3.677 4.37a.1.1 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.08.08 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.08.08 0 0 0 .084-.028a14 14 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13 13 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10 10 0 0 0 .372-.292a.07.07 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .078.01q.181.149.373.292a.077.077 0 0 1-.006.127a12.3 12.3 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.08.08 0 0 0 .084.028a19.8 19.8 0 0 0 6.002-3.03a.08.08 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03M8.02 15.33c-1.182 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418m7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418'/%3E%3C/svg%3E") no-repeat;
-}
-[data-theme='dark'] .header-discord-link::before {
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' %3E%3Cpath fill='white' d='M20.317 4.37a19.8 19.8 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.3 18.3 0 0 0-5.487 0a13 13 0 0 0-.617-1.25a.08.08 0 0 0-.079-.037A19.7 19.7 0 0 0 3.677 4.37a.1.1 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.08.08 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.08.08 0 0 0 .084-.028a14 14 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13 13 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10 10 0 0 0 .372-.292a.07.07 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .078.01q.181.149.373.292a.077.077 0 0 1-.006.127a12.3 12.3 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.08.08 0 0 0 .084.028a19.8 19.8 0 0 0 6.002-3.03a.08.08 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03M8.02 15.33c-1.182 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418m7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418'/%3E%3C/svg%3E") no-repeat;
 }
 
 .discussions-link::after {
@@ -349,17 +373,14 @@ a.no-underline:hover * {
    Mobile Sidebar — clean up
    ======================================== */
 
-/* Hide HTML navbar items (separators, github stars, social links) in mobile sidebar.
+/* Hide HTML navbar items (separators, icon links) in mobile sidebar.
    Docusaurus renders type:'html' items as .menu__list-item in mobile mode,
    and social/icon links get .header-link class. */
 .navbar-sidebar .menu__list-item:has(> span),
-.navbar-sidebar .menu__list-item:has(> .header-github-stars),
 .navbar-sidebar .menu__list-item .header-link,
 .navbar-sidebar a.header-link,
-.navbar-sidebar a[aria-label="X (Twitter) account"],
-.navbar-sidebar a[aria-label="Discord"],
-.navbar-sidebar a[aria-label="Star on GitHub"],
-.navbar-sidebar .header-github-stars {
+.navbar-sidebar .menu__list-item:has(> .header-github-link),
+.navbar-sidebar .header-github-link {
   display: none !important;
 }
 
@@ -642,6 +663,13 @@ a.no-underline:hover * {
   background: var(--site-bg);
 }
 
+/* ─── Wiring icons ───
+   Default (dark contexts) matches the old text-white/55;
+   paper-themed pages get readable ink instead. */
+.wiring-icon { color: rgba(255, 255, 255, 0.55); }
+
+:has([data-paper-page]) .wiring-icon { color: var(--paper-text-muted); }
+
 /* ─── Docs index navigation cards ─── */
 
 .doc-nav-card {
@@ -840,24 +868,13 @@ a.no-underline:hover * {
   height: 3.4rem;
 }
 
-/* GitHub stars badge */
-:has([data-paper-page]) .header-github-stars {
-  border-color: var(--paper-border-strong);
+/* GitHub icon link */
+:has([data-paper-page]) .header-github-link {
   color: var(--paper-text-body);
 }
 
-:has([data-paper-page]) .header-github-stars:hover {
-  border-color: var(--paper-text);
+:has([data-paper-page]) .header-github-link:hover {
   color: var(--paper-text);
-}
-
-/* X and Discord icon links */
-:has([data-paper-page]) .header-x-link::before {
-  background: url("data:image/svg+xml,%3Csvg fill='%233a362e' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' %3E%3Cpath d='M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584l-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z'/%3E%3C/svg%3E") no-repeat;
-}
-
-:has([data-paper-page]) .header-discord-link::before {
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' %3E%3Cpath fill='%233a362e' d='M20.317 4.37a19.8 19.8 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.3 18.3 0 0 0-5.487 0a13 13 0 0 0-.617-1.25a.08.08 0 0 0-.079-.037A19.7 19.7 0 0 0 3.677 4.37a.1.1 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.08.08 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.08.08 0 0 0 .084-.028a14 14 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13 13 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10 10 0 0 0 .372-.292a.07.07 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.07.07 0 0 1 .078.01q.181.149.373.292a.077.077 0 0 1-.006.127a12.3 12.3 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.08.08 0 0 0 .084.028a19.8 19.8 0 0 0 6.002-3.03a.08.08 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03M8.02 15.33c-1.182 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418m7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418'/%3E%3C/svg%3E") no-repeat;
 }
 
 /* Mega-menu trigger */

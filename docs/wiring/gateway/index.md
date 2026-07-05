@@ -11,6 +11,10 @@ Gateways are a meta-wiring for messaging platform integrations. They provide a n
 
 Your handler function receives the same `GatewayInboundMessage` regardless of which platform sent the message. Pikku normalizes inbound messages, routes them through your middleware, calls your function, and auto-sends responses via the platform's API.
 
+:::tip Ready-made adapters
+For Slack you don't need to write an adapter — [`@pikku/gateway-slack`](./slack.md) ships one with OAuth, slash commands, and signature verification built in.
+:::
+
 ## Your First Gateway
 
 Here's a WhatsApp webhook gateway:

@@ -1,21 +1,77 @@
 import React from 'react';
-import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
+import Link from '@docusaurus/Link';
 import CodeBlock from '@theme/CodeBlock';
+import Image from '@theme/ThemedImage';
+import { NavbarPageToggle, PikkuCircularLayout } from '../components/HomepageShared';
+import {
+  PaperPage, Section, Wrap, Eyebrow, H1, H2, Lead,
+  BtnPrimary, BtnGhost, CodeCard, CheckItem, Card, CardTitle, CardBody,
+} from '../components/PaperLayout';
 import { WiringIcon } from '../components/WiringIcons';
-import {
-  Hero, PikkuCircularLayout, NavbarPageToggle, DeployAnywhereSection,
-  ProductionFeaturesSection, ConsoleSection, TestimonialsSection, CallToActionSection,
-} from '../components/HomepageShared';
-import {
-  Zap, ShieldCheck, Plug, RefreshCw, Timer, Database,
-  Bot, Package, Blocks, KeyRound, MessageSquare, Radio, Webhook,
-} from 'lucide-react';
+import { runtimes } from '@site/data/homepage';
+import { testimonials } from '@site/data/testimonials';
+import styles from './developers.module.css';
 
-/** Before/After — visual contrast showing the problem vs. the Pikku solution */
-function BeforeAfterSection() {
-  const beforeCode = `// Same logic, copied per protocol
+/* ════════════════════════════════════════════════════════════════
+   Hero
+   ════════════════════════════════════════════════════════════════ */
+const ORBIT = [
+  { icon: 'http', label: 'HTTP' },
+  { icon: 'websocket', label: 'WebSocket' },
+  { icon: 'sse', label: 'SSE' },
+  { icon: 'queue', label: 'Queue' },
+  { icon: 'cron', label: 'Cron' },
+  { icon: 'rpc', label: 'RPC' },
+  { icon: 'mcp', label: 'MCP' },
+  { icon: 'cli', label: 'CLI' },
+  { icon: 'bot', label: 'AI Agent' },
+  { icon: 'workflow', label: 'Workflow' },
+  { icon: 'trigger', label: 'Trigger' },
+  { icon: 'gateway', label: 'Gateway' },
+];
+
+function Hero() {
+  return (
+    <header className={styles.hero}>
+      <Wrap>
+        <div className={styles.heroGrid}>
+          <div>
+            <Eyebrow>For developers · the technical deep-dive</Eyebrow>
+            <H1>One function. <em>Every wiring.</em></H1>
+            <Lead>
+              Write your backend once. Pikku wires it to HTTP, WebSocket, queues, cron,
+              AI agents, workflows and more — same auth, same validation, zero rewrites.
+            </Lead>
+            <div className={styles.heroActions}>
+              <BtnPrimary to="/getting-started">Get started</BtnPrimary>
+              <BtnGhost to="/docs">Read the docs</BtnGhost>
+            </div>
+          </div>
+          <div className={styles.heroOrbit}>
+            <PikkuCircularLayout
+              items={ORBIT}
+              renderItem={(item) => (
+                <div className={styles.orbitItem}>
+                  <WiringIcon wiringId={item.icon} size={34} />
+                  <span>{item.label}</span>
+                </div>
+              )}
+              logoSize={170}
+              radius={165}
+              minHeight={420}
+            />
+          </div>
+        </div>
+      </Wrap>
+    </header>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Before / after
+   ════════════════════════════════════════════════════════════════ */
+const BEFORE_CODE = `// Same logic, copied per protocol
 app.get('/cards/:id', auth, validate, async (req, res) => {
   const card = await db.getCard(req.params.id)
   res.json(card)
@@ -42,7 +98,7 @@ const tools = { getCard: tool({
 })} // Auth? Permissions? You're on your own.
 // Three frameworks. Three auth layers. One backend.`;
 
-  const afterCode = `// With Pikku — write it once
+const AFTER_CODE = `// With Pikku — write it once
 const getCard = pikkuFunc({
   func: async ({ db, audit }, { cardId }) => {
     const card = await db.getCard(cardId)
@@ -74,53 +130,45 @@ const support = pikkuAgent({
 })
 // Auth, permissions, and validation carry over. Done.`;
 
+function BeforeAfterSection() {
   return (
-    <section id="how-it-works" className="py-8 lg:py-16">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-10">
-          <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">The Difference</p>
-          <h2 className="text-3xl md:text-4xl font-jakarta font-bold text-white leading-tight mb-4">
-            Four handlers that drift apart — or <span className="text-primary">one function that doesn't.</span>
-          </h2>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+    <Section id="how-it-works" variant="alt">
+      <Wrap wide>
+        <Eyebrow>The difference</Eyebrow>
+        <H2>Four handlers that drift apart — <em>or one function that doesn't.</em></H2>
+        <div className={styles.compareGrid}>
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-red-500" />
-              <span className="text-sm font-semibold text-red-400">Without Pikku</span>
-              <span className="ml-auto text-xs text-neutral-600 font-mono">repeated + fragile</span>
+            <div className={styles.compareLabel}>
+              <span className={`${styles.compareDot} ${styles.dotBad}`} />
+              Without Pikku
+              <span className={styles.compareTag}>repeated + fragile</span>
             </div>
-            <div className="rounded-xl border border-white/12 overflow-hidden opacity-70">
-              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
-                <CodeBlock language="typescript">{beforeCode}</CodeBlock>
-              </div>
+            <div className={styles.compareBefore}>
+              <CodeCard filename="everything.ts">
+                <CodeBlock language="typescript">{BEFORE_CODE}</CodeBlock>
+              </CodeCard>
             </div>
           </div>
-
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-2 h-2 rounded-full bg-green-500" />
-              <span className="text-sm font-semibold text-green-400">With Pikku</span>
-              <span className="ml-auto text-xs text-neutral-600 font-mono">1 function + wirings</span>
+            <div className={styles.compareLabel}>
+              <span className={`${styles.compareDot} ${styles.dotGood}`} />
+              With Pikku
+              <span className={styles.compareTag}>1 function + wirings</span>
             </div>
-            <div className="rounded-xl border border-white/12 overflow-hidden">
-              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0 text-sm">
-                <CodeBlock language="typescript">{afterCode}</CodeBlock>
-              </div>
-            </div>
+            <CodeCard filename="cards.ts">
+              <CodeBlock language="typescript">{AFTER_CODE}</CodeBlock>
+            </CodeCard>
           </div>
         </div>
-      </div>
-    </section>
+      </Wrap>
+    </Section>
   );
 }
 
-/** Interactive circle selector — pick a protocol, see the wiring code */
-function AhaMomentSection() {
-  const [activeProtocol, setActiveProtocol] = React.useState<number | null>(0);
-
-  const functionCode = `const getCard = pikkuFunc({
+/* ════════════════════════════════════════════════════════════════
+   Same function, any transport — interactive picker
+   ════════════════════════════════════════════════════════════════ */
+const FUNCTION_CODE = `const getCard = pikkuFunc({
   title: 'Get Card',
   description: 'Retrieve a card by ID',
   func: async ({ db, audit }, { cardId }) => {
@@ -131,140 +179,95 @@ function AhaMomentSection() {
   permissions: { user: isAuthenticated }
 })`;
 
-  const wiringExamples = [
-    { title: 'HTTP API', icon: 'http', code: `wireHTTP({\n  method: 'get',\n  route: '/cards/:cardId',\n  func: getCard\n})` },
-    { title: 'WebSocket', icon: 'websocket', code: `wireChannel({\n  name: 'cards',\n  onConnect: onCardConnect,\n  onDisconnect: onCardDisconnect,\n  onMessageWiring: {\n    action: { getCard }\n  }\n})` },
-    { title: 'Server-Sent Events', icon: 'sse', code: `wireHTTP({\n  method: 'get',\n  route: '/cards/:cardId',\n  func: getCard,\n  sse: true\n})` },
-    { title: 'Queue Worker', icon: 'queue', code: `// Basic queue\nwireQueueWorker({\n  queue: 'fetch-card',\n  func: getCard\n})\n\n// With options\nwireQueueWorker({\n  queue: 'fetch-card',\n  func: getCard,\n  concurrency: 5,\n  rateLimiter: {\n    max: 10,\n    duration: 1000\n  }\n})` },
-    { title: 'Scheduled Task', icon: 'cron', code: `wireScheduler({\n  cron: '0 * * * *',\n  func: getCard\n})` },
-    { title: 'RPC Call', icon: 'rpc', code: `// From another function:\nconst card = await rpc.invoke(\n  'getCard',\n  { cardId: '123' }\n)` },
-    { title: 'MCP (AI Tools)', icon: 'mcp', code: `wireMCPResource({\n  uri: 'card/{cardId}',\n  func: getCard,\n  tags: ['cards', 'data']\n})` },
-    { title: 'CLI', icon: 'cli', code: `wireCLI({\n  program: 'cards',\n  commands: {\n    get: pikkuCLICommand({\n      parameters: '<cardId>',\n      func: getCard\n    }),\n    manage: {\n      subcommands: {\n        get: pikkuCLICommand({\n          parameters: '<cardId>',\n          func: getCard\n        })\n      }\n    }\n  }\n})` },
-    { title: 'Trigger', icon: 'trigger', code: `wireTrigger({\n  name: 'cardChanged',\n  func: getCard,\n})\n\n// Register the trigger source\nwireTriggerSource({\n  name: 'cardChanged',\n  func: webhookTrigger,\n  input: { secret: process.env.WEBHOOK_SECRET }\n})` },
-  ];
+const WIRING_EXAMPLES = [
+  { title: 'HTTP API', icon: 'http', code: `wireHTTP({\n  method: 'get',\n  route: '/cards/:cardId',\n  func: getCard\n})` },
+  { title: 'WebSocket', icon: 'websocket', code: `wireChannel({\n  name: 'cards',\n  onConnect: onCardConnect,\n  onDisconnect: onCardDisconnect,\n  onMessageWiring: {\n    action: { getCard }\n  }\n})` },
+  { title: 'Server-Sent Events', icon: 'sse', code: `wireHTTP({\n  method: 'get',\n  route: '/cards/:cardId',\n  func: getCard,\n  sse: true\n})` },
+  { title: 'Queue Worker', icon: 'queue', code: `// Basic queue\nwireQueueWorker({\n  queue: 'fetch-card',\n  func: getCard\n})\n\n// With options\nwireQueueWorker({\n  queue: 'fetch-card',\n  func: getCard,\n  concurrency: 5,\n  rateLimiter: {\n    max: 10,\n    duration: 1000\n  }\n})` },
+  { title: 'Scheduled Task', icon: 'cron', code: `wireScheduler({\n  cron: '0 * * * *',\n  func: getCard\n})` },
+  { title: 'RPC Call', icon: 'rpc', code: `// From another function:\nconst card = await rpc.invoke(\n  'getCard',\n  { cardId: '123' }\n)` },
+  { title: 'MCP (AI Tools)', icon: 'mcp', code: `wireMCPResource({\n  uri: 'card/{cardId}',\n  func: getCard,\n  tags: ['cards', 'data']\n})` },
+  { title: 'CLI', icon: 'cli', code: `wireCLI({\n  program: 'cards',\n  commands: {\n    get: pikkuCLICommand({\n      parameters: '<cardId>',\n      func: getCard\n    })\n  }\n})` },
+  { title: 'Trigger', icon: 'trigger', code: `wireTrigger({\n  name: 'cardChanged',\n  func: getCard,\n})\n\n// Register the trigger source\nwireTriggerSource({\n  name: 'cardChanged',\n  func: webhookTrigger,\n  input: { secret: process.env.WEBHOOK_SECRET }\n})` },
+];
 
+function SameFunctionSection() {
+  const [active, setActive] = React.useState(0);
   return (
-    <section id="code-examples" className="py-8 lg:py-12 overflow-x-hidden">
-      <div className="max-w-screen-xl mx-auto px-6">
-        <div className="mb-6 lg:mb-14">
-          <Heading as="h2" className="font-jakarta text-4xl md:text-5xl font-bold text-white mb-4">
-            Same function. <span className="text-primary">Any transport.</span>
-          </Heading>
-          <p className="text-lg text-neutral-400 max-w-xl">
-            The function on the left works with every protocol on the right. Same auth, same validation, zero rewrites.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-[5fr_3fr_5fr] gap-8 items-start max-w-6xl mx-auto">
-          <div className="w-full min-w-0 lg:max-w-[400px]">
-            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Write once</p>
-            <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-              <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-                <span className="text-sm font-semibold text-neutral-200">getCard.ts</span>
-                <span className="ml-auto text-xs text-neutral-600 font-mono">func.ts</span>
-              </div>
-              <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-                <CodeBlock language="typescript">{functionCode}</CodeBlock>
-              </div>
-            </div>
-            <div className="mt-5 space-y-3">
-              {[
-                'Same auth & permissions across all protocols',
-                'One place to fix bugs and add features',
-                'Type-safe inputs and outputs everywhere',
-              ].map((line, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm text-neutral-400">
-                  <span className="flex-shrink-0 w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-primary text-[10px] font-bold">&#10003;</span>
-                  {line}
-                </div>
-              ))}
+    <Section id="code-examples">
+      <Wrap wide>
+        <Eyebrow>Same function, any transport</Eyebrow>
+        <H2>Pick a protocol. <em>The function never changes.</em></H2>
+        <div className={styles.ahaGrid}>
+          <div>
+            <div className={styles.ahaColLabel}>Write once</div>
+            <CodeCard filename="getCard.ts">
+              <CodeBlock language="typescript">{FUNCTION_CODE}</CodeBlock>
+            </CodeCard>
+            <div className={styles.ahaChecks}>
+              <CheckItem>Same auth &amp; permissions across all protocols</CheckItem>
+              <CheckItem>One place to fix bugs and add features</CheckItem>
+              <CheckItem>Type-safe inputs and outputs everywhere</CheckItem>
             </div>
           </div>
-
-          <div className="flex flex-col items-center w-full min-w-0 lg:max-w-[400px]">
-            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-1 self-start">Pick a protocol</p>
+          <div className={styles.ahaPicker}>
+            <div className={styles.ahaColLabel}>Pick a protocol</div>
             <PikkuCircularLayout
-              items={wiringExamples}
-              renderItem={(example, idx) => {
-                const isActive = activeProtocol === idx;
-                return (
-                  <button
-                    onClick={() => setActiveProtocol(idx)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer border-2 ${
-                      isActive
-                        ? 'border-primary bg-white/8 scale-125 shadow-lg shadow-black/20'
-                        : 'border-neutral-800 bg-[#0d0d0d] hover:border-neutral-600 hover:scale-110'
-                    }`}
-                    title={example.title}
-                  >
-                    <WiringIcon wiringId={example.icon} size={18} />
-                  </button>
-                );
-              }}
+              items={WIRING_EXAMPLES}
+              renderItem={(example, idx) => (
+                <button
+                  onClick={() => setActive(idx)}
+                  className={`${styles.orbitBtn} ${active === idx ? styles.orbitBtnActive : ''}`}
+                  title={example.title}
+                >
+                  <WiringIcon wiringId={example.icon} size={18} />
+                </button>
+              )}
               logoSize={90}
               radius={110}
-              minHeight={280}
-              centerOverlay={
-                activeProtocol !== null ? (
-                  <span className="text-xs font-semibold text-neutral-400 tracking-wide">
-                    {wiringExamples[activeProtocol].title}
-                  </span>
-                ) : (
-                  <span className="text-xs text-neutral-600">click one</span>
-                )
-              }
+              minHeight={290}
+              centerOverlay={<span className={styles.orbitCaption}>{WIRING_EXAMPLES[active].title}</span>}
             />
           </div>
-
-          <div className="w-full min-w-0 lg:max-w-[400px]">
-            <p className="text-xs font-bold tracking-widest uppercase text-neutral-500 mb-4">Wiring code</p>
-            {activeProtocol !== null && (
-              <div className="rounded-xl border border-neutral-700/80 overflow-hidden">
-                <div className="flex items-center gap-3 px-5 py-3 bg-[#0d0d0d] border-b border-neutral-800">
-                  <WiringIcon wiringId={wiringExamples[activeProtocol].icon} size={15} />
-                  <span className="text-sm font-semibold text-neutral-200">{wiringExamples[activeProtocol].title}</span>
-                  <span className="ml-auto text-xs text-neutral-600 font-mono">wiring.ts</span>
-                </div>
-                <div className="[&>div]:!rounded-none [&>div]:!border-0 [&>div]:!m-0">
-                  <CodeBlock language="typescript">{wiringExamples[activeProtocol].code}</CodeBlock>
-                </div>
-              </div>
-            )}
+          <div>
+            <div className={styles.ahaColLabel}>Wiring code</div>
+            <CodeCard
+              filename="wiring.ts"
+              icon={<WiringIcon wiringId={WIRING_EXAMPLES[active].icon} size={15} />}
+              badge={WIRING_EXAMPLES[active].title}
+            >
+              <CodeBlock language="typescript">{WIRING_EXAMPLES[active].code}</CodeBlock>
+            </CodeCard>
           </div>
         </div>
-
-        <div className="mt-10 ">
-          <Link to="/docs" className="text-primary hover:underline font-medium text-sm">
-            Read the full docs →
-          </Link>
-        </div>
-      </div>
-    </section>
+      </Wrap>
+    </Section>
   );
 }
 
-/** Agents Section */
-function AgentsSection() {
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="mb-16">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <span className="text-xs font-semibold tracking-widest uppercase text-white/65">AI Agents</span>
-            <span className="inline-block bg-white/[0.06] border border-white/15 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">Alpha</span>
-          </div>
-          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
-            Your functions are already agent tools
-          </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl">
-            No adapters. No schema writing. No separate auth layer. Pass your existing Pikku functions directly — the agent gets your full backend.
-          </p>
-        </div>
+/* ════════════════════════════════════════════════════════════════
+   Feature deep-dives (agents, workflows, addons, gateway)
+   ════════════════════════════════════════════════════════════════ */
+type Feature = {
+  id: string;
+  eyebrow: string;
+  title: React.ReactNode;
+  lede: string;
+  code: { filename: string; source: string }[];
+  points: { title: string; body: string }[];
+  docs: { label: string; to: string };
+  codeFirst?: boolean;
+};
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-          <div className="overflow-x-auto">
-            <CodeBlock language="typescript" title="src/agents/support.agent.ts">
-{`// These already exist in your backend — no changes needed
+const FEATURES: Feature[] = [
+  {
+    id: 'agents',
+    eyebrow: 'AI agents',
+    title: <>Your functions are <em>already agent tools.</em></>,
+    lede: 'No adapters. No schema writing. No separate auth layer. Pass your existing Pikku functions directly — the agent gets your full backend.',
+    code: [{
+      filename: 'src/agents/support.agent.ts',
+      source: `// These already exist in your backend — no changes needed
 import { getCustomer, getOrders, createTicket } from './functions'
 
 export const supportAgent = pikkuAgent({
@@ -280,80 +283,24 @@ wireHTTP({
   method: 'post',
   route: '/api/chat',
   func: supportAgent
-})`}
-            </CodeBlock>
-          </div>
-
-          <div className="space-y-6">
-            {[
-              { icon: <Zap className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Zero glue code', desc: 'Pass any Pikku function as a tool — the agent inherits its type signature, description, and input schema automatically. No adapters, no wrappers, no manual schema definitions.' },
-              { icon: <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Auth follows the agent', desc: 'Agents inherit the caller\'s session, permissions, and middleware. The same rules that protect your HTTP endpoints automatically protect every tool the agent can call.' },
-              { icon: <Plug className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Any LLM, same interface', desc: 'Bring OpenAI, Anthropic, or any provider. Pikku handles tool calling, streaming, and context — you just swap the model name.' },
-            ].map((d, i) => (
-              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
-                <div className="flex items-start gap-4">
-                  {d.icon}
-                  <div>
-                    <h3 className="text-lg font-bold mb-2">{d.title}</h3>
-                    <p className="text-neutral-400 text-sm leading-relaxed">{d.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div className="pt-2">
-              <Link to="/docs/wiring/ai-agents" className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm">
-                Read the AI Agents docs →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Workflows Section */
-function WorkflowsSection() {
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="mb-16">
-          <span className="text-xs font-semibold tracking-widest uppercase text-white/65 block mb-4">Workflows</span>
-          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
-            Multi-step processes that<br />survive anything
-          </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl">
-            Write sequential logic like normal code. Pikku handles persistence, retries, and resumption — even across server restarts.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-          <div className="space-y-6">
-            {[
-              { icon: <RefreshCw className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Deterministic replay', desc: 'Completed steps are cached and never re-executed. A workflow that fails on step 4 resumes from step 4 — not from the beginning.' },
-              { icon: <Timer className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Sleep for hours, days, or weeks', desc: 'workflow.sleep(\'5min\') suspends execution without holding a server connection. Perfect for trial expirations, reminders, and follow-ups.' },
-              { icon: <Database className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Survives restarts', desc: 'State is persisted to PostgreSQL or Redis between steps. Deploy a new version mid-workflow and execution continues from where it left off.' },
-            ].map((d, i) => (
-              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
-                <div className="flex items-start gap-4">
-                  {d.icon}
-                  <div>
-                    <h3 className="text-lg font-bold mb-2">{d.title}</h3>
-                    <p className="text-neutral-400 text-sm leading-relaxed">{d.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div className="pt-2">
-              <Link to="/docs/wiring/workflows" className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm">
-                Read the Workflows docs →
-              </Link>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <CodeBlock language="typescript" title="src/workflows/onboarding.workflow.ts">
-{`export const onboardingWorkflow = pikkuWorkflowFunc(
+})`,
+    }],
+    points: [
+      { title: 'Zero glue code', body: 'Pass any Pikku function as a tool — the agent inherits its type signature, description, and input schema automatically.' },
+      { title: 'Auth follows the agent', body: "Agents inherit the caller's session, permissions, and middleware. The rules that protect your HTTP endpoints protect every tool the agent can call." },
+      { title: 'Any LLM, same interface', body: 'Bring OpenAI, Anthropic, or any provider. Pikku handles tool calling, streaming, and context — you just swap the model name.' },
+    ],
+    docs: { label: 'Read the AI Agents docs', to: '/docs/wiring/ai-agents' },
+    codeFirst: true,
+  },
+  {
+    id: 'workflows',
+    eyebrow: 'Workflows',
+    title: <>Multi-step processes that <em>survive anything.</em></>,
+    lede: 'Write sequential logic like normal code. Pikku handles persistence, retries, and resumption — even across server restarts.',
+    code: [{
+      filename: 'src/workflows/onboarding.workflow.ts',
+      source: `export const onboardingWorkflow = pikkuWorkflowFunc(
   async ({ workflow }, { email, userId }) => {
     // Each step is persisted — safe to retry
     const user = await workflow.do(
@@ -378,34 +325,24 @@ function WorkflowsSection() {
 
     return { success: true }
   }
-)`}
-            </CodeBlock>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Addons Section */
-function AddonsSection() {
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="mb-16">
-          <span className="text-xs font-semibold tracking-widest uppercase text-white/65 block mb-4">Addons</span>
-          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
-            Install a backend feature<br />in one line
-          </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl">
-            Stripe billing. SendGrid emails. One <code className="text-primary text-lg">wireAddon()</code> call each. Install, configure secrets, call via namespaced RPC — fully typed.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-          <div className="space-y-4 min-w-0 overflow-hidden">
-            <CodeBlock language="typescript" title="src/wiring.ts">
-{`// One line per addon
+)`,
+    }],
+    points: [
+      { title: 'Deterministic replay', body: 'Completed steps are cached and never re-executed. A workflow that fails on step 4 resumes from step 4 — not from the beginning.' },
+      { title: 'Sleep for hours, days, or weeks', body: "workflow.sleep('5min') suspends execution without holding a server connection. Perfect for trial expirations, reminders, and follow-ups." },
+      { title: 'Survives restarts', body: 'State is persisted between steps. Deploy a new version mid-workflow and execution continues from where it left off.' },
+    ],
+    docs: { label: 'Read the Workflows docs', to: '/docs/wiring/workflows' },
+  },
+  {
+    id: 'addons',
+    eyebrow: 'Addons',
+    title: <>Install a backend feature <em>in one line.</em></>,
+    lede: 'Stripe billing. SendGrid emails. One wireAddon() call each. Install, configure secrets, call via namespaced RPC — fully typed.',
+    code: [
+      {
+        filename: 'src/wiring.ts',
+        source: `// One line per addon
 wireAddon({
   name: 'stripe',
   package: '@pikku/addon-stripe'
@@ -416,10 +353,11 @@ wireAddon({
   secretOverrides: {
     SENDGRID_API_KEY: 'MY_EMAIL_KEY'
   }
-})`}
-            </CodeBlock>
-            <CodeBlock language="typescript" title="src/functions/checkout.func.ts">
-{`// Call addon functions via namespaced RPC
+})`,
+      },
+      {
+        filename: 'src/functions/checkout.func.ts',
+        source: `// Call addon functions via namespaced RPC
 const checkout = pikkuFunc({
   func: async ({}, { plan }, { rpc }) => {
     const session = await rpc.invoke(
@@ -432,61 +370,27 @@ const checkout = pikkuFunc({
     )
     return { url: session.url }
   }
-})`}
-            </CodeBlock>
-          </div>
-
-          <div className="space-y-6">
-            {[
-              { icon: <Package className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Drop-in, not bolt-on', desc: 'Install a package, add one wireAddon() call, and its functions appear as namespaced RPC calls. No glue code, no adapters, no boilerplate.' },
-              { icon: <Blocks className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Fully typed across boundaries', desc: 'The CLI generates TypeScript definitions for every addon function. rpc.invoke(\'stripe:checkoutCreate\', ...) is autocompleted with the exact input and output types.' },
-              { icon: <KeyRound className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Secrets you control', desc: 'Addons declare what secrets they need. You map them to your own infrastructure with secretOverrides — no env vars leaking across packages.' },
-              { icon: <Plug className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Shared infrastructure', desc: 'Addons reuse your existing logger, database, and services — no duplicate connections. Each addon gets its own namespace, so nothing collides.' },
-            ].map((d, i) => (
-              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
-                <div className="flex items-start gap-4">
-                  {d.icon}
-                  <div>
-                    <h3 className="text-lg font-bold mb-2">{d.title}</h3>
-                    <p className="text-neutral-400 text-sm leading-relaxed">{d.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div className="pt-2">
-              <Link to="/docs/addon" className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm">
-                Read the Addons docs →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Gateway Section */
-function GatewaySection() {
-  return (
-    <section className="py-16 lg:py-24">
-      <div className="max-w-screen-xl mx-auto px-4">
-        <div className="mb-16">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <span className="text-xs font-semibold tracking-widest uppercase text-white/65">Gateway</span>
-            <span className="inline-block bg-white/10 border border-white/12 text-green-400 text-xs font-semibold px-2 py-0.5 rounded-full">New</span>
-          </div>
-          <Heading as="h2" className="text-4xl md:text-5xl font-bold mb-4">
-            One handler for every<br />messaging platform
-          </Heading>
-          <p className="text-xl text-neutral-400 max-w-2xl">
-            WhatsApp, Slack, Telegram, WebChat — write one function. The adapter normalizes every platform into the same message format. Three transport types cover every integration pattern.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto">
-          <div className="space-y-4 min-w-0 overflow-hidden">
-            <CodeBlock language="typescript" title="src/gateway.wiring.ts">
-{`// Webhook — platform POSTs to you
+})`,
+      },
+    ],
+    points: [
+      { title: 'Drop-in, not bolt-on', body: 'Install a package, add one wireAddon() call, and its functions appear as namespaced RPC calls. No glue code, no adapters.' },
+      { title: 'Fully typed across boundaries', body: "The CLI generates TypeScript definitions for every addon function — rpc.invoke('stripe:checkoutCreate', …) autocompletes with exact input and output types." },
+      { title: 'Secrets you control', body: 'Addons declare what secrets they need. You map them to your own infrastructure with secretOverrides.' },
+      { title: 'Shared infrastructure', body: 'Addons reuse your existing logger, database, and services. Each addon gets its own namespace, so nothing collides.' },
+    ],
+    docs: { label: 'Read the Addons docs', to: '/docs/addon' },
+    codeFirst: true,
+  },
+  {
+    id: 'gateway',
+    eyebrow: 'Gateway',
+    title: <>One handler for <em>every messaging platform.</em></>,
+    lede: 'WhatsApp, Slack, Telegram, WebChat — write one function. The adapter normalizes every platform into the same message format.',
+    code: [
+      {
+        filename: 'src/gateway.wiring.ts',
+        source: `// Webhook — platform POSTs to you
 wireGateway({
   name: 'whatsapp',
   type: 'webhook',
@@ -502,18 +406,11 @@ wireGateway({
   route: '/chat',
   adapter: webChatAdapter,
   func: handleMessage,
-})
-
-// Listener — persistent connection (Baileys, Signal)
-wireGateway({
-  name: 'signal',
-  type: 'listener',
-  adapter: signalAdapter,
-  func: handleMessage,
-})`}
-            </CodeBlock>
-            <CodeBlock language="typescript" title="src/gateway.functions.ts">
-{`// One handler for all platforms
+})`,
+      },
+      {
+        filename: 'src/gateway.functions.ts',
+        source: `// One handler for all platforms
 const handleMessage = pikkuFunc({
   func: async ({ database, logger }, { senderId, text }) => {
     logger.info(\`\${senderId}: \${text}\`)
@@ -522,60 +419,220 @@ const handleMessage = pikkuFunc({
     // Return value is auto-sent via the adapter
     return { text: \`Got it! You said: \${text}\` }
   }
-})`}
-            </CodeBlock>
-          </div>
+})`,
+      },
+    ],
+    points: [
+      { title: 'Webhook auto-verification', body: 'WhatsApp challenges, Slack url_verification, Telegram tokens — handled by the adapter, invisible to your code.' },
+      { title: 'Normalized messages', body: 'Every platform delivers the same message shape — senderId, text, attachments, metadata. Your handler never knows which platform sent it.' },
+      { title: 'Three transport types', body: 'Webhook for cloud APIs, WebSocket for browser chat widgets, listener for persistent connections (Baileys, Signal CLI, Matrix).' },
+      { title: 'Same middleware, same auth', body: 'Rate limiting, logging, permissions — your existing middleware works on gateways too.' },
+    ],
+    docs: { label: 'Read the Gateway docs', to: '/docs/wiring/gateway' },
+  },
+];
 
-          <div className="space-y-6">
-            {[
-              { icon: <Webhook className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Webhook with auto-verification', desc: 'Registers POST and GET routes automatically. WhatsApp challenges, Slack url_verification, Telegram tokens — handled by the adapter, invisible to your code.' },
-              { icon: <MessageSquare className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Normalized messages', desc: 'Every platform delivers the same GatewayInboundMessage — senderId, text, attachments, metadata. Your handler never knows which platform sent the message.' },
-              { icon: <Radio className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Three transport types', desc: 'Webhook for cloud APIs (WhatsApp, Slack, Telegram). WebSocket for browser chat widgets. Listener for persistent connections (Baileys, Signal CLI, Matrix).' },
-              { icon: <ShieldCheck className="w-5 h-5 text-primary mt-0.5 shrink-0" />, title: 'Same middleware, same auth', desc: 'Rate limiting, logging, permissions — your existing middleware works on gateways. wire.gateway gives you platform, senderId, and send() in every handler.' },
-            ].map((d, i) => (
-              <div key={i} className="bg-[#0d0d0d] border border-neutral-800 rounded-lg p-6">
-                <div className="flex items-start gap-4">
-                  {d.icon}
-                  <div>
-                    <h3 className="text-lg font-bold mb-2">{d.title}</h3>
-                    <p className="text-neutral-400 text-sm leading-relaxed">{d.desc}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <div className="pt-2">
-              <Link to="/docs/wiring/gateway" className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm">
-                Read the Gateway docs →
-              </Link>
-            </div>
-          </div>
+function FeatureSection({ f, index }: { f: Feature; index: number }) {
+  const codeCol = (
+    <div className={styles.featureCode}>
+      {f.code.map((c) => (
+        <CodeCard key={c.filename} filename={c.filename}>
+          <CodeBlock language="typescript">{c.source}</CodeBlock>
+        </CodeCard>
+      ))}
+    </div>
+  );
+  const pointsCol = (
+    <div className={styles.featurePoints}>
+      {f.points.map((p) => (
+        <Card key={p.title}>
+          <CardTitle>{p.title}</CardTitle>
+          <CardBody>{p.body}</CardBody>
+        </Card>
+      ))}
+      <Link to={f.docs.to} className={styles.docsLink}>{f.docs.label} →</Link>
+    </div>
+  );
+  return (
+    <Section id={f.id} variant={index % 2 === 0 ? 'default' : 'alt'}>
+      <Wrap wide>
+        <Eyebrow>{f.eyebrow}</Eyebrow>
+        <H2>{f.title}</H2>
+        <Lead>{f.lede}</Lead>
+        <div className={styles.featureGrid}>
+          {f.codeFirst ? <>{codeCol}{pointsCol}</> : <>{pointsCol}{codeCol}</>}
         </div>
-      </div>
-    </section>
+      </Wrap>
+    </Section>
   );
 }
 
+/* ════════════════════════════════════════════════════════════════
+   Runtimes
+   ════════════════════════════════════════════════════════════════ */
+function RuntimesSection() {
+  const allRuntimes = [...runtimes.cloud, ...runtimes.middleware, runtimes.custom];
+  return (
+    <Section>
+      <Wrap wide>
+        <Eyebrow>Deploy anywhere</Eyebrow>
+        <H2>Change your runtime. <em>Keep your functions.</em></H2>
+        <Lead>
+          The same code runs on Express, Fastify, AWS Lambda, Cloudflare Workers, Next.js and more.
+          Switching runtimes never touches your functions.
+        </Lead>
+        <div className={styles.runtimeChips}>
+          {allRuntimes.map((runtime, idx) => (
+            <Link key={idx} to={runtime.docs} className={styles.runtimeChip} title={`Deploy to ${runtime.name}`}>
+              <Image
+                width={20}
+                height={20}
+                sources={{
+                  light: `img/logos/${runtime.img.light}`,
+                  dark: `img/logos/${runtime.img.dark}`,
+                }}
+              />
+              {runtime.name}
+            </Link>
+          ))}
+        </div>
+        <p className={styles.runtimeNote}>
+          Plus any custom runtime via the adapter interface.{' '}
+          <Link to="/docs/custom-runtimes/custom-http-runtime">Build your own →</Link>
+        </p>
+      </Wrap>
+    </Section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Production features
+   ════════════════════════════════════════════════════════════════ */
+const PROD_FEATURES = [
+  { title: 'Type-safe clients', body: 'Auto-generated HTTP, WebSocket, and RPC clients with full IntelliSense.' },
+  { title: 'Auth & permissions', body: 'Cookie, bearer, API key auth with fine-grained permissions — built in.' },
+  { title: 'Services', body: 'Singleton and per-request dependency injection, type-safe and testable.' },
+  { title: 'Middleware', body: 'Before/after hooks for logging, metrics, tracing — across all protocols.' },
+  { title: 'Schema validation', body: 'Runtime validation against TypeScript input schemas. Supports Zod.' },
+  { title: 'Zero lock-in', body: 'Standard TypeScript, tiny runtime, MIT licensed. Bring your own everything.' },
+];
+
+function ProductionSection() {
+  return (
+    <Section variant="alt">
+      <Wrap wide>
+        <Eyebrow>Built for production</Eyebrow>
+        <H2>Production-grade <em>out of the box.</em></H2>
+        <div className={styles.prodGrid}>
+          {PROD_FEATURES.map((p) => (
+            <Card key={p.title}>
+              <CardTitle>{p.title}</CardTitle>
+              <CardBody>{p.body}</CardBody>
+            </Card>
+          ))}
+        </div>
+      </Wrap>
+    </Section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Console + testimonials + CTA
+   ════════════════════════════════════════════════════════════════ */
+function ConsoleSection() {
+  return (
+    <Section>
+      <Wrap wide>
+        <Eyebrow>The console</Eyebrow>
+        <H2>Every function, every wire, <em>one screen.</em></H2>
+        <Lead>
+          Browse functions, run agents, manage secrets, and trigger workflows —
+          without writing tooling code.
+        </Lead>
+        <div className={styles.consoleShot}>
+          <img
+            src="/img/console-screenshot.webp"
+            loading="lazy"
+            alt="Pikku Console — browse and inspect all functions, wirings, and services"
+          />
+        </div>
+        <Link to="/docs/console" className={styles.docsLink}>Learn about the Console →</Link>
+      </Wrap>
+    </Section>
+  );
+}
+
+function TestimonialsSection() {
+  return (
+    <Section variant="alt">
+      <Wrap>
+        <Eyebrow>From the teams who switched</Eyebrow>
+        <H2>Built for the problems <em>developers actually have.</em></H2>
+        <div className={styles.quoteGrid}>
+          {testimonials.map((t, idx) => (
+            <figure key={idx} className={styles.quote}>
+              <blockquote>"{t.quote}"</blockquote>
+              <figcaption>
+                <strong>{t.author}</strong>
+                <span>{t.role}{t.company ? ` @ ${t.company}` : ''}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </Wrap>
+    </Section>
+  );
+}
+
+function CTASection() {
+  const [copied, setCopied] = React.useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText('npm create pikku@latest');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  };
+  return (
+    <Section>
+      <Wrap>
+        <div className={styles.cta}>
+          <H2 style={{ textAlign: 'center', margin: '0 auto 18px' }}>
+            Stop rewriting <em>the same function.</em>
+          </H2>
+          <p className={styles.ctaLede}>Write it once. Pikku wires it everywhere.</p>
+          <button type="button" className={styles.ctaCmd} onClick={copy} title="Copy to clipboard">
+            {copied ? '✓ copied' : 'npm create pikku@latest'}
+          </button>
+          <div className={styles.ctaActions}>
+            <BtnPrimary to="/getting-started">Build your first API in 5 minutes</BtnPrimary>
+            <BtnGhost href="https://github.com/pikkujs/pikku">View on GitHub</BtnGhost>
+          </div>
+        </div>
+      </Wrap>
+    </Section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Page assembly
+   ════════════════════════════════════════════════════════════════ */
 export default function Developers() {
   return (
     <Layout
-      title="Pikku for Developers - Code Examples & API"
-      description="See Pikku in action — code examples for HTTP, WebSocket, queues, cron, CLI, AI agents, workflows, and more. One function, every protocol."
+      title="Pikku for Developers — Code Examples & API"
+      description="See Pikku in action — code examples for HTTP, WebSocket, queues, cron, CLI, AI agents, workflows, and more. One function, every wiring."
     >
       <NavbarPageToggle isDeveloperPage={true} />
-      <Hero />
-      <main>
+      <PaperPage>
+        <Hero />
         <BeforeAfterSection />
-        <AhaMomentSection />
-        <AgentsSection />
-        <WorkflowsSection />
-        <AddonsSection />
-        <GatewaySection />
-        <DeployAnywhereSection />
-        <ProductionFeaturesSection />
+        <SameFunctionSection />
+        {FEATURES.map((f, i) => <FeatureSection key={f.id} f={f} index={i} />)}
+        <RuntimesSection />
+        <ProductionSection />
         <ConsoleSection />
         <TestimonialsSection />
-        <CallToActionSection />
-      </main>
+        <CTASection />
+      </PaperPage>
     </Layout>
   );
 }

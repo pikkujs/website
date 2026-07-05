@@ -14,7 +14,7 @@ Pikku provides official storage backend packages that implement the service inte
 | Package | Database | Best For |
 |---------|----------|----------|
 | [`@pikku/kysely-postgres`](./postgresql) | PostgreSQL | Production workloads with full SQL, transactions, and reliability |
-| [`@pikku/kysely`](./kysely) | SQL (via Kysely) | Shared Kysely base; pairs with `@pikku/kysely-mysql`, `@pikku/kysely-sqlite`, `@pikku/kysely-node-sqlite` |
+| [`@pikku/kysely`](./kysely) | SQL (via Kysely) | Shared Kysely base; pairs with `@pikku/kysely-mysql`, `@pikku/kysely-sqlite`, `@pikku/kysely-node-sqlite`, `@pikku/kysely-bun-sqlite` |
 | [`@pikku/redis`](./redis) | Redis | High-throughput state management and caching |
 | [`@pikku/mongodb`](./mongodb) | MongoDB | Document-oriented storage with flexible schemas |
 
@@ -33,6 +33,10 @@ Each backend implements one or more of these core interfaces:
 | `EventHubStore` | Channel topic subscription tracking | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
 | `DeploymentService` | Multi-instance deployment tracking | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
 | `SecretService` | Encrypted secret storage | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
+| `SessionStore` | User session persistence keyed by `pikkuUserId` | `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` (`InMemorySessionStore` built into core) |
+| `CredentialService` | Encrypted per-user credentials (OAuth tokens, API keys) | `@pikku/kysely` (re-exported by `@pikku/kysely-postgres`) |
+| `AuditService` | Durable audit event storage | `@pikku/kysely` |
+| `EventHubService` | Cross-instance pub/sub delivery | `@pikku/kysely-postgres` (`PgEventHubService` via LISTEN/NOTIFY) |
 
 ## Quick Comparison
 
@@ -59,7 +63,7 @@ Each backend implements one or more of these core interfaces:
 - You already have Redis in your stack
 
 **Use Kysely (`@pikku/kysely`)** when you need:
-- A non-Postgres SQL dialect — MySQL (`@pikku/kysely-mysql`) or SQLite (`@pikku/kysely-sqlite`, `@pikku/kysely-node-sqlite`)
+- A non-Postgres SQL dialect — MySQL (`@pikku/kysely-mysql`) or SQLite (`@pikku/kysely-sqlite`, `@pikku/kysely-node-sqlite`, `@pikku/kysely-bun-sqlite`)
 - The Kysely query builder for custom queries
 - Type-safe SQL queries
 

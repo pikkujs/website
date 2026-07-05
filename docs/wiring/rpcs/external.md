@@ -13,7 +13,7 @@ Exposed RPCs let external clients invoke your Pikku functions via HTTP POST endp
 Functions with `expose: true` can be called by external systems:
 
 ```typescript reference title="remote-rpc.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/remote-rpc.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/remote-rpc.functions.ts
 ```
 
 Everything else is derived from the function:
@@ -29,7 +29,7 @@ See [Middleware](../../core-features/middleware.md) for auth configuration.
 Wire an HTTP endpoint that calls any exposed function:
 
 ```typescript
-import { wireHTTP } from '#pikku/http'
+import { wireHTTP } from '#pikku'
 import { pikkuSessionlessFunc } from '#pikku'
 
 // Generic RPC caller function

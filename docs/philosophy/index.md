@@ -40,10 +40,10 @@ Wire it to whatever you need:
 
 ```typescript
 // Process from a background queue
-wireQueueWorker({ queue: 'emails', func: sendWelcomeEmail })
+wireQueueWorker({ name: 'emails', func: sendWelcomeEmail })
 
 // Or trigger on a schedule
-wireScheduler({ schedule: '0 9 * * *', func: sendDailyDigest })
+wireScheduler({ name: 'dailyDigest', schedule: '0 9 * * *', func: sendDailyDigest })
 ```
 
 Same business logic. Different entry points. Zero duplication.

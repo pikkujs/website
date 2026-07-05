@@ -6,9 +6,9 @@ description: Authorization and access control
 
 # Permission Guards
 
-Permissions in Pikku run before your function executes. They're boolean checks that determine whether a request should proceed - if any permission returns `false`, the request is rejected with a 403 Forbidden.
+Permissions in Pikku run before your function executes. They're boolean checks that determine whether a request should proceed - if no permission group passes, the request is rejected with a 403 Forbidden.
 
-Permissions run in parallel, so they should be independent checks that don't depend on execution order.
+Permissions should be independent checks that don't depend on execution order or side effects.
 
 ## Your First Permission
 
@@ -44,7 +44,7 @@ export const deleteUser = pikkuFunc<{ userId: string }, void>({
 })
 ```
 
-Both permissions must pass for the function to execute. If either returns `false`, the request is rejected.
+Each key is a separate permission group, and groups use **OR logic** - the function executes if *either* `auth` or `admin` passes. To require both checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
 
 ## Permission Signature
 
@@ -240,9 +240,9 @@ Use `return false` for authorization failures. Only throw for actual errors.
 
 ## Permission Logic and Execution
 
-:::warning Important: Permissions Run in Parallel
-All permissions execute concurrently, not sequentially. This means:
-- **Don't rely on execution order** - Permissions may run in any order
+:::warning Important: Don't Rely on Execution Order
+Permission groups are evaluated until one passes (short-circuiting), and permissions inside an array run concurrently via `Promise.all`. This means:
+- **Don't rely on execution order** - A group (or array member) may not run at all if an earlier group already passed
 - **Avoid side effects** - Don't modify shared state or depend on other permissions running first
 - **Keep them independent** - Each permission should be a self-contained check
 :::

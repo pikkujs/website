@@ -44,7 +44,7 @@ export const chargeCard = pikkuSessionlessFunc<
   { chargeId: string }
 >({
   func: async ({ secrets }, data) => {
-    const stripe = await secrets.getSecretJSON('STRIPE_CREDENTIALS')
+    const stripe = await secrets.getSecret('STRIPE_CREDENTIALS')
     // stripe.apiKey and stripe.webhookSecret are typed
 
     return { chargeId: '...' }

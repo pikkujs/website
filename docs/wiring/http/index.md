@@ -33,7 +33,7 @@ export const getBook = pikkuFunc<{ bookId: string }, Book>({
 
 ```typescript
 // get-book.http.ts
-import { wireHTTP } from '#pikku/http'
+import { wireHTTP } from '#pikku'
 import { getBook } from './functions/books.function.js'
 
 wireHTTP({
@@ -56,7 +56,7 @@ That's it! Your function is now available at `GET /books/:bookId`. Pikku automat
 The `wireHTTP` function accepts a configuration object with all routing options:
 
 ```typescript
-import { wireHTTP } from '#pikku/http'
+import { wireHTTP } from '#pikku'
 import { deleteBook } from './functions/books.function.js'
 import { requireBookOwner, requireAdmin } from './permissions.js'
 import { auditMiddleware, setCookieMiddleware } from './middleware.js'
@@ -153,7 +153,7 @@ These permissions **add to** the permissions defined on the function itself.
 You can also apply permissions globally or to route prefixes:
 
 ```typescript
-import { addHTTPPermission } from '#pikku/http'
+import { addHTTPPermission } from '#pikku'
 import { requireAuth, requireAdmin } from './permissions.js'
 
 // Global permissions - applies to all HTTP routes
@@ -187,7 +187,7 @@ wireHTTP({
 You can also apply middleware globally or to route prefixes:
 
 ```typescript
-import { addHTTPMiddleware } from '#pikku/http'
+import { addHTTPMiddleware } from '#pikku'
 import { corsMiddleware, loggingMiddleware, adminAuthMiddleware } from './middleware.js'
 
 // Global - applies to all HTTP routes

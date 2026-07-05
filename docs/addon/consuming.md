@@ -8,6 +8,46 @@ description: How to use addons in your application
 
 Once an addon is published, any Pikku application can consume it with minimal configuration. Functions become available via namespaced RPC calls, and trigger sources can be wired to your own handler functions.
 
+There are two ways to get an addon into your project:
+
+1. **npm** — install a published package (`npm install @pikku/addon-postgres`) and wire it by package name
+2. **Community registry** — copy the addon's source into your repo with `pikku fabric addon add` (shadcn-style)
+
+## Installing from the Community Registry
+
+`pikku fabric addon add` installs an addon from the Fabric community registry by **copying its source** into your project — like shadcn/ui components, the code lands in your repo where you can read, audit, and fork it:
+
+```bash
+npx pikku fabric addon add <id>
+yarn install
+```
+
+What it does:
+
+- Downloads the addon artifact and extracts it into `<addonDir>/<name>/` (default `addons/`, override with `--dir` or `addons.addonDir` in `pikku.config.json`)
+- Registers `<addonDir>/*` as a workspace glob in your root `package.json`, so `yarn install` symlinks the addon into `node_modules` — `wireAddon({ package })` then resolves it by package name, unchanged
+- Records provenance (registry id + version) in a CLI-owned `pikku-addons.json`, so the origin is known even after you edit or fork the copied source
+
+After installing, wire it exactly like an npm addon:
+
+```typescript
+import { wireAddon } from '#pikku'
+
+wireAddon({
+  name: 'invoicing',
+  package: '@acme/addon-invoicing', // the copied package's name
+})
+```
+
+| Option | Description |
+|--------|-------------|
+| `--dir` | Addon directory (overrides `pikku.config.json` `addons.addonDir`, default `addons/`) |
+| `--apiUrl` | Override the fabric-api URL for this call |
+
+:::tip Publishing your own
+The other side of the registry is `pikku fabric addon verify` (check an addon directory is correctly built) and `pikku fabric addon publish` (pack and upload it). See [Creating Addons](./creating.md).
+:::
+
 ## Configuration
 
 Wire addons in a `*.wiring.ts` file:

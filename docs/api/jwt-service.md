@@ -76,11 +76,11 @@ await services.jwt.encode('1w', payload)   // 1 week
 Pikku provides a JOSE-based implementation:
 
 ```typescript reference title="jose-jwt-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/jose/src/jose-jwt-service.ts
+https://github.com/pikkujs/pikku/blob/main/packages/services/jose/src/jose-jwt-service.ts
 ```
 
 ## Interface
 
 ```typescript reference title="jwt-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/jwt-service.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/jwt-service.ts
 ```

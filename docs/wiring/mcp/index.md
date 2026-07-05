@@ -15,11 +15,11 @@ Your domain functions don't need to know they're being called by an AI agent. Th
 Here are MCP functions and wiring from the templates, showing a tool, resource, and two prompts:
 
 ```typescript reference title="mcp.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/mcp.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/mcp.functions.ts
 ```
 
 ```typescript reference title="mcp.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/mcp.wiring.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/mcp.wiring.ts
 ```
 
 That's it! AI agents can now request your documentation. Pikku automatically:
@@ -34,10 +34,9 @@ That's it! AI agents can now request your documentation. Pikku automatically:
 When you define an MCP function with TypeScript types:
 
 ```typescript
-export const getProjectDocs = pikkuMCPResourceFunc<
-  { section: string },
-  MCPResourceResponse
->({ ... })
+export const getProjectDocs = pikkuMCPResourceFunc<{ section: string }>(
+  async (services, data, { mcp }) => { ... }
+)
 ```
 
 Pikku automatically:
@@ -61,13 +60,8 @@ Pikku automatically:
 Resources provide data sources for AI models - documentation, user data, search results, or any queryable information:
 
 ```typescript
-import type { MCPResourceResponse } from '#pikku'
-
-export const searchCode = pikkuMCPResourceFunc<
-  { query: string; limit?: number },
-  MCPResourceResponse
->({
-  func: async ({ database }, data) => {
+export const searchCode = pikkuMCPResourceFunc<{ query: string; limit?: number }>(
+  async ({ database }, data) => {
     const results = await database.query('code_index', {
       where: { content: { contains: data.query } },
       limit: data.limit ?? 20
@@ -77,10 +71,8 @@ export const searchCode = pikkuMCPResourceFunc<
       uri: `file://${r.filePath}:${r.lineNumber}`,
       text: r.codeSnippet
     }))
-  },
-  title: 'Search codebase',
-  tags: ['mcp', 'code-search']
-})
+  }
+)
 ```
 
 **Response format**: Array of `{ uri: string, text: string }`
@@ -96,13 +88,8 @@ Tools let AI models perform actions - creating records, running operations, or m
 Prompts generate reusable prompt templates for AI interactions:
 
 ```typescript
-import type { MCPPromptResponse } from '#pikku'
-
-export const codeReviewPrompt = pikkuMCPPromptFunc<
-  { filePath: string; context: string },
-  MCPPromptResponse
->({
-  func: async ({ database }, data) => {
+export const codeReviewPrompt = pikkuMCPPromptFunc<{ filePath: string; context: string }>(
+  async ({ database }, data) => {
     const file = await database.query('files', {
       where: { path: data.filePath }
     })
@@ -116,62 +103,53 @@ export const codeReviewPrompt = pikkuMCPPromptFunc<
         }
       }
     ]
-  },
-  title: 'Generate code review prompt',
-  tags: ['mcp', 'code-review']
-})
+  }
+)
 ```
 
 **Response format**: Array of `{ role: 'user' | 'assistant' | 'system', content: { type: 'text' | 'image', text: string, data?: string } }`
 
 ## Wiring Configuration
 
-Wire your MCP functions with these configuration options:
+Resources and prompts are wired explicitly; tools register themselves when exported:
 
 ```typescript
-import { wireMCPTool } from '#pikku/mcp'
-import { createIssue } from './functions/issues.function.js'
-import { requireAdmin } from './permissions.js'
-import { auditMiddleware } from './middleware.js'
+import { wireMCPResource, wireMCPPrompt } from '#pikku'
+import { getUserInfo, codeReviewPrompt } from './functions/mcp.functions.js'
 
-wireMCPTool({
-  // Required
-  name: 'createIssue',
-  description: 'Create a new issue in the tracker',
-  func: createIssue,
+wireMCPResource({
+  uri: 'user/{userId}',
+  title: 'User Information',
+  description: 'Get user profile by ID',
+  func: getUserInfo
+})
 
-  // Optional
-  title: 'Create Issue',  // Display name for the tool
-  middleware: [auditMiddleware],
-  permissions: { admin: requireAdmin },
-  tags: ['issues', 'write']
+wireMCPPrompt({
+  name: 'codeReview',
+  description: 'Generate a code review prompt',
+  func: codeReviewPrompt
 })
 ```
 
 **Required Properties:**
 - `wireMCPResource`: `uri`, `title`, `description`, `func`
-- `wireMCPTool`: `name`, `description`, `func` (optional: `title`)
 - `wireMCPPrompt`: `name`, `description`, `func`
+- Tools have **no wiring call** — pass `description` (plus optional `name`, `title`, `summary`, `middleware`, `permissions`, `tags`) directly to `pikkuMCPToolFunc`.
 
-All three wiring functions support the same optional configuration (middleware, permissions, tags).
+Both wiring functions also accept optional `middleware`, `permissions`, and `tags`.
 
 ## Running the MCP Server
 
-Start your MCP server to expose functions to AI agents:
+MCP endpoints run through the MCP server runtime (stdio transport), which any MCP client can connect to. See the [MCP Server runtime](/docs/runtimes/mcp-server) for setup and client configuration.
 
-```bash
-npx pikku serve mcp
-```
-
-AI agents can now discover and invoke your resources, tools, and prompts through the MCP protocol.
+AI agents can then discover and invoke your resources, tools, and prompts through the MCP protocol.
 
 ## Error Handling
 
 MCP functions should throw errors when operations fail. Register errors with both HTTP status codes and MCP error codes:
 
 ```typescript
-import { PikkuError } from '@pikku/core/errors'
-import { addError } from '#pikku'
+import { PikkuError, addError } from '@pikku/core/errors'
 
 export class ResourceNotFoundError extends PikkuError {}
 
@@ -185,11 +163,8 @@ addError(ResourceNotFoundError, {
 Now use your error in MCP functions:
 
 ```typescript
-export const getFile = pikkuMCPResourceFunc<
-  { path: string },
-  MCPResourceResponse
->({
-  func: async ({ database }, data) => {
+export const getFile = pikkuMCPResourceFunc<{ path: string }>(
+  async ({ database }, data) => {
     const file = await database.query('files', {
       where: { path: data.path }
     })
@@ -204,10 +179,8 @@ export const getFile = pikkuMCPResourceFunc<
         text: file.content
       }
     ]
-  },
-  title: 'Get file contents',
-  tags: ['mcp']
-})
+  }
+)
 ```
 
 ## Next Steps

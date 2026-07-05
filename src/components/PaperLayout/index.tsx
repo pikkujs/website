@@ -121,8 +121,8 @@ export function Terminal() {
         <div><span className={styles.tOk}>✓</span> database <span className={styles.tHl}>postgres</span> — introspected, types generated</div>
         <div><span className={styles.tOk}>✓</span> auth, content, secrets — ready</div>
         <div><span className={styles.tOk}>✓</span> email previews · workflows · agents — mounted</div>
-        <div><span className={styles.tOk}>✓</span> console <span className={styles.tUrl}>localhost:4173</span></div>
-        <div><span className={styles.tOk}>✓</span> api <span className={styles.tUrl}>localhost:8787</span> <span className={styles.cursor} /></div>
+        <div><span className={styles.tOk}>✓</span> console <span className={styles.tUrl}>localhost:3000/console</span></div>
+        <div><span className={styles.tOk}>✓</span> api <span className={styles.tUrl}>localhost:3000</span> <span className={styles.cursor} /></div>
       </div>
     </div>
   );

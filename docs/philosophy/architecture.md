@@ -201,7 +201,7 @@ async function main(): Promise<void> {
   await appServer.start()
 
   const scheduler = new PikkuTaskScheduler(singletonServices)
-  scheduler.startAll()
+  await scheduler.start()
 }
 ```
 

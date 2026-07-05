@@ -6,7 +6,7 @@ description: Complete reference for pikku.config.json
 
 # Configuration
 
-The `pikku.config.json` file configures how the Pikku CLI scans your codebase and generates files.
+The `pikku.config.json` file configures how the Pikku CLI scans your codebase and generates files. The CLI looks for it in the current directory and walks up parent directories until it hits the git repository root, so you can run `pikku` from anywhere inside your project.
 
 ## Minimal Configuration
 
@@ -24,7 +24,7 @@ The `pikku.config.json` file configures how the Pikku CLI scans your codebase an
 |--------|------|----------|-------------|
 | `tsconfig` | `string` | ✅ | Path to TypeScript configuration file |
 | `srcDirectories` | `string[]` | ✅ | Directories to scan for Pikku functions and wirings |
-| `outDir` | `string` | ✅ | Where generated files are written (default: `.pikku`) |
+| `outDir` | `string` | ✅ | Where generated files are written (conventionally `.pikku`) |
 | `rootDir` | `string` | ❌ | Root directory for resolving paths (default: config file directory) |
 | `extends` | `string` | ❌ | Path to another `pikku.config.json` to inherit from |
 | `ignoreFiles` | `string[]` | ❌ | Glob patterns to skip (default: `["**/*.test.ts", "**/*.spec.ts", "**/node_modules/**", "**/dist/**"]`) |
@@ -93,7 +93,7 @@ The `scaffold` section controls where `pikku new` puts generated files and which
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `pikkuDir` | `string` | Directory for auto-generated scaffold files (RPC endpoints, agent endpoints, console functions, workflow routes) |
+| `pikkuDir` | `string` | Directory for auto-generated scaffold files — RPC endpoints, agent endpoints, console functions, workflow routes, the Better Auth wiring (default: `<srcDirectories[0]>/scaffold`) |
 | `functionDir` | `string` | Where `pikku new function` puts files |
 | `wiringDir` | `string` | Where `pikku new wiring` puts files |
 | `middlewareDir` | `string` | Where `pikku new middleware` puts files |
@@ -106,9 +106,11 @@ The `scaffold` section controls where `pikku new` puts generated files and which
 |--------|--------|-------------|
 | `rpc` | `"auth"` \| `"no-auth"` \| `false` | Generate public RPC endpoint |
 | `console` | `"auth"` \| `"no-auth"` \| `false` | Generate console functions |
+| `scenarios` | `"auth"` \| `"no-auth"` \| `false` | Generate scenario instrumentation functions (without needing the console addon) |
 | `agent` | `"auth"` \| `"no-auth"` \| `false` | Generate public agent endpoints |
 | `workflow` | `"auth"` \| `"no-auth"` \| `false` | Generate workflow routes |
 | `events` | `"auth"` \| `"no-auth"` \| `false` | Generate the realtime events channel + SSE stream (`events.gen.ts`) |
+| `remoteRpc` | `"auth"` \| `"no-auth"` \| `false` | Generate the remote internal RPC queue worker + HTTP endpoint (`rpc-remote.gen.ts`) |
 
 ## AI Agents
 
@@ -117,6 +119,72 @@ AI agent models are declared **per-agent** using the provider-qualified
 there is no config-level model alias map, defaults block, or per-agent override
 map in `pikku.config.json`. Request-time overrides are passed as `input.model`
 when the agent runs. See [AI Agents](/docs/wiring/ai-agents) for details.
+
+## Local Database
+
+Configure the local development database used by `pikku dev` and the `pikku db` commands:
+
+```json
+{
+  "db": {
+    "engine": "sqlite",
+    "pgVersion": 16
+  }
+}
+```
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `db.engine` | `"sqlite"` \| `"postgres"` | Local dev database engine (default: sqlite) |
+| `db.pgVersion` | `number` | Postgres version when `engine` is `"postgres"` |
+
+## Emails
+
+```json
+{
+  "emailTemplatesDir": "src/emails"
+}
+```
+
+Directory containing email templates, locales, partials, and `theme.json`. Used by `pikku emails init` / `pikku emails generate`.
+
+## Auth (Better Auth)
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `authFile` | `string` | Path to write the generated Better Auth wiring (`auth.gen.ts`). Must be within `srcDirectories` |
+| `authTypesFile` | `string` | Path for the typed `pikkuBetterAuth` re-export (default: `{outDir}/auth/auth.types.ts`) |
+| `authMetaJsonFile` | `string` | Path for the generated auth metadata (enabled social providers/plugins; default: `{outDir}/auth/pikku-auth-meta.gen.json`) |
+
+## Scenarios
+
+Configure scenario actors and target environments for `pikku scenario run <environment>`:
+
+```json
+{
+  "scenarios": {
+    "actors": {
+      "alice": {
+        "email": "alice@example.com",
+        "name": "Alice",
+        "jobTitle": "Admin",
+        "personality": "Skeptical power user who reads every tooltip"
+      }
+    },
+    "environments": {
+      "staging": {
+        "apiUrl": "https://staging.example.com/api",
+        "signInPath": "/auth/sign-in/actor",
+        "rpcPath": "/rpc"
+      }
+    }
+  }
+}
+```
+
+Each actor takes an `email` (required) plus optional `name`, `jobTitle`, and `personality`. Actors generate a typed `createScenarioActors` factory (see the `scenarioActorsFile` output) and appear as personas in the Console. Each environment takes an `apiUrl` (with the HTTP prefix) plus optional `signInPath` (default: `/auth/sign-in/actor`) and `rpcPath` (default: `/rpc`).
+
+The actor secret is never configured here — it comes from the `SCENARIO_ACTOR_SECRET` environment variable at run time.
 
 ## Workflows
 
@@ -182,9 +250,10 @@ Configure deployment providers and settings.
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `deploy.providers` | `Record<string, string>` | Map of provider names to adapter packages |
-| `deploy.defaultProvider` | `string` | Default provider for `pikku deploy` commands |
+| `deploy.providers` | `Record<string, string>` | Map of provider names to adapter packages (defaults: `cloudflare`, `serverless`, `azure`, `standalone`) |
+| `deploy.defaultProvider` | `string` | Default provider for `pikku deploy` commands (default: `cloudflare`) |
 | `deploy.serverlessIncompatible` | `string[]` | Function names that can't run in serverless (routed to server fallback) |
+| `deploy.defaultTarget` | `"serverless"` \| `"server"` | Default deploy target for functions without an explicit `deploy` flag (default: `serverless`) |
 
 ## Addon Mode
 
@@ -204,10 +273,14 @@ Or with metadata for the addon registry:
     "displayName": "Slack Integration",
     "description": "Slack API functions for Pikku",
     "categories": ["Communication"],
-    "icon": "slack-icon.svg"
+    "icon": "slack-icon.svg",
+    "serverlessIncompatible": ["streamLargeExport"],
+    "openapi": { "version": "1.2.0", "hash": "abc123" }
   }
 }
 ```
+
+The addon object also accepts `serverlessIncompatible` (function names that must run on a server) and `openapi` (`version` + `hash`, stamped by `pikku new addon --openapi` to track the spec the addon was generated from). Two related top-level keys: `addonName` overrides the addon's package name in generated metadata (defaults to the `name` in `package.json`), and `addonMetaJsonFile` overrides where the addon metadata JSON is written (default: `{outDir}/console/pikku-addon-meta.gen.json`).
 
 ## OpenAPI Generation
 
@@ -308,6 +381,17 @@ Configure lint rules for the inspector:
 | `runtimeDir` | `string` | Runtime artifacts directory (dev.db, content, tmp). Resolved relative to `rootDir`. Default: `<rootDir>/.pikku-runtime` |
 | `namedFilters` | `Record<string, InspectorFilters>` | Named filter presets, selected via `pikku --filter <name>` |
 | `stateOutput` / `stateInput` | `string` | Save/load inspector state to/from JSON (skips re-inspection) |
+| `security` | `boolean` | Always run the data-classification security lint (same as `--security` per invocation) |
+| `tsc` / `tscSummary` | `boolean` | Always run `tsc --noEmit` after codegen and fail on type errors (same as `--tsc` / `--tsc-summary`) |
+| `tests.outputDir` | `string` | Output directory for the `pikku tests` harness |
+| `addons.addonDir` | `string` | Where community-registry addons installed via `pikku fabric addon add` are copied (default: `addons/`) |
+| `userSessionType` | `string` | Which `UserSession` type to use when the inspector finds more than one (same as `--user-session-type`) |
+| `singletonServicesFactoryType` | `string` | Which singleton services factory to use when multiple exist (same as `--singleton-services-factory-type`) |
+| `wireServicesFactoryType` | `string` | Which wire services factory to use when multiple exist (same as `--wire-services-factory-type`) |
+
+### Output File Overrides
+
+Every generated file path is individually overridable at the top level of the config. By default they're all derived from `outDir` (e.g. `functionsFile`, `httpWiringsFile`, `schemaDirectory`, `typesDeclarationFile`, `bootstrapFile`, `scenarioActorsFile`, and several dozen more — one key per generated file listed in [Generated Files](/docs/pikku-cli/generated-files)). You rarely need these; the common exceptions are `authFile` (which must live in your source tree) and the `clientFiles` block above.
 
 ### Native Binary
 

@@ -22,7 +22,7 @@ We'll use express here as the example request/response as it's most popular.
 This wraps the request object provided into a pikku request object.
 
 ```typescript reference title="Pikku Express Request"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/pikku-express-request.ts
+https://github.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/express-pikku-http-request.ts
 ```
 
 ### Create a class to extend PikkuResponse
@@ -30,30 +30,23 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/runtimes/expr
 This wraps the response object provided into a pikku response object.
 
 ```typescript reference title="Pikku Express Response"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/pikku-express-response.ts
+https://github.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/express-pikku-http-response.ts
 ```
 
-### Call fetch with the correct request and response object
+### Call fetchData with the correct request and response object
 
-The `runRoute` method will find the correct route to run, and check permissions / authentication, validate data against the schema and map any errors to their errors.
+The `fetchData` method will find the correct route to run, check permissions / authentication, validate data against the schema and map any errors to their HTTP responses. Services are resolved from Pikku's global state, which is set up by importing the generated bootstrap.
 
 ```typescript title="Pikku Middleware"
-await fetch(
-    new PikkuExpressRequest(req),
-    new PikkuExpressResponse(res),
-    singletonServices,
-    createWireServices,
+import { fetchData } from '@pikku/core/http'
+
+await fetchData(
+    new ExpressPikkuHTTPRequest(req),
+    new ExpressPikkuHTTPResponse(res),
     {
-        // The HTTP method
-        method: req.method.toLowerCase() as any,
-        // The HTTP Route
-        route: req.path,
-        // Whether we want allow the route handler to return a 404, or
-        // not do anything if the route isn't found
-        respondWith404: true
-        // This skips us trying to find a session for a route that
-        // isn't authenticated
-        skipUserSession: false
+        // Whether we want to allow the route handler to return a 404,
+        // or not do anything if the route isn't found
+        respondWith404: true,
     }
 )
 ```
@@ -63,5 +56,5 @@ await fetch(
 To get an idea how this all ties together, let's now look at the express middleware plugin.
 
 ```typescript reference title="Pikku Express Middleware"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/pikku-express-middleware.ts
+https://github.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/pikku-express-middleware.ts
 ```

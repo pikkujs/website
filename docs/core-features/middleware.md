@@ -285,30 +285,35 @@ Use HTTP transport middleware for:
 - API versioning concerns
 - Different auth strategies per route prefix
 
-### Scheduler Transport Middleware
+### Global & Tag Middleware
 
-For scheduled tasks, you can apply middleware globally:
+To apply middleware across every wiring (HTTP, Channel, Queue, Scheduler, MCP, CLI, Workflow, Agent), use `addGlobalMiddleware`. To apply it to any wiring carrying a specific tag, use `addTagMiddleware`:
 
 ```typescript
-import { addSchedulerMiddleware } from '#pikku/scheduler'
+import { addGlobalMiddleware, addTagMiddleware } from '@pikku/core/middleware'
 
-// All scheduled tasks will run this middleware
-addSchedulerMiddleware([withSchedulerMetrics, withRetry])
+// Every wiring runs this middleware
+addGlobalMiddleware([telemetryMiddleware])
+
+// Any wiring tagged 'admin' runs this middleware
+addTagMiddleware('admin', [requireAdmin])
 ```
 
-Use scheduler transport middleware for:
-- Performance monitoring across all scheduled tasks
-- Retry logic for failed tasks
-- Alerting on task failures
+Use global and tag middleware for:
+- Performance monitoring across all entry points (including scheduled tasks)
+- Alerting on failures
+- Cross-cutting auth for a tagged group of functions
 
 ## Execution Order
 
 Middleware executes from the broadest scope inward to the most specific. Think of it like layers of an onion - the outer layers run first:
 
-1. **Transport-specific middleware** - All HTTP (`addHTTPMiddleware('*', [...])`) or all Schedulers (`addSchedulerMiddleware([...])`)
-2. **Prefix-based middleware** - HTTP routes matching prefix (`addHTTPMiddleware('/prefix', [...])`)
-3. **Wire-specific middleware** - Defined in `wireHTTP`/`wireChannel`/etc.
-4. **Function-level middleware** - Defined in function config
+1. **Global middleware** - Every wiring (`addGlobalMiddleware([...])`)
+2. **Transport-specific middleware** - All HTTP routes (`addHTTPMiddleware('*', [...])`)
+3. **Prefix-based middleware** - HTTP routes matching prefix (`addHTTPMiddleware('/prefix', [...])`)
+4. **Wire-specific middleware** - Defined in `wireHTTP`/`wireChannel`/etc.
+5. **Tag middleware** - Wirings carrying a matching tag (`addTagMiddleware('tag', [...])`)
+6. **Function-level middleware** - Defined in function config
 
 After the function completes, they run in reverse order (onion model).
 
@@ -364,19 +369,19 @@ export const transportAware = pikkuMiddleware(async (services, wire, next) => {
   }
 
   if (wire.channel) {
-    // Channel-specific: connectionId, channelData, userId
-    const connectionId = wire.channel.connectionId
-    const customData = wire.channel.channelData
+    // Channel-specific: channelId, openingData, send, close
+    const channelId = wire.channel.channelId
+    const openingData = wire.channel.openingData
   }
 
   if (wire.queue) {
-    // Queue-specific: queue name, payload, attempt
-    const attempt = wire.queue.attempt
+    // Queue-specific: queueName, jobId, updateProgress, fail, discard
+    const jobId = wire.queue.jobId
   }
 
   if (wire.scheduledTask) {
-    // Scheduler-specific: cron, lastRun, nextRun
-    const cron = wire.scheduledTask.cron
+    // Scheduler-specific: name, schedule, executionTime, skip
+    const schedule = wire.scheduledTask.schedule
   }
 
   await next()
@@ -453,14 +458,14 @@ pikkuMiddleware((services, wire, next) => { ... })
 :::tip Transport-Agnostic vs Transport-Specific Middleware
 **Prefer function-level middleware for transport-agnostic logic** - Logging, metrics, validation, etc. should work regardless of whether your function is called via HTTP, WebSocket, or queue.
 
-**Use transport-specific middleware (like `addHTTPMiddleware`) for HTTP-only concerns** - Things like cookie parsing, CORS headers, or security headers that only make sense for HTTP. These middleware should throw `InvalidMiddlewareInteractionError` if used on non-HTTP transports to fail fast:
+**Use transport-specific middleware (like `addHTTPMiddleware`) for HTTP-only concerns** - Things like cookie parsing, CORS headers, or security headers that only make sense for HTTP. These middleware should throw `InvalidMiddlewareWireError` if used on non-HTTP transports to fail fast:
 
 ```typescript
-import { InvalidMiddlewareInteractionError } from '@pikku/core/errors'
+import { InvalidMiddlewareWireError } from '@pikku/core/errors'
 
 export const cookieParser = pikkuMiddleware(async (services, wire, next) => {
   if (!wire.http) {
-    throw new InvalidMiddlewareInteractionError()
+    throw new InvalidMiddlewareWireError()
   }
   // Parse cookies from HTTP request
   await next()

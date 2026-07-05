@@ -76,7 +76,7 @@ npx pikku
 Here's the workflow from the templates showing all three step types:
 
 ```typescript reference title="workflow.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/workflow.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/workflow.functions.ts
 ```
 
 Each `pikkuWorkflowFunc` exported from a `*.workflow.ts` / functions file is discovered and registered automatically by `npx pikku` — there is no separate wiring call. The execution mode (inline vs remote) is determined automatically based on whether a queue service is configured in your singleton services.

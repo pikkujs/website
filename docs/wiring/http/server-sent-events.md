@@ -15,11 +15,11 @@ Pikku supports SSE as a progressive enhancement for GET routes — your function
 Here are SSE functions and wiring from the templates, showing a progress stream and a periodic update stream:
 
 ```typescript reference title="sse.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/sse.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/sse.functions.ts
 ```
 
 ```typescript reference title="sse.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/sse.wiring.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/sse.wiring.ts
 ```
 
 This pattern works for both SSE and regular HTTP clients:

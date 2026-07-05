@@ -6,7 +6,7 @@ description: Testing Pikku functions
 
 # Testing
 
-Testing Pikku functions is straightforward - they're just functions that take services, data, and session as parameters. Mock the services, call the function, assert the result.
+Testing Pikku functions is straightforward - they're just functions that take services, data, and a wire object as parameters. Mock the services, call the function, assert the result.
 
 ## Basic Testing
 
@@ -27,7 +27,7 @@ test('should return book by ID', async () => {
   const result = await getBook.func(
     mockServices as any,
     { bookId: '123' },
-    undefined // session
+    {} as any // wire (holds session and transport info)
   )
 
   assert.equal(result.title, 'Test Book')
@@ -51,7 +51,8 @@ test('should use session userId', async () => {
 
   const session = { userId: 'user-123' }
 
-  await getProfile.func(mockServices as any, {}, session)
+  // Session is passed on the wire object (third parameter)
+  await getProfile.func(mockServices as any, {}, { session } as any)
 })
 ```
 
@@ -66,7 +67,7 @@ test('should throw NotFoundError', async () => {
   }
 
   await assert.rejects(
-    getBook.func(mockServices as any, { bookId: 'invalid' }, undefined),
+    getBook.func(mockServices as any, { bookId: 'invalid' }, {} as any),
     NotFoundError
   )
 })
@@ -106,7 +107,7 @@ test('should create order', async () => {
     }
   })
 
-  const result = await createOrder.func(services as any, { productId: 'abc' }, undefined)
+  const result = await createOrder.func(services as any, { productId: 'abc' }, {} as any)
   assert.equal(result.id, '456')
 })
 ```

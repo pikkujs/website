@@ -4,6 +4,12 @@ const sidebars: SidebarsConfig = {
   docs: [
     'index',
     {
+      type: 'link',
+      label: 'Getting Started',
+      href: '/getting-started',
+      description: 'From an empty folder to a running platform',
+    },
+    {
     type: 'category',
     label: 'Philosophy',
     description: 'Why Pikku exists and the problems it solves',
@@ -171,6 +177,14 @@ const sidebars: SidebarsConfig = {
       },
       {
         type: 'doc',
+        id: 'runtimes/azure-functions',
+        label: 'Azure Functions',
+        customProps: {
+          wirings: ['http', 'cron', 'queue']
+        }
+      },
+      {
+        type: 'doc',
         id: 'runtimes/express-middleware',
         label: 'Express Middleware',
         customProps: {
@@ -207,6 +221,30 @@ const sidebars: SidebarsConfig = {
         label: 'WS Handler',
         customProps: {
           wirings: ['http', 'websocket']
+        }
+      },
+      {
+        type: 'doc',
+        id: 'runtimes/bun-server',
+        label: 'Bun',
+        customProps: {
+          wirings: ['http', 'websocket', 'mcp']
+        }
+      },
+      {
+        type: 'doc',
+        id: 'runtimes/node-http-server',
+        label: 'Node HTTP',
+        customProps: {
+          wirings: ['http', 'mcp']
+        }
+      },
+      {
+        type: 'doc',
+        id: 'runtimes/tanstack-start',
+        label: 'TanStack Start',
+        customProps: {
+          wirings: ['http', 'rpc']
         }
       },
       {

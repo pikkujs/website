@@ -130,8 +130,33 @@ By default, Pikku functions require authentication (`auth: true`). This means a 
 
 ### Authentication Functions (Login, Logout, GetMe)
 
-```typescript reference title="auth.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/auth.functions.ts
+```typescript title="auth.functions.ts"
+import { pikkuFunc, pikkuSessionlessFunc } from '#pikku'
+
+export const login = pikkuSessionlessFunc<{ email: string; password: string }, { token: string; user: User }>({
+  func: async ({ jwt, userService }, data, { setSession }) => {
+    const user = await userService.verifyCredentials(data.email, data.password)
+    const token = await jwt.encode({ value: 30, unit: 'day' }, { userId: user.id })
+    await setSession({ userId: user.id })
+    return { token, user }
+  },
+  auth: false,
+  title: 'Log in'
+})
+
+export const logout = pikkuFunc<void, void>({
+  func: async (services, _data, { clearSession }) => {
+    await clearSession()
+  },
+  title: 'Log out'
+})
+
+export const getMe = pikkuFunc<void, User>({
+  func: async ({ userService }, _data, { session }) => {
+    return await userService.getUser(session.userId)
+  },
+  title: 'Get the current user'
+})
 ```
 
 The `login` function uses `jwt.encode` to issue a token and returns it alongside the user. The `logout` function calls `clearSession()` to clear the session. The `getMe` function reads the current session to return the authenticated user.
@@ -296,8 +321,8 @@ Control how your functions are exposed:
 
 ```typescript
 export const internalHelper = pikkuFunc<Input, Output>({
-  func: async (services, data) => { ... },
-  internal: true  // Not exposed via external RPC
+  func: async (services, data) => { ... }
+  // No flags: internal-only by default, not exposed via external RPC
 })
 
 export const publicAPI = pikkuFunc<Input, Output>({
@@ -307,7 +332,8 @@ export const publicAPI = pikkuFunc<Input, Output>({
 ```
 
 - `expose: true` - Makes the function available for external RPC calls
-- `internal: true` - Marks the function as internal-only (not exposed externally)
+- Functions are internal-only by default - without `expose: true` they can only be called from wirings and other functions
+- `mcp: true` - Additionally surfaces the function as an MCP tool
 
 ## Organizing Your Code
 
@@ -333,7 +359,7 @@ Functions live in `*.function.ts` files and only export Pikku functions. Service
 
 :::tip Why This Matters: Portability & Testability
 By keeping your services as plain TypeScript (no Pikku dependencies), you can:
-- **Test functions in isolation** - Just call `myFunction.func(mockServices, mockData, mockSession)`
+- **Test functions in isolation** - Just call `myFunction.func(mockServices, mockData, mockWire)`
 - **Reuse logic elsewhere** - Your database service can be used in scripts, migrations, or other tools
 - **Avoid lock-in** - If you ever move away from Pikku, your core logic stays intact
 

@@ -18,17 +18,17 @@ Pikku functions primarily work with JSON-serializable data:
 
 ### File Uploads
 
-File uploads are not yet fully supported. See the [content service documentation](/docs/api/content-service) for our planned approach to file handling.
+Functions don't accept multipart file uploads directly. Instead, files are handled through the [content service](/docs/api/content-service) — clients get signed upload/download URLs (local disk, S3, or Backblaze B2 backends) and the file bytes never flow through your functions.
 
-## Not a Standalone Server
+## Bring a Runtime (or Use Ours)
 
-Pikku is not a standalone HTTP server or runtime. It requires an adapter:
+Pikku functions don't bind to a port by themselves — they run inside a runtime adapter. That can be:
 
-- Express, Fastify, Bun, Next.js
-- AWS Lambda, Cloudflare Workers
-- And more...
+- **A full Pikku server** — `@pikku/express-server`, `@pikku/fastify-server`, `@pikku/bun-server`, `@pikku/node-http-server`, `@pikku/uws-server` — or simply `pikku dev` during development
+- **Middleware in an existing app** — Express middleware, Fastify plugin, Next.js, TanStack Start
+- **Serverless** — AWS Lambda, Cloudflare Workers, Azure Functions
 
-This is by design - Pikku focuses on business logic and routing, not server concerns like connection handling or request parsing.
+The constraint is that the transport layer is always pluggable: Pikku owns routing, validation, and your business logic, while connection handling belongs to the adapter you pick. In practice this is what lets the same code move between servers and serverless without changes.
 
 ## Runtime Support
 

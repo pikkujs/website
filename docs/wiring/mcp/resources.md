@@ -2,16 +2,18 @@
 
 Resources are data sources for AI agents. They provide queryable information - documentation, user data, search results, or any content your AI agents need to access.
 
-:::warning Always Specify Output Types
-MCP functions must **always specify the output type explicitly**. TypeScript's type inference doesn't work reliably for MCP responses, so you need to be explicit:
+:::info Single Type Parameter
+MCP resource functions take a **single input type parameter** — the output is always `MCPResourceResponse`:
 
 ```typescript
-// ✅ Correct - explicit type
-pikkuMCPResourceFunc<InputType, MCPResourceResponse>
-
-// ❌ Wrong - will cause type issues
+// ✅ Correct - input type only
 pikkuMCPResourceFunc<InputType>
+
+// ❌ Wrong - there is no output type parameter
+pikkuMCPResourceFunc<InputType, MCPResourceResponse>
 ```
+
+Alternatively, pass a schema as `input` (e.g. Zod) and the input type is inferred.
 :::
 
 **Recommended Pattern**: Keep your MCP resources thin. Use RPC to invoke your existing domain functions, then format the response for MCP. This keeps your business logic reusable and your codebase clean.
@@ -23,7 +25,6 @@ Let's create a resource that provides user information. Both the domain function
 ```typescript
 // user.function.ts
 import { pikkuFunc, pikkuMCPResourceFunc } from '#pikku'
-import type { MCPResourceResponse } from '#pikku'
 import { NotFoundError } from '@pikku/core/errors'
 
 // Domain function - reusable across all transports
@@ -52,11 +53,8 @@ export const getUserInfo = pikkuFunc<
 })
 
 // MCP adapter - just formats the response for AI agents
-export const getUserInfoMCP = pikkuMCPResourceFunc<
-  { userId: string },
-  MCPResourceResponse
->({
-  func: async (services, data, { rpc }) => {
+export const getUserInfoMCP = pikkuMCPResourceFunc<{ userId: string }>(
+  async (services, data, { rpc }) => {
     const user = await rpc.invoke('getUserInfo', data)
 
     return [
@@ -65,19 +63,18 @@ export const getUserInfoMCP = pikkuMCPResourceFunc<
         text: JSON.stringify(user)
       }
     ]
-  },
-  title: 'Get user information (MCP adapter)',
-  tags: ['mcp', 'users']
-})
+  }
+)
 ```
 
 ```typescript
 // user.mcp.ts
-import { wireMCPResource } from '#pikku/mcp'
+import { wireMCPResource } from '#pikku'
 import { getUserInfoMCP } from './functions/user.function.js'
 
 wireMCPResource({
-  name: 'userInfo',
+  uri: 'user/{userId}',
+  title: 'User Information',
   description: 'Retrieve user information by user ID',
   func: getUserInfoMCP,
   tags: ['user', 'profile']
@@ -110,11 +107,8 @@ export const getProjectReadme = pikkuFunc<void, { content: string; path: string 
 Then the MCP adapter:
 
 ```typescript
-export const getProjectReadmeMCP = pikkuMCPResourceFunc<
-  void,
-  MCPResourceResponse
->({
-  func: async (services, data, { rpc }) => {
+export const getProjectReadmeMCP = pikkuMCPResourceFunc<void>(
+  async (services, data, { rpc }) => {
     const readme = await rpc.invoke('getProjectReadme', {})
 
     return [
@@ -123,10 +117,8 @@ export const getProjectReadmeMCP = pikkuMCPResourceFunc<
         text: readme.content
       }
     ]
-  },
-  title: 'Get project README (MCP adapter)',
-  tags: ['mcp', 'docs']
-})
+  }
+)
 ```
 
 ## Parameterized Resources
@@ -154,11 +146,8 @@ export const searchDocs = pikkuFunc<
 The MCP adapter that formats results:
 
 ```typescript
-export const searchDocsMCP = pikkuMCPResourceFunc<
-  { query: string; limit?: number },
-  MCPResourceResponse
->({
-  func: async (services, data, { rpc }) => {
+export const searchDocsMCP = pikkuMCPResourceFunc<{ query: string; limit?: number }>(
+  async (services, data, { rpc }) => {
     const results = await rpc.invoke('searchDocs', data)
 
     // Return multiple resource objects
@@ -166,10 +155,8 @@ export const searchDocsMCP = pikkuMCPResourceFunc<
       uri: `docs://${doc.section}/${doc.id}`,
       text: doc.content
     }))
-  },
-  title: 'Search documentation (MCP adapter)',
-  tags: ['mcp', 'docs', 'search']
-})
+  }
+)
 ```
 
 ## Response Format
@@ -205,16 +192,17 @@ return [
 Wire your resource functions with these options:
 
 ```typescript
-import { wireMCPResource } from '#pikku/mcp'
-import { searchDocs } from './functions/docs.function.js'
+import { wireMCPResource } from '#pikku'
+import { searchDocsMCP } from './functions/docs.function.js'
 import { requireRead } from './permissions.js'
 import { auditMiddleware } from './middleware.js'
 
 wireMCPResource({
   // Required
-  name: 'searchDocs',
+  uri: 'docs/search/{query}',
+  title: 'Search Documentation',
   description: 'Search project documentation',
-  func: searchDocs,
+  func: searchDocsMCP,
 
   // Optional
   middleware: [auditMiddleware],
@@ -257,11 +245,8 @@ export const getFile = pikkuFunc<
 The MCP adapter just formats the result:
 
 ```typescript
-export const getFileMCP = pikkuMCPResourceFunc<
-  { path: string },
-  MCPResourceResponse
->({
-  func: async (services, data, { rpc }) => {
+export const getFileMCP = pikkuMCPResourceFunc<{ path: string }>(
+  async (services, data, { rpc }) => {
     const file = await rpc.invoke('getFile', data)
 
     return [
@@ -270,10 +255,8 @@ export const getFileMCP = pikkuMCPResourceFunc<
         text: file.content
       }
     ]
-  },
-  title: 'Get file contents (MCP adapter)',
-  tags: ['mcp', 'files']
-})
+  }
+)
 ```
 
 Errors are automatically formatted according to MCP protocol with the registered error codes.
@@ -307,11 +290,8 @@ export const getRelatedDocs = pikkuFunc<
 The MCP adapter returns multiple resource objects:
 
 ```typescript
-export const getRelatedDocsMCP = pikkuMCPResourceFunc<
-  { docId: string },
-  MCPResourceResponse
->({
-  func: async (services, data, { rpc }) => {
+export const getRelatedDocsMCP = pikkuMCPResourceFunc<{ docId: string }>(
+  async (services, data, { rpc }) => {
     const result = await rpc.invoke('getRelatedDocs', data)
 
     // Return the main doc and all related docs
@@ -322,10 +302,8 @@ export const getRelatedDocsMCP = pikkuMCPResourceFunc<
         text: r.content
       }))
     ]
-  },
-  title: 'Get document and related documents (MCP adapter)',
-  tags: ['mcp', 'docs']
-})
+  }
+)
 ```
 
 This allows AI agents to efficiently fetch related data in a single request.

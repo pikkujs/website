@@ -15,11 +15,11 @@ Your domain functions don't need to know they're being called by a scheduler. Th
 Here's a scheduled task example from the templates — a daily summary and a weekly cleanup:
 
 ```typescript reference title="scheduled.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/scheduled.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/scheduled.functions.ts
 ```
 
 ```typescript reference title="scheduled.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/scheduled.wiring.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/scheduled.wiring.ts
 ```
 
 That's it! Your functions will now run on their configured schedules.
@@ -91,31 +91,36 @@ Common examples:
 ```typescript
 // Every 5 minutes
 wireScheduler({
-  schedule:'*/5 * * * *',
+  name: 'healthCheck',
+  schedule: '*/5 * * * *',
   func: healthCheck
 })
 
 // Every hour at minute 30
 wireScheduler({
-  schedule:'30 * * * *',
+  name: 'hourlyUpdate',
+  schedule: '30 * * * *',
   func: hourlyUpdate
 })
 
 // Every day at 2:30 AM
 wireScheduler({
-  schedule:'30 2 * * *',
+  name: 'dailyBackup',
+  schedule: '30 2 * * *',
   func: dailyBackup
 })
 
 // Every Monday at 9:00 AM
 wireScheduler({
-  schedule:'0 9 * * 1',
+  name: 'weeklyReport',
+  schedule: '0 9 * * 1',
   func: weeklyReport
 })
 
 // First day of every month at midnight
 wireScheduler({
-  schedule:'0 0 1 * *',
+  name: 'monthlyBilling',
+  schedule: '0 0 1 * *',
   func: monthlyBilling
 })
 ```
@@ -129,12 +134,13 @@ Cron expressions are interpreted as **UTC** by default (unless your runtime spec
 ### Basic Wiring
 
 ```typescript
-import { wireScheduler } from '#pikku/scheduler'
+import { wireScheduler } from '#pikku'
 import { runMaintenance } from './functions/maintenance.function.js'
 
 wireScheduler({
   // Required
-  schedule:'0 3 * * *',
+  name: 'runMaintenance',
+  schedule: '0 3 * * *',
   func: runMaintenance,
 
   // Optional
@@ -148,11 +154,12 @@ wireScheduler({
 For different schedules across environments:
 
 ```typescript
-import { wireScheduler } from '#pikku/scheduler'
+import { wireScheduler } from '#pikku'
 import { config } from './config.js'
 import { runBackup } from './functions/backup.function.js'
 
 wireScheduler({
+  name: 'runBackup',
   schedule: config.backupSchedule,  // '0 2 * * *' in prod, '0 */4 * * *' in dev
   func: runBackup
 })
@@ -201,7 +208,8 @@ export const schedulerMetrics = pikkuMiddleware(
 
 ```typescript
 wireScheduler({
-  schedule:'0 3 * * *',
+  name: 'runMaintenance',
+  schedule: '0 3 * * *',
   func: runMaintenance,
   middleware: [schedulerMetrics, retryMiddleware]
 })
@@ -209,12 +217,12 @@ wireScheduler({
 
 ### Global Middleware
 
-Apply middleware to all scheduled tasks:
+Apply middleware to all wirings (including scheduled tasks) with `addGlobalMiddleware`, or to a shared tag with `addTagMiddleware`:
 
 ```typescript
-import { addSchedulerMiddleware } from '#pikku/scheduler'
+import { addGlobalMiddleware } from '#pikku'
 
-addSchedulerMiddleware([schedulerMetrics, alertMiddleware])
+addGlobalMiddleware([schedulerMetrics, alertMiddleware])
 ```
 
 ## Error Handling
@@ -249,7 +257,7 @@ You can wire multiple schedules in a single file:
 
 ```typescript
 // housekeeping.schedule.ts
-import { wireScheduler } from '#pikku/scheduler'
+import { wireScheduler } from '#pikku'
 import {
   cleanupOldLogs,
   updateStatistics,
@@ -259,25 +267,29 @@ import {
 
 // Every hour - cleanup logs
 wireScheduler({
-  schedule:'0 * * * *',
+  name: 'cleanupOldLogs',
+  schedule: '0 * * * *',
   func: cleanupOldLogs
 })
 
 // Every 6 hours - update stats
 wireScheduler({
-  schedule:'0 */6 * * *',
+  name: 'updateStatistics',
+  schedule: '0 */6 * * *',
   func: updateStatistics
 })
 
 // Daily at 2 AM - archive old data
 wireScheduler({
-  schedule:'0 2 * * *',
+  name: 'archiveOldData',
+  schedule: '0 2 * * *',
   func: archiveOldData
 })
 
 // Every 15 minutes - refresh cache
 wireScheduler({
-  schedule:'*/15 * * * *',
+  name: 'refreshCache',
+  schedule: '*/15 * * * *',
   func: refreshCache
 })
 ```

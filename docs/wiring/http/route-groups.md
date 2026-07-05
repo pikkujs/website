@@ -13,7 +13,7 @@ For larger APIs, `defineHTTPRoutes` and `wireHTTPRoutes` let you organise routes
 Use `defineHTTPRoutes` to create a route contract:
 
 ```typescript reference title="todos.http.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/todos.http.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/todos.http.ts
 ```
 
 `defineHTTPRoutes` doesn't register anything — it returns a route contract that can be composed and wired later.
@@ -38,7 +38,7 @@ Use `wireHTTPRoutes` to register route contracts:
 
 ```typescript
 // app.http.ts
-import { wireHTTPRoutes } from '#pikku/http'
+import { wireHTTPRoutes } from '#pikku'
 import { todosRoutes } from './routes/todos.routes.js'
 import { authRoutes } from './routes/auth.routes.js'
 

@@ -42,7 +42,7 @@ Access variables through the `variables` service. When you use the generated `Ty
 ```typescript
 export const connectToDb = pikkuSessionlessFunc<void, { connected: boolean }>({
   func: async ({ variables }, _data) => {
-    const config = await variables.getJSON('POSTGRES_PARAMS')
+    const config = await variables.get('POSTGRES_PARAMS')
     // config.host, config.port, config.database are typed
 
     const connection = await createConnection(config)
@@ -67,7 +67,7 @@ const variables = new TypedVariablesService(baseVariablesService)
 | **Examples** | Database hosts, ports, feature flags | API keys, tokens, passwords |
 | **Wire function** | `wireVariable` | `wireSecret` |
 | **Service** | `variables` | `secrets` |
-| **Access method** | `variables.getJSON(id)` | `secrets.getSecretJSON(id)` |
+| **Access method** | `variables.get(id)` | `secrets.getSecret(id)` |
 
 Use variables for anything you'd comfortably put in a `.env` file without encrypting. Use secrets for anything that needs secure storage.
 

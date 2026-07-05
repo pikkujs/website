@@ -14,15 +14,19 @@ Your business logic shouldn't care how it's invoked. Write it once as a **typed 
 - **Server-Sent Events** - Progressive enhancement, stream updates
 - **Queue** - Background jobs and async processing
 - **Cron** - Scheduled tasks
+- **Workflows** - Durable multi-step processes
 - **RPC** - Internal function-to-function calls
+- **Triggers** - Event-driven subscriptions
+- **AI Agents** - Conversational agents built from your functions
 - **MCP** - AI agent tools (Claude, GPT, and more)
 - **CLI** - Command-line interfaces
+- **Gateway** - Messaging platforms like Slack
 
 No code duplication. No logic fragmentation. **Just functions.**
 
 This flexibility means you can build for traditional servers and serverless platforms using the same codebase - without the headaches of mixing paradigms.
 
-**Current limitations:** File uploads and non-JSON content types aren't supported yet.
+**Current limitations:** See [Limitations](/docs/philosophy/limitations) for what's not covered yet.
 
 ---
 
@@ -32,7 +36,7 @@ Pick your runtime. Change it tomorrow. Your code stays the same.
 
 - **Traditional Servers** - [Express](https://expressjs.com), [Fastify](https://www.fastify.io), [uWS](https://github.com/uNetworking/uWebSockets.js)
 - **Serverless** - [AWS Lambda](https://aws.amazon.com/lambda), [Azure Functions](https://azure.microsoft.com/en-us/products/functions/), [Cloudflare Workers](https://workers.cloudflare.com)
-- **AI Agents** - [MCP](https://modelcontextprotocol.io/docs/philosophy/resources) for Claude, GPT, and other models
+- **AI Agents** - [MCP](https://modelcontextprotocol.io) for Claude, GPT, and other models
 - **Full-Stack Frameworks** - [Next.js](https://nextjs.org) with App or Pages Router
 
 **Start with a monolith. Scale to microservices. Optimize individual functions.** All without rewriting a single line of business logic.

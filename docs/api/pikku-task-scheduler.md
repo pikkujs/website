@@ -94,5 +94,5 @@ async function main() {
 ## Source
 
 ```typescript reference title="in-memory-scheduler-service.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/schedule/src/in-memory-scheduler-service.ts
+https://github.com/pikkujs/pikku/blob/main/packages/schedule/src/in-memory-scheduler-service.ts
 ```

@@ -17,11 +17,11 @@ A trigger has two parts:
 Here's a complete trigger example from the templates. The source polls an event using `setInterval`, and the target function processes the payload:
 
 ```typescript reference title="trigger.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/trigger.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/trigger.functions.ts
 ```
 
 ```typescript reference title="trigger.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/trigger.wiring.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/trigger.wiring.ts
 ```
 
 The trigger function:
@@ -167,7 +167,7 @@ Triggers can also start [graph workflows](../workflows/index.md) instead of simp
 wireTrigger({
   name: 'order-received',
   func: processOrderWorkflow,
-  graph: 'process-order'  // Start this graph workflow
+  graph: true  // The target is a graph workflow
 })
 ```
 

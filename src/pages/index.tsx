@@ -6,10 +6,6 @@ import { PaperPage, Terminal } from '../components/PaperLayout';
 import styles from './index.module.css';
 import snippets from '../data/snippets.json';
 
-// ─── Replace with your YouTube video ID when ready ──────────────
-const VIDEO_ID = '';
-// ────────────────────────────────────────────────────────────────
-
 /* ── Screenshot frame with browser chrome ────────────────────── */
 function ScreenshotFrame({ src, alt, addr, wide = false }: { src: string; alt: string; addr: string; wide?: boolean }) {
   return (
@@ -22,6 +18,21 @@ function ScreenshotFrame({ src, alt, addr, wide = false }: { src: string; alt: s
       </div>
       <img src={src} alt={alt} loading="lazy" />
     </div>
+  );
+}
+
+/* ── Click-to-copy command chip ──────────────────────────────── */
+function CopyCmd({ cmd }: { cmd: string }) {
+  const [copied, setCopied] = React.useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(cmd);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
+  };
+  return (
+    <button type="button" className={styles.heroCmd} onClick={copy} title="Copy to clipboard">
+      {copied ? '✓ copied' : cmd}
+    </button>
   );
 }
 
@@ -46,7 +57,7 @@ function Hero() {
             <div className={styles.heroActions}>
               <Link href="/getting-started" className={styles.btnPrimary}>Get started</Link>
               <Link href="#platform" className={styles.btnGhost}>See how it works</Link>
-              <span className={styles.heroCmd}>npx pikku dev</span>
+              <CopyCmd cmd="npx pikku dev" />
             </div>
           </div>
           <Terminal />
@@ -60,66 +71,32 @@ function Hero() {
    Trust strip
    ════════════════════════════════════════════════════════════════ */
 function TrustStrip() {
-  const logos = ['marta', 'BambooRose', 'AgreeWe', 'HeyGermany', 'Calligraphy Cut'];
+  const logos: { name: string; url: string; img?: string }[] = [
+    { name: 'marta', img: 'marta-dark.svg', url: 'https://marta.de' },
+    { name: 'BambooRose', url: 'https://bamboorose.com' },
+    { name: 'AgreeWe', url: 'https://www.agreewe.com' },
+    { name: 'HeyGermany', img: 'heygermany-light.svg', url: 'https://hey-germany.com' },
+    { name: 'Calligraphy Cut', img: 'calligraphycut-light.svg', url: 'https://calligraphy-cut.com' },
+  ];
   return (
     <div className={styles.trust}>
       <div className={styles.wrap}>
         <div className={styles.trustIn}>
           <span className={styles.trustLabel}>Running in production at</span>
           <div className={styles.trustLogos}>
-            {logos.map((name) => (
-              <span key={name} className={styles.trustLogo}>{name}</span>
+            {logos.map((l) => (
+              l.img ? (
+                <Link key={l.name} href={l.url} className={styles.trustLogoLink} title={l.name}>
+                  <img src={`/img/logos/${l.img}`} alt={l.name} loading="lazy" />
+                </Link>
+              ) : (
+                <Link key={l.name} href={l.url} className={styles.trustLogo}>{l.name}</Link>
+              )
             ))}
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   Video — "See it in 90 seconds"
-   ════════════════════════════════════════════════════════════════ */
-function VideoSection() {
-  return (
-    <section id="video" className={styles.sectionDark}>
-      <div className={styles.wrap}>
-        <div className={styles.eyebrow}>See it in action</div>
-        <h2 className={styles.h2}>
-          From zero to a running platform in <em>90 seconds.</em>
-        </h2>
-        <p className={styles.secLede}>
-          Watch the full setup — local dev, the console, writing a function, and deploying to production.
-          No editing, no cuts.
-        </p>
-
-        <div className={styles.videoOuter}>
-          <div className={styles.videoFrame}>
-            {VIDEO_ID ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${VIDEO_ID}?rel=0&modestbranding=1`}
-                title="Pikku — 90 second demo"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <div className={styles.videoPlaceholder}>
-                <img src="/img/console-screenshot.webp" alt="" aria-hidden />
-                <div className={styles.playRing}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style={{ color: '#f7f5f0', marginLeft: 3 }}>
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-                <span className={styles.videoCaption}>Video coming soon — set VIDEO_ID in index.tsx</span>
-              </div>
-            )}
-          </div>
-          {!VIDEO_ID && (
-            <p className={styles.videoDuration}>~90 seconds · no cuts · no slides</p>
-          )}
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -134,7 +111,7 @@ function PlatformSection() {
     { n: '04', title: 'Email, with previews', body: 'Generate transactional email and preview every message live in the console — before a single one is sent.' },
     { n: '05', title: 'Workflows & agents', body: 'Durable, restart-proof workflows and AI agents run natively — no separate engine to operate.' },
     { n: '06', title: 'One binary', body: 'The entire platform is a single command. No container orchestration to maintain just to run "hello world."' },
-    { n: '07', title: 'Audit trails', body: 'Decide what to audit and Pikku records who did what, and when — across every entry point. Compliance-grade history without a separate system.', wide: true },
+    { n: '07', title: 'Audit trails', body: 'Every action can leave a record — who, what, when — no matter which entry point it came through. History your auditors will actually accept.', wide: true },
   ];
 
   return (
@@ -271,18 +248,8 @@ function ConsoleSection() {
           <ScreenshotFrame
             src="/img/console-screenshot.webp"
             alt="Pikku Console — browse and run functions, inspect wirings"
-            addr="localhost:4173 — Pikku Console"
+            addr="localhost:3000/console — Pikku Console"
             wide
-          />
-          <ScreenshotFrame
-            src="/img/console-screenshot.png"
-            alt="Pikku Console — function detail view"
-            addr="localhost:4173 — Functions"
-          />
-          <ScreenshotFrame
-            src="/img/last-slide.webp"
-            alt="Pikku Console — workflows and queue overview"
-            addr="localhost:4173 — Workflows"
           />
         </div>
         <p className={styles.consoleCaption}>
@@ -311,7 +278,7 @@ function DeploySection() {
       title: 'Standalone',
       who: 'Run it anywhere you control.',
       body: 'Bundle the entire platform into a single executable and run it on your own infrastructure. A complete server in one file.',
-      cmd: <><span className={styles.thl}>pikku</span> deploy standalone</>,
+      cmd: <><span className={styles.thl}>pikku</span> deploy apply -p standalone</>,
       pill: 'oss',
     },
     {
@@ -319,7 +286,7 @@ function DeploySection() {
       title: 'Your cloud',
       who: 'Your account, your bill.',
       body: 'Deploy the open-source way to AWS or Cloudflare. Same application, your infrastructure, no lock-in.',
-      cmd: <><span className={styles.thl}>pikku</span> deploy aws · cloudflare</>,
+      cmd: <><span className={styles.thl}>pikku</span> deploy apply -p aws · cloudflare</>,
       pill: 'oss',
     },
     {
@@ -327,7 +294,7 @@ function DeploySection() {
       title: 'Fabric',
       who: 'Managed, with an AI that knows your system.',
       body: 'Push and forget. Every function becomes a serverless worker, fully observable — and you can talk to your platform in plain language.',
-      cmd: <><span className={styles.thl}>pikku</span> deploy fabric</>,
+      cmd: <><span className={styles.thl}>pikku</span> fabric deploy apply</>,
       pill: 'managed',
       featured: true,
     },
@@ -382,6 +349,10 @@ function FabricSection() {
             <p className={styles.fabricP}>
               It's the same application your team ran locally, now hosted, observable, and conversational.
             </p>
+            <p className={styles.fabricP}>
+              <strong>Not a developer?</strong> This works for you too — describe the product you want and
+              the assistant builds the data, the screens, the emails, and the deployment. No terminal, no code.
+            </p>
             <Link href="https://pikkufabric.com" className={styles.fabricBtn}>
               Explore Fabric
             </Link>
@@ -415,29 +386,6 @@ function FabricSection() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Non-dev
-   ════════════════════════════════════════════════════════════════ */
-function NonDevSection() {
-  return (
-    <section id="nondev" className={`${styles.sectionDark} ${styles.nondev}`}>
-      <div className={styles.wrap}>
-        <div className={styles.nondevCard}>
-          <div className={styles.eyebrow}>Not a developer?</div>
-          <h2 className={styles.h2} style={{ margin: '0 auto 18px' }}>You can still use all of this.</h2>
-          <p className={styles.secLede} style={{ margin: '0 auto 30px' }}>
-            Open Fabric and an assistant builds the whole thing for you — the data, the screens, the emails,
-            the deployment. You describe the product you want; it ships a real one. No terminal, no code.
-          </p>
-          <Link href="https://pikkufabric.com" className={styles.btnPrimary}>
-            Start without code
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
    CTA
    ════════════════════════════════════════════════════════════════ */
 function CTASection() {
@@ -460,7 +408,7 @@ function CTASection() {
         </div>
         <p className={styles.engNote}>
           Engineers — curious how it works underneath?{' '}
-          <Link href="/docs/core-features/functions">Read the framework docs →</Link>
+          <Link href="/developers">See Pikku for developers →</Link>
         </p>
       </div>
     </section>
@@ -480,14 +428,12 @@ export default function Home() {
       <PaperPage>
         <Hero />
         <TrustStrip />
-        <VideoSection />
         <PlatformSection />
         <ParitySection />
         <EnterpriseSection />
         <ConsoleSection />
         <DeploySection />
         <FabricSection />
-        <NonDevSection />
         <CTASection />
       </PaperPage>
     </Layout>

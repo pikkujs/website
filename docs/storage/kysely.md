@@ -14,8 +14,10 @@ The Kysely packages provide storage implementations using the [Kysely](https://k
 | `@pikku/kysely` | PostgreSQL | `postgres.js` via `kysely-postgres-js` |
 | `@pikku/kysely-mysql` | MySQL | `mysql2` via `kysely` |
 | `@pikku/kysely-sqlite` | SQLite | `better-sqlite3` via `kysely` |
+| `@pikku/kysely-node-sqlite` | SQLite | Node's built-in `node:sqlite` |
+| `@pikku/kysely-bun-sqlite` | SQLite | Bun's built-in `bun:sqlite` |
 
-All three packages export the same service interfaces — choose the one matching your database.
+All packages export the same service interfaces — choose the one matching your database. The `node-sqlite` and `bun-sqlite` packages are dialect adapters with zero native dependencies: they provide `createNodeSqliteKysely` / `createBunSqliteKysely` helpers that return a `Kysely` instance you pass to the `SQLiteKysely*` services.
 
 ## Installation
 
@@ -32,6 +34,13 @@ npm install @pikku/kysely-mysql kysely mysql2
 **SQLite:**
 ```bash
 npm install @pikku/kysely-sqlite kysely better-sqlite3
+```
+
+**SQLite without native modules (Node 22+ / Bun):**
+```bash
+npm install @pikku/kysely-sqlite @pikku/kysely-node-sqlite kysely
+# or on Bun
+bun add @pikku/kysely-sqlite @pikku/kysely-bun-sqlite kysely
 ```
 
 ## Services
@@ -161,6 +170,27 @@ const eventHubStore = new KyselyEventHubStore(db.kysely)
 await eventHubStore.init()
 ```
 
+### KyselySessionStore
+
+Persists user sessions keyed by `pikkuUserId` — plugs into the `sessionStore` singleton service.
+
+```typescript
+import { KyselySessionStore } from '@pikku/kysely'
+
+const sessionStore = new KyselySessionStore(db.kysely)
+await sessionStore.init()
+```
+
+### KyselyAuditService
+
+Durable audit event storage for functions wired with `audit: true`.
+
+```typescript
+import { KyselyAuditService } from '@pikku/kysely'
+
+const audit = new KyselyAuditService(db.kysely)
+```
+
 ## Type-Safe Queries
 
 The `KyselyPikkuDB` type provides full type safety for direct Kysely queries against Pikku tables:
@@ -236,6 +266,7 @@ Usage is identical to the PostgreSQL versions — pass a `Kysely<KyselyPikkuDB>`
 All services have SQLite equivalents with the `SQLite` prefix. The package also provides a helper for creating the Kysely instance:
 
 ```typescript
+import Database from 'better-sqlite3'
 import { createSQLiteKysely } from '@pikku/kysely-sqlite'
 import {
   SQLiteKyselyAIStorageService,
@@ -248,13 +279,28 @@ import {
   SQLiteKyselySecretService,
 } from '@pikku/kysely-sqlite'
 
-const db = createSQLiteKysely('./pikku.db')
+const db = createSQLiteKysely(new Database('./pikku.db'))
 
 const aiStorage = new SQLiteKyselyAIStorageService(db)
 await aiStorage.init()
 ```
 
 SQLite is used by the Cloudflare D1 integration (`@pikku/cloudflare/d1`) under the hood.
+
+### Runtime-native SQLite drivers
+
+If you'd rather avoid the `better-sqlite3` native module, `@pikku/kysely-node-sqlite` (Node 22+'s built-in `node:sqlite`) and `@pikku/kysely-bun-sqlite` (Bun's `bun:sqlite`) provide drop-in Kysely dialects. Pass the resulting instance to the same `SQLiteKysely*` services:
+
+```typescript
+import { createNodeSqliteKysely } from '@pikku/kysely-node-sqlite'
+// or: import { createBunSqliteKysely } from '@pikku/kysely-bun-sqlite'
+import { SQLiteKyselyAIStorageService } from '@pikku/kysely-sqlite'
+
+const db = createNodeSqliteKysely({ filename: './pikku.db' })
+
+const aiStorage = new SQLiteKyselyAIStorageService(db)
+await aiStorage.init()
+```
 
 ## Cleanup
 

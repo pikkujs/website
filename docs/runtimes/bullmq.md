@@ -45,7 +45,7 @@ After creating your project, you'll have these key files:
 Define your job processing logic:
 
 ```typescript reference title="queue.functions.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/functions/queue.functions.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/queue.functions.ts
 ```
 
 ### Queue Worker Registration
@@ -53,7 +53,7 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/sr
 Register workers with specific queues:
 
 ```typescript reference title="queue.wiring.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/queue.wiring.ts
+https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/queue.wiring.ts
 ```
 
 ### BullMQ Runtime Server
@@ -61,7 +61,7 @@ https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/functions/sr
 The main server that processes jobs:
 
 ```typescript reference title="start.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/templates/bullmq/src/start.ts
+https://github.com/pikkujs/pikku/blob/main/templates/bullmq/src/start.ts
 ```
 
 ## How It Works

@@ -5,8 +5,8 @@ description: Pikku documentation — guides, references, and API docs
 ---
 
 import Link from '@docusaurus/Link';
-import { Lightbulb, Layers, Terminal, LayoutDashboard, ShieldCheck, Database, Package, FlaskConical, BookOpen } from 'lucide-react';
-import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon, WorkflowIcon, TriggerIcon, RPCIcon } from '@site/src/components/WiringIcons';
+import { Lightbulb, Layers, Terminal, LayoutDashboard, ShieldCheck, Database, Package, FlaskConical, BookOpen, Rocket, KeyRound } from 'lucide-react';
+import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon, WorkflowIcon, TriggerIcon, RPCIcon, GatewayIcon } from '@site/src/components/WiringIcons';
 
 # Documentation
 
@@ -132,6 +132,22 @@ Connect your functions to protocols.
   </div>
 </Link>
 
+<Link to="/docs/wiring/gateway" className="doc-nav-card doc-nav-card--compact">
+  <GatewayIcon size={20} />
+  <div>
+    <div className="doc-nav-title">Gateway</div>
+    <div className="doc-nav-desc">Messaging platforms</div>
+  </div>
+</Link>
+
+<Link to="/docs/wiring/credentials" className="doc-nav-card doc-nav-card--compact">
+  <KeyRound size={20} />
+  <div>
+    <div className="doc-nav-title">Credentials</div>
+    <div className="doc-nav-desc">Per-user & OAuth2</div>
+  </div>
+</Link>
+
 </div>
 
 ## Runtimes
@@ -164,6 +180,26 @@ Deploy to any platform.
   <div className="doc-nav-title">uWebSockets</div>
 </Link>
 
+<Link to="/docs/runtimes/ws-handler" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">WS Handler</div>
+</Link>
+
+<Link to="/docs/runtimes/azure-functions" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">Azure Functions</div>
+</Link>
+
+<Link to="/docs/runtimes/bun-server" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">Bun</div>
+</Link>
+
+<Link to="/docs/runtimes/node-http-server" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">Node HTTP</div>
+</Link>
+
+<Link to="/docs/runtimes/tanstack-start" className="doc-nav-card doc-nav-card--compact">
+  <div className="doc-nav-title">TanStack Start</div>
+</Link>
+
 <Link to="/docs/runtimes/mcp-server" className="doc-nav-card doc-nav-card--compact">
   <div className="doc-nav-title">MCP Server</div>
 </Link>
@@ -181,6 +217,14 @@ Deploy to any platform.
 ## More
 
 <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'1rem',marginTop:'0.75rem'}}>
+
+<Link to="/docs/deploy" className="doc-nav-card">
+  <div className="doc-nav-icon"><Rocket size={24} /></div>
+  <div>
+    <div className="doc-nav-title">Deploy</div>
+    <div className="doc-nav-desc">Ship to cloud infrastructure or a standalone server</div>
+  </div>
+</Link>
 
 <Link to="/docs/middleware/auth-jwt" className="doc-nav-card">
   <div className="doc-nav-icon"><ShieldCheck size={24} /></div>

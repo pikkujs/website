@@ -1,0 +1,86 @@
+---
+sidebar_position: 5
+title: Built-in Middleware
+description: CORS, request timeouts, telemetry, and remote RPC auth shipped with @pikku/core
+ai: true
+---
+
+# Built-in Middleware
+
+Beyond the auth middleware, `@pikku/core/middleware` ships a small set of general-purpose middleware: CORS handling, request timeouts, telemetry logging, and remote RPC authentication.
+
+```typescript
+import { cors, timeout, telemetryOuter, telemetryInner } from '@pikku/core/middleware'
+```
+
+## CORS
+
+Handles cross-origin requests, including `OPTIONS` preflight — preflights are answered directly with `204 No Content` without hitting your functions.
+
+```typescript title="cors.ts"
+import { cors } from '@pikku/core/middleware'
+import { addHTTPMiddleware } from '#pikku'
+
+addHTTPMiddleware('*', [
+  cors({
+    origin: 'https://app.example.com',
+    credentials: true,
+  }),
+])
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `origin` | `string \| string[] \| true` | `'*'` | Allowed origin(s). `'*'` allows any origin, `true` reflects the request origin, an array allows multiple origins. |
+| `methods` | `string[]` | `GET, POST, PUT, PATCH, DELETE, OPTIONS` | Allowed HTTP methods. |
+| `headers` | `string[]` | `Content-Type, Authorization, x-api-key` | Allowed request headers. |
+| `credentials` | `boolean` | `false` | Sets `Access-Control-Allow-Credentials`. |
+| `maxAge` | `number` | `86400` | Preflight cache duration in seconds. |
+
+When `origin` is `true` or an array, a `Vary: Origin` header is added so caches don't serve one origin's response to another.
+
+:::warning Wildcard + credentials
+`cors({ origin: '*', credentials: true })` throws at startup — browsers reject that combination, so Pikku refuses the misconfiguration up front. Use an explicit origin (or `origin: true`) with credentials.
+:::
+
+## Timeout
+
+Rejects a request with `RequestTimeoutError` (HTTP 408) if the rest of the chain — remaining middleware plus the function — doesn't finish in time:
+
+```typescript title="timeout.ts"
+import { timeout } from '@pikku/core/middleware'
+import { addHTTPMiddleware } from '#pikku'
+
+addHTTPMiddleware('*', [timeout()({ timeout: 30_000 })])
+```
+
+The timer covers everything inside it, so place it early in the chain to bound the whole request.
+
+## Telemetry
+
+Two middleware that emit structured JSON log entries (via `services.logger`) with durations and outcomes, designed to be parsed by log-based monitoring:
+
+- **`telemetryOuter()`** — runs at `highest` priority (outermost). Captures **total** request duration including all middleware, the outcome (`ok`/`error`), and HTTP method/path/status when applicable.
+- **`telemetryInner()`** — runs at `lowest` priority (innermost, right next to the function). Captures the **function-only** duration and the authenticated `pikkuUserId`.
+
+```typescript title="telemetry.ts"
+import { telemetryOuter, telemetryInner } from '@pikku/core/middleware'
+import { addGlobalMiddleware } from '@pikku/core'
+
+addGlobalMiddleware([telemetryOuter(), telemetryInner()])
+```
+
+Every entry carries the wire metadata (`traceId`, `wireType`, `wireId`) and is tagged `__pikku_telemetry: 'end'` with a `__pikku_layer` of `outer` or `inner`. Comparing the two durations tells you how much time middleware (auth, session lookup) costs per request. Both accept optional `{ environmentId, orgId }` to stamp entries in multi-tenant deployments.
+
+## Remote RPC auth
+
+`pikkuRemoteAuthMiddleware` protects the `/remote/rpc/*` endpoints used for [remote RPC calls](/docs/wiring/rpcs) between services. It verifies a JWT bearer token (audience `pikku-remote`), checks the token is scoped to the function being called, and decrypts the caller's session so it carries across service boundaries.
+
+It activates only when the `PIKKU_REMOTE_SECRET` secret is configured — without it, remote RPC endpoints reject all calls and everything else passes through untouched. The generated bootstrap wires this up for you when you use remote RPCs; you rarely register it by hand.
+
+## Related
+
+- [Middleware](/docs/core-features/middleware) — how middleware ordering and priorities work
+- [Better Auth](/docs/middleware/better-auth) / [JWT](/docs/middleware/auth-jwt) / [API Key](/docs/middleware/auth-apikey) — authentication middleware

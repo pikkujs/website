@@ -9,7 +9,7 @@ The Logger interface provides structured logging across all Pikku services and f
 The Logger interface is minimal by design — it matches the common subset of popular logging libraries:
 
 ```typescript reference title="logger.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/logger.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/logger.ts
 ```
 
 Each method accepts either a string message or a structured object:
@@ -27,7 +27,7 @@ logger.error(new Error('Connection failed'))
 The default logger that wraps `console.*`. No additional packages required:
 
 ```typescript reference title="logger-console.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/core/src/services/logger-console.ts
+https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/logger-console.ts
 ```
 
 ```typescript
@@ -45,7 +45,7 @@ npm install @pikku/pino pino
 ```
 
 ```typescript reference title="pino.ts"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/services/pino/src/pino.ts
+https://github.com/pikkujs/pikku/blob/main/packages/services/pino/src/pino.ts
 ```
 
 ```typescript

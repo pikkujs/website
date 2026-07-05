@@ -79,7 +79,7 @@ Register your prompts in the routes file:
 
 ```typescript
 // mcp.wiring.ts
-import { wireMCPPrompt } from '#pikku/mcp'
+import { wireMCPPrompt } from '#pikku'
 import { staticPromptGenerator, dynamicPromptGenerator } from './mcp.functions.js'
 
 wireMCPPrompt({

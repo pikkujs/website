@@ -14,12 +14,9 @@ The core of it is the following:
 ```typescript
 import { getScheduledTasks, runScheduledTask } from '@pikku/core/scheduler'
 
-const run = async (singletonServices: SingletonServices, name: string) => {
-    const { scheduledTasks } = getScheduleTasks()
-    await runScheduledTask({
-        singletonServices: this.singletonServices,
-        name,
-    })
+const run = async (name: string) => {
+    const scheduledTasks = getScheduledTasks()
+    await runScheduledTask({ name })
 }
 ```
 
@@ -29,8 +26,8 @@ In the case of serverless, this is all that's actually needed, since the runtime
 
 ## Writing a Task Scheduler for servers
 
-The rest of it is integrating it with your prefered cron library. The following is the implementation of the `PikkuTaskScheduler` provided for non-serverless invocation.
+The rest of it is integrating it with your prefered cron library. The following is the implementation of the `InMemorySchedulerService` provided for non-serverless invocation.
 
-```typescript reference title="PikkuTaskScheduler"
-https://raw.githubusercontent.com/pikkujs/pikku/blob/main/packages/schedule/src/pikku-task-scheduler.ts
+```typescript reference title="InMemorySchedulerService"
+https://github.com/pikkujs/pikku/blob/main/packages/schedule/src/in-memory-scheduler-service.ts
 ```

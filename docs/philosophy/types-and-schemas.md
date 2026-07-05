@@ -24,11 +24,13 @@ The Pikku CLI extracts those types to generate all the relevant information need
 
 One of the key benefits of using types is that JSON schemas can be automatically generated to validate incoming data. This means that API endpoints can validate data before processing, ensuring that invalid data doesn't cause unexpected behavior.
 
-The schemas are automatically created when running the default pikku command. However you can also specifically only update the schemas by running:
+The schemas are automatically created when running the default pikku command:
 
 ```bash npm2yarn
-npx @pikku/cli schemas
+npx pikku all
 ```
+
+Or continuously while developing with `npx pikku watch`.
 
 ## Advanced Approach: Database-Driven Types
 

@@ -64,6 +64,8 @@
   "queueJobControl": "wirings/shop.queue.ts",
   "rpcFunc": "wirings/shop.rpc.ts",
   "rpcInternalCall": "wirings/shop.rpc.ts",
+  "scenarioBasics": "wirings/shop.scenario.ts",
+  "scenarioConverse": "wirings/shop.scenario.ts",
   "secrets": "wirings/shop.secret.ts",
   "shopSecretUsage": "wirings/shop.secret.ts",
   "shopIsAuthenticated": "wirings/shop.security.ts",
