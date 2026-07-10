@@ -19,7 +19,7 @@ Errors related to missing required properties or invalid types in your Pikku con
 | PKU220 | Missing URI Property         | [View](./pku220.md)  |
 | PKU236 | Missing Function Property    | [View](./pku236.md)  |
 | PKU247 | Invalid Tags Type            | [View](./pku247.md)  |
-| PKU300 | Invalid Handler              | Coming soon          |
+| PKU300 | Invalid Handler              | [View](./pku300.md)  |
 | PKU370 | Missing Title Property       | [View](./pku370.md)  |
 | PKU384 | Missing Queue Name           | [View](./pku384.md)  |
 | PKU400 | Missing Channel Name         | [View](./pku400.md)  |
@@ -34,10 +34,10 @@ Errors related to Pikku configuration and schema generation.
 | Code   | Description             | Link                 |
 | ------ | ----------------------- | -------------------- |
 | PKU426 | Config Type Not Found   | [View](./pku426.md)  |
-| PKU427 | Config Type Undefined   | Coming soon          |
+| PKU427 | Config Type Undefined   | [View](./pku427.md)  |
 | PKU431 | Schema Has No Root      | [View](./pku431.md)  |
 | PKU456 | Schema Generation Error | [View](./pku456.md)  |
-| PKU488 | Schema Load Error       | Coming soon          |
+| PKU488 | Schema Load Error       | [View](./pku488.md)  |
 | PKU489 | Inline Schema           | [View](./pku489.md) |
 | PKU490 | Schema and Wiring Colocated | [View](./pku490.md) |
 
@@ -70,7 +70,7 @@ Errors related to Pikku function definitions and metadata.
 | Code   | Description                 | Link                 |
 | ------ | --------------------------- | -------------------- |
 | PKU559 | Function Metadata Not Found | [View](./pku559.md)  |
-| PKU568 | Handler Not Resolved        | Coming soon          |
+| PKU568 | Handler Not Resolved        | [View](./pku568.md)  |
 
 ## Middleware & Permission Errors
 
@@ -79,13 +79,23 @@ Errors related to middleware and permission configuration.
 | Code   | Description                | Link                 |
 | ------ | -------------------------- | -------------------- |
 | PKU685 | Middleware Handler Invalid | [View](./pku685.md)  |
-| PKU715 | Middleware Tag Invalid     | Coming soon          |
-| PKU736 | Middleware Empty Array     | Coming soon          |
-| PKU787 | Middleware Pattern Invalid | Coming soon          |
+| PKU715 | Middleware Tag Invalid     | [View](./pku715.md)  |
+| PKU736 | Middleware Empty Array     | [View](./pku736.md)  |
+| PKU787 | Middleware Pattern Invalid | [View](./pku787.md)  |
 | PKU835 | Permission Handler Invalid | [View](./pku835.md)  |
-| PKU836 | Permission Tag Invalid     | Coming soon          |
-| PKU937 | Permission Empty Array     | Coming soon          |
-| PKU975 | Permission Pattern Invalid | Coming soon          |
+| PKU836 | Permission Tag Invalid     | [View](./pku836.md)  |
+| PKU937 | Permission Empty Array     | [View](./pku937.md)  |
+| PKU975 | Permission Pattern Invalid | [View](./pku975.md)  |
+
+## Database Schema Errors
+
+Warnings from `pikku db migrate` / `pikku db reset` when generating Kysely types. Fix these by editing `db/annotations.ts` and re-running migrate — never hand-edit the generated `db/schema.d.ts`.
+
+| Code   | Description                    | Link                 |
+| ------ | ------------------------------ | -------------------- |
+| PKU480 | Column Name / Type Contradiction | [View](./pku480.md) |
+| PKU481 | JSON/JSONB Column Untyped      | [View](./pku481.md)  |
+| PKU482 | Format on Non-String Column    | [View](./pku482.md)  |
 
 ## Versioning & Contract Errors
 
@@ -110,8 +120,9 @@ Errors from `pikku versions` contract checking.
 | PKU146 | Invalid Model (AI agent)                      | [View](./pku146.md) |
 | PKU410 | Services Not Destructured (lint)              | [View](./pku410.md) |
 | PKU411 | Wires Not Destructured (lint)                 | [View](./pku411.md) |
+| PKU498 | Dynamic Import in Function Body (lint)         | [View](./pku498.md) |
 | PKU717 | Duplicate @pikku/core Version                 | [View](./pku717.md) |
-| PKU901 | Workflow Multi-Queue Not Supported            | Coming soon |
+| PKU901 | Workflow Multi-Queue Not Supported            | [View](./pku901.md) |
 | PKU910 | PII in Output (data classification)           | [View](./pku910.md) |
 | PKU920 | Addon Wiring Not Allowed                      | [View](./pku920.md) |
 | PKU921 | Addon Contract Handlers Not Allowed           | [View](./pku921.md) |
