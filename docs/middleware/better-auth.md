@@ -186,6 +186,60 @@ return betterAuth({
 
 Actor rows are flagged with an `actor: true` column and auto-created on first sign-in. Sign-in for a non-actor user is always refused — knowing the secret never impersonates real users — and the flag rides into the Pikku session so audits and analytics can identify synthetic traffic. A missing secret disables the endpoint entirely.
 
+## Delegated sign-in (upstream credentials)
+
+The `delegatedAuth` plugin lets users sign in with the credentials they already have on an upstream API — useful when your app fronts an existing system (typically one imported as an [addon](/docs/addon/creating#auth-config-overrides)). The upstream API is the identity provider: no separate password, no invite flow.
+
+It adds a `POST /sign-in/delegated` endpoint that accepts `{ email, password }` or `{ apiKey }`, verifies them against the upstream via your `authenticate` callback, and on success:
+
+1. **JIT-provisions a real user** — email-keyed and `emailVerified` (the upstream just verified those credentials), linked to the upstream via an `account` row (`providerId: 'delegated'`, `accountId` = the upstream user id).
+2. **Persists the upstream token per-user** via `storeCredential`, *before* the session is minted — if the token can't be stored, the sign-in fails, since every proxied call would be dead anyway.
+3. **Mints a normal Better Auth session** and refreshes `name`/`role` from the upstream on every sign-in.
+
+Passwords are never stored — they're forwarded to `authenticate` and discarded.
+
+```typescript title="src/auth.ts"
+import { delegatedAuth } from '@pikku/better-auth'
+import { authenticateAcmeUpstream } from '@my-org/acme-addon'
+
+export const auth = pikkuBetterAuth(async (services) => {
+  const { credentialService } = services
+
+  return betterAuth({
+    // ...
+    plugins: [
+      delegatedAuth({
+        authenticate: (credentials) =>
+          authenticateAcmeUpstream(credentials, 'https://api.acme.example'),
+        storeCredential: async (userId, identity) => {
+          await credentialService.set('acme', identity.credential, userId)
+        },
+        defaultRole: 'member',
+      }),
+    ],
+  })
+})
+```
+
+### Options
+
+| Option | Required | Description |
+|--------|----------|-------------|
+| `authenticate` | yes | Verify the credentials against the upstream and return an `UpstreamIdentity` (`externalId`, `email`, optional `name`/`role`/`tenantId`, plus an opaque `credential` — by convention `{ token, expiresAt?, tenantId? }`). Return `null` to reject; a thrown error is logged server-side and treated as a rejection without leaking upstream detail. |
+| `storeCredential` | yes | Persist `identity.credential` for the user — typically `credentialService.set('<addon>', identity.credential, userId)`. Runs before the session is created. |
+| `defaultRole` | no | Role assigned when the upstream identity carries none. Requires the `admin()` plugin's role column. |
+| `mapRole` | no | Map an upstream role onto an app role. Defaults to pass-through. |
+
+### Guard rails
+
+- Exactly **one** upstream system of record per app — additional imported APIs are linked integrations, not extra login methods.
+- An email already bound to a *different* upstream user is refused, and delegated identities never attach to synthetic operator/actor rows.
+- The user's email is not updated on later sign-ins — an upstream email change must not collide with another local row.
+
+:::tip Generated authenticate callback
+When you generate an addon from an OpenAPI spec with `pikku new addon --auth-config`, a ready-made `authenticate<Name>Upstream()` implementation is emitted for you — see [Auth Config Overrides](/docs/addon/creating#auth-config-overrides).
+:::
+
 ## Related
 
 - [User Sessions](/docs/core-features/user-sessions) — how sessions flow through Pikku functions

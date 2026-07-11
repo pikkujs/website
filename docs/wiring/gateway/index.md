@@ -187,6 +187,37 @@ export const whatsAppAdapter: GatewayAdapter = {
 }
 ```
 
+## Adapter Factories
+
+`wireGateway` runs at module load, but real platform adapters usually need secrets or services that only exist after your app boots — the WhatsApp access token, a Slack signing secret, a database connection. Instead of an adapter instance, pass a factory that receives your singleton services:
+
+```typescript title="gateway.wiring.ts"
+import { wireGateway } from '@pikku/core/gateway'
+import { createWhatsAppAdapter } from './adapters/whatsapp.js'
+import { handleMessage } from './functions/gateway.functions.js'
+
+wireGateway({
+  name: 'whatsapp',
+  type: 'webhook',
+  route: '/webhooks/whatsapp',
+  adapter: async ({ secrets }) => {
+    const { accessToken, phoneId, verifyToken } = await secrets.getSecret<{
+      accessToken: string
+      phoneId: string
+      verifyToken: string
+    }>('WHATSAPP')
+    return createWhatsAppAdapter({ accessToken, phoneId, verifyToken })
+  },
+  func: handleMessage,
+})
+```
+
+The factory type is `(services) => GatewayAdapter | Promise<GatewayAdapter>`. It's resolved lazily — on the first inbound request for webhook and websocket gateways, or on gateway start for listeners — and cached for the lifetime of the gateway. Concurrent first requests share a single construction.
+
+:::note Verify route is always registered
+For a factory adapter, Pikku can't know whether the adapter implements `verifyWebhook` until the factory first runs, so the GET verification route is registered unconditionally. If the resolved adapter has no `verifyWebhook`, the route responds with `{ error: 'Verification not supported' }`.
+:::
+
 ## Message Types
 
 ### GatewayInboundMessage

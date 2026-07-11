@@ -36,7 +36,7 @@ npm install @pikku/kysely-mysql kysely mysql2
 npm install @pikku/kysely-sqlite kysely better-sqlite3
 ```
 
-**SQLite without native modules (Node 22+ / Bun):**
+**SQLite without native modules (Node / Bun built-ins):**
 ```bash
 npm install @pikku/kysely-sqlite @pikku/kysely-node-sqlite kysely
 # or on Bun
@@ -289,7 +289,7 @@ SQLite is used by the Cloudflare D1 integration (`@pikku/cloudflare/d1`) under t
 
 ### Runtime-native SQLite drivers
 
-If you'd rather avoid the `better-sqlite3` native module, `@pikku/kysely-node-sqlite` (Node 22+'s built-in `node:sqlite`) and `@pikku/kysely-bun-sqlite` (Bun's `bun:sqlite`) provide drop-in Kysely dialects. Pass the resulting instance to the same `SQLiteKysely*` services:
+If you'd rather avoid the `better-sqlite3` native module, `@pikku/kysely-node-sqlite` (Node's built-in `node:sqlite`) and `@pikku/kysely-bun-sqlite` (Bun's `bun:sqlite`) provide drop-in Kysely dialects. Pass the resulting instance to the same `SQLiteKysely*` services:
 
 ```typescript
 import { createNodeSqliteKysely } from '@pikku/kysely-node-sqlite'

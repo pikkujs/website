@@ -468,6 +468,34 @@ function ApprovalPanel() {
 | `initialMessages` | `any[]` | Pre-populate the chat |
 | `onFinish` | `() => void` | Called when a response completes |
 
+## Agents as Workflow Nodes
+
+A [graph workflow](/docs/wiring/workflows/graph-workflows) node can reference an agent by name, just like an RPC function or a sub-workflow. The node runs the agent with the standard agent input (`message`, `threadId`, `resourceId`), and the node's result is the agent's output — so downstream nodes can `ref()` its fields:
+
+```typescript
+export const triageWorkflow = pikkuWorkflowGraph({
+  nodes: {
+    classify: 'ticket-classifier',   // agent name
+    escalate: 'ticketEscalate',      // RPC function
+  },
+  config: {
+    classify: {
+      input: (ref) => ({
+        message: ref('input', 'message'),
+        threadId: ref('input', 'ticketId'),
+        resourceId: ref('input', 'userId'),
+      }),
+      next: 'escalate',
+    },
+    escalate: {
+      input: (ref) => ({ category: ref('classify', 'category') }),
+    },
+  },
+})
+```
+
+Declare an `output` schema on the agent when downstream nodes need typed access to its result — `ref()` resolves the agent's output keys. See [Graph Workflows](/docs/wiring/workflows/graph-workflows) for the full graph syntax.
+
 ## Visualizing Agents in the Console
 
 The [Pikku Console](/docs/console) provides a built-in chat interface for your AI agents, displays agent metadata, and lets you test agents interactively. See [Console Features](/docs/console/features) for details.
@@ -475,6 +503,7 @@ The [Pikku Console](/docs/console) provides a built-in chat interface for your A
 ## Next Steps
 
 - **[Channels](/docs/wiring/channels/)**: Learn about the streaming transport used by agents
+- **[Graph Workflows](/docs/wiring/workflows/graph-workflows)**: Run agents as workflow-graph nodes
 - **[Credentials](/docs/wiring/credentials/)**: Per-user credentials and OAuth2 for agent tools
 - **[Functions](/docs/core-features/functions)**: Understand how Pikku functions work as agent tools
 - **[Middleware](/docs/core-features/middleware)**: Apply middleware to agent tool calls

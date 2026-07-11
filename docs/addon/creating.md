@@ -30,6 +30,7 @@ This generates a complete addon project with package.json, tsconfig, pikku.confi
 | `--credential bearer` | Per-user bearer token credential |
 | `--credential oauth2` | Per-user OAuth2 credential (same as `--oauth` but using the credential system) |
 | `--openapi ./spec.yaml` | Generate functions from an OpenAPI spec |
+| `--auth-config ./auth.json` | Auth overrides for the spec — custom auth header and/or delegated login (see [Auth Config Overrides](#auth-config-overrides)) |
 | `--mcp` | Add `mcp: true` to generated functions (expose as MCP tools) |
 | `--camelCase` | Convert snake_case properties to camelCase in generated Zod schemas |
 | `--display-name "My Tool"` | Human-readable display name (defaults to PascalCase of name) |
@@ -52,6 +53,9 @@ npx pikku new addon stripe --credential apikey
 
 # Generate from an OpenAPI spec
 npx pikku new addon github --openapi ./github-api.yaml --credential bearer
+
+# Enterprise API with a custom auth header and delegated login
+npx pikku new addon acme --openapi ./acme-api.yaml --auth-config ./acme-auth.json
 
 # Full options
 npx pikku new addon hubspot \
@@ -249,6 +253,63 @@ npx pikku new addon github --openapi ./github-openapi.yaml --camelCase --mcp
 ```
 
 The `--camelCase` flag converts `snake_case` property names from the spec to `camelCase` in the generated Zod schemas. The generated contract hash is stored in `pikku.config.json` so you can detect when the upstream API changes.
+
+## Auth Config Overrides
+
+Real-world enterprise specs often declare no `securitySchemes` at all (auth described only in prose), or use a custom auth header the spec doesn't mention. Pass `--auth-config ./auth.json` alongside `--openapi` to override the spec:
+
+```json title="acme-auth.json"
+{
+  "headerName": "authentication",
+  "headerFormat": "raw",
+  "delegated": {
+    "loginPath": "/users/login",
+    "loginMethod": "post",
+    "credentials": ["email", "password"],
+    "tokenPath": "token",
+    "claims": {
+      "source": "jwt",
+      "externalId": "user._id",
+      "email": "user.email",
+      "name": ["user.firstName", "user.lastName"],
+      "role": "user.role"
+    }
+  }
+}
+```
+
+### Custom auth header
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `headerName` | `Authorization` | Header the API expects on authenticated calls |
+| `headerFormat` | `bearer` for `Authorization`, `raw` for custom headers | `raw` sends the bare token; `bearer` prefixes it with `Bearer ` |
+
+### Delegated login
+
+The `delegated` block describes the upstream's own login operation so end-users can sign in to your app with their existing upstream credentials:
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `loginPath` | — | Spec-relative path of the login operation (e.g. `/users/login`) |
+| `loginMethod` | `post` | HTTP method of the login operation |
+| `credentials` | `["email", "password"]` | Which credential fields the login accepts (`email`/`password` go in the JSON body, `apiKey` in a header) |
+| `apiKeyHeader` | `x-api-key` | Header carrying the apiKey, when `apiKey` is a supported credential |
+| `tokenPath` | — | Dot-path to the token in the login response (e.g. `token`) |
+| `expiresAtPath` | JWT `exp` claim | Dot-path to an epoch-seconds expiry in the response |
+| `claims.source` | — | Where identity claims live: `jwt` (the decoded login-token payload) or `response` (the login response body) |
+| `claims.externalId` / `claims.email` | — | Dot-paths to the stable upstream user id and email |
+| `claims.name` | — | One dot-path, or several joined with a space (e.g. first + last name) |
+| `claims.role` / `claims.tenantId` | — | Optional dot-paths to role and tenant |
+
+With a `delegated` block the generator:
+
+- Forces `--credential bearer` (the credential *is* the upstream token) and emits a credential schema of `{ token, expiresAt?, tenantId? }`.
+- Emits a self-contained `src/<name>-upstream-auth.ts` exporting `authenticate<Name>Upstream(credentials, baseUrl)` — it performs the login call, extracts the token via `tokenPath`, and maps the claims onto an identity object compatible with the [`delegatedAuth()` Better Auth plugin](/docs/middleware/better-auth#delegated-sign-in-upstream-credentials).
+- Generates wire services that check token expiry per call and throw `UnauthorizedError` when the session is missing or expired — the consumer's re-auth signal.
+- Records `authConfig: true` in the addon's `pikku.config.json` for provenance.
+
+Wire the exported authenticate function into your app's Better Auth config and users sign in at `POST /sign-in/delegated` with their upstream credentials — see [Delegated sign-in](/docs/middleware/better-auth#delegated-sign-in-upstream-credentials).
 
 ## Publishing
 

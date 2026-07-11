@@ -34,7 +34,7 @@ The constraint is that the transport layer is always pluggable: Pikku owns routi
 
 Current runtime support:
 
-- **Supported**: Node.js 18+, Bun
+- **Supported**: Node.js 24+, Bun
 - **Planned**: Deno support
 - **Planned**: Browser support for sharing logic between client/server (with serverless dependencies)
 

@@ -33,12 +33,13 @@ A graph workflow has three main parts:
 
 ### nodes
 
-Maps node IDs to RPC function names:
+Maps node IDs to the function each node runs. A node can name an RPC function, a registered workflow (run as a child workflow), or a registered [AI agent](/docs/wiring/ai-agents/) (run as an agent):
 
 ```typescript
 nodes: {
   createUser: 'userCreate',      // node ID -> RPC function name
   sendWelcome: 'emailSend',
+  classify: 'ticket-classifier', // an AI agent name works too
   updateCRM: 'crmUserCreate',
 }
 ```
@@ -94,6 +95,43 @@ input: (ref) => ({
 ```
 
 The CLI generates types so `ref()` provides autocomplete for both node IDs and output fields.
+
+## Sub-Workflow and Agent Nodes
+
+A node's function name doesn't have to be an RPC — it can also be:
+
+- **A registered workflow name.** The node starts a child workflow run and its result is the child's output.
+- **A registered AI agent name.** The node runs the agent (via the agent-run path) and its result is the agent's declared output, so downstream nodes can `ref()` its output fields.
+
+An agent node takes the standard agent input — `message`, `threadId`, and `resourceId`:
+
+```typescript
+export const triageWorkflow = pikkuWorkflowGraph({
+  description: 'Classify a support ticket with an AI agent, then route it',
+  nodes: {
+    classify: 'ticket-classifier',   // AI agent
+    escalate: 'ticketEscalate',      // RPC function
+  },
+  config: {
+    classify: {
+      input: (ref) => ({
+        message: ref('input', 'message'),
+        threadId: ref('input', 'ticketId'),
+        resourceId: ref('input', 'userId'),
+      }),
+      next: 'escalate',
+    },
+    escalate: {
+      input: (ref) => ({
+        // 'category' comes from the agent's output schema
+        category: ref('classify', 'category'),
+      }),
+    },
+  },
+})
+```
+
+The generated `pikkuWorkflowGraph` wrapper type-checks all three kinds of names, and `ref()` on an agent node resolves the keys of the agent's `output` schema. Give the agent an `output` schema if downstream nodes need typed access to its result — see [AI Agents](/docs/wiring/ai-agents/).
 
 ## Flow Control
 
