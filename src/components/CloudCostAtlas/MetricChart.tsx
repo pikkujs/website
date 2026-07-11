@@ -197,7 +197,8 @@ export default function MetricChart({
 
       <BrowserOnly fallback={<div>Loading chart...</div>}>
         {() => {
-          const Chart = require('react-apexcharts').default;
+          const mod = require('react-apexcharts');
+          const Chart = mod.default ?? mod;
           return <Chart options={options} series={series} type="bar" height={height} />;
         }}
       </BrowserOnly>
