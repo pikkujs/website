@@ -1,0 +1,363 @@
+---
+title: Pikku 0.13 — The Backend Grew Up
+description: One CLI that runs everything — plus durable workflows, AI agents, a typed database layer, real auth, scenarios testing, and a visual console. 0.13 is the biggest Pikku release ever, and the first with a backwards-compatibility commitment.
+authors: yasser
+tags: [release]
+draft: true
+---
+
+New here? **Pikku is a TypeScript backend framework that does everything it can at compile time.** Your functions are inspected, typed, validated, and wired before deployment — so most bugs are caught before your code ever ships. And because all that work happens ahead of time, a huge amount of functionality rides on a tiny (&lt;10kb) runtime that goes anywhere Node, Bun, or a Worker goes.
+
+The last announced release was 0.10, back in November. Since then we've landed roughly **1,600 commits** — 0.11 and 0.12 shipped quietly along the way — and 0.13 rolls all of it up into one milestone: one CLI that runs everything, durable workflows, AI agents as first-class citizens, a fully typed database layer, production auth, a new testing model, and a visual console — all still the same Pikku idea: **write functions, wire them to anything**.
+
+0.13 is also the first release where we commit to **backwards compatibility**. Everything below is API we intend to keep.
+
+> tl;dr: `pikku dev` runs your entire backend — HTTP, WebSockets, queues, cron, workflows, agents, console — from one command. Your functions can now be workflow steps, AI agent tools, trigger handlers, and Slack commands, with a typed database underneath, real auth in front, and scenarios testing around it.
+
+<!-- truncate -->
+
+---
+
+## One CLI That Does It All
+
+The biggest shift in how Pikku feels day to day:
+
+```bash
+pikku dev
+```
+
+That's your whole backend. Codegen, HTTP, WebSockets, queues, schedulers, workflows, agents — one command, one process, with hot reload that picks up edited *and brand-new* functions and routes without a restart. When you're ready for production, `pikku serve` runs the same thing without the dev tooling. No docker-compose choreography, no six terminal tabs.
+
+And crucially, **nothing is baked in**. Everything runs in-memory by default — queues, schedulers, workflow state — so `pikku dev` needs zero infrastructure. Then you pick and choose your providers: Postgres and SQLite have first-class support, with MongoDB, Redis, and others as extensions. Your own queue (BullMQ, pg-boss), your own scheduler, your own database. Run it on AWS Lambda, Azure Functions, Cloudflare Workers, Express, Fastify, Bun, plain Node. Deploy as a monolith, as services, or as individual functions — Pikku tree-shakes every deploy unit down to exactly the code and services it uses.
+
+And it serves the **Pikku Console** at `/console`: a visual control plane for your entire backend. The console deserves its own post (and will probably get one), because it grew into a full operations surface:
+
+- **Run things** — workflow runs with a live view and a time-travel timeline you can scrub through, an agent playground for chatting with your agents, a try-it form for every function, and one-click suspend/resume/retry.
+- **See everything** — every function (with version history), HTTP route, channel, queue (live depths, failed counts), scheduler (run history), trigger, gateway, and MCP tool your app exposes, plus the middleware and permission chains attached to each.
+- **Your data** — the database schema visualized with relationships, enums, and PII classifications; secrets, variables, and config; per-user credentials with a "connect" flow.
+- **Your users** — auth providers and SSO config, admin users, and impersonation for support.
+- **Quality & security** — scenarios with per-scenario coverage, the audit log, dependency security screens, and an addon gallery.
+
+![The Pikku Console overview — every function, workflow, agent, route, and queue in your app](/img/blog/pikku-0-13/console-overview.png)
+
+It's not a dev toy: run `pikku serve --console` in production (token-gated with `PIKKU_CONSOLE_TOKEN`) and you get the same control plane against your live system.
+
+📚 **[Console docs →](https://pikku.dev/docs/console/)** • **[Pikku CLI →](https://pikku.dev/docs/pikku-cli/)**
+
+---
+
+## Durable Workflows
+
+The biggest new capability. Workflows are long-running, stateful processes built out of your existing functions. Every `workflow.do` step is persisted — if your process crashes mid-workflow, it resumes exactly where it left off. Steps get retries with backoff, you can `sleep` for a second or a month, and the console lets you time-travel through any run's history.
+
+No separate workflow engine to operate. State lives in Postgres or Redis, execution rides on the queue transport you already have (pg-boss or BullMQ), or in-memory for dev.
+
+```typescript
+export const createAndNotifyWorkflow = pikkuWorkflowFunc<
+  { userId: string; title: string; priority: Priority; dueDate?: string },
+  { todo: Todo; notificationSent: boolean }
+>({
+  func: async ({}, data, { workflow }) => {
+    const { todo } = await workflow.do('Create todo', 'createTodo', {
+      userId: data.userId,
+      title: data.title,
+      priority: data.priority,
+    })
+
+    let notificationSent = false
+    if (data.priority === 'high') {
+      await workflow.sleep('Wait before notification', '1s')
+      const notif = await workflow.do('Notify', 'sendNotification', {
+        userId: data.userId,
+        message: `High priority todo created: ${data.title}`,
+      })
+      notificationSent = notif.sent
+    }
+
+    return { todo, notificationSent }
+  },
+})
+```
+
+That's plain TypeScript — `if` statements, loops, early returns — and Pikku extracts the durable step graph from it. Prefer declarative? `pikkuWorkflowGraph` gives you node-based workflows with branching and cycles.
+
+Workflows can also stop and wait for the outside world:
+
+```typescript
+await workflow.suspend('Wait for manager approval')
+```
+
+The run parks itself — no worker held hostage, no timeout to babysit — until something resumes it: a human clicking approve in the console, or another function. A workflow can have multiple independent suspend points, workflows can call other workflows (child runs resume their parents on completion), and every step gets a stable invocation ID so retries collapse onto the same result instead of double-charging your customer.
+
+![A workflow run in the console — the extracted graph, run status, inputs, and outputs](/img/blog/pikku-0-13/workflow-run.png)
+
+```bash
+npm create pikku@latest -- --template workflows-pg-boss
+```
+
+📚 **[Workflow docs →](https://pikku.dev/docs/wiring/workflows/)** • **[Graph workflows →](https://pikku.dev/docs/wiring/workflows/graph-workflows)**
+
+---
+
+## AI Agents
+
+Agents are now a native Pikku wiring — and their tools are **your existing functions**. No adapter layer, no re-describing your API to an LLM: the same typed functions you wired to HTTP become agent tools, with your middleware and permissions still enforced on every call.
+
+```typescript
+export const todoAgent = pikkuAIAgent({
+  name: 'todo-agent',
+  description: 'Manages a todo list',
+  goal: 'You help users manage their todos.',
+  model: 'openai/o4-mini',
+  tools: [
+    ref('todos:listTodos'),
+    ref('todos:addTodo'),
+    ref('todos:completeTodo'),
+  ],
+  maxSteps: 10,
+})
+```
+
+Agents stream to your frontend over the assistant-ui protocol, keep conversation memory in Redis or Postgres, and can be intercepted with AI middleware (`beforeToolCall`, `afterToolCall`). And because agents are **native workflow-graph nodes**, an agent can be one durable step inside a bigger workflow — human-ish reasoning in the middle of a machine process, with retries and resumability for free.
+
+![Agents in the console — sub-agents, tool counts, and models at a glance](/img/blog/pikku-0-13/agents.png)
+
+📚 **[AI agent docs →](https://pikku.dev/docs/wiring/ai-agents/)**
+
+---
+
+## A Typed Database Layer
+
+Pikku now has a real database story built on Kysely. Write SQL migrations, run `pikku db migrate`, and get generated TypeScript types for your whole schema — tables, enums, UUIDs, the lot. Queries are fully typed end to end, and those types flow straight into your function inputs and outputs, which means they flow into your generated clients too. **Your database schema is now part of your API contract.**
+
+```bash
+pikku db migrate   # run migrations + regenerate typed schema
+pikku db seed      # seed data
+pikku db reset     # start over
+```
+
+Dialects for Postgres, SQLite (`node:sqlite`, Bun, libSQL/Turso), and MySQL. Columns can carry data classifications (PII tiers), enforced at codegen and visualized in the console's schema explorer.
+
+📚 **[Kysely storage docs →](https://pikku.dev/docs/storage/kysely)** • **[Storage overview →](https://pikku.dev/docs/storage/)**
+
+---
+
+## Auth, Actually Solved
+
+### By Better Auth &lt;3
+
+Authentication went from "bring your own middleware" to done. One `pikkuBetterAuth` factory and Pikku generates the catch-all auth routes, session-bridge middleware, provider secrets, and SSO metadata.
+
+```typescript
+export const auth = pikkuBetterAuth(async ({ secrets, kysely }) => {
+  return betterAuth({
+    secret: await secrets.getSecret('BETTER_AUTH_SECRET'),
+    database: { db: kysely, type: 'sqlite' },
+    emailAndPassword: { enabled: true },
+  })
+})
+```
+
+You get stateful or stateless sessions, unified human + machine auth (`pikku login` for people, API keys for services), user impersonation for support flows, and delegated auth — sign users in with credentials from an upstream API. And because it's Better Auth, its entire plugin ecosystem comes along for the ride: MFA, passkeys, organizations, Stripe billing, magic links, last-used login method, and more. The auth server tree-shakes out of deploy units that don't need it.
+
+![Auth providers in the console — see what's configured and which secrets each provider needs](/img/blog/pikku-0-13/auth-providers.png)
+
+📚 **[Better Auth docs →](https://pikku.dev/docs/middleware/better-auth)** • **[JWT](https://pikku.dev/docs/middleware/auth-jwt)** / **[cookies](https://pikku.dev/docs/middleware/auth-cookie)** / **[API keys](https://pikku.dev/docs/middleware/auth-apikey)**
+
+---
+
+## Scenarios: Tests That Are Also Health Checks
+
+**Scenarios** are flows written as Pikku functions that double as e2e tests, seed scripts, and production health checks. Actors give each step a real identity (real login, real permissions), and steps can ride the actual transport — HTTP, WebSocket, even a conversation with one of your agents.
+
+```typescript
+export const orderSupportScenario = pikkuScenario({
+  title: 'Order support',
+  func: async ({}, data, { workflow, actors }) => {
+    const doubled = await workflow.do(
+      'shopper doubles their order',
+      'doubleValue',
+      { value: 21 },
+      { actor: actors.shopper }
+    )
+
+    await workflow.expectEventually(
+      'support sees the message settle',
+      'formatMessage',
+      { greeting: 'Hello', name: 'Support' },
+      (out) => out.message.length > 0,
+      { actor: actors.support, within: '5s' }
+    )
+  },
+})
+```
+
+And scenarios can talk to your AI agents. `converse` puts an actor in a live conversation with an agent — the actor plays the user, pursues a task, and judges whether it actually happened:
+
+```typescript
+const verdict = await actor.converse({
+  agent: 'todo-agent',
+  task: 'Ask the assistant to add a todo titled "buy milk".',
+  evaluate: 'A todo titled "buy milk" was successfully added.',
+})
+```
+
+You get back a pass/fail verdict with the reasoning and the full transcript. Your agents are now e2e-testable like everything else.
+
+Run scenarios with `pikku dev --coverage` and you get in-process V8 **precise coverage attributed per scenario** — you can see exactly which functions your flows actually exercise, in the console.
+
+![Scenarios in the console — flows and the personas that run them](/img/blog/pikku-0-13/scenarios.png)
+
+📚 **[Scenarios docs →](https://pikku.dev/docs/core-features/scenarios)** • **[Testing →](https://pikku.dev/docs/core-features/testing)**
+
+---
+
+## Addons: Shareable Backend Packages
+
+Addons are self-contained Pikku packages — functions, wirings, secrets, and all — that you drop into any project with one line:
+
+```typescript
+wireAddon({ name: 'todos', package: '@pikku/addon-todos' })
+```
+
+Namespaced RPCs, typed contracts, secret/variable overrides, tree-shaken per deploy unit. Scaffold one with `pikku new addon` — including straight **from an OpenAPI spec** (`--openapi`), which generates typed functions for an entire third-party API in one command. There's a community registry to publish and consume them, and `pikku audit` checks what your addons are allowed to touch.
+
+![The addon gallery in the console — browse, inspect, and install community addons](/img/blog/pikku-0-13/addons.png)
+
+📚 **[Addon docs →](https://pikku.dev/docs/addon/)** • **[Creating addons →](https://pikku.dev/docs/addon/creating)**
+
+---
+
+## Triggers
+
+Event-driven wiring for things that aren't requests. A trigger names an event; any function — or an entire workflow — subscribes to it. Trigger *sources* are functions too, so watching a webhook, polling an upstream API, or listening to a Postgres NOTIFY all look the same:
+
+```typescript
+wireTrigger({ name: 'invoice-paid', func: onInvoicePaid })
+
+wireTriggerSource({
+  name: 'invoice-paid',
+  func: stripeWebhookSource,
+  input: { eventName: 'invoice-paid' },
+})
+```
+
+The `TriggerService` runs on Postgres, Redis, or in-memory, and workflows auto-register as trigger targets — so "an event arrived" can mean "a durable, resumable, retryable process just started", not "a callback fired and hopefully finished". This is the glue layer between your system and everyone else's.
+
+📚 **[Trigger docs →](https://pikku.dev/docs/wiring/triggers/)**
+
+---
+
+## Gateways: Your Functions in Slack
+
+`wireGateway` connects your functions to messaging platforms — the same function serving your HTTP route can now answer `/todo add buy milk` in a channel.
+
+```typescript
+wireGateway({
+  name: 'support-bot',
+  type: 'webhook',
+  route: '/webhooks/slack',
+  platform: 'slack',
+  adapter: slackAdapter,
+  func: supportResponder,
+})
+```
+
+The first adapter is **Slack** — slash-command parsing, request signature verification, and install-URL flows included. Adapters are a tiny `parse`/`send` interface and resolve lazily from your services, so wrapping Discord, Teams, WhatsApp, or your own webhook format is an afternoon, not a project. Pair a gateway with an AI agent and you have a bot that answers in Slack with your real API behind it — permissions and all.
+
+📚 **[Gateway docs →](https://pikku.dev/docs/wiring/gateway/)** • **[Slack →](https://pikku.dev/docs/wiring/gateway/slack)**
+
+---
+
+## Emails, Templated and Previewed
+
+Transactional email is now a first-class service. `pikku email templates` scaffolds a template directory — layouts, partials, themes, and locales — and every send is typed:
+
+```typescript
+export const sendWelcome = pikkuFunc<{ userId: string }, { sent: boolean }>({
+  func: async ({ emailService, kysely }, { userId }) => {
+    const user = await kysely
+      .selectFrom('user')
+      .selectAll()
+      .where('id', '=', userId)
+      .executeTakeFirstOrThrow()
+    await emailService.send({
+      to: user.email,
+      template: { name: 'welcome', locale: 'en', data: { name: user.name } },
+    })
+    return { sent: true }
+  },
+})
+```
+
+The console gets an Emails page with HTML and plain-text previews and an inline source editor — so "what does this email actually look like?" no longer requires sending one to yourself. A local email service handles dev; swap the backend for your provider in production.
+
+![Email template preview in the console — rendered per locale, with live variable inputs](/img/blog/pikku-0-13/email-preview.png)
+
+📚 **[EmailService API →](https://pikku.dev/docs/api/email-service)**
+
+---
+
+## Typed Realtime
+
+A new `PikkuRealtime` client mirrors the RPC client for server-pushed events: a generic `/events` channel over SSE with full type safety, channel state (`setState`/`getState`) that survives across messages, and a pluggable event hub (local or Postgres) for fan-out.
+
+📚 **[Channel docs →](https://pikku.dev/docs/wiring/channels/)** • **[SSE →](https://pikku.dev/docs/wiring/http/server-sent-events)**
+
+---
+
+## Runtimes: Bun, and Batteries-Included Node
+
+Two big arrivals. **Bun** is now a first-class runtime — `pikku dev` auto-selects `@pikku/bun-server` when you're running under Bun, and deploys can bundle with `Bun.build`. And the new unified **`@pikku/node-http-server`** runs everything — HTTP, WebSockets, cron, queue processing, MCP — in one process, from dev to a standalone container.
+
+Also new or expanded: **TanStack Start**, Cloudflare Workers (including workflows on Durable Objects), Azure Functions, and a Next.js worker-RPC transport. Node 24 is now the baseline.
+
+📚 **[Bun →](https://pikku.dev/docs/runtimes/bun-server)** • **[Node HTTP server →](https://pikku.dev/docs/runtimes/node-http-server)** • **[TanStack Start →](https://pikku.dev/docs/runtimes/tanstack-start)**
+
+---
+
+## Secrets, Variables & Per-User Credentials
+
+Configuration is now declared, not scattered: `wireSecret` (with rotation periods) and `wireVariable` give you a typed, auditable inventory of everything your app reads from the environment. New in 0.13: **per-user credentials** via `wireCredential` — store each user's OAuth tokens or API keys and let functions act on their behalf, with a "connect" flow surfaced in the console.
+
+![Secrets in the console — every secret your app declares, and where it comes from](/img/blog/pikku-0-13/secrets.png)
+
+📚 **[Secrets →](https://pikku.dev/docs/core-features/secrets)** • **[Variables →](https://pikku.dev/docs/core-features/variables)** • **[Credentials →](https://pikku.dev/docs/wiring/credentials/)**
+
+---
+
+## And the Rapid-Fire Round
+
+Because three minor versions don't fit in one post:
+
+- **Zod schemas** — `pikkuFunc({ input, output })` accepts Zod schemas as an alternative to generics, with runtime validation for free. [Types & schemas →](https://pikku.dev/docs/philosophy/types-and-schemas)
+- **MCP auto-mount** — wire an MCP tool, resource, or prompt and the Node server mounts an MCP endpoint automatically. [MCP →](https://pikku.dev/docs/wiring/mcp/)
+- **Queues matured** — BullMQ and pg-boss transports, in-memory retries, and benchmarks across all of them. [Queues →](https://pikku.dev/docs/wiring/queue/)
+- **RPC hardening** — aliases, addon-scoped names, configurable public auth, and remote internal RPC with encrypted sessions. [RPC →](https://pikku.dev/docs/wiring/rpcs/)
+- **React Query hooks** — generated, typed hooks for your RPCs. [React Query →](https://pikku.dev/docs/wiring/rpcs/react-query)
+- **Deploy targets** — per-unit deploy codegen with tree-shaking, `pikku all --deploy serverless|server`, and container images out of the box. [Deploy →](https://pikku.dev/docs/deploy/)
+- **`pikku new`** — scaffolds for functions, wirings, middleware, permissions, and addons; plus `pikku info`, structural `--diff`, and JSON/NDJSON output for CI.
+- **Coded diagnostics** — every CLI error now has a `PKU` code with a documentation page and `--fail-on-*` severity control. [Error reference →](https://pikku.dev/docs/pikku-cli/errors/)
+- **i18n** — `@pikku/paraglide` generates typed enum-label lookups reconciled against your database enums.
+- **Function versioning** — version your functions and keep old clients working while you move on. [Versioning →](https://pikku.dev/docs/core-features/versioning)
+- **Content service** — bucket-aware typed storage with a new Backblaze backend alongside S3.
+- **Audit logging** — a per-invocation `auditLog` service slot with a durable Kysely sink. [Audit service →](https://pikku.dev/docs/api/audit-service)
+- **Native binaries & AI skills** — the CLI ships as native binaries (Windows included) and bundles Claude Code skills so AI assistants write idiomatic Pikku out of the box.
+
+---
+
+## Try It Now
+
+0.13 is where Pikku stops being a promising way to wire functions and becomes a complete backend: durable execution, agents, data, auth, testing, and observability — one framework, any runtime, no lock-in. And with the backwards-compatibility commitment, it's the release you can build on.
+
+```bash
+npm create pikku@latest
+```
+
+- 🧪 **[Get Started](https://pikku.dev/docs/)**
+- 💻 **[View on GitHub](https://github.com/pikkujs/pikku)**
+- 💬 **[Join the conversation](https://github.com/pikkujs/pikku/discussions)**
+
+Thanks for building with Pikku.
+
+— Yasser
