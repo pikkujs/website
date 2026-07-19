@@ -1,14 +1,14 @@
 ---
 sidebar_position: 5
 title: HTTP Router
-description: Global HTTP middleware and permissions for routes
+description: Global HTTP middleware for routes
 ---
 
 # HTTP Router APIs
 
-The HTTP router APIs let you register middleware and permissions that apply across multiple HTTP routes. Use these for cross-cutting concerns like authentication, logging, and access control.
+The HTTP router APIs let you register middleware that applies across multiple HTTP routes. Use these for cross-cutting concerns like authentication, logging, and request transformation.
 
-For route-specific middleware and permissions, see [wireHTTP](./index.md) configuration options.
+For route-specific middleware, see [wireHTTP](./index.md) configuration options. Authorization lives on the function definition — see [Permission Guards](../../core-features/permission-guards.md).
 
 ## addHTTPMiddleware
 
@@ -101,66 +101,19 @@ addHTTPMiddleware('/admin', [adminAuth])
 addHTTPMiddleware('/api', [rateLimit])
 ```
 
-## addHTTPPermission
+## Authorization
 
-Applies permissions globally or to routes matching a prefix.
-
-```typescript
-import { addHTTPPermission } from '#pikku'
-import { requireAuth, requireAdmin } from './permissions.js'
-
-// Routes starting with /admin require auth + admin
-addHTTPPermission('/admin', {
-  auth: requireAuth,
-  admin: requireAdmin,
-})
-
-// All HTTP routes require authentication
-addHTTPPermission('*', {
-  auth: requireAuth,
-})
-```
-
-### Parameters
-
-- **route** (`string`) - Route prefix pattern, or `'*'` for global
-- **permissions** (`Record<string, PikkuPermission>`) - Named permissions to apply
-
-### Example with Multiple Permissions
+Permissions are declared on the function definition, not on the router. For an app-wide baseline that every function must additionally pass, use `addGlobalPermission`:
 
 ```typescript
-import { pikkuPermission } from '#pikku'
+import { addGlobalPermission } from '#pikku'
+import { requireAuth } from './permissions.js'
 
-const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
-  return session?.userId != null
-})
-
-const requireAdmin = pikkuPermission(async (_services, _data, { session }) => {
-  return session?.role === 'admin'
-})
-
-const requirePremium = pikkuPermission(async ({ database }, _data, { session }) => {
-  if (!session?.userId) return false
-
-  const dbUser = await database.query('users', {
-    where: { id: session.userId }
-  })
-
-  return dbUser?.isPremium === true
-})
-
-// Admin routes need both auth and admin role
-addHTTPPermission('/admin', {
-  auth: requireAuth,
-  admin: requireAdmin,
-})
-
-// Premium features need auth and premium subscription
-addHTTPPermission('/api/premium', {
-  auth: requireAuth,
-  premium: requirePremium,
-})
+// Every function also requires a valid session
+addGlobalPermission([requireAuth])
 ```
+
+Global permissions form an independent AND gate and can only narrow access. See [Permission Guards](../../core-features/permission-guards.md) for the full model.
 
 ## Route Pattern Matching
 

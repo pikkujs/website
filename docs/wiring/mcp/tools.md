@@ -221,7 +221,6 @@ export const processOrder = pikkuMCPToolFunc<{ orderId: string }>({
   title: 'Process Order',
   summary: 'Runs invoicing, payment, and confirmation',
   middleware: [auditMiddleware],
-  permissions: { admin: requireAdmin },
   tags: ['orders', 'admin']
 })
 ```

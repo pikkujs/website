@@ -83,9 +83,6 @@ Errors related to middleware and permission configuration.
 | PKU736 | Middleware Empty Array     | [View](./pku736.md)  |
 | PKU787 | Middleware Pattern Invalid | [View](./pku787.md)  |
 | PKU835 | Permission Handler Invalid | [View](./pku835.md)  |
-| PKU836 | Permission Tag Invalid     | [View](./pku836.md)  |
-| PKU937 | Permission Empty Array     | [View](./pku937.md)  |
-| PKU975 | Permission Pattern Invalid | [View](./pku975.md)  |
 
 ## Database Schema Errors
 

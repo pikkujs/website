@@ -169,43 +169,23 @@ export const activeSubscription = pikkuPermission(
 )
 ```
 
-## HTTP-Specific Permissions
+## Global Permissions
 
-For HTTP routes, you can apply permissions at the route level or globally:
-
-```typescript
-import { wireHTTP } from '#pikku/http'
-
-// Route-level permissions
-wireHTTP({
-  method: 'delete',
-  route: '/users/:userId',
-  func: deleteUser,
-  permissions: {
-    auth: requireAuth,
-    admin: requireAdmin
-  }
-})
-```
-
-Or apply to all routes with a prefix:
+Permissions live on the function definition. To apply an app-wide baseline that **every** function must additionally satisfy, use `addGlobalPermission`:
 
 ```typescript
-import { addHTTPPermission } from '#pikku/http'
+import { addGlobalPermission } from '#pikku'
+import { requireAuth } from './permissions.js'
 
-// All /admin routes require authentication and admin role
-addHTTPPermission('/admin', {
-  auth: requireAuth,
-  admin: requireAdmin
-})
-
-// All routes require authentication
-addHTTPPermission('*', {
-  auth: requireAuth
-})
+// Every function now also requires a valid session
+addGlobalPermission([requireAuth])
 ```
 
-See [HTTP Router](../wiring/http/router.md) for more on `addHTTPPermission`.
+Global permissions form an independent **AND** gate: they can only ever *narrow* access. Each function still enforces its own `permissions` in full — a broad global (e.g. `requireAuth`) can never satisfy a stricter function's own requirement (e.g. `requireAdmin`).
+
+:::note
+Wire-, tag-, and HTTP-route-level permissions (`addHTTPPermission`, `addTagPermission`, and a `permissions` field on the wiring) were removed in 0.13. Declare authorization on the function, plus the optional global gate above. Tags are organizational only — use tag/HTTP _middleware_ for cross-cutting request handling.
+:::
 
 ## Error Handling
 
@@ -466,5 +446,5 @@ if (!session?.userId) throw new Error('Unauthorized')  // Returns 500, not 403
 ## Next Steps
 
 - [Functions](./functions.md) - Understanding Pikku functions
-- [HTTP Router](../wiring/http/router.md) - HTTP-specific permissions with `addHTTPPermission`
+- [HTTP Router](../wiring/http/router.md) - Global HTTP middleware for routes
 - [Middleware](./middleware.md) - Request/response transformation

@@ -70,17 +70,8 @@ wireHTTP({
   // Optional - Authentication
   auth: true,  // Requires user session (default: true)
 
-  // Optional - Permissions
-  permissions: {
-    owner: requireBookOwner,
-    admin: requireAdmin
-  },
-
   // Optional - Middleware
   middleware: [auditMiddleware, setCookieMiddleware],
-
-  // Optional - Server-Sent Events
-  sse: false,  // Enable SSE for GET routes (default: false)
 })
 ```
 
@@ -89,7 +80,7 @@ Let's break down each option:
 ### Method
 
 ```typescript
-method: 'get' | 'post' | 'put' | 'patch' | 'delete'
+method: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'head' | 'options'
 ```
 
 The HTTP method for this route.
@@ -134,13 +125,13 @@ By default, functions require authentication (`auth: true`).
 
 ### Permissions
 
-Add transport-specific permissions for this HTTP route:
+Authorization is not a wiring concern. Declare permissions on the function definition itself:
 
 ```typescript
-wireHTTP({
-  method: 'delete',
-  route: '/books/:bookId',
-  func: deleteBook,
+export const deleteBook = pikkuFunc({
+  func: async ({ db }, { bookId }) => {
+    await db.deleteBook(bookId)
+  },
   permissions: {
     owner: requireBookOwner,
     admin: requireAdmin
@@ -148,26 +139,7 @@ wireHTTP({
 })
 ```
 
-These permissions **add to** the permissions defined on the function itself.
-
-You can also apply permissions globally or to route prefixes:
-
-```typescript
-import { addHTTPPermission } from '#pikku'
-import { requireAuth, requireAdmin } from './permissions.js'
-
-// Global permissions - applies to all HTTP routes
-addHTTPPermission('*', {
-  auth: requireAuth
-})
-
-// Prefix permissions - applies to routes starting with /admin
-addHTTPPermission('/admin', {
-  admin: requireAdmin
-})
-```
-
-See [Permission Guards](../../core-features/permission-guards.md) for more details.
+For an app-wide baseline every function must also pass, use `addGlobalPermission`. See [Permission Guards](../../core-features/permission-guards.md) for details.
 
 ### Middleware
 
@@ -193,13 +165,13 @@ import { corsMiddleware, loggingMiddleware, adminAuthMiddleware } from './middle
 // Global - applies to all HTTP routes
 addHTTPMiddleware('*', [corsMiddleware, loggingMiddleware])
 
-// Prefix - applies to routes starting with /admin
-addHTTPMiddleware('/admin', [adminAuthMiddleware])
+// Pattern - applies to routes matching /admin/*
+addHTTPMiddleware('/admin/*', [adminAuthMiddleware])
 ```
 
 Middleware runs in this order:
 1. Global HTTP middleware
-2. Prefix-based middleware (`/admin/*`)
+2. Route-pattern middleware (`/admin/*`)
 3. Tag-based middleware
 4. Wire-specific middleware (defined in `wireHTTP`)
 5. Function-level middleware
@@ -219,7 +191,7 @@ wireHTTP({
 })
 ```
 
-Your function can then send incremental updates through the `channel` service. See [Server-Sent Events](./server-sent-events.md) for more details.
+Your function can then send incremental updates through the `channel` object on the third (wire) argument: `async (services, data, { channel }) => ...`. See [Server-Sent Events](./server-sent-events.md) for more details.
 
 ## How Data Flows
 
@@ -263,8 +235,7 @@ Pikku automatically maps errors to HTTP status codes. You can use built-in error
 
 ```typescript
 // errors.ts
-import { PikkuError } from '@pikku/core/errors'
-import { addError } from '#pikku'
+import { PikkuError, addError } from '@pikku/core/errors'
 
 export class BookNotAvailableError extends PikkuError {
 }

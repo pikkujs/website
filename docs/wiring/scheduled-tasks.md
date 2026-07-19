@@ -67,7 +67,6 @@ wireHTTP({
   method: 'post',
   route: '/admin/trigger-maintenance',
   func: runDailyMaintenance,
-  permissions: { admin: requireAdmin }
 })
 ```
 :::

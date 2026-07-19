@@ -206,7 +206,6 @@ wireMCPResource({
 
   // Optional
   middleware: [auditMiddleware],
-  permissions: { read: requireRead },
   tags: ['docs', 'search']
 })
 ```
