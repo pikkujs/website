@@ -651,10 +651,6 @@ a.no-underline:hover * {
   background: var(--site-bg);
 }
 
-.wire-hero-dynamic-workflows {
-  background: var(--site-bg);
-}
-
 .wire-hero-instant-reload {
   background: var(--site-bg);
 }

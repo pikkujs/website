@@ -4,8 +4,6 @@ import snippets from '../../data/snippets.json';
 
 const basicsCode = snippets.aiAgent;
 
-const dynamicWorkflowCode = snippets.aiAgentDynamic;
-
 const invokeCode = snippets.aiAgentInvoke;
 
 const streamCode = snippets.aiAgentStream;
@@ -108,37 +106,10 @@ const page: PageData = {
 
     {
       component: 'two-col',
-      eyebrow: 'Dynamic Workflows',
-      h2: 'Agents that _build workflows_',
-      lead: 'Other frameworks let AI call tools in a loop — burning tokens every time. Pikku agents design actual workflow graphs that run natively after the first pass.',
-      variant: 'default',
-      columns: '1fr 1fr',
-      left: {
-        type: 'cards',
-        cards: [
-          { icon: 'sparkles', title: 'AI designs the workflow', body: 'The agent analyses your request and creates a workflow graph using your existing functions as steps. It proposes the workflow and waits for approval.' },
-          { icon: 'play', title: 'Runs natively — no AI', body: 'Once approved, the workflow executes as a real durable workflow. No LLM in the loop. No token cost. Full retry, sleep, and replay guarantees.' },
-          { icon: 'code-2', title: 'Promote to code', body: 'Use graph-to-dsl to pull runtime workflows into your codebase as real TypeScript. Version control, code review, and CI/CD — like any other code.' },
-        ],
-      },
-      right: {
-        type: 'code',
-        code: { filename: 'ops-agent.ts', badge: "dynamicWorkflows: 'write'", icon: 'bot', code: dynamicWorkflowCode, snippetKey: 'aiAgentDynamic' },
-      },
-      below: {
-        type: 'note',
-        icon: 'zap',
-        title: 'Why this matters:',
-        body: 'Every other agent framework re-runs the full AI loop on repeat tasks. Pikku saves the workflow — so the second run costs zero tokens, has zero AI latency, and has zero security surface from LLM decisions.',
-      },
-    },
-
-    {
-      component: 'two-col',
       eyebrow: 'Invocation',
       h2: 'Run or _stream_',
       lead: 'Two execution modes: get the full result at once, or stream events in real time as the agent thinks and acts.',
-      variant: 'alt',
+      variant: 'default',
       left: {
         type: 'code',
         code: { filename: 'run.ts', badge: 'non-streaming', icon: 'bot', code: invokeCode, snippetKey: 'aiAgentInvoke' },
