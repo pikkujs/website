@@ -33,7 +33,6 @@
   "aiAgent": "wirings/shop.bot.ts",
   "aiAgentInvoke": "wirings/shop.bot.ts",
   "aiAgentStream": "wirings/shop.bot.ts",
-  "aiAgentDynamic": "wirings/shop.bot.ts",
   "orderStatusChannel": "wirings/shop.channel.ts",
   "channelWiring": "wirings/shop.channel.ts",
   "channelPubSub": "wirings/shop.channel.ts",
