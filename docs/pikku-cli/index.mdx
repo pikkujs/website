@@ -29,16 +29,16 @@ npx pikku all
 
 **Filtering flags** (apply to `all`):
 
-| Flag | Description |
-|------|-------------|
-| `--filter` | Named filter preset(s) from the `filters` map in `pikku.config.json` (comma-separated) |
-| `--tags, -t` / `--exclude-tags` | Include/exclude functions by tags (comma-separated) |
-| `--wires` / `--exclude-wires` | Include/exclude wirings by category (comma-separated): `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli`, `workflow`, `trigger`, `agent` |
-| `--directories, -d` / `--exclude-directories` | Include/exclude functions by directories (comma-separated) |
-| `--http-methods` / `--exclude-http-methods` | Include/exclude HTTP routes by methods (comma-separated) |
-| `--http-routes` / `--exclude-http-routes` | Include/exclude HTTP routes by route patterns (comma-separated) |
-| `--names, -n` / `--exclude-names` | Include/exclude functions by name patterns (supports wildcards) |
-| `--target` / `--exclude-target` | Include/exclude by deploy target (`serverless`, `server`) |
+| Flag                                          | Description                                                                                                                                         |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--filter`                                    | Named filter preset(s) from the `filters` map in `pikku.config.json` (comma-separated)                                                              |
+| `--tags, -t` / `--exclude-tags`               | Include/exclude functions by tags (comma-separated)                                                                                                 |
+| `--wires` / `--exclude-wires`                 | Include/exclude wirings by category (comma-separated): `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli`, `workflow`, `trigger`, `agent` |
+| `--directories, -d` / `--exclude-directories` | Include/exclude functions by directories (comma-separated)                                                                                          |
+| `--http-methods` / `--exclude-http-methods`   | Include/exclude HTTP routes by methods (comma-separated)                                                                                            |
+| `--http-routes` / `--exclude-http-routes`     | Include/exclude HTTP routes by route patterns (comma-separated)                                                                                     |
+| `--names, -n` / `--exclude-names`             | Include/exclude functions by name patterns (supports wildcards)                                                                                     |
+| `--target` / `--exclude-target`               | Include/exclude by deploy target (`serverless`, `server`)                                                                                           |
 
 ```bash
 # Public HTTP API only
@@ -80,6 +80,8 @@ npx pikku serve
 npx pikku serve --port 8080
 npx pikku serve --console        # Also serve the Console same-origin at /console
 ```
+
+Both commands own the full server lifecycle — creating services, starting, and shutting down. Hook into it with [lifecycle hooks](/docs/core-features/server-lifecycle) rather than writing your own entrypoint.
 
 ### `pikku watch`
 
@@ -224,7 +226,6 @@ npx pikku db reset      # Wipe and recreate the dev database (migrate + seed)
 npx pikku db audit      # Report column classifications and flag columns with no anonymize strategy
 ```
 
-
 ### `pikku binary`
 
 Compile a TypeScript entrypoint to a self-contained native binary via `bun build --compile`. Configure `binary.entrypoint`, `binary.output`, and `binary.targets` in `pikku.config.json`.
@@ -315,23 +316,23 @@ PikkuFabric commands (login, link, deploy, domains, secrets, logs, …). Run `np
 
 These flags work with any command:
 
-| Flag | Description |
-|------|-------------|
-| `--config, -c` | Path to `pikku.config.json` file |
-| `--log-level, -l` | Set log level (default: `info`) |
-| `--output` | Output format: `text` (default) or `json` (emits NDJSON) |
-| `--json, -j` | Alias for `--output json` |
-| `--out-dir, -o` | Override output directory |
-| `--user-session-type` | Specify which UserSession type to use (when multiple exist) |
-| `--singleton-services-factory-type` | Specify which singleton services factory to use |
-| `--wire-services-factory-type` | Specify which wire services factory to use |
-| `--state-output` | Save inspector state to JSON file for reuse |
-| `--state-input` | Load inspector state from JSON (skips inspection) |
-| `--security` | Run the data-classification security lint (scans function return types for Private/Pii/Secret leaks). Off by default |
-| `--fail-on-error` | Fail the build on error-severity diagnostics (default: only critical fail) |
-| `--fail-on-warn` | Fail the build on warn-severity diagnostics (implies `--fail-on-error`) |
-| `--tsc` | After codegen, run a real `tsc --noEmit` and fail on type errors (full diagnostics with code frames) |
-| `--tsc-summary` | Like `--tsc` but prints a compact one-line-per-error summary — cheap for CI and AI agents |
+| Flag                                | Description                                                                                                          |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `--config, -c`                      | Path to `pikku.config.json` file                                                                                     |
+| `--log-level, -l`                   | Set log level (default: `info`)                                                                                      |
+| `--output`                          | Output format: `text` (default) or `json` (emits NDJSON)                                                             |
+| `--json, -j`                        | Alias for `--output json`                                                                                            |
+| `--out-dir, -o`                     | Override output directory                                                                                            |
+| `--user-session-type`               | Specify which UserSession type to use (when multiple exist)                                                          |
+| `--singleton-services-factory-type` | Specify which singleton services factory to use                                                                      |
+| `--wire-services-factory-type`      | Specify which wire services factory to use                                                                           |
+| `--state-output`                    | Save inspector state to JSON file for reuse                                                                          |
+| `--state-input`                     | Load inspector state from JSON (skips inspection)                                                                    |
+| `--security`                        | Run the data-classification security lint (scans function return types for Private/Pii/Secret leaks). Off by default |
+| `--fail-on-error`                   | Fail the build on error-severity diagnostics (default: only critical fail)                                           |
+| `--fail-on-warn`                    | Fail the build on warn-severity diagnostics (implies `--fail-on-error`)                                              |
+| `--tsc`                             | After codegen, run a real `tsc --noEmit` and fail on type errors (full diagnostics with code frames)                 |
+| `--tsc-summary`                     | Like `--tsc` but prints a compact one-line-per-error summary — cheap for CI and AI agents                            |
 
 ## Common Workflows
 

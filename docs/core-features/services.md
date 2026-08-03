@@ -16,19 +16,19 @@ Here's a minimal example – a service that manages a book collection:
 
 ```typescript
 interface BookService {
-  getBook(id: string): Book | undefined
-  createBook(book: Book): void
+  getBook(id: string): Book | undefined;
+  createBook(book: Book): void;
 }
 
 class LocalBookService implements BookService {
-  private books = new Map<string, Book>()
+  private books = new Map<string, Book>();
 
   getBook(id: string) {
-    return this.books.get(id)
+    return this.books.get(id);
   }
 
   createBook(book: Book) {
-    this.books.set(book.id, book)
+    this.books.set(book.id, book);
   }
 }
 ```
@@ -43,15 +43,15 @@ Services are available to your functions via the first parameter. **Always destr
 export const getBook = pikkuFunc<{ bookId: string }, Book>({
   func: async ({ books }, data) => {
     // Only books service is included in the bundle for this function
-    const book = books.getBook(data.bookId)
+    const book = books.getBook(data.bookId);
     if (!book) {
-      throw new NotFoundError('Book not found')
+      throw new NotFoundError("Book not found");
     }
-    return book
+    return book;
   },
-  title: 'Get a book by ID',
-  tags: ['books']
-})
+  title: "Get a book by ID",
+  tags: ["books"],
+});
 ```
 
 :::tip Tree-Shaking
@@ -103,28 +103,32 @@ First, extend Pikku's type system with your services:
 
 ```typescript
 // types/application-types.d.ts
-import type { CoreConfig, CoreSingletonServices, CoreServices } from '@pikku/core'
+import type {
+  CoreConfig,
+  CoreSingletonServices,
+  CoreServices,
+} from "@pikku/core";
 
 // Define your app configuration
 export interface Config extends CoreConfig {
-  logLevel: string
+  logLevel: string;
   database: {
-    host: string
-    port: number
-  }
+    host: string;
+    port: number;
+  };
 }
 
 // Add your singleton services
 export interface SingletonServices extends CoreSingletonServices<Config> {
-  jwt: JWTService
-  books: BookService
-  database: DatabasePool
+  jwt: JWTService;
+  books: BookService;
+  database: DatabasePool;
 }
 
 // Main services type (combines singleton and wire services)
 export interface Services extends CoreServices<SingletonServices> {
   // Wire-specific services are added here
-  dbTransaction: DatabaseTransaction
+  dbTransaction: DatabaseTransaction;
 }
 ```
 
@@ -138,40 +142,40 @@ Then implement the factories that create your services:
 
 ```typescript
 // services.ts
-import { pikkuConfig, pikkuServices, pikkuWireServices } from '#pikku'
+import { pikkuConfig, pikkuServices, pikkuWireServices } from "#pikku";
 
 export const createConfig = pikkuConfig(async () => {
   return {
-    logLevel: 'info',
+    logLevel: "info",
     database: {
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432'),
-    }
-  }
-})
+      host: process.env.DB_HOST || "localhost",
+      port: parseInt(process.env.DB_PORT || "5432"),
+    },
+  };
+});
 
 export const createSingletonServices = pikkuServices(
   async (config, existingServices) => {
-    const logger = new ConsoleLogger()
+    const logger = new ConsoleLogger();
 
     if (config.logLevel) {
-      logger.setLevel(config.logLevel)
+      logger.setLevel(config.logLevel);
     }
 
     const jwt = new JoseJWTService(
       async () => [
         {
-          id: 'my-key',
-          value: process.env.JWT_SECRET || 'dev-secret',
+          id: "my-key",
+          value: process.env.JWT_SECRET || "dev-secret",
         },
       ],
-      logger
-    )
+      logger,
+    );
 
-    const database = new DatabasePool(config.database)
-    await database.connect()
+    const database = new DatabasePool(config.database);
+    await database.connect();
 
-    const books = new BookService()
+    const books = new BookService();
 
     return {
       config,
@@ -179,9 +183,9 @@ export const createSingletonServices = pikkuServices(
       jwt,
       database,
       books,
-    }
-  }
-)
+    };
+  },
+);
 
 export const createWireServices = pikkuWireServices(
   async (singletonServices, wire) => {
@@ -191,9 +195,9 @@ export const createWireServices = pikkuWireServices(
     // the wire — you don't create it here.
     return {
       dbTransaction: new DatabaseTransaction(singletonServices.database),
-    }
-  }
-)
+    };
+  },
+);
 ```
 
 Key points:
@@ -225,8 +229,8 @@ Unlike frameworks like NestJS that use decorators and automatic dependency injec
 @Injectable()
 class MyService {
   constructor(
-    @Inject('DATABASE') private db: Database,
-    @Inject('LOGGER') private logger: Logger
+    @Inject("DATABASE") private db: Database,
+    @Inject("LOGGER") private logger: Logger,
   ) {}
 }
 ```
@@ -238,17 +242,17 @@ Pikku keeps it simple:
 export const myFunction = pikkuFunc({
   func: async ({ database, logger }, data) => {
     // Just destructure what you need
-  }
-})
+  },
+});
 ```
 
-| **Aspect** | **Pikku (Dependency Lookup)** | **NestJS (Dependency Injection)** |
-|------------|-------------------------------|-----------------------------------|
-| **Setup** | Define in factory functions | Decorators on every service |
-| **Runtime** | No reflection overhead | Reflection at startup |
-| **Tree-shaking** | Excellent (Pikku analyzes usage) | Limited (all services bundled) |
-| **Mental model** | Explicit and simple | "Magical" but familiar to some |
-| **Testing** | Mock the factories | Mock via DI container |
+| **Aspect**       | **Pikku (Dependency Lookup)**    | **NestJS (Dependency Injection)** |
+| ---------------- | -------------------------------- | --------------------------------- |
+| **Setup**        | Define in factory functions      | Decorators on every service       |
+| **Runtime**      | No reflection overhead           | Reflection at startup             |
+| **Tree-shaking** | Excellent (Pikku analyzes usage) | Limited (all services bundled)    |
+| **Mental model** | Explicit and simple              | "Magical" but familiar to some    |
+| **Testing**      | Mock the factories               | Mock via DI container             |
 
 The trade-off: Pikku requires you to explicitly create your services in factory functions, but in exchange you get better tree-shaking, faster cold starts, and a simpler mental model.
 
@@ -258,30 +262,30 @@ Pikku defines service interfaces for its core features. You provide implementati
 
 ### Required by Feature
 
-| Service | Interface | Required For | Packages |
-|---------|-----------|-------------|----------|
-| `logger` | `Logger` | Always | Built-in (`ConsoleLogger`) |
-| `config` | `CoreConfig` | Always | Your own |
-| `schema` | `SchemaService` | Validation | `@pikku/schema-ajv`, `@pikku/schema-cfworker` |
-| `secrets` | `SecretService` | [Secrets](/docs/core-features/secrets) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
-| `variables` | `VariablesService` | [Variables](/docs/core-features/variables) | Built-in (`LocalVariablesService`) |
-| `jwt` | `JWTService` | JWT auth | `@pikku/jose` |
-| `aiAgentRunner` | `AIAgentRunnerService` | [AI Agents](/docs/wiring/ai-agents/) | `@pikku/ai-vercel` |
-| `aiStorage` | `AIStorageService` | AI Agents | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
-| `aiRunState` | `AIRunStateService` | AI Agents | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
-| `agentRunService` | `AgentRunService` | Console (agent runs) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
-| `workflowService` | `WorkflowService` | [Workflows](/docs/wiring/workflows/) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
-| `workflowRunService` | `WorkflowRunService` | Console (workflow runs) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
-| `queueService` | `QueueService` | [Queues](/docs/wiring/queue/) | `@pikku/queue-bullmq`, `@pikku/queue-pg-boss`, `CloudflareQueueService`, `SQSQueueService` |
-| `schedulerService` | `SchedulerService` | [Scheduled Tasks](/docs/wiring/scheduled-tasks) | Built-in |
-| `channelStore` | `ChannelStore` | [Channels](/docs/wiring/channels/) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
-| `eventHubStore` | `EventHubStore` | Channels (pub/sub) | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
-| `credentialService` | `CredentialService` | [Credentials](/docs/wiring/credentials/) | `@pikku/kysely` |
-| `deploymentService` | `DeploymentService` | Multi-instance deploy | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb` |
-| `content` | `ContentService` | Static content serving | Built-in (`LocalContentService`) |
-| `triggerService` | `TriggerService` | [Triggers](/docs/wiring/triggers/) | Built-in (`PikkuTriggerService`) |
-| `gatewayService` | `GatewayService` | [Gateway](/docs/wiring/gateway/) | Your own |
-| `metaService` | `MetaService` | Console | Generated (`PikkuMetaService`) |
+| Service              | Interface              | Required For                                    | Packages                                                                                   |
+| -------------------- | ---------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `logger`             | `Logger`               | Always                                          | Built-in (`ConsoleLogger`)                                                                 |
+| `config`             | `CoreConfig`           | Always                                          | Your own                                                                                   |
+| `schema`             | `SchemaService`        | Validation                                      | `@pikku/schema-ajv`, `@pikku/schema-cfworker`                                              |
+| `secrets`            | `SecretService`        | [Secrets](/docs/core-features/secrets)          | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
+| `variables`          | `VariablesService`     | [Variables](/docs/core-features/variables)      | Built-in (`LocalVariablesService`)                                                         |
+| `jwt`                | `JWTService`           | JWT auth                                        | `@pikku/jose`                                                                              |
+| `aiAgentRunner`      | `AIAgentRunnerService` | [AI Agents](/docs/wiring/ai-agents/)            | `@pikku/ai-vercel`                                                                         |
+| `aiStorage`          | `AIStorageService`     | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
+| `aiRunState`         | `AIRunStateService`    | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
+| `agentRunService`    | `AgentRunService`      | Console (agent runs)                            | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
+| `workflowService`    | `WorkflowService`      | [Workflows](/docs/wiring/workflows/)            | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
+| `workflowRunService` | `WorkflowRunService`   | Console (workflow runs)                         | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
+| `queueService`       | `QueueService`         | [Queues](/docs/wiring/queue/)                   | `@pikku/queue-bullmq`, `@pikku/queue-pg-boss`, `CloudflareQueueService`, `SQSQueueService` |
+| `schedulerService`   | `SchedulerService`     | [Scheduled Tasks](/docs/wiring/scheduled-tasks) | Built-in                                                                                   |
+| `channelStore`       | `ChannelStore`         | [Channels](/docs/wiring/channels/)              | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
+| `eventHubStore`      | `EventHubStore`        | Channels (pub/sub)                              | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
+| `credentialService`  | `CredentialService`    | [Credentials](/docs/wiring/credentials/)        | `@pikku/kysely`                                                                            |
+| `deploymentService`  | `DeploymentService`    | Multi-instance deploy                           | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
+| `content`            | `ContentService`       | Static content serving                          | Built-in (`LocalContentService`)                                                           |
+| `triggerService`     | `TriggerService`       | [Triggers](/docs/wiring/triggers/)              | Built-in (`PikkuTriggerService`)                                                           |
+| `gatewayService`     | `GatewayService`       | [Gateway](/docs/wiring/gateway/)                | Your own                                                                                   |
+| `metaService`        | `MetaService`          | Console                                         | Generated (`PikkuMetaService`)                                                             |
 
 You only need to provide the services your project uses. The CLI detects which services your functions reference and generates a `RequiredSingletonServices` type that makes unused services optional.
 
@@ -290,20 +294,20 @@ You only need to provide the services your project uses. The CLI detects which s
 Services can throw Pikku errors that are automatically mapped to HTTP status codes:
 
 ```typescript
-import { PikkuError, addError } from '#pikku'
+import { PikkuError, addError } from "#pikku";
 
 export class NotEnoughPointsError extends PikkuError {}
-addError(NotEnoughPointsError, { status: 400, message: 'Not enough points!' })
+addError(NotEnoughPointsError, { status: 400, message: "Not enough points!" });
 
 class GameScoreService {
-  private score = 100
+  private score = 100;
 
   deductPoints(points: number) {
     if (points > this.score) {
-      throw new NotEnoughPointsError()
+      throw new NotEnoughPointsError();
     }
-    this.score -= points
-    return this.score
+    this.score -= points;
+    return this.score;
   }
 }
 ```
@@ -317,24 +321,24 @@ Services make it easy to swap implementations based on environment:
 ```typescript
 export const createSingletonServices = pikkuServices(
   async (config, existingServices) => {
-    const isProduction = process.env.NODE_ENV === 'production'
+    const isProduction = process.env.NODE_ENV === "production";
 
-    let storage: Storage
+    let storage: Storage;
     if (isProduction) {
       // Use S3 in production
-      storage = new S3Storage(config.aws)
+      storage = new S3Storage(config.aws);
     } else {
       // Use local filesystem in development
-      storage = new LocalStorage('./tmp')
+      storage = new LocalStorage("./tmp");
     }
 
     return {
       config,
       storage,
       // ... other services
-    }
-  }
-)
+    };
+  },
+);
 ```
 
 For tests, create a separate factory that returns mocked services:
@@ -349,9 +353,9 @@ export const createTestServices = pikkuServices(
       database: new MockDatabase(),
       storage: new InMemoryStorage(),
       // ... other mocks
-    }
-  }
-)
+    };
+  },
+);
 ```
 
 ## Summary
@@ -369,6 +373,7 @@ The key insight: **your services don't know about Pikku**. They're just classes 
 
 ## Next Steps
 
+- [Server Lifecycle](/docs/core-features/server-lifecycle) – Run migrations, seeding and teardown around your services
 - [Middleware](/docs/core-features/middleware) – Add cross-cutting concerns like logging and authentication
 - [Errors](/docs/core-features/errors) – Map custom errors to HTTP status codes
 - [Functions](/docs/core-features/functions) – Understand how functions use services
