@@ -19,13 +19,10 @@ Errors related to missing required properties or invalid types in your Pikku con
 | PKU220 | Missing URI Property         | [View](./pku220.md)  |
 | PKU236 | Missing Function Property    | [View](./pku236.md)  |
 | PKU247 | Invalid Tags Type            | [View](./pku247.md)  |
-| PKU300 | Invalid Handler              | [View](./pku300.md)  |
 | PKU370 | Missing Title Property       | [View](./pku370.md)  |
 | PKU384 | Missing Queue Name           | [View](./pku384.md)  |
 | PKU400 | Missing Channel Name         | [View](./pku400.md)  |
 | PKU672 | CLI Client-Side Renderer Has Services | [View](./pku672.md) |
-| PKU673 | Scenario Has Services        | [View](./pku673.md) |
-| PKU675 | expectEventually Is Scenario-Only | [View](./pku675.md) |
 
 ## Configuration Errors
 
@@ -33,11 +30,7 @@ Errors related to Pikku configuration and schema generation.
 
 | Code   | Description             | Link                 |
 | ------ | ----------------------- | -------------------- |
-| PKU426 | Config Type Not Found   | [View](./pku426.md)  |
-| PKU427 | Config Type Undefined   | [View](./pku427.md)  |
-| PKU431 | Schema Has No Root      | [View](./pku431.md)  |
 | PKU456 | Schema Generation Error | [View](./pku456.md)  |
-| PKU488 | Schema Load Error       | [View](./pku488.md)  |
 | PKU489 | Inline Schema           | [View](./pku489.md) |
 | PKU490 | Schema and Wiring Colocated | [View](./pku490.md) |
 
@@ -50,8 +43,59 @@ Errors related to HTTP route definitions and auth wiring.
 | PKU571 | Route Param Mismatch                 | [View](./pku571.md) |
 | PKU572 | Route Query Mismatch                 | [View](./pku572.md) |
 | PKU573 | Auth Disabled Requires Sessionless   | [View](./pku573.md) |
+| PKU574 | Exposed Function Has No Gate         | [View](./pku574.md) |
+| PKU575 | Tag Resolves to No Middleware        | [View](./pku575.md) |
+| PKU576 | Permissions in Body Not Allowed      | [View](./pku576.md) |
 | PKU581 | Duplicate Auth Definition            | [View](./pku581.md) |
 | PKU582 | Auth Not Exported                    | [View](./pku582.md) |
+| PKU585 | Duplicate Personas Definition        | [View](./pku585.md) |
+
+## AI Agent Errors
+
+Errors from `pikkuAIAgent` model and tool declarations.
+
+| Code   | Description                  | Link        |
+| ------ | ---------------------------- | ----------- |
+| PKU145 | Missing Model                | [View](./pku145.md) |
+| PKU146 | Invalid Model                | [View](./pku146.md) |
+| PKU152 | Agent Tool Unknown Namespace | [View](./pku152.md) |
+| PKU153 | Agent Tool Not Found         | [View](./pku153.md) |
+| PKU154 | Agent Tool Missing Description | [View](./pku154.md) |
+
+## Addon Errors
+
+Errors from `wireAddon` / `wireRemoteAddon` declarations and addon authoring rules.
+
+| Code   | Description                          | Link        |
+| ------ | ------------------------------------ | ----------- |
+| PKU338 | Remote Addon Not a Dev Dependency    | [View](./pku338.md) |
+| PKU339 | Remote Addon Auth Unresolved         | [View](./pku339.md) |
+| PKU920 | Addon Wiring Not Allowed             | [View](./pku920.md) |
+| PKU921 | Addon Contract Handlers Not Allowed  | [View](./pku921.md) |
+
+## Scenario Errors
+
+Errors from `pikkuScenario` flows and their steps.
+
+| Code   | Description                          | Link        |
+| ------ | ------------------------------------ | ----------- |
+| PKU673 | Scenario Has Services                | [View](./pku673.md) |
+| PKU675 | expectEventually Is Scenario-Only    | [View](./pku675.md) |
+| PKU677 | Scenario Browser Step Needs Actor    | [View](./pku677.md) |
+| PKU678 | Scenario Step Target Not Static      | [View](./pku678.md) |
+| PKU679 | Scenario Not Extractable             | [View](./pku679.md) |
+| PKU680 | Scenario Has No Assertion            | [View](./pku680.md) |
+
+## Secret Boundary Errors
+
+Errors and warnings from the secret-handling boundary. The revealed-secret sink scan (PKU953) runs only under `pikku all --security`.
+
+| Code   | Description                | Link        |
+| ------ | -------------------------- | ----------- |
+| PKU950 | Secret Service Aliased     | [View](./pku950.md) |
+| PKU951 | Secret Not Declared        | [View](./pku951.md) |
+| PKU952 | Secret Key Not Static      | [View](./pku952.md) |
+| PKU953 | Secret Revealed Into Sink  | [View](./pku953.md) |
 
 ## Workflow Errors
 
@@ -59,9 +103,10 @@ Errors related to DSL workflow definitions and orchestration.
 
 | Code   | Description                       | Link                 |
 | ------ | --------------------------------- | -------------------- |
-| PKU529 | Dynamic Step Name                 | [View](./pku529.md)  |
 | PKU600 | Workflow Orchestrator Not Configured | [View](./pku600.md) |
 | PKU641 | Invalid DSL Workflow              | [View](./pku641.md)  |
+| PKU642 | Workflow Graph Addon Not Wired    | [View](./pku642.md)  |
+| PKU643 | Complex Workflow Not Allowed      | [View](./pku643.md)  |
 
 ## Function Errors
 
@@ -70,19 +115,6 @@ Errors related to Pikku function definitions and metadata.
 | Code   | Description                 | Link                 |
 | ------ | --------------------------- | -------------------- |
 | PKU559 | Function Metadata Not Found | [View](./pku559.md)  |
-| PKU568 | Handler Not Resolved        | [View](./pku568.md)  |
-
-## Middleware & Permission Errors
-
-Errors related to middleware and permission configuration.
-
-| Code   | Description                | Link                 |
-| ------ | -------------------------- | -------------------- |
-| PKU685 | Middleware Handler Invalid | [View](./pku685.md)  |
-| PKU715 | Middleware Tag Invalid     | [View](./pku715.md)  |
-| PKU736 | Middleware Empty Array     | [View](./pku736.md)  |
-| PKU787 | Middleware Pattern Invalid | [View](./pku787.md)  |
-| PKU835 | Permission Handler Invalid | [View](./pku835.md)  |
 
 ## Database Schema Errors
 
@@ -113,16 +145,13 @@ Errors from `pikku versions` contract checking.
 
 | Code   | Description                                   | Link        |
 | ------ | --------------------------------------------- | ----------- |
-| PKU145 | Missing Model (AI agent)                      | [View](./pku145.md) |
-| PKU146 | Invalid Model (AI agent)                      | [View](./pku146.md) |
+| PKU342 | CLI Metadata Not Found                        | [View](./pku342.md) |
 | PKU410 | Services Not Destructured (lint)              | [View](./pku410.md) |
 | PKU411 | Wires Not Destructured (lint)                 | [View](./pku411.md) |
 | PKU498 | Dynamic Import in Function Body (lint)         | [View](./pku498.md) |
 | PKU717 | Duplicate @pikku/core Version                 | [View](./pku717.md) |
-| PKU901 | Workflow Multi-Queue Not Supported            | [View](./pku901.md) |
+| PKU718 | CLI / Core Version Skew                       | [View](./pku718.md) |
 | PKU910 | PII in Output (data classification)           | [View](./pku910.md) |
-| PKU920 | Addon Wiring Not Allowed                      | [View](./pku920.md) |
-| PKU921 | Addon Contract Handlers Not Allowed           | [View](./pku921.md) |
 | PKU940 | RPC Invocation Type Cast                      | [View](./pku940.md) |
 
 ## How to Use This Documentation

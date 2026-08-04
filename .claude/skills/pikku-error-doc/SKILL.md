@@ -17,7 +17,7 @@ You are writing a CLI error reference page for the Pikku documentation. These pa
 ## Your process
 
 1. **Read the error code and message** from the CLI source. Find the exact error text thrown and the condition that triggers it.
-2. **Read 1-2 existing error docs** (e.g., `pku400.md`, `pku685.md`) to absorb the format and tone.
+2. **Read 1-2 existing error docs** (e.g., `pku400.md`, `pku673.md`) to absorb the format and tone.
 3. **Understand the fix** — trace the code to understand what the user needs to do to resolve it.
 4. **Generate the doc** using the format below.
 
