@@ -82,7 +82,6 @@ export default function MetricChart({
       background: 'transparent',
       animations: {
         enabled: true,
-        easing: 'easeinout',
         speed: 500,
       },
     },
@@ -155,13 +154,11 @@ export default function MetricChart({
       hover: {
         filter: {
           type: 'darken',
-          value: 0.15,
         },
       },
       active: {
         filter: {
           type: 'darken',
-          value: 0.25,
         },
       },
     },

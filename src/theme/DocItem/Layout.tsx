@@ -8,10 +8,13 @@ import { AIDisclaimer } from '@site/src/components/AIDisclaimer';
 type Props = WrapperProps<typeof LayoutType>;
 
 export default function LayoutWrapper(props: Props): React.JSX.Element {
-  const { frontMatter } = useDoc();
+  // `metadata.frontMatter` keeps the front matter as-authored, so custom keys
+  // survive; the `frontMatter` field beside it is narrowed to Docusaurus's own.
+  const { metadata } = useDoc();
+  const showAIDisclaimer = Boolean(metadata.frontMatter.ai);
   return (
     <>
-      {frontMatter.ai && <AIDisclaimer />}
+      {showAIDisclaimer && <AIDisclaimer />}
       <Layout {...props} />
     </>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
+import useBrokenLinks from '@docusaurus/useBrokenLinks';
 import Layout from '@theme/Layout';
 import CodeBlock from '@theme/CodeBlock';
 import {
@@ -26,6 +27,13 @@ import type {
   HeroSection, TwoColSection, FeatureGridSection,
   WideCodeSection, StepCardsSection, CtaSection,
 } from './types';
+
+// Docusaurus discovers anchors only through this hook, never by reading `id`
+// attributes off the rendered markup, so a section that does not register here
+// is reported as a broken anchor by every page that links to it.
+function useSectionAnchor(id: string | undefined) {
+  useBrokenLinks().collectAnchor(id);
+}
 
 const GITHUB_BASE = 'https://github.com/pikkujs/template-online-shop/blob/main/packages/functions/src/';
 function snippetSourceUrl(key: string | undefined): string | undefined {
@@ -258,6 +266,7 @@ function HeroRenderer({ s }: { s: HeroSection }) {
 /* ── Two-col ─────────────────────────────────────────────── */
 
 function TwoColRenderer({ s }: { s: TwoColSection }) {
+  useSectionAnchor(s.id);
   return (
     <section id={s.id} className={sectionClass(s.variant)}>
       <div className={styles.wrap}>
@@ -275,6 +284,7 @@ function TwoColRenderer({ s }: { s: TwoColSection }) {
 /* ── Feature grid ────────────────────────────────────────── */
 
 function FeatureGridRenderer({ s }: { s: FeatureGridSection }) {
+  useSectionAnchor(s.id);
   return (
     <section id={s.id} className={sectionClass(s.variant)}>
       <div className={styles.wrap}>
@@ -292,6 +302,7 @@ function WideCodeRenderer({ s, flip = false }: { s: WideCodeSection; flip?: bool
   // Split: prose (eyebrow + h2 + lead) left, code right.
   // When `flip` is true, code moves left and prose moves right via CSS order.
   const hasHeader = !!(s.eyebrow || s.h2 || s.lead);
+  useSectionAnchor(s.id);
   return (
     <section id={s.id} className={sectionClass(s.variant)}>
       <div className={styles.wrap}>
@@ -316,6 +327,7 @@ function WideCodeRenderer({ s, flip = false }: { s: WideCodeSection; flip?: bool
 /* ── Step cards ──────────────────────────────────────────── */
 
 function StepCardsRenderer({ s }: { s: StepCardsSection }) {
+  useSectionAnchor(s.id);
   const cols = s.columns ?? s.steps.length;
   return (
     <section id={s.id} className={sectionClass(s.variant)}>

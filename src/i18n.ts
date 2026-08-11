@@ -4,17 +4,23 @@ import homepageContent from '@site/data/homepage-content.json';
 type HomepageContent = typeof homepageContent;
 
 // Create a recursive type to get all possible paths through the object
-type PathsToStringLeaves<T> = T extends string 
+// Array indices come through as `number`, so the segment type is `string | number`
+// rather than `string` — a path through `hero.features[0]` has a numeric hop.
+type PathSegment = string | number;
+
+type PathsToStringLeaves<T> = T extends string
   ? []
   : {
-      [K in keyof T]: [K, ...PathsToStringLeaves<T[K]>]
+      [K in keyof T]: K extends PathSegment
+        ? [K, ...PathsToStringLeaves<T[K]>]
+        : never
     }[keyof T];
 
-type Join<T extends string[], D extends string> = T extends readonly [infer F, ...infer R]
-  ? F extends string
-    ? R extends readonly string[]
+type Join<T extends readonly PathSegment[], D extends string> = T extends readonly [infer F, ...infer R]
+  ? F extends PathSegment
+    ? R extends readonly PathSegment[]
       ? R['length'] extends 0
-        ? F
+        ? `${F}`
         : `${F}${D}${Join<R, D>}`
       : never
     : never
