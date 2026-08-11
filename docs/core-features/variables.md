@@ -10,10 +10,10 @@ Variables let you declare non-sensitive configuration your application needs usi
 
 ## Defining Variables
 
-Use `wireVariable` to declare a variable with its schema:
+Use `defineVariable` to declare a variable with its schema:
 
 ```typescript
-import { wireVariable } from '#pikku'
+import { defineVariable } from '#pikku'
 import { z } from 'zod'
 
 export const postgresParamsSchema = z.object({
@@ -23,7 +23,7 @@ export const postgresParamsSchema = z.object({
   ssl: z.string().optional(),
 })
 
-wireVariable({
+defineVariable({
   name: 'postgres_params',
   displayName: 'PostgreSQL Params',
   variableId: 'POSTGRES_PARAMS',
@@ -65,7 +65,7 @@ const variables = new TypedVariablesService(baseVariablesService)
 |---|---|---|
 | **Purpose** | Non-sensitive configuration | Sensitive values |
 | **Examples** | Database hosts, ports, feature flags | API keys, tokens, passwords |
-| **Wire function** | `wireVariable` | `wireSecret` |
+| **Wire function** | `defineVariable` | `defineSecret` |
 | **Service** | `variables` | `secrets` |
 | **Access method** | `variables.get(id)` | `secrets.getSecret(id)` |
 
@@ -88,7 +88,7 @@ const redisConfigSchema = z.object({
 
 The CLI generates typed wrappers in `.pikku/variables/`:
 
-- `pikku-variable-types.gen.ts` — re-exports `wireVariable` and types
+- `pikku-variable-types.gen.ts` — re-exports `defineVariable` and types
 - `pikku-variables.gen.ts` — `TypedVariablesService` with your `VariablesMap`
 - `pikku-variables-meta.gen.json` — variable metadata for Console and deploy
 

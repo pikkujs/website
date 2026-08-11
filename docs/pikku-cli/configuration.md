@@ -83,10 +83,10 @@ The `scaffold` section controls where `pikku new` puts generated files and which
     "middlewareDir": "src/middleware",
     "permissionDir": "src/permissions",
     "addonDir": "packages/addons",
-    "rpc": "auth",
-    "console": "no-auth",
-    "agent": "auth",
-    "workflow": "auth"
+    "rpc": true,
+    "console": { "auth": false },
+    "agent": true,
+    "workflow": true
   }
 }
 ```
@@ -100,17 +100,34 @@ The `scaffold` section controls where `pikku new` puts generated files and which
 | `permissionDir` | `string` | Where `pikku new permission` puts files |
 | `addonDir` | `string` | Where `pikku new addon` puts addon packages |
 
-**Feature flags** — set via `pikku enable <feature>` or directly in config:
+**Feature flags** — set via `pikku enable <feature>` or directly in config.
 
-| Option | Values | Description |
-|--------|--------|-------------|
-| `rpc` | `"auth"` \| `"no-auth"` \| `false` | Generate public RPC endpoint |
-| `console` | `"auth"` \| `"no-auth"` \| `false` | Generate console functions |
-| `scenarios` | `"auth"` \| `"no-auth"` \| `false` | Generate scenario instrumentation functions (without needing the console addon) |
-| `agent` | `"auth"` \| `"no-auth"` \| `false` | Generate public agent endpoints |
-| `workflow` | `"auth"` \| `"no-auth"` \| `false` | Generate workflow routes |
-| `events` | `"auth"` \| `"no-auth"` \| `false` | Generate the realtime events channel + SSE stream (`events.gen.ts`) |
-| `remoteRpc` | `"auth"` \| `"no-auth"` \| `false` | Generate the remote internal RPC queue worker + HTTP endpoint (`rpc-remote.gen.ts`) |
+Each flag says only whether the *surface exists*, and whether reaching it needs
+a session:
+
+| Value | Meaning |
+|---|---|
+| `true` | the surface exists and requires a session |
+| `{ "auth": false }` | the surface exists and is public |
+| `false` | the surface is not generated |
+
+| Option | Description |
+|--------|-------------|
+| `rpc` | Generate the public RPC endpoint |
+| `console` | Generate console functions |
+| `scenarios` | Generate scenario instrumentation functions (without needing the console addon) |
+| `agent` | Generate agent endpoints |
+| `workflow` | Generate workflow routes |
+| `events` | Generate the realtime events channel + SSE stream (`events.gen.ts`) |
+| `remoteRpc` | Generate the remote internal RPC queue worker + HTTP endpoint (`rpc-remote.gen.ts`) |
+
+:::warning `"no-auth"` is no longer a mode
+Older configs used `"auth"` / `"no-auth"` strings. Authentication is now
+declared on the function or on the addon, and the scaffold flag only says
+whether the surface exists — so `"no-auth"` became `{ "auth": false }` and
+`"auth"` became `true`. A config still using the strings fails at startup with
+an explicit message naming the replacement.
+:::
 
 ## AI Agents
 

@@ -10,10 +10,10 @@ Secrets let you declare what sensitive values your application needs using schem
 
 ## Defining Secrets
 
-Use `wireSecret` to declare a secret with its schema:
+Use `defineSecret` to declare a secret with its schema:
 
 ```typescript
-import { wireSecret } from '#pikku'
+import { defineSecret } from '#pikku'
 import { z } from 'zod'
 
 export const stripeSecretsSchema = z.object({
@@ -21,7 +21,7 @@ export const stripeSecretsSchema = z.object({
   webhookSecret: z.string(),
 })
 
-wireSecret({
+defineSecret({
   name: 'stripe',
   displayName: 'Stripe API',
   description: 'API keys for Stripe payment processing',
@@ -102,7 +102,7 @@ See [Console Features](/docs/console/features#configuration) for details.
 
 The CLI generates typed wrappers in `.pikku/secrets/`:
 
-- `pikku-secret-types.gen.ts` — re-exports `wireSecret` and types
+- `pikku-secret-types.gen.ts` — re-exports `defineSecret` and types
 - `pikku-secrets.gen.ts` — `TypedSecretService` with your `CredentialsMap`
 - `pikku-secrets-meta.gen.json` — secret metadata for Console and deploy
 

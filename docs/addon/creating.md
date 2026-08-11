@@ -23,8 +23,8 @@ This generates a complete addon project with package.json, tsconfig, pikku.confi
 
 | Flag | Description |
 |------|-------------|
-| `--secret` | Include a secret definition file (`wireSecret`) |
-| `--variable` | Include a variable definition file (`wireVariable`) |
+| `--secret` | Include a secret definition file (`defineSecret`) |
+| `--variable` | Include a variable definition file (`defineVariable`) |
 | `--oauth` | Include OAuth2 credential wiring, secret for app credentials, and `OAuth2Client`-based API service |
 | `--credential apikey` | Per-user API key credential (`wireCredential` with `type: 'wire'`) |
 | `--credential bearer` | Per-user bearer token credential |
@@ -132,14 +132,14 @@ Declare what secrets your addon needs:
 
 ```typescript
 // sendgrid.secret.ts
-import { wireSecret } from '@pikku/core/secret'
+import { defineSecret } from '@pikku/core/secret'
 import { z } from 'zod'
 
 export const sendgridSecretsSchema = z.object({
   apiKey: z.string(),
 })
 
-wireSecret({
+defineSecret({
   name: 'sendgrid',
   displayName: 'SendGrid API Key',
   description: 'API key for sending emails',

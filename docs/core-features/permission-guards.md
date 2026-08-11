@@ -181,7 +181,7 @@ import { requireAuth } from './permissions.js'
 addGlobalPermission([requireAuth])
 ```
 
-Global permissions form an independent **AND** gate: they can only ever *narrow* access. Each function still enforces its own `permissions` in full — a broad global (e.g. `requireAuth`) can never satisfy a stricter function's own requirement (e.g. `requireAdmin`).
+Global permissions form an independent **AND** gate: they can only ever *narrow* access. Each function still enforces its own `permissions` in full — a broad global (e.g. `requireAuth`) can never satisfy a stricter function's own requirement (e.g. `requireOwnership`).
 
 :::note
 Wire-, tag-, and HTTP-route-level permissions (`addHTTPPermission`, `addTagPermission`, and a `permissions` field on the wiring) were removed in 0.13. Declare authorization on the function, plus the optional global gate above. Tags are organizational only — use tag/HTTP _middleware_ for cross-cutting request handling.
@@ -233,14 +233,17 @@ When you list multiple permissions as object keys, **any one can pass** (OR logi
 
 ```typescript
 permissions: {
-  admin: requireAdmin,      // Can pass if admin
-  owner: requireOwner,      // OR can pass if owner
-  moderator: requireModerator  // OR can pass if moderator
+  owner: requireOwner,            // Can pass if it is theirs
+  teamMember: requireTeamMember,  // OR if they are on the owning team
+  assignee: requireAssignee       // OR if it is assigned to them
 }
 // Request proceeds if ANY permission returns true
 ```
 
-This is useful when multiple roles or conditions should grant access. For example, both admins and resource owners should be able to edit a resource.
+Each key is a different way of being entitled to *this row*. That is what OR is
+for here — and it is why "is an admin" is not one of them: an admin is entitled
+to every row, which is a `scopes` entry rather than a third way of owning
+something.
 
 ### AND Logic (Arrays)
 
@@ -309,9 +312,18 @@ export const requireAuth = pikkuPermission(async (_services, _data, { session })
   return session?.userId != null
 })
 
-export const requireAdmin = pikkuPermission(async (_services, _data, { session }) => {
-  return session?.role === 'admin'
-})
+// Note what is NOT here: a `requireAdmin` comparing a role column. "Is an
+// admin" is a fact about the caller, not about a row, so it belongs in
+// `scopes`. Every permission below asks about the *data* instead.
+export const requireTeamMember = pikkuPermission<{ teamId: string }>(
+  async ({ database }, data, { session }) => {
+    if (!session?.userId) return false
+    const membership = await database.query('memberships', {
+      where: { teamId: data.teamId, userId: session.userId }
+    })
+    return membership != null
+  }
+)
 
 export const requireOwnership = pikkuPermission<{ resourceId: string }>(
   async ({ database }, data, { session }) => {
@@ -327,7 +339,7 @@ export const requireOwnership = pikkuPermission<{ resourceId: string }>(
 Then import and use:
 
 ```typescript
-import { requireAuth, requireAdmin, requireOwnership } from './permissions.js'
+import { requireAuth, requireTeamMember, requireOwnership } from './permissions.js'
 
 export const updateResource = pikkuFunc({
   func: async ({ database }, data) => { /* ... */ },
@@ -341,9 +353,11 @@ export const updateResource = pikkuFunc({
 
 export const deleteUser = pikkuFunc({
   func: async ({ database }, data) => { /* ... */ },
+  // The capability is a scope; being on the owning team is a permission.
+  // Both run: scopes AND together first, then permissions OR across keys.
+  scopes: ['admin:users:remove'],
   permissions: {
-    auth: requireAuth,
-    admin: requireAdmin
+    teamMember: requireTeamMember
   },
   title: 'Delete user',
   tags: ['users']
@@ -391,19 +405,19 @@ Permission factories are useful when you have similar permission logic that vari
 ```typescript
 // ✅ Good - single responsibility
 export const requireAuth = pikkuPermission(...)
-export const requireAdmin = pikkuPermission(...)
+export const requireOwnership = pikkuPermission(...)
 export const requireVerified = pikkuPermission(...)
 
 permissions: {
   auth: requireAuth,
-  admin: requireAdmin,
+  ownership: requireOwnership,
   verified: requireVerified
 }
 
-// ❌ Bad - doing too much
+// ❌ Bad - doing too much, and one of the checks is not a permission at all
 export const requireEverything = pikkuPermission(async (services, data, { session }) => {
   if (!session?.userId) return false
-  if (session.role !== 'admin') return false
+  if (session.role !== 'admin') return false   // ← belongs in `scopes`
   if (!session.emailVerified) return false
   // Too many concerns
 })

@@ -258,6 +258,6 @@ When the addon calls `secrets.getSecretJSON('SENDGRID_API_KEY')`, Pikku transpar
 
 **Namespace naming**: Use short, descriptive namespaces (`postgres`, `stripe`, `redis`) that identify the addon's purpose.
 
-**Provide secrets**: Addons declare what secrets they need via `wireSecret`. Make sure you've configured those secrets in your secret store before calling addon functions.
+**Provide secrets**: Addons declare what secrets they need via `defineSecret`. Make sure you've configured those secrets in your secret store before calling addon functions.
 
 **Trigger configuration**: When wiring trigger sources, the `input` parameter controls what the trigger listens for. Check the addon documentation for available options.

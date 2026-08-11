@@ -57,9 +57,9 @@ wireCredential({
 The `appCredentialSecretId` references a secret containing your OAuth2 application credentials:
 
 ```typescript
-import { wireSecret } from '@pikku/core/secret'
+import { defineSecret } from '@pikku/core/secret'
 
-wireSecret({
+defineSecret({
   name: 'githubOAuthApp',
   displayName: 'GitHub OAuth App',
   description: 'GitHub OAuth application credentials',

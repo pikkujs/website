@@ -70,7 +70,7 @@ That's the whole setup. Run `npx pikku dev` (or `npx pikku all`) and the CLI gen
 
 - `pikku/auth.gen.ts` — the `/api/auth{/*splat}` HTTP wiring using `createAuthHandler`
 - `pikku/auth-middleware.gen.ts` — `addHTTPMiddleware('*', [...])` with the right session middleware
-- `pikku/auth-secrets.gen.ts` — a `wireSecret` for `BETTER_AUTH_SECRET` and one for each configured social provider (e.g. `GITHUB_OAUTH`), so the platform knows which credentials to collect
+- `pikku/auth-secrets.gen.ts` — a `defineSecret` for `BETTER_AUTH_SECRET` and one for each configured social provider (e.g. `GITHUB_OAUTH`), so the platform knows which credentials to collect
 
 Better Auth owns its own tables (`user`, `session`, `account`, `verification`) — run `pikku db migrate` to create them.
 
@@ -121,7 +121,7 @@ Both variants skip silently when a session is already set, so they stack with ot
 
 ## Social providers and SSO
 
-Add providers under `socialProviders` in your Better Auth config. The CLI reads the provider keys and emits a `wireSecret` for each one it recognizes (GitHub → `GITHUB_OAUTH`, Google → `GOOGLE_OAUTH`, and so on), so OAuth credentials are collected like any other Pikku secret — through your secret service locally, or through the console in production.
+Add providers under `socialProviders` in your Better Auth config. The CLI reads the provider keys and emits a `defineSecret` for each one it recognizes (GitHub → `GITHUB_OAUTH`, Google → `GOOGLE_OAUTH`, and so on), so OAuth credentials are collected like any other Pikku secret — through your secret service locally, or through the console in production.
 
 The convention: each provider secret is an object with `clientId` and `clientSecret`, read in the factory and spread into the config:
 
