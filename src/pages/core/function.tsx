@@ -56,7 +56,7 @@ function Hero() {
 /* ════════════════════════════════════════════════════════
    2. Three parameters
    ════════════════════════════════════════════════════════ */
-const threeParamsCode = snippets.funcThreeParams;
+const threeParamsCode = snippets.getOrder;
 
 function ThreeParamsSection() {
   const params = [
@@ -118,7 +118,7 @@ function ThreeParamsSection() {
         </div>
 
         <div style={{ maxWidth: 580 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('funcThreeParams')} filename="getBook.func.ts" badge="func.ts">
+          <CodeCard sourceUrl={snippetSourceUrl('getOrder')} filename="get-order.function.ts" badge="func.ts">
             <CodeBlock language="typescript">{threeParamsCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -258,7 +258,7 @@ function VersioningSection() {
 /* ════════════════════════════════════════════════════════
    5. Session & Auth
    ════════════════════════════════════════════════════════ */
-const loginCode = snippets.shopLogin;
+const loginCode = snippets.sessionFunction;
 const getMeCode = snippets.shopGetProfile;
 
 function SessionSection() {
@@ -295,7 +295,7 @@ function SessionSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 900 }}
           className="lg:grid-cols-2 grid-cols-1">
-          <CodeCard sourceUrl={snippetSourceUrl('shopLogin')} filename="login.func.ts" badge="func.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('sessionFunction')} filename="get-session.function.ts" badge="func.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
             <CodeBlock language="typescript">{loginCode}</CodeBlock>
           </CodeCard>
           <CodeCard sourceUrl={snippetSourceUrl('shopGetProfile')} filename="getMe.func.ts" badge="func.ts" icon={<Shield className="w-4 h-4" style={{ color: '#8a8475' }} />}>

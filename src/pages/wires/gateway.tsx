@@ -2,11 +2,11 @@ import { FeaturePage } from '../../components/FeaturePage';
 import type { PageData } from '../../components/FeaturePage/types';
 import snippets from '../../data/snippets.json';
 
-const wiringCode = snippets.gatewayWiring;
+const wiringCode = snippets.gatewayWebsocket;
 
-const handlerCode = snippets.gatewayHandler;
+const handlerCode = snippets.gatewayAdapter;
 
-const webhookCode = snippets.gatewayWiring;
+const webhookCode = snippets.gatewayWebsocket;
 
 const websocketCode = snippets.gatewayWebsocket;
 
@@ -39,11 +39,11 @@ const page: PageData = {
       variant: 'default',
       left: {
         type: 'code',
-        code: { filename: 'gateway.wiring.ts', badge: 'wireGateway', icon: 'gateway', code: wiringCode, snippetKey: 'gatewayWiring' },
+        code: { filename: 'gateway.wiring.ts', badge: 'wireGateway', icon: 'gateway', code: wiringCode, snippetKey: 'gatewayWebsocket' },
       },
       right: {
         type: 'code',
-        code: { filename: 'gateway.functions.ts', badge: 'handler', icon: 'gateway', code: handlerCode, snippetKey: 'gatewayHandler' },
+        code: { filename: 'gateway.functions.ts', badge: 'handler', icon: 'gateway', code: handlerCode, snippetKey: 'gatewayAdapter' },
       },
       below: {
         type: 'check-list',
@@ -64,7 +64,7 @@ const page: PageData = {
       left: {
         type: 'codes',
         codes: [
-          { filename: 'webhook gateway', badge: 'webhook', icon: 'gateway', code: webhookCode, snippetKey: 'gatewayWiring' },
+          { filename: 'webhook gateway', badge: 'webhook', icon: 'gateway', code: webhookCode, snippetKey: 'gatewayWebsocket' },
           { filename: 'websocket gateway', badge: 'websocket', icon: 'gateway', code: websocketCode, snippetKey: 'gatewayWebsocket' },
           { filename: 'listener gateway', badge: 'listener', icon: 'gateway', code: listenerCode, snippetKey: 'gatewayAdapter' },
         ],

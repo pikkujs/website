@@ -8,13 +8,13 @@ import styles from './security.module.css';
 import snippets from '../../data/snippets.json';
 import { snippetSourceUrl } from '../../utils/snippets';
 
-const loginCode = snippets.shopLogin;
+const authConfigCode = snippets.betterAuthConfig;
 const getProfileCode = snippets.shopGetProfile;
-const logoutCode = snippets.shopLogout;
+const sessionFuncCode = snippets.sessionFunction;
 const authCode = snippets.shopIsAuthenticated;
 const permissionCode = snippets.shopIsOrderOwner;
-const usageCode = snippets.shopPermissions;
-const middlewareCode = snippets.shopAuthMiddleware;
+const usageCode = snippets.scopedFunction;
+const middlewareCode = snippets.betterAuthConfig;
 const scopeCode = snippets.shopAuthScope;
 
 function Hero() {
@@ -82,14 +82,14 @@ function SessionSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('shopLogin')} filename="login.func.ts" badge="setSession" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
-            <CodeBlock language="typescript">{loginCode}</CodeBlock>
+          <CodeCard sourceUrl={snippetSourceUrl('betterAuthConfig')} filename="auth.ts" badge="pikkuBetterAuth" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+            <CodeBlock language="typescript">{authConfigCode}</CodeBlock>
           </CodeCard>
           <CodeCard sourceUrl={snippetSourceUrl('shopGetProfile')} filename="getProfile.func.ts" badge="session" icon={<UserCheck size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{getProfileCode}</CodeBlock>
           </CodeCard>
-          <CodeCard sourceUrl={snippetSourceUrl('shopLogout')} filename="logout.func.ts" badge="clearSession" icon={<KeyRound size={13} style={{ color: '#c2410c' }} />}>
-            <CodeBlock language="typescript">{logoutCode}</CodeBlock>
+          <CodeCard sourceUrl={snippetSourceUrl('sessionFunction')} filename="get-session.function.ts" badge="session" icon={<KeyRound size={13} style={{ color: '#c2410c' }} />}>
+            <CodeBlock language="typescript">{sessionFuncCode}</CodeBlock>
           </CodeCard>
         </div>
       </div>
@@ -127,7 +127,7 @@ function PermissionsSection() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard sourceUrl={snippetSourceUrl('shopPermissions')} filename="deleteBook.func.ts" badge="func.ts" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard sourceUrl={snippetSourceUrl('scopedFunction')} filename="delete-order.function.ts" badge="func.ts" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{usageCode}</CodeBlock>
             </CodeCard>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -186,7 +186,7 @@ function MiddlewareSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 32 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('shopAuthMiddleware')} filename="middleware.ts" badge="built-in" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard sourceUrl={snippetSourceUrl('betterAuthConfig')} filename="middleware.ts" badge="built-in" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{middlewareCode}</CodeBlock>
           </CodeCard>
           <CodeCard sourceUrl={snippetSourceUrl('shopAuthScope')} filename="scopes.ts" badge="4 levels" icon={<Layers size={13} style={{ color: '#c2410c' }} />}>

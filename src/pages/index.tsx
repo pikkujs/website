@@ -188,7 +188,7 @@ function EnterpriseSection() {
     {
       title: 'SSO with any provider',
       body: <>Built on standard OAuth and OIDC. Provide credentials for Google, Microsoft, Okta — or any provider — and your organization signs in. <strong>No authentication code to write or own.</strong></>,
-      code: snippets.authProviders,
+      code: snippets.betterAuthConfig,
     },
     {
       title: 'Full audit trails',
