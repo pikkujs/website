@@ -96,7 +96,7 @@ The client handles:
 
 The [Pikku Console](/docs/console) provides a visual interface for managing secrets per environment. You can view, set, and update secret values — including running OAuth2 authorization flows for credentials like GitHub or Stripe — without touching code or environment files.
 
-See [Console Features](/docs/console/features#configuration) for details.
+See [Console Features](/docs/console/features#secrets) for details.
 
 ## Generated Files
 

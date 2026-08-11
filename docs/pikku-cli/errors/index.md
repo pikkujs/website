@@ -31,6 +31,7 @@ Errors related to Pikku configuration and schema generation.
 | Code   | Description             | Link                 |
 | ------ | ----------------------- | -------------------- |
 | PKU456 | Schema Generation Error | [View](./pku456.md)  |
+| PKU463 | Schema Reference Unresolved | [View](./pku463.md) |
 | PKU489 | Inline Schema           | [View](./pku489.md) |
 | PKU490 | Schema and Wiring Colocated | [View](./pku490.md) |
 
@@ -125,6 +126,9 @@ Warnings from `pikku db migrate` / `pikku db reset` when generating Kysely types
 | PKU480 | Column Name / Type Contradiction | [View](./pku480.md) |
 | PKU481 | JSON/JSONB Column Untyped      | [View](./pku481.md)  |
 | PKU482 | Format on Non-String Column    | [View](./pku482.md)  |
+| PKU483 | Secret Column Stored in the Clear | [View](./pku483.md) |
+| PKU484 | Form on Non-String Column      | [View](./pku484.md)  |
+| PKU485 | Default Schema Name Collision  | [View](./pku485.md)  |
 
 ## Versioning & Contract Errors
 
