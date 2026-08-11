@@ -56,7 +56,7 @@ function Hero() {
 /* ════════════════════════════════════════════════════════
    2. Three parameters
    ════════════════════════════════════════════════════════ */
-const threeParamsCode = snippets.getOrder;
+const threeParamsCode = snippets.funcThreeParams;
 
 function ThreeParamsSection() {
   const params = [
@@ -118,7 +118,7 @@ function ThreeParamsSection() {
         </div>
 
         <div style={{ maxWidth: 580 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('getOrder')} filename="get-order.function.ts" badge="func.ts">
+          <CodeCard sourceUrl={snippetSourceUrl('funcThreeParams')} filename="get-order.function.ts" badge="func.ts">
             <CodeBlock language="typescript">{threeParamsCode}</CodeBlock>
           </CodeCard>
         </div>

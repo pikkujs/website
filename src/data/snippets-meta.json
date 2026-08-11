@@ -26,6 +26,7 @@
   "auditDispatch": "functions/orders/create-order.function.ts",
   "createOrder": "functions/orders/create-order.function.ts",
   "scopedFunction": "functions/orders/delete-order.function.ts",
+  "funcThreeParams": "functions/orders/get-order.function.ts",
   "getOrder": "functions/orders/get-order.function.ts",
   "listOrders": "functions/orders/list-orders.function.ts",
   "cleanupFunction": "functions/reports/cleanup-abandoned-baskets.function.ts",
@@ -94,5 +95,6 @@
   "wireTrigger": "wirings/shop.trigger.ts",
   "triggerSource": "wirings/shop.trigger.ts",
   "variables": "wirings/shop.variable.ts",
+  "paymentTable": "../../../db/sqlite/0003-shop.sql",
   "scenarioConfig": "../../../pikku.config.json"
 }
