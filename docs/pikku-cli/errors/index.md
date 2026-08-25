@@ -155,6 +155,7 @@ Errors from `pikku versions` contract checking.
 | PKU498 | Dynamic Import in Function Body (lint)         | [View](./pku498.md) |
 | PKU717 | Duplicate @pikku/core Version                 | [View](./pku717.md) |
 | PKU718 | CLI / Core Version Skew                       | [View](./pku718.md) |
+| PKU724 | SingletonServices Type Unresolved             | [View](./pku724.md) |
 | PKU910 | PII in Output (data classification)           | [View](./pku910.md) |
 | PKU940 | RPC Invocation Type Cast                      | [View](./pku940.md) |
 
