@@ -258,15 +258,15 @@ function VersioningSection() {
 /* ════════════════════════════════════════════════════════
    5. Session & Auth
    ════════════════════════════════════════════════════════ */
-const loginCode = snippets.sessionFunction;
+const authConfigCode = snippets.betterAuthConfig;
 const getMeCode = snippets.shopGetProfile;
 
 function SessionSection() {
   const lifecycle = [
-    { step: 'Middleware loads', desc: 'Session populated from cookie, token, or connection state' },
+    { step: 'Better Auth signs in', desc: 'Sign-up, sign-in and provider routes are generated from your auth config' },
+    { step: 'Pikku bridges', desc: 'Generated middleware turns the verified session into a pikku session' },
     { step: 'Function receives', desc: 'Access session via the wire parameter — read userId, role, etc.' },
-    { step: 'Function modifies', desc: 'Call setSession() or clearSession() to update' },
-    { step: 'Middleware persists', desc: 'Changes saved back to the transport — cookie, store, etc.' },
+    { step: 'Gates apply', desc: 'auth: true on the wiring, permission functions on the function' },
   ];
 
   return (
@@ -276,8 +276,9 @@ function SessionSection() {
           <div className={styles.eyebrow}>Session & Auth</div>
           <h2 className={styles.h2}>One session API, <em>every transport</em></h2>
           <p className={styles.lead}>
-            Whether the request arrives over HTTP, WebSocket, or CLI — your function reads and writes
-            the session the same way.
+            Better Auth owns identity; pikku reads its config and generates the auth routes and the
+            session bridge. Whether the request arrives over HTTP, WebSocket, or CLI, your function
+            reads the session the same way.
           </p>
         </div>
 
@@ -295,8 +296,8 @@ function SessionSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 900 }}
           className="lg:grid-cols-2 grid-cols-1">
-          <CodeCard sourceUrl={snippetSourceUrl('sessionFunction')} filename="get-session.function.ts" badge="func.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
-            <CodeBlock language="typescript">{loginCode}</CodeBlock>
+          <CodeCard sourceUrl={snippetSourceUrl('betterAuthConfig')} filename="auth.ts" badge="wiring.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
+            <CodeBlock language="typescript">{authConfigCode}</CodeBlock>
           </CodeCard>
           <CodeCard sourceUrl={snippetSourceUrl('shopGetProfile')} filename="getMe.func.ts" badge="func.ts" icon={<Shield className="w-4 h-4" style={{ color: '#8a8475' }} />}>
             <CodeBlock language="typescript">{getMeCode}</CodeBlock>
