@@ -11,13 +11,13 @@ You can integrate Pikku into most javascript HTTP servers in three steps.
 
 1) Create a bridge for the `request`
 2) Create a bridge for the `response`
-3) Call `fetch` from your runtimes event
+3) Call `fetchData` from your runtimes event
 
 :::info
 We'll use express here as the example request/response as it's most popular.
 :::
 
-### Create a class to extend PikkuRequest
+### Create a class that implements PikkuHTTPRequest
 
 This wraps the request object provided into a pikku request object.
 
@@ -25,7 +25,7 @@ This wraps the request object provided into a pikku request object.
 https://github.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/src/express-pikku-http-request.ts
 ```
 
-### Create a class to extend PikkuResponse
+### Create a class that implements PikkuHTTPResponse
 
 This wraps the response object provided into a pikku response object.
 

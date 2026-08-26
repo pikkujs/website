@@ -75,7 +75,7 @@ export const dynamicPromptGenerator = pikkuMCPPromptFunc<{
 
 ## Registering Prompts
 
-Register your prompts in the routes file:
+Register your prompts in the wiring file:
 
 ```typescript
 // mcp.wiring.ts
@@ -83,7 +83,7 @@ import { wireMCPPrompt } from '#pikku'
 import { staticPromptGenerator, dynamicPromptGenerator } from './mcp.functions.js'
 
 wireMCPPrompt({
-  name: 'getStaticResource',
+  name: 'staticPrompt',
   description: 'A static prompt that returns a predefined message',
   func: staticPromptGenerator,
 })

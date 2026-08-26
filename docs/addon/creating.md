@@ -177,6 +177,35 @@ wireCredential({
 
 See [Credentials](/docs/wiring/credentials/) for the full reference.
 
+### Declaring Scopes
+
+If your addon's functions need to be gated, declare the capabilities with
+`defineScope` and put them on the functions. The tree is merged into the
+consuming app's `ScopeId` union when the addon is wired, so one of the app's
+roles can grant them.
+
+**Choose a root nobody else will declare** — your package or vendor name, with
+everything nested beneath it. Scope trees merge by root name and the first
+declaration wins, and the host app's own declarations are loaded first. An addon
+that declares a common root like `admin` in an app that also declares `admin`
+contributes nothing at all: not the root, and not the children the app never
+declared. Nothing errors, the scopes simply never exist, and every function
+requiring one denies everybody.
+
+Where a root genuinely does belong to both sides, the two declarations must be
+byte-identical — codegen errors naming both files if they are not.
+
+Two further constraints, both from static extraction:
+
+- The tree must be an inline object literal. A constant imported from another
+  module cannot be spread into `defineScope`; the inspector reads the AST, not
+  the runtime value.
+- Publish `.pikku/scopes/pikku-scopes-meta.gen.json` with the package (see
+  [Publishing](#publishing)) — it is the file the consumer's build reads.
+
+See [Scopes](/docs/core-features/scopes) for the model, and [Console
+Scopes](/docs/console/scopes) for a worked example of an addon-owned tree.
+
 ### Create Services
 
 Use `pikkuAddonServices` to create your service factory. It receives the consumer's shared services (logger, secrets, variables):
@@ -188,7 +217,7 @@ import { pikkuAddonServices } from '#pikku'
 
 export const createSingletonServices = pikkuAddonServices(
   async (config, { secrets }) => {
-    const apiKey = await secrets.getSecretJSON<string>('SENDGRID_API_KEY')
+    const apiKey = (await secrets.getSecret('SENDGRID_API_KEY')).reveal()
     const sendgrid = new SendgridService(apiKey)
     return { sendgrid }
   }
@@ -333,6 +362,20 @@ Build and publish:
 ```bash
 npx pikku all && tsc && npm publish
 ```
+
+### Where `.pikku` ends up
+
+The generated meta may sit at the package root (`<pkg>/.pikku/…`) or inside the
+build output (`<pkg>/dist/.pikku/…`), depending on whether your `tsconfig`
+copies it and what `files` ships. Both layouts are supported and consumers probe
+for both, so pick one and be consistent.
+
+What is **not** optional is the subpath export. Consumers resolve the meta by
+specifier — `@your/addon/.pikku/scopes/pikku-scopes-meta.gen.json` and its
+siblings — so the `"./.pikku/*"` entry in `exports` must point at wherever the
+directory actually landed. Without it the addon installs cleanly and its
+secrets, variables and scopes are invisible: the consumer's build finds no meta
+and skips it silently.
 
 ## Contract Versioning
 

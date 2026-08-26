@@ -64,14 +64,26 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/regis
 Define supported and unsupported configurations:
 
 ```typescript
+import type { QueueConfigMapping } from '@pikku/core/queue'
+
 const configMappings: QueueConfigMapping = {
   supported: {
-    batchSize: 'teamSize',         // Maps to pg-boss teamSize
-    pollInterval: 'intervalSeconds', // Maps to polling interval
+    batchSize: {
+      queueProperty: 'batchSize',
+      description: 'Number of jobs to fetch and process concurrently',
+    },
+    pollInterval: {
+      queueProperty: 'pollingIntervalSeconds',
+      transform: (value: number) => Math.round(value / 1000),
+      description: 'How often to poll for new jobs (converted from ms to seconds)',
+    },
   },
   unsupported: {
-    lockDuration: 'Managed internally by pg-boss',
-    visibilityTimeout: 'Uses PostgreSQL locks instead'
-  }
+    lockDuration: {
+      reason: 'Lock duration is managed differently in pg-boss',
+      explanation: 'pg-boss uses job-level expiration instead of worker-level locks',
+    },
+  },
+  fallbacks: {},
 }
 ```

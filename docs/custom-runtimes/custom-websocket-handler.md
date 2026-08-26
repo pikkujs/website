@@ -30,8 +30,11 @@ For local channels, the lifecycle events mirror the typical WebSocket flow:
 When a connection is upgraded, we obtain a channel handler which is our interface to the Pikku framework:
 
 ```typescript
-const request = new UWSPikkuHTTPRequest(req, res)
-const response = new UWSPikkuHTTPResponse(res)
+import { runLocalChannel } from '@pikku/core/channel/local'
+import { PikkuFetchHTTPRequest, PikkuFetchHTTPResponse } from '@pikku/core/http'
+
+const request = new PikkuFetchHTTPRequest(await uwsToRequest(req, res))
+const response = new PikkuFetchHTTPResponse()
 
 // Services are resolved from Pikku's global state,
 // set up by importing the generated bootstrap.
@@ -65,6 +68,12 @@ open: (ws) => {
       ws.send(data as any)
     }
   })
+  channelHandler.registerOnSendBinary((data) => {
+    ws.send(data, true)
+  })
+  channelHandler.registerOnClose(() => {
+    ws.close()
+  })
   eventHub.onChannelOpened(channelHandler.channelId, ws)
   channelHandler.open()
 }
@@ -77,11 +86,18 @@ Incoming messages are decoded and passed to the channel handler. If a response i
 ```typescript
 message: async (ws, message, isBinary) => {
   const { channelHandler } = ws.getUserData()
-  const data = isBinary ? message : decoder.decode(message)
-  const result = await channelHandler.message(data)
-  if (result) {
-    // TODO: Handle binary responses as needed
-    ws.send(JSON.stringify(result))
+  if (isBinary) {
+    const copied = new Uint8Array((message as ArrayBuffer).slice(0))
+    const result = await channelHandler.binaryMessage(copied)
+    if (result) {
+      channelHandler.sendBinary(result)
+    }
+  } else {
+    const data = decoder.decode(message)
+    const result = await channelHandler.message(data)
+    if (result) {
+      ws.send(JSON.stringify(result))
+    }
   }
 }
 ```

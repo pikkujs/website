@@ -108,8 +108,8 @@ The `BullServiceFactory` from `@pikku/queue-bullmq` manages the lifecycle of all
 ```typescript
 import { BullServiceFactory } from '@pikku/queue-bullmq'
 
-// Connects to Redis via the REDIS_URL env var by default.
-// Pass ioredis ConnectionOptions to override (e.g. { host, port }).
+// Connects to localhost:6379 by default.
+// Pass BullMQ ConnectionOptions to override (e.g. { host, port }).
 const bullFactory = new BullServiceFactory()
 await bullFactory.init()
 ```
@@ -125,11 +125,13 @@ await bullFactory.init()
 ### Worker Registration
 
 Get the workers from the factory and call `registerQueues()`. The job runner is
-wired automatically when you import the generated bootstrap, so no extra setup is
-needed:
+wired automatically when you import the generated bootstrap. Singleton services
+must be created first — `registerQueues()` needs the logger from them:
 
 ```typescript
 import './.pikku/pikku-bootstrap.gen.js'
+
+const singletonServices = await createSingletonServices(config)
 
 const queueWorkers = bullFactory.getQueueWorkers()
 await queueWorkers.registerQueues()

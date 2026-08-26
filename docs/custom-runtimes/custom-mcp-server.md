@@ -25,7 +25,7 @@ Use the built-in MCP server runtime which provides:
 - Automatic schema generation
 - Type-safe endpoint definitions
 - Built-in error handling
-- Standard stdio transport
+- Standard stdio and streamable HTTP transports
 
 See the [MCP Server Runtime](../runtimes/mcp-server.md) documentation for usage details.
 

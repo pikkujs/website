@@ -20,7 +20,7 @@ import { Stackblitz } from '@site/src/components/Stackblitz';
 The MCP server provides:
 - **JSON-RPC 2.0 compliance** with the official MCP SDK
 - **Automatic schema generation** from TypeScript types
-- **stdio transport** for seamless MCP client integration
+- **stdio and streamable HTTP transports** for seamless MCP client integration
 - **Type-safe endpoints** with full TypeScript support
 - **Tools, resources, and prompts** in a unified API
 - **Error handling** with proper JSON-RPC responses
@@ -70,12 +70,12 @@ https://github.com/pikkujs/pikku/blob/main/templates/mcp-server/src/start.ts
 1. **Define Functions**: Create MCP functions using specialized Pikku types
 2. **Register Endpoints**: Associate functions with MCP endpoint types (tool/resource/prompt)  
 3. **Generate Schemas**: Pikku CLI creates JSON schemas automatically
-4. **Start Server**: MCP server connects via stdio transport
+4. **Start Server**: MCP server connects via stdio (`connectStdio()`) or streamable HTTP (`connectHTTP({ port })`)
 5. **AI Integration**: AI models can call your functions through MCP protocol
 
 ## MCP Client Integration
 
-The server uses stdio transport and works with any MCP client:
+Using stdio transport, the server works with any MCP client:
 
 ```json
 {
@@ -103,15 +103,15 @@ The server uses stdio transport and works with any MCP client:
 For development with auto-reload:
 
 ```bash
-npm run pikku --watch
+npm run dev
 ```
 
 ## Generated Files
 
 Pikku automatically generates:
-- `mcp.gen.json`: JSON schemas for all endpoints
-- `pikku-bootstrap-mcp.gen.ts`: Endpoint registration bootstrap
-- Type definitions for full TypeScript support
+- `mcp/mcp.gen.json`: JSON schemas for all endpoints
+- `mcp/pikku-mcp-wirings.gen.ts`: Endpoint registration bootstrap
+- `mcp/pikku-mcp-types.gen.ts`: Type definitions for full TypeScript support
 
 ## Extending
 
@@ -119,6 +119,6 @@ To add new MCP endpoints:
 
 1. Define functions in `mcp.functions.ts`
 2. Register them in `mcp.wiring.ts` 
-3. Restart the server
+3. Re-run the Pikku CLI (`npx pikku prebuild`) and restart the server
 
 The Pikku CLI handles all schema generation and type safety automatically.
