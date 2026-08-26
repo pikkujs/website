@@ -21,7 +21,7 @@ import {
 } from '../WiringIcons';
 import { PaperPage, CodeCard } from '../PaperLayout';
 import styles from './feature-page.module.css';
-import snippetsMeta from '../../data/snippets-meta.json';
+import { snippetSourceUrl as resolveSnippetSourceUrl } from '../../utils/snippets';
 import type {
   PageData, Section, ColContent, CardItem, CodeSpec,
   HeroSection, TwoColSection, FeatureGridSection,
@@ -35,11 +35,11 @@ function useSectionAnchor(id: string | undefined) {
   useBrokenLinks().collectAnchor(id);
 }
 
-const GITHUB_BASE = 'https://github.com/pikkujs/template-online-shop/blob/main/packages/functions/src/';
+/* The shared helper resolves the `..` segments that origins outside the src
+   dir carry; a local copy of the base URL silently produced dead links. */
 function snippetSourceUrl(key: string | undefined): string | undefined {
   if (!key) return undefined;
-  const file = (snippetsMeta as Record<string, string>)[key];
-  return file ? GITHUB_BASE + file : undefined;
+  return resolveSnippetSourceUrl(key);
 }
 
 /* ── Icon resolution ─────────────────────────────────────── */
