@@ -2,7 +2,7 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import CodeBlock from '@theme/CodeBlock';
-import { Shield, Lock, KeyRound, UserCheck, Layers, Copy, Check, ShieldCheck, Cookie, Key, Scan } from 'lucide-react';
+import { Shield, Lock, UserCheck, Layers, Copy, Check, ShieldCheck, Cookie, Key, Scan } from 'lucide-react';
 import { PaperPage, CodeCard } from '../../components/PaperLayout';
 import styles from './security.module.css';
 import snippets from '../../data/snippets.json';
@@ -10,11 +10,9 @@ import { snippetSourceUrl } from '../../utils/snippets';
 
 const authConfigCode = snippets.betterAuthConfig;
 const getProfileCode = snippets.shopGetProfile;
-const sessionFuncCode = snippets.sessionFunction;
 const authCode = snippets.shopIsAuthenticated;
 const permissionCode = snippets.shopIsOrderOwner;
 const usageCode = snippets.scopedFunction;
-const middlewareCode = snippets.betterAuthConfig;
 const scopeCode = snippets.shopAuthScope;
 
 function Hero() {
@@ -53,10 +51,10 @@ function Hero() {
 
 function SessionSection() {
   const lifecycle = [
-    { step: 'Middleware loads', desc: 'Session populated from cookie, bearer token, or connection state' },
+    { step: 'Better Auth signs in', desc: 'Sign-up, sign-in and provider routes are generated from your auth config' },
+    { step: 'Pikku bridges', desc: 'Generated middleware turns the verified session into a pikku session' },
     { step: 'Function reads', desc: 'Access session via the wire parameter — userId, role, etc.' },
-    { step: 'Function modifies', desc: 'Call setSession() or clearSession() to update' },
-    { step: 'Middleware persists', desc: 'Changes saved back to the transport — cookie, store, etc.' },
+    { step: 'Gates apply', desc: 'auth: true on the wiring, permission functions on the function' },
   ];
 
   return (
@@ -64,8 +62,8 @@ function SessionSection() {
       <div className={styles.wrap}>
         <div className={styles.sectionHead}>
           <div className={styles.eyebrow}>Sessions</div>
-          <h2 className={styles.h2}>Read, write, clear. <em>That's the API.</em></h2>
-          <p className={styles.lead}>Whether the request arrives over HTTP, WebSocket, or CLI — your function reads and writes the session the same way.</p>
+          <h2 className={styles.h2}>You don't write the login. <em>You read the session.</em></h2>
+          <p className={styles.lead}>Better Auth owns identity. Pikku reads its config and generates the auth routes and the session bridge — so whether the request arrives over HTTP, WebSocket, or CLI, your function just reads <code>session</code>.</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 40 }}>
@@ -81,15 +79,12 @@ function SessionSection() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('betterAuthConfig')} filename="auth.ts" badge="pikkuBetterAuth" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.35fr 1fr', gap: 20 }}>
+          <CodeCard sourceUrl={snippetSourceUrl('betterAuthConfig')} filename="auth.ts" badge="generates routes" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{authConfigCode}</CodeBlock>
           </CodeCard>
           <CodeCard sourceUrl={snippetSourceUrl('shopGetProfile')} filename="getProfile.func.ts" badge="session" icon={<UserCheck size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{getProfileCode}</CodeBlock>
-          </CodeCard>
-          <CodeCard sourceUrl={snippetSourceUrl('sessionFunction')} filename="get-session.function.ts" badge="session" icon={<KeyRound size={13} style={{ color: '#c2410c' }} />}>
-            <CodeBlock language="typescript">{sessionFuncCode}</CodeBlock>
           </CodeCard>
         </div>
       </div>
@@ -185,11 +180,8 @@ function MiddlewareSection() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 32 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('betterAuthConfig')} filename="middleware.ts" badge="built-in" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
-            <CodeBlock language="typescript">{middlewareCode}</CodeBlock>
-          </CodeCard>
-          <CodeCard sourceUrl={snippetSourceUrl('shopAuthScope')} filename="scopes.ts" badge="4 levels" icon={<Layers size={13} style={{ color: '#c2410c' }} />}>
+        <div style={{ marginBottom: 32, maxWidth: 720 }}>
+          <CodeCard sourceUrl={snippetSourceUrl('shopAuthScope')} filename="shop.security.ts" badge="4 levels" icon={<Layers size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{scopeCode}</CodeBlock>
           </CodeCard>
         </div>

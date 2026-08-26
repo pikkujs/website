@@ -17,7 +17,7 @@ operate on.
 
 Generates a signed URL for uploading a file directly to storage.
 
-- **`args`:** `{ bucket, fileKey, contentType, size? }`
+- **`args`:** `{ bucket, fileKey, contentType, size?, visibility? }` (`visibility` is `'private' | 'public'`)
 - **Returns:** `UploadURLResult` — `{ uploadUrl, assetKey, uploadHeaders?, uploadMethod? }`. The client `PUT`s (or `POST`s) the file to `uploadUrl`; `assetKey` is the finalized storage key.
 
 ### `signContentKey(args): Promise<string>`

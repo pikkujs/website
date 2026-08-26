@@ -252,12 +252,61 @@ wireAddon({
 })
 ```
 
-When the addon calls `secrets.getSecretJSON('SENDGRID_API_KEY')`, Pikku transparently looks up `MY_EMAIL_API_KEY` instead. The addon code doesn't need to know about your naming conventions.
+When the addon calls `secrets.getSecret('SENDGRID_API_KEY')`, Pikku transparently looks up `MY_EMAIL_API_KEY` instead. The addon code doesn't need to know about your naming conventions.
+
+## An Install Only Takes Effect on Restart
+
+`wireAddon` populates the live registry when its module executes at boot.
+Installing an addon — whether by hand, or through the Console's Addons page —
+writes the wiring file and installs the package, and **the running server keeps
+serving the registry it booted with**. Nothing about the addon exists until the
+process restarts.
+
+That is why the Console reports an install as *installed, restart required*
+rather than as done, and why the addon's functions are absent from the RPC map
+until you restart.
+
+## Readiness: What the Addon Still Needs
+
+An addon that boots without its secrets fails at the first call, usually deep
+inside a service constructor. Before restarting, check what is still unset.
+
+The Console does this for you on the Addons page. Over RPC it is:
+
+```typescript
+const { ready, missingSecrets, missingVariables } = await rpc.invoke(
+  'console:addonReadiness',
+  { packageName: '@pikku/addon-sendgrid', namespace: 'email' }
+)
+```
+
+The check reads the addon's declared secrets and variables from its published
+meta and asks whether the host can resolve each one, and it answers under the
+names **this instance** actually uses — a `secretOverrides` entry in the wiring
+file is followed, so `missingSecrets` names the key you have to set, not the
+addon's internal id.
+
+Two rules decide what counts as missing:
+
+- **Every declared secret is required.** There is no such thing as an optional
+  secret.
+- **A variable is required unless its schema carries a `default`.** A default
+  means the addon boots without it, so it is never reported missing — which also
+  makes shipping a default the way an addon author marks a variable optional.
+
+An addon that publishes no secret or variable meta at all is always ready.
+
+`console:installAddon` returns the same fields (`ready`, `missingSecrets`,
+`missingVariables`) alongside `restartRequired`, so an install and its blockers
+come back in one call. Both RPCs require Console scopes — see [Console
+Scopes](/docs/console/scopes).
 
 ## Best Practices
 
 **Namespace naming**: Use short, descriptive namespaces (`postgres`, `stripe`, `redis`) that identify the addon's purpose.
 
-**Provide secrets**: Addons declare what secrets they need via `defineSecret`. Make sure you've configured those secrets in your secret store before calling addon functions.
+**Provide secrets**: Addons declare what secrets they need via `defineSecret`. Configure them in your secret store *before* the restart that activates the addon — the readiness check above is how you know they are all there.
+
+**Grant the addon's scopes**: An addon may declare its own scopes with `defineScope`; they merge into your app's `ScopeId` union when it is wired, and your roles grant them like any other. If an addon's scopes never appear, check it does not declare a root your app already declares — see [Scopes and addons](/docs/core-features/scopes#scopes-and-addons).
 
 **Trigger configuration**: When wiring trigger sources, the `input` parameter controls what the trigger listens for. Check the addon documentation for available options.

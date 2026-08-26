@@ -36,21 +36,59 @@ The `secretId` is the key used to look up the secret from your secret store.
 
 ## Using Secrets
 
-Access secrets through the `secrets` service. When you use the generated `TypedSecretService`, calls are fully typed:
+Secrets are read where services are **constructed**, and functions receive the
+configured client rather than the vault:
+
+```typescript title="src/services.ts"
+export const createSingletonServices = async (config, { secrets }) => {
+  const stripeCredentials = (
+    await secrets.getSecret<{ apiKey: string; webhookSecret: string }>(
+      'STRIPE_CREDENTIALS'
+    )
+  ).reveal()
+
+  return { stripe: new Stripe(stripeCredentials.apiKey) }
+}
+```
+
+`getSecret` returns a `SecretValue<T>`, not the value — `.reveal()` is the
+deliberate unwrap, and it is what keeps a secret from being stringified into a
+log or a response by accident.
 
 ```typescript
 export const chargeCard = pikkuSessionlessFunc<
   { amount: number },
   { chargeId: string }
 >({
-  func: async ({ secrets }, data) => {
-    const stripe = await secrets.getSecret('STRIPE_CREDENTIALS')
-    // stripe.apiKey and stripe.webhookSecret are typed
-
-    return { chargeId: '...' }
+  func: async ({ stripe }, data) => {
+    const charge = await stripe.charges.create({ amount: data.amount })
+    return { chargeId: charge.id }
   },
 })
 ```
+
+### Functions cannot reach `secrets` at all
+
+This is not a convention — it is the type. Every function-, permission- and
+auth-facing services type is bounded by `SecretlessServices<Services>`, which is
+`Omit<Services, 'secrets'>`. Destructuring `secrets` inside a `pikkuFunc` body
+is a compile error, not a lint:
+
+```
+Property 'secrets' does not exist on type 'WiredServices'
+```
+
+The places that legitimately hold a `SecretService` are the ones that build
+things: `pikkuServices`, `pikkuWireServices`, addon service factories, and
+middleware. Renaming the service does not get around it — the CLI follows the
+type and reports [PKU950](/docs/pikku-cli/errors/pku950) for a `SecretService`
+reaching a function under any alias.
+
+A function that genuinely needs to *ask about* a secret — "is this one set?" —
+does it through a service of your own that holds `secrets` and exposes only that
+question. That is exactly how the Console's addon readiness check is built.
+
+### Typed access
 
 The CLI generates a `TypedSecretService` class that wraps your `SecretService` implementation. Use it when creating your singleton services to get typed access:
 
@@ -71,10 +109,16 @@ Use `OAuth2Client` from `@pikku/core/oauth2` to make authenticated requests with
 ```typescript
 import { OAuth2Client } from '@pikku/core/oauth2'
 
-const github = new OAuth2Client({
-  secretService: secrets,
-  credential: githubOAuthConfig,
-})
+const github = new OAuth2Client(
+  {
+    tokenSecretId: 'GITHUB_TOKENS',
+    authorizationUrl: 'https://github.com/login/oauth/authorize',
+    tokenUrl: 'https://github.com/login/oauth/access_token',
+    scopes: ['read:user'],
+  },
+  'GITHUB_OAUTH_APP',
+  secrets
+)
 
 // Makes authenticated request, refreshes token if expired
 const response = await github.request('https://api.github.com/user')

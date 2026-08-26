@@ -12,7 +12,7 @@ Auditing is opt-in per function. Set `audit` on the function definition:
 ```typescript
 export const deleteAccount = pikkuFunc<{ accountId: string }, void>({
   audit: true, // or { durability: 'transactional' }
-  func: async (services, data, session) => {
+  func: async (services, data) => {
     await services.db.deleteAccount(data.accountId)
 
     await services.auditLog.write({

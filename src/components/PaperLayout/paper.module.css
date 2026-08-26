@@ -135,6 +135,13 @@
 
 .btnGhost:hover { border-color: var(--paper-text); color: var(--paper-text) !important; }
 
+/* Keyboard focus — the paper palette is too low-contrast for the UA default ring */
+.btnPrimary:focus-visible,
+.btnGhost:focus-visible {
+  outline: 2px solid var(--paper-accent);
+  outline-offset: 3px;
+}
+
 /* ── Card ──────────────────────────────────────────────── */
 .card {
   background: var(--paper-bg-alt);
@@ -256,6 +263,11 @@
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
+}
+
+/* WCAG 2.2.2 — blinking content must be stoppable */
+@media (prefers-reduced-motion: reduce) {
+  .cursor { animation: none; }
 }
 
 /* ── Check item ────────────────────────────────────────── */

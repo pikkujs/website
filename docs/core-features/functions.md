@@ -294,7 +294,7 @@ Pikku supports runtime validation using [Zod](https://zod.dev):
 ```typescript
 import { z } from 'zod'
 
-export const createBook = pikkuFunc<CreateBookInput, Book>({
+export const createBook = pikkuFunc({
   func: async ({ database }, data) => {
     return await database.insert('book', data)
   },
@@ -313,7 +313,7 @@ export const createBook = pikkuFunc<CreateBookInput, Book>({
 })
 ```
 
-The `input` and `output` schemas provide runtime validation on top of the compile-time TypeScript type checking.
+When you provide `input` and `output` schemas, the function's data and return types are inferred from them — don't pass type generics as well. Use **either** generics (compile-time types with generated JSON schema validation) **or** `input`/`output` schemas (runtime validation with inferred types), never both.
 
 ## Visibility Control
 

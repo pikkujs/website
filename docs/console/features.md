@@ -9,6 +9,8 @@ ai: true
 
 The Console sidebar groups your application into a handful of sections — **Run**, **Data**, **Config**, **Users**, and **Changes** — plus an overview dashboard. Everything is derived from the registry the Pikku CLI generates, so it always matches your code.
 
+Each section below is gated on its own scope, so you can hand someone the workflow pages without handing them your secrets — see [Console Scopes](./scopes.md).
+
 ## Overview
 
 The landing page shows stat cards summarizing your application at a glance: total functions, workflows, agents, HTTP routes, channels, CLI commands, MCP tools, scheduled jobs, queues, and triggers. Each card links to its section.
@@ -103,6 +105,8 @@ Run the data-classification security audit from the UI — the same lint as `pik
 ### Addons
 
 Browse the [addons](/docs/addon) wired into your project and their functions, services, secrets, and credentials — plus a **community gallery** of registry addons you can bring in with `pikku fabric addon add`.
+
+Installing one writes its wiring file and reports **restart required**: an addon is only in the registry the server booted with, so it does nothing until the process restarts. The install also reports which of the addon's secrets and variables are still unset, under the names your wiring file uses — set those before restarting. See [Readiness](/docs/addon/consuming#readiness-what-the-addon-still-needs).
 
 ## Users
 

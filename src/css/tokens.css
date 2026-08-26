@@ -70,6 +70,20 @@
   --paper-code-bg-bar:     #1f1c16;
   --paper-code-border:     #2a2720;
 
+  /* Terminal/snippet syntax (dark theme). The light palette below is tuned for
+     cream; on #16140f those hues go muddy, so the dark set is its own thing —
+     same families, lifted and desaturated to stay readable on near-black. */
+  --paper-code-dark-text:      #e8e3d8;
+  --paper-code-dark-kw:        #f0845c;   /* keywords / tags            */
+  --paper-code-dark-str:       #8fbf8a;   /* strings / template lits    */
+  --paper-code-dark-num:       #e0b34b;   /* numbers / booleans         */
+  --paper-code-dark-cmt:       #6f695c;   /* comments (italic)          */
+  --paper-code-dark-fn:        #8ab6e0;   /* functions                  */
+  --paper-code-dark-type:      #c9a0dc;   /* types / class names        */
+  --paper-code-dark-prop:      #7fc4c4;   /* properties / attr-names    */
+  --paper-code-dark-op:        #b8b0a0;   /* operators                  */
+  --paper-code-dark-punct:     #8a8375;   /* punctuation                */
+
   /* Markdown code blocks (light theme) */
   --paper-code-light-bg:       #f2efe7;   /* warm cream code bg         */
   --paper-code-light-bar:      #e8e4da;   /* title bar                  */
@@ -90,7 +104,9 @@
   --paper-text:            #1a1814;   /* headings               */
   --paper-text-body:       #3a362e;   /* body copy              */
   --paper-text-muted:      #6b6559;   /* secondary / captions   */
-  --paper-text-faint:      #9a9387;   /* labels / timestamps    */
+  /* WCAG AA on all three paper backgrounds (4.94 / 5.34 / 4.56).
+     Was #9a9387, which failed at 2.79:1 against --paper-bg. */
+  --paper-text-faint:      #6f6a5e;   /* labels / timestamps    */
 
   /* Accent — orange-red */
   --paper-accent:          #c2410c;
@@ -113,7 +129,7 @@
   --paper-code-teal:       #6fb3c0;   /* strings / urls         */
   --paper-code-green:      #79b06a;   /* success / prompt       */
   --paper-code-dim:        #8a8475;   /* comments               */
-  --paper-code-label:      #6f6a5e;   /* terminal tab label     */
+  --paper-code-label:      #948d7d;   /* terminal tab label     */
 
   /* Shadow + alpha helpers */
   --paper-accent-ring:     rgba(194, 65, 12, 0.20);

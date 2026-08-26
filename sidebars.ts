@@ -36,7 +36,8 @@ const sidebars: SidebarsConfig = {
     items: [
       'console/index',
       'console/getting-started',
-      'console/features'
+      'console/features',
+      'console/scopes'
     ]
   }, {
     type: 'category',
