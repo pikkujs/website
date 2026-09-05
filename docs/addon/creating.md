@@ -25,8 +25,8 @@ This generates a complete addon project with package.json, tsconfig, pikku.confi
 |------|-------------|
 | `--secret` | Include a secret definition file (`defineSecret`) |
 | `--variable` | Include a variable definition file (`defineVariable`) |
-| `--oauth` | Include OAuth2 credential wiring, secret for app credentials, and `OAuth2Client`-based API service |
-| `--credential apikey` | Per-user API key credential (`wireCredential` with `type: 'wire'`) |
+| `--oauth` | Include an OAuth2 credential declaration, a secret for the app credentials, and an API service handed the access token per request |
+| `--credential apikey` | Per-user API key credential (`defineCredential` with `type: 'wire'`) |
 | `--credential bearer` | Per-user bearer token credential |
 | `--credential oauth2` | Per-user OAuth2 credential (same as `--oauth` but using the credential system) |
 | `--openapi ./spec.yaml` | Generate functions from an OpenAPI spec |
@@ -132,7 +132,7 @@ Declare what secrets your addon needs:
 
 ```typescript
 // sendgrid.secret.ts
-import { defineSecret } from '@pikku/core/secret'
+import { defineSecret } from '#pikku/addon/secrets'
 import { z } from 'zod'
 
 export const sendgridSecretsSchema = z.object({
@@ -154,10 +154,10 @@ For per-user credentials or OAuth2:
 
 ```typescript
 // google-sheets.credential.ts
-import { wireCredential } from '@pikku/core/credential'
+import { defineCredential } from '#pikku/addon/auth'
 import { z } from 'zod'
 
-wireCredential({
+defineCredential({
   name: 'googleSheets',
   displayName: 'Google Sheets',
   type: 'wire',
@@ -184,7 +184,7 @@ Use `pikkuAddonServices` to create your service factory. It receives the consume
 ```typescript
 // services.ts
 import { SendgridService } from './sendgrid-api.service.js'
-import { pikkuAddonServices } from '#pikku'
+import { pikkuAddonServices } from '#pikku/addon/setup'
 
 export const createSingletonServices = pikkuAddonServices(
   async (config, { secrets }) => {
@@ -200,7 +200,7 @@ For per-user credentials, use `pikkuAddonWireServices` instead — the credentia
 ```typescript
 // services.ts
 import { StripeService } from './stripe-api.service.js'
-import { pikkuAddonWireServices } from '#pikku'
+import { pikkuAddonWireServices } from '#pikku/addon/setup'
 
 export const createWireServices = pikkuAddonWireServices(
   async ({ variables }, wire) => {
@@ -216,7 +216,7 @@ export const createWireServices = pikkuAddonWireServices(
 Functions use your injected services like any other Pikku function:
 
 ```typescript
-import { pikkuSessionlessFunc } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku/addon/function'
 import { z } from 'zod'
 
 export const mailSend = pikkuSessionlessFunc({
@@ -238,6 +238,49 @@ Export all functions from `src/index.ts`:
 export { mailSend } from './functions/mail/send.function.js'
 export { listCreate } from './functions/lists/create.function.js'
 ```
+
+## Shipping Route Contracts
+
+Exporting functions lets consumers call them over RPC. If your addon also has an
+opinion about *how* those functions should be reachable — a set of routes that
+belong together, with paths and methods you have already thought about — declare
+a contract and let the consumer mount it.
+
+An addon may declare contracts; it may not wire them. Calling `wireHTTP`,
+`wireChannel`, `wireScheduler` or any other `wire*` helper from addon code is a
+build error ([PKU920](/docs/pikku-cli/errors/pku920)) — installing your addon
+would otherwise mount endpoints the consumer never asked for.
+
+```typescript title="addon: src/todos.contract.ts"
+import { defineHTTPRoutes } from '#pikku/addon/http'
+import { listTodos } from './functions/todos/list.function.js'
+import { createTodo } from './functions/todos/create.function.js'
+
+export const todosRoutes = defineHTTPRoutes({
+  basePath: '/todos',
+  routes: [
+    { method: 'get', route: '/', func: listTodos },
+    { method: 'post', route: '/', func: createTodo },
+  ],
+})
+```
+
+The consumer mounts it by name, and picks the path:
+
+```typescript title="consuming app: src/addons.wiring.ts"
+wireHTTPRoutes(refHTTP('todos:todosRoutes', { basePath: '/api/todos' }))
+```
+
+Keep contracts free of `middleware` and `permissions` — those are the consuming
+app's policy, and the CLI rejects a contract that carries them
+([PKU921](/docs/pikku-cli/errors/pku921)). Channels work the same way with
+`defineChannelRoutes` from `#pikku/addon/channel`.
+
+:::caution CLI commands cannot be shipped from an addon yet
+There is no `#pikku/addon/cli` door, so `defineCLICommands` is not importable
+from addon code even though `refCLI` exists on the consuming side. Ship the
+functions and let the consumer declare the commands.
+:::
 
 ## OpenAPI Generation
 
@@ -348,7 +391,7 @@ npx pikku versions update   # Update manifest with current hashes
 Addons can export trigger source functions that consumers wire to their own handlers:
 
 ```typescript
-import { pikkuTriggerFunc } from '#pikku'
+import { pikkuTriggerFunc } from '#pikku/addon/trigger'
 
 export const onChanges = pikkuTriggerFunc<
   { table: string; events: ('INSERT' | 'UPDATE' | 'DELETE')[] },

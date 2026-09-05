@@ -31,7 +31,7 @@ What it does:
 After installing, wire it exactly like an npm addon:
 
 ```typescript
-import { wireAddon } from '#pikku'
+import { wireAddon } from '#pikku/addon'
 
 wireAddon({
   name: 'invoicing',
@@ -53,7 +53,7 @@ The other side of the registry is `pikku fabric addon verify` (check an addon di
 Wire addons in a `*.wiring.ts` file:
 
 ```typescript
-import { wireAddon } from '#pikku'
+import { wireAddon } from '#pikku/addon'
 
 wireAddon({
   name: 'postgres',
@@ -68,30 +68,27 @@ The `name` becomes the namespace prefix for all RPC calls to that addon's functi
 Your `services.ts` provides the base services that addons need — logger, secrets, and variables. Addons receive these automatically:
 
 ```typescript
-import type { SingletonServices } from '../.pikku/pikku-types.gen.js'
-import { CreateSingletonServices } from '@pikku/core'
+import { pikkuServices } from '#pikku/setup'
 import {
   ConsoleLogger,
   LocalVariablesService,
   LocalSecretService,
 } from '@pikku/core/services'
-import '../.pikku/pikku-bootstrap.gen.js'
 
-export const createSingletonServices: CreateSingletonServices<
-  {},
-  SingletonServices
-> = async (_config, existingServices) => {
-  const variables =
-    existingServices?.variables ?? new LocalVariablesService(process.env)
-  const secrets =
-    existingServices?.secrets ?? new LocalSecretService(variables)
+export const createSingletonServices = pikkuServices(
+  async (_config, existingServices) => {
+    const variables =
+      existingServices?.variables ?? new LocalVariablesService(process.env)
+    const secrets =
+      existingServices?.secrets ?? new LocalSecretService(variables)
 
-  return {
-    logger: existingServices?.logger ?? new ConsoleLogger(),
-    variables,
-    secrets,
+    return {
+      logger: existingServices?.logger ?? new ConsoleLogger(),
+      variables,
+      secrets,
+    }
   }
-}
+)
 ```
 
 The addon's service factory (created with `pikkuAddonServices`) receives your logger, secrets, and variables to build its own services on top.
@@ -101,7 +98,7 @@ The addon's service factory (created with `pikkuAddonServices`) receives your lo
 Call addon functions using the `namespace:functionName` syntax:
 
 ```typescript
-import { pikkuSessionlessFunc } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku/function'
 
 export const runDatabaseOperations = pikkuSessionlessFunc<void, void>({
   func: async (_services, _data, { rpc }) => {
@@ -159,13 +156,49 @@ This works through generated type maps that prefix addon function types with the
 type FlattenedRPCMap = RPCMap & PrefixKeys<PostgresRPCMap, 'postgres'>
 ```
 
+## Wiring Addon Route Contracts
+
+An addon cannot wire its own routes — that decision is yours. What it can ship is
+a *contract*: a named group of routes with methods and paths already worked out.
+Mount one with `refHTTP`, which takes the same `namespace:name` key as
+`rpc.invoke`:
+
+```typescript
+// addons.wiring.ts
+import { wireHTTPRoutes } from '#pikku/http'
+import { refHTTP } from '#pikku/function'
+
+wireHTTPRoutes(refHTTP('todos:todosRoutes'))
+```
+
+Pass a `basePath` to mount it somewhere else, and wrap it in a group config to
+apply your own middleware to everything the addon exposes:
+
+```typescript
+wireHTTPRoutes({
+  middleware: [rateLimit()],
+  routes: {
+    todos: refHTTP('todos:todosRoutes', { basePath: '/api/todos' }),
+  },
+})
+```
+
+Group config accepts `basePath`, `tags`, `auth` and `middleware`. The addon's
+contract carries none of those by design ([PKU921](/docs/pikku-cli/errors/pku921)),
+so nothing is fighting you for them.
+
+`refChannel` does the same for `defineChannelRoutes` contracts inside
+`wireChannel`'s `onMessageWiring`. Both helpers resolve against the addon's
+published contract metadata — no addon source is imported, and an unknown key is
+a type error rather than a route that silently never mounts.
+
 ## Using Trigger Sources
 
 Addons can export trigger source functions that listen for events. You wire them to your own handler functions in a `*.wiring.ts` file:
 
 ```typescript
 // change.wiring.ts
-import { wireTrigger, wireTriggerSource } from '#pikku'
+import { wireTrigger, wireTriggerSource } from '#pikku/trigger'
 import { onChanges } from '@pikku/addon-postgres'
 import { onChange } from './on-change.function.js'
 
@@ -187,7 +220,7 @@ Your handler function receives the trigger's output as typed input:
 
 ```typescript
 // on-change.function.ts
-import { pikkuSessionlessFunc } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku/function'
 
 export const onChange = pikkuSessionlessFunc<
   { event: string; data: any },
@@ -203,7 +236,7 @@ This pattern works with any trigger source — Redis pub/sub, Telegram updates, 
 
 ```typescript
 // subscribe.wiring.ts
-import { wireTrigger, wireTriggerSource } from '#pikku'
+import { wireTrigger, wireTriggerSource } from '#pikku/trigger'
 import { subscribe } from '@pikku/addon-redis'
 import { onMessage } from './on-message.function.js'
 
@@ -219,7 +252,7 @@ wireTriggerSource({
 })
 ```
 
-See [Triggers](../wiring/triggers/index.md) for more details on how triggers work.
+See [Triggers](../wiring/triggers/index.md) for more details on how triggers work, and the [`#pikku/addon` reference](/docs/api-reference/enhance/addon) for every option `wireAddon` takes.
 
 ## Multiple Addons
 

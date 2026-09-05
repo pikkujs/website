@@ -13,6 +13,8 @@ Addons define secrets with their own `secretId` naming conventions. Secret overr
 Override secrets when wiring the addon:
 
 ```typescript
+import { wireAddon } from '#pikku/addon'
+
 wireAddon({
   name: 'ext',
   package: '@pikku/my-addon',
