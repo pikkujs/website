@@ -16,7 +16,7 @@ Let's wire a function to an HTTP endpoint:
 
 ```typescript
 // books.function.ts
-import { pikkuFunc } from '#pikku'
+import { pikkuFunc } from '#pikku/function'
 
 export const getBook = pikkuFunc<{ bookId: string }, Book>({
   func: async ({ database }, data) => {
@@ -33,7 +33,7 @@ export const getBook = pikkuFunc<{ bookId: string }, Book>({
 
 ```typescript
 // get-book.http.ts
-import { wireHTTP } from '#pikku'
+import { wireHTTP } from '#pikku/http'
 import { getBook } from './functions/books.function.js'
 
 wireHTTP({
@@ -56,7 +56,7 @@ That's it! Your function is now available at `GET /books/:bookId`. Pikku automat
 The `wireHTTP` function accepts a configuration object with all routing options:
 
 ```typescript
-import { wireHTTP } from '#pikku'
+import { wireHTTP } from '#pikku/http'
 import { deleteBook } from './functions/books.function.js'
 import { requireBookOwner, requireAdmin } from './permissions.js'
 import { auditMiddleware, setCookieMiddleware } from './middleware.js'
@@ -159,7 +159,7 @@ wireHTTP({
 You can also apply middleware globally or to route prefixes:
 
 ```typescript
-import { addHTTPMiddleware } from '#pikku'
+import { addHTTPMiddleware } from '#pikku/middleware'
 import { corsMiddleware, loggingMiddleware, adminAuthMiddleware } from './middleware.js'
 
 // Global - applies to all HTTP routes
@@ -235,7 +235,7 @@ Pikku automatically maps errors to HTTP status codes. You can use built-in error
 
 ```typescript
 // errors.ts
-import { PikkuError, addError } from '@pikku/core/errors'
+import { PikkuError, addError } from '#pikku/error'
 
 export class BookNotAvailableError extends PikkuError {
 }
@@ -250,7 +250,7 @@ addError(BookNotAvailableError, {
 Now use your custom error in functions:
 
 ```typescript
-import { NotFoundError, BadRequestError } from '@pikku/core/errors'
+import { NotFoundError, BadRequestError } from '#pikku/error'
 import { BookNotAvailableError } from './errors.js'
 
 export const borrowBook = pikkuFunc<{ bookId: string }, BorrowResult>({
@@ -285,3 +285,4 @@ See [Errors](../../core-features/errors.md) for more on error handling.
 - [OpenAPI Documentation](./openapi.md)
 - [CORS Configuration](./cors.md)
 - [Fetch Client](./fetch-client.md) - Type-safe HTTP client generation
+- [`#pikku/http` API reference](/docs/api-reference/wire/http) - every export on the HTTP door

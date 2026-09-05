@@ -166,6 +166,7 @@ npx pikku enable agent        # Enable public agent endpoints
 npx pikku enable workflow     # Enable workflow workers
 npx pikku enable events       # Enable the realtime events channel + SSE stream
 npx pikku enable remote-rpc   # Enable the remote internal RPC queue worker + HTTP endpoint
+npx pikku enable webhook      # Enable the outgoing webhook delivery queue worker
 
 # Disable auth requirement
 npx pikku enable rpc --no-auth
@@ -213,6 +214,28 @@ npx pikku info middleware                # List all middleware definitions
 npx pikku info permissions               # List all permission definitions
 npx pikku info --limit 100              # Show more rows (default: 50)
 ```
+
+### `pikku doc`
+
+Print the API surface of the pikku installed here — the doors you import from,
+what each one exports, and how each export is called. The surface is computed when
+the CLI is built and shipped inside it, so what you get back is the version you
+actually have rather than whatever the docs last said.
+
+```bash
+npx pikku doc              # the index: every door, grouped by build step
+npx pikku doc http         # one door: what it exports, and how
+npx pikku doc wireHTTP     # one export: signature, config keys, examples
+npx pikku doc http queue   # several at once, in one call
+npx pikku doc --ai         # the same, plus the skill to load for each door
+npx pikku doc --addon      # the addon surface instead of the application one
+```
+
+`--ai` is the one to point a coding agent at: it names the skill that teaches each
+door, so an agent can load *how* only for the doors it needs, and the export list
+it reads is the installed version rather than something it remembers.
+
+The same content is published as the [API Reference](/docs/api-reference).
 
 ### `pikku db`
 
@@ -289,12 +312,93 @@ npx pikku audit
 npx pikku audit --outdated
 ```
 
-### `pikku workspace`
+### `pikku validate`
 
-Workspace-level validation and maintenance.
+Run every check that applies to this project — app structure, and the published file set of any addon it contains.
 
 ```bash
-npx pikku workspace validate   # Check the project structure for Pikku workspace compatibility
+npx pikku validate
+```
+
+### `pikku dist`
+
+Copy the generated files `tsc` cannot emit — the `.gen.json` meta and hand-authored `.d.ts` — into the build output. Run it after `tsc`, as a package's build script.
+
+```bash
+npx pikku dist
+```
+
+### `pikku update`
+
+Report which `@pikku/*` dependencies can be updated, and the peers those updates need. Reports only, until you pass `--update`.
+
+```bash
+npx pikku update            # report only
+npx pikku update --update   # actually write the new versions
+```
+
+### `pikku semver`
+
+Derive a release's semver by comparing this build's surface against a deployed one, and write `.pikku/changes.gen.json`. Pass `--emit` to produce this build's snapshot instead of comparing it — publish that to serve as the next baseline.
+
+```bash
+npx pikku semver                      # compare against the deployed baseline
+npx pikku semver --emit --out surface.json   # publish a new baseline
+```
+
+### `pikku scopes` / `pikku roles`
+
+Inspect and maintain the authorization scopes declared with `defineScope` and the roles declared with `defineSystemRole`.
+
+```bash
+npx pikku scopes audit    # report declared scopes and where they are used
+npx pikku scopes prune    # remove scopes nothing references
+npx pikku roles audit
+npx pikku roles prune
+```
+
+### `pikku knowledge`
+
+Inspect and maintain the knowledge base — what this app is, in the language its users use.
+
+```bash
+npx pikku knowledge validate        # Check the knowledge base against the app-project profile
+npx pikku knowledge index           # Refresh every index.md to list the notes actually in it
+npx pikku knowledge index --check   # Report stale indexes without writing — a CI gate
+```
+
+#### `pikku knowledge plan`
+
+A milestone's technical plan — the shape of the work, checked before it is built rather than after.
+
+```bash
+npx pikku knowledge plan schema                    # Print the plan schema
+npx pikku knowledge plan show <milestone>          # Print a milestone's plan
+npx pikku knowledge plan show <milestone> --for-build   # Render it as the ordered list of work
+npx pikku knowledge plan progress <milestone>      # What the milestone still owes its plan
+npx pikku knowledge plan set <milestone> <file>    # Validate a plan and write it
+npx pikku knowledge plan defer <milestone> <item> --reason "..."  # Move an item to the next pass
+```
+
+`progress` reads from the generated meta rather than from what was claimed, and `set` writes nothing if the plan does not validate against its milestone note.
+
+### `pikku persona`
+
+The people this app is for, and running one against a real stage.
+
+```bash
+npx pikku persona list
+npx pikku persona run
+npx pikku persona sync
+npx pikku persona secret
+```
+
+### `pikku import`
+
+Import workflows from other systems.
+
+```bash
+npx pikku import n8n
 ```
 
 ### `pikku login` / `pikku logout` / `pikku whoami`
@@ -331,6 +435,8 @@ These flags work with any command:
 | `--security`                        | Run the data-classification security lint (scans function return types for Private/Pii/Secret leaks). Off by default |
 | `--fail-on-error`                   | Fail the build on error-severity diagnostics (default: only critical fail)                                           |
 | `--fail-on-warn`                    | Fail the build on warn-severity diagnostics (implies `--fail-on-error`)                                              |
+| `--fail-on-critical`                | Fail the build on critical diagnostics. Always on; accepted for symmetry with the two above                          |
+| `--strict-meta`                     | Fail when an AI agent's tool has no description — a quality gate, off by default. A `title` does not satisfy it      |
 | `--tsc`                             | After codegen, run a real `tsc --noEmit` and fail on type errors (full diagnostics with code frames)                 |
 | `--tsc-summary`                     | Like `--tsc` but prints a compact one-line-per-error summary — cheap for CI and AI agents                            |
 
@@ -394,3 +500,4 @@ npx pikku --wires queue,scheduler
 - **[Configuration](./configuration)** — Configure `pikku.config.json` for your project
 - **[Tree-Shaking](./tree-shaking)** — Learn how filtering and tree-shaking work
 - **[Errors](./errors)** — CLI error code reference
+- **[API Reference](/docs/api-reference)** — What `pikku doc` prints, as browsable pages

@@ -10,10 +10,10 @@ Variables let you declare non-sensitive configuration your application needs usi
 
 ## Defining Variables
 
-Use `defineVariable` to declare a variable with its schema:
+Use `defineVariable`, from [`#pikku/variables`](/docs/api-reference/enhance/variables), to declare a variable with its schema:
 
 ```typescript
-import { defineVariable } from '#pikku'
+import { defineVariable } from '#pikku/variables'
 import { z } from 'zod'
 
 export const postgresParamsSchema = z.object({
@@ -54,7 +54,7 @@ export const connectToDb = pikkuSessionlessFunc<void, { connected: boolean }>({
 The CLI generates a `TypedVariablesService` class that wraps your `VariablesService` implementation. Use it when creating your singleton services:
 
 ```typescript
-import { TypedVariablesService } from './.pikku/variables/pikku-variables.gen.js'
+import { TypedVariablesService } from '#pikku/variables'
 
 const variables = new TypedVariablesService(baseVariablesService)
 ```

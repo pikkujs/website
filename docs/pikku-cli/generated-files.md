@@ -11,12 +11,13 @@ When you run `pikku`, the CLI writes a set of generated files into your `outDir`
 
 ## The `#pikku` Import Alias
 
-Your `package.json` maps `#pikku` to the generated output directory:
+Your `package.json` maps `#pikku/*` onto the generated output directory — one subpath per door, and no bare `#pikku`:
 
 ```json
 {
   "imports": {
-    "#pikku/*": "./.pikku/*"
+    "#pikku/*.js": "./.pikku/*.ts",
+    "#pikku/*": ["./.pikku/*/index.ts", "./.pikku/*"]
   }
 }
 ```
@@ -24,7 +25,8 @@ Your `package.json` maps `#pikku` to the generated output directory:
 This lets you write clean imports throughout your code:
 
 ```typescript
-import { pikkuFunc, wireHTTP } from '#pikku'
+import { pikkuFunc } from '#pikku/function'
+import { wireHTTP } from '#pikku/http'
 ```
 
 Instead of fragile relative paths like `../../.pikku/function/pikku-function-types.gen.js`.
@@ -34,9 +36,18 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 ```
 .pikku/
 ├── pikku-bootstrap.gen.ts       # Master import — registers everything
-├── pikku-types.gen.ts           # Re-exports all wiring-specific types
+├── pikku-bootstrap-scenarios.gen.ts  # The same, for scenario runs
 ├── pikku-services.gen.ts        # Service dependency map
-├── pikku-meta-service.gen.ts    # Meta service for Console
+├── pikku-fetch.gen.ts           # Typed fetch client
+├── pikku-rpc.gen.ts             # Typed RPC client
+├── http-map.gen.d.ts            # Typed route map
+├── rpc-map.gen.d.ts             # Typed RPC map
+│
+├── setup/
+│   └── pikku-setup-types.gen.ts       # pikkuConfig, pikkuServices, Config
+│
+├── services/
+│   └── pikku-meta-service.gen.ts      # Meta service for the Console
 │
 ├── function/
 │   ├── pikku-function-types.gen.ts    # pikkuFunc, pikkuSessionlessFunc, etc.
@@ -82,7 +93,7 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 │       └── myWorkflow-verbose.gen.json
 │
 ├── agent/
-│   ├── pikku-agent-types.gen.ts       # pikkuAIAgent type helper
+│   ├── pikku-agent-types.gen.ts       # pikkuAgent type helper
 │   ├── pikku-agent-wirings.gen.ts     # Agent registration
 │   ├── pikku-agent-wirings-meta.gen.ts
 │   ├── pikku-agent-wirings-meta.gen.json
@@ -91,7 +102,8 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 ├── mcp/
 │   ├── pikku-mcp-types.gen.ts         # MCP wiring types
 │   ├── pikku-mcp-wirings.gen.ts
-│   └── pikku-mcp-wirings-meta.gen.ts
+│   ├── pikku-mcp-wirings-meta.gen.ts
+│   └── mcp.gen.json                   # MCP server manifest (read by deploy)
 │
 ├── cli/
 │   ├── pikku-cli-types.gen.ts         # wireCLI, pikkuCLICommand types
@@ -163,13 +175,16 @@ The master entry point. Importing this file registers all your functions, wiring
 import './.pikku/pikku-bootstrap.gen.js'
 ```
 
-### `pikku-types.gen.ts`
+### Door barrels (`<door>/index.ts`)
 
-Re-exports all the type helpers you use in your code — `pikkuFunc`, `pikkuSessionlessFunc`, `wireHTTP`, `wireChannel`, `pikkuAIAgent`, etc. This is what `#pikku` resolves to when you write:
+Every concern directory carries an `index.ts` that `#pikku/<door>` resolves to. It re-exports that concern's generated types — so `#pikku/function` gives you `pikkuFunc` and `pikkuSessionlessFunc`, `#pikku/http` gives you `wireHTTP`, and so on:
 
 ```typescript
-import { pikkuFunc } from '#pikku'
+import { pikkuFunc } from '#pikku/function'
+import { wireHTTP } from '#pikku/http'
 ```
+
+There is no single re-export hub and no bare `#pikku` — see [Import Patterns](/docs/advanced/import-patterns) for the full alias setup, and the [API Reference](/docs/api-reference) for what each door exports.
 
 ### `pikku-services.gen.ts`
 

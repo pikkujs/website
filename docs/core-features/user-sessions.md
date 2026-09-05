@@ -38,7 +38,7 @@ This separation means you can use different session strategies per protocol whil
 
 ## Pikku Session Middleware
 
-Pikku ships session-aware middleware in `@pikku/core/middleware`:
+Pikku ships session-aware middleware in [`#pikku/middleware`](/docs/api-reference/enhance/middleware):
 
 - **[`authCookie`](/docs/middleware/auth-cookie)** – Cookie-based sessions for HTTP
 - **[`authBearer`](/docs/middleware/auth-jwt)** – Bearer/JWT token sessions
@@ -52,7 +52,7 @@ Define what data you want to store in sessions by creating your `UserSession` ty
 
 ```typescript
 // types/application-types.d.ts
-import { CoreUserSession } from '@pikku/core'
+import type { CoreUserSession } from '@pikku/core/types'
 
 interface UserSession extends CoreUserSession {
   userId: string
@@ -69,8 +69,8 @@ Now your session type is available throughout your application with full type sa
 Use `setSession()` to create or update a session. This typically happens in a login function:
 
 ```typescript
-import { pikkuSessionlessFunc } from '#pikku'
-import { UnauthorizedError } from '@pikku/core/errors'
+import { pikkuSessionlessFunc } from '#pikku/function'
+import { UnauthorizedError } from '#pikku/error'
 
 type LoginInput = {
   email: string

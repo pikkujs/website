@@ -136,7 +136,7 @@ await workflow.do('Step 3', async () => sendReminder()) // Executes
 Here's a simple user onboarding workflow:
 
 ```typescript
-import { pikkuWorkflowFunc } from './.pikku/workflow/pikku-workflow-types.gen'
+import { pikkuWorkflowFunc } from '#pikku/workflow'
 
 export const onboardingWorkflow = pikkuWorkflowFunc<
   { email: string; userId: string },
@@ -200,3 +200,4 @@ The [Pikku Console](/docs/console) renders your workflows as interactive visual 
 - **[Getting Started](./getting-started.md)**: Set up workflows in your project
 - **[Step Types](./steps.md)**: Learn about RPC, inline, and sleep steps
 - **[Configuration](./configuration.md)**: Configure state storage and execution modes
+- **[`#pikku/workflow` API reference](/docs/api-reference/orchestrate/workflow)**: Every export on the workflow door

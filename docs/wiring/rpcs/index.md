@@ -15,6 +15,8 @@ RPC lets you invoke Pikku functions — internally from other functions, externa
 Internal RPCs are function-to-function calls within your application. Use `rpc.invoke()` to call one function from another:
 
 ```typescript
+import { pikkuFunc } from '#pikku/function'
+
 export const processOrder = pikkuFunc<OrderInput, OrderResult>({
   func: async (services, data, { rpc }) => {
     // Internal RPC - calls another function

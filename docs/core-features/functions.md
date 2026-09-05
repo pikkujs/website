@@ -12,10 +12,10 @@ The beauty of Pikku functions is that they're **transport-agnostic**. Write your
 
 ## Your First Function
 
-Here's a simple function that fetches a book from a database:
+Here's a simple function that fetches a book from a database. The definers live behind the [`#pikku/function`](/docs/api-reference/create/function) door the CLI generates:
 
 ```typescript
-import { pikkuFunc } from '#pikku'
+import { pikkuFunc } from '#pikku/function'
 
 export const getBook = pikkuFunc<{ bookId: string }, Book>({
   func: async ({ database }, data) => {
@@ -131,7 +131,7 @@ By default, Pikku functions require authentication (`auth: true`). This means a 
 ### Authentication Functions (Login, Logout, GetMe)
 
 ```typescript title="auth.functions.ts"
-import { pikkuFunc, pikkuSessionlessFunc } from '#pikku'
+import { pikkuFunc, pikkuSessionlessFunc } from '#pikku/function'
 
 export const login = pikkuSessionlessFunc<{ email: string; password: string }, { token: string; user: User }>({
   func: async ({ jwt, userService }, data, { setSession }) => {
@@ -242,7 +242,7 @@ See [RPC (Remote Procedure Calls)](../wiring/rpcs/index.md) for more details on 
 Errors in Pikku are thrown, not returned. Use built-in error classes or extend `PikkuError`:
 
 ```typescript
-import { BadRequestError, NotFoundError } from '@pikku/core/errors'
+import { BadRequestError, NotFoundError } from '#pikku/error'
 
 export const updateBook = pikkuFunc<UpdateBookInput, Book>({
   func: async ({ database }, data) => {

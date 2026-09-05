@@ -28,17 +28,22 @@ Types drift. Logic fragments. Vendor lock-in creeps in.
 Write your function once:
 
 ```typescript
-export const sendWelcomeEmail = pikkuFunc<SendWelcomeEmailInput>(
-  async ({ email }, data) => {
+import { pikkuFunc } from '#pikku/function'
+
+export const sendWelcomeEmail = pikkuFunc<SendWelcomeEmailInput, { sent: boolean }>({
+  func: async ({ email }, data) => {
     await email.send({ to: data.userEmail, subject: 'Welcome!', body: `Hello ${data.userName}!` })
     return { sent: true }
   }
-)
+})
 ```
 
 Wire it to whatever you need:
 
 ```typescript
+import { wireQueueWorker } from '#pikku/queue'
+import { wireScheduler } from '#pikku/scheduler'
+
 // Process from a background queue
 wireQueueWorker({ name: 'emails', func: sendWelcomeEmail })
 

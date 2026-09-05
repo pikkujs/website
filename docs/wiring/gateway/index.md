@@ -20,7 +20,7 @@ For Slack you don't need to write an adapter — [`@pikku/gateway-slack`](./slac
 Here's a WhatsApp webhook gateway:
 
 ```typescript title="gateway.functions.ts"
-import { pikkuFunc } from '#pikku'
+import { pikkuFunc } from '#pikku/function'
 
 export const handleMessage = pikkuFunc<
   GatewayInboundMessage,
@@ -37,7 +37,7 @@ export const handleMessage = pikkuFunc<
 ```
 
 ```typescript title="gateway.wiring.ts"
-import { wireGateway } from '@pikku/core/gateway'
+import { wireGateway } from '#pikku/gateway'
 import { whatsAppAdapter } from './adapters/whatsapp.js'
 import { handleMessage } from './functions/gateway.functions.js'
 
@@ -142,7 +142,7 @@ interface GatewayAdapter {
 Here's an example adapter for WhatsApp Cloud API:
 
 ```typescript title="adapters/whatsapp.ts"
-import type { GatewayAdapter } from '@pikku/core/gateway'
+import type { GatewayAdapter } from '#pikku/gateway'
 
 export const whatsAppAdapter: GatewayAdapter = {
   name: 'whatsapp',
@@ -192,7 +192,7 @@ export const whatsAppAdapter: GatewayAdapter = {
 `wireGateway` runs at module load, but real platform adapters usually need secrets or services that only exist after your app boots — the WhatsApp access token, a Slack signing secret, a database connection. Instead of an adapter instance, pass a factory that receives your singleton services:
 
 ```typescript title="gateway.wiring.ts"
-import { wireGateway } from '@pikku/core/gateway'
+import { wireGateway } from '#pikku/gateway'
 import { createWhatsAppAdapter } from './adapters/whatsapp.js'
 import { handleMessage } from './functions/gateway.functions.js'
 
@@ -356,4 +356,4 @@ wireGateway({
 })
 ```
 
-Your handler function stays the same — the adapter normalizes platform differences. Use `wire.gateway.platform` if you need platform-specific behavior.
+Your handler function stays the same — the adapter normalizes platform differences. Use `wire.gateway.platform` if you need platform-specific behavior. See the [`#pikku/gateway` API reference](/docs/api-reference/wire/gateway) for every export on the door.

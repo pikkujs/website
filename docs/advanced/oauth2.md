@@ -10,18 +10,18 @@ Pikku provides built-in OAuth2 support for managing access tokens to third-party
 
 ## Defining an OAuth2 Credential
 
-Use `wireCredential` with an `oauth2` block to register an OAuth2 integration:
+Use `defineCredential` with an `oauth2` block to register an OAuth2 integration:
 
 ```typescript
 import { z } from 'zod'
-import { wireCredential } from '@pikku/core/credential'
+import { defineCredential } from '#pikku/auth'
 
 export const githubTokenSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string().optional(),
 })
 
-wireCredential({
+defineCredential({
   name: 'github',
   displayName: 'GitHub',
   description: 'GitHub API access for repository operations',
@@ -57,7 +57,7 @@ wireCredential({
 The `appCredentialSecretId` references a secret containing your OAuth2 application credentials:
 
 ```typescript
-import { defineSecret } from '@pikku/core/secret'
+import { defineSecret } from '#pikku/secrets'
 
 defineSecret({
   name: 'githubOAuthApp',
@@ -73,40 +73,58 @@ defineSecret({
 
 Set this secret with your OAuth app's client ID and secret (via the Console or your secret service).
 
-## OAuth2Client
+## Who Runs the Flow
 
-The `OAuth2Client` class manages token lifecycle:
+You never write the token exchange. The CLI turns every `oauth2` declaration into an entry in the generated `CREDENTIAL_OAUTH2_CONFIGS`, and `@pikku/better-auth` turns those into one provider per credential:
 
-```typescript
-import { OAuth2Client } from '@pikku/core/oauth2'
+```typescript title="auth.ts"
+import { pikkuCredentialOAuth, credentialOAuthProviders } from '@pikku/better-auth'
+import { CREDENTIAL_OAUTH2_CONFIGS } from '#pikku/credentials/pikku-credentials.gen.js'
 
-const client = new OAuth2Client(
-  oauth2Config,           // { tokenSecretId, authorizationUrl, tokenUrl, scopes, ... }
-  appCredentialSecretId,  // Secret holding { clientId, clientSecret }
-  secretService           // For reading/writing tokens
-)
+plugins: [
+  pikkuCredentialOAuth({
+    config: await credentialOAuthProviders(
+      CREDENTIAL_OAUTH2_CONFIGS,
+      secrets,
+      logger
+    ),
+    scopeService,
+    logger,
+  }),
+]
 ```
 
-### Token Auto-Refresh
+The credential name is the provider id, so linking an account is what makes `getCredential(name)` resolve. `BetterAuthCredentialService` reads the token out of better-auth's `account` table, which refreshes it on read rather than serving a stale one; credentials without an `oauth2` block fall through to whatever `CredentialService` you passed it as a fallback.
 
-`OAuth2Client` automatically handles token refresh:
+A credential whose app secret isn't configured yet is skipped with a warning rather than throwing, so one unset provider doesn't take down auth for everything else.
 
-- Checks token validity before each request (with 60-second buffer for clock skew)
-- Refreshes expired tokens using the stored refresh token
-- Prevents concurrent refresh requests using a promise lock
-- Falls back to re-authorization if refresh fails
+## Using the Token
 
-### Making Authenticated Requests
+Functions read the token off the wire, by credential name:
 
 ```typescript
-// OAuth2Client wraps fetch with automatic token management
-const response = await client.request('https://api.github.com/user/repos', {
-  method: 'GET',
-  headers: { 'Accept': 'application/json' },
+import { pikkuFunc } from '#pikku/function'
+import { UnauthorizedError } from '#pikku/error'
+
+export const listRepos = pikkuFunc<void, { names: string[] }>({
+  func: async (services, _data, wire) => {
+    const cred = await wire.getCredential?.<{ accessToken: string }>('github')
+    if (!cred?.accessToken) {
+      throw new UnauthorizedError('Connect GitHub first')
+    }
+
+    const response = await fetch('https://api.github.com/user/repos', {
+      headers: { Authorization: `Bearer ${cred.accessToken}` },
+    })
+    const repos = (await response.json()) as Array<{ name: string }>
+    return { names: repos.map((repo) => repo.name) }
+  },
 })
 ```
 
-If the access token has expired, `OAuth2Client` refreshes it before making the request. If the request returns a 401, it refreshes and retries once.
+Addons do the same thing inside `pikkuAddonWireServices`, resolving the token once and handing it to the API service — see [Creating Addons](/docs/addon/creating).
+
+`@pikku/core/oauth2` carries the two types involved, `OAuth2AppCredential` and `OAuth2Token`. There is no client class — the refresh lives in the credential service, not in something you construct.
 
 ## Console Integration
 
@@ -121,7 +139,7 @@ This makes it easy to set up third-party integrations per environment without wr
 
 ## Token Storage
 
-OAuth2 tokens are stored as secrets via your `SecretService`. The token object contains:
+Tokens are stored by whatever `CredentialService` you wired up — with `@pikku/better-auth` that's better-auth's `account` table. The stored token has the shape of `OAuth2Token`:
 
 | Field | Type | Description |
 |-------|------|-------------|

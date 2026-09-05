@@ -13,7 +13,7 @@ Node metadata lets you annotate your functions with visual information — displ
 A node is a function with extra metadata that describes how it should appear in a visual graph:
 
 ```typescript
-import { pikkuSessionlessFunc } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku/function'
 
 export const sendEmail = pikkuSessionlessFunc<
   { to: string; subject: string; body: string },
@@ -54,17 +54,18 @@ The `node` property on a function definition accepts a `CoreNodeConfig`:
 
 ## Node Categories
 
-Categories group related nodes in the Console UI. Configure allowed categories in `pikku.config.json`:
+Categories group related nodes in the Console UI. Allowed categories come from the addon metadata in `pikku.config.json`:
 
 ```json
 {
-  "console": {
-    "nodeCategories": ["notifications", "database", "payment", "auth", "utility"]
+  "addon": {
+    "displayName": "Notifications",
+    "categories": ["notifications", "database", "payment", "auth", "utility"]
   }
 }
 ```
 
-The Pikku CLI validates that all node categories in your code match the configured list. Unrecognized categories produce a build error.
+The Pikku CLI validates that every node category in your code is in that list — an unrecognized one is a critical diagnostic ([PKU124](/docs/pikku-cli/errors/pku124)). Leave `categories` off and no category check runs.
 
 ## NodeMeta
 

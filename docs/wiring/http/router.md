@@ -15,7 +15,7 @@ For route-specific middleware, see [wireHTTP](./index.md) configuration options.
 Applies middleware globally or to routes matching a prefix.
 
 ```typescript
-import { addHTTPMiddleware } from '#pikku'
+import { addHTTPMiddleware } from '#pikku/middleware'
 import { corsMiddleware, responseTime } from './middleware.js'
 
 // All HTTP routes
@@ -33,8 +33,8 @@ addHTTPMiddleware('/admin', [requireAuth, auditLog])
 ### Global HTTP Middleware
 
 ```typescript
-import { addHTTPMiddleware } from '#pikku'
-import { pikkuMiddleware } from '#pikku'
+import { addHTTPMiddleware } from '#pikku/middleware'
+import { pikkuMiddleware } from '#pikku/middleware'
 
 const cors = pikkuMiddleware(async (_services, { http }, next) => {
   if (http) {
@@ -106,7 +106,7 @@ addHTTPMiddleware('/api', [rateLimit])
 Permissions are declared on the function definition, not on the router. For an app-wide baseline that every function must additionally pass, use `addGlobalPermission`:
 
 ```typescript
-import { addGlobalPermission } from '#pikku'
+import { addGlobalPermission } from '#pikku/auth'
 import { requireAuth } from './permissions.js'
 
 // Every function also requires a valid session

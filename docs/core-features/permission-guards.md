@@ -12,10 +12,10 @@ Permissions should be independent checks that don't depend on execution order or
 
 ## Your First Permission
 
-A permission is a function that returns a boolean:
+A permission is a function that returns a boolean. `pikkuPermission` comes from [`#pikku/auth`](/docs/api-reference/guard/auth):
 
 ```typescript
-import { pikkuPermission } from '#pikku'
+import { pikkuPermission } from '#pikku/auth'
 
 export const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
   return session?.userId != null
@@ -29,7 +29,7 @@ export const requireAdmin = pikkuPermission(async (_services, _data, { session }
 Use them in your function:
 
 ```typescript
-import { pikkuFunc } from '#pikku'
+import { pikkuFunc } from '#pikku/function'
 
 export const deleteUser = pikkuFunc<{ userId: string }, void>({
   func: async ({ database }, data) => {
@@ -174,7 +174,7 @@ export const activeSubscription = pikkuPermission(
 Permissions live on the function definition. To apply an app-wide baseline that **every** function must additionally satisfy, use `addGlobalPermission`:
 
 ```typescript
-import { addGlobalPermission } from '#pikku'
+import { addGlobalPermission } from '#pikku/auth'
 import { requireAuth } from './permissions.js'
 
 // Every function now also requires a valid session
@@ -369,7 +369,7 @@ export const deleteUser = pikkuFunc({
 For permissions that need configuration parameters, use `pikkuPermissionFactory`:
 
 ```typescript
-import { pikkuPermissionFactory, pikkuPermission } from '#pikku'
+import { pikkuPermissionFactory, pikkuPermission } from '#pikku/auth'
 
 export const requireRole = pikkuPermissionFactory<{ role: string }>(({ role }) => {
   return pikkuPermission(async (_services, _data, { session }) => {

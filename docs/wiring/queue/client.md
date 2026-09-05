@@ -42,7 +42,7 @@ First, create a queue client with your chosen queue provider:
 
 ```typescript
 // app.ts
-import { PikkuQueue } from './.pikku/pikku-queue.gen'
+import { PikkuQueue } from '#pikku/pikku-queue.gen.js'
 import { BullServiceFactory } from '@pikku/queue-bullmq'
 
 // Create queue service (connects to Redis via REDIS_URL by default)

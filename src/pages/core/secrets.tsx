@@ -132,7 +132,7 @@ function OAuth2Section() {
         <div className={styles.sectionHead}>
           <div className={styles.eyebrow}>OAuth2</div>
           <h2 className={styles.h2}>Managed <em>OAuth2 tokens.</em></h2>
-          <p className={styles.lead}>Declare credentials with wireOAuth2Credential — app secrets, token storage, authorization and token URLs. The OAuth2Client handles refresh, caching, and expiry automatically.</p>
+          <p className={styles.lead}>Declare credentials with defineCredential — app secrets, token storage, authorization and token URLs. The credential service handles refresh, caching, and expiry automatically.</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
@@ -158,7 +158,7 @@ function OAuth2Section() {
               </div>
             </div>
           </div>
-          <CodeCard sourceUrl={snippetSourceUrl('shopSecretUsage')} filename="oauth2.ts" badge="wireOAuth2Credential">
+          <CodeCard sourceUrl={snippetSourceUrl('shopSecretUsage')} filename="oauth2.ts" badge="defineCredential">
             <CodeBlock language="typescript">{oauth2Code}</CodeBlock>
           </CodeCard>
         </div>

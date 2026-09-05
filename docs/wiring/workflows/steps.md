@@ -52,6 +52,8 @@ const payment = await workflow.do(
 RPC functions can access workflow step information through the `workflowStep` parameter:
 
 ```typescript
+import { pikkuSessionlessFunc } from '#pikku/function'
+
 export const processPayment = pikkuSessionlessFunc<
   { amount: number; userId: string },
   { success: boolean }
@@ -206,6 +208,8 @@ await workflow.cancel(reason)
 ### Example
 
 ```typescript
+import { pikkuWorkflowFunc } from '#pikku/workflow'
+
 export const orderWorkflow = pikkuWorkflowFunc<
   { orderId: string; amount: number },
   { success: boolean }

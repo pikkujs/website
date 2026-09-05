@@ -66,18 +66,18 @@ await db.init()
 | `connectionOrConfig` | `postgres.Sql \| postgres.Options` | — | Postgres connection or config |
 | `defaultSchemaName` | `string` | — | Default schema for table creation |
 
-### KyselyAIStorageService
+### KyselyAgentStorageService
 
-Implements both `AIStorageService` and `AIRunStateService` for AI Agent persistence.
+Implements both `AgentStorageService` and `AgentRunStateService` for AI Agent persistence.
 
 ```typescript
-import { KyselyAIStorageService } from '@pikku/kysely'
+import { KyselyAgentStorageService } from '@pikku/kysely'
 
-const aiStorage = new KyselyAIStorageService(db.kysely)
-await aiStorage.init()
+const agentStorage = new KyselyAgentStorageService(db.kysely)
+await agentStorage.init()
 ```
 
-Provides the same methods as [`PgKyselyAIStorageService`](./postgresql#pgkyselyaistorageservice).
+Provides the same methods as [`PgKyselyAgentStorageService`](./postgresql#pgkyselyagentstorageservice).
 
 ### KyselyAgentRunService
 
@@ -213,11 +213,11 @@ async function customQuery(db: Kysely<KyselyPikkuDB>) {
 ```typescript
 import {
   PikkuKysely,
-  KyselyAIStorageService,
+  KyselyAgentStorageService,
   KyselyAgentRunService,
   KyselyWorkflowService,
 } from '@pikku/kysely'
-import { VercelAIAgentRunner } from '@pikku/ai-vercel'
+import { VercelAgentRunner } from '@pikku/ai-vercel'
 import { createOpenAI } from '@ai-sdk/openai'
 import postgres from 'postgres'
 
@@ -225,18 +225,18 @@ const sql = postgres(process.env.DATABASE_URL!)
 const db = new PikkuKysely(logger, sql)
 await db.init()
 
-const aiStorage = new KyselyAIStorageService(db.kysely)
-await aiStorage.init()
+const agentStorage = new KyselyAgentStorageService(db.kysely)
+await agentStorage.init()
 
 const workflowService = new KyselyWorkflowService(db.kysely)
 await workflowService.init()
 
 const singletonServices = await createSingletonServices(config, {
-  aiStorage,
-  aiRunState: aiStorage,
+  agentStorage,
+  agentRunState: agentStorage,
   agentRunService: new KyselyAgentRunService(db.kysely),
   workflowService,
-  aiAgentRunner: new VercelAIAgentRunner({
+  agentRunner: new VercelAgentRunner({
     openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),
   }),
 })
@@ -248,7 +248,7 @@ All services from `@pikku/kysely` have MySQL equivalents with the `MySQL` prefix
 
 ```typescript
 import {
-  MySQLKyselyAIStorageService,
+  MySQLKyselyAgentStorageService,
   MySQLKyselyAgentRunService,
   MySQLKyselyWorkflowService,
   MySQLKyselyWorkflowRunService,
@@ -269,7 +269,7 @@ All services have SQLite equivalents with the `SQLite` prefix. The package also 
 import Database from 'better-sqlite3'
 import { createSQLiteKysely } from '@pikku/kysely-sqlite'
 import {
-  SQLiteKyselyAIStorageService,
+  SQLiteKyselyAgentStorageService,
   SQLiteKyselyAgentRunService,
   SQLiteKyselyWorkflowService,
   SQLiteKyselyWorkflowRunService,
@@ -281,8 +281,8 @@ import {
 
 const db = createSQLiteKysely(new Database('./pikku.db'))
 
-const aiStorage = new SQLiteKyselyAIStorageService(db)
-await aiStorage.init()
+const agentStorage = new SQLiteKyselyAgentStorageService(db)
+await agentStorage.init()
 ```
 
 SQLite is used by the Cloudflare D1 integration (`@pikku/cloudflare/d1`) under the hood.
@@ -294,12 +294,12 @@ If you'd rather avoid the `better-sqlite3` native module, `@pikku/kysely-node-sq
 ```typescript
 import { createNodeSqliteKysely } from '@pikku/kysely-node-sqlite'
 // or: import { createBunSqliteKysely } from '@pikku/kysely-bun-sqlite'
-import { SQLiteKyselyAIStorageService } from '@pikku/kysely-sqlite'
+import { SQLiteKyselyAgentStorageService } from '@pikku/kysely-sqlite'
 
 const db = createNodeSqliteKysely({ filename: './pikku.db' })
 
-const aiStorage = new SQLiteKyselyAIStorageService(db)
-await aiStorage.init()
+const agentStorage = new SQLiteKyselyAgentStorageService(db)
+await agentStorage.init()
 ```
 
 ## Cleanup

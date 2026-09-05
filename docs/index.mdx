@@ -28,6 +28,22 @@ import { HttpIcon, WebSocketIcon, QueueIcon, CronIcon, CLIIcon, MCPIcon, BotIcon
   </div>
 </Link>
 
+<Link to="/docs/api-reference" className="doc-nav-card">
+  <div className="doc-nav-icon"><BookOpen size={24} /></div>
+  <div>
+    <div className="doc-nav-title">API Reference</div>
+    <div className="doc-nav-desc">Every export pikku gives you, by the door you import it from</div>
+  </div>
+</Link>
+
+<Link to="/docs/deploy" className="doc-nav-card">
+  <div className="doc-nav-icon"><Rocket size={24} /></div>
+  <div>
+    <div className="doc-nav-title">Deploy</div>
+    <div className="doc-nav-desc">Ship to cloud infrastructure or a standalone server</div>
+  </div>
+</Link>
+
 <Link to="/docs/pikku-cli" className="doc-nav-card">
   <div className="doc-nav-icon"><Terminal size={24} /></div>
   <div>
@@ -150,9 +166,49 @@ Connect your functions to protocols.
 
 </div>
 
-## Runtimes
+## More
 
-Deploy to any platform.
+<div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'1rem',marginTop:'0.75rem'}}>
+
+<Link to="/docs/middleware/auth-jwt" className="doc-nav-card">
+  <div className="doc-nav-icon"><ShieldCheck size={24} /></div>
+  <div>
+    <div className="doc-nav-title">Middleware</div>
+    <div className="doc-nav-desc">Authentication and request processing</div>
+  </div>
+</Link>
+
+<Link to="/docs/addon" className="doc-nav-card">
+  <div className="doc-nav-icon"><Package size={24} /></div>
+  <div>
+    <div className="doc-nav-title">Addons</div>
+    <div className="doc-nav-desc">Reusable function packages</div>
+  </div>
+</Link>
+
+<Link to="/docs/advanced/import-patterns" className="doc-nav-card">
+  <div className="doc-nav-icon"><FlaskConical size={24} /></div>
+  <div>
+    <div className="doc-nav-title">Advanced</div>
+    <div className="doc-nav-desc">Custom runtimes and advanced topics</div>
+  </div>
+</Link>
+
+<Link to="/docs/storage" className="doc-nav-card">
+  <div className="doc-nav-icon"><Database size={24} /></div>
+  <div>
+    <div className="doc-nav-title">Storage</div>
+    <div className="doc-nav-desc">Database backends for AI, workflows, and channels</div>
+  </div>
+</Link>
+
+</div>
+
+## Hosting it yourself
+
+`pikku deploy` covers the common providers. If you would rather wire pikku into a
+server you already run, there is an adapter for it — and if there isn't, you can
+[write one](/docs/custom-runtimes/custom-http-runtime).
 
 <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'0.75rem',marginTop:'0.75rem'}}>
 
@@ -210,60 +266,6 @@ Deploy to any platform.
 
 <Link to="/docs/runtimes/pg-boss" className="doc-nav-card doc-nav-card--compact">
   <div className="doc-nav-title">PG Boss</div>
-</Link>
-
-</div>
-
-## More
-
-<div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:'1rem',marginTop:'0.75rem'}}>
-
-<Link to="/docs/deploy" className="doc-nav-card">
-  <div className="doc-nav-icon"><Rocket size={24} /></div>
-  <div>
-    <div className="doc-nav-title">Deploy</div>
-    <div className="doc-nav-desc">Ship to cloud infrastructure or a standalone server</div>
-  </div>
-</Link>
-
-<Link to="/docs/middleware/auth-jwt" className="doc-nav-card">
-  <div className="doc-nav-icon"><ShieldCheck size={24} /></div>
-  <div>
-    <div className="doc-nav-title">Middleware</div>
-    <div className="doc-nav-desc">Authentication and request processing</div>
-  </div>
-</Link>
-
-<Link to="/docs/storage" className="doc-nav-card">
-  <div className="doc-nav-icon"><Database size={24} /></div>
-  <div>
-    <div className="doc-nav-title">Storage</div>
-    <div className="doc-nav-desc">Database backends for AI, workflows, and channels</div>
-  </div>
-</Link>
-
-<Link to="/docs/addon" className="doc-nav-card">
-  <div className="doc-nav-icon"><Package size={24} /></div>
-  <div>
-    <div className="doc-nav-title">Addons</div>
-    <div className="doc-nav-desc">Reusable function packages</div>
-  </div>
-</Link>
-
-<Link to="/docs/advanced/import-patterns" className="doc-nav-card">
-  <div className="doc-nav-icon"><FlaskConical size={24} /></div>
-  <div>
-    <div className="doc-nav-title">Advanced</div>
-    <div className="doc-nav-desc">Custom runtimes and advanced topics</div>
-  </div>
-</Link>
-
-<Link to="/docs/api/jwt-service" className="doc-nav-card">
-  <div className="doc-nav-icon"><BookOpen size={24} /></div>
-  <div>
-    <div className="doc-nav-title">API Reference</div>
-    <div className="doc-nav-desc">Complete API documentation</div>
-  </div>
 </Link>
 
 </div>

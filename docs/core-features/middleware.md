@@ -33,7 +33,7 @@ graph LR
 Let's write middleware that tracks response time:
 
 ```typescript
-import { pikkuMiddleware } from '#pikku'
+import { pikkuMiddleware } from '#pikku/middleware'
 
 export const responseTime = pikkuMiddleware(async ({ logger }, wire, next) => {
   const start = Date.now()
@@ -60,12 +60,12 @@ The middleware:
 
 ## Built-in Middleware
 
-Pikku provides built-in middleware for common authentication and CORS patterns via `@pikku/core/middleware`:
+Pikku provides built-in middleware for common authentication and CORS patterns via [`#pikku/middleware`](/docs/api-reference/enhance/middleware):
 
 ### Bearer Token Authentication
 
 ```typescript
-import { authBearer } from '@pikku/core/middleware'
+import { authBearer } from '#pikku/middleware'
 
 // JWT mode (default) - decodes bearer tokens using the JWT service
 addHTTPMiddleware('*', [authBearer()])
@@ -84,7 +84,7 @@ addHTTPMiddleware('*', [
 ### API Key Authentication
 
 ```typescript
-import { authAPIKey } from '@pikku/core/middleware'
+import { authAPIKey } from '#pikku/middleware'
 
 // Look for API key in x-api-key header
 addHTTPMiddleware('*', [authAPIKey({ source: 'header' })])
@@ -99,7 +99,7 @@ addHTTPMiddleware('*', [authAPIKey({ source: 'all' })])
 ### Cookie-Based Authentication
 
 ```typescript
-import { authCookie } from '@pikku/core/middleware'
+import { authCookie } from '#pikku/middleware'
 
 addHTTPMiddleware('*', [
   authCookie({
@@ -118,7 +118,7 @@ addHTTPMiddleware('*', [
 ### CORS
 
 ```typescript
-import { cors } from '@pikku/core/middleware'
+import { cors } from '#pikku/middleware'
 
 // Allow all origins
 addHTTPMiddleware('*', [cors()])
@@ -144,7 +144,7 @@ addHTTPMiddleware('*', [
 Use `pikkuMiddlewareFactory` to create configurable middleware:
 
 ```typescript
-import { pikkuMiddlewareFactory, pikkuMiddleware } from '#pikku'
+import { pikkuMiddlewareFactory, pikkuMiddleware } from '#pikku/middleware'
 
 export const rateLimit = pikkuMiddlewareFactory<{
   maxRequests: number
@@ -266,7 +266,7 @@ Use wire-specific middleware for:
 For HTTP routes specifically, you can apply middleware globally or per-prefix:
 
 ```typescript
-import { addHTTPMiddleware } from '#pikku/http'
+import { addHTTPMiddleware } from '#pikku/middleware'
 
 // All HTTP routes will run this middleware
 addHTTPMiddleware('*', [corsHeaders, securityHeaders])
@@ -290,7 +290,7 @@ Use HTTP transport middleware for:
 To apply middleware across every wiring (HTTP, Channel, Queue, Scheduler, MCP, CLI, Workflow, Agent), use `addGlobalMiddleware`. To apply it to any wiring carrying a specific tag, use `addTagMiddleware`:
 
 ```typescript
-import { addGlobalMiddleware, addTagMiddleware } from '@pikku/core/middleware'
+import { addGlobalMiddleware, addTagMiddleware } from '#pikku/middleware'
 
 // Every wiring runs this middleware
 addGlobalMiddleware([telemetryMiddleware])
@@ -442,7 +442,7 @@ export const conditionalCache = pikkuMiddleware(async ({ cache }, wire, next) =>
 
 Pikku automatically generates and validates schemas based on your TypeScript types. No middleware needed for input validation - it happens before your function runs.
 
-If validation fails, Pikku throws a `ValidationError` with details about which fields failed.
+If validation fails, Pikku throws an [`UnprocessableContentError`](/docs/api-reference/enhance/error) (HTTP 422) carrying the validator's report of which fields failed.
 
 ## Best Practices
 
@@ -461,7 +461,7 @@ pikkuMiddleware((services, wire, next) => { ... })
 **Use transport-specific middleware (like `addHTTPMiddleware`) for HTTP-only concerns** - Things like cookie parsing, CORS headers, or security headers that only make sense for HTTP. These middleware should throw `InvalidMiddlewareWireError` if used on non-HTTP transports to fail fast:
 
 ```typescript
-import { InvalidMiddlewareWireError } from '@pikku/core/errors'
+import { InvalidMiddlewareWireError } from '#pikku/error'
 
 export const cookieParser = pikkuMiddleware(async (services, wire, next) => {
   if (!wire.http) {

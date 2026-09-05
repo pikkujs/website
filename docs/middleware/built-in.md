@@ -1,16 +1,17 @@
 ---
 sidebar_position: 5
 title: Built-in Middleware
-description: CORS, request timeouts, telemetry, and remote RPC auth shipped with @pikku/core
+description: CORS, telemetry, and remote RPC auth shipped with @pikku/core
 ai: true
 ---
 
 # Built-in Middleware
 
-Beyond the auth middleware, `@pikku/core/middleware` ships a small set of general-purpose middleware: CORS handling, request timeouts, telemetry logging, and remote RPC authentication.
+Beyond the auth middleware, Pikku ships a small set of general-purpose middleware: CORS handling, telemetry logging, and remote RPC authentication. `cors` is on your app's `#pikku/middleware` door alongside `addHTTPMiddleware`; the telemetry pair isn't re-exported, so it comes straight from `@pikku/core/middleware`.
 
 ```typescript
-import { cors, timeout, telemetryOuter, telemetryInner } from '@pikku/core/middleware'
+import { cors, addHTTPMiddleware } from '#pikku/middleware'
+import { telemetryOuter, telemetryInner } from '@pikku/core/middleware'
 ```
 
 ## CORS
@@ -18,8 +19,7 @@ import { cors, timeout, telemetryOuter, telemetryInner } from '@pikku/core/middl
 Handles cross-origin requests, including `OPTIONS` preflight — preflights are answered directly with `204 No Content` without hitting your functions.
 
 ```typescript title="cors.ts"
-import { cors } from '@pikku/core/middleware'
-import { addHTTPMiddleware } from '#pikku'
+import { cors, addHTTPMiddleware } from '#pikku/middleware'
 
 addHTTPMiddleware('*', [
   cors({
@@ -47,16 +47,21 @@ When `origin` is `true` or an array, a `Vary: Origin` header is added so caches 
 
 ## Timeout
 
-Rejects a request with `RequestTimeoutError` (HTTP 408) if the rest of the chain — remaining middleware plus the function — doesn't finish in time:
+There is no timeout middleware. A timeout is declared on the HTTP wiring itself, as `timeout` in **seconds**:
 
-```typescript title="timeout.ts"
-import { timeout } from '@pikku/core/middleware'
-import { addHTTPMiddleware } from '#pikku'
+```typescript title="wirings/report.http.ts"
+import { wireHTTP } from '#pikku/http'
+import { generateReport } from '../functions/report.function.js'
 
-addHTTPMiddleware('*', [timeout()({ timeout: 30_000 })])
+wireHTTP({
+  method: 'post',
+  route: '/reports',
+  func: generateReport,
+  timeout: 30,
+})
 ```
 
-The timer covers everything inside it, so place it early in the chain to bound the whole request.
+It's a per-route number, not a chain wrapper, so there's no ordering to get right. Work that can outlast a request should be dispatched to a [queue](/docs/wiring/queue) rather than given a longer timeout.
 
 ## Telemetry
 
@@ -67,7 +72,7 @@ Two middleware that emit structured JSON log entries (via `services.logger`) wit
 
 ```typescript title="telemetry.ts"
 import { telemetryOuter, telemetryInner } from '@pikku/core/middleware'
-import { addGlobalMiddleware } from '@pikku/core'
+import { addGlobalMiddleware } from '#pikku/middleware'
 
 addGlobalMiddleware([telemetryOuter(), telemetryInner()])
 ```
@@ -83,4 +88,5 @@ It activates only when the `PIKKU_REMOTE_SECRET` secret is configured — withou
 ## Related
 
 - [Middleware](/docs/core-features/middleware) — how middleware ordering and priorities work
+- [API reference: enhance/middleware](/docs/api-reference/enhance/middleware) — everything on the `#pikku/middleware` door
 - [Better Auth](/docs/middleware/better-auth) / [JWT](/docs/middleware/auth-jwt) / [API Key](/docs/middleware/auth-apikey) — authentication middleware

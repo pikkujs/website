@@ -24,8 +24,8 @@ Each backend implements one or more of these core interfaces:
 
 | Interface | Purpose | Backends |
 |-----------|---------|----------|
-| `AIStorageService` | Thread, message, and working memory persistence for AI Agents | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
-| `AIRunStateService` | Agent run tracking and tool approval state | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
+| `AgentStorageService` | Thread, message, and working memory persistence for AI Agents | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
+| `AgentRunStateService` | Agent run tracking and tool approval state | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
 | `AgentRunService` | Read-only agent run queries (used by the Console) | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
 | `WorkflowService` | Workflow run orchestration and step state | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
 | `WorkflowRunService` | Read-only workflow run queries (used by the Console) | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
@@ -37,12 +37,16 @@ Each backend implements one or more of these core interfaces:
 | `CredentialService` | Encrypted per-user credentials (OAuth tokens, API keys) | `@pikku/kysely` (re-exported by `@pikku/kysely-postgres`) |
 | `AuditService` | Durable audit event storage | `@pikku/kysely` |
 | `EventHubService` | Cross-instance pub/sub delivery | `@pikku/kysely-postgres` (`PgEventHubService` via LISTEN/NOTIFY) |
+| `WebhookService` | Outgoing webhook delivery history | `@pikku/kysely` (`KyselyWebhookService`; the `QueueWebhookService` default in core is queue-only and throws on the delivery-read methods) |
+| `ScopeService` | User scope resolution and administration | `@pikku/kysely` (`KyselyScopeService`) |
+| `VirtualUserRunStore` | Virtual-user run records and transcripts | `@pikku/kysely` (`KyselyVirtualUserRunStore`) |
+| `VirtualUserScheduleStore` | Per-persona virtual-user cadence | `@pikku/kysely` (`KyselyVirtualUserScheduleStore`) |
 
 ## Quick Comparison
 
 | Feature | PostgreSQL | Redis | Kysely | MongoDB |
 |---------|-----------|-------|--------|---------|
-| **AI Storage** | PgKyselyAIStorageService | — | KyselyAIStorageService | MongoDBAIStorageService |
+| **AI Storage** | PgKyselyAgentStorageService | — | KyselyAgentStorageService | MongoDBAgentStorageService |
 | **Workflows** | PgKyselyWorkflowService | RedisWorkflowService | KyselyWorkflowService | MongoDBWorkflowService |
 | **Channels** | PgKyselyChannelStore | RedisChannelStore | KyselyChannelStore | MongoDBChannelStore |
 | **Secrets** | PgKyselySecretService | RedisSecretService | KyselySecretService | MongoDBSecretService |

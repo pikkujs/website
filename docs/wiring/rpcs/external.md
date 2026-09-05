@@ -29,8 +29,8 @@ See [Middleware](../../core-features/middleware.md) for auth configuration.
 Wire an HTTP endpoint that calls any exposed function:
 
 ```typescript
-import { wireHTTP } from '#pikku'
-import { pikkuSessionlessFunc } from '#pikku'
+import { wireHTTP } from '#pikku/http'
+import { pikkuSessionlessFunc } from '#pikku/function'
 
 // Generic RPC caller function
 export const rpcCaller = pikkuSessionlessFunc<
@@ -77,7 +77,7 @@ Response:
 Pikku generates a type-safe `PikkuRPC` client (`pikku rpc`) for calling exposed RPCs by name:
 
 ```typescript
-import { PikkuRPC } from './pikku-rpc.gen.js'
+import { PikkuRPC } from '#pikku/pikku-rpc.gen.js'
 
 const rpc = new PikkuRPC()
 rpc.setServerUrl('https://api.example.com')

@@ -71,7 +71,7 @@ The trigger source (the thing listening for events) often runs on a different ma
 ### Redis Pub/Sub
 
 ```typescript
-import { pikkuTriggerFunc } from '#pikku'
+import { pikkuTriggerFunc } from '#pikku/trigger'
 
 export const redisSubscribe = pikkuTriggerFunc<
   { channels: string[] },
@@ -102,7 +102,7 @@ export const redisSubscribe = pikkuTriggerFunc<
 ### PostgreSQL Change Streams
 
 ```typescript
-import { pikkuTriggerFunc } from '#pikku'
+import { pikkuTriggerFunc } from '#pikku/trigger'
 
 export const postgresChanges = pikkuTriggerFunc<
   { table: string; events: ('INSERT' | 'UPDATE' | 'DELETE')[] },
@@ -250,3 +250,4 @@ In production you'd replace the `logger.warn` with a Slack notification, a resto
 - [Functions](../../core-features/functions.md) — Understanding Pikku functions
 - [Workflows](../workflows/index.md) — Multi-step processes triggered by events
 - [Scheduled Tasks](../scheduled-tasks.md) — Time-based triggers
+- [`#pikku/trigger` API reference](/docs/api-reference/wire/trigger) — every export on the trigger door

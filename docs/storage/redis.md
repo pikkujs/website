@@ -10,7 +10,7 @@ ai: true
 The `@pikku/redis` package provides Redis implementations for workflow orchestration, channel state, and deployment tracking. It uses the [`ioredis`](https://github.com/redis/ioredis) driver.
 
 :::note
-Redis does **not** provide `AIStorageService` or `AIRunStateService`. For AI Agent persistence, use [`@pikku/kysely-postgres`](./postgresql) or [`@pikku/kysely`](./kysely).
+Redis does **not** provide `AgentStorageService` or `AgentRunStateService`. For AI Agent persistence, use [`@pikku/kysely-postgres`](./postgresql) or [`@pikku/kysely`](./kysely).
 :::
 
 ## Installation
@@ -81,6 +81,29 @@ import { RedisDeploymentService } from '@pikku/redis'
 
 const deploymentService = new RedisDeploymentService(config, redis)
 await deploymentService.init()
+```
+
+### RedisSessionStore
+
+Persists user sessions keyed by `pikkuUserId`, so a session survives a restart
+and is shared across instances. The optional third argument sets a TTL in
+seconds; leave it off and sessions do not expire.
+
+```typescript
+import { RedisSessionStore } from '@pikku/redis'
+
+const sessionStore = new RedisSessionStore(redis, 'pikku', 60 * 60 * 24)
+```
+
+### RedisEventHubStore
+
+Tracks which channels are subscribed to which topics, so a broadcast reaches
+subscribers on every instance rather than only the one holding the socket.
+
+```typescript
+import { RedisEventHubStore } from '@pikku/redis'
+
+const eventHubStore = new RedisEventHubStore(redis)
 ```
 
 ## Key Structure

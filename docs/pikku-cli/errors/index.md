@@ -53,7 +53,7 @@ Errors related to HTTP route definitions and auth wiring.
 
 ## AI Agent Errors
 
-Errors from `pikkuAIAgent` model and tool declarations.
+Errors from `pikkuAgent` model and tool declarations.
 
 | Code   | Description                  | Link        |
 | ------ | ---------------------------- | ----------- |

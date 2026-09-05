@@ -9,6 +9,8 @@ Pikku is driven entirely by **Types**. This ensures type safety across the appli
 Define input and output types directly on your function:
 
 ```typescript
+import { pikkuFunc } from '#pikku/function'
+
 type Input = { sortBy: 'age' | 'name' }
 type Output = { users: Array<{ name: string, age: number }> }
 const myFunction = pikkuFunc<Input, Output>({

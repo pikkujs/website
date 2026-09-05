@@ -15,7 +15,7 @@ Lifecycle hooks are where that work goes. They run around your server starting a
 Export a `pikkuServerLifecycle` from anywhere in your `srcDirectories`:
 
 ```typescript title="src/lifecycle.ts"
-import { pikkuServerLifecycle } from "@pikku/core";
+import { pikkuServerLifecycle } from "@pikku/core/utils";
 import type { SingletonServices } from "../types/application-types.js";
 
 export const lifecycle = pikkuServerLifecycle<SingletonServices>({
@@ -61,7 +61,7 @@ Use `beforeStart` for anything that must be true before the first request lands 
 ## A Fuller Example
 
 ```typescript title="src/lifecycle.ts"
-import { pikkuServerLifecycle } from "@pikku/core";
+import { pikkuServerLifecycle } from "@pikku/core/utils";
 import type { SingletonServices } from "../types/application-types.js";
 
 export const lifecycle = pikkuServerLifecycle<SingletonServices>({

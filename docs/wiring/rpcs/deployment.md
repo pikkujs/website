@@ -28,6 +28,8 @@ When your application runs across multiple instances (microservices, scaled depl
 Functions that should be callable from other instances need `expose: true`:
 
 ```typescript
+import { pikkuSessionlessFunc } from '#pikku/function'
+
 export const greet = pikkuSessionlessFunc<
   { name: string },
   { greeting: string }
@@ -44,7 +46,7 @@ export const greet = pikkuSessionlessFunc<
 Create an HTTP endpoint that handles incoming remote RPC calls:
 
 ```typescript
-import { wireHTTP } from './.pikku/pikku-types.gen'
+import { wireHTTP } from '#pikku/http'
 
 const rpcCaller = pikkuSessionlessFunc<
   { rpcName: string; data?: unknown },
@@ -173,7 +175,7 @@ import { PikkuKysely, PgKyselyDeploymentService } from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 import { ConsoleLogger } from '@pikku/core/services'
 import { createConfig, createSingletonServices } from './services.js'
-import './.pikku/pikku-bootstrap.gen.js'
+import '#pikku/pikku-bootstrap.gen.js'
 
 const config = await createConfig()
 const logger = new ConsoleLogger()

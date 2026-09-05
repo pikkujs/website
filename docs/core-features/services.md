@@ -107,7 +107,7 @@ import type {
   CoreConfig,
   CoreSingletonServices,
   CoreServices,
-} from "@pikku/core";
+} from "@pikku/core/types";
 
 // Define your app configuration
 export interface Config extends CoreConfig {
@@ -142,7 +142,7 @@ Then implement the factories that create your services:
 
 ```typescript
 // services.ts
-import { pikkuConfig, pikkuServices, pikkuWireServices } from "#pikku";
+import { pikkuConfig, pikkuServices, pikkuWireServices } from "#pikku/setup";
 
 export const createConfig = pikkuConfig(async () => {
   return {
@@ -270,9 +270,9 @@ Pikku defines service interfaces for its core features. You provide implementati
 | `secrets`            | `SecretService`        | [Secrets](/docs/core-features/secrets)          | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
 | `variables`          | `VariablesService`     | [Variables](/docs/core-features/variables)      | Built-in (`LocalVariablesService`)                                                         |
 | `jwt`                | `JWTService`           | JWT auth                                        | `@pikku/jose`                                                                              |
-| `aiAgentRunner`      | `AIAgentRunnerService` | [AI Agents](/docs/wiring/ai-agents/)            | `@pikku/ai-vercel`                                                                         |
-| `aiStorage`          | `AIStorageService`     | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
-| `aiRunState`         | `AIRunStateService`    | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
+| `agentRunner`      | `AgentRunnerService` | [AI Agents](/docs/wiring/ai-agents/)            | `@pikku/ai-vercel`                                                                         |
+| `agentStorage`          | `AgentStorageService`     | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
+| `agentRunState`         | `AgentRunStateService`    | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
 | `agentRunService`    | `AgentRunService`      | Console (agent runs)                            | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
 | `workflowService`    | `WorkflowService`      | [Workflows](/docs/wiring/workflows/)            | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
 | `workflowRunService` | `WorkflowRunService`   | Console (workflow runs)                         | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
@@ -294,7 +294,7 @@ You only need to provide the services your project uses. The CLI detects which s
 Services can throw Pikku errors that are automatically mapped to HTTP status codes:
 
 ```typescript
-import { PikkuError, addError } from "#pikku";
+import { PikkuError, addError } from "#pikku/error";
 
 export class NotEnoughPointsError extends PikkuError {}
 addError(NotEnoughPointsError, { status: 400, message: "Not enough points!" });

@@ -38,7 +38,7 @@ Use `wireHTTPRoutes` to register route contracts:
 
 ```typescript
 // app.http.ts
-import { wireHTTPRoutes } from '#pikku'
+import { wireHTTPRoutes } from '#pikku/http'
 import { todosRoutes } from './routes/todos.routes.js'
 import { authRoutes } from './routes/auth.routes.js'
 

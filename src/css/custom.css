@@ -1063,3 +1063,37 @@ a.no-underline:hover * {
 html[data-accent-mode="mono"] .navbar__accent-toggle {
   opacity: 0.5;
 }
+
+/* ─── Generated API reference (docs/api-reference, from `pikku doc`) ───
+   One quiet line under each export heading: what kind of thing it is and
+   which package it is re-exported from. */
+
+.api-symbol-meta {
+  display: inline-block;
+  margin: -0.35rem 0 0.75rem;
+  font-size: 0.8125rem;
+  font-variant: all-small-caps;
+  letter-spacing: 0.03em;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.api-symbol-meta code {
+  font-size: 0.8125rem;
+  font-variant: normal;
+  letter-spacing: normal;
+  background: var(--site-overlay-xs);
+  border: none;
+  padding: 0 0.25rem;
+}
+
+/* The config-key tables are wide by nature — let them scroll rather than
+   squeeze the type column into a column of single characters. */
+.markdown details > table,
+.markdown details > div > table {
+  display: table;
+  width: 100%;
+}
+
+.markdown details {
+  margin-bottom: 1.25rem;
+}

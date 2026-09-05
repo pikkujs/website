@@ -59,6 +59,8 @@ test('should use session userId', async () => {
 ## Testing Errors
 
 ```typescript
+import { NotFoundError } from '#pikku/error'
+
 test('should throw NotFoundError', async () => {
   const mockServices = {
     database: {

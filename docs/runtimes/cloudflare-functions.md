@@ -215,12 +215,12 @@ The `@pikku/cloudflare/d1` sub-path provides Kysely-backed services running on C
 import {
   createD1Kysely,
   CloudflareWorkflowService,
-  CloudflareAIStorageService,
+  CloudflareAgentStorageService,
 } from '@pikku/cloudflare/d1'
 
 const kysely = createD1Kysely(env.MY_D1_DATABASE)
 const workflowService = new CloudflareWorkflowService(kysely)
-const aiStorage = new CloudflareAIStorageService(kysely)
+const agentStorage = new CloudflareAgentStorageService(kysely)
 ```
 
 ### Queue Service

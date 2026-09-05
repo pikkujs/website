@@ -112,6 +112,8 @@ The `workflowService` provides methods to query and interact with workflow runs:
 Get workflow run details by ID:
 
 ```typescript
+import { pikkuSessionlessFunc } from '#pikku/function'
+
 export const checkWorkflowStatus = pikkuSessionlessFunc<
   { runId: string },
   { status: string; output?: any }

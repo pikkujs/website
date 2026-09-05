@@ -36,7 +36,7 @@ Scheduled functions use `pikkuVoidFunc` (an alias for `pikkuSessionlessFunc<void
 - Don't have user sessions
 
 ```typescript
-import { pikkuVoidFunc } from '#pikku'
+import { pikkuVoidFunc } from '#pikku/function'
 
 export const generateWeeklyReport = pikkuVoidFunc({
   func: async ({ database, emailService, logger }) => {
@@ -133,7 +133,7 @@ Cron expressions are interpreted as **UTC** by default (unless your runtime spec
 ### Basic Wiring
 
 ```typescript
-import { wireScheduler } from '#pikku'
+import { wireScheduler } from '#pikku/scheduler'
 import { runMaintenance } from './functions/maintenance.function.js'
 
 wireScheduler({
@@ -153,7 +153,7 @@ wireScheduler({
 For different schedules across environments:
 
 ```typescript
-import { wireScheduler } from '#pikku'
+import { wireScheduler } from '#pikku/scheduler'
 import { config } from './config.js'
 import { runBackup } from './functions/backup.function.js'
 
@@ -169,7 +169,7 @@ wireScheduler({
 Middleware is important for scheduled tasks since they don't have automatic observability. Add logging, metrics, or error handling:
 
 ```typescript
-import { pikkuMiddleware } from '#pikku'
+import { pikkuMiddleware } from '#pikku/middleware'
 
 export const schedulerMetrics = pikkuMiddleware(
   async ({ logger }, { scheduledTask }, next) => {
@@ -219,7 +219,7 @@ wireScheduler({
 Apply middleware to all wirings (including scheduled tasks) with `addGlobalMiddleware`, or to a shared tag with `addTagMiddleware`:
 
 ```typescript
-import { addGlobalMiddleware } from '#pikku'
+import { addGlobalMiddleware } from '#pikku/middleware'
 
 addGlobalMiddleware([schedulerMetrics, alertMiddleware])
 ```
@@ -256,7 +256,7 @@ You can wire multiple schedules in a single file:
 
 ```typescript
 // housekeeping.schedule.ts
-import { wireScheduler } from '#pikku'
+import { wireScheduler } from '#pikku/scheduler'
 import {
   cleanupOldLogs,
   updateStatistics,
@@ -340,3 +340,4 @@ From the [online shop template](https://github.com/pikkujs/fabric/tree/main/temp
 - [Middleware](../core-features/middleware.md) - Adding observability to scheduled tasks
 - [RPC](./rpcs/index.md) - Orchestrating complex workflows
 - [Errors](../core-features/errors.md) - Error handling patterns
+- [`#pikku/scheduler` API reference](/docs/api-reference/wire/scheduler) - every export on the scheduler door

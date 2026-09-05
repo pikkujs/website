@@ -24,7 +24,7 @@ Functions don't accept multipart file uploads directly. Instead, files are handl
 
 Pikku functions don't bind to a port by themselves — they run inside a runtime adapter. That can be:
 
-- **A full Pikku server** — `@pikku/express-server`, `@pikku/fastify-server`, `@pikku/bun-server`, `@pikku/node-http-server`, `@pikku/uws-server` — or simply `pikku dev` during development
+- **A full Pikku server** — `@pikku/express`, `@pikku/fastify`, `@pikku/bun-server`, `@pikku/node-http-server`, `@pikku/uws` — or simply `pikku dev` during development
 - **Middleware in an existing app** — Express middleware, Fastify plugin, Next.js, TanStack Start
 - **Serverless** — AWS Lambda, Cloudflare Workers, Azure Functions
 

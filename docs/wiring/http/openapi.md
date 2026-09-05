@@ -62,6 +62,8 @@ This reads your HTTP route registrations and produces the spec file at the confi
 Pikku maps your `wireHTTP` definitions to OpenAPI paths:
 
 ```typescript
+import { wireHTTP } from '#pikku/http'
+
 wireHTTP({
   method: 'post',
   route: '/users/:userId/todos',

@@ -114,7 +114,7 @@ export const codeReviewPrompt = pikkuMCPPromptFunc<{ filePath: string; context: 
 Resources and prompts are wired explicitly; tools register themselves when exported:
 
 ```typescript
-import { wireMCPResource, wireMCPPrompt } from '#pikku'
+import { wireMCPResource, wireMCPPrompt } from '#pikku/mcp'
 import { getUserInfo, codeReviewPrompt } from './functions/mcp.functions.js'
 
 wireMCPResource({
@@ -149,7 +149,7 @@ AI agents can then discover and invoke your resources, tools, and prompts throug
 MCP functions should throw errors when operations fail. Register errors with both HTTP status codes and MCP error codes:
 
 ```typescript
-import { PikkuError, addError } from '@pikku/core/errors'
+import { PikkuError, addError } from '#pikku/error'
 
 export class ResourceNotFoundError extends PikkuError {}
 
@@ -188,3 +188,4 @@ export const getFile = pikkuMCPResourceFunc<{ path: string }>(
 - [MCP Tools](./tools.md) - Actions AI agents can invoke
 - [MCP Resources](./resources.md) - Data sources for AI agents
 - [MCP Prompts](./prompts.md) - Template generators for AI interactions
+- [`#pikku/mcp` API reference](/docs/api-reference/wire/mcp) - every export on the MCP door

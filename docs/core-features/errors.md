@@ -10,7 +10,7 @@ In Pikku, errors are mapped to HTTP status codes and messages. When you throw an
 
 ## Built-in Errors
 
-Pikku provides a comprehensive set of built-in error classes covering all standard HTTP status codes:
+Pikku provides a comprehensive set of built-in error classes covering all standard HTTP status codes. They all come from [`#pikku/error`](/docs/api-reference/enhance/error):
 
 ### Authentication & Authorization (4xx)
 
@@ -62,7 +62,7 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 ### Usage Example
 
 ```typescript
-import { NotFoundError, ForbiddenError, TooManyRequestsError } from '@pikku/core/errors'
+import { NotFoundError, ForbiddenError, TooManyRequestsError } from '#pikku/error'
 
 export const getBook = pikkuFunc<{ bookId: string }, Book>({
   func: async ({ database, rateLimit }, data, { session }) => {
@@ -94,7 +94,7 @@ export const getBook = pikkuFunc<{ bookId: string }, Book>({
 You can create custom error classes for domain-specific errors:
 
 ```typescript
-import { PikkuError, addError } from '@pikku/core/errors'
+import { PikkuError, addError } from '#pikku/error'
 
 export class BookLimitExceededError extends PikkuError {}
 export class InvalidISBNError extends PikkuError {}

@@ -120,6 +120,8 @@ a session:
 | `workflow` | Generate workflow routes |
 | `events` | Generate the realtime events channel + SSE stream (`events.gen.ts`) |
 | `remoteRpc` | Generate the remote internal RPC queue worker + HTTP endpoint (`rpc-remote.gen.ts`) |
+| `webhook` | Generate the outgoing webhook delivery queue worker (`webhook.gen.ts`) — see [`WebhookService`](/docs/api/webhook-service) |
+| `graph` | Generate the graph wirings (`graph.wirings.gen.ts`) |
 
 :::warning `"no-auth"` is no longer a mode
 Older configs used `"auth"` / `"no-auth"` strings. Authentication is now

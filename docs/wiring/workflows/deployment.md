@@ -33,7 +33,7 @@ import { BullServiceFactory } from '@pikku/queue-bullmq'
 import { RedisWorkflowService } from '@pikku/redis'
 import { InMemoryTriggerService } from '@pikku/core/services'
 import { createConfig, createSingletonServices } from './services.js'
-import './.pikku/pikku-bootstrap.gen.js'
+import '#pikku/pikku-bootstrap.gen.js'
 
 async function main() {
   const config = await createConfig()
@@ -96,7 +96,7 @@ import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 import { InMemoryTriggerService, ConsoleLogger } from '@pikku/core/services'
 import { createConfig, createSingletonServices } from './services.js'
-import './.pikku/pikku-bootstrap.gen.js'
+import '#pikku/pikku-bootstrap.gen.js'
 
 const connectionString =
   process.env.DATABASE_URL ||

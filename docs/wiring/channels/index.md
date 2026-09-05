@@ -35,6 +35,9 @@ The recommended pattern for channel authentication is to use an explicit authent
 
 ```typescript
 // auth.function.ts
+import { pikkuChannelFunc } from '#pikku/channel'
+import { UnauthorizedError } from '#pikku/error'
+
 export const authenticate = pikkuChannelFunc<
   { token: string },
   { authenticated: boolean },
@@ -181,7 +184,7 @@ export const onMessage = pikkuChannelFunc<
 Wire your channel functions together with `wireChannel`:
 
 ```typescript
-import { wireChannel } from '#pikku'
+import { wireChannel } from '#pikku/channel'
 import { onConnect, onDisconnect, onMessage } from './functions/chat.function.js'
 
 wireChannel({
@@ -401,3 +404,4 @@ The channel uses `auth: true` so only the logged-in user can subscribe to their 
 
 - [Wiring Channels](./channel-route.md)
 - [WebSocket Client](./websocket-client.md) - Type-safe client generation
+- [`#pikku/channel` API reference](/docs/api-reference/wire/channel) - every export on the channel door

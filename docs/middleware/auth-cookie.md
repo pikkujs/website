@@ -11,13 +11,14 @@ The `authCookie` middleware reads session data from a named cookie on incoming r
 ## Installation
 
 ```typescript
-import { authCookie } from '@pikku/core/middleware'
+import { authCookie } from '#pikku/middleware'
 ```
 
 ## Usage
 
 ```typescript
-import { authCookie } from '@pikku/core/middleware'
+import { authCookie } from '#pikku/middleware'
+import { wireHTTP } from '#pikku/http'
 
 wireHTTP({
   // ...

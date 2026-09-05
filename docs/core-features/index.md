@@ -49,7 +49,7 @@ You should see a JSON list of todos coming back from your first Pikku function!
 Let's look at the functions that came with the starter. Open `src/functions/todos.functions.ts`:
 
 ```typescript
-import { pikkuSessionlessFunc } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku/function'
 import { ListTodosWithUserInputSchema, TodoListResponseSchema } from '../schemas.js'
 
 /**
@@ -72,7 +72,7 @@ The function receives your **services** (like `logger` and `todoStore`) as its f
 The wiring lives separately, in `src/wirings/todos.http.ts`:
 
 ```typescript
-import { defineHTTPRoutes, wireHTTPRoutes } from '#pikku'
+import { defineHTTPRoutes, wireHTTPRoutes } from '#pikku/http'
 import { listTodos, getTodo, createTodo, updateTodo, deleteTodo, completeTodo } from '../functions/todos.functions.js'
 
 const todosRoutes = defineHTTPRoutes({
@@ -116,13 +116,15 @@ The CLI:
 3. Creates validation schemas for your functions
 4. Indexes routes, channels, queues, and commands for fast lookup
 
-Everything it produces lands in the `.pikku/` directory, and you import it via the `#pikku` alias:
+Everything it produces lands in the `.pikku/` directory, one barrel per concern. There is no single `#pikku` import — you import from the door for the concern you're using:
 
 ```typescript
-import { pikkuFunc, wireHTTP, wireScheduler } from '#pikku'
+import { pikkuFunc } from '#pikku/function'
+import { wireHTTP } from '#pikku/http'
+import { wireScheduler } from '#pikku/scheduler'
 ```
 
-Function types and wiring functions all come from that single alias. These files are regenerated whenever you change your functions or wirings — don't edit them manually.
+Function definers live behind [`#pikku/function`](/docs/api-reference/create/function), each transport behind its own wiring door (`#pikku/http`, `#pikku/queue`, `#pikku/scheduler`, …), and the rest — errors, middleware, secrets, variables, permissions — behind theirs. The [API reference](/docs/api-reference) lists every door and what it exports. These files are regenerated whenever you change your functions or wirings — don't edit them manually.
 
 For more details, see [Import Patterns](/docs/advanced/import-patterns) and [Generated Files](/docs/pikku-cli/generated-files).
 

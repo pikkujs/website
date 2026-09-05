@@ -34,7 +34,7 @@ export const slackAdapter = new SlackGatewayAdapter({
 ```
 
 ```typescript title="slack.wiring.ts"
-import { wireGateway } from '@pikku/core/gateway'
+import { wireGateway } from '#pikku/gateway'
 import { slackAdapter } from './adapters/slack.js'
 import { handleMessage } from './functions/gateway.functions.js'
 
@@ -54,7 +54,7 @@ The adapter handles Slack's `url_verification` challenge automatically, parses `
 Slack replies need channel and thread context, which the generic `senderId`-based send doesn't carry. Use `SlackGatewayHelper` inside your handler — it binds sends to the same team, channel, and thread the message came from:
 
 ```typescript title="functions/gateway.functions.ts"
-import { pikkuFunc } from '#pikku'
+import { pikkuFunc } from '#pikku/function'
 import { SlackGatewayHelper } from '@pikku/gateway-slack'
 import { slackAdapter } from '../adapters/slack.js'
 
@@ -82,7 +82,7 @@ The helper also exposes `replyBlocks(blocks)` for [Block Kit](https://api.slack.
 For a multi-workspace app, wire two HTTP routes — one that redirects to Slack's consent screen, one that exchanges the callback code for a bot token:
 
 ```typescript title="functions/slack-oauth.functions.ts"
-import { pikkuSessionlessFunc } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku/function'
 import {
   buildSlackInstallUrl,
   exchangeSlackOAuthCode,
@@ -128,7 +128,7 @@ The adapter caches one `WebClient` per workspace. After rotating a token, call `
 Slash commands arrive as form-encoded POSTs on their own route, not through the Events API. Parse them with `parseSlashCommand`:
 
 ```typescript title="functions/slack-command.functions.ts"
-import { pikkuSessionlessFunc } from '#pikku'
+import { pikkuSessionlessFunc } from '#pikku/function'
 import {
   parseSlashCommand,
   respondToSlashCommand,

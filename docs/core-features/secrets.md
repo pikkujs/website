@@ -10,10 +10,10 @@ Secrets let you declare what sensitive values your application needs using schem
 
 ## Defining Secrets
 
-Use `defineSecret` to declare a secret with its schema:
+Use `defineSecret`, from [`#pikku/secrets`](/docs/api-reference/enhance/secrets), to declare a secret with its schema:
 
 ```typescript
-import { defineSecret } from '#pikku'
+import { defineSecret } from '#pikku/secrets'
 import { z } from 'zod'
 
 export const stripeSecretsSchema = z.object({
@@ -55,7 +55,7 @@ export const chargeCard = pikkuSessionlessFunc<
 The CLI generates a `TypedSecretService` class that wraps your `SecretService` implementation. Use it when creating your singleton services to get typed access:
 
 ```typescript
-import { TypedSecretService } from './.pikku/secrets/pikku-secrets.gen.js'
+import { TypedSecretService } from '#pikku/secrets'
 
 const secrets = new TypedSecretService(baseSecretService)
 ```
@@ -64,27 +64,19 @@ const secrets = new TypedSecretService(baseSecretService)
 
 For OAuth2 integrations and per-user credentials, see [Credentials](/docs/wiring/credentials/). Credentials build on top of secrets — the OAuth2 app credentials (client ID, client secret) are stored as secrets, while the credential system handles the authorization flow and token management.
 
-## OAuth2 Client
+## Using an OAuth2 Token
 
-Use `OAuth2Client` from `@pikku/core/oauth2` to make authenticated requests with automatic token refresh:
+There's no client class to construct. The credential service owns the token and refreshes it, so a function just asks the wire for it by credential name:
 
 ```typescript
-import { OAuth2Client } from '@pikku/core/oauth2'
+const cred = await wire.getCredential?.<{ accessToken: string }>('github')
 
-const github = new OAuth2Client({
-  secretService: secrets,
-  credential: githubOAuthConfig,
+const response = await fetch('https://api.github.com/user', {
+  headers: { Authorization: `Bearer ${cred.accessToken}` },
 })
-
-// Makes authenticated request, refreshes token if expired
-const response = await github.request('https://api.github.com/user')
 ```
 
-The client handles:
-- Adding authorization headers
-- Detecting expired tokens
-- Refreshing tokens automatically
-- Retrying failed requests after refresh
+See [OAuth2 Credentials](/docs/advanced/oauth2) for who runs the authorization flow and where the tokens end up.
 
 ## Best Practices
 

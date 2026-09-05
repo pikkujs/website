@@ -18,7 +18,7 @@ const page: PageData = {
       component: 'hero',
       badge: 'Wire Type: AI Agent',
       h1: 'AI agents,\n_same functions._',
-      lead: 'pikkuAIAgent turns your Pikku functions into AI agent tools — with memory, streaming, tool approval, and multi-agent delegation.',
+      lead: 'pikkuAgent turns your Pikku functions into AI agent tools — with memory, streaming, tool approval, and multi-agent delegation.',
       cta: [
         { label: 'Get Started', to: '/docs/wiring/ai-agents', primary: true },
         { label: 'See the Code', to: '#basics', primary: false },

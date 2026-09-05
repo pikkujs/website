@@ -29,7 +29,7 @@ Point the CLI at a shim output file in your Start app via `pikku.config.json`:
 {
   "clientFiles": {
     "rpcWiringsFile": "web/src/pikku-rpc.gen.ts",
-    "startServerFnsFile": "web/src/pikku-start.gen.ts"
+    "tanstackStartFile": "web/src/pikku-start.gen.ts"
   }
 }
 ```

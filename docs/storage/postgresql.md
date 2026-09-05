@@ -63,27 +63,27 @@ const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(
 
 ## Services
 
-### PgKyselyAIStorageService
+### PgKyselyAgentStorageService
 
-Implements both `AIStorageService` and `AIRunStateService` for AI Agent persistence.
+Implements both `AgentStorageService` and `AgentRunStateService` for AI Agent persistence.
 
 ```typescript
-import { PgKyselyAIStorageService } from '@pikku/kysely-postgres'
+import { PgKyselyAgentStorageService } from '@pikku/kysely-postgres'
 
-const aiStorage = new PgKyselyAIStorageService(pikkuKysely.kysely)
-await aiStorage.init() // Creates tables
+const agentStorage = new PgKyselyAgentStorageService(pikkuKysely.kysely)
+await agentStorage.init() // Creates tables
 ```
 
 Register in your singleton services — the same instance implements both interfaces:
 
 ```typescript
 const singletonServices = await createSingletonServices(config, {
-  aiStorage,
-  aiRunState: aiStorage, // Same instance implements both
+  agentStorage,
+  agentRunState: agentStorage, // Same instance implements both
 })
 ```
 
-**AIStorageService methods:**
+**AgentStorageService methods:**
 
 | Method | Description |
 |--------|-------------|
@@ -96,7 +96,7 @@ const singletonServices = await createSingletonServices(config, {
 | `getWorkingMemory(id, scope)` | Get working memory for a thread or resource |
 | `saveWorkingMemory(id, scope, data)` | Save working memory |
 
-**AIRunStateService methods:**
+**AgentRunStateService methods:**
 
 | Method | Description |
 |--------|-------------|
@@ -219,29 +219,29 @@ await deploymentService.init()
 ```typescript
 import {
   PikkuKysely,
-  PgKyselyAIStorageService,
+  PgKyselyAgentStorageService,
   PgKyselyAgentRunService,
   PgKyselyWorkflowService,
 } from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
-import { VercelAIAgentRunner } from '@pikku/ai-vercel'
+import { VercelAgentRunner } from '@pikku/ai-vercel'
 import { createOpenAI } from '@ai-sdk/openai'
 
 const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
 await pikkuKysely.init()
 
-const aiStorage = new PgKyselyAIStorageService(pikkuKysely.kysely)
-await aiStorage.init()
+const agentStorage = new PgKyselyAgentStorageService(pikkuKysely.kysely)
+await agentStorage.init()
 
 const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
 await workflowService.init()
 
 const singletonServices = await createSingletonServices(config, {
-  aiStorage,
-  aiRunState: aiStorage,
+  agentStorage,
+  agentRunState: agentStorage,
   agentRunService: new PgKyselyAgentRunService(pikkuKysely.kysely),
   workflowService,
-  aiAgentRunner: new VercelAIAgentRunner({
+  agentRunner: new VercelAgentRunner({
     openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),
   }),
 })

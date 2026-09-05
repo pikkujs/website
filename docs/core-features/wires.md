@@ -9,6 +9,8 @@ description: Transport-specific context passed to functions and middleware
 Every Pikku function receives three arguments: **services**, **data**, and **wire**. The wire is the transport-specific context — it tells your function _how_ it was called and gives access to transport-specific capabilities.
 
 ```typescript
+import { pikkuFunc } from '#pikku/function'
+
 export const myFunc = pikkuFunc<Input, Output>({
   func: async (services, data, wire) => {
     // wire contains transport-specific properties

@@ -109,6 +109,8 @@ options: {
 Build hierarchical CLI structures with subcommands:
 
 ```typescript
+import { wireCLI, pikkuCLICommand } from '#pikku/cli'
+
 wireCLI({
   program: 'my-tool',
   commands: {
@@ -172,7 +174,7 @@ Add CLI entrypoints to `pikku.config.json`:
           "type": "channel",
           "name": "cli",
           "route": "/cli",
-          "wirePath": ".pikku/cli-channel.ts",
+          "wirePath": "src/wirings/cli-channel.gen.ts",
           "path": ".pikku/cli-remote.gen.ts"
         }
       ]
@@ -215,3 +217,4 @@ Run `npx pikku` to generate the CLI executables. Each entrypoint can have both l
 - **[Remote CLI](./remote-cli.md)** - Invoke remote functions via RPC
 - **[Core Functions](../../core-features/functions.md)** - Understanding Pikku functions
 - **[Middleware](../../core-features/middleware.md)** - Adding middleware to CLI commands
+- **[`#pikku/cli` API reference](/docs/api-reference/wire/cli)** - every export on the CLI door

@@ -21,7 +21,7 @@ Add a channel entrypoint to `pikku.config.json`:
           "type": "channel",
           "name": "cli",
           "route": "/cli",
-          "wirePath": ".pikku/cli-channel.ts",
+          "wirePath": "src/wirings/cli-channel.gen.ts",
           "path": ".pikku/cli-remote.gen.ts"
         }
       ]
@@ -31,7 +31,7 @@ Add a channel entrypoint to `pikku.config.json`:
 ```
 
 Run `npx pikku` to generate:
-- `.pikku/cli-channel.ts` - Server-side channel handler
+- `src/wirings/cli-channel.gen.ts` - Server-side channel handler (must live in a source directory so the inspector can discover the `wireChannel()` call)
 - `.pikku/cli-remote.gen.ts` - Client executable
 
 ## Server Setup
@@ -40,7 +40,7 @@ Import the generated channel wiring in your server:
 
 ```typescript
 import { createPikkuExpressApp } from '@pikku/express'
-import '../.pikku/cli-channel.gen.js' // Import channel wiring
+import './wirings/cli-channel.gen.js' // Import channel wiring
 
 const app = createPikkuExpressApp({
   createConfig,
@@ -94,6 +94,8 @@ SSE (Server-Sent Events) support is coming soon.
 Renderers for remote CLI must be **service-free** since they execute on the client, not the server.
 
 ```typescript
+import { pikkuCLIRender } from '#pikku/cli'
+
 // ✅ Good (no services)
 export const renderer = pikkuCLIRender((_, data) => {
   console.log(data.message)

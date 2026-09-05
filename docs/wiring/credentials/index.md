@@ -9,17 +9,17 @@ ai: true
 
 Credentials let you define typed, per-user or platform-level secrets that your functions and AI agents need at runtime — API keys, OAuth2 tokens, or any structured config that varies by user or tenant.
 
-The CLI picks up `wireCredential()` calls, generates typed wrappers, and makes them available through the credential service. When an AI agent calls a tool that needs a credential the user hasn't connected yet, Pikku automatically suspends the agent run and signals the client to collect it.
+The CLI picks up `defineCredential()` calls, generates typed wrappers, and makes them available through the credential service. When an AI agent calls a tool that needs a credential the user hasn't connected yet, Pikku automatically suspends the agent run and signals the client to collect it.
 
 ## Defining a Credential
 
-Use `wireCredential` from `@pikku/core/credential`. The call itself is a no-op at runtime — the CLI reads it via AST and generates metadata.
+Use `defineCredential` from `#pikku/auth`. The call itself is a no-op at runtime — the CLI reads it via AST and generates metadata.
 
 ```typescript
-import { wireCredential } from '@pikku/core/credential'
+import { defineCredential } from '#pikku/auth'
 import { z } from 'zod'
 
-wireCredential({
+defineCredential({
   name: 'stripe',
   displayName: 'Stripe API Key',
   description: 'API key for Stripe payment processing',
@@ -50,7 +50,7 @@ wireCredential({
 For services that use OAuth2, add an `oauth2` block. Pikku handles the authorization flow, token exchange, and refresh.
 
 ```typescript
-wireCredential({
+defineCredential({
   name: 'google-sheets',
   displayName: 'Google Sheets',
   type: 'wire',
@@ -87,7 +87,7 @@ The `appCredentialSecretId` points to a [secret](/docs/core-features/secrets) th
 A platform-level Slack credential shared by the entire app:
 
 ```typescript
-wireCredential({
+defineCredential({
   name: 'slack',
   displayName: 'Slack',
   type: 'singleton',
@@ -110,7 +110,7 @@ wireCredential({
 Not everything needs OAuth. For plain API keys or bearer tokens:
 
 ```typescript
-wireCredential({
+defineCredential({
   name: 'hmac-key',
   displayName: 'HMAC Signing Key',
   type: 'wire',
@@ -126,7 +126,7 @@ This happens automatically — you don't need to write any credential-checking l
 
 ```typescript
 // The agent just lists its tools — credential checks happen at runtime
-export const assistant = pikkuAIAgent({
+export const assistant = pikkuAgent({
   name: 'assistant',
   description: 'A helpful assistant with integrations',
   goal: 'Help the user with their integrations.',
@@ -148,4 +148,4 @@ These are consumed by the Console, deploy pipeline, and AI agent runtime.
 
 ## File Convention
 
-Name your credential files `*.credential.ts` (e.g., `stripe.credential.ts`). This isn't required — the CLI finds `wireCredential()` calls anywhere in your source directories — but it keeps things organized.
+Name your credential files `*.credential.ts` (e.g., `stripe.credential.ts`). This isn't required — the CLI finds `defineCredential()` calls anywhere in your source directories — but it keeps things organized.

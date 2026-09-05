@@ -106,6 +106,8 @@ A node's function name doesn't have to be an RPC — it can also be:
 An agent node takes the standard agent input — `message`, `threadId`, and `resourceId`:
 
 ```typescript
+import { pikkuWorkflowGraph } from '#pikku/workflow'
+
 export const triageWorkflow = pikkuWorkflowGraph({
   description: 'Classify a support ticket with an AI agent, then route it',
   nodes: {

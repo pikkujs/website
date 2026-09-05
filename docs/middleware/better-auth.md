@@ -29,41 +29,36 @@ npm install @pikku/better-auth better-auth
 
 ## Setup
 
-Define your auth instance with `pikkuBetterAuth`. The factory runs lazily on the first auth request and receives your singleton services, so it can pull secrets and the database from them:
+Define your auth instance with `pikkuBetterAuth` from `#pikku/auth` — the generated wrapper types the factory against *your* singleton services, so `secrets` and `variables` come back knowing your secret names. The factory runs lazily on the first auth request, so it can pull secrets and the database off the services it's handed:
 
 ```typescript title="src/auth.ts"
 import { betterAuth } from 'better-auth'
-import { pikkuBetterAuth } from '@pikku/better-auth'
-import type { CoreSingletonServices } from '@pikku/core'
-import type { Kysely } from 'kysely'
-import type { KyselyPikkuDB } from '@pikku/kysely'
+import { pikkuBetterAuth } from '#pikku/auth'
 
-export const auth = pikkuBetterAuth(
-  async ({
-    secrets,
-    kysely,
-  }: CoreSingletonServices & { kysely: Kysely<KyselyPikkuDB> }) => {
-    const { BETTER_AUTH_SECRET, GITHUB_OAUTH } = await secrets.getSecrets<{
-      BETTER_AUTH_SECRET: string
-      GITHUB_OAUTH: { clientId: string; clientSecret: string }
-    }>(['BETTER_AUTH_SECRET', 'GITHUB_OAUTH'])
+export const auth = pikkuBetterAuth(async ({ secrets, kysely }) => {
+  const { BETTER_AUTH_SECRET, GITHUB_OAUTH } = await secrets.getSecrets([
+    'BETTER_AUTH_SECRET',
+    'GITHUB_OAUTH',
+  ])
 
-    if (!BETTER_AUTH_SECRET) {
-      throw new Error('Missing required secret: BETTER_AUTH_SECRET')
-    }
-
-    return betterAuth({
-      secret: BETTER_AUTH_SECRET,
-      database: { db: kysely, type: 'sqlite' },
-      emailAndPassword: { enabled: true },
-      // Enables the stateless session middleware (the CLI detects this)
-      session: { cookieCache: { enabled: true } },
-      socialProviders: {
-        ...(GITHUB_OAUTH ? { github: GITHUB_OAUTH } : {}),
-      },
-    })
+  // Reveal before the guard: a SecretValue wrapper is always truthy, so
+  // testing it directly would let an empty secret through.
+  const betterAuthSecret = BETTER_AUTH_SECRET?.reveal()
+  if (!betterAuthSecret) {
+    throw new Error('Missing required secret: BETTER_AUTH_SECRET')
   }
-)
+
+  return betterAuth({
+    secret: betterAuthSecret,
+    database: { db: kysely, type: 'sqlite' },
+    emailAndPassword: { enabled: true },
+    // Enables the stateless session middleware (the CLI detects this)
+    session: { cookieCache: { enabled: true } },
+    socialProviders: {
+      ...(GITHUB_OAUTH ? { github: GITHUB_OAUTH.reveal() } : {}),
+    },
+  })
+})
 ```
 
 That's the whole setup. Run `npx pikku dev` (or `npx pikku all`) and the CLI generates:
@@ -82,7 +77,7 @@ Two middleware variants bridge Better Auth sessions into Pikku sessions. The CLI
 
 ```typescript title="middleware.ts"
 import { betterAuthSession } from '@pikku/better-auth'
-import { addHTTPMiddleware } from '#pikku'
+import { addHTTPMiddleware } from '#pikku/middleware'
 
 addHTTPMiddleware('*', [
   betterAuthSession({
@@ -99,7 +94,7 @@ addHTTPMiddleware('*', [
 
 ```typescript title="middleware.ts"
 import { betterAuthStatelessSession } from '@pikku/better-auth'
-import { addHTTPMiddleware } from '#pikku'
+import { addHTTPMiddleware } from '#pikku/middleware'
 
 addHTTPMiddleware('*', [betterAuthStatelessSession()])
 ```
@@ -127,8 +122,8 @@ The convention: each provider secret is an object with `clientId` and `clientSec
 
 ```typescript
 socialProviders: {
-  github: await secrets.getSecret('GITHUB_OAUTH'),
-  google: await secrets.getSecret('GOOGLE_OAUTH'),
+  github: (await secrets.getSecret('GITHUB_OAUTH')).reveal(),
+  google: (await secrets.getSecret('GOOGLE_OAUTH')).reveal(),
 }
 ```
 
@@ -244,4 +239,5 @@ When you generate an addon from an OpenAPI spec with `pikku new addon --auth-con
 
 - [User Sessions](/docs/core-features/user-sessions) — how sessions flow through Pikku functions
 - [Middleware](/docs/core-features/middleware) — how middleware ordering works
+- [API reference: guard/auth](/docs/api-reference/guard/auth) — the rest of the `#pikku/auth` door
 - [API Key](/docs/middleware/auth-apikey) / [JWT](/docs/middleware/auth-jwt) / [Cookie](/docs/middleware/auth-cookie) — lighter-weight alternatives

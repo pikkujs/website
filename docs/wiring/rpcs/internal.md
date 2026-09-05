@@ -13,6 +13,8 @@ Internal RPCs let you call one function from another using `rpc.invoke()`. This 
 Let's call a function from another function:
 
 ```typescript
+import { pikkuFunc, pikkuSessionlessFunc } from '#pikku/function'
+
 // Calculate order totals - reusable business logic
 export const calculateOrderTotal = pikkuSessionlessFunc<
   { items: Array<{ price: number; quantity: number }> },

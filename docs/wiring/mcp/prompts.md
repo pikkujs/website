@@ -7,7 +7,7 @@ MCP prompts are template generators that help AI models create structured conver
 Use `pikkuMCPPromptFunc` to create static prompts:
 
 ```typescript
-import { pikkuMCPPromptFunc } from '#pikku'
+import { pikkuMCPPromptFunc } from '#pikku/mcp'
 
 export const staticPromptGenerator = pikkuMCPPromptFunc<unknown>(async () => {
   return [
@@ -79,7 +79,7 @@ Register your prompts in the routes file:
 
 ```typescript
 // mcp.wiring.ts
-import { wireMCPPrompt } from '#pikku'
+import { wireMCPPrompt } from '#pikku/mcp'
 import { staticPromptGenerator, dynamicPromptGenerator } from './mcp.functions.js'
 
 wireMCPPrompt({

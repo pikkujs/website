@@ -45,23 +45,23 @@ If you pass a URI, `PikkuMongoDB` owns the connection and `close()` disconnects 
 
 ## Services
 
-### MongoDBAIStorageService
+### MongoDBAgentStorageService
 
-Implements `AIStorageService` and `AIRunStateService` for AI Agent persistence — threads, messages, tool calls, working memory, and agent run state.
+Implements `AgentStorageService` and `AgentRunStateService` for AI Agent persistence — threads, messages, tool calls, working memory, and agent run state.
 
 ```typescript
-import { MongoDBAIStorageService } from '@pikku/mongodb'
+import { MongoDBAgentStorageService } from '@pikku/mongodb'
 
-const aiStorage = new MongoDBAIStorageService(mongo.db)
-await aiStorage.init()
+const agentStorage = new MongoDBAgentStorageService(mongo.db)
+await agentStorage.init()
 ```
 
 Register in your singleton services:
 
 ```typescript
 const singletonServices = await createSingletonServices(config, {
-  aiStorage,
-  aiRunState: aiStorage, // Same instance implements both
+  agentStorage,
+  agentRunState: agentStorage, // Same instance implements both
 })
 ```
 
@@ -156,12 +156,24 @@ await secrets.init()
 | `audit` | `boolean` | `false` | Log secret write operations |
 | `auditReads` | `boolean` | `false` | Also log read operations |
 
+### MongoDBSessionStore
+
+Persists user sessions keyed by `pikkuUserId`, so a session survives a restart
+and is shared across instances.
+
+```typescript
+import { MongoDBSessionStore } from '@pikku/mongodb'
+
+const sessionStore = new MongoDBSessionStore(mongo.db)
+await sessionStore.init()
+```
+
 ## Full Example
 
 ```typescript
 import { PikkuMongoDB } from '@pikku/mongodb'
 import {
-  MongoDBAIStorageService,
+  MongoDBAgentStorageService,
   MongoDBAgentRunService,
   MongoDBWorkflowService,
   MongoDBWorkflowRunService,
@@ -173,7 +185,7 @@ import {
 const mongo = new PikkuMongoDB(logger, process.env.MONGODB_URI!, 'pikku')
 await mongo.init()
 
-const aiStorage = new MongoDBAIStorageService(mongo.db)
+const agentStorage = new MongoDBAgentStorageService(mongo.db)
 const agentRunService = new MongoDBAgentRunService(mongo.db)
 const workflowService = new MongoDBWorkflowService(mongo.db)
 const workflowRunService = new MongoDBWorkflowRunService(mongo.db)
@@ -185,7 +197,7 @@ const secrets = new MongoDBSecretService(mongo.db, {
 
 // Initialize all services (creates collections and indexes)
 await Promise.all([
-  aiStorage.init(),
+  agentStorage.init(),
   agentRunService.init(),
   workflowService.init(),
   workflowRunService.init(),
@@ -195,8 +207,8 @@ await Promise.all([
 ])
 
 const singletonServices = await createSingletonServices(config, {
-  aiStorage,
-  aiRunState: aiStorage,
+  agentStorage,
+  agentRunState: agentStorage,
   agentRunService,
   workflowService,
   workflowRunService,
@@ -212,8 +224,8 @@ Each service creates its own collections with appropriate indexes on `init()`. Y
 
 | Service | Collections Created |
 |---------|-------------------|
-| `MongoDBAIStorageService` | `ai_threads`, `ai_messages`, `ai_tool_calls`, `ai_working_memory`, `ai_runs`, `ai_pending_approvals` |
-| `MongoDBAgentRunService` | (reads from `ai_runs`) |
+| `MongoDBAgentStorageService` | `agent_threads`, `agent_message`, `agent_tool_call`, `agent_working_memory`, `agent_run`, `agent_run_score` |
+| `MongoDBAgentRunService` | (reads from `agent_run`) |
 | `MongoDBWorkflowService` | `workflow_runs`, `workflow_steps` |
 | `MongoDBWorkflowRunService` | (reads from `workflow_runs`, `workflow_steps`) |
 | `MongoDBChannelStore` | `channels`, `channel_subscriptions` |

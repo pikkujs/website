@@ -12,38 +12,52 @@ Find what you need based on where you are in your Pikku journey.
 
 New to Pikku? Start here:
 
-1. **[Introduction](/docs/philosophy)** - Understand what Pikku is and why it exists
-2. **[Getting Started](/docs/core-features)** - Install and run your first Pikku app
-3. **[Functions](/docs/core-features/functions)** - Learn the core abstraction
+1. **[Introduction](/docs/philosophy)** — Understand what Pikku is and why it exists
+2. **[Getting Started](/getting-started)** — From an empty folder to a running platform
+3. **[Functions](/docs/core-features/functions)** — Learn the core abstraction
 
 ## Learning Path
 
 ### Fundamentals
 
-- [Functions](/docs/core-features/functions) - Core building blocks
-- [Services](/docs/core-features/services) - Dependency injection
-- [Middleware](/docs/core-features/middleware) - Request processing
-- [Errors](/docs/core-features/errors) - Error handling
+- [Functions](/docs/core-features/functions) — Core building blocks
+- [Services](/docs/core-features/services) — Dependency injection
+- [Middleware](/docs/core-features/middleware) — Request processing
+- [Errors](/docs/core-features/errors) — Error handling
+- [Import Patterns](/docs/advanced/import-patterns) — Where `#pikku/*` imports come from
 
 ### Protocols
 
-- [HTTP](/docs/wiring/http) - REST APIs
-- [Channels](/docs/wiring/channels) - WebSocket real-time
-- [Queue](/docs/wiring/queue) - Background jobs
-- [Scheduled Tasks](/docs/wiring/scheduled-tasks) - Cron jobs
-- [CLI](/docs/wiring/cli) - Command-line tools
-- [MCP](/docs/wiring/mcp) - Model Context Protocol
+- [HTTP](/docs/wiring/http) — REST APIs
+- [Channels](/docs/wiring/channels) — WebSocket real-time
+- [Queue](/docs/wiring/queue) — Background jobs
+- [Scheduled Tasks](/docs/wiring/scheduled-tasks) — Cron jobs
+- [CLI](/docs/wiring/cli) — Command-line tools
+- [MCP](/docs/wiring/mcp) — Model Context Protocol
 
-### Advanced
+### Looking something up
 
-- [User Sessions](/docs/core-features/user-sessions) - Authentication & state
-- [Permission Guards](/docs/core-features/permission-guards) - Authorization
-- [Testing](/docs/core-features/testing) - Unit testing functions
-- [Tree-Shaking](/docs/pikku-cli/tree-shaking) - Optimized builds
+- [API Reference](/docs/api-reference) — Every export, by the door you import it from
+- [`#pikku/function`](/docs/api-reference/create/function) — `pikkuFunc` and friends
+- [`#pikku/http`](/docs/api-reference/wire/http) — `wireHTTP`, `defineHTTPRoutes`
+- [`#pikku/error`](/docs/api-reference/enhance/error) — every error class and its status
+- [CLI errors](/docs/pikku-cli/errors) — what a `PKUxxx` code means and how to clear it
+
+Or run `npx pikku doc` for the same thing in your terminal, generated from the
+version you actually have installed.
+
+### Going deeper
+
+- [User Sessions](/docs/core-features/user-sessions) — Authentication & state
+- [Permission Guards](/docs/core-features/permission-guards) — Authorization
+- [Testing](/docs/core-features/testing) — Unit testing functions
+- [Scenarios](/docs/core-features/scenarios) — Driving the whole system like a user
+- [Tree-Shaking](/docs/pikku-cli/tree-shaking) — Optimized builds
 
 ### Configuration & Deployment
 
-- [CLI Configuration](/docs/pikku-cli/configuration) - Configure code generation
+- [CLI Configuration](/docs/pikku-cli/configuration) — Configure code generation
+- [Deploy](/docs/deploy) — Ship to cloud infrastructure or a standalone server
 
 ## I Want To...
 
@@ -62,15 +76,22 @@ New to Pikku? Start here:
 
 ### Deploy to Production
 
-1. Choose a runtime (Express, Lambda, etc.)
-2. [Configure tree-shaking](/docs/pikku-cli/tree-shaking) (optional)
-3. Deploy to your chosen platform
+1. [Run `pikku deploy`](/docs/deploy) for the common providers
+2. Or wire a [runtime](/docs/runtimes/express-middleware) into a server you already run
+3. [Configure tree-shaking](/docs/pikku-cli/tree-shaking) (optional)
 
 ### Work in a Monorepo
 
 1. [Configure package mappings](/docs/pikku-cli/configuration#monorepo-support)
 2. [Generate shared clients](/docs/pikku-cli/configuration#client-generation)
 3. [See monorepo example](https://github.com/pikkujs/yarn-workspace-starter)
+
+### Go Under the Hood
+
+- [Runtimes](/docs/runtimes/express-middleware) — Wire pikku into an existing server
+- [Creating runtimes](/docs/custom-runtimes/custom-http-runtime) — Build your own adapter
+- [Storage backends](/docs/storage) — Postgres, Redis, Mongo and friends
+- [Service Interfaces](/docs/api/logger) — The contracts you implement to bring your own
 
 ### Migrate from Another Framework / Integrate Pikku with Another Framework
 

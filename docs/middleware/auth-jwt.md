@@ -11,7 +11,7 @@ The `authBearer` middleware extracts and validates bearer tokens from the `Autho
 ## Installation
 
 ```typescript
-import { authBearer } from '@pikku/core/middleware'
+import { authBearer } from '#pikku/middleware'
 ```
 
 ## JWT Mode (Default)
@@ -19,7 +19,8 @@ import { authBearer } from '@pikku/core/middleware'
 Decodes the bearer token as a JWT using the `JWTService` from your singleton services:
 
 ```typescript
-import { authBearer } from '@pikku/core/middleware'
+import { authBearer } from '#pikku/middleware'
+import { wireHTTP } from '#pikku/http'
 
 wireHTTP({
   // ...

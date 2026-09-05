@@ -69,7 +69,7 @@ If you need portability, use `void` as the output type.
 Configure how your queue worker processes jobs:
 
 ```typescript
-import { wireQueueWorker } from '#pikku'
+import { wireQueueWorker } from '#pikku/queue'
 import { processPayment } from './functions/payment.function.js'
 
 wireQueueWorker({
@@ -230,3 +230,4 @@ From the [online shop template](https://github.com/pikkujs/fabric/tree/main/temp
 ## Next Steps
 
 - [Queue Client](./client.md) - Adding and monitoring jobs with type safety
+- [`#pikku/queue` API reference](/docs/api-reference/wire/queue) - every export on the queue door

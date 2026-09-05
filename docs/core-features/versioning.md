@@ -13,6 +13,8 @@ Pikku has built-in function versioning. You add `version: N` to a function, and 
 Add `version` to any function definition:
 
 ```typescript
+import { pikkuFunc } from '#pikku/function'
+
 // v1 — original implementation
 export const createUser = pikkuFunc<CreateUserInput_v1, CreateUserOutput_v1>({
   version: 1,

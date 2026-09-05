@@ -33,6 +33,8 @@ npx pikku react-query
 
 This generates a file with typed hooks that import from your generated RPC map.
 
+The examples below import it as `#pikku/pikku-react-query.gen.js`, which is what the `reactQueryFile` path above resolves to. If your React app is a separate package from the one Pikku generates into, point `reactQueryFile` at that package instead and import by its own path — the `#pikku/*` alias only reaches inside the package that declares it.
+
 ### 3. Install dependencies
 
 The generated hooks need `@tanstack/react-query` and `@pikku/react`:
@@ -48,8 +50,8 @@ Wrap your app with both the React Query and Pikku providers:
 ```tsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PikkuProvider, createPikku } from '@pikku/react'
-import { PikkuFetch } from '.pikku/pikku-fetch.gen'
-import { PikkuRPC } from '.pikku/pikku-rpc.gen'
+import { PikkuFetch } from '#pikku/pikku-fetch.gen.js'
+import { PikkuRPC } from '#pikku/pikku-rpc.gen.js'
 
 const queryClient = new QueryClient()
 
@@ -75,7 +77,7 @@ function App() {
 For reading data. Wraps `useQuery` with type-safe RPC name and input:
 
 ```tsx
-import { usePikkuQuery } from '.pikku/pikku-react-query.gen'
+import { usePikkuQuery } from '#pikku/pikku-react-query.gen.js'
 
 function UserProfile({ userId }: { userId: string }) {
   const { data, isLoading, error } = usePikkuQuery('getUser', { userId })
@@ -101,7 +103,7 @@ usePikkuQuery('getUser', { userId }, { staleTime: 5000, refetchInterval: 10000 }
 For writes. Wraps `useMutation`:
 
 ```tsx
-import { usePikkuMutation } from '.pikku/pikku-react-query.gen'
+import { usePikkuMutation } from '#pikku/pikku-react-query.gen.js'
 
 function CreateTodo() {
   const { mutate, isPending } = usePikkuMutation('createTodo')
@@ -123,10 +125,10 @@ The `mutate` callback is typed — it only accepts your function's input type an
 
 For paginated data. Only available for functions whose output includes `nextCursor` — the codegen detects this structurally, so any function shaped that way qualifies, not just ones built with a specific factory.
 
-The recommended way to build one is `pikkuListFunc` (from `@pikku/core`), which bakes in the standard `ListInput`/`ListOutput` cursor contract (`cursor`/`limit`/`sort`/`filter`/`search` in, `{ rows, nextCursor, totalCount }` out) so every paginated RPC in your app shares one shape:
+The recommended way to build one is `pikkuListFunc` (from `#pikku/function`), which bakes in the standard `ListInput`/`ListOutput` cursor contract (`cursor`/`limit`/`sort`/`filter`/`search` in, `{ rows, nextCursor, totalCount }` out) so every paginated RPC in your app shares one shape:
 
 ```typescript
-import { pikkuListFunc } from '#pikku'
+import { pikkuListFunc } from '#pikku/function'
 
 // Qualifies for infinite query because ListOutput always includes nextCursor
 export const listItems = pikkuListFunc<{ status?: string }, { id: string; label: string }>({
@@ -141,7 +143,7 @@ export const listItems = pikkuListFunc<{ status?: string }, { id: string; label:
 A plain `pikkuFunc`/`pikkuSessionlessFunc` with an ad-hoc output containing `nextCursor` also works — `pikkuListFunc` just gives you the shared shape for free instead of hand-rolling it each time.
 
 ```tsx
-import { usePikkuInfiniteQuery } from '.pikku/pikku-react-query.gen'
+import { usePikkuInfiniteQuery } from '#pikku/pikku-react-query.gen.js'
 
 function ItemList() {
   const { data, fetchNextPage, hasNextPage } = usePikkuInfiniteQuery(

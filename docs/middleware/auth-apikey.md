@@ -11,13 +11,14 @@ The `authAPIKey` middleware extracts API keys from the `x-api-key` header or `ap
 ## Installation
 
 ```typescript
-import { authAPIKey } from '@pikku/core/middleware'
+import { authAPIKey } from '#pikku/middleware'
 ```
 
 ## Usage
 
 ```typescript
-import { authAPIKey } from '@pikku/core/middleware'
+import { authAPIKey } from '#pikku/middleware'
+import { wireHTTP } from '#pikku/http'
 
 wireHTTP({
   // ...
