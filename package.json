@@ -13,7 +13,10 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "sync-snippets": "node scripts/extract-snippets.js"
+    "sync-snippets": "node scripts/extract-snippets.js",
+    "sync-api-surface": "node scripts/generate-api-surface.mjs",
+    "sync-submodules": "sh scripts/sync-submodules.sh",
+    "install-hooks": "sh scripts/install-hooks.sh"
   },
   "dependencies": {
     "@docusaurus/core": "^3.9.2",
