@@ -1,13 +1,18 @@
 ---
-title: PikkuTaskScheduler
+title: InMemorySchedulerService
 description: Run recurring scheduled tasks and one-off delayed RPCs at runtime
 ---
 
-`PikkuTaskScheduler` is the in-memory scheduler service (exported as both
-`PikkuTaskScheduler` and `InMemorySchedulerService` from `@pikku/schedule`). It
-runs your wired scheduled tasks in-process and can schedule one-off delayed RPC
-calls. Call `start()` to begin running recurring tasks and `stop()` to halt them
-— useful for graceful shutdown.
+`InMemorySchedulerService` from `@pikku/schedule` is the in-process
+implementation of [`SchedulerService`](./scheduler-service.md). It runs your
+wired scheduled tasks in-process and can schedule one-off delayed RPC calls.
+Call `start()` to begin running recurring tasks and `stop()` to halt them —
+useful for graceful shutdown. It takes no constructor arguments.
+
+:::caution `PikkuTaskScheduler` is a deprecated alias
+`@pikku/schedule` still exports the class under its old name, but new code
+should import `InMemorySchedulerService`.
+:::
 
 :::note
 For distributed/persistent scheduling backed by a queue (pg-boss, BullMQ), use
@@ -20,10 +25,10 @@ instead. They implement the same `SchedulerService` interface.
 ### `start()`
 
 Starts all registered recurring scheduled tasks (those wired with
-`wireScheduledTask`).
+`wireScheduler`).
 
 ```typescript
-const scheduler = new PikkuTaskScheduler()
+const scheduler = new InMemorySchedulerService()
 await scheduler.start()
 ```
 

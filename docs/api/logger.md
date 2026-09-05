@@ -20,6 +20,18 @@ logger.info({ userId: 'user-123', action: 'sign-in' })
 logger.error(new Error('Connection failed'))
 ```
 
+`info`, `warn`, `error`, `debug` and `setLevel(level)` are required. Two members
+are optional, so check before calling them on a logger you did not write:
+
+| Member | Description |
+|--------|-------------|
+| `trace?(message, ...meta)` | The level below `debug`, for loggers that have one |
+| `scope?(traceId): Logger` | Returns a child logger that stamps every line with the trace id |
+
+Every parameter is `Safe<>`-guarded: a `SecretValue` anywhere in the message or
+the metadata, however deeply nested, collapses to `never` and fails the build.
+Reveal it first if you genuinely mean to log it.
+
 ## Implementations
 
 ### ConsoleLogger (built-in)

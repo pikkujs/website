@@ -40,7 +40,7 @@ Lists all scheduled tasks as `{ taskId, rpcName, scheduledFor }` summaries.
 
 ### `start(): Promise<void>` / `stop(): Promise<void>`
 
-Starts and stops the recurring tasks wired with `wireScheduledTask`. Implementations that don't run recurring tasks in-process leave these as no-ops.
+Starts and stops the recurring tasks wired with `wireScheduler`. Implementations that don't run recurring tasks in-process leave these as no-ops.
 
 ### `init(): Promise<void>` / `close(): Promise<void>`
 
@@ -65,7 +65,7 @@ export const requestPasswordReset = pikkuFunc<{ email: string }, void>(
 
 ### InMemorySchedulerService (in-process)
 
-Runs recurring tasks and delayed RPCs in-process — no persistence, tasks are lost on restart. See [PikkuTaskScheduler](./pikku-task-scheduler) for full documentation.
+Runs recurring tasks and delayed RPCs in-process — no persistence, tasks are lost on restart. See [InMemorySchedulerService](./pikku-task-scheduler) for full documentation.
 
 ```bash npm2yarn
 npm install @pikku/schedule

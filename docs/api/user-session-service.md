@@ -22,6 +22,12 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/user-sessi
 
 Sets the initial session without marking it as changed. Called during session initialization — not intended for use in functions.
 
+### `freezeInitial(): UserSession | undefined`
+
+Pins the session as it stood at the start of the request and returns it. The
+first call records the current session as `initial`; later calls return that
+same snapshot, so a comparison against it stays stable even after `set`.
+
 ### `set(session: UserSession): Promise<void> | void`
 
 Updates the session and marks it as changed.

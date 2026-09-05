@@ -101,7 +101,7 @@ await credentialService.init()
 
 ### TypedCredentialService (wrapper)
 
-Wraps any `CredentialService` with a typed credential map, so `get('stripe')` returns the declared type instead of `unknown`. The Pikku CLI generates the map from your `wireCredential` declarations.
+Wraps any `CredentialService` with a typed credential map, so `get('stripe')` returns the declared type instead of `unknown`. The Pikku CLI generates the map from your `defineCredential` declarations.
 
 ```typescript reference title="typed-credential-service.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/typed-credential-service.ts

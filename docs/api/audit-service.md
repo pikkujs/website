@@ -47,6 +47,19 @@ Persists a single audit event.
 
 Optional batch write. When implemented, best-effort flushes deliver the whole invocation's buffer in one call; otherwise events are written one by one.
 
+### `query?(query: AuditQuery): Promise<AuditQueryResult>`
+
+The read side, returning `{ events, nextCursor, facets? }`. Optional because a
+sink can legitimately be write-only — a queue producer that hands events to
+another system has nothing to read back. A reader that finds this absent should
+say the trail is **not readable here**, not that it is empty; those are very
+different answers.
+
+### `facets?(): Promise<AuditFacets>`
+
+Distinct users and types across the whole trail. Paired with `query` — asking
+for facets inside a query costs two extra scans, which is why they are separate.
+
 ## AuditEvent
 
 | Field | Description |

@@ -73,14 +73,7 @@ Server acting as gateway didn't receive timely response from upstream server.
 ## Usage Examples
 
 ```typescript
-import {
-  BadRequestError,
-  UnauthorizedError,
-  ForbiddenError,
-  NotFoundError,
-  ConflictError,
-  InternalServerError
-} from '#pikku'
+import { BadRequestError, UnauthorizedError, ForbiddenError, NotFoundError, ConflictError, InternalServerError } from '#pikku/error'
 
 // Validate input
 export const createUser = pikkuFunc<
@@ -173,7 +166,7 @@ throw new ForbiddenError('Insufficient permissions')
 Pikku maintains an internal registry of error types and their HTTP status codes. You can also register custom errors:
 
 ```typescript
-import { PikkuError, addError } from '#pikku'
+import { PikkuError, addError } from '#pikku/error'
 
 class CustomBusinessError extends PikkuError {}
 
