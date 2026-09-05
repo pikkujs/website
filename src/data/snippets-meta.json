@@ -94,7 +94,5 @@
   "permissionsCompact": "wirings/shop.security.ts",
   "wireTrigger": "wirings/shop.trigger.ts",
   "triggerSource": "wirings/shop.trigger.ts",
-  "variables": "wirings/shop.variable.ts",
-  "paymentTable": "../../../db/sqlite/0003-shop.sql",
-  "scenarioConfig": "../../../pikku.config.json"
+  "variables": "wirings/shop.variable.ts"
 }

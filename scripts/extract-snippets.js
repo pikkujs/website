@@ -57,35 +57,55 @@ function findTsFiles(dir, results = []) {
 
 // ── Snippet extraction ─────────────────────────────────────
 
-function extractSnippets(content) {
+/** Strip the common leading indent, then run the result through prettier. */
+function dedent(lines) {
+  const nonEmpty = lines.filter((l) => l.trim().length > 0)
+  const minIndent = nonEmpty.length
+    ? Math.min(...nonEmpty.map((l) => l.match(/^(\s*)/)[1].length))
+    : 0
+  return lines
+    .map((l) => l.slice(minIndent))
+    .join('\n')
+    .trim()
+}
+
+/**
+ * Regions may nest and overlap — the template wraps a role-descriptive alias
+ * (`writeFunction`) around the same lines as a concrete one (`addToBasket`), and
+ * both are referenced by the site. So every open region collects every line, and
+ * an `end` closes the region of that name rather than whichever opened last.
+ * Marker lines themselves are never collected, so an inner marker does not leak
+ * into the snippet around it.
+ */
+function extractSnippets(content, rel) {
   const snippets = {}
-  const lines = content.split('\n')
-  let currentName = null
-  let currentLines = []
+  const open = new Map()
 
-  for (const line of lines) {
+  for (const line of content.split('\n')) {
     const startMatch = line.match(/\/\/\s*@snippet start\s+(\S+)/)
-    const endMatch   = line.match(/\/\/\s*@snippet end\s+(\S+)/)
-
     if (startMatch) {
-      currentName  = startMatch[1]
-      currentLines = []
-    } else if (endMatch && currentName) {
-      // Strip common leading whitespace
-      const nonEmpty = currentLines.filter((l) => l.trim().length > 0)
-      const minIndent = nonEmpty.length
-        ? Math.min(...nonEmpty.map((l) => l.match(/^(\s*)/)[1].length))
-        : 0
-      const raw = currentLines
-        .map((l) => l.slice(minIndent))
-        .join('\n')
-        .trim()
-      snippets[currentName] = formatSnippet(raw)
-      currentName  = null
-      currentLines = []
-    } else if (currentName !== null) {
-      currentLines.push(line)
+      open.set(startMatch[1], [])
+      continue
     }
+
+    const endMatch = line.match(/\/\/\s*@snippet end\s+(\S+)/)
+    if (endMatch) {
+      const name = endMatch[1]
+      const collected = open.get(name)
+      if (collected) {
+        snippets[name] = formatSnippet(dedent(collected))
+        open.delete(name)
+      } else {
+        console.warn(`[extract-snippets] "@snippet end ${name}" with no matching start in ${rel}`)
+      }
+      continue
+    }
+
+    for (const collected of open.values()) collected.push(line)
+  }
+
+  for (const name of open.keys()) {
+    console.warn(`[extract-snippets] "@snippet start ${name}" is never closed in ${rel}`)
   }
 
   return snippets
@@ -99,8 +119,8 @@ const origins = {} // snippet name → file path (for collision warnings)
 
 for (const file of files) {
   const content  = fs.readFileSync(file, 'utf8')
-  const snippets = extractSnippets(content)
   const rel      = path.relative(SUBMODULE_SRC, file)
+  const snippets = extractSnippets(content, rel)
 
   for (const [name, code] of Object.entries(snippets)) {
     if (origins[name]) {

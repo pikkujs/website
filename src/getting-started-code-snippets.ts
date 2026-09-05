@@ -3,7 +3,7 @@ export const codeTypes = `import {
     CoreServices,
     CoreSingletonServices,
     CoreUserSession,
-  } from '@pikku/core'
+  } from '@pikku/core/types'
   
   // This contains all the configuration for the application, created once on start.
   export interface Config extends CoreConfig {}
@@ -12,8 +12,7 @@ export const codeTypes = `import {
   export interface UserSession extends CoreUserSession {}
   
   // Singleton services, created once on start, shared across all requests.
-  export type SingletonServices = CoreSingletonServices & {
-    config: Config,
+  export interface SingletonServices extends CoreSingletonServices<Config> {
     jwt: JWTService<UserSession>
   }
   
@@ -22,7 +21,7 @@ export const codeTypes = `import {
   export interface Services extends CoreServices<SingletonServices> {}
   `;
   
-  export const codeImplementations = `import { pikkuConfig, pikkuServices, pikkuWireServices } from '#pikku/pikku-types.gen.js'
+  export const codeImplementations = `import { pikkuConfig, pikkuServices, pikkuWireServices } from '#pikku/setup'
 
   /**
    * Loads configuration for the application (created once at startup).
