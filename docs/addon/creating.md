@@ -276,11 +276,10 @@ app's policy, and the CLI rejects a contract that carries them
 ([PKU921](/docs/pikku-cli/errors/pku921)). Channels work the same way with
 `defineChannelRoutes` from `#pikku/addon/channel`.
 
-:::caution CLI commands cannot be shipped from an addon yet
-There is no `#pikku/addon/cli` door, so `defineCLICommands` is not importable
-from addon code even though `refCLI` exists on the consuming side. Ship the
-functions and let the consumer declare the commands.
-:::
+CLI commands follow the same shape. `defineCLICommands` comes from
+`#pikku/addon/cli`, and the consuming app mounts the result with `refCLI`. That
+door carries the declaration helpers only — `wireCLI` registers a program with
+the app's own CLI, which is not something an addon reaches.
 
 ## OpenAPI Generation
 
