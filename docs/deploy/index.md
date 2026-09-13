@@ -12,12 +12,12 @@ The Pikku deploy pipeline analyzes your project, splits it into deployment units
 ## How It Works
 
 1. **Analyze** — the CLI inspects your functions, wirings, and services to build a deployment manifest
-2. **Split** — each function becomes its own deployment unit. Gateways (MCP servers, agents, channels) get separate units that dispatch to function units via RPC
+2. **Split** — functions are grouped into deployment units by the services they build. Gateways (MCP servers, agents, channels) get separate units that dispatch to function units via RPC
 3. **Codegen** — per-unit entry points are generated with only the imports each unit needs
 4. **Bundle** — each unit is bundled and tree-shaken independently
 5. **Deploy** — the provider adapter provisions infrastructure (workers, queues, cron triggers, secrets) and uploads the bundles
 
-The core principle: **one function = one deployment unit**. This gives you per-function scaling, isolation, and minimal cold-start sizes.
+The core principle: **a unit holds only what its functions reach**. Each unit is bundled from its own imports, so it scales, fails and cold-starts on its own — and `deploy.grouping` decides how finely the app is cut, down to one function per unit.
 
 ## Quick Start
 
@@ -57,11 +57,12 @@ Add a `deploy` section to your `pikku.config.json`:
 
 ## Deployment unit grouping
 
-By default every function becomes its own deployment unit — its own worker, its
-own bundle, its own bindings. That gives maximum isolation, and it is the right
-default, but it is not always the right shape: a large app can reach a hundred
-workers whose bundles are mostly the same framework and third-party code
-repeated, and every one of them is a build and an upload.
+By default a function shares a deployment unit — a worker, a bundle, a set of
+bindings — with every other function that builds the same set of singleton
+services. One unit per function gives more isolation, and is a `strategy` away,
+but it is not always the right shape: a large app then reaches a hundred workers
+whose bundles are mostly the same framework and third-party code repeated, and
+every one of them is a build and an upload.
 
 `deploy.grouping` decides how many units you actually deploy.
 
@@ -220,8 +221,9 @@ carries two optional fields:
 | `targetForcedBy` | The target was forced | The `serverlessIncompatible` services that crossed the unit to `server` |
 
 Their absence carries the same weight as their presence. A unit with no
-`groupedBy` came from the fallback — one unit per function, or the shared `app`
-unit under `strategy: "single"`. A unit with no `targetForcedBy` is on the
+`groupedBy` came from the fallback — a service set under the default
+`strategy: "services"`, one unit per function under `"function"`, or the shared
+`app` unit under `"single"`. A unit with no `targetForcedBy` is on the
 target it was *asked* for, through a function's own `deploy` flag or through
 `defaultTarget`, rather than one it was pushed onto.
 
