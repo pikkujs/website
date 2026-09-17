@@ -3,6 +3,7 @@ title: '#pikku/secrets'
 sidebar_label: '#pikku/secrets'
 sidebar_position: 4
 description: 'Secrets a function can use without ever holding, declared here and resolved by the secrets service at runtime.'
+paper: true
 ---
 
 # `#pikku/secrets`
@@ -15,35 +16,51 @@ import { defineSecret, CredentialsMap, TypedSecretService } from '#pikku/secrets
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`CredentialsMap`](#credentialsmap) | type | Every secret this project declares with `defineSecret`, keyed by name. It is what gives `secrets.getSecret('NAME')` a real type. |
-| [`defineSecret`](#definesecret) | function | Declares a secret this project needs, with the shape of its value. The CLI collects every declaration into `CredentialsMap`, which is what makes `secrets.getSecret('NAME')` return the right type instead of `unknown`. |
-| [`TypedSecretService`](#typedsecretservice) | class | The `secrets` service as this project sees it: `getSecret('NAME')` resolves the value's type from `CredentialsMap` instead of returning `unknown`. |
+<ApiExports items={[{"name":"CredentialsMap","kind":"type","anchor":"credentialsmap","summary":"Every secret this project declares with defineSecret, keyed by name. It is what gives secrets.getSecret('NAME') a real type."},{"name":"defineSecret","kind":"function","anchor":"definesecret","summary":"Declares a secret this project needs, with the shape of its value. The CLI collects every declaration into CredentialsMap, which is what makes secrets.getSecret('NAME') return the right type instead of unknown."},{"name":"TypedSecretService","kind":"class","anchor":"typedsecretservice","summary":"The secrets service as this project sees it: getSecret('NAME') resolves the value's type from CredentialsMap instead of returning unknown."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `CredentialsMap` {#credentialsmap}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Every secret this project declares with `defineSecret`, keyed by name. It is
 what gives `secrets.getSecret('NAME')` a real type.
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `defineSecret` {#definesecret}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/secret`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/secret" />
+
+<ApiSection label="Description">
 
 Declares a secret this project needs, with the shape of its value. The CLI
 collects every declaration into `CredentialsMap`, which is what makes
 `secrets.getSecret('NAME')` return the right type instead of `unknown`.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 defineSecret: <T>(_config: CoreSecret<T>) => void
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (9)">
+
 <details>
-<summary>Config keys (9)</summary>
+<summary>Show all 9</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -58,6 +75,10 @@ defineSecret: <T>(_config: CoreSecret<T>) => void
 | `secretId` <sup>required</sup> | `string` | The id under the backing store, which is where the value actually lives. |
 
 </details>
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // BETTER_AUTH_SECRET is not declared here — the CLI generates its defineSecret
@@ -74,19 +95,35 @@ defineSecret({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `TypedSecretService` {#typedsecretservice}
 
-<span className="api-symbol-meta">class · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="class" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The `secrets` service as this project sees it: `getSecret('NAME')` resolves
 the value's type from `CredentialsMap` instead of returning `unknown`.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 TypedSecretService: new TypedSecretService(secrets: SecretService)
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (10)">
+
 <details>
-<summary>Config keys (10)</summary>
+<summary>Show all 10</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -94,7 +131,7 @@ TypedSecretService: new TypedSecretService(secrets: SecretService)
 | `credentialsMeta` <sup>required</sup> | `any` |  |
 | `deleteSecret` <sup>required</sup> | `(key: string) => Promise<void>` |  |
 | `getAllStatus` <sup>required</sup> | `() => Promise<CredentialStatus[]>` |  |
-| `getMissing` <sup>required</sup> | `() => Promise<CredentialStatus[]>` |  |
+| `getMissing` <sup>required</sup> | `() => Promise<CredentialStatus[]>` | The secrets a deployment still has to supply. An optional one is absent from this list however it is stored: `optional` already declares that absence is supported, which is why `getSecret` resolves `undefined` for it rather than throwing. Reporting it as missing contradicts that, and buries the required secrets someone actually has to go and configure. `getAllStatus` still reports it, flagged. |
 | `getSecret` <sup>required</sup> | `{ <K>(key: K): Promise<SecretResult<CredentialsMap[K]>>; <T>(key: string): Promise<Secret…` | Throws if the secret is not found, unless `defineSecret` declared it `optional` — then absence resolves `undefined`. Unwrap the result with `.reveal()`. |
 | `getSecrets` <sup>required</sup> | `<T extends Record<string, unknown> = Record<string, unknown>>(keys: (keyof T & string)[])…` | Missing keys are omitted rather than throwing, hence `Partial&lt;T&gt;`: callers must handle keys absent at runtime. Pass a shape as `T` to avoid casting, e.g. `getSecrets&lt;&#123; FOO: string; BAR: &#123; id: string &#125; &#125;&gt;(['FOO', 'BAR'])`. |
 | `hasSecret` <sup>required</sup> | `(key: string) => Promise<boolean>` | Answers for any key, including a disallowed one — it must not throw. |
@@ -102,6 +139,10 @@ TypedSecretService: new TypedSecretService(secrets: SecretService)
 | `setSecret` <sup>required</sup> | `<K>(key: K, value: K extends "BETTER_AUTH_SECRET" ? CredentialsMap[K] : unknown) => Promi…` |  |
 
 </details>
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

@@ -3,6 +3,7 @@ title: '#pikku/gateway'
 sidebar_label: '#pikku/gateway'
 sidebar_position: 3
 description: 'Wires a function behind a gateway that receives requests on behalf of another system.'
+paper: true
 ---
 
 # `#pikku/gateway`
@@ -15,28 +16,24 @@ import { wireGateway, GatewayAdapter, GatewayInboundMessage } from '#pikku/gatew
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`GatewayAdapter`](#gatewayadapter) | interface | What a gateway integration implements: parse an incoming event into a message, send one back, and open and close the connection. |
-| [`GatewayInboundMessage`](#gatewayinboundmessage) | interface | One message arriving from a gateway, normalised: who sent it, in which conversation, and what they said. |
-| [`GatewayOutboundMessage`](#gatewayoutboundmessage) | interface | One message to send back through a gateway — plain text, or the provider's own rich content. |
-| [`GatewayTransportType`](#gatewaytransporttype) | type | 'webhook' the platform POSTs to us, 'websocket' the client connects to us, 'listener' no route at all. |
-| [`GatewayWiring`](#gatewaywiring) | type | Type definition for gateway wirings. Declares a gateway name, its transport and its target pikku function. |
-| [`PikkuGatewayAdapterFactory`](#pikkugatewayadapterfactory) | type | Builds a &#123;@link GatewayAdapter&#125; from your application's services. The core factory type is handed `CoreSingletonServices`; this one receives the services your project actually registered. |
-| [`WebhookVerificationResult`](#webhookverificationresult) | type | What a gateway's `verifyWebhook` returns — verified, with the response the provider expects back, or not. |
-| [`wireGateway`](#wiregateway) | function | Registers a gateway with the Pikku framework. Runs everywhere — inspector extracts at build time. |
+<ApiExports items={[{"name":"GatewayAdapter","kind":"interface","anchor":"gatewayadapter","summary":"What a gateway integration implements: parse an incoming event into a message, send one back, and open and close the connection."},{"name":"GatewayInboundMessage","kind":"interface","anchor":"gatewayinboundmessage","summary":"One message arriving from a gateway, normalised: who sent it, in which conversation, and what they said."},{"name":"GatewayOutboundMessage","kind":"interface","anchor":"gatewayoutboundmessage","summary":"One message to send back through a gateway — plain text, or the provider's own rich content."},{"name":"GatewayTransportType","kind":"type","anchor":"gatewaytransporttype","summary":"'webhook' the platform POSTs to us, 'websocket' the client connects to us, 'listener' no route at all."},{"name":"GatewayWiring","kind":"type","anchor":"gatewaywiring","summary":"Type definition for gateway wirings. Declares a gateway name, its transport and its target pikku function."},{"name":"PikkuGatewayAdapterFactory","kind":"type","anchor":"pikkugatewayadapterfactory","summary":"Builds a {@link GatewayAdapter} from your application's services. The core factory type is handed CoreSingletonServices; this one receives the services your project actually registered."},{"name":"WebhookVerificationResult","kind":"type","anchor":"webhookverificationresult","summary":"What a gateway's verifyWebhook returns — verified, with the response the provider expects back, or not."},{"name":"wireGateway","kind":"function","anchor":"wiregateway","summary":"Registers a gateway with the Pikku framework. Runs everywhere — inspector extracts at build time."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `GatewayAdapter` {#gatewayadapter}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/core/gateway`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/core/gateway" />
+
+<ApiSection label="Description">
 
 What a gateway integration implements: parse an incoming event into a
 message, send one back, and open and close the connection.
 
-<details>
-<summary>Config keys (6)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (6)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -47,17 +44,24 @@ message, send one back, and open and close the connection.
 | `send` <sup>required</sup> | `(senderId: string, message: GatewayOutboundMessage) => Promise<void>` | Deliver a reply back to the sender the message came from. |
 | `verifyWebhook` | `((data: unknown, request?: PikkuHTTPRequest) => WebhookVerificationResult \| Promise<Webho…` | Receives the GET query params, or the POST body when called from the POST handler. |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `GatewayInboundMessage` {#gatewayinboundmessage}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/core/gateway`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/core/gateway" />
+
+<ApiSection label="Description">
 
 One message arriving from a gateway, normalised: who sent it, in which
 conversation, and what they said.
 
-<details>
-<summary>Config keys (5)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (5)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -67,17 +71,24 @@ conversation, and what they said.
 | `senderId` <sup>required</sup> | `string` | Platform-specific: a phone number, a Slack user id, and so on. |
 | `text` <sup>required</sup> | `string` | What they said, as plain text, with the provider's markup stripped. |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `GatewayOutboundMessage` {#gatewayoutboundmessage}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/core/gateway`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/core/gateway" />
+
+<ApiSection label="Description">
 
 One message to send back through a gateway — plain text, or the provider's
 own rich content.
 
-<details>
-<summary>Config keys (3)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (3)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -85,23 +96,41 @@ own rich content.
 | `richContent` | `Record<string, unknown>` | The provider's own rich payload, e.g. Slack blocks. Passed through as-is. |
 | `text` | `string` | The reply as plain text. Every provider can render this. |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `GatewayTransportType` {#gatewaytransporttype}
 
-<span className="api-symbol-meta">type · re-exported from `@pikku/core/gateway`</span>
+<ApiMeta kind="type" origin="re-exported from @pikku/core/gateway" />
+
+<ApiSection label="Description">
 
 'webhook' the platform POSTs to us, 'websocket' the client connects to us, 'listener' no route at all.
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `GatewayWiring` {#gatewaywiring}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Type definition for gateway wirings.
 Declares a gateway name, its transport and its target pikku function.
 
+</ApiSection>
+
+<ApiSection label="Config keys (13)">
+
 <details>
-<summary>Config keys (13)</summary>
+<summary>Show all 13</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -121,43 +150,74 @@ Declares a gateway name, its transport and its target pikku function.
 
 </details>
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuGatewayAdapterFactory` {#pikkugatewayadapterfactory}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Builds a &#123;@link GatewayAdapter&#125; from your application's services.
 The core factory type is handed `CoreSingletonServices`; this one receives
 the services your project actually registered.
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `WebhookVerificationResult` {#webhookverificationresult}
 
-<span className="api-symbol-meta">type · re-exported from `@pikku/core/gateway`</span>
+<ApiMeta kind="type" origin="re-exported from @pikku/core/gateway" />
+
+<ApiSection label="Description">
 
 What a gateway's `verifyWebhook` returns — verified, with the response the
 provider expects back, or not.
 
-<details>
-<summary>Config keys (1)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (1)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
 | `verified` <sup>required</sup> | `boolean` | True when the request really came from the provider. False when the signature or challenge did not check out. |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `wireGateway` {#wiregateway}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers a gateway with the Pikku framework.
 Runs everywhere — inspector extracts at build time.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireGateway: (gateway: GatewayWiring) => void
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (13)">
+
 <details>
-<summary>Config keys (13)</summary>
+<summary>Show all 13</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -176,6 +236,10 @@ wireGateway: (gateway: GatewayWiring) => void
 | `type` <sup>required</sup> | `"webhook" \| "websocket" \| "listener"` | How the platform reaches us: a `webhook` it posts to, a `websocket` it holds open, or a `listener` we open outward. |
 
 </details>
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 wireGateway({
@@ -184,6 +248,10 @@ wireGateway({
   func: handleStripeEvent
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

@@ -3,6 +3,7 @@ title: '#pikku/auth'
 sidebar_label: '#pikku/auth'
 sidebar_position: 1
 description: 'Who may call a function, and what the call is made with: permissions that see the request, auth gates that run before it, and the credentials a function b…'
+paper: true
 ---
 
 # `#pikku/auth`
@@ -15,49 +16,66 @@ import { addGlobalPermission, defineCredential, pikkuAuth } from '#pikku/auth'
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`addGlobalPermission`](#addglobalpermission) | function | Wire-agnostic global permissions. Runs at the top of every wiring's permission resolution — before wire-, tag-, and function-level entries. |
-| [`defineCredential`](#definecredential) | function | Declares a credential. The body is a no-op that tree-shakes away — the CLI reads the call by AST, so the declaration must be a top-level literal. `type: 'wire'` is per-user, `type: 'singleton'` is platform-wide. |
-| [`pikkuAuth`](#pikkuauth) | function | Factory function for creating auth-only permissions with tree-shaking support. Auth permissions only receive services and session (no request data), making them evaluable before request data is available. |
-| [`pikkuBetterAuth`](#pikkubetterauth) | function | Builds this project's Better Auth instance. The factory is handed the singleton services, with typed `secrets` and `variables`, and is called lazily so config and secrets are resolved before auth is constructed. |
-| [`pikkuPermission`](#pikkupermission) | function | Factory function for creating permissions with tree-shaking support. Supports both direct function and configuration object syntax. |
-| [`PikkuPermission`](#pikkupermission-2) | type | Type-safe API permission definition that integrates with your application's session type. Use this to define authorization logic for your API endpoints. |
-| [`pikkuPermissionFactory`](#pikkupermissionfactory) | function | Factory function for creating permission factories Use this when your permission needs configuration/input parameters |
+<ApiExports items={[{"name":"addGlobalPermission","kind":"function","anchor":"addglobalpermission","summary":"Wire-agnostic global permissions. Runs at the top of every wiring's permission resolution — before wire-, tag-, and function-level entries."},{"name":"defineCredential","kind":"function","anchor":"definecredential","summary":"Declares a credential. The body is a no-op that tree-shakes away — the CLI reads the call by AST, so the declaration must be a top-level literal. type: 'wire' is per-user, type: 'singleton' is platform-wide."},{"name":"pikkuAuth","kind":"function","anchor":"pikkuauth","summary":"Factory function for creating auth-only permissions with tree-shaking support. Auth permissions only receive services and session (no request data), making them evaluable before request data is available."},{"name":"pikkuBetterAuth","kind":"function","anchor":"pikkubetterauth","summary":"Builds this project's Better Auth instance. The factory is handed the singleton services, with typed secrets and variables, and is called lazily so config and secrets are resolved before auth is constructed."},{"name":"pikkuPermission","kind":"function","anchor":"pikkupermission","summary":"Factory function for creating permissions with tree-shaking support. Supports both direct function and configuration object syntax."},{"name":"PikkuPermission","kind":"type","anchor":"pikkupermission-2","summary":"Type-safe API permission definition that integrates with your application's session type. Use this to define authorization logic for your API endpoints."},{"name":"pikkuPermissionFactory","kind":"function","anchor":"pikkupermissionfactory","summary":"Factory function for creating permission factories Use this when your permission needs configuration/input parameters"}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `addGlobalPermission` {#addglobalpermission}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Wire-agnostic global permissions. Runs at the top of every wiring's
 permission resolution — before wire-, tag-, and function-level entries.
 
 Resolution order: global -&gt; wire -&gt; tag -&gt; function.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 addGlobalPermission: <In = unknown>(permissions: CorePermissionGroup<PikkuPermission<In>> | PikkuPermission<In>[]) => void
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 addGlobalPermission([signedInUser])
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `defineCredential` {#definecredential}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/credential`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/credential" />
+
+<ApiSection label="Description">
 
 Declares a credential. The body is a no-op that tree-shakes away — the CLI
 reads the call by AST, so the declaration must be a top-level literal.
 `type: 'wire'` is per-user, `type: 'singleton'` is platform-wide.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 defineCredential: <T>(_config: CoreCredential<T>) => void
 ```
 
-<details>
-<summary>Config keys (7)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (7)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -69,7 +87,9 @@ defineCredential: <T>(_config: CoreCredential<T>) => void
 | `schema` <sup>required</sup> | `T` | The shape of the value, validated when it is supplied rather than when it is first used. |
 | `type` <sup>required</sup> | `"singleton" \| "wire"` | `singleton` is one value for the whole deployment; `wire` is one per user, supplied by them and stored against their account. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // Per-user API key
@@ -111,17 +131,33 @@ defineCredential({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuAuth` {#pikkuauth}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Factory function for creating auth-only permissions with tree-shaking support.
 Auth permissions only receive services and session (no request data),
 making them evaluable before request data is available.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuAuth: <RequiredServices extends SecretlessServices<SingletonServices> = WiredAuthServices>(auth: PikkuAuth<RequiredServices> | PikkuAuthConfig<RequiredServices>) => PikkuPermission<any, any>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 \`\`\`typescript
@@ -139,17 +175,33 @@ const isAdmin = pikkuAuth({
 \`\`\`
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuBetterAuth` {#pikkubetterauth}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Builds this project's Better Auth instance. The factory is handed the
 singleton services, with typed `secrets` and `variables`, and is called
 lazily so config and secrets are resolved before auth is constructed.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuBetterAuth: <I extends BetterAuthInstance>(factory: (services: AuthSingletonServices) => I | Promise<I>) => PikkuBetterAuthFactory<I>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const auth = pikkuBetterAuth(
@@ -180,6 +232,10 @@ export const auth = pikkuBetterAuth(
     // every stage; locally it's simply absent, which disables /sign-in/fabric.
     // Asymmetric — the app verifies, it can never forge an operator login.
     const FABRIC_AUTH_PUBLIC_KEY = await variables.get('FABRIC_AUTH_PUBLIC_KEY')
+    // The opt-in that lets a deployed stage run scenarios. Read through
+    // `variables` rather than left to `process.env`, because a Worker receives
+    // it as a binding and has no populated environment to find it in.
+    const ALLOW_ACTOR_SIGN_IN = await variables.get(ACTOR_SIGN_IN_OPT_IN_ENV)
 
     return betterAuth({
       secret: BETTER_AUTH_SECRET,
@@ -230,7 +286,10 @@ export const auth = pikkuBetterAuth(
       // afterStart: that hook only ever runs under `pikku dev` and `pikku serve`,
       // so a deployed stage would provision nobody.
       plugins: [
-        pikkuActor({ secret: SCENARIO_ACTOR_SECRET }),
+        pikkuActor({
+          secret: SCENARIO_ACTOR_SECRET,
+          allowSignIn: ALLOW_ACTOR_SIGN_IN,
+        }),
         pikkuBan(),
         pikkuFabric({
           publicKey: FABRIC_AUTH_PUBLIC_KEY,
@@ -247,16 +306,32 @@ export const auth = pikkuBetterAuth(
 )
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuPermission` {#pikkupermission}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Factory function for creating permissions with tree-shaking support.
 Supports both direct function and configuration object syntax.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuPermission: <In>(permission: PikkuPermission<In> | PikkuPermissionConfig<In>) => PikkuPermission<In>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const isOrderOwner = pikkuPermission(
@@ -271,27 +346,55 @@ export const isOrderOwner = pikkuPermission(
 )
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuPermission` {#pikkupermission-2}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Type-safe API permission definition that integrates with your application's session type.
 Use this to define authorization logic for your API endpoints.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 PikkuPermission: PikkuPermission<In, RequiredServices>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuPermissionFactory` {#pikkupermissionfactory}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Factory function for creating permission factories
 Use this when your permission needs configuration/input parameters
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuPermissionFactory: <In = any>(factory: (input: In) => PikkuPermission<any>) => ((input: In) => PikkuPermission<any>)
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const requireRole = pikkuPermissionFactory<{ role: string }>(({
@@ -306,6 +409,10 @@ export const requireRole = pikkuPermissionFactory<{ role: string }>(({
   })
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

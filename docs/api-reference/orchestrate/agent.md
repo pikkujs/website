@@ -3,6 +3,7 @@ title: '#pikku/agent'
 sidebar_label: '#pikku/agent'
 sidebar_position: 1
 description: 'Defines an AI agent, the tools it may call and the scorers that judge what it did.'
+paper: true
 ---
 
 # `#pikku/agent`
@@ -15,28 +16,32 @@ import { agent, agentApprove, agentResume } from '#pikku/agent'
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`agent`](#agent) | function | A ready-made function that runs the named agent once and returns its result — wire it straight to a route when you need no logic around the run. |
-| [`agentApprove`](#agentapprove) | function | A ready-made function that answers every pending approval for a run at once. |
-| [`agentResume`](#agentresume) | function | A ready-made function that answers one pending tool approval, letting a run that paused for a human carry on. |
-| [`agentStream`](#agentstream) | function | The streaming counterpart of `agent`: wire it to a channel to send tokens and tool calls as they happen instead of waiting for the run to finish. |
-| [`pikkuAgent`](#pikkuagent) | function | Declares an agent: the model, the prompt, the tools it may call and the shape of what it returns. Wire it like any other function. |
-| [`pikkuAgentJudge`](#pikkuagentjudge) | function | Declares a scorer that grades an agent run with another model, for the qualities a programmatic check cannot express. |
-| [`pikkuAgentScorer`](#pikkuagentscorer) | function | Declares a scorer that grades an agent run programmatically — a function over the run's input and output returning a score. |
+<ApiExports items={[{"name":"agent","kind":"function","anchor":"agent","summary":"A ready-made function that runs the named agent once and returns its result — wire it straight to a route when you need no logic around the run."},{"name":"agentApprove","kind":"function","anchor":"agentapprove","summary":"A ready-made function that answers every pending approval for a run at once."},{"name":"agentResume","kind":"function","anchor":"agentresume","summary":"A ready-made function that answers one pending tool approval, letting a run that paused for a human carry on."},{"name":"agentStream","kind":"function","anchor":"agentstream","summary":"The streaming counterpart of agent: wire it to a channel to send tokens and tool calls as they happen instead of waiting for the run to finish."},{"name":"pikkuAgent","kind":"function","anchor":"pikkuagent","summary":"Declares an agent: the model, the prompt, the tools it may call and the shape of what it returns. Wire it like any other function."},{"name":"pikkuAgentJudge","kind":"function","anchor":"pikkuagentjudge","summary":"Declares a scorer that grades an agent run with another model, for the qualities a programmatic check cannot express."},{"name":"pikkuAgentScorer","kind":"function","anchor":"pikkuagentscorer","summary":"Declares a scorer that grades an agent run programmatically — a function over the run's input and output returning a score."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `agent` {#agent}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A ready-made function that runs the named agent once and returns its result —
 wire it straight to a route when you need no logic around the run.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 agent: <Name extends keyof AgentMap>(agentName: Name) => PikkuFunctionConfig<AgentInput, { runId: string; result: AgentMap[Name]["output"]; usage: { inputTokens: number; outputTokens: number; }; }, "session" | "rpc">
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // Wire the agent as a standard HTTP endpoint — non-streaming, returns the full response.
@@ -48,16 +53,32 @@ wireHTTP({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `agentApprove` {#agentapprove}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A ready-made function that answers every pending approval for a run at once.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 agentApprove: <Name extends keyof AgentMap>(agentName: Name) => PikkuFunctionConfig<{ runId: string; approvals: { toolCallId: string; approved: boolean; }[]; }, unknown, "session" | "rpc">
 ```
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 // The ops agent can cancel an order, so its tool calls wait for a human. These
 // two routes are the human's side of that pause.
@@ -76,17 +97,33 @@ wireHTTP({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `agentResume` {#agentresume}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A ready-made function that answers one pending tool approval, letting a run
 that paused for a human carry on.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 agentResume: () => PikkuFunctionConfig<{ runId: string; toolCallId: string; approved: boolean; }, void, "session" | "rpc">
 ```
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 // The ops agent can cancel an order, so its tool calls wait for a human. These
 // two routes are the human's side of that pause.
@@ -105,16 +142,32 @@ wireHTTP({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `agentStream` {#agentstream}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The streaming counterpart of `agent`: wire it to a channel to send tokens and
 tool calls as they happen instead of waiting for the run to finish.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 agentStream: <Name extends keyof AgentMap>(agentName?: Name) => PikkuFunctionConfig<{ agentName?: string; message: string; threadId: string; resourceId: string; }, void, "session" | "rpc">
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // Streaming endpoint — sends text-delta, tool-call, and usage events as they arrive.
@@ -126,19 +179,35 @@ wireHTTP({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuAgent` {#pikkuagent}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Declares an agent: the model, the prompt, the tools it may call and the shape
 of what it returns. Wire it like any other function.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 pikkuAgent: <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(agent: AgentConfig<InputSchema, OutputSchema>) => AgentConfig<InputSchema, OutputSchema>
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (23)">
+
 <details>
-<summary>Config keys (23)</summary>
+<summary>Show all 23</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -168,6 +237,10 @@ pikkuAgent: <InputSchema extends StandardSchemaV1 | undefined = undefined, Outpu
 
 </details>
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 export const shopAssistant = pikkuAgent({
   name: 'shop-assistant',
@@ -189,19 +262,32 @@ export const shopAssistant = pikkuAgent({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuAgentJudge` {#pikkuagentjudge}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Declares a scorer that grades an agent run with another model, for the
 qualities a programmatic check cannot express.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 pikkuAgentJudge: (config: Parameters<typeof corePikkuAgentJudge<Services>>[0]) => PikkuAgentScorer<Services>
 ```
 
-<details>
-<summary>Config keys (8)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (8)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -214,7 +300,9 @@ pikkuAgentJudge: (config: Parameters<typeof corePikkuAgentJudge<Services>>[0]) =
 | `sampleRate` | `number` | 0..1 fraction of live runs to grade. Defaults to all of them. |
 | `toolCalls` | `"off" \| "names" \| "full"` | How much of the run's trajectory to disclose to the judge. Defaults to `names`: enough to tell a tool-backed answer from an invented one, without sending a third-party model the rows the tools returned. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const answersTheShopper = pikkuAgentJudge({
@@ -230,19 +318,32 @@ export const answersTheShopper = pikkuAgentJudge({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuAgentScorer` {#pikkuagentscorer}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Declares a scorer that grades an agent run programmatically — a function over
 the run's input and output returning a score.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 pikkuAgentScorer: (config: Parameters<typeof corePikkuAgentScorer<Services>>[0]) => PikkuAgentScorer<Services>
 ```
 
-<details>
-<summary>Config keys (5)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (5)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -252,7 +353,9 @@ pikkuAgentScorer: (config: Parameters<typeof corePikkuAgentScorer<Services>>[0])
 | `sampleRate` | `number` | 0..1 fraction of live runs to grade. Defaults to all of them. |
 | `score` <sup>required</sup> | `(input: ScorerInput, services: Services) => ScorerOutput \| Promise<ScorerOutput>` | The grade itself: read the finished run and return `&#123; score, reason &#125;`. Runs in-process, so it may use your own services. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const namesAProduct = pikkuAgentScorer({
@@ -265,6 +368,10 @@ export const namesAProduct = pikkuAgentScorer({
   }),
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

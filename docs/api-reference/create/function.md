@@ -3,6 +3,7 @@ title: '#pikku/function'
 sidebar_label: '#pikku/function'
 sidebar_position: 1
 description: 'The function definers every wiring eventually points at, and the types they are written against. A function is handed services, then its input, then the w…'
+paper: true
 ---
 
 # `#pikku/function`
@@ -15,56 +16,67 @@ import { pikkuApprovalDescription, pikkuFunc, pikkuListFunc } from '#pikku/funct
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`InferSchemaOutput`](#inferschemaoutput) | type | Helper type to infer the output type from a Standard Schema |
-| [`NodeConfig`](#nodeconfig) | type | Inline node configuration for function definitions. |
-| [`pikkuApprovalDescription`](#pikkuapprovaldescription) | function | Factory function for creating approval description functions with tree-shaking support. |
-| [`PikkuApprovalDescription`](#pikkuapprovaldescription-2) | type | A function that generates a human-readable description of a pending approval action. Used by AI agents to show meaningful approval prompts instead of raw tool arguments. |
-| [`pikkuFunc`](#pikkufunc) | function | Creates a Pikku function that can be either session-aware or sessionless. This is the main function wrapper for creating API endpoints. |
-| [`PikkuFunction`](#pikkufunction) | type | A session-aware API function that requires user authentication. Use this for protected endpoints that need access to user session data. |
-| [`PikkuFunctionConfig`](#pikkufunctionconfig) | type | Configuration object for Pikku functions with optional middleware, permissions, tags, and documentation. This type wraps CorePikkuFunctionConfig with the user's custom types. |
-| [`PikkuFunctionSessionless`](#pikkufunctionsessionless) | type | A sessionless API function that doesn't require user authentication. Use this for public endpoints, health checks, or operations that don't need user context. |
-| [`pikkuListFunc`](#pikkulistfunc) | function | A `pikkuFunc` whose input and output are already the shared list shape — filters, sort, paging in; rows and a total out — so a listing endpoint pages the same way everywhere. |
-| [`pikkuRemoteChannelFunc`](#pikkuremotechannelfunc) | function | Declares a capability the connected client answers, reachable from any `wireChannel` function as `channel.remote(name, input)`. |
-| [`pikkuSessionlessFunc`](#pikkusessionlessfunc) | function | Creates a sessionless Pikku function that doesn't require user authentication. Use this for public endpoints, webhooks, or background tasks. |
-| [`pikkuVoidFunc`](#pikkuvoidfunc) | function | Creates a function that takes no input and returns no output. Useful for health checks, triggers, or cleanup operations. |
-| [`ref`](#ref) | function | References a registered function by name for use in any wiring. Works for both local and addon functions — resolves via RPC at runtime. |
-| [`refChannel`](#refchannel) | function | Names a channel an installed addon wires, for connecting to it without hardcoding its name. |
-| [`refCLI`](#refcli) | function | Names a CLI command an installed addon wires, for invoking it without hardcoding its name. |
-| [`refHTTP`](#refhttp) | function | Names an HTTP route an installed addon wires, so you can link or redirect to it without hardcoding a path the addon may move. |
-| [`Services`](#services) | interface | Everything a function is handed as its first argument: the singleton services plus whatever is built per request. This is the type to widen when you add a service. |
-| [`Session`](#session) | type | The signed-in user as this project defines it. Reached on the wire as `session`, and replaced with `setSession`. |
-| [`SingletonServices`](#singletonservices) | interface | The services that live for the process — the ones built once in `createConfig`/ `createSingletonServices` and shared by every request. |
-| [`WiredServices`](#wiredservices) | type | The services a wired function actually receives. The inspector records which services each wired `func`, `permissions` and `middleware` destructures and emits them as `RequiredSingletonServices`; intersecting that here makes those services **non-optional** at every call site. A service is optional only when nothing destructures it — in which case it is never created either. This is why an `if (!service)` guard inside a function body is always dead code. |
+<ApiExports items={[{"name":"InferSchemaOutput","kind":"type","anchor":"inferschemaoutput","summary":"Helper type to infer the output type from a Standard Schema"},{"name":"NodeConfig","kind":"type","anchor":"nodeconfig","summary":"Inline node configuration for function definitions."},{"name":"pikkuApprovalDescription","kind":"function","anchor":"pikkuapprovaldescription","summary":"Factory function for creating approval description functions with tree-shaking support."},{"name":"PikkuApprovalDescription","kind":"type","anchor":"pikkuapprovaldescription-2","summary":"A function that generates a human-readable description of a pending approval action. Used by AI agents to show meaningful approval prompts instead of raw tool arguments."},{"name":"pikkuFunc","kind":"function","anchor":"pikkufunc","summary":"Creates a Pikku function that can be either session-aware or sessionless. This is the main function wrapper for creating API endpoints."},{"name":"PikkuFunction","kind":"type","anchor":"pikkufunction","summary":"A session-aware API function that requires user authentication. Use this for protected endpoints that need access to user session data."},{"name":"PikkuFunctionConfig","kind":"type","anchor":"pikkufunctionconfig","summary":"Configuration object for Pikku functions with optional middleware, permissions, tags, and documentation. This type wraps CorePikkuFunctionConfig with the user's custom types."},{"name":"PikkuFunctionSessionless","kind":"type","anchor":"pikkufunctionsessionless","summary":"A sessionless API function that doesn't require user authentication. Use this for public endpoints, health checks, or operations that don't need user context."},{"name":"pikkuListFunc","kind":"function","anchor":"pikkulistfunc","summary":"A pikkuFunc whose input and output are already the shared list shape — filters, sort, paging in; rows and a total out — so a listing endpoint pages the same way everywhere."},{"name":"pikkuRemoteChannelFunc","kind":"function","anchor":"pikkuremotechannelfunc","summary":"Declares a capability the connected client answers, reachable from any wireChannel function as channel.remote(name, input)."},{"name":"pikkuSessionlessFunc","kind":"function","anchor":"pikkusessionlessfunc","summary":"Creates a sessionless Pikku function that doesn't require user authentication. Use this for public endpoints, webhooks, or background tasks."},{"name":"pikkuVoidFunc","kind":"function","anchor":"pikkuvoidfunc","summary":"Creates a function that takes no input and returns no output. Useful for health checks, triggers, or cleanup operations."},{"name":"ref","kind":"function","anchor":"ref","summary":"References a registered function by name for use in any wiring. Works for both local and addon functions — resolves via RPC at runtime."},{"name":"refChannel","kind":"function","anchor":"refchannel","summary":"Names a channel an installed addon wires, for connecting to it without hardcoding its name."},{"name":"refCLI","kind":"function","anchor":"refcli","summary":"Names a CLI command an installed addon wires, for invoking it without hardcoding its name."},{"name":"refHTTP","kind":"function","anchor":"refhttp","summary":"Names an HTTP route an installed addon wires, so you can link or redirect to it without hardcoding a path the addon may move."},{"name":"Services","kind":"interface","anchor":"services","summary":"Everything a function is handed as its first argument: the singleton services plus whatever is built per request. This is the type to widen when you add a service."},{"name":"Session","kind":"type","anchor":"session","summary":"The signed-in user as this project defines it. Reached on the wire as session, and replaced with setSession."},{"name":"SingletonServices","kind":"interface","anchor":"singletonservices","summary":"The services that live for the process — the ones built once in createConfig/ createSingletonServices and shared by every request."},{"name":"WiredServices","kind":"type","anchor":"wiredservices","summary":"The services a wired function actually receives. The inspector records which services each wired func, permissions and middleware destructures and emits them as RequiredSingletonServices; intersecting that here makes those services **non-optional** at every call site. A service is optional only when nothing destructures it — in which case it is never created either. This is why an if (!service) guard inside a function body is always dead code."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `InferSchemaOutput` {#inferschemaoutput}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Helper type to infer the output type from a Standard Schema
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 InferSchemaOutput: InferSchemaOutput<T>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `NodeConfig` {#nodeconfig}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Inline node configuration for function definitions.
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuApprovalDescription` {#pikkuapprovaldescription}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Factory function for creating approval description functions with tree-shaking support.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 pikkuApprovalDescription: <In = unknown, RequiredServices extends SecretlessServices<Services> = WiredServices>(fn: PikkuApprovalDescription<In, RequiredServices>) => PikkuApprovalDescription<In, RequiredServices>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const deleteTodoApproval = pikkuApprovalDescription(
@@ -75,20 +87,40 @@ export const deleteTodoApproval = pikkuApprovalDescription(
 )
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuApprovalDescription` {#pikkuapprovaldescription-2}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A function that generates a human-readable description of a pending approval action.
 Used by AI agents to show meaningful approval prompts instead of raw tool arguments.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 PikkuApprovalDescription: PikkuApprovalDescription<In, RequiredServices>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuFunc` {#pikkufunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a Pikku function that can be either session-aware or sessionless.
 This is the main function wrapper for creating API endpoints.
@@ -96,12 +128,20 @@ This is the main function wrapper for creating API endpoints.
 Define the input and output with Zod schemas — the function's types are
 inferred from them, and the schemas double as runtime validation.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuFunc: { <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuFunctionConfigWithSchema<InputSchema, OutputSchema, "session" | "rpc">): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "session" | "rpc">; <In, Out = unknown>(func: PikkuFunction<In, Out, "session" | "rpc"> | PikkuFunctionConfig<In, Out, "session" | "rpc">): PikkuFunctionConfig<In, Out, "session" | "rpc">; }
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (25)">
+
 <details>
-<summary>Config keys (25)</summary>
+<summary>Show all 25</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -133,6 +173,10 @@ pikkuFunc: { <InputSchema extends StandardSchemaV1 | undefined = undefined, Outp
 
 </details>
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 export const getSession = pikkuFunc({
   expose: true,
@@ -157,30 +201,58 @@ export const getSession = pikkuFunc({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuFunction` {#pikkufunction}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A session-aware API function that requires user authentication.
 Use this for protected endpoints that need access to user session data.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 PikkuFunction: PikkuFunction<In, Out, RequiredWires, RequiredServices>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuFunctionConfig` {#pikkufunctionconfig}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Configuration object for Pikku functions with optional middleware, permissions, tags, and documentation.
 This type wraps CorePikkuFunctionConfig with the user's custom types.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 PikkuFunctionConfig: PikkuFunctionConfig<In, Out, RequiredWires, PikkuFunc, InputSchema, OutputSchema>
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (30)">
+
 <details>
-<summary>Config keys (30)</summary>
+<summary>Show all 30</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -217,31 +289,59 @@ PikkuFunctionConfig: PikkuFunctionConfig<In, Out, RequiredWires, PikkuFunc, Inpu
 
 </details>
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuFunctionSessionless` {#pikkufunctionsessionless}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A sessionless API function that doesn't require user authentication.
 Use this for public endpoints, health checks, or operations that don't need user context.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 PikkuFunctionSessionless: PikkuFunctionSessionless<In, Out, RequiredWires, RequiredServices, ScenarioOut>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuListFunc` {#pikkulistfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A `pikkuFunc` whose input and output are already the shared list shape —
 filters, sort, paging in; rows and a total out — so a listing endpoint pages
 the same way everywhere.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuListFunc: <F extends Record<string, unknown> = {}, Row = unknown, S extends string = never>(config: PikkuFunctionConfig<ListInput<F, S>, ListOutput<Row>, "session" | "rpc">) => PikkuFunctionConfig<ListInput<F, S>, ListOutput<Row>, "session" | "rpc">
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (30)">
+
 <details>
-<summary>Config keys (30)</summary>
+<summary>Show all 30</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -278,6 +378,10 @@ pikkuListFunc: <F extends Record<string, unknown> = {}, Row = unknown, S extends
 
 </details>
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 export const listItemRows = pikkuListFunc<
   { categorySlug: string; inStock: boolean },
@@ -301,9 +405,17 @@ export const listItemRows = pikkuListFunc<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuRemoteChannelFunc` {#pikkuremotechannelfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Declares a capability the connected client answers, reachable from any
 `wireChannel` function as `channel.remote(name, input)`.
@@ -312,12 +424,20 @@ There is no `func`: this side owns the contract, the client owns the body.
 The `description` is what a person is shown when asked to approve the call,
 so write it for them rather than for the caller.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuRemoteChannelFunc: <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: Omit<PikkuFunctionSessionlessConfigWithSchema<InputSchema, OutputSchema, "session" | "rpc">, "func">) => PikkuFunctionConfig<SchemaInferred<InputSchema>, SchemaInferred<OutputSchema>, "session" | "rpc">
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (24)">
+
 <details>
-<summary>Config keys (24)</summary>
+<summary>Show all 24</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -347,6 +467,10 @@ pikkuRemoteChannelFunc: <InputSchema extends StandardSchemaV1 | undefined = unde
 | `workflowTimeout` | `string` | Timeout for this function when used as a workflow step (e.g. '30s', '5m'). |
 
 </details>
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const localCheckoutOutput = z.object({ sha: z.string(), branch: z.string() })
@@ -357,9 +481,17 @@ export const localCheckout = pikkuRemoteChannelFunc({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuSessionlessFunc` {#pikkusessionlessfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a sessionless Pikku function that doesn't require user authentication.
 Use this for public endpoints, webhooks, or background tasks.
@@ -367,12 +499,20 @@ Use this for public endpoints, webhooks, or background tasks.
 Define the input and output with Zod schemas — the function's types are
 inferred from them, and the schemas double as runtime validation.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuSessionlessFunc: { <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined, RequiredServices extends SecretlessServices<Services> = WiredServices>(config: PikkuFunctionSessionlessConfigWithSchema<InputSchema, OutputSchema, "session" | "rpc", RequiredServices>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "session" | "rpc">; <In, Out = unknown, RequiredServices extends SecretlessServices<Services> = WiredServices>(func: PikkuFunctionSessionless<In, Out, "session" | "rpc", RequiredServices> | PikkuFunctionSessionlessConfig<In, Out, "session" | "rpc", PikkuFunctionSessionless<In, Out, "session" | "rpc", RequiredServices>>): PikkuFunctionConfig<In, Out, "session" | "rpc">; }
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (24)">
+
 <details>
-<summary>Config keys (24)</summary>
+<summary>Show all 24</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -402,6 +542,10 @@ pikkuSessionlessFunc: { <InputSchema extends StandardSchemaV1 | undefined = unde
 | `workflowTimeout` | `string` | Timeout for this function when used as a workflow step (e.g. '30s', '5m'). |
 
 </details>
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const listItems = pikkuSessionlessFunc({
@@ -470,16 +614,32 @@ export const listItems = pikkuSessionlessFunc({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuVoidFunc` {#pikkuvoidfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a function that takes no input and returns no output.
 Useful for health checks, triggers, or cleanup operations.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuVoidFunc: (func: PikkuFunctionSessionless<void, void, "session" | "rpc"> | PikkuFunctionSessionlessConfig<void, void, "session" | "rpc">) => PikkuFunctionConfig<void, void, "session" | "rpc">
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const cleanupAbandonedBaskets = pikkuVoidFunc({
@@ -506,16 +666,32 @@ export const cleanupAbandonedBaskets = pikkuVoidFunc({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `ref` {#ref}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 References a registered function by name for use in any wiring.
 Works for both local and addon functions — resolves via RPC at runtime.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 ref: <Name extends keyof FlattenedRPCMap>(rpcName: Name) => PikkuFunctionConfig<FlattenedRPCMap[Name]["input"], FlattenedRPCMap[Name]["output"], "session" | "rpc">
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // Use in agent tools
@@ -525,49 +701,97 @@ tools: [ref('todos:listTodos'), ref('myLocalFunc')]
 wireHTTP({ route: '/greet', method: 'post', func: ref('greet') })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `refChannel` {#refchannel}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Names a channel an installed addon wires, for connecting to it without
 hardcoding its name.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 refChannel: <Name extends keyof typeof __addonChannel>(name: Name) => (typeof __addonChannel)[Name]
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `refCLI` {#refcli}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Names a CLI command an installed addon wires, for invoking it without
 hardcoding its name.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 refCLI: <Name extends keyof typeof __addonCli>(name: Name) => (typeof __addonCli)[Name]
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `refHTTP` {#refhttp}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Names an HTTP route an installed addon wires, so you can link or redirect to
 it without hardcoding a path the addon may move.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 refHTTP: <Name extends keyof typeof __addonHttp>(name: Name, options?: { basePath?: string; }) => (typeof __addonHttp)[Name]
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `Services` {#services}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/templates-functions`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/templates-functions" />
+
+<ApiSection label="Description">
 
 Everything a function is handed as its first argument: the singleton services
 plus whatever is built per request. This is the type to widen when you add a
 service.
 
+</ApiSection>
+
+<ApiSection label="Config keys (23)">
+
 <details>
-<summary>Config keys (23)</summary>
+<summary>Show all 23</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -597,19 +821,32 @@ service.
 
 </details>
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `Session` {#session}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The signed-in user as this project defines it. Reached on the wire as
 `session`, and replaced with `setSession`.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 Session: UserSession
 ```
 
-<details>
-<summary>Config keys (4)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (4)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -618,17 +855,27 @@ Session: UserSession
 | `readonly` | `boolean` | Restricts the session to functions declared `readonly`. The function runner throws `ReadonlySessionError` for anything else. |
 | `scopes` | `string[]` | Scopes granted to this session, checked against a function's `scopes`. Populated by whoever builds the session — core reads them, never fetches. |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `SingletonServices` {#singletonservices}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/templates-functions`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/templates-functions" />
+
+<ApiSection label="Description">
 
 The services that live for the process — the ones built once in `createConfig`/
 `createSingletonServices` and shared by every request.
 
+</ApiSection>
+
+<ApiSection label="Config keys (23)">
+
 <details>
-<summary>Config keys (23)</summary>
+<summary>Show all 23</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -658,9 +905,17 @@ The services that live for the process — the ones built once in `createConfig`
 
 </details>
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `WiredServices` {#wiredservices}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The services a wired function actually receives. The inspector records which
 services each wired `func`, `permissions` and `middleware` destructures and
@@ -680,8 +935,12 @@ which asks it to name each member service through a specifier it does not
 have — 3308 TS2883s. `--noEmit` cannot surface any of that, so re-check with
 `tsc --declaration --emitDeclarationOnly` before moving either one.
 
+</ApiSection>
+
+<ApiSection label="Config keys (22)">
+
 <details>
-<summary>Config keys (22)</summary>
+<summary>Show all 22</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -709,6 +968,10 @@ have — 3308 TS2883s. `--noEmit` cannot surface any of that, so re-check with
 | `workflowService` <sup>required</sup> | `WorkflowService` |  |
 
 </details>
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

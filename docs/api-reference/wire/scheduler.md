@@ -3,6 +3,7 @@ title: '#pikku/scheduler'
 sidebar_label: '#pikku/scheduler'
 sidebar_position: 7
 description: 'Wires a function to a cron expression to run it on a schedule.'
+paper: true
 ---
 
 # `#pikku/scheduler`
@@ -15,25 +16,32 @@ import { wireScheduler } from '#pikku/scheduler'
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`wireScheduler`](#wirescheduler) | function | Registers a scheduled task with the Pikku framework. Tasks run based on cron expressions and are sessionless. |
+<ApiExports items={[{"name":"wireScheduler","kind":"function","anchor":"wirescheduler","summary":"Registers a scheduled task with the Pikku framework. Tasks run based on cron expressions and are sessionless."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `wireScheduler` {#wirescheduler}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers a scheduled task with the Pikku framework.
 Tasks run based on cron expressions and are sessionless.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireScheduler: (task: SchedulerWiring) => void
 ```
 
-<details>
-<summary>Config keys (5)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (5)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -43,7 +51,9 @@ wireScheduler: (task: SchedulerWiring) => void
 | `schedule` <sup>required</sup> | `string` | A five-field cron expression: minute, hour, day of month, month, day of week. `0 9 * * 1` is 09:00 every Monday. Interpreted in the deployment's timezone, not the author's. |
 | `tags` | `string[]` | Filters this task in and out of a build — see the `tags` option on `pikku all`. It has no effect at runtime. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 wireScheduler({
@@ -59,6 +69,10 @@ wireScheduler({
   func: cleanupAbandonedBaskets,
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

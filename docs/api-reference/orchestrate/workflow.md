@@ -3,6 +3,7 @@ title: '#pikku/workflow'
 sidebar_label: '#pikku/workflow'
 sidebar_position: 2
 description: 'Composes functions into a durable workflow whose steps survive a restart and retry on their own.'
+paper: true
 ---
 
 # `#pikku/workflow`
@@ -15,38 +16,55 @@ import { pikkuWorkflowComplexFunc, pikkuWorkflowFunc, pikkuWorkflowGraph } from 
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`PikkuFunctionWorkflow`](#pikkufunctionworkflow) | type | The shape of a workflow's body — services, input, and the workflow wire. |
-| [`pikkuWorkflowComplexFunc`](#pikkuworkflowcomplexfunc) | function | Declares a workflow whose control flow the DSL cannot express - a loop whose bound is only known at runtime, or branching that rejoins. An escape hatch: reach for `pikkuWorkflowFunc` unless the shape genuinely needs this. |
-| [`pikkuWorkflowFunc`](#pikkuworkflowfunc) | function | Declares a workflow: the DSL form, where each step is awaited in order and the runner persists progress between them so a restart resumes rather than replays. The default choice for a workflow. |
-| [`pikkuWorkflowGraph`](#pikkuworkflowgraph) | function | Declares a workflow as an explicit node graph, for a genuine cyclic dependency or a Node-only import the DSL cannot carry. The last resort of the three. |
-| [`TypedWorkflow`](#typedworkflow) | interface | The wire a workflow step is handed: `step` to run one durably, plus sleeping, waiting for a signal and asking for approval. |
-| [`WorkflowCancelledException`](#workflowcancelledexception) | class | Thrown inside a workflow step when the run has been cancelled, so the step stops rather than finishing work nobody wants. |
+<ApiExports items={[{"name":"PikkuFunctionWorkflow","kind":"type","anchor":"pikkufunctionworkflow","summary":"The shape of a workflow's body — services, input, and the workflow wire."},{"name":"pikkuWorkflowComplexFunc","kind":"function","anchor":"pikkuworkflowcomplexfunc","summary":"Declares a workflow whose control flow the DSL cannot express - a loop whose bound is only known at runtime, or branching that rejoins. An escape hatch: reach for pikkuWorkflowFunc unless the shape genuinely needs this."},{"name":"pikkuWorkflowFunc","kind":"function","anchor":"pikkuworkflowfunc","summary":"Declares a workflow: the DSL form, where each step is awaited in order and the runner persists progress between them so a restart resumes rather than replays. The default choice for a workflow."},{"name":"pikkuWorkflowGraph","kind":"function","anchor":"pikkuworkflowgraph","summary":"Declares a workflow as an explicit node graph, for a genuine cyclic dependency or a Node-only import the DSL cannot carry. The last resort of the three."},{"name":"TypedWorkflow","kind":"interface","anchor":"typedworkflow","summary":"The wire a workflow step is handed: step to run one durably, plus sleeping, waiting for a signal and asking for approval."},{"name":"WorkflowCancelledException","kind":"class","anchor":"workflowcancelledexception","summary":"Thrown inside a workflow step when the run has been cancelled, so the step stops rather than finishing work nobody wants."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `PikkuFunctionWorkflow` {#pikkufunctionworkflow}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The shape of a workflow's body — services, input, and the workflow wire.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 PikkuFunctionWorkflow: PikkuFunctionWorkflow<In, Out>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuWorkflowComplexFunc` {#pikkuworkflowcomplexfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Declares a workflow whose control flow the DSL cannot express - a loop whose
 bound is only known at runtime, or branching that rejoins. An escape hatch:
 reach for `pikkuWorkflowFunc` unless the shape genuinely needs this.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuWorkflowComplexFunc: { <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuWorkflowConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "workflow", PikkuFunctionWorkflow<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown>, InputSchema, OutputSchema>; <In, Out = unknown>(func: PikkuFunctionWorkflow<In, Out> | PikkuFunctionConfig<In, Out, "workflow", PikkuFunctionWorkflow<In, Out>>): PikkuFunctionConfig<In, Out, "workflow">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 /**
@@ -78,17 +96,33 @@ export const refundOrderWorkflow = pikkuWorkflowComplexFunc<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuWorkflowFunc` {#pikkuworkflowfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Declares a workflow: the DSL form, where each step is awaited in order and
 the runner persists progress between them so a restart resumes rather than
 replays. The default choice for a workflow.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuWorkflowFunc: { <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuWorkflowConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "workflow", PikkuFunctionWorkflow<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown>, InputSchema, OutputSchema>; <In, Out = unknown>(func: PikkuFunctionWorkflow<In, Out> | PikkuFunctionConfig<In, Out, "workflow", PikkuFunctionWorkflow<In, Out>>): PikkuFunctionConfig<In, Out, "workflow">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // Every step of a DSL workflow is an ordinary pikku function. That is what
@@ -128,20 +162,33 @@ export const validateBasket = pikkuSessionlessFunc({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuWorkflowGraph` {#pikkuworkflowgraph}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Declares a workflow as an explicit node graph, for a genuine cyclic
 dependency or a Node-only import the DSL cannot carry. The last resort of the
 three.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuWorkflowGraph: <const FuncMap extends Record<string, (keyof FlattenedRPCMap & string) | (keyof FlattenedWorkflowMap & string) | (keyof FlattenedAgentMap & string)>>(config: PikkuWorkflowGraphConfig<FuncMap, GraphNodeConfigMap<FuncMap>>) => PikkuWorkflowGraphResult
 ```
 
-<details>
-<summary>Config keys (7)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (7)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -153,7 +200,9 @@ pikkuWorkflowGraph: <const FuncMap extends Record<string, (keyof FlattenedRPCMap
 | `notes` | `string[]` | Free text carried onto the rendered graph, for a reader who needs the reasoning the shape cannot show. |
 | `tags` | `string[]` | Filters this graph in and out of a build — see the `tags` option on `pikku all`. It has no effect at runtime. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 /**
@@ -177,15 +226,24 @@ export const nightlyHousekeeping = pikkuWorkflowGraph({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `TypedWorkflow` {#typedworkflow}
 
-<span className="api-symbol-meta">interface · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="interface" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The wire a workflow step is handed: `step` to run one durably, plus sleeping,
 waiting for a signal and asking for approval.
 
-<details>
-<summary>Config keys (7)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (7)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -197,28 +255,41 @@ waiting for a signal and asking for approval.
 | `sleep` <sup>required</sup> | `WorkflowWireSleep` | Sleep for a duration |
 | `suspend` <sup>required</sup> | `WorkflowWireSuspend` | Suspend workflow until explicitly resumed |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `WorkflowCancelledException` {#workflowcancelledexception}
 
-<span className="api-symbol-meta">class · re-exported from `@pikku/core/workflow`</span>
+<ApiMeta kind="class" origin="re-exported from @pikku/core/workflow" />
+
+<ApiSection label="Description">
 
 Thrown inside a workflow step when the run has been cancelled, so the step
 stops rather than finishing work nobody wants.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 WorkflowCancelledException: new WorkflowCancelledException(runId: string, reason?: string)
 ```
 
-<details>
-<summary>Config keys (2)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (2)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
 | `reason` | `string` |  |
 | `runId` <sup>required</sup> | `string` |  |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

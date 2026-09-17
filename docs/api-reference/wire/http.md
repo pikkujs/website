@@ -3,6 +3,7 @@ title: '#pikku/http'
 sidebar_label: '#pikku/http'
 sidebar_position: 4
 description: 'Wires a function to an HTTP route, with the path parameters checked against the function input.'
+paper: true
 ---
 
 # `#pikku/http`
@@ -15,23 +16,31 @@ import { defineHTTPRoutes, wireHTTP, wireHTTPRoutes } from '#pikku/http'
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`defineHTTPRoutes`](#definehttproutes) | function | Type-safe helper for defining route contracts that can be composed. |
-| [`wireHTTP`](#wirehttp) | function | Registers an HTTP wiring with the Pikku framework. |
-| [`wireHTTPRoutes`](#wirehttproutes) | function | Wires multiple HTTP routes from a nested map or array configuration. |
+<ApiExports items={[{"name":"defineHTTPRoutes","kind":"function","anchor":"definehttproutes","summary":"Type-safe helper for defining route contracts that can be composed."},{"name":"wireHTTP","kind":"function","anchor":"wirehttp","summary":"Registers an HTTP wiring with the Pikku framework."},{"name":"wireHTTPRoutes","kind":"function","anchor":"wirehttproutes","summary":"Wires multiple HTTP routes from a nested map or array configuration."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `defineHTTPRoutes` {#definehttproutes}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Type-safe helper for defining route contracts that can be composed.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 defineHTTPRoutes: { <T extends TypedHTTPRouteMap>(routes: T): TypedHTTPRouteContract<T>; <T extends TypedHTTPRouteMap>(config: TypedHTTPRoutesGroupConfig & { routes: T; }): TypedHTTPRouteContract<T>; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const shopRoutes = defineHTTPRoutes({
@@ -112,18 +121,34 @@ export const shopRoutes = defineHTTPRoutes({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `wireHTTP` {#wirehttp}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers an HTTP wiring with the Pikku framework.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireHTTP: <In, Out, Route extends string>(httpWiring: HTTPWiring<In, Out, Route> & AssertHTTPWiringParams<In, Route>) => void
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (11)">
+
 <details>
-<summary>Config keys (11)</summary>
+<summary>Show all 11</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -141,6 +166,10 @@ wireHTTP: <In, Out, Route extends string>(httpWiring: HTTPWiring<In, Out, Route>
 
 </details>
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 // Wire a single route — good for one-offs
 wireHTTP({
@@ -151,19 +180,39 @@ wireHTTP({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `wireHTTPRoutes` {#wirehttproutes}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Wires multiple HTTP routes from a nested map or array configuration.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireHTTPRoutes: (config: TypedWireHTTPRoutesConfig) => void
 ```
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 wireHTTPRoutes({ routes: { shop: shopRoutes } })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

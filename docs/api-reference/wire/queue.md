@@ -3,6 +3,7 @@ title: '#pikku/queue'
 sidebar_label: '#pikku/queue'
 sidebar_position: 6
 description: 'Wires a function as a queue worker, so a job on the queue runs the same handler an HTTP route would.'
+paper: true
 ---
 
 # `#pikku/queue`
@@ -15,25 +16,32 @@ import { wireQueueWorker } from '#pikku/queue'
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`wireQueueWorker`](#wirequeueworker) | function | Registers a queue worker with the Pikku framework. Workers process background jobs from queues. |
+<ApiExports items={[{"name":"wireQueueWorker","kind":"function","anchor":"wirequeueworker","summary":"Registers a queue worker with the Pikku framework. Workers process background jobs from queues."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `wireQueueWorker` {#wirequeueworker}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers a queue worker with the Pikku framework.
 Workers process background jobs from queues.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireQueueWorker: (queueWorker: QueueWiring<any, any>) => void
 ```
 
-<details>
-<summary>Config keys (6)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (6)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -44,7 +52,9 @@ wireQueueWorker: (queueWorker: QueueWiring<any, any>) => void
 | `name` <sup>required</sup> | `string` | The queue this worker consumes. Whoever enqueues a job names the same string, so it is the contract between producer and consumer. |
 | `tags` | `string[]` | Filters this worker in and out of a build — see the `tags` option on `pikku all`. It has no effect at runtime. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 wireQueueWorker({
@@ -57,6 +67,10 @@ wireQueueWorker({
   func: writeAuditEvent,
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

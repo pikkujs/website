@@ -3,6 +3,7 @@ title: '#pikku/scenarios'
 sidebar_label: '#pikku/scenarios'
 sidebar_position: 1
 description: 'Drives features and scenarios against a real running server, in the vocabulary a user would use.'
+paper: true
 ---
 
 # `#pikku/scenarios`
@@ -15,45 +16,32 @@ import { createCookieJar, createScenarioRunner, pikkuAddonScenarioStep } from '#
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`createCookieJar`](#createcookiejar) | function | A cookie store for a scenario run, so a step that signs in leaves the session cookie behind for the steps after it. |
-| [`createScenarioRunner`](#createscenariorunner) | function | A workflow service with the scenario capability attached — the two lines `pikku scenario run` needs, in one call so no caller has to remember that the capability is installed rather than inherited. |
-| [`pikkuAddonScenarioStep`](#pikkuaddonscenariostep) | function | A step in which a third-party system acts — "Given Stripe's webhook arrives", "When Mailgun bounces it". |
-| [`PikkuBrowserWire`](#pikkubrowserwire) | interface | Structural browser handle, present only when the runner provisioned a browser for this step (a `browser` binding on the step config). |
-| [`pikkuFeature`](#pikkufeature) | function | A feature: an ordered group of scenarios, mirroring gherkin's Feature ↔ Scenario structure. Scenarios are referenced by imported identifier, so a renamed or deleted scenario is a compile error rather than a silent skip. |
-| [`PikkuFeatureEntry`](#pikkufeatureentry) | type | One entry in a feature's `scenarios` list, validated against itself: a bare scenario, or a scenario paired with the input to run it with. The paired form is gherkin's `Examples:` written as an ordinary loop. |
-| [`PikkuFunctionScenario`](#pikkufunctionscenario) | type | `Ctx` types `scenario.context`, defaulting to the body's own output. A hook returns void but shares the scenario's context, so it passes that scenario's output here instead. |
-| [`PikkuFunctionScenarioStep`](#pikkufunctionscenariostep) | type | One surface's implementation of a step. |
-| [`pikkuPlatformScenarioStep`](#pikkuplatformscenariostep) | function | A step in which the app acts on itself — "Given the platform has expired the trial". |
-| [`pikkuScenario`](#pikkuscenario) | function | A scenario: a complex workflow that drives the app the way users do. Steps run as actors over the REAL transport — `scenario.do(step, rpc, data, &#123; actor: actors.yasser &#125;)` — so flows double as e2e tests and staged/production health checks (no state reset; scope what you create). |
-| [`pikkuScenarioHook`](#pikkuscenariohook) | function | Declares a scenario hook. Returns the function verbatim — a hook is never registered, so this exists purely to give an inline hook a call site to be contextually typed from, the way every other pikku primitive is. |
-| [`PikkuScenarioHook`](#pikkuscenariohook-2) | type | A scenario lifecycle hook: the scenario's own `(services, data, wire)` signature with its result discarded. `OutputSchema` types `scenario.context` while the return type stays `void`. |
-| [`PikkuScenarioRef`](#pikkuscenarioref) | type | A scenario as a feature references it. Any `pikkuScenario` export is assignable; `In` is recovered from it so the paired form's `data` is checked against that scenario's own input. |
-| [`pikkuScenarioStep`](#pikkuscenariostep) | function | A named, reusable scenario step, declaring one implementation per surface an actor can drive it through. |
-| [`pollUntil`](#polluntil) | function | Retries an assertion until it passes or the timeout runs out — for the eventually-consistent parts of a scenario (a queued job, a projection). |
-| [`postScenarioJson`](#postscenariojson) | function | POST JSON somewhere and report what came back, without throwing on a 4xx/5xx. |
-| [`readScenarioHttpResponse`](#readscenariohttpresponse) | function | Drain a response into the shape a step can carry: the parsed body (an empty one counting as no body at all) alongside the text it was parsed from. |
-| [`requireScenarioEnv`](#requirescenarioenv) | function | The environment the current scenario run targets, or a throw explaining that the run carries none. Use it in a step that needs the target's URLs. |
-| [`ScenarioHttpResponse`](#scenariohttpresponse) | interface | What the transport answered, for a step that treats the status as data. |
-| [`ScenarioSurface`](#scenariosurface) | type | How an actor drives the system for one step. |
-| [`TestIdSelector`](#testidselector) | interface | How a browser step names an element. |
-| [`TypedPersonas`](#typedpersonas) | type | The personas this project declares, keyed by name — the `actors` a scenario step runs as. |
-| [`TypedScenario`](#typedscenario) | type | `Out` types `scenario.context`. |
-| [`TypedScenarioSteps`](#typedscenariosteps) | interface | The typed half of a scenario wire: `given`/`when`/`then`, narrowed to the names declared by `pikkuScenarioStep` in this project. `given` and `when` differ only in the prose the reporter renders; `then` additionally makes the step's bindings witnesses rather than alternatives. |
+<ApiExports items={[{"name":"createCookieJar","kind":"function","anchor":"createcookiejar","summary":"A cookie store for a scenario run, so a step that signs in leaves the session cookie behind for the steps after it."},{"name":"createScenarioRunner","kind":"function","anchor":"createscenariorunner","summary":"A workflow service with the scenario capability attached — the two lines pikku scenario run needs, in one call so no caller has to remember that the capability is installed rather than inherited."},{"name":"pikkuAddonScenarioStep","kind":"function","anchor":"pikkuaddonscenariostep","summary":"A step in which a third-party system acts — \"Given Stripe's webhook arrives\", \"When Mailgun bounces it\"."},{"name":"PikkuBrowserWire","kind":"interface","anchor":"pikkubrowserwire","summary":"Structural browser handle, present only when the runner provisioned a browser for this step (a browser binding on the step config)."},{"name":"pikkuFeature","kind":"function","anchor":"pikkufeature","summary":"A feature: an ordered group of scenarios, mirroring gherkin's Feature ↔ Scenario structure. Scenarios are referenced by imported identifier, so a renamed or deleted scenario is a compile error rather than a silent skip."},{"name":"PikkuFeatureEntry","kind":"type","anchor":"pikkufeatureentry","summary":"One entry in a feature's scenarios list, validated against itself: a bare scenario, or a scenario paired with the input to run it with. The paired form is gherkin's Examples: written as an ordinary loop."},{"name":"PikkuFunctionScenario","kind":"type","anchor":"pikkufunctionscenario","summary":"Ctx types scenario.context, defaulting to the body's own output. A hook returns void but shares the scenario's context, so it passes that scenario's output here instead."},{"name":"PikkuFunctionScenarioStep","kind":"type","anchor":"pikkufunctionscenariostep","summary":"One surface's implementation of a step."},{"name":"pikkuPlatformScenarioStep","kind":"function","anchor":"pikkuplatformscenariostep","summary":"A step in which the app acts on itself — \"Given the platform has expired the trial\"."},{"name":"pikkuScenario","kind":"function","anchor":"pikkuscenario","summary":"A scenario: a complex workflow that drives the app the way users do. Steps run as actors over the REAL transport — scenario.do(step, rpc, data, { actor: actors.yasser }) — so flows double as e2e tests and staged/production health checks (no state reset; scope what you create)."},{"name":"pikkuScenarioHook","kind":"function","anchor":"pikkuscenariohook","summary":"Declares a scenario hook. Returns the function verbatim — a hook is never registered, so this exists purely to give an inline hook a call site to be contextually typed from, the way every other pikku primitive is."},{"name":"PikkuScenarioHook","kind":"type","anchor":"pikkuscenariohook-2","summary":"A scenario lifecycle hook: the scenario's own (services, data, wire) signature with its result discarded. OutputSchema types scenario.context while the return type stays void."},{"name":"PikkuScenarioRef","kind":"type","anchor":"pikkuscenarioref","summary":"A scenario as a feature references it. Any pikkuScenario export is assignable; In is recovered from it so the paired form's data is checked against that scenario's own input."},{"name":"pikkuScenarioStep","kind":"function","anchor":"pikkuscenariostep","summary":"A named, reusable scenario step, declaring one implementation per surface an actor can drive it through."},{"name":"pollUntil","kind":"function","anchor":"polluntil","summary":"Retries an assertion until it passes or the timeout runs out — for the eventually-consistent parts of a scenario (a queued job, a projection)."},{"name":"postScenarioJson","kind":"function","anchor":"postscenariojson","summary":"POST JSON somewhere and report what came back, without throwing on a 4xx/5xx."},{"name":"readScenarioHttpResponse","kind":"function","anchor":"readscenariohttpresponse","summary":"Drain a response into the shape a step can carry: the parsed body (an empty one counting as no body at all) alongside the text it was parsed from."},{"name":"requireScenarioEnv","kind":"function","anchor":"requirescenarioenv","summary":"The environment the current scenario run targets, or a throw explaining that the run carries none. Use it in a step that needs the target's URLs."},{"name":"ScenarioHttpResponse","kind":"interface","anchor":"scenariohttpresponse","summary":"What the transport answered, for a step that treats the status as data."},{"name":"ScenarioSurface","kind":"type","anchor":"scenariosurface","summary":"How an actor drives the system for one step."},{"name":"TestIdSelector","kind":"interface","anchor":"testidselector","summary":"How a browser step names an element."},{"name":"TypedPersonas","kind":"type","anchor":"typedpersonas","summary":"The personas this project declares, keyed by name — the actors a scenario step runs as."},{"name":"TypedScenario","kind":"type","anchor":"typedscenario","summary":"Out types scenario.context."},{"name":"TypedScenarioSteps","kind":"interface","anchor":"typedscenariosteps","summary":"The typed half of a scenario wire: given/when/then, narrowed to the names declared by pikkuScenarioStep in this project. given and when differ only in the prose the reporter renders; then additionally makes the step's bindings witnesses rather than alternatives."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `createCookieJar` {#createcookiejar}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/workflow`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/workflow" />
+
+<ApiSection label="Description">
 
 A cookie store for a scenario run, so a step that signs in leaves the session
 cookie behind for the steps after it.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 createCookieJar: (apiUrl: string) => ScenarioCookieJar
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 /**
@@ -86,9 +74,17 @@ export const signsUpShopper = pikkuScenarioStep<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `createScenarioRunner` {#createscenariorunner}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/workflow`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/workflow" />
+
+<ApiSection label="Description">
 
 A workflow service with the scenario capability attached — the two lines
 `pikku scenario run` needs, in one call so no caller has to remember that the
@@ -98,13 +94,25 @@ The in-memory service is the right engine because a scenario run is a single
 external process driving a deployed app over its real transport: there is
 nothing to persist and no second worker to resume it.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 createScenarioRunner: (options?: WorkflowQueueOptions) => { workflowService: InMemoryWorkflowService; scenarioService: PikkuScenarioService; }
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuAddonScenarioStep` {#pikkuaddonscenariostep}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A step in which a third-party system acts — "Given Stripe's webhook arrives",
 "When Mailgun bounces it".
@@ -120,9 +128,17 @@ stubs, "Then Stripe was charged" asserts, and only the first is a stub.
 Local-test-only, and never in a virtual user's catalogue: one that could
 invoke this would forge its own payment success.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuAddonScenarioStep: { <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuSubjectScenarioStepConfigWithSchema<InputSchema, OutputSchema> & { addon: string; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "scenarioStep", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "default">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuSubjectScenarioStepConfig<In, Out> & { addon: string; }): PikkuFunctionConfig<In, Out, "scenarioStep">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 /**
@@ -155,9 +171,17 @@ export const stripeReportsPayment = pikkuAddonScenarioStep<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuBrowserWire` {#pikkubrowserwire}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/core/workflow`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/core/workflow" />
+
+<ApiSection label="Description">
 
 Structural browser handle, present only when the runner provisioned a
 browser for this step (a `browser` binding on the step config).
@@ -167,8 +191,9 @@ dependency-free for edge runtimes. `@pikku/playwright` augments this
 interface via `declare module`, so `wire.browser.page` is a fully typed
 Playwright `Page` in a project that installs it.
 
-<details>
-<summary>Config keys (3)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (3)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -176,11 +201,17 @@ Playwright `Page` in a project that installs it.
 | `goto` <sup>required</sup> | `(url: string) => Promise<void>` |  |
 | `screenshot` <sup>required</sup> | `(name?: string) => Promise<Uint8Array>` |  |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `pikkuFeature` {#pikkufeature}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A feature: an ordered group of scenarios, mirroring gherkin's Feature ↔
 Scenario structure. Scenarios are referenced by imported identifier, so a
@@ -205,9 +236,17 @@ export const credentialFeature = pikkuFeature({
 })
 ```
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuFeature: <const Scenarios extends readonly unknown[]>(config: PikkuFeatureConfig<Scenarios>) => PikkuFeatureConfig<Scenarios>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const journeyFeature = pikkuFeature({
@@ -218,33 +257,65 @@ export const journeyFeature = pikkuFeature({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuFeatureEntry` {#pikkufeatureentry}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 One entry in a feature's `scenarios` list, validated against itself: a bare
 scenario, or a scenario paired with the input to run it with. The paired form
 is gherkin's `Examples:` written as an ordinary loop.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 PikkuFeatureEntry: PikkuFeatureEntry<Entry>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuFunctionScenario` {#pikkufunctionscenario}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 `Ctx` types `scenario.context`, defaulting to the body's own output. A hook
 returns void but shares the scenario's context, so it passes that scenario's
 output here instead.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 PikkuFunctionScenario: PikkuFunctionScenario<In, Out, Ctx>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuFunctionScenarioStep` {#pikkufunctionscenariostep}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 One surface's implementation of a step.
 
@@ -252,13 +323,25 @@ Each binding is typed independently, so a browser binding gets a non-optional
 `wire.browser` and a cli binding a non-optional `wire.cli` without either
 leaking into the other.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 PikkuFunctionScenarioStep: PikkuFunctionScenarioStep<In, Out, Surface, HasActor>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuPlatformScenarioStep` {#pikkuplatformscenariostep}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A step in which the app acts on itself — "Given the platform has expired the
 trial".
@@ -270,9 +353,17 @@ asterisk. A persona is a person.
 Local-test-only, and never in a virtual user's catalogue: a virtual user that
 could expire its own trial is manufacturing the outcome it exists to discover.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuPlatformScenarioStep: { <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuSubjectScenarioStepConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "scenarioStep", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "default">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuSubjectScenarioStepConfig<In, Out>): PikkuFunctionConfig<In, Out, "scenarioStep">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 /**
@@ -294,18 +385,34 @@ export const shipsTheOrder = pikkuPlatformScenarioStep<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuScenario` {#pikkuscenario}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A scenario: a complex workflow that drives the app the way users do.
 Steps run as actors over the REAL transport — `scenario.do(step, rpc,
 data, &#123; actor: actors.yasser &#125;)` — so flows double as e2e tests and
 staged/production health checks (no state reset; scope what you create).
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuScenario: { <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "scenario" | "actors", PikkuFunctionScenario<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown>, InputSchema, OutputSchema>; <In, Out = unknown>(func: PikkuFunctionScenario<In, Out> | PikkuFunctionConfig<In, Out, "scenario" | "actors", PikkuFunctionScenario<In, Out>>): PikkuFunctionConfig<In, Out, "scenario" | "actors">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // A scenario is a workflow whose steps run as real users ("actors") over the
@@ -387,17 +494,33 @@ export const shopperBuysAnItem = pikkuScenario({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuScenarioHook` {#pikkuscenariohook}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Declares a scenario hook. Returns the function verbatim — a hook is never
 registered, so this exists purely to give an inline hook a call site to be
 contextually typed from, the way every other pikku primitive is.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuScenarioHook: <In = unknown, Ctx = unknown>(hook: PikkuFunctionScenario<In, void, Ctx>) => PikkuFunctionScenario<In, void, Ctx>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 /**
@@ -421,32 +544,60 @@ const emptiesTheBasket = pikkuScenarioHook(
 )
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuScenarioHook` {#pikkuscenariohook-2}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A scenario lifecycle hook: the scenario's own `(services, data, wire)`
 signature with its result discarded. `OutputSchema` types
 `scenario.context` while the return type stays `void`.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 PikkuScenarioHook: PikkuScenarioHook<InputSchema, OutputSchema>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuScenarioRef` {#pikkuscenarioref}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A scenario as a feature references it. Any `pikkuScenario` export is
 assignable; `In` is recovered from it so the paired form's `data` is
 checked against that scenario's own input.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 PikkuScenarioRef: PikkuScenarioRef<In, Out>
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (30)">
+
 <details>
-<summary>Config keys (30)</summary>
+<summary>Show all 30</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -483,9 +634,17 @@ PikkuScenarioRef: PikkuScenarioRef<In, Out>
 
 </details>
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuScenarioStep` {#pikkuscenariostep}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 A named, reusable scenario step, declaring one implementation per surface an
 actor can drive it through.
@@ -498,9 +657,17 @@ flow can a human actually reach" a number rather than a guess.
 Steps are deliberately NOT registered as RPCs: a browser-driving step must
 never be network-callable.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuScenarioStep: { <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { actor: true; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "scenarioStep" | "browser" | "cli", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "browser" | "cli" | "default">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { actor: true; }): PikkuFunctionConfig<In, Out, "scenarioStep" | "browser" | "cli">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { browser: {}; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "scenarioStep" | "browser" | "cli", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "browser" | "cli" | "default">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { browser: {}; }): PikkuFunctionConfig<In, Out, "scenarioStep" | "browser" | "cli">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "scenarioStep" | "browser" | "cli", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "browser" | "cli" | "default">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out>): PikkuFunctionConfig<In, Out, "scenarioStep" | "browser" | "cli">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const opensPage = pikkuScenarioStep({
@@ -524,16 +691,32 @@ export const opensPage = pikkuScenarioStep({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pollUntil` {#polluntil}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/workflow`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/workflow" />
+
+<ApiSection label="Description">
 
 Retries an assertion until it passes or the timeout runs out — for the
 eventually-consistent parts of a scenario (a queued job, a projection).
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pollUntil: <T>(attempt: () => Promise<T | undefined> | T | undefined, { timeoutMs, intervalMs }?: PollOptions) => Promise<T | undefined>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const awaitsCheckout = pikkuScenarioStep<
@@ -570,9 +753,17 @@ export const awaitsCheckout = pikkuScenarioStep<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `postScenarioJson` {#postscenariojson}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/services`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/services" />
+
+<ApiSection label="Description">
 
 POST JSON somewhere and report what came back, without throwing on a 4xx/5xx.
 
@@ -583,9 +774,17 @@ outright when the target answers an empty body or an HTML error page. A
 refusal is the expected outcome of a permissions scenario, so it has to
 survive as data.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 postScenarioJson: <T = unknown>(url: string, { body, headers, method, fetch: send, }?: ScenarioJsonRequest) => Promise<ScenarioHttpResponse<T>>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const startsCheckout = pikkuScenarioStep<
@@ -619,9 +818,17 @@ export const startsCheckout = pikkuScenarioStep<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `readScenarioHttpResponse` {#readscenariohttpresponse}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/services`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/services" />
+
+<ApiSection label="Description">
 
 Drain a response into the shape a step can carry: the parsed body (an empty
 one counting as no body at all) alongside the text it was parsed from.
@@ -630,9 +837,17 @@ one counting as no body at all) alongside the text it was parsed from.
 route with no RPC, an identity no persona can hold — reaches for this rather
 than writing the same record by hand.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 readScenarioHttpResponse: <T = unknown>(res: Response) => Promise<ScenarioHttpResponse<T>>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const awaitsCheckout = pikkuScenarioStep<
@@ -669,16 +884,32 @@ export const awaitsCheckout = pikkuScenarioStep<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `requireScenarioEnv` {#requirescenarioenv}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/workflow`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/workflow" />
+
+<ApiSection label="Description">
 
 The environment the current scenario run targets, or a throw explaining that
 the run carries none. Use it in a step that needs the target's URLs.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 requireScenarioEnv: (scenarioStep: PikkuScenarioStepWire | undefined) => ScenarioEnvironment
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const startsCheckout = pikkuScenarioStep<
@@ -712,9 +943,17 @@ export const startsCheckout = pikkuScenarioStep<
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `ScenarioHttpResponse` {#scenariohttpresponse}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/core/services`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/core/services" />
+
+<ApiSection label="Description">
 
 What the transport answered, for a step that treats the status as data.
 
@@ -722,12 +961,17 @@ An HTTP response with its body already drained: the stream can only be read
 once, and a step's return value crosses into the run record, so the response
 object itself cannot travel. This is the shape every caller ends up with.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 ScenarioHttpResponse: ScenarioHttpResponse<T>
 ```
 
-<details>
-<summary>Config keys (4)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (4)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -736,11 +980,17 @@ ScenarioHttpResponse: ScenarioHttpResponse<T>
 | `serialized` <sup>required</sup> | `string` | The whole body as text, so an assertion can search it without knowing the payload's shape — and so an error body that is HTML rather than JSON still says what went wrong. |
 | `status` <sup>required</sup> | `number` |  |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `ScenarioSurface` {#scenariosurface}
 
-<span className="api-symbol-meta">type · re-exported from `@pikku/core/workflow`</span>
+<ApiMeta kind="type" origin="re-exported from @pikku/core/workflow" />
+
+<ApiSection label="Description">
 
 How an actor drives the system for one step.
 
@@ -751,9 +1001,17 @@ the websocket, or entirely server-side.
 `default` is the floor: it is what every other surface falls back to, so it
 can never itself fall back.
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `TestIdSelector` {#testidselector}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/core/workflow`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/core/workflow" />
+
+<ApiSection label="Description">
 
 How a browser step names an element.
 
@@ -766,8 +1024,9 @@ scopes the lookup to one row or section.
 Declared here so a step's input type is structural; the driver
 (`@pikku/playwright`) is what resolves it against a real page.
 
-<details>
-<summary>Config keys (5)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (5)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -777,27 +1036,49 @@ Declared here so a step's input type is structural; the driver
 | `where` | `Record<string, string>` | Data attributes the element must also carry, e.g. `&#123; 'data-open': 'true' &#125;`. |
 | `within` | `TestIdSelector` | Scope the lookup to one enclosing element, e.g. the row for one user. |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `TypedPersonas` {#typedpersonas}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The personas this project declares, keyed by name — the `actors` a scenario
 step runs as.
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `TypedScenario` {#typedscenario}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 `Out` types `scenario.context`.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 TypedScenario: TypedScenario<Out>
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (13)">
+
 <details>
-<summary>Config keys (13)</summary>
+<summary>Show all 13</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -817,14 +1098,26 @@ TypedScenario: TypedScenario<Out>
 
 </details>
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `TypedScenarioSteps` {#typedscenariosteps}
 
-<span className="api-symbol-meta">interface · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="interface" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The typed half of a scenario wire: `given`/`when`/`then`, narrowed to the
 names declared by `pikkuScenarioStep` in this project. `given` and `when`
 differ only in the prose the reporter renders; `then` additionally makes the
 step's bindings witnesses rather than alternatives.
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

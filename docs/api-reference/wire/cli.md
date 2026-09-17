@@ -3,6 +3,7 @@ title: '#pikku/cli'
 sidebar_label: '#pikku/cli'
 sidebar_position: 2
 description: 'Wires a function as a command, with its flags and arguments derived from the function input.'
+paper: true
 ---
 
 # `#pikku/cli`
@@ -15,24 +16,31 @@ import { defineCLICommands, pikkuCLICommand, pikkuCLIRender } from '#pikku/cli'
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`defineCLICommands`](#defineclicommands) | function | Type-safe helper for defining CLI commands that can be composed and spread into wireCLI. |
-| [`pikkuCLICommand`](#pikkuclicommand) | function | Creates a CLI command definition with automatic option inference from the function's input type. This allows TypeScript to automatically derive CLI options from the function signature. |
-| [`pikkuCLIRender`](#pikkuclirender) | function | Creates a type-safe CLI renderer with access to your application's singleton services. The renderer receives the full singleton services and output data to format and display results. |
-| [`wireCLI`](#wirecli) | function | Registers a CLI application with the Pikku framework. Creates command-line interfaces with type-safe commands and options. |
+<ApiExports items={[{"name":"defineCLICommands","kind":"function","anchor":"defineclicommands","summary":"Type-safe helper for defining CLI commands that can be composed and spread into wireCLI."},{"name":"pikkuCLICommand","kind":"function","anchor":"pikkuclicommand","summary":"Creates a CLI command definition with automatic option inference from the function's input type. This allows TypeScript to automatically derive CLI options from the function signature."},{"name":"pikkuCLIRender","kind":"function","anchor":"pikkuclirender","summary":"Creates a type-safe CLI renderer with access to your application's singleton services. The renderer receives the full singleton services and output data to format and display results."},{"name":"wireCLI","kind":"function","anchor":"wirecli","summary":"Registers a CLI application with the Pikku framework. Creates command-line interfaces with type-safe commands and options."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `defineCLICommands` {#defineclicommands}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Type-safe helper for defining CLI commands that can be composed and spread into `wireCLI`.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 defineCLICommands: <T extends Record<string, CoreCLICommandConfig<any, PikkuMiddleware, PikkuCLIRender<any>, any>>>(commands: T) => T
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // The command map is a contract of its own, so it can be declared once and
@@ -53,19 +61,35 @@ const shopCommands = defineCLICommands({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuCLICommand` {#pikkuclicommand}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a CLI command definition with automatic option inference from the function's input type.
 This allows TypeScript to automatically derive CLI options from the function signature.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 pikkuCLICommand: <FuncConfig extends PikkuFunctionConfig<any, any, "cli" | "rpc" | "session">, Params extends string>(config: CLICommandConfig<FuncConfig, any, any, Params>) => CoreCLICommandConfig<FuncConfig, PikkuMiddleware, PikkuCLIRender<any>, string>
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (11)">
+
 <details>
-<summary>Config keys (11)</summary>
+<summary>Show all 11</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -82,6 +106,10 @@ pikkuCLICommand: <FuncConfig extends PikkuFunctionConfig<any, any, "cli" | "rpc"
 | `title` | `string` | The heading shown above this command's own help. |
 
 </details>
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // The command map is a contract of its own, so it can be declared once and
@@ -104,16 +132,32 @@ const shopCommands = defineCLICommands({
 wireCLI({ program: 'shop', commands: shopCommands })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuCLIRender` {#pikkuclirender}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a type-safe CLI renderer with access to your application's singleton services.
 The renderer receives the full singleton services and output data to format and display results.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuCLIRender: <Data, RequiredServices extends SingletonServices = SingletonServices>(render: (services: SingletonServices, data: Data) => void | Promise<void>) => PikkuCLIRender<Data, RequiredServices>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 type ItemList = {
@@ -136,19 +180,35 @@ export const itemRenderer = pikkuCLIRender<ItemList>((_services, { items }) => {
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `wireCLI` {#wirecli}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers a CLI application with the Pikku framework.
 Creates command-line interfaces with type-safe commands and options.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireCLI: <Commands extends Record<string, CoreCLICommandConfig<any, PikkuMiddleware, PikkuCLIRender<any>, any>>, GlobalOptions>(cli: CLIWiring<Commands, GlobalOptions>) => void
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (10)">
+
 <details>
-<summary>Config keys (10)</summary>
+<summary>Show all 10</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -164,6 +224,10 @@ wireCLI: <Commands extends Record<string, CoreCLICommandConfig<any, PikkuMiddlew
 | `tags` | `string[]` | Filters this program in and out of a build — see the `tags` option on `pikku all`. It has no effect at runtime. |
 
 </details>
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // The command map is a contract of its own, so it can be declared once and
@@ -185,6 +249,10 @@ const shopCommands = defineCLICommands({
 
 wireCLI({ program: 'shop', commands: shopCommands })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

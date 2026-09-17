@@ -3,6 +3,7 @@ title: '#pikku/variables'
 sidebar_label: '#pikku/variables'
 sidebar_position: 5
 description: 'Configuration a function reads through the variables service, declared once so a deployment can be checked for what it is missing.'
+paper: true
 ---
 
 # `#pikku/variables`
@@ -15,28 +16,33 @@ import { defineVariable, TypedVariablesService, VariablesMap } from '#pikku/vari
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`defineVariable`](#definevariable) | function | Declares an environment variable this project needs, with the shape of its value. The CLI collects every declaration into `VariablesMap`, which is what makes `variables.get('NAME')` return the right type instead of `unknown`. |
-| [`TypedVariablesService`](#typedvariablesservice) | class | The `variables` service as this project sees it: `get('NAME')` resolves the value's type from `VariablesMap` instead of returning `unknown`. |
-| [`VariablesMap`](#variablesmap) | interface | Every variable this project declares with `defineVariable`, keyed by name. It is what gives `variables.get('NAME')` a real type. |
+<ApiExports items={[{"name":"defineVariable","kind":"function","anchor":"definevariable","summary":"Declares an environment variable this project needs, with the shape of its value. The CLI collects every declaration into VariablesMap, which is what makes variables.get('NAME') return the right type instead of unknown."},{"name":"TypedVariablesService","kind":"class","anchor":"typedvariablesservice","summary":"The variables service as this project sees it: get('NAME') resolves the value's type from VariablesMap instead of returning unknown."},{"name":"VariablesMap","kind":"interface","anchor":"variablesmap","summary":"Every variable this project declares with defineVariable, keyed by name. It is what gives variables.get('NAME') a real type."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `defineVariable` {#definevariable}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/variable`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/variable" />
+
+<ApiSection label="Description">
 
 Declares an environment variable this project needs, with the shape of its
 value. The CLI collects every declaration into `VariablesMap`, which is what
 makes `variables.get('NAME')` return the right type instead of `unknown`.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 defineVariable: <T>(_config: CoreVariable<T>) => void
 ```
 
-<details>
-<summary>Config keys (7)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (7)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -48,7 +54,9 @@ defineVariable: <T>(_config: CoreVariable<T>) => void
 | `schema` <sup>required</sup> | `T` | The shape of the value. It arrives as a string, so this is also what parses it. |
 | `variableId` <sup>required</sup> | `string` | The environment variable this reads, which is the name that has to exist on the host. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const DatabaseUrlSchema = z.string()
@@ -91,19 +99,35 @@ defineVariable({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `TypedVariablesService` {#typedvariablesservice}
 
-<span className="api-symbol-meta">class · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="class" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 The `variables` service as this project sees it: `get('NAME')` resolves the
 value's type from `VariablesMap` instead of returning `unknown`.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 TypedVariablesService: new TypedVariablesService(variables: VariablesService)
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (12)">
+
 <details>
-<summary>Config keys (12)</summary>
+<summary>Show all 12</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -122,12 +146,24 @@ TypedVariablesService: new TypedVariablesService(variables: VariablesService)
 
 </details>
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `VariablesMap` {#variablesmap}
 
-<span className="api-symbol-meta">interface · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="interface" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Every variable this project declares with `defineVariable`, keyed by name. It
 is what gives `variables.get('NAME')` a real type.
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

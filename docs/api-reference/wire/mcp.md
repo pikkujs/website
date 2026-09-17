@@ -3,6 +3,7 @@ title: '#pikku/mcp'
 sidebar_label: '#pikku/mcp'
 sidebar_position: 5
 description: 'Wires a function as an MCP tool, resource or prompt for a model to call.'
+paper: true
 ---
 
 # `#pikku/mcp`
@@ -15,19 +16,17 @@ import { pikkuMCPPromptFunc, pikkuMCPResourceFunc, pikkuMCPToolFunc } from '#pik
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`pikkuMCPPromptFunc`](#pikkumcppromptfunc) | function | Creates a function for handling MCP prompt requests. These functions generate prompt templates for AI models. |
-| [`pikkuMCPResourceFunc`](#pikkumcpresourcefunc) | function | Creates a function for handling MCP resource requests. These functions provide data that AI models can access. |
-| [`pikkuMCPToolFunc`](#pikkumcptoolfunc) | function | Creates a function for handling MCP tool invocations. These functions perform actions that AI models can request. |
-| [`wireMCPPrompt`](#wiremcpprompt) | function | Registers an MCP prompt with the Pikku framework. Prompts provide templates that AI models can use. |
-| [`wireMCPResource`](#wiremcpresource) | function | Registers an MCP resource with the Pikku framework. Resources provide data that AI models can access. |
+<ApiExports items={[{"name":"pikkuMCPPromptFunc","kind":"function","anchor":"pikkumcppromptfunc","summary":"Creates a function for handling MCP prompt requests. These functions generate prompt templates for AI models."},{"name":"pikkuMCPResourceFunc","kind":"function","anchor":"pikkumcpresourcefunc","summary":"Creates a function for handling MCP resource requests. These functions provide data that AI models can access."},{"name":"pikkuMCPToolFunc","kind":"function","anchor":"pikkumcptoolfunc","summary":"Creates a function for handling MCP tool invocations. These functions perform actions that AI models can request."},{"name":"wireMCPPrompt","kind":"function","anchor":"wiremcpprompt","summary":"Registers an MCP prompt with the Pikku framework. Prompts provide templates that AI models can use."},{"name":"wireMCPResource","kind":"function","anchor":"wiremcpresource","summary":"Registers an MCP resource with the Pikku framework. Resources provide data that AI models can access."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `pikkuMCPPromptFunc` {#pikkumcppromptfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a function for handling MCP prompt requests.
 These functions generate prompt templates for AI models.
@@ -36,9 +35,17 @@ Supports two patterns:
 1. Generic types: `pikkuMCPPromptFunc&lt;Input&gt;(&#123; func: ... &#125;)`
 2. Zod schemas: `pikkuMCPPromptFunc(&#123; input: z.object(...), func: ... &#125;)`
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuMCPPromptFunc: { <InputSchema extends StandardSchemaV1>(config: MCPPromptFuncConfigWithSchema<InputSchema>): PikkuFunctionConfig<InferSchemaOutput<InputSchema>, MCPPromptResponse, "mcp" | "rpc">; <In>(func: PikkuFunctionSessionless<In, MCPPromptResponse, "mcp" | "rpc"> | { func: PikkuFunctionSessionless<In, MCPPromptResponse, "mcp" | "rpc">; name?: string; }): PikkuFunctionConfig<In, MCPPromptResponse, "mcp" | "rpc">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // MCP prompts give AI agents reusable conversation starters.
@@ -65,9 +72,17 @@ wireMCPPrompt({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuMCPResourceFunc` {#pikkumcpresourcefunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a function for handling MCP resource requests.
 These functions provide data that AI models can access.
@@ -76,9 +91,17 @@ Supports two patterns:
 1. Generic types: `pikkuMCPResourceFunc&lt;Input&gt;(&#123; func: ... &#125;)`
 2. Zod schemas: `pikkuMCPResourceFunc(&#123; input: z.object(...), func: ... &#125;)`
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuMCPResourceFunc: { <InputSchema extends StandardSchemaV1>(config: MCPResourceFuncConfigWithSchema<InputSchema>): PikkuFunctionConfig<InferSchemaOutput<InputSchema>, MCPResourceResponse, "mcp" | "rpc">; <In>(func: PikkuFunctionSessionless<In, MCPResourceResponse, "mcp" | "rpc"> | { func: PikkuFunctionSessionless<In, MCPResourceResponse, "mcp" | "rpc">; name?: string; }): PikkuFunctionConfig<In, MCPResourceResponse, "mcp" | "rpc">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // MCP resources let AI agents read data by URI template.
@@ -101,9 +124,17 @@ wireMCPResource({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuMCPToolFunc` {#pikkumcptoolfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a function for handling MCP tool invocations.
 These functions perform actions that AI models can request.
@@ -112,9 +143,17 @@ Supports two patterns:
 1. Generic types: `pikkuMCPToolFunc&lt;Input&gt;(&#123; func: ... &#125;)`
 2. Zod schemas: `pikkuMCPToolFunc(&#123; input: z.object(...), func: ... &#125;)`
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuMCPToolFunc: { <InputSchema extends StandardSchemaV1>(config: MCPToolFuncConfigWithSchema<InputSchema>): PikkuFunctionConfig<InferSchemaOutput<InputSchema>, MCPToolResponse, "mcp" | "rpc">; <In>(func: PikkuFunctionSessionless<In, MCPToolResponse, "mcp" | "rpc"> | { func: PikkuFunctionSessionless<In, MCPToolResponse, "mcp" | "rpc">; description?: string; tags?: string[]; title?: string; summary?: string; name?: string; middleware?: PikkuMiddleware[]; permissions?: CorePermissionGroup<PikkuPermission<In>>; }): PikkuFunctionConfig<In, MCPToolResponse, "mcp" | "rpc">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // Any Pikku function becomes an MCP tool — the same implementation already wired to HTTP.
@@ -127,19 +166,32 @@ export const getItemForAI = pikkuMCPToolFunc<{ itemId: string }>({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `wireMCPPrompt` {#wiremcpprompt}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers an MCP prompt with the Pikku framework.
 Prompts provide templates that AI models can use.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireMCPPrompt: <In>(mcpPrompt: MCPPromptWiring<In>) => void
 ```
 
-<details>
-<summary>Config keys (7)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (7)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -151,7 +203,9 @@ wireMCPPrompt: <In>(mcpPrompt: MCPPromptWiring<In>) => void
 | `summary` | `string` | A one-line description for listings, where the full `description` is too long. |
 | `tags` | `string[]` | Filters this wiring in and out of a build — see the `tags` option on `pikku all`. It has no effect at runtime. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 // MCP prompts give AI agents reusable conversation starters.
@@ -178,19 +232,35 @@ wireMCPPrompt({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `wireMCPResource` {#wiremcpresource}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers an MCP resource with the Pikku framework.
 Resources provide data that AI models can access.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireMCPResource: <In, URI extends string>(mcpResource: MCPResourceWiring<In, URI> & AssertMCPResourceURIParams<In, URI>) => void
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (11)">
+
 <details>
-<summary>Config keys (11)</summary>
+<summary>Show all 11</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -208,6 +278,10 @@ wireMCPResource: <In, URI extends string>(mcpResource: MCPResourceWiring<In, URI
 
 </details>
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 // MCP resources let AI agents read data by URI template.
 export const itemResource = pikkuMCPResourceFunc<{ itemId: string }>(
@@ -228,6 +302,10 @@ wireMCPResource({
   func: itemResource,
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

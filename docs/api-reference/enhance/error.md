@@ -3,6 +3,7 @@ title: '#pikku/error'
 sidebar_label: '#pikku/error'
 sidebar_position: 2
 description: 'The errors your functions throw and the HTTP status each one maps to, so a thrown error is part of the contract rather than a stack trace.'
+paper: true
 ---
 
 # `#pikku/error`
@@ -15,13 +16,7 @@ import { addError, isExpectedError, ErrorDetails } from '#pikku/error'
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`addError`](#adderror) | function | Registers one of your own error classes with the HTTP status and message it should produce, so throwing it maps to a real response instead of a 500. |
-| [`ErrorDetails`](#errordetails) | interface | Types the exports above mention but do not themselves export. Without them a consumer's declaration emit has no name for the type it infers, and fails with TS2883 rather than reaching for the original entry point. |
-| [`isExpectedError`](#isexpectederror) | function | A `PikkuError`, or any error carrying `expected: true` — the marker that survives serialization across a workflow step boundary and rehydration as a plain `Error`. Callers log the message alone for these, the full stack for everything else. |
-| [`PikkuError`](#pikkuerror) | class |  |
-| [`SerializedError`](#serializederror) | interface |  |
+<ApiExports items={[{"name":"addError","kind":"function","anchor":"adderror","summary":"Registers one of your own error classes with the HTTP status and message it should produce, so throwing it maps to a real response instead of a 500."},{"name":"ErrorDetails","kind":"interface","anchor":"errordetails","summary":"Types the exports above mention but do not themselves export. Without them a consumer's declaration emit has no name for the type it infers, and fails with TS2883 rather than reaching for the original entry point."},{"name":"isExpectedError","kind":"function","anchor":"isexpectederror","summary":"A PikkuError, or any error carrying expected: true — the marker that survives serialization across a workflow step boundary and rehydration as a plain Error. Callers log the message alone for these, the full stack for everything else."},{"name":"PikkuError","kind":"class","anchor":"pikkuerror","summary":""},{"name":"SerializedError","kind":"interface","anchor":"serializederror","summary":""}]} />
 
 ## Error classes
 
@@ -76,19 +71,28 @@ Throw one of these and every wiring turns it into its status — HTTP responds w
 
 ## Reference
 
+<ApiSymbol>
+
 ### `addError` {#adderror}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/errors`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/errors" />
+
+<ApiSection label="Description">
 
 Registers one of your own error classes with the HTTP status and message it
 should produce, so throwing it maps to a real response instead of a 500.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 addError: (error: any, { status, message, mcpCode }: ErrorDetails) => void
 ```
 
-<details>
-<summary>Config keys (3)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (3)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -96,7 +100,9 @@ addError: (error: any, { status, message, mcpCode }: ErrorDetails) => void
 | `message` <sup>required</sup> | `string` | What the caller is told. It leaves the process, so it must not name anything internal. |
 | `status` <sup>required</sup> | `number` | The HTTP status this error answers with, instead of a 500. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export class OutOfStockError extends Error {}
@@ -107,16 +113,25 @@ addError(OutOfStockError, {
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `ErrorDetails` {#errordetails}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/core/errors`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/core/errors" />
+
+<ApiSection label="Description">
 
 Types the exports above mention but do not themselves export. Without
 them a consumer's declaration emit has no name for the type it infers,
 and fails with TS2883 rather than reaching for the original entry point.
 
-<details>
-<summary>Config keys (3)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (3)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -124,20 +139,34 @@ and fails with TS2883 rather than reaching for the original entry point.
 | `message` <sup>required</sup> | `string` | What the caller is told. It leaves the process, so it must not name anything internal. |
 | `status` <sup>required</sup> | `number` | The HTTP status this error answers with, instead of a 500. |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `isExpectedError` {#isexpectederror}
 
-<span className="api-symbol-meta">function · re-exported from `@pikku/core/errors`</span>
+<ApiMeta kind="function" origin="re-exported from @pikku/core/errors" />
+
+<ApiSection label="Description">
 
 A `PikkuError`, or any error carrying `expected: true` — the marker that
 survives serialization across a workflow step boundary and rehydration as a
 plain `Error`. Callers log the message alone for these, the full stack for
 everything else.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 isExpectedError: (error: unknown) => boolean
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 try {
@@ -154,20 +183,33 @@ try {
 }
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `PikkuError` {#pikkuerror}
 
-<span className="api-symbol-meta">class · re-exported from `@pikku/core/errors`</span>
+<ApiMeta kind="class" origin="re-exported from @pikku/core/errors" />
+
+<ApiSection label="Signature">
 
 ```typescript
 PikkuError: new PikkuError(message?: string)
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `SerializedError` {#serializederror}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/core/errors`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/core/errors" />
 
-<details>
-<summary>Config keys (4)</summary>
+<ApiSection label="Config keys (4)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -176,7 +218,9 @@ PikkuError: new PikkuError(message?: string)
 | `message` <sup>required</sup> | `string` | What went wrong, carried across a boundary that cannot carry an Error. |
 | `stack` | `string` | Present only where the failure was unexpected; a deliberate error is logged by its message alone. |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

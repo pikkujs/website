@@ -3,6 +3,7 @@ title: '#pikku/trigger'
 sidebar_label: '#pikku/trigger'
 sidebar_position: 8
 description: 'Wires a function to an event a source emits, rather than to a caller that asks for it.'
+paper: true
 ---
 
 # `#pikku/trigger`
@@ -15,24 +16,32 @@ import { pikkuTriggerFunc, wireTrigger, wireTriggerSource } from '#pikku/trigger
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`pikkuTriggerFunc`](#pikkutriggerfunc) | function | Creates a trigger function configuration. Use this to define trigger functions that set up subscriptions. |
-| [`wireTrigger`](#wiretrigger) | function | Registers a trigger with the Pikku framework. Declares a trigger name and its target pikku function. Runs everywhere — inspector extracts at build time. |
-| [`wireTriggerSource`](#wiretriggersource) | function | Registers a trigger source with the Pikku framework. Provides the subscription function and input data. Only imported in the trigger worker process. |
+<ApiExports items={[{"name":"pikkuTriggerFunc","kind":"function","anchor":"pikkutriggerfunc","summary":"Creates a trigger function configuration. Use this to define trigger functions that set up subscriptions."},{"name":"wireTrigger","kind":"function","anchor":"wiretrigger","summary":"Registers a trigger with the Pikku framework. Declares a trigger name and its target pikku function. Runs everywhere — inspector extracts at build time."},{"name":"wireTriggerSource","kind":"function","anchor":"wiretriggersource","summary":"Registers a trigger source with the Pikku framework. Provides the subscription function and input data. Only imported in the trigger worker process."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `pikkuTriggerFunc` {#pikkutriggerfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a trigger function configuration.
 Use this to define trigger functions that set up subscriptions.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuTriggerFunc: { <InputSchema extends StandardSchemaV1, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuTriggerFunctionConfigWithSchema<InputSchema, OutputSchema>): PikkuTriggerFunctionConfig<InferSchemaOutput<InputSchema>, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, InputSchema, OutputSchema>; <TInput, TOutput = unknown>(triggerOrConfig: PikkuTriggerFunction<TInput, TOutput> | PikkuTriggerFunctionConfig<TInput, TOutput>): PikkuTriggerFunctionConfig<TInput, TOutput>; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const redisSubscribeTrigger = pikkuTriggerFunc<
@@ -61,20 +70,33 @@ export const redisSubscribeTrigger = pikkuTriggerFunc({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `wireTrigger` {#wiretrigger}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers a trigger with the Pikku framework.
 Declares a trigger name and its target pikku function.
 Runs everywhere — inspector extracts at build time.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 wireTrigger: (trigger: TriggerWiring) => void
 ```
 
-<details>
-<summary>Config keys (4)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (4)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -83,7 +105,9 @@ wireTrigger: (trigger: TriggerWiring) => void
 | `name` <sup>required</sup> | `string` | What a `wireTriggerSource` points at to fire this trigger. It is the contract between the two, so both must spell it the same. |
 | `tags` | `string[]` | Filters this trigger in and out of a build — see the `tags` option on `pikku all`. It has no effect at runtime. |
 
-</details>
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 wireTrigger({
@@ -92,17 +116,33 @@ wireTrigger({
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `wireTriggerSource` {#wiretriggersource}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers a trigger source with the Pikku framework.
 Provides the subscription function and input data.
 Only imported in the trigger worker process.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 wireTriggerSource: <TInput = unknown, TOutput = unknown>(source: TriggerSource<TInput, TOutput>) => void
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 /**
@@ -120,6 +160,10 @@ wireTriggerSource({
   input: { threshold: 5 },
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

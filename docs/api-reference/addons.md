@@ -3,13 +3,14 @@ title: The addon surface
 sidebar_label: 'Building an addon'
 sidebar_position: 7
 description: 'The 15 doors an addon author imports from — what they share with the application surface, and what they do not.'
+paper: true
 ---
 
 # The addon surface
 
 An addon declares functions and contracts; the host application decides how the world reaches them. The same barrels are generated under `#pikku/addon/*`, minus every wiring — an addon that called `wireHTTP` would be registering a route in a registry it does not own.
 
-An addon reaches its doors under `#pikku/addon/*` instead of `#pikku/*`: **15 doors, 154 exports**, from `@pikku/cli@0.12.133`.
+An addon reaches its doors under `#pikku/addon/*` instead of `#pikku/*`: **15 doors, 154 exports**, from `@pikku/cli@0.12.140`.
 
 ## An addon declares; the application wires
 
@@ -53,36 +54,68 @@ These exist only on the addon surface, so they are documented here in full.
 
 The three factories a project declares exactly once — its config, its singleton services and its per-wire services. An addon declares the same three in its own flavour, handed the logger, variables and secrets the host application already built. Everything else on this page is imported by features; these are imported by bootstrap and then left alone.
 
+<ApiSymbol>
+
 ### `AddonBaseServices` {#addonbaseservices}
 
-<span className="api-symbol-meta">type · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="type" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Base services provided to addon package service factories.
 These are always available from the parent application.
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuAddonConfig` {#pikkuaddonconfig}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a Pikku config factory for addon packages.
 Unlike `pikkuConfig`, this receives AddonBaseServices (logger, variables, secrets)
 from the parent application, so addon packages can read variables/secrets during config creation.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuAddonConfig: <ExistingServices extends Omit<Partial<SingletonServices>, "variables" | "secrets"> & AddonBaseServices>(func: (services: ExistingServices) => Promise<Config>) => CreateConfig<Config>
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuAddonServices` {#pikkuaddonservices}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a Pikku singleton services factory for addon packages.
 Unlike `pikkuServices`, this expects the parent application to provide
 logger, variables, and secrets - no fallbacks needed.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuAddonServices: <T extends Record<string, any>, ExistingServices extends Omit<Partial<SingletonServices>, "variables" | "secrets"> & AddonBaseServices>(func: (config: Config, services: ExistingServices) => Promise<T>) => (config: Config, existingServices?: Partial<SingletonServices>) => Promise<RequiredSingletonServices>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const createSingletonServices = pikkuAddonServices(async (
@@ -95,16 +128,32 @@ export const createSingletonServices = pikkuAddonServices(async (
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuAddonWireServices` {#pikkuaddonwireservices}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a Pikku wire services factory for addon packages.
 Wire services are created per-request and have access to the HTTP request context.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuAddonWireServices: <ExistingServices extends Omit<Partial<SingletonServices>, "variables" | "secrets"> & AddonBaseServices>(func: (services: ExistingServices, wire: PikkuWire) => Promise<Record<string, any>>) => any
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const createWireServices = pikkuAddonWireServices(async (services, wire) => {
@@ -112,6 +161,10 @@ export const createWireServices = pikkuAddonWireServices(async (services, wire) 
   return { myService: new MyService(authHeader) }
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ---
 

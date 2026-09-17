@@ -189,13 +189,20 @@ const KIND_LABEL = {
   namespace: 'namespace',
 }
 
+/**
+ * The origin chip's text. Plain, because the chip is already monospaced — a
+ * backtick here would render as a literal one inside the badge.
+ */
 const originNote = (origin) => {
   if (!origin) return null
-  if (origin.via === 'generated') return 'generated into `.pikku` by the CLI'
-  if (origin.via === 'core') return `re-exported from \`@pikku/core${origin.subpath.replace(/^\./, '')}\``
-  if (origin.via === 'package') return `re-exported from \`${origin.packageName}\``
+  if (origin.via === 'generated') return 'generated into .pikku by the CLI'
+  if (origin.via === 'core') return `re-exported from @pikku/core${origin.subpath.replace(/^\./, '')}`
+  if (origin.via === 'package') return `re-exported from ${origin.packageName}`
   return null
 }
+
+/** A JSX string attribute — the value is text, so only the quotes matter. */
+const attr = (value) => JSON.stringify(String(value))
 
 const renderMembers = (symbol) => {
   const members = symbol.members ?? []
@@ -206,43 +213,81 @@ const renderMembers = (symbol) => {
     const type = member.line.slice(member.line.indexOf(':') + 1).trim()
     return `| \`${codeCell(key.trim())}\`${optional ? '' : ' <sup>required</sup>'} | \`${codeCell(truncate(oneLine(type), 90))}\` | ${cell(member.doc ?? '')} |`
   })
+  const table = ['| Key | Type | What it does |', '| --- | --- | --- |', ...rows]
+
+  // The console shows a shape's fields outright; only a long one earns a
+  // click, and eight is where the panel stops being readable at a glance.
+  if (members.length > 8) {
+    return [
+      `<ApiSection label="Config keys (${members.length})">`,
+      '',
+      '<details>',
+      `<summary>Show all ${members.length}</summary>`,
+      '',
+      ...table,
+      '',
+      '</details>',
+      '',
+      '</ApiSection>',
+      '',
+    ]
+  }
+
   return [
-    '<details>',
-    `<summary>Config keys (${members.length})</summary>`,
+    `<ApiSection label="Config keys (${members.length})">`,
     '',
-    '| Key | Type | What it does |',
-    '| --- | --- | --- |',
-    ...rows,
+    ...table,
     '',
-    '</details>',
+    '</ApiSection>',
     '',
   ]
 }
 
 const renderSymbol = (symbol, anchor) => {
-  const lines = [`### \`${symbol.name}\` \{#${anchor}\}`, '']
-
-  const meta = [KIND_LABEL[symbol.kind] ?? symbol.kind, originNote(symbol.origin)]
-    .filter(Boolean)
-    .join(' · ')
-  lines.push(`<span className="api-symbol-meta">${mdxSafe(meta)}</span>`, '')
+  const origin = originNote(symbol.origin)
+  const lines = [
+    '<ApiSymbol>',
+    '',
+    `### \`${symbol.name}\` \{#${anchor}\}`,
+    '',
+    `<ApiMeta kind=${attr(KIND_LABEL[symbol.kind] ?? symbol.kind)}` +
+      (origin ? ` origin=${attr(origin)}` : '') +
+      (symbol.deprecated ? ' deprecated' : '') +
+      ' />',
+    '',
+  ]
 
   if (symbol.deprecated) {
     lines.push(':::warning Deprecated', '', prose(symbol.deprecated), '', ':::', '')
   }
 
   const docs = symbol.docs ?? symbol.summary
-  if (docs) lines.push(prose(docs), '')
+  if (docs) {
+    lines.push('<ApiSection label="Description">', '', prose(docs), '', '</ApiSection>', '')
+  }
 
   if (symbol.signature) {
-    lines.push('```typescript', `${symbol.name}: ${oneLine(symbol.signature)}`, '```', '')
+    lines.push(
+      '<ApiSection label="Signature">',
+      '',
+      '```typescript',
+      `${symbol.name}: ${oneLine(symbol.signature)}`,
+      '```',
+      '',
+      '</ApiSection>',
+      ''
+    )
   }
 
   lines.push(...renderMembers(symbol))
 
-  for (const block of symbol.examples ?? []) {
-    lines.push(example(block), '')
-  }
+  const examples = symbol.examples ?? []
+  examples.forEach((block, index) => {
+    const label = examples.length === 1 ? 'Example' : `Example ${index + 1}`
+    lines.push(`<ApiSection label="${label}">`, '', example(block), '', '</ApiSection>', '')
+  })
+
+  lines.push('</ApiSymbol>', '')
 
   return lines
 }
@@ -281,6 +326,7 @@ const renderLeaf = (leaf, stepMeta, position, addonLeaf) => {
     `sidebar_label: ${frontmatterString(leaf.specifier)}`,
     `sidebar_position: ${position}`,
     `description: ${frontmatterString(truncate(oneLine(leaf.summary), 155))}`,
+    'paper: true',
     '---',
     '',
     `# \`${leaf.specifier}\``,
@@ -294,17 +340,16 @@ const renderLeaf = (leaf, stepMeta, position, addonLeaf) => {
   ]
 
   if (plain.length > 0) {
-    lines.push(
-      '## Exports',
-      '',
-      '| Export | Kind | Summary |',
-      '| --- | --- | --- |',
-      ...plain.map(
-        (symbol) =>
-          `| [\`${symbol.name}\`](#${anchors.get(symbol.name)}) | ${KIND_LABEL[symbol.kind] ?? symbol.kind} | ${cell(symbol.summary ?? '')} |`
-      ),
-      ''
-    )
+    // The console lists a door's exports as cards rather than table rows, so
+    // the name, the kind and the sentence its author wrote all read at once.
+    const items = plain.map((symbol) => ({
+      name: symbol.name,
+      kind: KIND_LABEL[symbol.kind] ?? symbol.kind,
+      anchor: anchors.get(symbol.name),
+      summary: oneLine(symbol.summary ?? '').replace(/`/g, ''),
+      ...(symbol.deprecated ? { deprecated: true } : {}),
+    }))
+    lines.push('## Exports', '', `<ApiExports items={${JSON.stringify(items)}} />`, '')
   }
 
   if (statuses.length > 0) lines.push(...renderErrorTable(statuses))
@@ -438,6 +483,7 @@ const renderAddonSurface = (doc, appEntry, addonEntry, stepOf) => {
     "sidebar_label: 'Building an addon'",
     'sidebar_position: 7',
     `description: ${frontmatterString(`The ${addonEntry.leaves.length} doors an addon author imports from — what they share with the application surface, and what they do not.`)}`,
+    'paper: true',
     '---',
     '',
     '# The addon surface',
@@ -490,24 +536,38 @@ const renderAddonSurface = (doc, appEntry, addonEntry, stepOf) => {
   return lines.join('\n')
 }
 
+/**
+ * A step's doors, as cards rather than table rows — the console's navigator
+ * lists a door by what you type and how much is behind it, not by column.
+ *
+ * The hrefs are site-absolute on purpose: a markdown link is resolved against
+ * the source file by the docs plugin, but a `<Link>` inside JSX is not, so a
+ * relative one would break on any URL without a trailing slash.
+ */
+const doorCards = (leaves, href) =>
+  `<ApiDoors items={${JSON.stringify(
+    leaves.map((leaf) => ({
+      specifier: leaf.specifier,
+      href: href(leaf),
+      exports: leaf.symbols.length,
+      summary: truncate(oneLine(leaf.summary), 160).replace(/`/g, ''),
+    }))
+  )}} />`
+
 const renderStepIndex = (stepMeta, leaves) =>
   [
     '---',
     `title: ${frontmatterString(stepMeta.label)}`,
     'sidebar_position: 0',
     `description: ${frontmatterString(truncate(oneLine(stepMeta.blurb), 155))}`,
+    'paper: true',
     '---',
     '',
     `# ${stepMeta.label}`,
     '',
     prose(stepMeta.blurb),
     '',
-    '| Door | Exports | What it is for |',
-    '| --- | --- | --- |',
-    ...leaves.map(
-      (leaf) =>
-        `| [\`${leaf.specifier}\`](./${leaf.name}.md) | ${leaf.symbols.length} | ${cell(truncate(oneLine(leaf.summary), 160))} |`
-    ),
+    doorCards(leaves, (leaf) => `/docs/api-reference/${stepMeta.slug}/${leaf.name}`),
     '',
   ].join('\n')
 
@@ -518,6 +578,7 @@ const renderIndex = (doc, entryPoint, byStep) => {
     'title: API Reference',
     'sidebar_position: 0',
     `description: ${frontmatterString(`Every export pikku gives you, by the door you import it from — ${entryPoint.leaves.length} doors, ${total} exports.`)}`,
+    'paper: true',
     '---',
     '',
     '# API Reference',
@@ -566,12 +627,7 @@ const renderIndex = (doc, entryPoint, byStep) => {
       '',
       prose(stepMeta.blurb),
       '',
-      '| Door | Exports | What it is for |',
-      '| --- | --- | --- |',
-      ...leaves.map(
-        (leaf) =>
-          `| [\`${leaf.specifier}\`](./${stepMeta.slug}/${leaf.name}.md) | ${leaf.symbols.length} | ${cell(truncate(oneLine(leaf.summary), 160))} |`
-      ),
+      doorCards(leaves, (leaf) => `/docs/api-reference/${stepMeta.slug}/${leaf.name}`),
       '',
     ]),
     '## Building an addon instead?',

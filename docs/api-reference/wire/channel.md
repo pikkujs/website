@@ -3,6 +3,7 @@ title: '#pikku/channel'
 sidebar_label: '#pikku/channel'
 sidebar_position: 1
 description: 'Wires a function to a websocket channel, its message routes and its pub/sub topics.'
+paper: true
 ---
 
 # `#pikku/channel`
@@ -15,26 +16,32 @@ import { defineChannelRoutes, pikkuChannelConnectionFunc, pikkuChannelDisconnect
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`defineChannelRoutes`](#definechannelroutes) | function | Type-safe helper for defining channel message routes that can be composed. Returns the routes record as-is for use with wireChannel's onMessageWiring. |
-| [`pikkuChannelConnectionFunc`](#pikkuchannelconnectionfunc) | function | Creates a function that handles WebSocket channel connections. Called when a client connects to a channel. |
-| [`pikkuChannelDisconnectionFunc`](#pikkuchanneldisconnectionfunc) | function | Creates a function that handles WebSocket channel disconnections. Called when a client disconnects from a channel. |
-| [`pikkuChannelFunc`](#pikkuchannelfunc) | function | Creates a function that handles WebSocket channel messages. Called when a message is received on a channel. |
-| [`wireChannel`](#wirechannel) | function | Registers a WebSocket channel with the Pikku framework. |
+<ApiExports items={[{"name":"defineChannelRoutes","kind":"function","anchor":"definechannelroutes","summary":"Type-safe helper for defining channel message routes that can be composed. Returns the routes record as-is for use with wireChannel's onMessageWiring."},{"name":"pikkuChannelConnectionFunc","kind":"function","anchor":"pikkuchannelconnectionfunc","summary":"Creates a function that handles WebSocket channel connections. Called when a client connects to a channel."},{"name":"pikkuChannelDisconnectionFunc","kind":"function","anchor":"pikkuchanneldisconnectionfunc","summary":"Creates a function that handles WebSocket channel disconnections. Called when a client disconnects from a channel."},{"name":"pikkuChannelFunc","kind":"function","anchor":"pikkuchannelfunc","summary":"Creates a function that handles WebSocket channel messages. Called when a message is received on a channel."},{"name":"wireChannel","kind":"function","anchor":"wirechannel","summary":"Registers a WebSocket channel with the Pikku framework."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `defineChannelRoutes` {#definechannelroutes}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Type-safe helper for defining channel message routes that can be composed.
 Returns the routes record as-is for use with `wireChannel`'s onMessageWiring.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 defineChannelRoutes: <T extends Record<string, any>>(routes: T) => T
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 type: defineChannelRoutes({
@@ -43,17 +50,33 @@ type: defineChannelRoutes({
 }),
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuChannelConnectionFunc` {#pikkuchannelconnectionfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a function that handles WebSocket channel connections.
 Called when a client connects to a channel.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 pikkuChannelConnectionFunc: <Out = unknown>(func: PikkuFunctionSessionless<void, Out, "channel" | "session" | "rpc"> | PikkuFunctionConfig<void, Out, "channel" | "session" | "rpc">) => PikkuFunctionConfig<void, Out, "channel" | "rpc" | "session">
 ```
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 export const onConnect = pikkuChannelConnectionFunc(
   async ({ logger }, _, { channel }) => {
@@ -68,17 +91,33 @@ export const onDisconnect = pikkuChannelDisconnectionFunc(
 )
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuChannelDisconnectionFunc` {#pikkuchanneldisconnectionfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a function that handles WebSocket channel disconnections.
 Called when a client disconnects from a channel.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 pikkuChannelDisconnectionFunc: (func: PikkuFunctionSessionless<void, void, "channel"> | PikkuFunctionConfig<void, void, "channel" | "session" | "rpc">) => PikkuFunctionConfig<void, void, "channel" | "rpc" | "session">
 ```
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 export const onConnect = pikkuChannelConnectionFunc(
   async ({ logger }, _, { channel }) => {
@@ -93,9 +132,17 @@ export const onDisconnect = pikkuChannelDisconnectionFunc(
 )
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuChannelFunc` {#pikkuchannelfunc}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a function that handles WebSocket channel messages.
 Called when a message is received on a channel.
@@ -104,9 +151,17 @@ Supports two patterns:
 1. Generic types: `pikkuChannelFunc&lt;Input, Output&gt;(&#123; func: ... &#125;)`
 2. Zod schemas: `pikkuChannelFunc(&#123; input: z.object(...), func: ... &#125;)`
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuChannelFunc: { <InputSchema extends StandardSchemaV1, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuChannelFuncConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InferSchemaOutput<InputSchema>, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, "channel" | "session" | "rpc">; <In, Out = unknown>(func: PikkuFunctionSessionless<In, Out, "channel" | "session" | "rpc"> | PikkuFunctionConfig<In, Out, "channel" | "session" | "rpc">): PikkuFunctionConfig<In, Out, "channel" | "session" | "rpc">; }
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const subscribeToOrder = pikkuChannelFunc<{ orderId: string }, void>(
@@ -122,18 +177,34 @@ export const unsubscribeFromOrder = pikkuChannelFunc<{ orderId: string }, void>(
 )
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `wireChannel` {#wirechannel}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Registers a WebSocket channel with the Pikku framework.
+
+</ApiSection>
+
+<ApiSection label="Signature">
 
 ```typescript
 wireChannel: <ChannelData, Channel extends string>(channel: ChannelWiring<ChannelData, Channel> & AssertHTTPWiringParams<ChannelData, Channel>) => void
 ```
 
+</ApiSection>
+
+<ApiSection label="Config keys (12)">
+
 <details>
-<summary>Config keys (12)</summary>
+<summary>Show all 12</summary>
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -152,6 +223,10 @@ wireChannel: <ChannelData, Channel extends string>(channel: ChannelWiring<Channe
 
 </details>
 
+</ApiSection>
+
+<ApiSection label="Example">
+
 ```typescript
 wireChannel({
   name: 'order-status',
@@ -167,6 +242,10 @@ wireChannel({
   },
 })
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 

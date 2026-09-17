@@ -3,6 +3,7 @@ title: '#pikku/setup'
 sidebar_label: '#pikku/setup'
 sidebar_position: 2
 description: 'The three factories a project declares exactly once — its config, its singleton services and its per-wire services. An addon declares the same three in it…'
+paper: true
 ---
 
 # `#pikku/setup`
@@ -15,24 +16,24 @@ import { pikkuConfig, pikkuServices, pikkuWireServices } from '#pikku/setup'
 
 ## Exports
 
-| Export | Kind | Summary |
-| --- | --- | --- |
-| [`Config`](#config) | interface | This project's own config — whatever `createConfig` returns. Every singleton service is built from it. |
-| [`pikkuConfig`](#pikkuconfig) | function | Creates a Pikku config factory. Use this to define your application's configuration factory. |
-| [`pikkuServices`](#pikkuservices) | function | Creates a Pikku singleton services factory. Use this to define services that are created once and shared across all requests. |
-| [`pikkuWireServices`](#pikkuwireservices) | function | Creates a Pikku wire services factory. Use this to define services that are created per-request/session. |
+<ApiExports items={[{"name":"Config","kind":"interface","anchor":"config","summary":"This project's own config — whatever createConfig returns. Every singleton service is built from it."},{"name":"pikkuConfig","kind":"function","anchor":"pikkuconfig","summary":"Creates a Pikku config factory. Use this to define your application's configuration factory."},{"name":"pikkuServices","kind":"function","anchor":"pikkuservices","summary":"Creates a Pikku singleton services factory. Use this to define services that are created once and shared across all requests."},{"name":"pikkuWireServices","kind":"function","anchor":"pikkuwireservices","summary":"Creates a Pikku wire services factory. Use this to define services that are created per-request/session."}]} />
 
 ## Reference
 
+<ApiSymbol>
+
 ### `Config` {#config}
 
-<span className="api-symbol-meta">interface · re-exported from `@pikku/templates-functions`</span>
+<ApiMeta kind="interface" origin="re-exported from @pikku/templates-functions" />
+
+<ApiSection label="Description">
 
 This project's own config — whatever `createConfig` returns. Every singleton
 service is built from it.
 
-<details>
-<summary>Config keys (5)</summary>
+</ApiSection>
+
+<ApiSection label="Config keys (5)">
 
 | Key | Type | What it does |
 | --- | --- | --- |
@@ -42,18 +43,32 @@ service is built from it.
 | `webhook` | `WebhookServiceConfig` |  |
 | `workflow` | `WorkflowServiceConfig` |  |
 
-</details>
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
 
 ### `pikkuConfig` {#pikkuconfig}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a Pikku config factory.
 Use this to define your application's configuration factory.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuConfig: (func: (variables?: any, ...args: any[]) => Promise<Config>) => (variables?: any, ...args: any[]) => Promise<Config>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const createConfig = pikkuConfig(async () => ({
@@ -62,16 +77,32 @@ export const createConfig = pikkuConfig(async () => ({
 }))
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuServices` {#pikkuservices}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a Pikku singleton services factory.
 Use this to define services that are created once and shared across all requests.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuServices: (func: (config: Config, existingServices: Partial<SingletonServices>) => Promise<Partial<Omit<RequiredSingletonServices, "auth">>>) => (config: Config, existingServices?: Partial<SingletonServices>) => Promise<RequiredSingletonServices>
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const createSingletonServices = pikkuServices(async (config, existingServices) => {
@@ -83,16 +114,32 @@ export const createSingletonServices = pikkuServices(async (config, existingServ
 })
 ```
 
+</ApiSection>
+
+</ApiSymbol>
+
+<ApiSymbol>
+
 ### `pikkuWireServices` {#pikkuwireservices}
 
-<span className="api-symbol-meta">function · generated into `.pikku` by the CLI</span>
+<ApiMeta kind="function" origin="generated into .pikku by the CLI" />
+
+<ApiSection label="Description">
 
 Creates a Pikku wire services factory.
 Use this to define services that are created per-request/session.
 
+</ApiSection>
+
+<ApiSection label="Signature">
+
 ```typescript
 pikkuWireServices: (func: (services: SingletonServices, wire: any) => Promise<RequiredWireServices>) => CreateWireServices
 ```
+
+</ApiSection>
+
+<ApiSection label="Example">
 
 ```typescript
 export const createWireServices = pikkuWireServices(
@@ -119,6 +166,10 @@ export const createWireServices = pikkuWireServices(
   }
 )
 ```
+
+</ApiSection>
+
+</ApiSymbol>
 
 ## Inside an addon
 
