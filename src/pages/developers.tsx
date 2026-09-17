@@ -506,6 +506,110 @@ function RuntimesSection() {
 }
 
 /* ════════════════════════════════════════════════════════════════
+   The API surface — the doors you import from, generated per project
+   ════════════════════════════════════════════════════════════════ */
+const SURFACE_GROUPS: {
+  name: string;
+  blurb: string;
+  doors: { door: string; to: string }[];
+}[] = [
+  {
+    name: 'Create a function',
+    blurb: 'The definers every wiring eventually points at, and the config and services they run against.',
+    doors: [
+      { door: 'function', to: '/docs/api-reference/create/function' },
+      { door: 'setup', to: '/docs/api-reference/create/setup' },
+    ],
+  },
+  {
+    name: 'Enhance it',
+    blurb: 'Errors, middleware, secrets, variables and addons — what wraps a function without changing it.',
+    doors: [
+      { door: 'error', to: '/docs/api-reference/enhance/error' },
+      { door: 'middleware', to: '/docs/api-reference/enhance/middleware' },
+      { door: 'secrets', to: '/docs/api-reference/enhance/secrets' },
+      { door: 'variables', to: '/docs/api-reference/enhance/variables' },
+      { door: 'addon', to: '/docs/api-reference/enhance/addon' },
+    ],
+  },
+  {
+    name: 'Wire it up',
+    blurb: 'One wire* call per protocol. The function does not change; only how the world reaches it does.',
+    doors: [
+      { door: 'http', to: '/docs/api-reference/wire/http' },
+      { door: 'channel', to: '/docs/api-reference/wire/channel' },
+      { door: 'queue', to: '/docs/api-reference/wire/queue' },
+      { door: 'scheduler', to: '/docs/api-reference/wire/scheduler' },
+      { door: 'cli', to: '/docs/api-reference/wire/cli' },
+      { door: 'mcp', to: '/docs/api-reference/wire/mcp' },
+      { door: 'trigger', to: '/docs/api-reference/wire/trigger' },
+      { door: 'gateway', to: '/docs/api-reference/wire/gateway' },
+    ],
+  },
+  {
+    name: 'Guard it',
+    blurb: 'Who may call a function, and under which scope or role.',
+    doors: [
+      { door: 'auth', to: '/docs/api-reference/guard/auth' },
+      { door: 'scopes', to: '/docs/api-reference/guard/scopes' },
+    ],
+  },
+  {
+    name: 'Orchestrate it',
+    blurb: 'Workflows and agents — composing functions into something longer-lived than one call.',
+    doors: [
+      { door: 'agent', to: '/docs/api-reference/orchestrate/agent' },
+      { door: 'workflow', to: '/docs/api-reference/orchestrate/workflow' },
+    ],
+  },
+  {
+    name: 'Test it',
+    blurb: 'Features, scenarios and steps that drive the whole system the way a user would.',
+    doors: [{ door: 'scenarios', to: '/docs/api-reference/test/scenarios' }],
+  },
+];
+
+function ApiSurfaceSection() {
+  return (
+    <Section id="api-surface" variant="dark">
+      <Wrap wide>
+        <Eyebrow>The API surface</Eyebrow>
+        <H2>Every import, <em>generated for your project.</em></H2>
+        <div className={styles.surfaceLead}>
+        <Lead>
+          You import from <code>#pikku</code>, not <code>@pikku</code>. The CLI generates a barrel per
+          concern into <code>.pikku</code>, so <code>#pikku/http</code> is <em>your</em> project's HTTP
+          door — carrying your session type, your services and your function names, which is how{' '}
+          <code>wireHTTP</code> knows what you may pass it.
+        </Lead>
+        </div>
+        <div className={styles.surfaceGrid}>
+          {SURFACE_GROUPS.map((g) => (
+            <div key={g.name} className={styles.surfaceGroup}>
+              <h3>{g.name}</h3>
+              <p>{g.blurb}</p>
+              <div className={styles.surfaceDoors}>
+                {g.doors.map((d) => (
+                  <Link key={d.door} to={d.to} className={styles.surfaceDoor}>
+                    #pikku/{d.door}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className={styles.surfaceNote}>
+          The same surface prints in your terminal — <code>npx pikku doc</code> for the index,{' '}
+          <code>npx pikku doc http</code> for one door, <code>npx pikku doc --ai</code> for the version
+          a coding agent should read. Writing an addon instead? The parallel doors live under{' '}
+          <code>#pikku/addon/*</code>. <Link to="/docs/api-reference">Browse the API reference →</Link>
+        </p>
+      </Wrap>
+    </Section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
    Production features
    ════════════════════════════════════════════════════════════════ */
 const PROD_FEATURES = [
@@ -628,6 +732,7 @@ export default function Developers() {
         <SameFunctionSection />
         {FEATURES.map((f, i) => <FeatureSection key={f.id} f={f} index={i} />)}
         <RuntimesSection />
+        <ApiSurfaceSection />
         <ProductionSection />
         <ConsoleSection />
         <TestimonialsSection />

@@ -21,31 +21,39 @@ const WIRINGS = [
 
 /* ── Band 2 — what each wiring is actually built on ──────────── */
 type Adapted = {
-  wiring: string;
+  name: string;
   backing: string;
   /** Set when Pikku wrote the thing itself, with the reason why. */
   ownReason?: string;
 };
 
-const ADAPTED: Adapted[] = [
-  { wiring: 'http', backing: 'Fastify · Express · uWebSockets · Node · Bun · Next · TanStack Start' },
-  { wiring: 'channel', backing: 'ws · uWebSockets · Durable Objects' },
-  { wiring: 'queue', backing: 'BullMQ · pg-boss · NATS' },
-  { wiring: 'cron', backing: 'cron · cron-schedule' },
-  { wiring: 'agent', backing: 'Vercel AI SDK · DeepInfra — AG-UI on the frontend' },
-  { wiring: 'mcp', backing: "@modelcontextprotocol/sdk — Anthropic's own" },
-  { wiring: 'auth', backing: 'Better Auth' },
-  { wiring: 'database', backing: 'Kysely — Postgres, MySQL, SQLite, D1 · MongoDB' },
+/* One row per wiring in band 1, in the same order — the two lists are meant
+   to be read straight down against each other. */
+const ADAPTED_WIRINGS: Adapted[] = [
+  { name: 'http', backing: 'Fastify · Express · uWebSockets · Node · Bun · Next · TanStack Start' },
+  { name: 'channel', backing: 'ws · uWebSockets · Durable Objects' },
+  { name: 'queue', backing: 'BullMQ · pg-boss · NATS' },
+  { name: 'cron', backing: 'cron · cron-schedule' },
   {
-    wiring: 'workflow',
+    name: 'workflow',
     backing: 'ours, on your queues and your database',
     ownReason: 'Nothing off the shelf did graphs, branching and a typed DSL over a queue we did not own.',
   },
+  { name: 'agent', backing: 'the Vercel AI SDK underneath — the agent loop, its tools and its scorers are ours' },
+  { name: 'mcp', backing: "@modelcontextprotocol/sdk — Anthropic's own" },
   {
-    wiring: 'cli',
+    name: 'cli',
     backing: 'ours',
     ownReason: 'Every framework CLI we tried pulled in more than it ran. This one also calls a remote deployment, not just localhost.',
   },
+];
+
+/* Not wirings — the services a function is handed, and the library behind each. */
+const ADAPTED_SERVICES: Adapted[] = [
+  { name: 'auth', backing: 'Better Auth' },
+  { name: 'database', backing: 'Kysely — Postgres, MySQL, SQLite, D1' },
+  { name: 'files', backing: 'S3 · Backblaze B2 · local disk' },
+  { name: 'schema', backing: 'ajv · cfworker' },
 ];
 
 /* ── Band 3 — the interchangeable part ───────────────────────── */
@@ -168,24 +176,34 @@ export function StackMatrix() {
           <span className={styles.bandNum}>Pikku adapts</span>
           <span className={styles.bandHint}>the libraries you already know — not replacements for them</span>
         </div>
-        <ul className={styles.adaptList}>
-          {ADAPTED.map((a) => (
-            <li key={a.wiring} className={a.ownReason ? styles.adaptOwn : undefined}>
-              <span className={styles.adaptWiring}>
-                {a.wiring}
-                {a.ownReason && <span className={styles.star} aria-hidden="true">✻</span>}
-              </span>
-              <span className={styles.adaptBacking}>{a.backing}</span>
-            </li>
+        <div className={styles.adaptSplit}>
+          {([
+            { key: 'wirings', label: 'wirings', rows: ADAPTED_WIRINGS },
+            { key: 'services', label: 'services', rows: ADAPTED_SERVICES },
+          ] as const).map((group) => (
+            <div key={group.key} className={styles.adaptGroup}>
+              <span className={styles.adaptGroupLabel}>{group.label}</span>
+              <ul className={styles.adaptList}>
+                {group.rows.map((a) => (
+                  <li key={a.name} className={a.ownReason ? styles.adaptOwn : undefined}>
+                    <span className={styles.adaptWiring}>
+                      {a.name}
+                      {a.ownReason && <span className={styles.star} aria-hidden="true">✻</span>}
+                    </span>
+                    <span className={styles.adaptBacking}>{a.backing}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
         <p className={styles.starNote}>
           <span className={styles.star} aria-hidden="true">✻</span>
           <span>
             Two things we did write.{' '}
-            {ADAPTED.filter((a) => a.ownReason).map((a) => (
-              <React.Fragment key={a.wiring}>
-                <b>{a.wiring}:</b> {a.ownReason}{' '}
+            {ADAPTED_WIRINGS.filter((a) => a.ownReason).map((a) => (
+              <React.Fragment key={a.name}>
+                <b>{a.name}:</b> {a.ownReason}{' '}
               </React.Fragment>
             ))}
           </span>

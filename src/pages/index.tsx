@@ -36,8 +36,9 @@ function Hero() {
             </h1>
             <p className={styles.lede}>
               One command gives your team a complete backend on their machine — database, auth, content,
-              email, secrets, workflows — <strong>identical to what ships to production.</strong> No services to
-              install. No infrastructure to assemble. Deploy it anywhere, including fully managed.
+              email, secrets, workflows — <strong>identical to what ships to production.</strong> Nothing to
+              install and nothing to assemble before the first line of code. When you ship it, deploy onto
+              your own infrastructure — or let Fabric run it for you.
             </p>
             <div className={styles.heroActions}>
               <Link href="/getting-started" className={styles.btnPrimary}>Get started</Link>
@@ -145,6 +146,59 @@ function WhatPikkuIsSection() {
           The top two bands never change. That's the whole parity claim:{' '}
           <code>pikku dev</code> and <code>pikku deploy</code> run the same code against the same
           libraries — only the bottom row swaps.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Addons — the ecosystem story: a package declares, the app wires
+   ════════════════════════════════════════════════════════════════ */
+function AddonsSection() {
+  const addons = [
+    {
+      pkg: '@pikku/addon-admin',
+      call: 'admin:listUsers',
+      body: 'The user directory, roles and scopes, credentials and the audit trail — as ordinary RPCs you can call from anywhere in your app.',
+    },
+    {
+      pkg: '@pikku/addon-console',
+      call: 'npx pikku dev',
+      body: 'The local build surface: every function, wiring and service on one page, editing the code on your laptop as you go.',
+    },
+    {
+      pkg: '@pikku/addon-graph',
+      call: 'graph:editFields',
+      body: 'Native transforms your workflow graphs can reference by name, so a step that reshapes data needs no function of its own.',
+    },
+  ];
+
+  return (
+    <section id="addons" className={styles.sectionAlt}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>Addons</div>
+        <h2 className={styles.h2}>Install a capability. <em>Call it by name.</em></h2>
+        <p className={styles.addonLede}>
+          An addon is an npm package of functions, services, contracts and even database tables.
+          Install it, map its secrets onto your own infrastructure, and its functions are reachable
+          as <code>namespace:function</code> — fully typed, sharing your logger, your database and
+          your auth.
+        </p>
+        <div className={styles.addonGrid}>
+          {addons.map((a) => (
+            <div key={a.pkg} className={styles.addonCard}>
+              <div className={styles.addonPkg}>{a.pkg}</div>
+              <div className={styles.addonCall}>{a.call}</div>
+              <p>{a.body}</p>
+            </div>
+          ))}
+        </div>
+        <p className={styles.matrixCaption}>
+          An addon declares; the app that installs it decides what gets mounted — so nothing appears
+          on your API because a dependency felt like it. Write your own with{' '}
+          <code>npx pikku new addon</code>, or point it at an OpenAPI spec and get a typed one out.{' '}
+          <Link href="/docs/addon">Read the addon docs →</Link>
         </p>
       </div>
     </section>
@@ -477,6 +531,7 @@ export default function Home() {
         <TrustStrip />
         <PlatformSection />
         <WhatPikkuIsSection />
+        <AddonsSection />
         <PlatformReadySection />
         <ConsoleSection />
         <DeploySection />
