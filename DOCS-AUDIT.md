@@ -500,3 +500,69 @@ typed client, which does expose `.add()`.
 Re-swept all 52 skills: CLEAN for fake pkgs, HTTP accessors, array-only
 addHTTPMiddleware, agent `instructions:`/model-alias, 3-arg server constructors,
 positional content calls, and wire-`{queue}`-enqueue.
+
+---
+
+## Session 4 — full re-verification against pikku `origin/main` (0.12.152, d78894993)
+
+Scope: every hand-written page under `docs/` (error pages and generated
+`api-reference/` included in the sweeps), verified against a clean extract of
+`origin/main`. New gaps documented. Build and `tsc` green.
+
+### Cross-cutting fixes applied
+
+- **Secrets API:** `getSecretJSON` is gone; `getSecret` returns a wrapped
+  `SecretValue` — `.reveal()` added/verified across addon, storage, gateway,
+  middleware, runtime and API pages. `secrets` is stripped from function
+  services (use a services factory or middleware).
+- **JWT:** `jwt.verify` does not exist; `encode`/`decode` do. Fixed in
+  `wiring/http/router.md` and `wiring/channels/index.md`.
+- **Channels:** `pikkuChannelFunc<In, Out>` (two generics) — a third
+  `ChannelData` generic and the `pikkuChannelDisconnectionFunc<{...}>` form were
+  removed; disconnection input is `void` (use `channel.openingData`).
+- **No `cache`/`cacheService` service** anywhere in core; middleware and
+  permission examples now use a local store.
+- **`addHTTPMiddleware` patterns are anchored globs** (`'/api/*'`, not
+  `'/api'`); fixed across middleware docs.
+- **`serverlessIncompatible` is a list of service names**, not function names;
+  corrected in `pikku-cli/configuration.md` (and deploy grouping now lists
+  `services` as the default strategy).
+- **AI agents:** config uses `goal`, `model` is `provider/model`; middleware
+  examples use `modifyInput`, not config `instructions`.
+- **Definers:** `defineSecret` / `defineVariable` / `defineCredential` (no
+  `wire*` forms).
+- **Error pages:** `workflow.expectEventually` → `scenario.expectEventually`
+  with the real arity (`stepName, rpcName, data, predicate, options?`) in
+  `pku673`, `pku675`, `pku680`. Page set matches `error-codes.ts` exactly
+  (76 enum codes + core-literal PKU342; PKU583/PKU584 are retired).
+- **`pikku tests` is gone** (scenarios own coverage); `@pikku/cucumber` is a
+  deleted placeholder.
+- **Better Auth:** plugins are `pikkuActor` / `pikkuDelegatedAuth`; Next.js
+  handler is `pikkuAPIRequest` (not `pikkuNextHTTPHandler`); `getSession`
+  signature verified.
+- **MCP server:** `PikkuMCPServer({ name, version, mcpJSON, capabilities },
+  logger)` + `init()` + `connectStdio()`/`connectHTTP({port})`; generated files
+  are `.pikku/mcp/mcp.gen.json` and `.pikku/pikku-bootstrap.gen.ts`.
+- **NATS 2.14+** requirement, dedupe-as-window, WorkQueue retention and
+  reconnect/escalation documented.
+- CLI config/docs were rewritten in this round for the current command surface
+  (including `doc`, `serve`, `dist`, `audit`, `semver`, `update`, `validate`,
+  `scenarios`, `personas`, `knowledge`, `emails`, `import n8n`, `db`
+  subcommands, `enable remote-jobs`, full `meta`).
+
+### New pages
+
+- `runtimes/nats.md`, `api/browser-service.md`, `pikku-cli/create-pikku.md`,
+  `core-features/knowledge.md`, `frontend/react.md`, `frontend/i18n.md`,
+  `frontend/ui-packages.md`, `addon/shipped-addons.md`,
+  `wiring/workflows/import-n8n.md`, `deploy/fabric.md`
+- Sidebars: Frontend category added; NATS runtime entry and the create-pikku
+  page wired in.
+
+### Still open (documented, not added)
+
+Niche frontend/marketing packages (`@pikku/paraglide` RTL deep-dive is covered in
+`frontend/i18n.md`), Fabric change-board workflow detail, and the agent-only
+skills (`pikku-a11y`, `pikku-seo`, `pikku-software-archaeology`) have no
+website pages. `docs/runtimes/google-cloud-run-functions.md` remains a draft stub
+with no matching package.

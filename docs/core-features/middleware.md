@@ -46,9 +46,7 @@ export const responseTime = pikkuMiddleware(async ({ logger }, wire, next) => {
   logger.info(`Request completed in ${duration}ms`)
 
   // For HTTP, you can set headers
-  if (wire.http) {
-    wire.http.response.header('X-Response-Time', `${duration}ms`)
-  }
+  wire.http?.response?.header('X-Response-Time', `${duration}ms`)
 })
 ```
 
@@ -146,28 +144,32 @@ Use `pikkuMiddlewareFactory` to create configurable middleware:
 ```typescript
 import { pikkuMiddlewareFactory, pikkuMiddleware } from '#pikku/middleware'
 
+// A real rate limiter belongs in a shared store; this keeps the example local.
+const counts = new Map<string, number>()
+
 export const rateLimit = pikkuMiddlewareFactory<{
   maxRequests: number
   windowMs: number
 }>(({ maxRequests, windowMs }) =>
-  pikkuMiddleware(async ({ cache }, { http }, next) => {
+  pikkuMiddleware(async (_services, { http }, next) => {
     if (!http) return next()
 
     const ip = http.request.header('x-forwarded-for') || 'unknown'
     const key = `ratelimit:${ip}`
-    const count = (await cache.get(key)) || 0
+    const count = counts.get(key) || 0
 
     if (count >= maxRequests) {
       throw new TooManyRequestsError()
     }
 
-    await cache.set(key, count + 1, { ttl: windowMs / 1000 })
+    counts.set(key, count + 1)
+    setTimeout(() => counts.delete(key), windowMs).unref?.()
     return next()
   })
 )
 
-// Usage
-addHTTPMiddleware('/api', [
+// Usage — patterns are anchored globs, so '/api/*' covers the subtree
+addHTTPMiddleware('/api/*', [
   rateLimit({ maxRequests: 100, windowMs: 60000 })
 ])
 ```
@@ -205,7 +207,7 @@ export const authMiddleware = pikkuMiddleware(async ({ jwt }, { http, setSession
 
   if (token) {
     try {
-      const payload = await jwt.verify(token)
+      const payload = await jwt.decode(token)
       setSession({
         userId: payload.userId,
         role: payload.role
@@ -252,7 +254,7 @@ wireHTTP({
   method: 'post',
   route: '/orders',
   func: createOrder,
-  middleware: [rateLimit, auditLog]
+  middleware: [rateLimit({ maxRequests: 100, windowMs: 60000 }), auditLog]
 })
 ```
 
@@ -271,11 +273,11 @@ import { addHTTPMiddleware } from '#pikku/middleware'
 // All HTTP routes will run this middleware
 addHTTPMiddleware('*', [corsHeaders, securityHeaders])
 
-// All routes starting with /admin will run this middleware
-addHTTPMiddleware('/admin', [requireAuth, requireAdmin])
+// All routes starting with /admin will run this middleware (anchored glob)
+addHTTPMiddleware('/admin/*', [requireAuth, requireAdmin])
 
 // All routes starting with /api/v1 will run this middleware
-addHTTPMiddleware('/api/v1', [apiKeyValidation])
+addHTTPMiddleware('/api/v1/*', [apiKeyValidation])
 ```
 
 Use HTTP transport middleware for:
@@ -403,10 +405,8 @@ export const errorHandler = pikkuMiddleware(async ({ logger }, wire, next) => {
     })
 
     // For HTTP, you can set custom error responses
-    if (wire.http) {
-      wire.http.response.status(500)
-      wire.http.response.header('X-Error-Id', generateErrorId())
-    }
+    wire.http?.response?.status(500)
+    wire.http?.response?.header('X-Error-Id', generateErrorId())
 
     // Re-throw to let Pikku handle it
     throw error
@@ -419,16 +419,19 @@ export const errorHandler = pikkuMiddleware(async ({ logger }, wire, next) => {
 Sometimes you only want middleware to run in certain conditions:
 
 ```typescript
-export const conditionalCache = pikkuMiddleware(async ({ cache }, wire, next) => {
+// A shared store the rest of the app writes into (a Map here for brevity)
+const responseCache = new Map<string, unknown>()
+
+export const conditionalCache = pikkuMiddleware(async (_services, wire, next) => {
   // Only cache GET requests
   if (wire.http?.request.method() !== 'get') {
     return await next()
   }
 
   const cacheKey = wire.http.request.path()
-  const cached = await cache.get(cacheKey)
+  const cached = responseCache.get(cacheKey)
 
-  if (cached) {
+  if (cached !== undefined) {
     // Short-circuit - serve the cached response without calling next()
     wire.http.response.json(cached)
     return

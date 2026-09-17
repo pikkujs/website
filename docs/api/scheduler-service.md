@@ -3,7 +3,7 @@ title: SchedulerService
 ai: true
 ---
 
-The SchedulerService manages persistent scheduled tasks — recurring cron-wired tasks and one-off delayed RPC calls. It is registered as the `schedulerService` singleton service and backs the [Scheduled Tasks wiring](/docs/wiring/scheduled-tasks).
+The SchedulerService manages scheduled tasks — recurring cron-wired tasks and one-off delayed RPC calls. It is registered as the `schedulerService` singleton service and backs the [Scheduled Tasks wiring](/docs/wiring/scheduled-tasks).
 
 ## Interface
 

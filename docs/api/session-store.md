@@ -4,7 +4,7 @@ title: SessionStore
 
 The SessionStore persists user sessions server-side, keyed by `pikkuUserId`. It is registered as the `sessionStore` singleton service. Three methods, no lifecycle, no queries — it is a keyed blob store and nothing more.
 
-You never call it from a function. The function runner reads from it while resolving a request's session, and [`UserSessionService`](./user-session-service) writes to it whenever `setSession()` or `clearSession()` runs on the wire. Leaving it out is a valid choice: sessions then live only for the length of the request or connection that carried them.
+You never call it from a function. The function runner reads from it while resolving a request's session, and [`PikkuSessionService`](./user-session-service) writes to it whenever `setSession()` or `clearSession()` runs on the wire. Leaving it out is a valid choice: sessions then live only for the length of the request or connection that carried them.
 
 ## Interface
 
@@ -42,7 +42,7 @@ The store is consulted once per invocation, before your function runs:
   upgrade, or a session propagated from a parent workflow — the store is not
   consulted, and that session wins.
 
-Writes go the other way: `UserSessionService.set()` and `.clear()` forward to
+Writes go the other way: `PikkuSessionService.set()` and `.clear()` forward to
 the store, but **only when a `pikkuUserId` is known**. A session set on a wire
 with no resolved `pikkuUserId` lives for that invocation and is never persisted.
 

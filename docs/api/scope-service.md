@@ -40,10 +40,13 @@ A role's **scope set is** re-synced, because that is the declaration's whole
 content — editing `defineSystemRole` is how you change what a system role means,
 and the deploy is when it takes effect.
 
-Nothing in core or a runtime calls this for you. Call it yourself on startup with
-the generated `SYSTEM_ROLES` list, as in [Registration](#registration) below —
-until you do, `defineSystemRole` is a declaration nobody has written down, and
-granting one of those roles fails on the foreign key into `pikku_scopes`.
+`pikku dev` and `pikku serve` do this for you: when a `scopeService` is required,
+they construct a `KyselyScopeService`, sync the declared scopes and roles, and
+only then boot. If you bootstrap your own server, call it yourself on startup
+with the generated `SCOPES` and `SYSTEM_ROLES` lists, as in
+[Registration](#registration) below — until you do, `defineSystemRole` is a
+declaration nobody has written down, and granting one of those roles fails on
+the foreign key into `pikku_scopes`.
 
 ## Reading
 
@@ -130,7 +133,7 @@ Removes undeclared system roles, cascading them out of user grants.
 ### KyselyScopeService
 
 The only implementation that ships: [`@pikku/kysely`](/docs/storage/kysely),
-backed by four `pikku_*` tables. There is no in-memory or noop default — leaving
+backed by five `pikku_*` tables. There is no in-memory or noop default — leaving
 `scopeService` unregistered is the "off" position, and it denies rather than
 allows.
 
@@ -158,9 +161,9 @@ https://github.com/pikkujs/pikku/blob/main/packages/services/kysely/src/kysely-s
 `pikku scopes audit`, `pikku scopes prune`, `pikku roles audit` and
 `pikku roles prune` do **not** go through your registered singleton. They open
 the project's database from your `createConfig` and construct a
-`KyselyScopeService` directly, syncing the declared scopes first so the audit is
-against current code. An app whose scopes live somewhere other than Kysely gets
-nothing from those commands.
+`KyselyScopeService` directly, syncing the declared scopes (and, for the roles
+commands, the declared roles) first so the audit is against current code. An app
+whose scopes live somewhere other than Kysely gets nothing from those commands.
 :::
 
 ## Registration

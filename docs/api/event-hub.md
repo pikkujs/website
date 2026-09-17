@@ -24,12 +24,12 @@ EventHub enables:
 Subscribe a channel/connection to a topic.
 
 ```typescript
-await eventHub.subscribe(topic: string, subscriberId: string)
+await eventHub.subscribe(topic: string, channelId: string)
 ```
 
 **Parameters:**
 - `topic` - Topic name (e.g., `'room:lobby'`, `'user:123'`)
-- `subscriberId` - Unique identifier for the subscriber (typically `channel.channelId`)
+- `channelId` - Unique identifier for the subscriber (typically `channel.channelId`)
 
 **Example:**
 ```typescript
@@ -42,12 +42,12 @@ await eventHub.subscribe(`room:${roomId}`, channel.channelId)
 Unsubscribe a channel/connection from a topic.
 
 ```typescript
-await eventHub.unsubscribe(topic: string, subscriberId: string)
+await eventHub.unsubscribe(topic: string, channelId: string)
 ```
 
 **Parameters:**
 - `topic` - Topic name to unsubscribe from
-- `subscriberId` - Subscriber identifier to remove
+- `channelId` - Subscriber identifier to remove
 
 **Example:**
 ```typescript
@@ -66,15 +66,17 @@ Publish a message to all subscribers of a topic.
 ```typescript
 await eventHub.publish(
   topic: string,
-  excludeId: string | null,
-  payload: any
+  channelId: string | null,
+  data: any,
+  isBinary?: boolean
 )
 ```
 
 **Parameters:**
 - `topic` - Topic to publish to
-- `excludeId` - Subscriber ID to exclude (set to `null` to broadcast to all)
-- `payload` - Message payload (must be JSON-serializable)
+- `channelId` - Subscriber ID to exclude (set to `null` to broadcast to all)
+- `data` - Message payload (must be JSON-serializable)
+- `isBinary` - Optional flag for binary payloads
 
 **Examples:**
 
@@ -110,37 +112,37 @@ await eventHub.publish(
 
 ```typescript
 // Connection - subscribe to room
-export const joinRoom = pikkuChannelConnectionFunc<
-  { welcome: string },
-  { room: string }
->(async ({ eventHub }, data, { channel }) => {
-  const room = channel.openingData.room
-  await eventHub.subscribe(`room:${room}`, channel.channelId)
-  return { welcome: `Welcome to ${room}!` }
-})
+export const joinRoom = pikkuChannelConnectionFunc<{ welcome: string }>(
+  async ({ eventHub }, data, { channel }) => {
+    const room = channel.openingData.room
+    await eventHub.subscribe(`room:${room}`, channel.channelId)
+    return { welcome: `Welcome to ${room}!` }
+  }
+)
 
 // Message - broadcast to room (excluding sender)
-export const sendMessage = pikkuChannelFunc<
-  { message: string },
-  void,
-  { room: string }
->(async ({ eventHub }, data, { channel, session }) => {
-  const room = channel.openingData.room
-  await eventHub.publish(
-    `room:${room}`,
-    channel.channelId, // Don't echo back to sender
-    {
-      message: data.message,
-      userId: session.userId,
-      timestamp: Date.now()
-    }
-  )
-})
+export const sendMessage = pikkuChannelFunc<{ message: string }, void>(
+  async ({ eventHub }, data, { channel, session }) => {
+    const room = channel.openingData.room
+    await eventHub.publish(
+      `room:${room}`,
+      channel.channelId, // Don't echo back to sender
+      {
+        message: data.message,
+        userId: session.userId,
+        timestamp: Date.now()
+      }
+    )
+  }
+)
 
 // Disconnect - cleanup (optional, happens automatically)
-export const leaveRoom = pikkuChannelDisconnectionFunc<{ room: string }>(
-  async ({ eventHub }, data, { channel }) => {
-    await eventHub.unsubscribe(`room:${data.room}`, channel.channelId)
+export const leaveRoom = pikkuChannelDisconnectionFunc(
+  async ({ eventHub }, _data, { channel }) => {
+    await eventHub.unsubscribe(
+      `room:${channel.openingData.room}`,
+      channel.channelId
+    )
   }
 )
 ```
@@ -172,13 +174,12 @@ export const watchPresence = pikkuChannelConnectionFunc(
 
 ```typescript
 // Subscribe user to their personal notification channel
-export const connectNotifications = pikkuChannelConnectionFunc<
-  void,
-  { userId: string }
->(async ({ eventHub }, data, { channel }) => {
-  const userId = channel.openingData.userId
-  await eventHub.subscribe(`notifications:${userId}`, channel.channelId)
-})
+export const connectNotifications = pikkuChannelConnectionFunc<void>(
+  async ({ eventHub }, data, { channel }) => {
+    const userId = channel.openingData.userId
+    await eventHub.subscribe(`notifications:${userId}`, channel.channelId)
+  }
+)
 
 // Trigger notification from any function
 export const sendNotification = pikkuFunc<

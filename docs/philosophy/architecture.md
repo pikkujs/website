@@ -126,13 +126,13 @@ wireChannel({
   }
 })
 
-// Wire to RPC (functions are automatically available via RPC)
-// No explicit wiring needed - RPC calls functions by name
+// Expose via RPC (set expose: true on the function; there is no wire* call)
+// External callers reach it at POST /rpc/:rpcName
 ```
 
 ## Deployment Flexibility
 
-Because functions are protocol-agnostic, Pikku can deploy anywhere by providing different runtime adapters. Each runtime calls the same core functions (`runHTTP`, `runChannel`, `runScheduler`, etc.) but adapts them to the target platform:
+Because functions are protocol-agnostic, Pikku can deploy anywhere by providing different runtime adapters. Each runtime calls the same core runners (`fetchData` for HTTP, `runChannelMessage` for channels, `runScheduledTask` for scheduled tasks, and so on) but adapts them to the target platform:
 
 ```mermaid
 graph LR
@@ -145,9 +145,9 @@ graph LR
     end
     
     subgraph "Runtime Adapters"
-        R1[runHTTP]
-        R2[runChannel]
-        R3[runScheduler]
+        R1[fetchData]
+        R2[runChannelMessage]
+        R3[runScheduledTask]
     end
     
     subgraph "Wiring Layer"
@@ -186,12 +186,10 @@ graph LR
 **Express Server:**
 ```typescript
 import { PikkuExpressServer } from '@pikku/express'
-import { PikkuTaskScheduler } from '@pikku/schedule'
-import {
-  createConfig,
-  createSingletonServices,
-  createWireServices,
-} from '../../functions/src/services.js'
+import { InMemorySchedulerService } from '@pikku/schedule'
+import { createConfig } from '../../functions/src/config.js'
+import { createSingletonServices } from '../../functions/src/services.js'
+import '#pikku/pikku-bootstrap.gen.js'
 
 async function main(): Promise<void> {
   const config = await createConfig()
@@ -199,13 +197,12 @@ async function main(): Promise<void> {
 
   const appServer = new PikkuExpressServer(
     { ...config, port: 4002, hostname: 'localhost' },
-    singletonServices,
-    createWireServices
+    singletonServices.logger
   )
   await appServer.init()
   await appServer.start()
 
-  const scheduler = new PikkuTaskScheduler(singletonServices)
+  const scheduler = new InMemorySchedulerService()
   await scheduler.start()
 }
 ```
@@ -215,18 +212,19 @@ async function main(): Promise<void> {
 import { runFetch } from '@pikku/lambda/http'
 import { runScheduledTask } from '@pikku/core/scheduler'
 import { APIGatewayProxyEvent, ScheduledHandler } from 'aws-lambda'
+import { coldStart } from './cold-start.js'
+import '#pikku/pikku-bootstrap.gen.js'
 
 export const httpRoute = async (event: APIGatewayProxyEvent) => {
-  const singletonServices = await coldStart()
-  const result = await runFetch(singletonServices, createWireServices, event)
+  await coldStart()
+  const result = await runFetch(event)
   return result
 }
 
 export const myScheduledTask: ScheduledHandler = async () => {
-  const singletonServices = await coldStart()
+  await coldStart()
   await runScheduledTask({
     name: 'myScheduledTask',
-    singletonServices,
   })
 }
 ```
@@ -236,20 +234,17 @@ export const myScheduledTask: ScheduledHandler = async () => {
 import { runFetch, runScheduled } from '@pikku/cloudflare'
 import { setupServices } from './setup-services.js'
 import { ExportedHandler } from '@cloudflare/workers-types'
+import '#pikku/pikku-bootstrap.gen.js'
 
 export default {
   async scheduled(controller, env) {
-    const singletonServices = await setupServices(env)
-    await runScheduled(controller, singletonServices)
+    await setupServices(env)
+    await runScheduled(controller)
   },
 
   async fetch(request, env): Promise<Response> {
-    const singletonServices = await setupServices(env)
-    return await runFetch(
-      request as unknown as Request,
-      singletonServices,
-      createWireServices
-    )
+    await setupServices(env)
+    return await runFetch(request as unknown as Request)
   },
 } satisfies ExportedHandler<Record<string, string>>
 ```
@@ -300,30 +295,32 @@ Based on Inspector analysis, the CLI generates only what's actually needed throu
 
 Pikku only includes functions in the generated bundle if they meet specific criteria:
 
-1. **Exported Functions**: Automatically included and exposed via RPC
-2. **Wired Functions**: Referenced by `wireHTTP()`, `wireChannel()`, `wireScheduler()`, etc.
-3. **Tag Filtering**: Functions can be filtered by tags during build time
+1. **Wired Functions**: Referenced by `wireHTTP()`, `wireChannel()`, `wireScheduler()`, etc. — the wiring registers the function when its file is imported
+2. **Exposed Functions**: Marked `expose: true`, which registers them for external `POST /rpc/<name>` calls
+3. **Invoked Functions**: Called by name through internal RPC or referenced by an agent, MCP or workflow wiring
+4. **Tag Filtering**: Functions can be filtered by tags during build time
 
-Functions that aren't exported AND aren't referenced by any wiring are considered unused. While the entire wiring file gets imported (so the function code exists in the bundle), only functions that are actually wired get registered with the runtime and become callable.
+A function that is only exported — never wired, exposed or invoked — is not registered. Exporting it makes it a module export, not a callable endpoint.
 
 The `pikkuFuncId` serves as the universal identifier that connects your functions across all wiring types - whether it's HTTP routes, WebSocket channels, RPC calls, or scheduled tasks, they all reference the same function by this consistent name.
 
 **How `pikkuFuncId` is determined:**
-1. **Export Name**: If the function is exported, uses the export name (`export const createUser = ...`)
-2. **Defined Name**: If defined in the `pikkuFunc()` object with a name property
-3. **File + Line Fallback**: If neither above, uses the filename and line number where the function is defined
+1. **Explicit Name**: An `override` property on the function config
+2. **Export Name**: If the function is exported, uses the export name (`export const createUser = ...`)
+3. **Deterministic Fallback**: If neither above, a hash derived from the function file's path and its position in the file
 
 ```typescript
-// Example 1: Exported function - included in bundle, exposed via RPC
+// Example 1: Exposed function - registered and callable via RPC
 export const createUser = pikkuFunc<CreateUserInput, CreateUserOutput>({
+  expose: true,
   func: async (services, data) => {
     // Implementation
   }
 })
-// ✅ Included: Exported function
+// ✅ Included: expose: true registers it
 // ✅ Available via RPC
 
-// Example 2: Wired function - included in bundle
+// Example 2: Wired function - registered by its wiring
 const getUserProfile = pikkuFunc<GetUserInput, GetUserOutput>({
   func: async (services, data) => {
     // Implementation
@@ -335,28 +332,25 @@ wireHTTP({
   route: '/users/:id',
   func: getUserProfile
 })
-// ✅ Included: Referenced by HTTP wiring
-// Note: The entire wiring file gets imported, but only wired functions 
-// are registered and callable at runtime
+// ✅ Included: the HTTP wiring registers it
 
-// Example 3: Internal helper - tree-shaken out
+// Example 3: Internal helper - not registered
 const validateUserData = pikkuFunc<ValidationInput, ValidationOutput>({
   func: async (services, data) => {
     // Helper function not exported or wired
   }
 })
-// ❌ Excluded: Not exported, not referenced by any wiring
+// ❌ Not registered: not wired, exposed, or invoked
 
 ```
 
 **Tag-Based Filtering:**
 
-Tags are applied to wiring configurations to organize and filter routes, channels, and other endpoints:
+Tags can be declared on the function itself or on a wiring, and help organize routes, channels, and other endpoints:
 
 ```typescript
-// Tags are applied to the wiring, not the function itself
+// Tags can come from the wiring...
 wireHTTP({
-  auth: false,
   method: 'get',
   route: '/admin/users',
   func: getUserProfile,
@@ -381,36 +375,34 @@ import { createUser } from '../src/user.functions.js'
 addFunction('createUser', createUser)
 ```
 
-```typescript
-// Generated by CLI - HTTP metadata
-// The same pikkuFuncId 'createUser' references the function
-import { pikkuState } from '@pikku/core/state'
-pikkuState(null, 'http', 'meta', [
-  {
-    "pikkuFuncId": "createUser",  // Single source of truth
-    "route": "/users",
-    "method": "post",
-    "inputTypes": {
-      "body": "CreateUserInput"
-    },
-    "docs": {
-      "description": "Create a new user",
-      "tags": ["users"]
+Generated HTTP metadata is keyed by method, then route. The same `pikkuFuncId`
+that registered the function references it here, in `http/pikku-http-wirings-meta.gen.json`:
+
+```json
+{
+  "post": {
+    "/users": {
+      "pikkuFuncId": "createUser",
+      "route": "/users",
+      "method": "post",
+      "inputTypes": {
+        "body": "CreateUserInput"
+      }
     }
   }
-])
+}
 ```
 
-```typescript
-// Generated by CLI - Channel metadata
-// Same pikkuFuncId used for WebSocket channels
-pikkuState(null, 'channel', 'meta', {
+WebSocket channels use the same identifier, in `channel/pikku-channels-meta.gen.json`:
+
+```json
+{
   "user-updates": {
     "connect": {
-      "pikkuFuncId": "createUser"  // Same identifier across all wiring
+      "pikkuFuncId": "createUser"
     }
   }
-})
+}
 ```
 
 ### Client Code Generation

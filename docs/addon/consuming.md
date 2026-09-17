@@ -285,7 +285,7 @@ wireAddon({
 })
 ```
 
-When the addon calls `secrets.getSecretJSON('SENDGRID_API_KEY')`, Pikku transparently looks up `MY_EMAIL_API_KEY` instead. The addon code doesn't need to know about your naming conventions.
+When the addon calls `(await secrets.getSecret('SENDGRID_API_KEY')).reveal()`, Pikku transparently looks up `MY_EMAIL_API_KEY` instead. The addon code doesn't need to know about your naming conventions.
 
 ## Best Practices
 

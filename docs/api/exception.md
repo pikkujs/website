@@ -97,7 +97,7 @@ export const createUser = pikkuFunc<
 export const getResource = pikkuFunc<
   { resourceId: string },
   { resource: Resource }
->(async (services, data, session) => {
+>(async (services, data, { session }) => {
   const resource = await services.database.getResource(data.resourceId)
   if (!resource) {
     throw new NotFoundError(`Resource ${data.resourceId} not found`)
@@ -142,7 +142,9 @@ const validateData: CorePikkuFunction<{ age: number }, { valid: boolean }> = asy
 // When called via HTTP, this automatically returns:
 // HTTP 400 Bad Request
 // {
-//   "error": "Age cannot be negative"
+//   "name": "BadRequestError",
+//   "message": "Age cannot be negative",
+//   "errorId": "<trace id>"
 // }
 ```
 
@@ -157,7 +159,9 @@ throw new ForbiddenError('Insufficient permissions')
 // Automatically becomes HTTP response:
 // Status: 403 Forbidden
 // Body: {
-//   "error": "Insufficient permissions"
+//   "name": "ForbiddenError",
+//   "message": "Insufficient permissions",
+//   "errorId": "<trace id>"
 // }
 ```
 

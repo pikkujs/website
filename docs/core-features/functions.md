@@ -63,6 +63,8 @@ const myFunction = pikkuFunc<InputType, OutputType>({
 })
 ```
 
+Three definers cover the common shapes: `pikkuFunc` (requires a session), `pikkuSessionlessFunc` (may run without one), and `pikkuVoidFunc` (no input, no output — for scheduled tasks and cleanup). All three accept either a bare function or this config object.
+
 ### Parameters Explained
 
 **1. Services** - Your application's singleton services (database, cache, logger, etc.)
@@ -93,7 +95,7 @@ func: async ({ database }, data, { http }) => {
 
 Pikku automatically merges data from wherever it comes from - URL paths, query parameters, request bodies, WebSocket messages, queue payloads, etc. Your function just receives clean, typed data.
 
-**Automatic Validation**: Pikku automatically generates JSON schemas from your TypeScript input types and validates all incoming data against them. If the data doesn't match your type signature, the function won't even be called - an error is returned immediately.
+**Automatic Validation**: When a function declares an `input` schema (or its input type is listed under `schemasFromTypes` in `pikku.config.json`), Pikku generates the JSON Schema and validates all incoming data against it. If the data doesn't match, the function won't even be called - an error is returned immediately.
 
 ```typescript
 type CreateBookInput = {
@@ -188,6 +190,8 @@ Permissions are defined separately and can be reused across functions:
 
 ```typescript
 // permissions.ts
+import type { PikkuPermission } from '#pikku/auth'
+
 export const requireBookOwner: PikkuPermission<{ bookId: string }> =
   async ({ database }, data, { session }) => {
     // session IS the user session value directly
@@ -289,12 +293,12 @@ This metadata is used to:
 
 ## Input and Output Validation
 
-Pikku supports runtime validation using [Zod](https://zod.dev):
+Pikku supports runtime validation using any [Standard Schema](https://standardschema.dev) validator, such as [Zod](https://zod.dev). The schemas are also the source of the data and return types, so use either schemas or generics - never both:
 
 ```typescript
 import { z } from 'zod'
 
-export const createBook = pikkuFunc<CreateBookInput, Book>({
+export const createBook = pikkuFunc({
   func: async ({ database }, data) => {
     return await database.insert('book', data)
   },
@@ -313,7 +317,7 @@ export const createBook = pikkuFunc<CreateBookInput, Book>({
 })
 ```
 
-The `input` and `output` schemas provide runtime validation on top of the compile-time TypeScript type checking.
+The `input` and `output` schemas provide runtime validation on top of the compile-time type checking, and `data`/the return value are inferred from them.
 
 ## Visibility Control
 

@@ -49,10 +49,10 @@ Add a `deploy` section to your `pikku.config.json`:
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `providers` | `Record<string, string>` | Map of provider names to adapter packages |
+| `providers` | `Record<string, string>` | Map of provider names to adapter packages. The keys are the names you pass to `--provider`; without a config the built-ins are `cloudflare`, `serverless`, `azure` and `standalone` |
 | `defaultProvider` | `string` | Which provider to use when `--provider` isn't passed |
-| `serverlessIncompatible` | `string[]` | Function names that can't run serverless (routed to a server fallback) |
-| `defaultTarget` | `"serverless"` \| `"server"` | Target for functions with no explicit `deploy` flag (default: `serverless`) |
+| `serverlessIncompatible` | `string[]` | Service names that can't run serverless (any function reaching one is routed to a server target) |
+| `defaultTarget` | `"serverless"` \| `"server"` | Target for functions with no explicit `deploy` flag and no serverless-incompatible service (default: `serverless`) |
 | `grouping` | `object` | How many deployment units the app's functions collapse into — see below |
 
 ## Deployment unit grouping
@@ -165,7 +165,7 @@ wireHTTP({ method: 'get', route: '/todos', func: getTodos, tags: ['todos'] })
 ```
 
 A rule matching `todos` picks up `getTodos` from that wiring. The same holds for
-`wireQueueWorker`, `wireScheduledTask`, `wireChannel` and the MCP wirings — a
+`wireQueueWorker`, `wireScheduler`, `wireChannel` and the MCP wirings — a
 function inherits the tags of every wiring that points at it, unioned with any
 it declares itself.
 :::
@@ -285,20 +285,19 @@ Example output:
 ```
 Project: my-app
 
-Units (4):
-  function       my-app-get-books         [getBooks]
+Units (3):
+  function       svc-base                       [getBooks, createBook]
     GET /api/books
-  function       my-app-create-book       [createBook]
     POST /api/books
-  agent          my-app-assistant         [assistant]
-  workflow       my-app-onboarding        [onboarding]
+  agent          agent-assistant                [assistant]
+  workflow       wf-onboarding                  []
 
 Queues (2):
-  pikku-workflow-orchestrator    -> my-app-onboarding
-  pikku-workflow-worker          -> my-app-onboarding
+  wf-orchestrator-onboarding                 -> wf-onboarding
+  wf-step-createBook                         -> svc-base
 
 Scheduled Tasks (1):
-  daily-cleanup                  0 3 * * *  -> my-app-daily-cleanup
+  daily-cleanup                  0 3 * * *  -> svc-base
 
 Required Secrets (2):
   DATABASE_URL
@@ -322,17 +321,17 @@ Each unit lists its handlers (HTTP routes, queue consumers, cron schedules), ser
 
 ### Server Fallback
 
-Some functions can't run in serverless environments (long-running processes, native dependencies, etc.). Mark them in config:
+Some services can't run in serverless environments (long-running processes, native dependencies, etc.). Name those **services** in config:
 
 ```json
 {
   "deploy": {
-    "serverlessIncompatible": ["heavy-compute", "video-transcode"]
+    "serverlessIncompatible": ["pdfService", "videoTranscode"]
   }
 }
 ```
 
-These get routed to a server-based deployment target instead of a serverless worker.
+Any function whose body reaches one of those services is routed to a server-based deployment target instead of a serverless worker. A function can also choose the target itself with `deploy: "server"`; declaring `deploy: "serverless"` on a function that uses an incompatible service is a build error.
 
 ## Providers
 
@@ -444,6 +443,19 @@ npx pikku deploy apply --provider standalone --runtime bun
 
 The artifact answers `--version` and `--help` without opening a database, and runs its own migrations with `./my-app db migrate`. Point `PIKKU_DATA_DIR` at a directory that outlives a release so a SQLite database is not replaced along with the bundle.
 
+Unlike every other provider, a standalone artifact is its own host: nothing
+hands it a `kysely`, so it opens the database itself. It resolves which one the
+same way `pikku dev` does — `sqliteDb` or `postgresUrl` from your `createConfig`
+first, then the `db/sqlite` or `db/postgres` migrations directory. Declaring
+both is refused rather than guessed at.
+
+Only the engine carries into the artifact. A SQLite build names its file through
+`PIKKU_DATA_DIR` (or `PIKKU_DATABASE_FILE`), never the path your config used
+locally; a Postgres build reads `DATABASE_URL` and fails by name if it is unset.
+Install the dialect the build needs — `@pikku/kysely-node-sqlite` for a node
+bundle, `@pikku/kysely-bun-sqlite` for a compiled bun binary, or
+`@pikku/kysely-postgres` — or the bundle cannot resolve it.
+
 Adding `--desktop` to a `--runtime bun` build also generates a Tauri shell that runs the binary as a sidecar; `--desktop-url` points that shell at an already-deployed server and bundles nothing. Desktop builds are unsigned and do not auto-update.
 
 Good for self-hosted deployments, on-premise, edge devices, or handing someone an app.
@@ -455,16 +467,21 @@ The deploy pipeline writes everything to `.deploy/<provider>/`:
 ```
 .deploy/cloudflare/
 ├── units/
-│   ├── my-app-get-books/
-│   │   ├── index.js          # Bundled entry point
-│   │   └── wrangler.toml     # Worker config
-│   ├── my-app-create-book/
+│   ├── svc-base/
+│   │   ├── bundle.js          # Bundled entry point
+│   │   ├── package.json       # Minimal runtime dependencies
+│   │   └── wrangler.toml      # Worker config
+│   ├── agent-assistant/
 │   │   └── ...
-│   └── my-app-assistant/
+│   └── wf-onboarding/
 │       └── ...
-├── infra.json                 # Infrastructure manifest
-└── plan.json                  # Deployment plan
+├── deployment-manifest.json   # Units, handlers, services, dependencies
+└── infra.json                 # Infrastructure manifest
 ```
+
+`pikku deploy plan --result-file plan.json` additionally writes the structured
+plan wherever you ask, and `pikku deploy apply --from-plan` deploys from an
+existing `.deploy/<provider>/` build without rebuilding.
 
 ## Next Steps
 

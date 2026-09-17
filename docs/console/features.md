@@ -44,7 +44,7 @@ Both [DSL workflows](/docs/wiring/workflows) and [graph workflows](/docs/wiring/
 
 End-to-end [scenario](/docs/core-features/scenarios) tests and the personas that run them:
 
-- Browse your `pikkuScenario` flows with their **cast of actors** (from `scenarios.actors` in `pikku.config.json`), or flip to a personas view to see which flows each actor appears in
+- Browse your `pikkuScenario` flows with their **cast of personas** (declared in code with `definePersonas`, surfaced via `#pikku/scopes/pikku-personas.gen.js`), or flip to a personas view to see which flows each persona appears in
 - **Run a scenario** straight from the Console — each actor signs in via the actor auth plugin and drives its steps over real HTTP as that persona (needs `SCENARIO_ACTOR_SECRET` configured; without it the run falls back to actor-less with a warning)
 - Follow the **persona-driven step timeline** and last-run status for each flow
 
@@ -117,6 +117,33 @@ Configure [Better Auth](/docs/middleware/better-auth) social sign-in and SSO pro
 ### Credentials
 
 See per-user [credential](/docs/wiring/credentials) status across your integrations: which users have connected which services, and whether their tokens are healthy.
+
+## Rollout
+
+### Feature Flags
+
+A launch board rather than a list: every feature flag your code declares sits in the lane its rollout has actually reached.
+
+- **Dark** — switched off for everyone. An override still lets a named subject in.
+- **Rolling out** — on, but held to a percentage of buckets. A subject stays in or out across requests.
+- **Live** — on for everyone the flag's capabilities admit.
+- **Needs attention** — the flag is not resolving in a way anybody chose. Either the declaration is gone from the code and the stored row is waiting for `pikku flags prune`, or the flag is declared with no stored row at all — which **fails open**, so it is live for everyone right now. That second case reads as `enabled` with no rollout limit, i.e. exactly like a deliberate full launch, which is why the board calls it out instead of drawing it as one.
+
+Selecting a flag opens its controls beside the board: the switch, the rollout percentage, and the list of subjects pinned on or off past that rollout, with the user who pinned each one. They share a surface because they are read together — "off for everyone except these three" is a switch and an override row, and an operator who has to leave one screen to see the other is the operator who turns a flag on for everybody by mistake.
+
+Turning a flag on while it carries no rollout limit asks first, because that single press admits everyone the flag's capabilities allow — there is no bucket left to hold anybody back.
+
+Two board-level actions sit in the header: **Create missing rows** (`pikku flags sync`) writes a stored row for every declaration that has none, which is how a fail-open flag is closed; **Prune undeclared** (`pikku flags prune`) drops the rows whose declaration is gone.
+
+The board is read-only when your project's flags come from a `FeatureFlagSource` — a provider Pikku reads but does not own — and says so rather than offering controls that would fail.
+
+### Analytics Events
+
+The catalog of every analytics event your code declares, with the props each one carries and the schema each prop was declared with.
+
+Events are grouped by the file that declares them, so the catalog reads in the same order the code does.
+
+This is the **declared surface** — what a client is allowed to emit — read from build-time metadata, not a volume report of what has been emitted. Use it to check what a new event will be called and what shape the ingest will accept before you write the call.
 
 ## Changes
 

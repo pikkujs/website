@@ -10,6 +10,20 @@ Cross-Origin Resource Sharing (CORS) is a security feature that allows your appl
 
 We recommend managing CORS through your chosen runtime environment. Each platform offers robust, battle-hardened libraries and built-in support for handling CORS, ensuring reliable and efficient configuration. By leveraging your runtime's native CORS capabilities, you can simplify your setup and maintain consistency across your deployment environments, whilst also keeping Pikku focused on its core goals.
 
+### Handling CORS in Pikku
+
+For the cases where runtime configuration isn't convenient, Pikku also ships a `cors` middleware. Register it globally to set the CORS headers and answer preflight requests:
+
+```typescript
+import { addHTTPMiddleware, cors } from '#pikku/middleware'
+
+addHTTPMiddleware('*', [
+  cors({ origin: ['https://app.example.com'], credentials: true }),
+])
+```
+
+`origin` defaults to `*`, which browsers reject alongside `credentials: true` — name the origins when cookies ride along. Pikku also exports `requireOrigin`, which rejects a request with a 403 unless its `Origin` matches the app's own host (or an allowed list). Unlike CORS headers, which only a browser enforces, `requireOrigin` stops the request before the function body runs.
+
 ### Why Use Runtime-Provided CORS Solutions?
 
 - **Stability and Security:** Established runtimes provide well-tested and secure implementations of CORS policies.

@@ -29,7 +29,19 @@ Sends an email.
 | HTML | `{ html: string, text?: string }` — optional plain-text fallback |
 | Template | `{ template: { name, locale?, data? } }` — rendered server-side by name |
 
-All shapes share the envelope fields: `to` (string or array), and optional `from`, `cc`, `bcc`, `replyTo`, `headers`, `subject`.
+All shapes share the envelope fields: `to` (string or array), and optional `from`, `cc`, `bcc`, `replyTo`, `headers`, `subject` and `attachments`.
+
+### Attachments
+
+Every shape accepts `attachments?: EmailAttachment[]`:
+
+| Field | Description |
+|-------|-------------|
+| `filename` | File name shown to the recipient |
+| `content` | Raw bytes (`Uint8Array`) or a base64-encoded string. A string is always decoded as base64 — encode text yourself |
+| `contentType?` | MIME type |
+| `contentId?` | Content ID, for inline images referenced from the HTML |
+| `disposition?` | `'attachment'` (the default) or `'inline'` |
 
 ## Usage Example
 
@@ -52,7 +64,7 @@ export const sendWelcomeEmail = pikkuFunc<{ email: string; name: string }, void>
 
 ### LocalEmailService (built-in)
 
-Logs the email as structured JSON to the console instead of sending — the development default, so `pikku dev` can capture and preview outbound mail without a provider.
+Logs the email as structured JSON to the console instead of sending — the development default, so outbound mail leaves a trace under `pikku dev` without a provider.
 
 ```typescript
 import { LocalEmailService } from '@pikku/core/services'
@@ -65,7 +77,7 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-emai
 
 ### Production providers
 
-Provider integrations (Resend, SES, SMTP, …) ship as addons or are implemented in your project — the interface is a single `send` method, so wrapping any provider SDK is a few lines:
+Provider integrations (Resend, SES, SMTP, …) are implemented in your project — the interface is a single `send` method, so wrapping any provider SDK is a few lines:
 
 ```typescript
 import type { EmailService, SendEmailInput, SendEmailResult } from '@pikku/core/services'

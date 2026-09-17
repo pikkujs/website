@@ -54,7 +54,7 @@ so it works at runtime and under modern TypeScript resolution without a bundler:
 {
   "imports": {
     "#pikku/*.js": "./.pikku/*.ts",
-    "#pikku/*": "./.pikku/*/index.ts"
+    "#pikku/*": ["./.pikku/*/index.ts", "./.pikku/*"]
   }
 }
 ```
@@ -62,7 +62,8 @@ so it works at runtime and under modern TypeScript resolution without a bundler:
 The first entry lets a `.js` specifier resolve to the `.ts` source, which is what
 `NodeNext` emits — that is how `#pikku/pikku-fetch.gen.js` reaches a generated
 artifact that is not a door. The second resolves `#pikku/http` to the door barrel
-`.pikku/http/index.ts`.
+`.pikku/http/index.ts`, with the bare `./.pikku/*` as a fallback for specifiers
+that name a generated file rather than a door.
 
 An addon builds to `dist/` first, so its map points there instead, with an array
 fallback because a published package is read by tools with a range of resolution
@@ -77,6 +78,31 @@ behaviour:
 }
 ```
 
+An addon's generated tree roots one level down, at `.pikku/addon/`, so its source
+reaches every leaf as `#pikku/addon/<leaf>` (`#pikku/addon/function`,
+`#pikku/addon/setup`, …). Its own build resolves those through `paths` in
+`tsconfig.json`, because a linked addon's flat `#pikku/function` would otherwise
+match the *host application's* leaf and type the addon against the host's
+services:
+
+```json title="tsconfig.json (addon)"
+{
+  "compilerOptions": {
+    "paths": {
+      "#pikku/*.js": ["./.pikku/*.ts"],
+      "#pikku/*": ["./.pikku/*/index.ts", "./.pikku/*"]
+    }
+  }
+}
+```
+
+An addon also must not wire transports. `wireHTTP`, `wireChannel`,
+`wireQueueWorker`, `wireScheduler`, `wireCLI`, `wireGateway`, `wireTrigger`,
+`wireMCPResource`/`wireMCPPrompt`, `wireAddon` and `wireRemoteAddon` are refused
+in an addon package ([PKU920](/docs/pikku-cli/errors/pku920)): the addon declares
+contracts with the `define*` helpers and exports functions, and the consuming
+app wires them with `refHTTP` / `refChannel` / `refCLI`.
+
 Relative imports resolve to exactly the same files if you would rather not use
 the alias:
 
@@ -84,14 +110,19 @@ the alias:
 import { pikkuSessionlessFunc } from '../../.pikku/function/index.js'
 ```
 
+In a monorepo the generated imports between packages are rewritten to package
+names: `packageMappings` in `pikku.config.json` maps each source directory to
+the package that publishes it — see
+[Monorepo Support](/docs/pikku-cli/configuration#monorepo-support).
+
 ## What is in `.pikku/`
 
 One directory per door, plus a handful of generated files that are not doors:
 
 - `function/`, `setup/`, `middleware/`, `error/`, `auth/`, `scopes/`, `secrets/`,
-  `variables/`, `addon/` — the everyday doors
+  `credentials/`, `variables/`, `addon/`, `analytics/` — the everyday doors
 - `http/`, `channel/`, `queue/`, `scheduler/`, `cli/`, `mcp/`, `trigger/`,
-  `gateway/`, `rpc/` — one per transport
+  `gateway/` — one per transport
 - `workflow/`, `agent/`, `scenarios/` — orchestration and testing
 - `pikku-bootstrap.gen.ts` — imports every wiring; your server entry point
   imports this once so the registrations happen

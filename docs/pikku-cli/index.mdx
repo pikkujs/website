@@ -29,16 +29,18 @@ npx pikku all
 
 **Filtering flags** (apply to `all`):
 
-| Flag                                          | Description                                                                                                                                         |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--filter`                                    | Named filter preset(s) from the `filters` map in `pikku.config.json` (comma-separated)                                                              |
-| `--tags, -t` / `--exclude-tags`               | Include/exclude functions by tags (comma-separated)                                                                                                 |
-| `--wires` / `--exclude-wires`                 | Include/exclude wirings by category (comma-separated): `http`, `channel`, `queue`, `scheduler`, `rpc`, `mcp`, `cli`, `workflow`, `trigger`, `agent` |
-| `--directories, -d` / `--exclude-directories` | Include/exclude functions by directories (comma-separated)                                                                                          |
-| `--http-methods` / `--exclude-http-methods`   | Include/exclude HTTP routes by methods (comma-separated)                                                                                            |
-| `--http-routes` / `--exclude-http-routes`     | Include/exclude HTTP routes by route patterns (comma-separated)                                                                                     |
-| `--names, -n` / `--exclude-names`             | Include/exclude functions by name patterns (supports wildcards)                                                                                     |
-| `--target` / `--exclude-target`               | Include/exclude by deploy target (`serverless`, `server`)                                                                                           |
+| Flag                                          | Description                                                                                                                                           |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--filter`                                    | Named filter preset(s) from the `namedFilters` map in `pikku.config.json` (comma-separated)                                                           |
+| `--tags, -t` / `--exclude-tags`               | Include/exclude functions by tags (comma-separated)                                                                                                   |
+| `--wires` / `--exclude-wires`                 | Include/exclude wirings by category (comma-separated): `http`, `scheduler`, `trigger`, `channel`, `rpc`, `queue`, `mcp`, `cli`, `workflow`, `agent`, `gateway` |
+| `--directories, -d` / `--exclude-directories` | Include/exclude functions by directories (comma-separated)                                                                                            |
+| `--http-methods` / `--exclude-http-methods`   | Include/exclude HTTP routes by methods (comma-separated)                                                                                              |
+| `--http-routes` / `--exclude-http-routes`     | Include/exclude HTTP routes by route patterns (comma-separated)                                                                                       |
+| `--names, -n` / `--exclude-names`             | Include/exclude functions by name patterns (supports wildcards)                                                                                       |
+| `--target` / `--exclude-target`               | Include/exclude by deploy target (`serverless`, `server`)                                                                                             |
+| `--diff`                                      | On success, emit a structural diff of the generated `.pikku` meta as a `PIKKU_DIFF <json>` line on stdout. Only emitted on exit 0                       |
+| `--force-relative-imports`                    | Emit relative imports even when `packageMappings` would apply (used by per-unit deploy codegen)                                                       |
 
 ```bash
 # Public HTTP API only
@@ -67,8 +69,10 @@ Start a local development server with all services wired. Watch mode and hot mod
 npx pikku dev
 npx pikku dev --port 8080        # Custom port (default: 3000)
 npx pikku dev --no-watch         # Disable file watching
+npx pikku dev --no-hmr           # Disable hot module reload
 npx pikku dev --coverage         # Collect V8 precise coverage in-process
 npx pikku dev --test             # Test mode: record service calls for scenario assertions
+npx pikku dev --model cheap:openai/gpt-5-nano   # Repoint model aliases for this run
 ```
 
 ### `pikku serve`
@@ -79,6 +83,7 @@ Start a server using the bundled bun or node runner — no watch, no codegen. Fo
 npx pikku serve
 npx pikku serve --port 8080
 npx pikku serve --console        # Also serve the Console same-origin at /console
+npx pikku serve --model cheap:openai/gpt-5-nano
 ```
 
 Both commands own the full server lifecycle — creating services, starting, and shutting down. Hook into it with [lifecycle hooks](/docs/core-features/server-lifecycle) rather than writing your own entrypoint.
@@ -116,7 +121,7 @@ npx pikku openapi        # OpenAPI specification from HTTP routes
 npx pikku nextjs         # Next.js backend and HTTP wrappers
 ```
 
-These require the corresponding file paths to be set in `pikku.config.json` under `clientFiles` (e.g., `fetchFile`, `websocketFile`, `reactQueryFile`, `realtimeFile`, `startServerFnsFile`).
+Most of these require the corresponding output path to be set in `pikku.config.json` under `clientFiles` (e.g., `fetchFile`, `websocketFile`, `reactQueryFile`, `realtimeFile`, `tanstackStartFile`), and they skip silently when it isn't. `openapi` writes to `openAPI.outputFile` instead, and `tanstack-start` needs `rpcWiringsFile` because the shim imports the generated `PikkuRPC` class.
 
 ### `pikku new`
 
@@ -148,15 +153,18 @@ npx pikku new addon my-integration
 npx pikku new addon my-integration --secret       # Include secret schema
 npx pikku new addon my-integration --variable     # Include variable definition
 npx pikku new addon my-integration --oauth        # OAuth2 credential + API service
-npx pikku new addon my-integration --credential apikey  # Per-user credential
+npx pikku new addon my-integration --credential apikey  # Per-user credential (apikey, bearer, or oauth2)
 npx pikku new addon my-integration --openapi ./spec.yaml  # Generate from OpenAPI spec
+npx pikku new addon my-integration --auth-config auth.json  # Override the spec's auth
 npx pikku new addon my-integration --mcp          # Expose functions as MCP tools
-npx pikku new addon my-integration --camelCase    # Convert snake_case to camelCase in schemas
+npx pikku new addon my-integration --camel-case   # Convert snake_case to camelCase in schemas
 ```
+
+`new addon` also takes `--display-name`, `--description`, `--category` (default `General`), `--dir/-d` to choose where the package lands, `--no-test` to skip the test harness, and `--no-build` to skip install + build. The package is created at `<scaffold.addonDir>/addon-<name>` (default: the current working directory).
 
 ### `pikku enable`
 
-Enable Pikku features by updating the `scaffold` section in `pikku.config.json`:
+Enable Pikku features by setting `scaffold.<feature> = true` in `pikku.config.json`:
 
 ```bash
 npx pikku enable rpc          # Enable public RPC endpoint
@@ -166,11 +174,11 @@ npx pikku enable agent        # Enable public agent endpoints
 npx pikku enable workflow     # Enable workflow workers
 npx pikku enable events       # Enable the realtime events channel + SSE stream
 npx pikku enable remote-rpc   # Enable the remote internal RPC queue worker + HTTP endpoint
+npx pikku enable remote-jobs  # Enable the remote job inbox routes
 npx pikku enable webhook      # Enable the outgoing webhook delivery queue worker
-
-# Disable auth requirement
-npx pikku enable rpc --no-auth
 ```
+
+Authentication is not part of the scaffold flag: it is declared on the function, its wiring, its scopes and its addon, and enforced there on every call.
 
 ### `pikku versions`
 
@@ -189,13 +197,13 @@ Deploy your Pikku project to cloud infrastructure.
 
 ```bash
 npx pikku deploy plan                    # Show what will be created/updated/deleted
-npx pikku deploy plan --provider aws     # Use AWS provider (default: cloudflare)
+npx pikku deploy plan --provider serverless  # Use a configured provider (default: cloudflare)
 npx pikku deploy apply                   # Execute the deployment
 npx pikku deploy apply --from-plan       # Deploy from existing plan output
 npx pikku deploy info                    # Show current deployment state
 ```
 
-Both `plan` and `apply` accept `--runtime node|bun` for the standalone provider (bundle.js vs compiled executable) and `--result-file <path>` to write a structured JSON result.
+`plan` and `apply` accept `--provider/-p` (default: `cloudflare`), `--runtime node|bun` for the standalone provider (bundle.js vs compiled executable, default `node`), and `--result-file <path>` to write a structured JSON result. `apply` also takes `--desktop` (generate a `src-tauri/` shell that runs the compiled binary as a sidecar) and `--desktop-url` (point that shell at an already-deployed server instead of bundling one). `info` takes `--provider`.
 
 **Providers:** `cloudflare` (default), `serverless`, `azure`, `standalone` — extendable via the `deploy.providers` map in `pikku.config.json`
 
@@ -203,17 +211,19 @@ The deploy pipeline builds your project, tree-shakes per deployment unit, and pr
 
 ### `pikku info`
 
-Inspect your Pikku project:
+Inspect your Pikku project (for a person to read; use `pikku meta` when tooling consumes the output):
 
 ```bash
 npx pikku info                           # List all functions (default)
 npx pikku info functions                 # List all registered functions
-npx pikku info functions --verbose       # Include file paths, services, etc.
-npx pikku info tags                      # List all tags with associated functions
+npx pikku info functions --verbose       # Include type, middleware, and file
+npx pikku info tags                      # List all tags with associated functions, middleware, and permissions
 npx pikku info middleware                # List all middleware definitions
 npx pikku info permissions               # List all permission definitions
-npx pikku info --limit 100              # Show more rows (default: 50)
+npx pikku info --limit 100               # Show more rows (default: 50)
 ```
+
+`--limit` and `--verbose` work on the subcommands too.
 
 ### `pikku doc`
 
@@ -244,10 +254,13 @@ Local development database commands.
 ```bash
 npx pikku db migrate    # Apply pending SQL migrations and regenerate db/schema.gen.ts
 npx pikku db generate   # Generate SQL migrations from detected schema changes
-npx pikku db seed       # Apply db/seed.sql to the dev database
+npx pikku db check      # Report how the configured database differs from the schema its migrations define
+npx pikku db baseline   # Record pending migrations as applied, for a database that already has what they describe
+npx pikku db codegen    # Regenerate db/schema.gen.ts and db/zod.gen.ts, without connecting to a database
+npx pikku db export     # Publish this package's schema for addon consumers
 npx pikku db reset      # Wipe and recreate the dev database (migrate + seed)
+npx pikku db reset --no-seed  # Migrate only, leaving the database empty
 npx pikku db audit      # Report column classifications and flag columns with no anonymize strategy
-npx pikku db export     # Publish an addon's schema so a consumer can create its tables
 ```
 
 `db export` is run from an addon's build, not an application's — see [Shipping Database Tables](/docs/addon/database).
@@ -263,13 +276,17 @@ npx pikku binary --compile-target bun-linux-x64
 
 ### `pikku skills`
 
-Install bundled agent skills (Claude Code today; Codex/Gemini coming soon).
+Install bundled agent skills (Claude Code, opencode, pi; Codex/Gemini coming soon).
 
 ```bash
 npx pikku skills list                 # List bundled skills and which are installed
 npx pikku skills install              # Copy bundled skills into the project
+npx pikku skills install --agent opencode  # Target an agent (default: claude)
+npx pikku skills install --only pikku-wiring,pikku-http
 npx pikku skills install --core       # Only skills tagged installGroups: [core]
 npx pikku skills install --fabric     # Only skills tagged installGroups: [fabric]
+npx pikku skills install --client     # Only skills tagged installGroups: [client]
+npx pikku skills install --update     # Overwrite existing skills
 ```
 
 ### `pikku meta`
@@ -279,8 +296,21 @@ Inspect project metadata in machine-readable form (for planners and tooling).
 ```bash
 npx pikku meta context     # Bulk project context in one call
 npx pikku meta clients     # Frontend-targeted metadata (exposed RPCs, workflows, channels)
+npx pikku meta apply ops.json  # Apply a batch of edits to your own source, all-or-nothing (or via stdin)
+
 npx pikku meta functions list
+npx pikku meta functions get myFunction
+npx pikku meta schemas list
+npx pikku meta schemas get mySchema
+npx pikku meta workflows list
+npx pikku meta workflows get myWorkflow
+npx pikku meta middleware list
+npx pikku meta middleware get myMiddleware
+npx pikku meta permissions list
+npx pikku meta permissions get myPermission
 npx pikku meta wires list
+npx pikku meta wires http        # also: scheduler, queue, channel, trigger
+npx pikku meta wires get http
 ```
 
 ### `pikku emails`
@@ -289,22 +319,48 @@ Typed email template generation.
 
 ```bash
 npx pikku emails init       # Scaffold emailTemplatesDir with starter locales, theme, partials
+npx pikku emails init --force  # Overwrite an existing email scaffold
 npx pikku emails generate   # Generate typed email renderers and metadata
 ```
 
-Requires `emailTemplatesDir` in `pikku.config.json`.
+Requires `emailTemplatesDir` in `pikku.config.json` (`emails init` writes it for you).
 
 ### `pikku scenario`
 
-Run and inspect scenarios (`pikkuScenario`) against a configured environment. Environments live under `scenarios.environments` in `pikku.config.json`; the actor secret comes from the `SCENARIO_ACTOR_SECRET` environment variable.
+Run and inspect scenarios (`pikkuScenario`) against a configured environment. Environments live under `environments` in `pikku.config.json`; the actor secret comes from the `SCENARIO_ACTOR_SECRET` environment variable.
 
 ```bash
 npx pikku scenario list                    # List scenarios with names and descriptions
 npx pikku scenario run staging             # Run all scenarios against the staging environment
 npx pikku scenario run staging --flows onboarding,checkout
+npx pikku scenario run staging --features checkout
 npx pikku scenario run staging --tags smoke
-npx pikku scenario run local --coverage    # Per-scenario server coverage (target must run with --coverage)
+npx pikku scenario run staging --exclude-tags slow
+npx pikku scenario run staging --run browser   # Drive each actor through 'browser', 'cli', or 'default'
+npx pikku scenario run staging --strict        # Fail a `then` with no witness for --run
+npx pikku scenario run local --spawn --keep-alive  # Start `pikku dev` for the run
+npx pikku scenario run local --coverage        # Per-scenario server coverage (target must run with --coverage)
+npx pikku scenario run staging --trace --screenshots --video all
+npx pikku scenario run staging --api-url https://sandbox.example.com --app-url https://app.example.com
 ```
+
+`--video` takes `failed` (the default), `all`, or `off`. `--api-url` and `--app-url` override the environment for one run; `--app-url` also accepts `<app>=<url>` pairs for products whose personas sign into different frontends.
+
+### `pikku persona`
+
+The people this app is for, and running one against a real stage. Personas are declared in code with `definePersonas`; `persona secret` mints per-persona credentials from `SCENARIO_ACTOR_SECRET` (exported to a run as `PIKKU_PERSONA_SECRETS`).
+
+```bash
+npx pikku persona list
+npx pikku persona run staging susan            # Sign in as a persona and work the API in character
+npx pikku persona run staging susan --disposition careless --goals "find a cheaper plan"
+npx pikku persona run staging susan --model openai/gpt-5-mini --out run.json
+npx pikku persona sync staging                 # Report which personas an environment will provision
+npx pikku persona secret                       # Mint credentials for every persona
+npx pikku persona secret susan admin           # Just these two
+```
+
+`persona run` also takes `--steps` (default 40), `--mutations`, `--duration 30m`, `--seed`, `--allow-approval`, `--skip-role-check`, and `--api-url`.
 
 ### `pikku audit`
 
@@ -329,6 +385,7 @@ Copy the generated files `tsc` cannot emit — the `.gen.json` meta and hand-aut
 
 ```bash
 npx pikku dist
+npx pikku dist --dist-dir dist/server  # Defaults to the tsconfig's compilerOptions.outDir
 ```
 
 ### `pikku update`
@@ -340,12 +397,16 @@ npx pikku update            # report only
 npx pikku update --update   # actually write the new versions
 ```
 
+`--update-peers` also writes the ranges unsatisfied peers require (implies `--update`), `--no-install` leaves `node_modules` alone, `--tag` picks a dist-tag (default `latest`), and `--registry` overrides the registry to read versions from.
+
 ### `pikku semver`
 
 Derive a release's semver by comparing this build's surface against a deployed one, and write `.pikku/changes.gen.json`. Pass `--emit` to produce this build's snapshot instead of comparing it — publish that to serve as the next baseline.
 
 ```bash
 npx pikku semver                      # compare against the deployed baseline
+npx pikku semver --against ./old-pikku  # baseline: a .pikku dir, a snapshot file, or a URL
+npx pikku semver --fail-on minor      # exit non-zero at or above this level
 npx pikku semver --emit --out surface.json   # publish a new baseline
 ```
 
@@ -354,10 +415,10 @@ npx pikku semver --emit --out surface.json   # publish a new baseline
 Inspect and maintain the authorization scopes declared with `defineScope` and the roles declared with `defineSystemRole`.
 
 ```bash
-npx pikku scopes audit    # report declared scopes and where they are used
-npx pikku scopes prune    # remove scopes nothing references
-npx pikku roles audit
-npx pikku roles prune
+npx pikku scopes audit    # Report scopes in the database no longer declared in code, and the roles holding them
+npx pikku scopes prune    # Remove them — reports first, deletes with --yes
+npx pikku roles audit     # Report system roles in the database no longer declared in code, and how many people hold them
+npx pikku roles prune --yes
 ```
 
 ### `pikku knowledge`
@@ -368,6 +429,7 @@ Inspect and maintain the knowledge base — what this app is, in the language it
 npx pikku knowledge validate        # Check the knowledge base against the app-project profile
 npx pikku knowledge index           # Refresh every index.md to list the notes actually in it
 npx pikku knowledge index --check   # Report stale indexes without writing — a CI gate
+npx pikku knowledge next            # Say the one thing to do next
 ```
 
 #### `pikku knowledge plan`
@@ -385,23 +447,13 @@ npx pikku knowledge plan defer <milestone> <item> --reason "..."  # Move an item
 
 `progress` reads from the generated meta rather than from what was claimed, and `set` writes nothing if the plan does not validate against its milestone note.
 
-### `pikku persona`
-
-The people this app is for, and running one against a real stage.
-
-```bash
-npx pikku persona list
-npx pikku persona run
-npx pikku persona sync
-npx pikku persona secret
-```
-
 ### `pikku import`
 
 Import workflows from other systems.
 
 ```bash
-npx pikku import n8n
+npx pikku import n8n <file>          # A single export, an export array, or a directory of exports
+npx pikku import n8n workflow.json --out src/workflows
 ```
 
 ### `pikku login` / `pikku logout` / `pikku whoami`
@@ -411,8 +463,12 @@ Authenticate the CLI against a Pikku server (device-authorization flow). Used by
 ```bash
 npx pikku login                          # Default: http://localhost:3000
 npx pikku login --url https://api.example.com
+npx pikku login --client-id my-agent --scope "openid profile" --auth-path /auth
+npx pikku login --no-open                # Don't open the verification URL in a browser
 npx pikku whoami                         # Show the current CLI session
+npx pikku whoami --url https://api.example.com
 npx pikku logout                         # Remove a stored CLI session
+npx pikku logout --url https://api.example.com
 ```
 
 ### `pikku fabric`

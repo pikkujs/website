@@ -60,13 +60,15 @@ export const myFunction = pikkuFunc<void, { apiUrl: string; debug: boolean }>(
 
 ### Local (development)
 
-Reads from `process.env`. Used automatically in Node.js and Bun environments:
+`LocalVariablesService` from `@pikku/core/services`, constructed with
+`process.env` by default:
 
 ```typescript reference title="local-variables.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-variables.ts
 ```
 
-For Cloudflare Workers, pass the `env` object from the Workers handler into your service setup.
+For Cloudflare Workers, pass the `env` object from the Workers handler into the
+service — `new LocalVariablesService(env)`.
 
 ## Interface
 

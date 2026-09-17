@@ -262,30 +262,44 @@ Pikku defines service interfaces for its core features. You provide implementati
 
 ### Required by Feature
 
-| Service              | Interface              | Required For                                    | Packages                                                                                   |
-| -------------------- | ---------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `logger`             | `Logger`               | Always                                          | Built-in (`ConsoleLogger`)                                                                 |
-| `config`             | `CoreConfig`           | Always                                          | Your own                                                                                   |
-| `schema`             | `SchemaService`        | Validation                                      | `@pikku/schema-ajv`, `@pikku/schema-cfworker`                                              |
-| `secrets`            | `SecretService`        | [Secrets](/docs/core-features/secrets)          | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
-| `variables`          | `VariablesService`     | [Variables](/docs/core-features/variables)      | Built-in (`LocalVariablesService`)                                                         |
-| `jwt`                | `JWTService`           | JWT auth                                        | `@pikku/jose`                                                                              |
-| `agentRunner`      | `AgentRunnerService` | [AI Agents](/docs/wiring/ai-agents/)            | `@pikku/ai-vercel`                                                                         |
-| `agentStorage`          | `AgentStorageService`     | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
-| `agentRunState`         | `AgentRunStateService`    | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
-| `agentRunService`    | `AgentRunService`      | Console (agent runs)                            | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                |
-| `workflowService`    | `WorkflowService`      | [Workflows](/docs/wiring/workflows/)            | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
-| `workflowRunService` | `WorkflowRunService`   | Console (workflow runs)                         | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
-| `queueService`       | `QueueService`         | [Queues](/docs/wiring/queue/)                   | `@pikku/queue-bullmq`, `@pikku/queue-pg-boss`, `CloudflareQueueService`, `SQSQueueService` |
-| `schedulerService`   | `SchedulerService`     | [Scheduled Tasks](/docs/wiring/scheduled-tasks) | Built-in                                                                                   |
-| `channelStore`       | `ChannelStore`         | [Channels](/docs/wiring/channels/)              | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
-| `eventHubStore`      | `EventHubStore`        | Channels (pub/sub)                              | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
-| `credentialService`  | `CredentialService`    | [Credentials](/docs/wiring/credentials/)        | `@pikku/kysely`                                                                            |
-| `deploymentService`  | `DeploymentService`    | Multi-instance deploy                           | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                |
-| `content`            | `ContentService`       | Static content serving                          | Built-in (`LocalContentService`)                                                           |
-| `triggerService`     | `TriggerService`       | [Triggers](/docs/wiring/triggers/)              | Built-in (`PikkuTriggerService`)                                                           |
-| `gatewayService`     | `GatewayService`       | [Gateway](/docs/wiring/gateway/)                | Your own                                                                                   |
-| `metaService`        | `MetaService`          | Console                                         | Generated (`PikkuMetaService`)                                                             |
+| Service                    | Interface                    | Required For                                    | Packages                                                                                                      |
+| -------------------------- | ---------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `logger`                   | `Logger`                     | Always                                          | Built-in (`ConsoleLogger`), `@pikku/pino`                                                                     |
+| `config`                   | `CoreConfig`                 | Always                                          | Your own                                                                                                      |
+| `variables`                | `VariablesService`           | Configuration                                   | Built-in (`LocalVariablesService`)                                                                            |
+| `schema`                   | `SchemaService`              | Validation                                      | `@pikku/schema-ajv`, `@pikku/schema-cfworker`                                                                 |
+| `secrets`                  | `SecretService`              | [Secrets](/docs/core-features/secrets)          | Built-in (`LocalSecretService`), `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`  |
+| `jwt`                      | `JWTService`                 | JWT auth                                        | `@pikku/jose`                                                                                                 |
+| `eventHub`                 | `EventHubService`            | Channels (pub/sub)                              | Runtime-provided (`LocalEventHubService`), `@pikku/kysely-postgres` (`PgEventHubService`)                     |
+| `schedulerService`         | `SchedulerService`           | [Scheduled Tasks](/docs/wiring/scheduled-tasks) | Built-in (`InMemorySchedulerService`)                                                                         |
+| `queueService`             | `QueueService`               | [Queues](/docs/wiring/queue/)                   | `@pikku/queue-bullmq`, `@pikku/queue-pg-boss`, `@pikku/queue-nats`, `CloudflareQueueService`, `SQSQueueService` |
+| `workflowService`          | `WorkflowService`            | [Workflows](/docs/wiring/workflows/)            | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                                   |
+| `workflowRunService`       | `WorkflowRunService`         | Console (workflow runs)                         | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                                   |
+| `agentRunner`              | `AgentRunnerService`         | [AI Agents](/docs/wiring/ai-agents/)            | `@pikku/ai-vercel`                                                                                            |
+| `agentStorage`             | `AgentStorageService`        | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                                   |
+| `agentRunState`            | `AgentRunStateService`       | AI Agents                                       | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                                   |
+| `agentRunService`          | `AgentRunService`            | Console (agent runs)                            | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb`                                                   |
+| `aiEmbedding`              | `AIEmbeddingService`         | Semantic search                                 | Your own                                                                                                      |
+| `channelStore`             | `ChannelStore`               | Serverless [Channels](/docs/wiring/channels/)   | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                                   |
+| `credentialService`        | `CredentialService`          | [Credentials](/docs/wiring/credentials/)        | Built-in (`LocalCredentialService`), `@pikku/kysely`                                                          |
+| `deploymentService`        | `DeploymentService`          | Multi-instance deploy                           | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                                   |
+| `emailService`             | `EmailService`               | Sending email                                   | Built-in (`LocalEmailService`)                                                                                |
+| `webhookService`           | `WebhookService`             | [Outgoing webhooks](../api/webhook-service.md)     | Built-in (`QueueWebhookService`), `@pikku/kysely` (`KyselyWebhookService`)                                    |
+| `sessionStore`             | `SessionStore`               | Persisted user sessions                         | Built-in (`InMemorySessionStore`), `@pikku/kysely`, `@pikku/redis`, `@pikku/mongodb`                          |
+| `scopeService`             | `ScopeService`               | Scopes and roles                                | `@pikku/kysely` (`KyselyScopeService`)                                                                        |
+| `featureFlags`             | `FeatureFlagSource`          | Feature flags                                   | `@pikku/kysely` (`KyselyFeatureFlagStore`)                                                                    |
+| `audit`                    | `AuditService`               | Audit log                                       | `@pikku/kysely` (`KyselyAuditService`)                                                                        |
+| `analyticsService`         | `AnalyticsService`           | Product analytics                               | `@pikku/kysely` (`KyselyAnalyticsService`), built-in (logger)                                                 |
+| `analyticsIdentity`        | `AnalyticsIdentityResolver`  | Browser-originated analytics identity           | Your own                                                                                                      |
+| `coverageService`          | `CoverageService`            | Live coverage (`pikku dev --coverage`)          | Built-in (dev only)                                                                                           |
+| `virtualUserRunStore`      | `VirtualUserRunStore`        | Persona runs                                    | `@pikku/kysely` (`KyselyVirtualUserRunStore`)                                                                 |
+| `virtualUserScheduleStore` | `VirtualUserScheduleStore`   | Persona schedules                               | `@pikku/kysely` (`KyselyVirtualUserScheduleStore`)                                                            |
+| `content`                  | `ContentService`             | Static content serving                          | Built-in (`LocalContent`)                                                                                     |
+| `triggerService`           | `TriggerService`             | [Triggers](/docs/wiring/triggers/)              | Built-in (`InMemoryTriggerService`)                                                                           |
+| `gatewayService`           | `GatewayService`             | [Gateway](/docs/wiring/gateway/)                | Built-in (`LocalGatewayService`)                                                                              |
+| `metaService`              | `MetaService`                | Console                                         | Generated (`PikkuMetaService`)                                                                                |
+
+Some services are built per invocation rather than once at startup: `auditLog` (an `AuditLog` buffer that flushes into `audit`) and `analytics` (an `AnalyticsLog` buffer that writes into `analyticsService`). You do not construct them - Pikku installs them on the services object when the function is invoked. `auth` is likewise injected by whichever auth package registered a factory, and your `createSingletonServices` must not return it itself.
 
 You only need to provide the services your project uses. The CLI detects which services your functions reference and generates a `RequiredSingletonServices` type that makes unused services optional.
 

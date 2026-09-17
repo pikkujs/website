@@ -29,14 +29,14 @@ Below is a **side-by-side comparison** to help you decide which one fits your us
 | **Permissions**           | External libraries needed              | First-class permission system |
 | **Schema Validation**     | External libraries (`zod`, etc.)       | **Automatic schema validation from TypeScript types** |
 | **Testing**               | Requires HTTP request mocking   | **Per-function testing, independent of transport** |
-| **Scaffolding**           | `npm create hono` for minimal setup    | `npm run pikku@latest` for full project |
+| **Scaffolding**           | `npm create hono` for minimal setup    | `npm create pikku@latest` for full project |
 | **WebSockets**            | Has support, but not a first class citizen     | **Native support with a built-in WebSocket wrapper** |
 | **API Fetch Wrapper**     | Requires manual work                  | **Built-in fetch wrapper for easy frontend calls** |
 | **Next.js Integration**   | Works as an API layer                  | **Built-in Next.js API wrapper** |
 | **Background Jobs**       | Use external cron services             | First class citizen |
 | **Edge Compatibility**    | Optimized for Cloudflare Workers       | Supported via adapters |
 | **Automatic Documentation** | ❌ Manual setup needed               | ✅ **Auto-generated API documentation** |
-| **File Uploads / Buffers** | ✅ Supports file uploads & buffers | ❌ **Not yet supported** |
+| **File Uploads / Buffers** | ✅ Supports file uploads & buffers | ❌ Functions take JSON; files go through the [content service](/docs/api/content-service) |
 
 ---
 
@@ -76,7 +76,7 @@ Pikku **ships with a full project template**, while Hono provides a **basic star
 
 | Aspect                 | **Hono** 🎯                      | **Pikku** 🛠️                     |
 |------------------------|---------------------------------|---------------------------------|
-| **Project Setup**      | `npm create hono`               | `npm run pikku@latest` |
+| **Project Setup**      | `npm create hono`               | `npm create pikku@latest` |
 | **Built-in Features**  | Just routing & middleware       | Auth, permissions, real-time, background jobs |
 | **Ease of Use**        | Simple & lightweight           | More features, slightly more to learn |
 
@@ -108,7 +108,7 @@ Pikku reduces **boilerplate** by including **fetch, WebSocket, and Next.js wrapp
 | **Next.js API Wrapper**| ❌ Requires custom implementation | ✅ **Works natively with Next.js** |
 | **Testing**            | Requires manual HTTP request mocking | ✅ **Per-function testing, independent of transport** |
 | **API Documentation**  | ❌ Manual setup needed       | ✅ **Auto-generated OpenAPI docs** |
-| **File Uploads / Buffers** | ✅ Supports file uploads & buffers | ❌ **Not yet supported** |
+| **File Uploads / Buffers** | ✅ Supports file uploads & buffers | ❌ Functions take JSON; files go through the [content service](/docs/api/content-service) |
 
 ---
 
@@ -119,7 +119,7 @@ Pikku reduces **boilerplate** by including **fetch, WebSocket, and Next.js wrapp
 ✔️ You prefer **a minimal setup and want to choose your own libraries**  
 ✔️ You’re deploying **to Cloudflare Workers, AWS Lambda, or Bun**  
 ✔️ You want a **tiny, dependency-free framework**  
-✔️ You need **file uploads or buffer handling**  
+✔️ You need **direct multipart uploads or raw buffer handling**  
 
 ### **Choose Pikku if…**
 ✔️ You need **more than just HTTP**—WebSockets, background jobs, and **event-driven architecture**  

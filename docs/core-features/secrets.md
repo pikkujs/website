@@ -36,23 +36,29 @@ The `secretId` is the key used to look up the secret from your secret store.
 
 ## Using Secrets
 
-Access secrets through the `secrets` service. When you use the generated `TypedSecretService`, calls are fully typed:
+`secrets` is confined to `pikkuServices`, `pikkuWireServices`, addon service factories and middleware. It is stripped from the services a function receives, and reaching for it inside a function throws. Read the secret where the service is built and hand the resulting client to your functions:
 
 ```typescript
-export const chargeCard = pikkuSessionlessFunc<
-  { amount: number },
-  { chargeId: string }
->({
-  func: async ({ secrets }, data) => {
-    const stripe = await secrets.getSecret('STRIPE_CREDENTIALS')
-    // stripe.apiKey and stripe.webhookSecret are typed
+import { pikkuServices } from '#pikku/setup'
+import { TypedSecretService } from '#pikku/secrets'
+import { LocalSecretService } from '@pikku/core/services'
 
-    return { chargeId: '...' }
+export const createSingletonServices = pikkuServices(
+  async (config, existingServices) => {
+    const secrets = new TypedSecretService(
+      existingServices.secrets ?? new LocalSecretService(),
+    )
+
+    const stripe = await secrets.getSecret('STRIPE_CREDENTIALS')
+    // stripe.reveal().apiKey and stripe.reveal().webhookSecret are typed
+    const client = new StripeClient(stripe.reveal().apiKey)
+
+    return { config, secrets, stripe: client }
   },
-})
+)
 ```
 
-The CLI generates a `TypedSecretService` class that wraps your `SecretService` implementation. Use it when creating your singleton services to get typed access:
+`getSecret` returns a `SecretValue` wrapper, not the raw value - call `.reveal()` at the point the value reaches the network. The CLI generates the `TypedSecretService` class, which calls are typed through:
 
 ```typescript
 import { TypedSecretService } from '#pikku/secrets'

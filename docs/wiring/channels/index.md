@@ -40,12 +40,11 @@ import { UnauthorizedError } from '#pikku/error'
 
 export const authenticate = pikkuChannelFunc<
   { token: string },
-  { authenticated: boolean },
-  { room: string }
+  { authenticated: boolean }
 >({
   func: async ({ jwt }, data, { setSession }) => {
     try {
-      const payload = await jwt.verify(data.token)
+      const payload = await jwt.decode(data.token)
 
       // Set the user session for this connection
       await setSession({
@@ -65,8 +64,7 @@ export const authenticate = pikkuChannelFunc<
 
 export const sendMessage = pikkuChannelFunc<
   { message: string },
-  { message: string; timestamp: number },
-  { room: string }
+  { message: string; timestamp: number }
 >({
   func: async ({ database }, data, { channel, session }) => {
     // session is guaranteed to exist because auth: true
@@ -124,8 +122,7 @@ Called when a client first connects:
 
 ```typescript
 export const onConnect = pikkuChannelConnectionFunc<
-  { welcome: string },      // Output - sent to client
-  { room: string }          // ChannelData - from URL params/query params/depends on source
+  { welcome: string }       // Output - sent to client
 >({
   func: async ({ logger }, data, { channel }) => {
     logger.info('User connected to room', { room: channel.openingData.room })
@@ -143,9 +140,9 @@ export const onConnect = pikkuChannelConnectionFunc<
 Called when a client disconnects:
 
 ```typescript
-export const onDisconnect = pikkuChannelDisconnectionFunc<{ room: string }>({
-  func: async ({ logger }, data) => {
-    logger.info('User disconnected from room', { room: data.room })
+export const onDisconnect = pikkuChannelDisconnectionFunc({
+  func: async ({ logger }, _data, { channel }) => {
+    logger.info('User disconnected from room', { room: channel.openingData.room })
     // No return value - connection is closing
   },
   title: 'Handle disconnections',
@@ -160,8 +157,7 @@ Called when a client sends a message:
 ```typescript
 export const onMessage = pikkuChannelFunc<
   { message: string },
-  { message: string; timestamp: number },
-  { room: string }
+  { message: string; timestamp: number }
 >({
   func: async ({ database }, data, { channel }) => {
     const timestamp = Date.now()
@@ -214,8 +210,7 @@ ChannelData is data extracted when the channel **first opens** - typically from 
 
 export const onMessage = pikkuChannelFunc<
   { message: string },
-  { message: string; timestamp: number },
-  { room: string }  // ChannelData type
+  { message: string; timestamp: number }
 >({
   func: async (services, data, { channel }) => {
     // Access opening data throughout the connection
@@ -329,8 +324,7 @@ Subscribe channels to topics when they connect:
 
 ```typescript
 export const onConnect = pikkuChannelConnectionFunc<
-  { welcome: string },
-  { room: string }
+  { welcome: string }
 >({
   func: async ({ eventHub }, data, { channel }) => {
     const room = channel.openingData.room
@@ -348,9 +342,9 @@ export const onConnect = pikkuChannelConnectionFunc<
 Clean up subscriptions when clients disconnect:
 
 ```typescript
-export const onDisconnect = pikkuChannelDisconnectionFunc<{ room: string }>({
-  func: async ({ eventHub }, data, { channel }) => {
-    await eventHub.unsubscribe(`room:${data.room}`, channel.channelId)
+export const onDisconnect = pikkuChannelDisconnectionFunc({
+  func: async ({ eventHub }, _data, { channel }) => {
+    await eventHub.unsubscribe(`room:${channel.openingData.room}`, channel.channelId)
   }
 })
 ```

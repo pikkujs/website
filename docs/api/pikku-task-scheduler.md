@@ -40,6 +40,15 @@ Stops all running recurring scheduled tasks.
 await scheduler.stop()
 ```
 
+### `close()`
+
+Shutdown hook: stops the recurring tasks and cancels every pending delayed
+timer. `init()` is a no-op for the in-memory implementation.
+
+```typescript
+await scheduler.close()
+```
+
 ### `scheduleRPC(delay, rpcName, data?, session?)`
 
 Schedules a one-off RPC call after a delay. `delay` is either milliseconds or a
@@ -89,7 +98,7 @@ async function main() {
 
   // Graceful shutdown
   process.on('SIGTERM', async () => {
-    await scheduler.stop()
+    await scheduler.close()
     await server.stop()
     process.exit(0)
   })

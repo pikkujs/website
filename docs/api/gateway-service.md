@@ -3,7 +3,7 @@ title: GatewayService
 ai: true
 ---
 
-The GatewayService manages the lifecycle of listener gateways — the adapters that connect [Gateway wirings](/docs/wiring/gateway) (Slack, Discord, Telegram, etc.) to your functions. It initializes each registered listener adapter and delivers incoming platform messages to handler functions. Full-server runtimes and `pikku dev` start it for you; you provide one when running gateways in your own server process.
+The GatewayService manages the lifecycle of listener gateways — the adapters that connect [Gateway wirings](/docs/wiring/gateway) (Slack, Discord, Telegram, etc.) to your functions. It initializes each registered listener adapter and delivers incoming platform messages to handler functions. Listener gateways are started explicitly: provide a `GatewayService` and start it from your bootstrap (or a `pikkuServerLifecycle` hook), then stop it on shutdown. Webhook and websocket gateways are served as routes and need no lifecycle wiring.
 
 ## Interface
 

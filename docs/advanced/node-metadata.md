@@ -92,7 +92,7 @@ The CLI generates node metadata files automatically:
 npx pikku
 ```
 
-This produces JSON files in the `.pikku/` output directory that the Console reads to render the graph UI.
+This produces `.pikku/console/pikku-addon-meta.gen.json`, which the Console reads to render the graph UI. The file is written when `scaffold.console` is enabled or the package is an addon.
 
 ## Use Cases
 

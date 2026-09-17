@@ -22,18 +22,21 @@ The `pikku.config.json` file configures how the Pikku CLI scans your codebase an
 
 | Option | Type | Required | Description |
 |--------|------|----------|-------------|
-| `tsconfig` | `string` | ✅ | Path to TypeScript configuration file |
+| `tsconfig` | `string` | ✅ | Path to TypeScript configuration file, resolved against `rootDir` |
 | `srcDirectories` | `string[]` | ✅ | Directories to scan for Pikku functions and wirings |
 | `outDir` | `string` | ✅ | Where generated files are written (conventionally `.pikku`) |
 | `rootDir` | `string` | ❌ | Root directory for resolving paths (default: config file directory) |
 | `extends` | `string` | ❌ | Path to another `pikku.config.json` to inherit from |
 | `ignoreFiles` | `string[]` | ❌ | Glob patterns to skip (default: `["**/*.test.ts", "**/*.spec.ts", "**/node_modules/**", "**/dist/**"]`) |
-| `globalHTTPPrefix` | `string` | ❌ | Prefix prepended to all HTTP routes (e.g., `/api/v1`) |
+| `globalHTTPPrefix` | `string` | ❌ | Prefix prepended to all HTTP routes (e.g., `/api/v1`). Trailing slashes are stripped |
+| `metaLocale` | `string` | ❌ | BCP-47 language tag for the meta the Console renders back to your team — function/step descriptions, feature and scenario names (default: `"en"`). Identifiers stay English; the language the app speaks to users is a separate setting |
 | `$schema` | `string` | ❌ | JSON schema URL for editor autocomplete |
+
+In addon mode (`"addon": true`) the generated tree roots at `outDir/addon`, so every leaf an addon authors is reached as `#pikku/addon/<leaf>`.
 
 ## Client Generation
 
-Client files can be specified under a `clientFiles` object. When set, the corresponding `pikku <command>` generates a type-safe client at that path.
+Client files can be specified under a `clientFiles` object. When set, the corresponding `pikku <command>` generates a type-safe client at that path. Paths are resolved relative to the config file directory.
 
 ```json
 {
@@ -56,18 +59,17 @@ Client files can be specified under a `clientFiles` object. When set, the corres
 | `rpcWiringsFile` | `pikku rpc` | RPC client wrappers |
 | `reactQueryFile` | `pikku react-query` | TanStack React Query hooks |
 | `realtimeFile` | `pikku realtime` | Typed realtime client (WebSocket + SSE) |
-| `startServerFnsFile` | `pikku tanstack-start` | TanStack Start server-function shim (`makeApi`) |
+| `tanstackStartFile` | `pikku tanstack-start` | TanStack Start server-function shim (`makeApi`). Requires `rpcWiringsFile` |
 | `queueWiringsFile` | `pikku queue-service` | Queue service wrapper |
-| `mcpJsonFile` | — | MCP server JSON manifest |
 | `nextBackendFile` | `pikku nextjs` | Next.js backend integration |
 | `nextHTTPFile` | `pikku nextjs` | Next.js HTTP route handler |
+| `scopesFile` | `pikku` | Browser-side scope client — the project's `ScopeId` union plus `hasScopes()`. No imports, so a frontend never reaches into `@pikku/core` |
+| `mcpJsonFile` | `pikku` | MCP server JSON manifest |
 
-`clientFiles` also accepts `nextBackendTransport` (`local` \| `worker-rpc` \|
-`http`), `nextBackendFetcherImport`, and `realtimeEventHubTopicsImport` for
-advanced Next.js / realtime setups.
+`clientFiles` also accepts `nextBackendTransport` (`local` \| `worker-rpc` \| `http`; default `local`), `nextBackendFetcherImport` (required for `worker-rpc`), and `realtimeEventHubTopicsImport` for advanced Next.js / realtime setups.
 
-:::note Legacy format
-You can also specify these at the top level (e.g., `"fetchFile": "..."` instead of `"clientFiles": { "fetchFile": "..." }`). The `clientFiles` object is recommended because paths inside it are resolved relative to the config file directory.
+:::note `startServerFnsFile` was renamed
+Older configs used `startServerFnsFile` for the TanStack Start shim. It is now `tanstackStartFile`; a config still using the old key fails at startup naming the replacement.
 :::
 
 ## Scaffold
@@ -84,7 +86,7 @@ The `scaffold` section controls where `pikku new` puts generated files and which
     "permissionDir": "src/permissions",
     "addonDir": "packages/addons",
     "rpc": true,
-    "console": { "auth": false },
+    "console": true,
     "agent": true,
     "workflow": true
   }
@@ -93,69 +95,130 @@ The `scaffold` section controls where `pikku new` puts generated files and which
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `pikkuDir` | `string` | Directory for auto-generated scaffold files — RPC endpoints, agent endpoints, console functions, workflow routes, the Better Auth wiring (default: `<srcDirectories[0]>/scaffold`) |
-| `functionDir` | `string` | Where `pikku new function` puts files |
-| `wiringDir` | `string` | Where `pikku new wiring` puts files |
-| `middlewareDir` | `string` | Where `pikku new middleware` puts files |
-| `permissionDir` | `string` | Where `pikku new permission` puts files |
-| `addonDir` | `string` | Where `pikku new addon` puts addon packages |
+| `pikkuDir` | `string` | Directory for auto-generated scaffold files — RPC endpoints, agent endpoints, console functions, workflow routes, the Better Auth wiring (default: `<srcDirectories[0]>/scaffold`, resolved against `rootDir`) |
+| `functionDir` | `string` | Where `pikku new function` puts files (default: `<srcDirectories[0]>/functions`) |
+| `wiringDir` | `string` | Where `pikku new wiring` puts files (default: `<srcDirectories[0]>/wirings`) |
+| `middlewareDir` | `string` | Where `pikku new middleware` puts files (default: `<srcDirectories[0]>/middleware`) |
+| `permissionDir` | `string` | Where `pikku new permission` puts files (default: `<srcDirectories[0]>/permissions`) |
+| `addonDir` | `string` | Base directory for `pikku new addon`; the package is created at `<addonDir>/addon-<name>` (default: current working directory) |
 
 **Feature flags** — set via `pikku enable <feature>` or directly in config.
 
-Each flag says only whether the *surface exists*, and whether reaching it needs
-a session:
+Each flag says only whether the *surface exists*, and where its file goes. It never says who may call the surface: authentication is declared on the function, its wiring, its scopes and its addon, and enforced there on every call.
 
 | Value | Meaning |
 |---|---|
-| `true` | the surface exists and requires a session |
-| `{ "auth": false }` | the surface exists and is public |
+| `true` | the surface exists, at its default path under `pikkuDir` |
+| `{ "path": "src/my.gen.ts" }` | the surface exists and is written to `path` instead |
 | `false` | the surface is not generated |
+
+Only `path` is accepted as an object key. A bare string and the old `auth` key are both refused by the loader with an explicit message.
 
 | Option | Description |
 |--------|-------------|
-| `rpc` | Generate the public RPC endpoint |
-| `console` | Generate console functions |
-| `scenarios` | Generate scenario instrumentation functions (without needing the console addon) |
-| `agent` | Generate agent endpoints |
-| `workflow` | Generate workflow routes |
+| `rpc` | Generate the public RPC endpoint (`rpc-public.gen.ts`) |
+| `analytics` | Generate the typed `POST /analytics` ingest (`analytics.gen.ts`) |
+| `featureFlags` | Generate the `GET /feature-flags` read wire (`feature-flags.gen.ts`) |
+| `console` | Generate console functions (`console.gen.ts`) |
+| `scenarios` | Generate scenario instrumentation functions (`scenarios.gen.ts`) |
+| `virtualUser` | Generate the virtual-user run/read RPCs (`virtual-user.gen.ts`). Requires at least one declared persona |
+| `agent` | Generate agent endpoints (`agent.gen.ts`) |
+| `workflow` | Generate workflow routes (`workflow-routes.gen.ts`) |
 | `events` | Generate the realtime events channel + SSE stream (`events.gen.ts`) |
 | `remoteRpc` | Generate the remote internal RPC queue worker + HTTP endpoint (`rpc-remote.gen.ts`) |
-| `webhook` | Generate the outgoing webhook delivery queue worker (`webhook.gen.ts`) — see [`WebhookService`](/docs/api/webhook-service) |
-| `graph` | Generate the graph wirings (`graph.wirings.gen.ts`) |
+| `remoteJobs` | Generate the remote job inbox routes for queue and scheduled work (`remote-jobs.gen.ts`) |
+| `webhook` | Generate the outgoing webhook delivery queue worker (`webhook.gen.ts`). Boolean only — no path override |
+| `graph` | Wire the addon-graph package so `pikkuWorkflowGraph` can reference its native transforms (`graph.wirings.gen.ts`). Boolean only — no path override |
 
-:::warning `"no-auth"` is no longer a mode
-Older configs used `"auth"` / `"no-auth"` strings. Authentication is now
-declared on the function or on the addon, and the scaffold flag only says
-whether the surface exists — so `"no-auth"` became `{ "auth": false }` and
-`"auth"` became `true`. A config still using the strings fails at startup with
-an explicit message naming the replacement.
-:::
+## Models
 
-## AI Agents
-
-AI agent models are declared **per-agent** using the provider-qualified
-`provider/model` form (e.g. `openai/gpt-5-mini`) on the agent definition itself —
-there is no config-level model alias map, defaults block, or per-agent override
-map in `pikku.config.json`. Request-time overrides are passed as `input.model`
-when the agent runs. See [AI Agents](/docs/wiring/ai-agents) for details.
-
-## Local Database
-
-Configure the local development database used by `pikku dev` and the `pikku db` commands:
+`models` is an alias table so an agent can name a model by what it is for, and one edit repoints every use:
 
 ```json
 {
-  "db": {
-    "engine": "sqlite",
-    "pgVersion": 16
+  "models": {
+    "cheap": "openai/gpt-5-mini",
+    "reasoning": "anthropic/claude-sonnet-5"
+  }
+}
+```
+
+A `model` containing `/` is used as written; a bare name that is not in this table fails codegen. `pikku dev` and `pikku serve` accept `--model alias:provider/model` (comma-separated for several) to repoint aliases for one run without editing the config. Request-time overrides are passed as `input.model` when the agent runs. See [AI Agents](/docs/wiring/ai-agents) for details.
+
+## Environments and Scenarios
+
+`environments` names the targets a run can point at. It is top-level rather than under `scenarios` because a scenario suite and a persona run are two different things that both point at an environment.
+
+```json
+{
+  "environments": {
+    "staging": {
+      "apiUrl": "https://staging.example.com/api",
+      "signInPath": "/auth/sign-in/actor",
+      "rpcPath": "/rpc"
+    }
+  },
+  "scenarios": {
+    "emailDomain": "staging.example.com",
+    "browserDriver": "@pikku/playwright",
+    "model": "openai/gpt-5-mini"
   }
 }
 ```
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `db.engine` | `"sqlite"` \| `"postgres"` | Local dev database engine (default: sqlite) |
-| `db.pgVersion` | `number` | Postgres version when `engine` is `"postgres"` |
+| `environments.<name>.apiUrl` | `string` | Required. Base URL, including the HTTP prefix |
+| `environments.<name>.signInPath` | `string` | Actor sign-in path under `apiUrl` (default: `/auth/sign-in/actor`) |
+| `environments.<name>.sessionPath` | `string` | Where the session and its roles are read back (default: `get-session` under the sign-in path's mount) |
+| `environments.<name>.rpcPath` | `string` | Exposed-RPC prefix under `apiUrl` (default: `/rpc`) |
+| `environments.<name>.appUrl` | `string` | Frontend base URL for browser steps |
+| `environments.<name>.production` | `boolean` | Marks an environment with real consequences: only an `accountable` persona may run against it |
+| `scenarios.emailDomain` | `string` | Mail domain a persona's address is built on (default: `personas.invalid`, a domain nobody can own) |
+| `scenarios.browserDriver` | `string` | Package driving `browser` step bindings. Anything exporting a `ScenarioBrowserProvider` works (default: `@pikku/playwright`) |
+| `scenarios.model` | `string` | Model a persona thinks with. Not the model under test; a step can override it per conversation |
+
+Personas are declared in code with `definePersonas`, not in `pikku.config.json`:
+
+```typescript
+import { definePersonas } from '#pikku/scopes/pikku-personas.gen.js'
+
+definePersonas({
+  susan: {
+    name: 'Susan',
+    jobTitle: 'Buys for a small café',
+    roles: ['buyer'],
+    personality: 'Hunts cheap deals. Tries three coupon codes before giving up.',
+    goals: ['Get the weekly order in under five minutes'],
+    account: {},
+  },
+})
+```
+
+Addresses are never written down: each is derived from the persona id and `scenarios.emailDomain`, and codegen materialises one actor per persona for scenario runs.
+
+The actor secret is never configured here — it comes from the `SCENARIO_ACTOR_SECRET` environment variable at run time.
+
+## Local Database
+
+Configure how the CLI reaches the local development database used by `pikku dev` and the `pikku db` commands:
+
+```json
+{
+  "db": {
+    "schema": "app",
+    "pgliteExtensions": ["citext"]
+  }
+}
+```
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `db.schema` | `string` | Postgres schema the generated runtime migrations create their tables in. Postgres only; with no schema the DDL is unqualified and lands wherever `search_path` points |
+| `db.defaultSchema` | `string` | Schema whose qualifier is dropped from the generated Kysely types, so `app.user` is queried as `selectFrom('user')`. Usually the same value as `db.schema`; set it only for a schema the connection's `search_path` resolves |
+| `db.pgliteExtensions` | `string[]` | Postgres extensions the CLI's embedded PGlite databases must load — the local dev database and the shadow one every `db` command migrates to diff a schema. A bare name is one of PGlite's bundled contrib extensions (`hstore`, `citext`, …); anything else must be a project dependency, such as `@electric-sql/pglite-pgvector` |
+
+The dialect is not configured here. It comes from your project's `createConfig()`: a `postgresUrl` means Postgres, and an `sqliteDb` (or a `db/sqlite/` migrations directory) means SQLite. The `db.engine` and `db.pgVersion` keys are still accepted for compatibility but are not read by the current CLI.
 
 ## Emails
 
@@ -165,45 +228,15 @@ Configure the local development database used by `pikku dev` and the `pikku db` 
 }
 ```
 
-Directory containing email templates, locales, partials, and `theme.json`. Used by `pikku emails init` / `pikku emails generate`.
+Directory containing email templates, locales, partials, and `theme.json`. Used by `pikku emails init` / `pikku emails generate`. `pikku emails init` scaffolds a starter tree and writes this key for you.
 
 ## Auth (Better Auth)
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `authFile` | `string` | Path to write the generated Better Auth wiring (`auth.gen.ts`). Must be within `srcDirectories` |
+| `authFile` | `string` | Path to write the generated Better Auth wiring (`auth.gen.ts`, plus `auth-secrets.gen.ts` and `auth-middleware.gen.ts` beside it). The CLI inspects these explicitly, so they may sit outside `srcDirectories` (default: `<pikkuDir>/auth/auth.gen.ts`) |
 | `authTypesFile` | `string` | Path for the typed `pikkuBetterAuth` re-export (default: `{outDir}/auth/auth.types.ts`) |
-| `authMetaJsonFile` | `string` | Path for the generated auth metadata (enabled social providers/plugins; default: `{outDir}/auth/pikku-auth-meta.gen.json`) |
-
-## Scenarios
-
-Configure scenario actors and target environments for `pikku scenario run <environment>`:
-
-```json
-{
-  "scenarios": {
-    "actors": {
-      "alice": {
-        "email": "alice@example.com",
-        "name": "Alice",
-        "jobTitle": "Admin",
-        "personality": "Skeptical power user who reads every tooltip"
-      }
-    },
-    "environments": {
-      "staging": {
-        "apiUrl": "https://staging.example.com/api",
-        "signInPath": "/auth/sign-in/actor",
-        "rpcPath": "/rpc"
-      }
-    }
-  }
-}
-```
-
-Each actor takes an `email` (required) plus optional `name`, `jobTitle`, and `personality`. Actors generate a typed `createScenarioActors` factory (see the `scenarioActorsFile` output) and appear as personas in the Console. Each environment takes an `apiUrl` (with the HTTP prefix) plus optional `signInPath` (default: `/auth/sign-in/actor`) and `rpcPath` (default: `/rpc`).
-
-The actor secret is never configured here — it comes from the `SCENARIO_ACTOR_SECRET` environment variable at run time.
+| `authMetaJsonFile` | `string` | Path for the generated auth metadata — enabled social providers/plugins, read by the Console SSO page (default: `{outDir}/auth/pikku-auth-meta.gen.json`) |
 
 ## Workflows
 
@@ -269,11 +302,12 @@ Configure deployment providers and settings.
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `deploy.providers` | `Record<string, string>` | Map of provider names to adapter packages (defaults: `cloudflare`, `serverless`, `azure`, `standalone`) |
+| `deploy.providers` | `Record<string, string>` | Map of provider names to adapter packages (defaults: `cloudflare` → `@pikku/deploy-cloudflare`, `serverless` → `@pikku/deploy-serverless`, `azure` → `@pikku/deploy-azure`, `standalone` → `@pikku/deploy-standalone`) |
 | `deploy.defaultProvider` | `string` | Default provider for `pikku deploy` commands (default: `cloudflare`) |
-| `deploy.serverlessIncompatible` | `string[]` | Function names that can't run in serverless (routed to server fallback) |
+| `deploy.serverlessIncompatible` | `string[]` | Service names that can't run in serverless — any function that reaches one is routed to the server target |
 | `deploy.defaultTarget` | `"serverless"` \| `"server"` | Default deploy target for functions without an explicit `deploy` flag (default: `serverless`) |
-| `deploy.grouping` | `object` | How many deployment units the app's functions collapse into — see [Deployment unit grouping](../deploy/index.md#deployment-unit-grouping) |
+| `deploy.grouping` | `object` | How many deployment units the app's functions collapse into — `{ strategy: "services" \| "function" \| "single", rules: [{ unit, tags?, addon?, routes? }] }` (`services` is the default). See [Deployment unit grouping](../deploy/index.md#deployment-unit-grouping) |
+| `deploy.desktop` | `object` | Desktop shell settings used by `pikku deploy apply --desktop`: `{ identifier?, url? }` |
 
 ## Addon Mode
 
@@ -300,7 +334,7 @@ Or with metadata for the addon registry:
 }
 ```
 
-The addon object also accepts `serverlessIncompatible` (function names that must run on a server) and `openapi` (`version` + `hash`, stamped by `pikku new addon --openapi` to track the spec the addon was generated from). Two related top-level keys: `addonName` overrides the addon's package name in generated metadata (defaults to the `name` in `package.json`), and `addonMetaJsonFile` overrides where the addon metadata JSON is written (default: `{outDir}/console/pikku-addon-meta.gen.json`).
+The addon object also accepts `serverlessIncompatible` (service names that must run on a server) and `openapi` (`version` + `hash`, stamped by `pikku new addon --openapi` to track the spec the addon was generated from). Two related top-level keys: `addonName` overrides the addon's package name in generated metadata (defaults to the `name` in `package.json`), and `addonMetaJsonFile` overrides where the addon metadata JSON is written (default: `{outDir}/console/pikku-addon-meta.gen.json`).
 
 ## OpenAPI Generation
 
@@ -375,43 +409,71 @@ All `InspectorFilters` keys are supported: `names`, `tags`, `wires`,
 
 ## Linting
 
-Configure lint rules for the inspector:
+Configure lint rules. The first three are evaluated by codegen; the last by
+[`pikku validate`](/docs/pikku-cli#pikku-validate):
 
 ```json
 {
   "lint": {
     "servicesNotDestructured": "warn",
-    "wiresNotDestructured": "error"
+    "wiresNotDestructured": "error",
+    "functionDynamicImport": "warn",
+    "customServerBootstrap": "error"
   }
 }
 ```
 
-| Rule | Values | Description |
-|------|--------|-------------|
-| `servicesNotDestructured` | `"off"` \| `"warn"` \| `"error"` | Warn when functions don't destructure services |
-| `wiresNotDestructured` | `"off"` \| `"warn"` \| `"error"` | Warn when functions don't destructure wires |
+| Rule | Values | Default | Description |
+|------|--------|---------|-------------|
+| `servicesNotDestructured` | `"off"` \| `"warn"` \| `"error"` | `"error"` | Warn when functions don't destructure services |
+| `wiresNotDestructured` | `"off"` \| `"warn"` \| `"error"` | `"error"` | Warn when functions don't destructure wires |
+| `functionDynamicImport` | `"off"` \| `"warn"` \| `"error"` | `"warn"` | Warn when a function body reaches for a dynamic `import()` |
+| `customServerBootstrap` | `"off"` \| `"warn"` \| `"error"` | `"warn"` | Flag a `start`/`dev` script that boots a server without `pikku dev` or `pikku serve` |
 
 ## Advanced Options
 
 | Option | Type | Description |
 |--------|------|-------------|
 | `forceRequiredServices` | `string[]` | Service names that must always be available, even if not detected |
+| `allowShadowedServices` | `string[]` | Service names `createSingletonServices` may replace even though the host passed its own. Anything unlisted warns at boot, because the host's instance is the configured one and the replacement starts empty |
 | `schemasFromTypes` | `string[]` | Additional type names to generate schemas for |
-| `verboseMeta` | `boolean` | Include extra metadata in generated JSON files |
 | `runtimeDir` | `string` | Runtime artifacts directory (dev.db, content, tmp). Resolved relative to `rootDir`. Default: `<rootDir>/.pikku-runtime` |
 | `namedFilters` | `Record<string, InspectorFilters>` | Named filter presets, selected via `pikku --filter <name>` |
 | `stateOutput` / `stateInput` | `string` | Save/load inspector state to/from JSON (skips re-inspection) |
 | `security` | `boolean` | Always run the data-classification security lint (same as `--security` per invocation) |
 | `tsc` / `tscSummary` | `boolean` | Always run `tsc --noEmit` after codegen and fail on type errors (same as `--tsc` / `--tsc-summary`) |
-| `tests.outputDir` | `string` | Output directory for the `pikku tests` harness |
+| `diff` | `boolean` | Emit a structural diff of the generated `.pikku` meta as a `PIKKU_DIFF <json>` line on stdout (same as `--diff`) |
 | `addons.addonDir` | `string` | Where community-registry addons installed via `pikku fabric addon add` are copied (default: `addons/`) |
+| `allow.permissionsInBody` | `boolean` | Permits `permissionsInBody: true` on a function config |
+| `allow.complexWorkflows` | `boolean` | Permits `pikkuWorkflowComplexFunc`, whose inline steps cannot be serialized into the workflow graph |
 | `userSessionType` | `string` | Which `UserSession` type to use when the inspector finds more than one (same as `--user-session-type`) |
 | `singletonServicesFactoryType` | `string` | Which singleton services factory to use when multiple exist (same as `--singleton-services-factory-type`) |
 | `wireServicesFactoryType` | `string` | Which wire services factory to use when multiple exist (same as `--wire-services-factory-type`) |
+| `tests.outputDir` | `string` | Output directory for the old `pikku tests` harness. Scenarios own coverage now and no current command reads this key |
+
+### Serving a Frontend
+
+```json
+{
+  "frontend": {
+    "dir": "apps/web/dist",
+    "urlPrefix": "/",
+    "spaFallback": true
+  }
+}
+```
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `dir` | `string` | Required. Directory of built frontend output, resolved relative to the config file |
+| `urlPrefix` | `string` | Where the frontend is mounted (default: `/`) |
+| `spaFallback` | `boolean` | Serve `index.html` for a path under the prefix that no route and no file claimed (default: `true`) |
+
+This names *output*, not a project: `pikku serve` and `pikku deploy` read the directory and never build it. `pikku dev` ignores it — a frontend dev server owns that job and proxies API calls back to pikku.
 
 ### Output File Overrides
 
-Every generated file path is individually overridable at the top level of the config. By default they're all derived from `outDir` (e.g. `functionsFile`, `httpWiringsFile`, `schemaDirectory`, `typesDeclarationFile`, `bootstrapFile`, `scenarioActorsFile`, and several dozen more — one key per generated file listed in [Generated Files](/docs/pikku-cli/generated-files)). You rarely need these; the common exceptions are `authFile` (which must live in your source tree) and the `clientFiles` block above.
+Every generated file path is individually overridable at the top level of the config. By default they're all derived from `outDir` (e.g. `functionsFile`, `httpWiringsFile`, `schemaDirectory`, `bootstrapFile`, `personasWiringFile`, and several dozen more — one key per generated file listed in [Generated Files](/docs/pikku-cli/generated-files)). You rarely need these; the common exceptions are `authFile` (which lives in your source tree) and the `clientFiles` block above.
 
 ### Native Binary
 
@@ -444,9 +506,9 @@ Compile a TypeScript entrypoint to a self-contained native binary with
   },
   "scaffold": {
     "pikkuDir": "src/pikku",
-    "rpc": "auth",
-    "agent": "auth",
-    "workflow": "auth"
+    "rpc": true,
+    "agent": true,
+    "workflow": true
   },
   "deploy": {
     "providers": {

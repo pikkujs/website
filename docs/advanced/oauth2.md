@@ -131,9 +131,9 @@ Addons do the same thing inside `pikkuAddonWireServices`, resolving the token on
 The [Pikku Console](/docs/console) provides a UI for managing OAuth2 credentials:
 
 1. **Connect** — Initiates the OAuth2 flow, opening the provider's authorization page
-2. **Status** — Shows whether the credential is connected, token expiration, and scope information
-3. **Refresh** — Manually triggers a token refresh
-4. **Disconnect** — Clears stored tokens
+2. **Status** — Shows whether the credential is connected
+3. **Reconnect** — Re-runs the authorization flow for a connected credential
+4. **Disconnect** — Unlinks the account and clears the stored tokens
 
 This makes it easy to set up third-party integrations per environment without writing custom OAuth flows.
 
@@ -144,7 +144,7 @@ Tokens are stored by whatever `CredentialService` you wired up — with `@pikku/
 | Field | Type | Description |
 |-------|------|-------------|
 | `accessToken` | `string` | The access token for API requests |
-| `refreshToken` | `string` | Token used to obtain new access tokens |
-| `expiresAt` | `number` | Unix timestamp when the access token expires |
+| `refreshToken` | `string?` | Token used to obtain new access tokens |
+| `expiresAt` | `number?` | Unix timestamp when the access token expires |
 | `tokenType` | `string` | Usually `"bearer"` |
-| `scope` | `string` | Granted scopes (may differ from requested) |
+| `scope` | `string?` | Granted scopes (may differ from requested) |

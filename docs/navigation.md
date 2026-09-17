@@ -76,7 +76,7 @@ version you actually have installed.
 
 ### Deploy to Production
 
-1. [Run `pikku deploy`](/docs/deploy) for the common providers
+1. [Run `pikku deploy apply`](/docs/deploy) for the common providers
 2. Or wire a [runtime](/docs/runtimes/express-middleware) into a server you already run
 3. [Configure tree-shaking](/docs/pikku-cli/tree-shaking) (optional)
 

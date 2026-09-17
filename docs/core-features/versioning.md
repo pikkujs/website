@@ -24,13 +24,15 @@ export const createUser = pikkuFunc<CreateUserInput_v1, CreateUserOutput_v1>({
 })
 
 // v2 — new input/output types
-export const createUser_v2 = pikkuFunc<CreateUserInput_v2, CreateUserOutput_v2>({
+export const createUserV2 = pikkuFunc<CreateUserInput_v2, CreateUserOutput_v2>({
   version: 2,
   func: async (services, data) => {
     // updated logic
   }
 })
 ```
+
+The trailing `V2` is stripped because it matches the version, so the second export registers as `createUser@v2` rather than `createUserV2@v2`.
 
 The CLI inspector reads the `version` property and generates versioned function IDs using the `@v` separator — so `createUser` with `version: 2` becomes `createUser@v2` internally.
 
@@ -40,7 +42,9 @@ The CLI inspector reads the `version` property and generates versioned function 
 - **Versioned name** (`createUser@v1`) points to that exact version
 - If you have an unversioned function alongside versioned ones, the unversioned one automatically becomes `latest + 1`
 
-So if you have `createUser` with `version: 1` and a plain `createUser` without a version, the unversioned one becomes `createUser@v2`.
+So with `createUserV1` pinned as `version: 1` and a plain `createUser` without a version, the plain one becomes `createUser@v2`.
+
+The ID comes from the exported name with a matching `V<n>` suffix removed, so `getBookV1` with `version: 1` becomes `getBook@v1`. Use `override: 'getBook'` when the export cannot follow that convention (for example `legacyGetBook`).
 
 ### Calling Versioned Functions
 
@@ -64,8 +68,8 @@ Pikku tracks the "contract" of each function — its name and input/output schem
 
 1. Each function's contract is hashed (function key + input schema + output schema → hex hash)
 2. Hashes are stored in a **version manifest** (`versions.pikku.json`)
-3. On each build, the CLI compares current contracts against the manifest
-4. If a contract changed without a version bump, the build fails
+3. `npx pikku versions check` compares current contracts against the manifest
+4. If a contract changed without a version bump, the check fails
 
 ### Initialize the Manifest
 
@@ -73,7 +77,7 @@ Pikku tracks the "contract" of each function — its name and input/output schem
 npx pikku versions init
 ```
 
-This creates `versions.pikku.json` with the current contract hashes for all your functions.
+This creates an empty `versions.pikku.json` (`{ "manifestVersion": 1, "contracts": {} }`). It does not record any hashes — run `npx pikku versions update` straight after, or `check` has nothing to compare against.
 
 ### Check for Breaking Changes
 
@@ -91,7 +95,7 @@ Compares current function contracts against the manifest. Fails if:
 npx pikku versions update
 ```
 
-Records the current contracts into the manifest. Run this after bumping function versions. The `pikku all` command also calls this automatically at the end of every build.
+Records the current contracts into the manifest. Run this after bumping function versions. The `pikku all` command also calls this automatically at the end of every build; it refuses to overwrite a published version's hash, but a contract that changed without a bump is reported as a diagnostic rather than crashing the build — `npx pikku versions check` is the hard gate.
 
 ## Version Manifest
 
@@ -132,6 +136,8 @@ The contract system enforces strict rules:
 
 | Code | Name | Description |
 |------|------|-------------|
+| PKU850 | `DUPLICATE_FUNCTION_VERSION` | Two exports declare the same version of one function |
+| PKU851 | `DUPLICATE_FUNCTION_NAME` | Two exports resolve to the same function name |
 | PKU860 | `MANIFEST_MISSING` | Version manifest not found — run `versions init` |
 | PKU861 | `FUNCTION_VERSION_MODIFIED` | Contract hash changed for an existing version (immutable) |
 | PKU862 | `CONTRACT_CHANGED_REQUIRES_BUMP` | Latest contract changed without a version bump |

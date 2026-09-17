@@ -4,23 +4,23 @@ title: SchemaService
 
 The SchemaService validates function inputs against JSON schemas at runtime. Pikku's CLI generates those schemas automatically from your TypeScript types — you don't write schemas by hand. At bootstrap, the generated schemas are compiled into the service; on every function call, input data is validated before your function runs.
 
-You don't call the SchemaService directly — Pikku handles it internally. You just need to choose an implementation and register it in your singleton services.
+You don't call the SchemaService directly — Pikku handles it internally. You just need to choose an implementation and register it under the `schema` key of your singleton services.
 
 ## Choosing an Implementation
 
 | | `@pikku/schema-ajv` | `@pikku/schema-cfworker` |
 |---|---|---|
-| **Package** | `AjvSchemaService` | `CFWorkerSchemaService` |
+| **Class** | `AjvSchemaService` | `CFWorkerSchemaService` |
 | **Backend** | [Ajv](https://ajv.js.org/) + ajv-formats | [@cfworker/json-schema](https://github.com/cfworker/cfworker) |
 | **Runtime** | Node.js, Bun, Deno | Cloudflare Workers, Node.js |
 | **Format validation** | Built-in (email, date, uri, etc.) | Not included |
-| **Type coercion** | Yes (`coerceTypes: true`) | No |
+| **Type coercion** | No (`coerceTypes: false`) | No |
 | **Default values** | Yes (`useDefaults: true`) | No |
 | **Best for** | Node.js servers | Cloudflare Workers (no Node.js APIs) |
 
 ### AJV Schema Service
 
-The default choice for Node.js environments. Supports format validation, type coercion, and default value injection:
+The default choice for Node.js environments. Supports format validation and default value injection:
 
 ```bash npm2yarn
 npm install @pikku/schema-ajv
@@ -30,14 +30,16 @@ npm install @pikku/schema-ajv
 import { AjvSchemaService } from '@pikku/schema-ajv'
 
 const singletonServices = await createSingletonServices(config, {
-  schemaService: new AjvSchemaService(logger),
+  schema: new AjvSchemaService(logger),
 })
 ```
 
 AJV automatically:
-- Coerces types (e.g., string `"42"` → number `42`)
 - Applies default values from your schemas
 - Validates formats like `email`, `date-time`, `uri`
+
+Type coercion is off (`coerceTypes: false`), so a string `"42"` is not accepted
+where a number is declared.
 
 ### Cloudflare Worker Schema Service
 
@@ -51,7 +53,7 @@ npm install @pikku/schema-cfworker
 import { CFWorkerSchemaService } from '@pikku/schema-cfworker'
 
 const singletonServices = await createSingletonServices(config, {
-  schemaService: new CFWorkerSchemaService(logger),
+  schema: new CFWorkerSchemaService(logger),
 })
 ```
 

@@ -15,7 +15,7 @@ When you run `pikku`, the CLI:
 1. **Scans your codebase** for `pikkuFunc` definitions and wirings (`wireHTTP`, `wireChannel`, `wireQueueWorker`, etc.)
 2. **Applies filters** based on CLI arguments (`--http-routes`, `--tags`, `--wires`)
 3. **Determines required services** by analyzing which services each filtered function uses
-4. **Generates an entry point** that imports only the needed functions and services
+4. **Generates a bootstrap** that imports only the needed functions, plus a services map marking only the services they need as required
 
 ```typescript
 // Your code - write once
@@ -42,7 +42,7 @@ wireHTTP({ route: '/status', func: getStatus })
 pikku
 ```
 
-Generates an entry point that imports all three functions and instantiates all services: `database`, `audit`, `cache`.
+Generates a bootstrap that imports all three functions and marks all three services — `database`, `audit`, `cache` — as required.
 
 ### Deploying Filtered Subset
 
@@ -50,11 +50,11 @@ Generates an entry point that imports all three functions and instantiates all s
 pikku --http-routes=/status
 ```
 
-Generates an entry point that:
+Generates a bootstrap that:
 - ✅ Imports only `getStatus`
-- ✅ Instantiates only `cache` service
+- ✅ Marks only the `cache` service as required
 - ❌ Does NOT import `getUser` or `deleteUser`
-- ❌ Does NOT instantiate `database` or `audit` services
+- ❌ Does NOT require `database` or `audit`
 
 This means your health check endpoint has zero database connection overhead.
 
@@ -99,21 +99,21 @@ pikku --wires=http,queue  # Multiple types
 pikku --http-routes=/admin --tags=payments
 ```
 
-Filters use AND logic - functions must match all criteria.
+Filters are ANDed across categories and ORed within one: a function must match every category you filter on, and any one value inside a category is enough.
 
 ## Service Loading
 
-Pikku analyzes which services your filtered functions actually use and generates optimized service initialization code. This happens in two ways:
+Pikku analyzes which services your filtered functions actually use and writes the answer into `pikku-services.gen.ts` as `requiredSingletonServices` and `requiredWireServices`. Your services factory can then construct only what the deployment needs:
 
 ### 1. Static Filtering (Recommended)
 
-When services can be completely excluded, Pikku doesn't import them at all:
+When a build's filter set is fixed, only the services it needs have to exist:
 
 ```typescript
-// Generated services.ts - only imports what's needed
+// Your services.ts — import only what this deployment needs
 import { createCache } from '../services/cache'
 
-export const createServices = pikkuServices(async () => {
+export const createSingletonServices = pikkuServices(async () => {
   return {
     cache: await createCache(),
     // database and audit are NOT imported or loaded
@@ -126,9 +126,9 @@ export const createServices = pikkuServices(async () => {
 When you need one bundle to serve multiple filtered deployments, Pikku uses conditional loading:
 
 ```typescript
-import { requiredSingletonServices } from '.pikku/pikku-services.gen.js'
+import { requiredSingletonServices } from '#pikku/pikku-services.gen.js'
 
-export const createServices = pikkuServices(async (config) => {
+export const createSingletonServices = pikkuServices(async (config) => {
   const logger = new ConsoleLogger()
   const cache = new RedisCache()
 
@@ -236,8 +236,9 @@ imports that bootstrap and hands the wired services to a runtime server:
 
 ```typescript
 import { PikkuExpressServer } from '@pikku/express'
-import { createConfig, createSingletonServices } from './services.js'
-import './.pikku/pikku-bootstrap.gen.js' // only the filtered functions are registered
+import { createConfig } from './config.js'
+import { createSingletonServices } from './services.js'
+import '#pikku/pikku-bootstrap.gen.js' // only the filtered functions are registered
 
 const config = await createConfig()
 const singletonServices = await createSingletonServices(config)

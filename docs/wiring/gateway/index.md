@@ -201,11 +201,13 @@ wireGateway({
   type: 'webhook',
   route: '/webhooks/whatsapp',
   adapter: async ({ secrets }) => {
-    const { accessToken, phoneId, verifyToken } = await secrets.getSecret<{
-      accessToken: string
-      phoneId: string
-      verifyToken: string
-    }>('WHATSAPP')
+    const { accessToken, phoneId, verifyToken } = (
+      await secrets.getSecret<{
+        accessToken: string
+        phoneId: string
+        verifyToken: string
+      }>('WHATSAPP')
+    ).reveal()
     return createWhatsAppAdapter({ accessToken, phoneId, verifyToken })
   },
   func: handleMessage,

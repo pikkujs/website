@@ -21,16 +21,19 @@ app.post('/users', async (req, res) => {
 })
 
 // Pikku — function is transport-agnostic
-export const createUser = pikkuFunc<CreateUserInput, User>({
+export const createUser = pikkuSessionlessFunc<CreateUserInput, User>({
   func: async (services, data) => {
     return await services.database.insert('users', data)
   }
 })
 
 // Then wire it to any transport
-wireHTTP({ method: 'post', route: '/users', func: createUser })
-wireQueueWorker({ queue: 'user-creation', func: createUser })
-wireCLI({ commands: { create: pikkuCLICommand({ func: createUser }) } })
+wireHTTP({ auth: false, method: 'post', route: '/users', func: createUser })
+wireQueueWorker({ name: 'user-creation', func: createUser })
+wireCLI({
+  program: 'users',
+  commands: { create: pikkuCLICommand({ auth: false, func: createUser }) }
+})
 ```
 
 The same function works across HTTP, WebSockets, queues, CLI, MCP, and scheduled tasks — without any modification.

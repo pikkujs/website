@@ -52,13 +52,13 @@ Lists all user IDs that have any credential configured.
 
 ```typescript
 export const connectStripe = pikkuFunc<{ apiKey: string }, void>(
-  async (services, data, session) => {
+  async (services, data, { session }) => {
     await services.credentialService.set('stripe', data.apiKey, session.userId)
   }
 )
 
 export const chargeCustomer = pikkuFunc<{ amount: number }, void>(
-  async (services, data, session) => {
+  async (services, data, { session }) => {
     const apiKey = await services.credentialService.get<string>(
       'stripe',
       session.userId

@@ -92,6 +92,30 @@ export const listIssues = pikkuFunc<
 
 Give the function a `description` — it's what the AI agent sees when deciding whether to call the tool (the inspector warns if it's missing). Use the `pikkuMCPToolFunc` adapter pattern instead when you want to control the tool's text output or combine multiple domain calls into one tool.
 
+## Tools from an Addon
+
+An installed addon's functions become tools through `wireAddon`, without a wiring each. `mcp: true` offers every function that addon declared `mcp: true` — the addon's own idea of which of its functions are tool-shaped:
+
+```typescript
+wireAddon({
+  name: 'issues',
+  package: '@acme/addon-issues',
+  mcp: true,
+})
+```
+
+A list instead names the tools *this* deployment offers. It is not limited to the functions the addon declared — the addon says what it thinks is tool-shaped, and the app installing it decides what a model actually gets to see:
+
+```typescript
+wireAddon({
+  name: 'issues',
+  package: '@acme/addon-issues',
+  mcp: ['listIssues', 'searchIssues'],
+})
+```
+
+The names are typed against the functions that addon publishes, so a typo is a compile error rather than a tool that quietly never appears. Tools arrive namespaced by the instance name — `issues:listIssues` — so the same package wired twice offers two distinct menus.
+
 ## Complex Operations
 
 For complex workflows, invoke multiple functions via RPC:

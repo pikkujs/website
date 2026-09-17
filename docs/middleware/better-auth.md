@@ -166,15 +166,15 @@ export const { GET, POST } = toNextJsAuthHandler(
 
 ## Actors (synthetic test users)
 
-The `actor` plugin adds a `POST /sign-in/actor` endpoint used by [scenarios](/docs/core-features/testing) to sign in synthetic users during automated flows:
+The `pikkuActor` plugin adds a `POST /sign-in/actor` endpoint used by [scenarios](/docs/core-features/testing) to sign in synthetic users during automated flows:
 
 ```typescript
-import { actor } from '@pikku/better-auth'
+import { pikkuActor } from '@pikku/better-auth'
 
 return betterAuth({
   // ...
   plugins: [
-    actor({ secret: await secrets.getSecret('SCENARIO_ACTOR_SECRET') }),
+    pikkuActor({ secret: (await secrets.getSecret('SCENARIO_ACTOR_SECRET')).reveal() }),
   ],
 })
 ```
@@ -183,7 +183,7 @@ Actor rows are flagged with an `actor: true` column and auto-created on first si
 
 ## Delegated sign-in (upstream credentials)
 
-The `delegatedAuth` plugin lets users sign in with the credentials they already have on an upstream API — useful when your app fronts an existing system (typically one imported as an [addon](/docs/addon/creating#auth-config-overrides)). The upstream API is the identity provider: no separate password, no invite flow.
+The `pikkuDelegatedAuth` plugin lets users sign in with the credentials they already have on an upstream API — useful when your app fronts an existing system (typically one imported as an [addon](/docs/addon/creating#auth-config-overrides)). The upstream API is the identity provider: no separate password, no invite flow.
 
 It adds a `POST /sign-in/delegated` endpoint that accepts `{ email, password }` or `{ apiKey }`, verifies them against the upstream via your `authenticate` callback, and on success:
 
@@ -194,7 +194,7 @@ It adds a `POST /sign-in/delegated` endpoint that accepts `{ email, password }` 
 Passwords are never stored — they're forwarded to `authenticate` and discarded.
 
 ```typescript title="src/auth.ts"
-import { delegatedAuth } from '@pikku/better-auth'
+import { pikkuDelegatedAuth } from '@pikku/better-auth'
 import { authenticateAcmeUpstream } from '@my-org/acme-addon'
 
 export const auth = pikkuBetterAuth(async (services) => {
@@ -203,7 +203,7 @@ export const auth = pikkuBetterAuth(async (services) => {
   return betterAuth({
     // ...
     plugins: [
-      delegatedAuth({
+      pikkuDelegatedAuth({
         authenticate: (credentials) =>
           authenticateAcmeUpstream(credentials, 'https://api.acme.example'),
         storeCredential: async (userId, identity) => {

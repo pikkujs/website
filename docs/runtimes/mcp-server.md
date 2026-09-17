@@ -65,12 +65,17 @@ The main server that handles MCP protocol communication:
 https://github.com/pikkujs/pikku/blob/main/templates/mcp-server/src/start.ts
 ```
 
+The template runs over **stdio** by default. Run it with `--http` (and optionally
+`MCP_PORT`, default `3000`) to serve the same endpoints over HTTP instead —
+handy for browser clients and for testing without wiring the server into an MCP
+client config.
+
 ## How It Works
 
 1. **Define Functions**: Create MCP functions using specialized Pikku types
 2. **Register Endpoints**: Associate functions with MCP endpoint types (tool/resource/prompt)  
 3. **Generate Schemas**: Pikku CLI creates JSON schemas automatically
-4. **Start Server**: MCP server connects via stdio transport
+4. **Start Server**: `new PikkuMCPServer({ name, version, mcpJSON, capabilities }, logger)`, then `await server.init()` and `connectStdio()` or `connectHTTP({ port })`
 5. **AI Integration**: AI models can call your functions through MCP protocol
 
 ## MCP Client Integration
@@ -100,18 +105,17 @@ The server uses stdio transport and works with any MCP client:
 
 ## Development
 
-For development with auto-reload:
+For development with auto-reload, use the template's dev script:
 
 ```bash
-npm run pikku --watch
+npm run dev
 ```
 
 ## Generated Files
 
 Pikku automatically generates:
-- `mcp.gen.json`: JSON schemas for all endpoints
-- `pikku-bootstrap-mcp.gen.ts`: Endpoint registration bootstrap
-- Type definitions for full TypeScript support
+- `.pikku/mcp/mcp.gen.json`: JSON schemas for all endpoints
+- `.pikku/pikku-bootstrap.gen.ts`: the import hub that registers your functions and wirings
 
 ## Extending
 

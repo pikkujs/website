@@ -116,7 +116,7 @@ The CLI reads your source with the TypeScript AST and never executes it, so the 
 - The file must live under a directory listed in `srcDirectories` in your `pikku.config.json`.
 
 :::tip Checking your setup
-`pikku workspace validate` warns when your `start`/`dev` script boots a server by hand _and_ no Pikku runtime adapter is installed — the combination that means lifecycle hooks were available and went unused. Silence it with `"lint": { "customServerBootstrap": "off" }` in `pikku.config.json`, or set `"error"` to enforce it.
+`pikku validate` warns when your `start`/`dev` script boots a server by hand _and_ no Pikku runtime adapter is installed — the combination that means lifecycle hooks were available and went unused. Silence it with `"lint": { "customServerBootstrap": "off" }` in `pikku.config.json`, or set `"error"` to enforce it.
 :::
 
 ## Related

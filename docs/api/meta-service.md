@@ -14,7 +14,7 @@ Every `relativePath` argument is relative to the `.pikku` root directory, except
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/meta-service.ts
 ```
 
-Thirty-three members. Three are optional: `basePath`, `readPackageFile` and `readPackageDir`.
+Thirty-five members. Three are optional: `basePath`, `readPackageFile` and `readPackageDir`.
 
 ## Files
 
@@ -70,6 +70,8 @@ when the file has not been generated.
 | `getWorkflowMeta()` | `WorkflowsMeta` — workflows *and* scenarios, merged |
 | `getPersonasMeta()` | `Record<string, ResolvedPersona>` |
 | `getSystemRolesMeta()` | `SystemRoleDefinitionsMeta` |
+| `getFeatureFlagsMeta()` | `FeatureFlagDefinitionsMeta` — flags declared in code |
+| `getAnalyticsMeta()` | `AnalyticsEventsMeta` — analytics events declared in code |
 | `getFeaturesMeta()` | `FeaturesMeta` — scenario features |
 | `getTriggerMeta()` | `TriggerMeta` |
 | `getTriggerSourceMeta()` | `TriggerSourceMeta` |

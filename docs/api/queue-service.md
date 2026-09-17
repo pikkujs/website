@@ -32,8 +32,9 @@ wired with — it is the contract between producer and consumer.
 `data` is `Safe<T>`, not `T`. `Safe` collapses to `never` if a `SecretValue`
 appears anywhere inside the payload, however deeply nested, so handing a vault
 secret to a queue is a type error rather than something you find in a broker's
-UI later. The build additionally scans for *revealed* secrets — values that went
-through `.reveal()` — reaching `add`. PII is deliberately **not** rejected here,
+UI later. With the security lint enabled (`pikku all --security`), the build
+additionally scans for *revealed* secrets — values that went through `.reveal()`
+— reaching `add`. PII is deliberately **not** rejected here,
 unlike on the logger or the webhook service: a queue payload stays on the
 operator's own infrastructure and is consumed by their own worker, so it is not
 a disclosure.
@@ -102,6 +103,44 @@ to the wrapped service.
 
 ```typescript reference title="signed-queue-service.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/signed-queue-service.ts
+```
+
+## Worker job context
+
+Inside a function wired with `wireQueueWorker`, the job arrives on the **wire**
+(the 3rd argument) as `queue` — `PikkuQueue`:
+
+| Member | Description |
+|--------|-------------|
+| `queueName: string` | The queue being consumed |
+| `jobId: string` | The job's id |
+| `pikkuUserId?: string` | The producer's verified identity, when the claim checked out |
+| `updateProgress(progress: number \| string \| object)` | Reports progress to the backend |
+| `fail(reason?)` | Never returns — throws `QueueJobFailedError`, so the job is retried per its attempts/backoff |
+| `discard(reason?)` | Never returns — throws `QueueJobDiscardedError`, ending the job without a retry |
+
+To enqueue a job you use the `queueService` **singleton service** (the 1st
+argument) — `queue` on the wire exists only inside a worker invocation. Both error
+classes, plus `wireQueueWorker` and `runQueueJob`, are exported from
+`@pikku/core/queue`:
+
+```typescript
+export const processReminder = pikkuSessionlessFunc<
+  { todoId: string },
+  { sent: boolean }
+>(async ({ db, emailService }, { todoId }, { queue }) => {
+  await queue.updateProgress(25)
+
+  const todo = await db.getTodo(todoId)
+  if (!todo) {
+    await queue.discard('Todo not found')
+    return { sent: false }
+  }
+
+  await emailService.sendReminder(todo)
+  await queue.updateProgress(100)
+  return { sent: true }
+})
 ```
 
 ## Implementations

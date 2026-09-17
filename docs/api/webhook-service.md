@@ -20,12 +20,14 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/webhook-se
 
 The one member a subclass must implement. Returns `{ jobId }` — the id of the
 queued delivery, not a delivery result, because nothing has been sent yet when
-it returns.
+it returns. Store-backed implementations also return `deliveryId`, the
+persisted delivery row's id (not interchangeable with `jobId`; a broker may mint
+its own).
 
 `input` is `Safe<T>`, so a `SecretValue` anywhere in the payload is a type
-error. The build also rejects revealed secrets *and* PII flowing into `send`:
-a webhook posts to a third party's server, which is a disclosure in a way a
-queue payload is not.
+error. With the security lint enabled (`pikku all --security`) the build also
+rejects revealed secrets *and* PII flowing into `send`: a webhook posts to a
+third party's server, which is a disclosure in a way a queue payload is not.
 
 ### `protected sign(secret: string, body: string): string`
 
@@ -41,13 +43,15 @@ the same method rather than a reimplementation. The comparison is timing-safe.
 ### The three delivery-history methods
 
 `recordAttempt`, `listDeliveries` and `getDelivery` are an **optional
-capability** expressed as base implementations that throw `NotImplementedError`
-rather than as `?` members. The default queue-only service keeps no history; a
-store-backed implementation overrides all three.
+capability** expressed as base implementations rather than as `?` members. The
+default queue-only service keeps no history: only the write throws
+`NotImplementedError` — a write that goes nowhere loses the caller's data — while
+the two reads honestly answer `[]` / `null`. A store-backed implementation
+overrides all three.
 
-Callers must not assume they work. The Console's webhook pages, for instance,
-render an empty list when no `webhookService` is wired at all — but a service
-that is wired and simply keeps no history throws, so guard for it.
+Callers must not assume a history exists. The Console's webhook pages, for
+instance, render an empty list when no `webhookService` is wired at all or when
+the wired one keeps no history.
 
 #### `recordAttempt(deliveryId: string, result: WebhookAttemptResult): Promise<void>`
 
@@ -98,9 +102,9 @@ logs an error and sends the webhook **unsigned** rather than failing the send.
 ### QueueWebhookService (built-in)
 
 The default. Signs the body, resolves the retry policy, and enqueues onto
-`pikku-outgoing-webhooks`. It keeps no history, so the three delivery-read
-methods throw. Its collaborators are constructor arguments rather than service
-lookups:
+`pikku-outgoing-webhooks`. It keeps no history, so `recordAttempt` throws
+`NotImplementedError` and the two reads return `[]` / `null`. Its collaborators
+are constructor arguments rather than service lookups:
 
 ```typescript
 import { QueueWebhookService } from '@pikku/core/services'

@@ -36,8 +36,8 @@ npx pikku nextjs
 ```
 
 This generates:
-- **`pikku-next.gen.ts`** — a `pikku()` helper for calling functions from server components and server actions
-- **`pikku-next-http.gen.ts`** — an HTTP route handler for API routes (requires `fetchFile` to also be configured)
+- **`pikku-next.gen.ts`** — a `pikku()` helper for calling functions from server components and server actions, plus `pikkuAPIRequest` for mounting Pikku as an API route
+- **`pikku-next-http.gen.ts`** — a fetch-backed wrapper with the same typed `pikku()` surface (requires `fetchFile` to also be configured)
 
 ## Server-Side Usage
 
@@ -76,16 +76,17 @@ export default async function PublicPage() {
 
 ## API Route Handler
 
-Mount Pikku as a Next.js API route handler for external HTTP access:
+Mount Pikku as a Next.js API route handler for external HTTP access. The handler is `pikkuAPIRequest`, exported from the file configured as `nextBackendFile`:
 
 ```typescript
-// app/api/[...pikku]/route.ts
-import { pikkuNextHTTPHandler } from './pikku-next-http.gen'
+// app/api/[...route]/route.ts
+import { pikkuAPIRequest } from '@/pikku-nextjs.gen.js'
 
-export const GET = pikkuNextHTTPHandler
-export const POST = pikkuNextHTTPHandler
-export const PUT = pikkuNextHTTPHandler
-export const DELETE = pikkuNextHTTPHandler
+export const GET = pikkuAPIRequest
+export const POST = pikkuAPIRequest
+export const PUT = pikkuAPIRequest
+export const PATCH = pikkuAPIRequest
+export const DELETE = pikkuAPIRequest
 ```
 
 ## Sub-path Exports

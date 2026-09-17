@@ -60,9 +60,13 @@ The rest of the interface is runtime plumbing, grouped by concern:
 | Orchestration | `orchestrateWorkflow`, `runWorkflowJob`, `executeWorkflowSleepCompleted`, `wireQueueWorkers` | Workflow runtime / queue workers |
 | Step state | `insertStepState`, `getStepState`, `setStepRunning`, `setStepScheduled`, `setStepResult`, `setStepChildRunId`, `setStepError`, `createRetryAttempt` | Step executor |
 | Step execution | `executeWorkflowStep` | Queue workers |
-| Versions | `upsertWorkflowVersion`, `updateWorkflowVersionStatus`, `getWorkflowVersion`, `getAIGeneratedWorkflows` | Deploy + AI agent tooling |
+| Versions | `upsertWorkflowVersion`, `updateWorkflowVersionStatus`, `getWorkflowVersion` | Deploy + AI agent tooling |
 
 ## Implementations
+
+The shipped backends extend the abstract `PikkuWorkflowService`
+(`@pikku/core/workflow`), which implements the interface's shared orchestration;
+a backend supplies the persistence hooks.
 
 ### InMemoryWorkflowService (built-in)
 

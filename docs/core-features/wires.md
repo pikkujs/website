@@ -26,9 +26,12 @@ The wire object (`PikkuWire`) contains these properties, all optional depending 
 
 | Property | Type | Available When |
 |----------|------|---------------|
-| `session` | `UserSession \| undefined` | Auth is enabled |
-| `setSession` | `(session) => void` | Auth middleware is active |
-| `clearSession` | `() => void` | Auth middleware is active |
+| `session` | `UserSession \| undefined` | A session was loaded (auth is enabled) |
+| `setSession` | `(session) => Promise<void> \| void` | Session management is available |
+| `clearSession` | `() => Promise<void> \| void` | Session management is available |
+| `getSession` | `() => Promise<UserSession> \| UserSession \| undefined` | Session management is available |
+| `hasSessionChanged` | `() => boolean` | Session management is available |
+| `pikkuUserId` | `string \| undefined` | A user id could be resolved for the call |
 | `http` | `PikkuHTTP` | Called via HTTP |
 | `channel` | `PikkuChannel` | Called via WebSocket or SSE |
 | `rpc` | `PikkuRPC` | Always (for calling other functions) |
@@ -38,6 +41,9 @@ The wire object (`PikkuWire`) contains these properties, all optional depending 
 | `mcp` | `PikkuMCP` | Called via MCP |
 | `trigger` | `PikkuTrigger` | Called as a trigger source |
 | `workflow` | `PikkuWorkflowWire` | Called within a workflow |
+| `workflowStep` | `WorkflowStepWire` | Called as a workflow step |
+| `scenario` | `PikkuScenarioWire` | Called within a scenario |
+| `gateway` | `PikkuGateway` | Called through a gateway (e.g. Slack) |
 
 ## Destructuring
 

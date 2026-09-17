@@ -46,6 +46,18 @@ export const deleteUser = pikkuFunc<{ userId: string }, void>({
 
 Each key is a separate permission group, and groups use **OR logic** - the function executes if *either* `auth` or `admin` passes. To require both checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
 
+### Session-Only Checks with `pikkuAuth`
+
+When a check only needs the session and no request data - a role or a feature gate - use `pikkuAuth` from the same `#pikku/auth` door. It receives `(services, session)` and is marked as an auth check, which is how agent tooling can tell it apart from an ordinary permission:
+
+```typescript
+import { pikkuAuth } from '#pikku/auth'
+
+export const isAdmin = pikkuAuth(async (_services, session) => {
+  return session?.role === 'admin'
+})
+```
+
 ## Permission Signature
 
 ```typescript
@@ -184,7 +196,7 @@ addGlobalPermission([requireAuth])
 Global permissions form an independent **AND** gate: they can only ever *narrow* access. Each function still enforces its own `permissions` in full — a broad global (e.g. `requireAuth`) can never satisfy a stricter function's own requirement (e.g. `requireOwnership`).
 
 :::note
-Wire-, tag-, and HTTP-route-level permissions (`addHTTPPermission`, `addTagPermission`, and a `permissions` field on the wiring) were removed in 0.13. Declare authorization on the function, plus the optional global gate above. Tags are organizational only — use tag/HTTP _middleware_ for cross-cutting request handling.
+Wire-, tag-, and HTTP-route-level permissions (`addHTTPPermission`, `addTagPermission`, and a `permissions` field on the wiring) do not exist. Declare authorization on the function, plus the optional global gate above. Tags are organizational only — use tag/HTTP _middleware_ for cross-cutting request handling.
 :::
 
 ## Error Handling
@@ -426,21 +438,23 @@ export const requireEverything = pikkuPermission(async (services, data, { sessio
 **Optimize expensive checks** - Cache when possible:
 
 ```typescript
-// ✅ Good - caches subscription check
+// ✅ Good - caches subscription check (a shared store in real apps)
+const subscriptionCache = new Map<string, string>()
+
 export const requireSubscription = pikkuPermission(
-  async ({ cache, database }, _data, { session }) => {
+  async ({ database }, _data, { session }) => {
     if (!session?.userId) return false
 
     const cacheKey = `sub:${session.userId}`
-    const cached = await cache.get(cacheKey)
-    if (cached !== null) return cached === 'true'
+    const cached = subscriptionCache.get(cacheKey)
+    if (cached !== undefined) return cached === 'true'
 
     const sub = await database.query('subscriptions', {
       where: { userId: session.userId }
     })
 
     const isActive = sub && new Date(sub.expiresAt) > new Date()
-    await cache.set(cacheKey, isActive ? 'true' : 'false', { ttl: 300 })
+    subscriptionCache.set(cacheKey, isActive ? 'true' : 'false')
 
     return isActive
   }

@@ -24,13 +24,12 @@ Group-level config applies to all routes in the contract:
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `basePath` | `string` | Prefix prepended to all routes |
-| `tags` | `string[]` | Tags applied to all routes |
+| `basePath` | `string` | Prefix concatenated onto all routes in the group (nested groups concatenate down the chain) |
+| `tags` | `string[]` | Tags merged (unioned) onto all routes in the group |
 | `auth` | `boolean` | Default auth requirement for all routes |
-| `middleware` | `Middleware[]` | Middleware applied to all routes |
-| `permissions` | `PermissionGroup` | Permissions applied to all routes |
+| `middleware` | `Middleware[]` | Middleware applied to all routes, ahead of route-level middleware |
 
-Individual routes can still override group-level settings.
+Individual routes can still override `auth`, and their `tags`/`middleware` are merged on top of the group's. Authorization is not a wiring concern — declare permissions on the function definition (see [Permission Guards](../../core-features/permission-guards.md)).
 
 ## Wiring Route Groups
 

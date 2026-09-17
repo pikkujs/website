@@ -19,9 +19,13 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 | `UnauthorizedError` | 401 | Authentication required but missing or invalid |
 | `MissingSessionError` | 401 | No session provided (more specific than Unauthorized) |
 | `InvalidSessionError` | 401 | Session provided but not valid |
+| `AIProviderAuthError` | 401 | The AI provider's API key is missing or invalid |
 | `PaymentRequiredError` | 402 | Payment or subscription required |
 | `ForbiddenError` | 403 | User authenticated but lacks permission |
 | `InvalidOriginError` | 403 | Request from unauthorized origin (CORS) |
+| `MissingScopeError` | 403 | The session does not hold a scope the function requires |
+| `ReadonlySessionError` | 403 | A readonly session called a mutating function |
+| `MissingCredentialError` | 403 | A credential the function needs is not configured |
 
 ### Client Errors (4xx)
 
@@ -34,6 +38,8 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 | `ProxyAuthenticationRequiredError` | 407 | Proxy authentication required |
 | `RequestTimeoutError` | 408 | Request took too long |
 | `ConflictError` | 409 | Request conflicts with current state (e.g., duplicate) |
+| `SystemRoleImmutableError` | 409 | An admin tried to change a role declared in code |
+| `SystemRoleShadowedError` | 409 | A role was created with the name of a code-declared role |
 | `GoneError` | 410 | Resource permanently deleted |
 | `LengthRequiredError` | 411 | Content-Length header required |
 | `PreconditionFailedError` | 412 | Precondition in headers not met |
@@ -52,9 +58,12 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 |------------|-------------|----------|
 | `InternalServerError` | 500 | Generic server error |
 | `MissingSchemaError` | 500 | Schema not found during validation |
+| `WeakKeyMaterialError` | 500 | A configured secret has too little entropy to use |
 | `NotImplementedError` | 501 | Feature not yet implemented |
 | `BadGatewayError` | 502 | Invalid response from upstream server |
 | `ServiceUnavailableError` | 503 | Server temporarily unavailable |
+| `FeatureUnavailableError` | 503 | A `featureFlag` on the function is switched off |
+| `AIProviderNotConfiguredError` | 503 | No AI provider is configured for the agent |
 | `GatewayTimeoutError` | 504 | Upstream server timeout |
 | `HTTPVersionNotSupportedError` | 505 | HTTP version not supported |
 | `MaxComputeTimeReachedError` | 524 | Function exceeded time limit (serverless) |

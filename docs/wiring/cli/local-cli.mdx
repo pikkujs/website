@@ -27,13 +27,13 @@ Add a local CLI entrypoint to `pikku.config.json`:
 }
 ```
 
-Run `npx pikku` to generate the CLI executable at `.pikku/cli-local.gen.ts`.
+Run `npx pikku` to generate the CLI executable at the path set on the entrypoint (`.pikku/cli-local.gen.ts` above). The generated file is TypeScript, so run it with a TS runner such as `tsx`.
 
 ## Usage
 
 ```bash
-node .pikku/cli-local.gen.ts greet Alice
-node .pikku/cli-local.gen.ts user create alice@example.com
+npx tsx .pikku/cli-local.gen.ts greet Alice
+npx tsx .pikku/cli-local.gen.ts user create alice@example.com
 ```
 
 Or add to `package.json`:
@@ -41,7 +41,7 @@ Or add to `package.json`:
 ```json
 {
   "scripts": {
-    "cli": "node .pikku/cli-local.gen.ts"
+    "cli": "tsx .pikku/cli-local.gen.ts"
   }
 }
 ```

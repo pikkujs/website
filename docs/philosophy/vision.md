@@ -50,7 +50,7 @@ No framework lock-in. No vendor lock-in. **Just adaptability.**
 **Your functions receive:**
 - Services (database, cache, logger)
 - Data (validated automatically)
-- User sessions
+- Wire context (the session and transport details, on the third argument)
 
 **They return:**
 - Data (or streaming updates)

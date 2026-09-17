@@ -22,7 +22,7 @@ Sessions are designed for interactive, user-facing protocols:
 
 Pikku doesn't make assumptions about how sessions are stored or managed. Instead, it provides a session abstraction through the wire parameter that your middleware uses to load and persist sessions.
 
-The key benefit: **your functions don't need to know** if the session comes from an HTTP cookie, a WebSocket connection, or somewhere else. They just destructure `session`, `setSession`, and `clearSession` from the wire parameter, and it works across all protocols.
+The key benefit: **your functions don't need to know** if the session comes from an HTTP cookie, a WebSocket connection, or somewhere else. They just destructure `session`, `setSession`, `clearSession`, `getSession`, and `hasSessionChanged` from the wire parameter, and it works across all protocols. The resolved user id is also available as `pikkuUserId`.
 
 ### Session Lifecycle
 
@@ -225,7 +225,7 @@ export const refreshSessionMiddleware = pikkuMiddleware(async (
 
 Pikku's session system provides:
 
-- **Transport-agnostic abstraction** – Same wire-level `session`, `setSession`, and `clearSession` API for all protocols
+- **Transport-agnostic abstraction** – Same wire-level `session`, `setSession`, `clearSession`, `getSession`, and `hasSessionChanged` API for all protocols
 - **Middleware-driven** – Pikku's middleware handles loading and persisting sessions
 - **Type-safe** – Full TypeScript support for your session data
 - **Protocol support** – Works with HTTP, WebSocket, CLI, and MCP
@@ -234,6 +234,6 @@ Pikku's session system provides:
 The wire parameter is the key: it provides `session`, `setSession`, and `clearSession` so your functions work identically whether called via HTTP, WebSocket, or any other protocol that supports user sessions.
 
 For more details, see:
-- [UserSessionService API](/docs/api/user-session-service)
+- [SessionService API](/docs/api/user-session-service)
 - [Middleware](/docs/core-features/middleware)
 - [Permission Guards](/docs/core-features/permission-guards)

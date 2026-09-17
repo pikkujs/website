@@ -12,7 +12,7 @@ For route-specific middleware, see [wireHTTP](./index.md) configuration options.
 
 ## addHTTPMiddleware
 
-Applies middleware globally or to routes matching a prefix.
+Applies middleware globally or to routes matching a pattern.
 
 ```typescript
 import { addHTTPMiddleware } from '#pikku/middleware'
@@ -21,13 +21,13 @@ import { corsMiddleware, responseTime } from './middleware.js'
 // All HTTP routes
 addHTTPMiddleware('*', [corsMiddleware, responseTime])
 
-// Routes starting with /admin
-addHTTPMiddleware('/admin', [requireAuth, auditLog])
+// Every route under /admin/
+addHTTPMiddleware('/admin/*', [requireAuth, auditLog])
 ```
 
 ### Parameters
 
-- **route** (`string`) - Route prefix pattern, or `'*'` for global
+- **pattern** (`string`) - Route pattern, or `'*'` for global. `*` matches any run of characters and the pattern is anchored, so `/admin/*` covers `/admin/users` but `/admin` on its own matches only the exact route.
 - **middleware** - Array of middleware to apply to matching routes
 
 ### Global HTTP Middleware
@@ -57,7 +57,7 @@ const responseTime = pikkuMiddleware(async (_services, { http }, next) => {
 addHTTPMiddleware('*', [cors, responseTime])
 ```
 
-### Prefix-Based Middleware
+### Pattern-Based Middleware
 
 ```typescript
 const adminAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
@@ -70,7 +70,7 @@ const adminAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) =>
   }
 
   try {
-    const payload = await jwt.verify(token.replace('Bearer ', ''))
+    const payload = await jwt.decode(token.replace('Bearer ', ''))
     setSession(payload)
     await next()
   } catch (e) {
@@ -78,28 +78,39 @@ const adminAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) =>
   }
 })
 
-const rateLimit = pikkuMiddleware(async ({ cache }, { http }, next) => {
+const hits = new Map<string, { count: number; resetAt: number }>()
+
+const rateLimit = pikkuMiddleware(async (_services, { http }, next) => {
   if (!http) return await next()
 
   const ip = http.request.header('x-forwarded-for') || 'unknown'
-  const key = `ratelimit:${ip}`
-  const count = (await cache.get(key)) || 0
+  const now = Date.now()
+  const entry = hits.get(ip)
 
-  if (count > 100) {
+  if (!entry || entry.resetAt < now) {
+    hits.set(ip, { count: 1, resetAt: now + 60_000 })
+    return await next()
+  }
+
+  if (entry.count >= 100) {
     http.response.status(429).json({ error: 'Too many requests' })
     return
   }
 
-  await cache.set(key, count + 1, { ttl: 60 })
+  entry.count++
   await next()
 })
 
 // Admin routes need authentication
-addHTTPMiddleware('/admin', [adminAuth])
+addHTTPMiddleware('/admin/*', [adminAuth])
 
 // API routes are rate limited
-addHTTPMiddleware('/api', [rateLimit])
+addHTTPMiddleware('/api/*', [rateLimit])
 ```
+
+:::note
+The rate limiter above keeps its counters in a process-local `Map`, which is the right shape for per-instance limiting. A limit that has to hold across instances belongs in a store the instances share, such as Redis or a database.
+:::
 
 ## Authorization
 
@@ -117,15 +128,16 @@ Global permissions form an independent AND gate and can only narrow access. See 
 
 ## Route Pattern Matching
 
-Prefix patterns match routes that start with the given path:
+Patterns are anchored globs — `*` matches any run of characters, and the pattern must match the whole route:
 
 | Pattern | Matches | Examples |
 |---------|---------|----------|
-| `/admin` | All routes starting with `/admin` | `/admin/users`, `/admin/settings` |
-| `/api/v1` | All routes starting with `/api/v1` | `/api/v1/users`, `/api/v1/posts` |
 | `*` | All routes (global) | Any HTTP route |
+| `/admin/*` | Routes under `/admin/` | `/admin/users`, `/admin/settings/profile` |
+| `/admin` | That exact route only | `/admin` |
+| `/api/v1/*` | Routes under `/api/v1/` | `/api/v1/users`, `/api/v1/posts` |
 
-Note: These are prefix matches, not glob patterns. `/admin` matches `/admin/users` and `/admin/settings/profile`.
+Note: `/admin` is **not** a prefix match. To cover a subtree use `/admin/*`.
 
 ## Middleware Execution Order
 
@@ -133,9 +145,12 @@ See [Middleware](../../core-features/middleware.md#execution-order) for the comp
 
 For HTTP routes, middleware runs in this order:
 1. **Global HTTP middleware** - `addHTTPMiddleware('*', [...])`
-2. **Prefix HTTP middleware** - `addHTTPMiddleware('/prefix', [...])`
-3. **Wire-specific middleware** - `wireHTTP({ middleware: [...] })`
-4. **Function-level middleware** - `pikkuFunc({ middleware: [...] })`
+2. **Pattern HTTP middleware** - `addHTTPMiddleware('/prefix/*', [...])`
+3. **Tag middleware** - wirings carrying a tag registered with `addTagMiddleware(...)`
+4. **Wire-specific middleware** - `wireHTTP({ middleware: [...] })`
+5. **Function-level middleware** - `pikkuFunc({ middleware: [...] })`
+
+The full list is then sorted by middleware priority (highest first), so a `priority: 'highest'` middleware can jump ahead of a narrower scope.
 
 ## Common Patterns
 
@@ -151,7 +166,7 @@ const jwtAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
 
   if (token) {
     try {
-      const payload = await jwt.verify(token)
+      const payload = await jwt.decode(token)
       setSession({
         userId: payload.userId,
         role: payload.role
@@ -166,7 +181,7 @@ const jwtAuth = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
 })
 
 // Apply to all protected routes
-addHTTPMiddleware('/api', [jwtAuth])
+addHTTPMiddleware('/api/*', [jwtAuth])
 ```
 
 ### Request Logging

@@ -12,7 +12,7 @@ This guide covers the **core fundamentals** of Pikku through a practical setup w
 
 ## Prerequisites
 
-Ensure that [Node.js](https://nodejs.org) (version >= 18) is installed on your operating system.
+Ensure that [Node.js](https://nodejs.org) (version >= 24) is installed on your operating system.
 
 ## Installation
 

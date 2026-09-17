@@ -11,7 +11,7 @@ The JWTService encodes and decodes JSON Web Tokens. It's typically used in middl
 Encodes a payload into a signed JWT with expiration.
 
 - **Parameters:**
-  - `expiresIn`: How long until the token expires (e.g. `'15m'`, `'7d'`)
+  - `expiresIn`: How long until the token expires, as a `{ value, unit }` pair (see below)
   - `payload`: The data to encode
 - **Returns:** Promise resolving to the JWT string
 
@@ -45,11 +45,14 @@ export const login = pikkuFunc<
     throw new UnauthorizedError('Invalid credentials')
   }
 
-  const token = await services.jwt.encode<UserTokenPayload>('24h', {
-    userId: user.id,
-    email: user.email,
-    role: user.role,
-  })
+  const token = await services.jwt.encode<UserTokenPayload>(
+    { value: 24, unit: 'hour' },
+    {
+      userId: user.id,
+      email: user.email,
+      role: user.role,
+    }
+  )
 
   return { token }
 })
@@ -61,14 +64,16 @@ const payload = await services.jwt.decode<UserTokenPayload>(
 )
 ```
 
-## Relative Time Formats
+## Relative Time Format
+
+`expiresIn` is a `RelativeTimeInput` — `{ value: number, unit: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'year' }` — exported from `@pikku/core/utils`:
 
 ```typescript
-await services.jwt.encode('30s', payload)  // 30 seconds
-await services.jwt.encode('15m', payload)  // 15 minutes
-await services.jwt.encode('2h', payload)   // 2 hours
-await services.jwt.encode('7d', payload)   // 7 days
-await services.jwt.encode('1w', payload)   // 1 week
+await services.jwt.encode({ value: 30, unit: 'second' }, payload) // 30 seconds
+await services.jwt.encode({ value: 15, unit: 'minute' }, payload) // 15 minutes
+await services.jwt.encode({ value: 2, unit: 'hour' }, payload)    // 2 hours
+await services.jwt.encode({ value: 7, unit: 'day' }, payload)     // 7 days
+await services.jwt.encode({ value: 1, unit: 'week' }, payload)    // 1 week
 ```
 
 ## Implementation

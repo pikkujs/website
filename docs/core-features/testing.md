@@ -114,6 +114,10 @@ test('should create order', async () => {
 })
 ```
 
+## End-to-End Testing
+
+Unit tests never leave the process - they mock the services a function destructures, so auth, middleware, serialization, and permissions are not exercised. When you need that, write a [Scenario](./scenarios.md) instead: a `pikkuScenario` drives your app as signed-in actors over the real transport, so the same definition works as an e2e test locally, a smoke test against staging, and a health check against production. Live coverage is attributed to scenario runs (`pikku dev --coverage` plus `pikku scenario run <env> --coverage`), not to unit tests.
+
 ## Why This Works
 
 Pikku functions are transport-agnostic and framework-independent. Your business logic doesn't depend on HTTP requests, WebSocket connections, or any runtime - it's just a function that receives services and data.

@@ -3,7 +3,7 @@ title: TriggerService
 ai: true
 ---
 
-The TriggerService manages [Trigger](/docs/wiring/triggers) subscriptions — it starts the registered trigger sources, listens for their events, and dispatches each firing to its wired RPC targets or workflow starts. Full-server runtimes and `pikku dev` start it for you; you provide one when running triggers in your own server process.
+The TriggerService manages [Trigger](/docs/wiring/triggers) subscriptions — it starts the registered trigger sources, listens for their events, and dispatches each firing to its wired RPC targets or workflow starts. Nothing fires until one is registered as the `triggerService` singleton and `start()` has been called. `pikku dev` and `pikku serve` register `InMemoryTriggerService` but leave it stopped; start it from your entrypoint — or a `pikkuServerLifecycle` `beforeStart` hook — and stop it again on shutdown.
 
 ## Interface
 

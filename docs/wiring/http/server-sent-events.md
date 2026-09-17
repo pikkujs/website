@@ -8,7 +8,7 @@ description: Streaming real-time data to clients
 
 Server-Sent Events (SSE) let you stream real-time updates from the server to clients over HTTP. Unlike WebSockets, SSE is unidirectional (server → client) and works over standard HTTP connections.
 
-Pikku supports SSE as a progressive enhancement for GET routes — your function returns an initial response immediately, and can optionally stream updates if the client supports SSE.
+Pikku supports SSE on `GET` routes: when a route is wired with `sse: true`, every request is served as a stream (`text/event-stream`), and the function pushes messages with `channel.send()`.
 
 ## Your First SSE Route
 
@@ -22,16 +22,18 @@ https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/sse
 https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/sse.wiring.ts
 ```
 
-This pattern works for both SSE and regular HTTP clients:
-- **Regular HTTP client**: Gets the return value as a normal JSON response
-- **SSE client**: Gets the return value as the final message, plus any `channel.send()` calls as intermediate messages
+Everything an SSE client receives comes from `channel.send()` calls in your function:
+- Each `channel.send(data)` is delivered as one SSE event
+- `channel.close()` ends the stream
+- The function's return value is **not** written to the stream. It is what the same function returns when it is wired to a non-SSE route (or called over RPC). If SSE clients need a final message, `channel.send()` it yourself.
 
 ## Requirements
 
 - Must be a **GET route**
 - Set `sse: true` in wireHTTP config
-- The function's output type is used for both intermediate SSE messages and the final return value
-- `channel` is automatically injected when the client connects via SSE
+- Every request to that route is streamed — there is no JSON response from the same route. A client that needs one value should call a non-SSE wiring of the function.
+- `channel` is injected on the wire for SSE routes
+- The function's output type should describe the messages the stream carries
 
 ## Two SSE Patterns
 
@@ -45,16 +47,19 @@ if (channel) {
   for (let i = 0; i < todos.length; i++) {
     channel.send({ status: 'processing', processed: i + 1, total })
   }
+  channel.send({ status: 'complete', processed: total, total })
+  channel.close()
 }
 
+// Returned to non-SSE callers of the same function
 return { status: 'complete', processed: total, total }
 ```
 
-The return value is automatically sent as the final SSE message — no need to call `channel.close()`.
+Send the final message explicitly and call `channel.close()` when the stream is done — the return value is not sent to SSE clients.
 
 ### Periodic Updates (`todoStream`)
 
-For ongoing streams — set up an interval, send updates, then return an initial snapshot:
+For ongoing streams — set up an interval, send updates, and return the current snapshot for non-SSE callers:
 
 ```typescript
 if (channel) {
@@ -68,7 +73,7 @@ if (channel) {
   }, 5000)
 }
 
-// Return immediate snapshot
+// Returned to non-SSE callers
 return { todos, timestamp, count: todos.length }
 ```
 
@@ -96,37 +101,44 @@ eventSource.onerror = function(error) {
 }
 ```
 
-### Handling Both Modes
+### Typed client (Pikku Fetch)
+
+The generated fetch client can consume the stream directly:
+
+```typescript
+import { pikkuFetch } from '#pikku/pikku-fetch.gen.js'
+
+pikkuFetch.setServerUrl('http://localhost:4002')
+
+const stream = pikkuFetch.subscribeToSSE('/todos/progress', (event) => {
+  console.log('Received:', event)
+})
+
+// Later, to stop listening
+stream.close()
+```
+
+### Clients that can't stream
+
+A route with `sse: true` is always streamed, so a client that needs a single JSON response should call a non-SSE wiring of the same function instead of the SSE route:
+
+```typescript
+// Streamed
+wireHTTP({ method: 'get', route: '/todos/progress', func: processTodosProgress, sse: true })
+
+// Single response, same function
+wireHTTP({ method: 'get', route: '/todos/progress.json', func: processTodosProgress })
+```
 
 ```javascript
-async function getTodosProgress() {
-  // Try SSE first
-  if (window.EventSource) {
-    const eventSource = new EventSource('/todos/progress', { withCredentials: true })
-
-    eventSource.onmessage = function(event) {
-      const data = JSON.parse(event.data)
-      updateUI(data)
-      if (data.status === 'complete') eventSource.close()
-    }
-
-    eventSource.onerror = function() {
-      // Fallback to regular HTTP
-      eventSource.close()
-      fetchTodosProgress()
-    }
-  } else {
-    // Browser doesn't support SSE - use regular fetch
-    fetchTodosProgress()
-  }
-}
-
 async function fetchTodosProgress() {
-  const response = await fetch('/todos/progress')
+  const response = await fetch('/todos/progress.json')
   const data = await response.json()
   updateUI(data)
 }
 ```
+
+The `if (channel)` guard in the function is what lets it serve both: it streams when a channel is present and just returns its value otherwise.
 
 ## When to Use SSE
 
@@ -143,12 +155,13 @@ Consider WebSockets ([channels](../channels/index.md)) instead if you need:
 
 ## Best Practices
 
-**Always provide an initial response** — don't make regular HTTP clients wait:
+**Send an initial message** — an SSE client has nothing to render until the first event arrives:
 
 ```typescript
-// ✅ Good - immediate response for HTTP clients too
+// ✅ Good - first message arrives immediately
 if (channel) {
-  // stream updates...
+  channel.send(initialState)
+  // ... stream updates
 }
 return initialState
 ```
@@ -165,7 +178,7 @@ if (count >= maxUpdates) {
 // ✅ Open-ended stream - omit channel.close(), client disconnects when done
 ```
 
-**Don't call `channel.close()` and return a value** — the return value is automatically sent as the last SSE message. Closing before returning will cut off that final message.
+**Send the final message before `channel.close()`** — the return value is not part of the stream, so a terminal event that clients wait for has to be sent explicitly.
 
 ## Next Steps
 

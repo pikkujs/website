@@ -85,14 +85,16 @@ const secretService = new AWSSecrets({
 ### Usage
 
 ```typescript
-// Get a plain string secret
-const apiKey = await secretService.getSecret('my-api-key')
+// Get a plain string secret (getSecret returns a wrapped SecretValue)
+const apiKey = (await secretService.getSecret('my-api-key')).reveal()
 
 // Get and parse a JSON secret
-const dbConfig = await secretService.getSecretJSON<{
-  host: string
-  password: string
-}>('database-config')
+const dbConfig = (
+  await secretService.getSecret<{
+    host: string
+    password: string
+  }>('database-config')
+).reveal()
 
 // Check if a secret exists
 const exists = await secretService.hasSecret('my-api-key')

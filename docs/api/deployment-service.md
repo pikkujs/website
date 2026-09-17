@@ -40,7 +40,7 @@ Dispatches a remote RPC call to whichever deployment owns the function. The impl
 - **Returns:** Promise resolving to the function's output
 
 :::info
-You rarely call `invoke` yourself — `services.rpc.invoke(...)` routes through the deployment service automatically when the target function lives in another deployment.
+You rarely call `invoke` yourself — `rpc.invoke(...)` on the [wire](/docs/wiring/rpcs) routes through the deployment service automatically when the target function lives in another deployment.
 :::
 
 ## Configuration
@@ -72,15 +72,18 @@ Platform-native (created by the runtime adapters, using the platform's own disco
 ```typescript
 import { PgKyselyDeploymentService } from '@pikku/kysely-postgres'
 
+const baseServices = await createSingletonServices(config, { logger })
+
 const deploymentService = new PgKyselyDeploymentService(
   { heartbeatInterval: 5000, heartbeatTtl: 15000 },
   pikkuKysely.kysely,
-  singletonServices.jwt,
-  singletonServices.secrets
+  baseServices.jwt,
+  baseServices.secrets
 )
 await deploymentService.init()
 
 const singletonServices = await createSingletonServices(config, {
+  ...baseServices,
   deploymentService,
 })
 ```

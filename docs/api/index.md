@@ -35,8 +35,12 @@ give up by leaving it out.
 | `credentialService` | [`CredentialService`](./credential-service.md) | No per-user credentials or OAuth2 |
 | `sessionStore` | [`SessionStore`](./session-store.md) | No server-side session persistence |
 | `scopeService` | [`ScopeService`](./scope-service.md) | No scope resolution when building a session |
+| `featureFlags` | `FeatureFlagSource` | Declared feature flags resolve as open |
 | `audit` | [`AuditService`](./audit-service.md) | Audit events are dropped |
 | `auditLog` | `AuditLog` | The request-scoped buffer that writes into `audit` — see below |
+| `analyticsService` | `AnalyticsService` | Analytics events are logged instead of stored |
+| `analyticsIdentity` | `AnalyticsIdentityResolver` | Analytics events carry only what the session holds |
+| `analytics` | `AnalyticsLog` | The request-scoped buffer that writes into `analyticsService` — see below |
 | `queueService` | [`QueueService`](./queue-service.md) | No queue workers |
 | `schedulerService` | [`SchedulerService`](./scheduler-service.md) | No cron or delayed RPCs |
 | `eventHub` | [`EventHubService`](./event-hub.md) | No cross-process channel broadcast |
@@ -86,22 +90,34 @@ ends. Like [`Logger`](./logger.md), `write` is `Safe<>`-guarded: an unrevealed
 `SecretValue` in an event fails the build rather than serializing as `[secret]`
 by accident.
 
+### `analytics` — `AnalyticsLog`
+
+The request-scoped buffer that writes into `analyticsService`, installed by the
+function runner for every invocation whether or not a sink is registered.
+Exposes `record(event, client?)`, `flush()` and `close()`. When
+`analyticsService` is unset the runner falls back to a logger-backed sink, so a
+validated event with nowhere to go is still visible at `debug` rather than
+silently dropped. `analyticsIdentity` is the optional resolver for the
+browser-originated half of an event's identity (`vendorIds`, `consent`,
+`anonymousId`); without it a sink sees only what the session carries.
+
 ### `virtualUserRunStore` / `VirtualUserScheduleStore`
 
 A virtual-user run is dispatched and answered for later, so the run store is the
 only trace it leaves: `start(run)`, `complete(runId, outcome)`,
-`fail(runId, error)`, `get(runId)`, `list(options?)` (newest first) and a
-separate call for one run's turns — separate because a run at a 500-step budget
-carries more transcript than every other column put together, and `list` would
-pay for it on every row.
+`fail(runId, error)`, `get(runId)`, `list(options?)` (newest first) and
+`steps(runId, options?)` for one run's turns — separate because a run at a
+500-step budget carries more transcript than every other column put together,
+and `list` would pay for it on every row.
 
 The schedule store is each persona's cadence, for apps that want their virtual
 users to keep going without being asked: `set(schedule)`, `get(persona)`,
-`list()`, `due(now)` and a call that pushes the next run out. That last one runs
-*before* the run is dispatched, so a tick that dies halfway does not leave a row
-due for the next tick to re-dispatch. The cost is that a dispatch which throws
-waits a full interval instead of retrying — the right way round, since a persona
-failing to start should not be retried every minute for a week.
+`list()`, `due(now)`, `claim(persona, …)` — which pushes the next run out — and
+`remove(persona)`. The claim runs *before* the run is dispatched, so a tick that
+dies halfway does not leave a row due for the next tick to re-dispatch. The cost
+is that a dispatch which throws waits a full interval instead of retrying — the
+right way round, since a persona failing to start should not be retried every
+minute for a week.
 
 The two are separate on purpose: wiring nothing is how an app says it only wants
 the runs it starts itself.

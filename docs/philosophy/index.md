@@ -28,11 +28,11 @@ Types drift. Logic fragments. Vendor lock-in creeps in.
 Write your function once:
 
 ```typescript
-import { pikkuFunc } from '#pikku/function'
+import { pikkuSessionlessFunc } from '#pikku/function'
 
-export const sendWelcomeEmail = pikkuFunc<SendWelcomeEmailInput, { sent: boolean }>({
+export const sendWelcomeEmail = pikkuSessionlessFunc<SendWelcomeEmailInput, { sent: boolean }>({
   func: async ({ email }, data) => {
-    await email.send({ to: data.userEmail, subject: 'Welcome!', body: `Hello ${data.userName}!` })
+    await email.send({ to: data.userEmail, subject: 'Welcome!', text: `Hello ${data.userName}!` })
     return { sent: true }
   }
 })

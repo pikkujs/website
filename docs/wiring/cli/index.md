@@ -28,7 +28,7 @@ Run commands directly on your local machine. The CLI invokes functions in-proces
 
 ### Remote CLI
 
-Run commands that invoke functions on a remote server via RPC. The CLI acts as a thin client that sends requests over the network.
+Run commands that invoke functions on a remote server over a WebSocket channel. The CLI acts as a thin client that sends requests over the network.
 
 **Use remote CLI when:**
 - Managing production systems from your terminal
@@ -192,16 +192,23 @@ Run `npx pikku` to generate the CLI executables. Each entrypoint can have both l
 | `program` | `string` | The CLI program name (shown in help text) |
 | `description` | `string` | Program description |
 | `commands` | `Record<string, Command>` | Top-level commands |
+| `options` | `CLIOptions` | Flags accepted before any command |
+| `render` | `PikkuCLIRender` | Default renderer for commands that declare none |
+| `middleware` | `Middleware[]` | Wraps every command |
+| `auth` | `boolean` | Requires a session on the generated remote (channel) backend; has no effect on local runs |
 
 ### pikkuCLICommand Options
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `func` | `PikkuFunc` | The Pikku function to invoke |
-| `parameters` | `string` | Positional params: `<required>` `[optional]` |
+| `func` | `PikkuFunc` | The Pikku function to invoke. Omit it on a command that only holds `subcommands` |
+| `parameters` | `string` | Positional params: `<required>` `[optional]`. Each name must be a key of the function's input |
 | `description` | `string` | Command description for help text |
 | `options` | `Record<string, Option>` | Named flags and options |
-| `render` | `CLIRender` | Output renderer function |
+| `render` | `PikkuCLIRender` | Output renderer function |
+| `subcommands` | `Record<string, Command>` | Nested commands |
+| `middleware` | `Middleware[]` | Wraps every run of this command |
+| `auth` | `boolean` | Whether running this command requires a session (defaults to `true`) |
 
 ### Option Properties
 
@@ -210,11 +217,15 @@ Run `npx pikku` to generate the CLI executables. Each entrypoint can have both l
 | `description` | `string` | Help text for the option |
 | `short` | `string` | Single-letter alias (e.g., `'v'` for `--verbose` / `-v`) |
 | `default` | `any` | Default value (also determines the type: `false` → boolean flag) |
+| `type` | `'string' \| 'number' \| 'boolean' \| 'string[]'` | How the value is parsed. Inferred from the function's input schema, then `default`, when omitted |
+| `choices` | `any[]` | The values the option accepts |
+
+A field with no entry in `options` is still accepted as `--field`; an entry is how it gets a short form, a default, or help text.
 
 ## Next Steps
 
 - **[Local CLI](./local-cli.mdx)** - Run commands directly in-process
-- **[Remote CLI](./remote-cli.md)** - Invoke remote functions via RPC
+- **[Remote CLI](./remote-cli.md)** - Invoke remote functions over a WebSocket channel
 - **[Core Functions](../../core-features/functions.md)** - Understanding Pikku functions
 - **[Middleware](../../core-features/middleware.md)** - Adding middleware to CLI commands
 - **[`#pikku/cli` API reference](/docs/api-reference/wire/cli)** - every export on the CLI door

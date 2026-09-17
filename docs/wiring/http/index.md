@@ -156,7 +156,7 @@ wireHTTP({
 })
 ```
 
-You can also apply middleware globally or to route prefixes:
+You can also apply middleware globally or to route patterns:
 
 ```typescript
 import { addHTTPMiddleware } from '#pikku/middleware'

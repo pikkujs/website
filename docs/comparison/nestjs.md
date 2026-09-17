@@ -28,14 +28,14 @@ Below is a **side-by-side comparison** to help you decide which might fit your r
 | **Permissions**          | Custom guards or external libs           | First-class permission system                 |
 | **Schema Validation**    | Usually manual (`class-validator`, pipes) | **Automatic from TypeScript types**           |
 | **Testing**              | Integration tests with controllers, e2e test harness | **Per-function testing, no transport mocking** |
-| **Scaffolding**          | `nest new <app-name>` (CLI)              | `npm run pikku@latest` for a full project     |
+| **Scaffolding**          | `nest new <app-name>` (CLI)              | `npm create pikku@latest` for a full project     |
 | **WebSockets**           | Official Gateway support                 | **Native built-in WebSocket wrapper**         |
 | **API Fetch Wrapper**    | No built-in (manual client generation)    | **Auto-generated fetch & client libraries**   |
 | **Next.js Integration**  | Works as a standalone API, some bridging needed | **Native Next.js API layer**                  |
 | **Background Jobs**      | External scheduling or custom microservice approach | **First-class built-in**                      |
 | **Edge Compatibility**   | Requires platform-specific adjustments    | Supported via adapters (Cloudflare, etc.)     |
 | **Automatic Documentation** | Manual or use Nest Swagger Module     | ✅ **Auto-generated**                         |
-| **File Uploads / Buffers**| ✅ Supported through Multer or similar   | ❌ **Not yet supported**                      |
+| **File Uploads / Buffers**| ✅ Supported through Multer or similar   | ❌ Functions take JSON; files go through the [content service](/docs/api/content-service) |
 
 ---
 
@@ -75,12 +75,12 @@ Both frameworks are TypeScript-based and can be fast, but NestJS typically suits
 
 | Aspect              | **NestJS** 🏗️                               | **Pikku** 🛠️                               |
 |---------------------|---------------------------------------------|--------------------------------------------|
-| **Project Setup**   | `nest new app` (CLI)                        | `npm run pikku@latest` (full-stack template) |
+| **Project Setup**   | `nest new app` (CLI)                        | `npm create pikku@latest` (full-stack template) |
 | **Built-in Features** | Controllers, providers, microservices, etc.  | Auth, permissions, real-time, docs, tests    |
 | **Ease of Use**     | Excellent docs but steeper learning curve    | Very low boilerplate, simpler mental model  |
 
 ### **🔗 Transport & Protocols**
-**NestJS** typically revolves around HTTP but has a **Microservices package**. **Pikku** includes **native WebSockets** and is building out queue support.
+**NestJS** typically revolves around HTTP but has a **Microservices package**. **Pikku** includes **native WebSockets** and first-class queue workers.
 
 | Transport Type        | **NestJS** 🚀                           | **Pikku** 🔥                                   |
 |-----------------------|-----------------------------------------|-----------------------------------------------|
@@ -107,7 +107,7 @@ Both frameworks are TypeScript-based and can be fast, but NestJS typically suits
 | **Next.js Integration** | ❌ Manual bridging needed             | ✅ **Native** support for Next.js API routes  |
 | **Testing**           | CLI-based e2e tests or integration    | ✅ Per-function, no need to mock HTTP         |
 | **API Documentation** | ✅ With `@nestjs/swagger` module       | ✅ **Auto-generated** from TypeScript types   |
-| **File Uploads / Buffers** | ✅ Built-in support (Multer, etc.) | ❌ **Not yet supported**                      |
+| **File Uploads / Buffers** | ✅ Built-in support (Multer, etc.) | ❌ Functions take JSON; files go through the [content service](/docs/api/content-service) |
 
 ---
 

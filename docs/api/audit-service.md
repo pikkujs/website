@@ -12,10 +12,10 @@ Auditing is opt-in per function. Set `audit` on the function definition:
 ```typescript
 export const deleteAccount = pikkuFunc<{ accountId: string }, void>({
   audit: true, // or { durability: 'transactional' }
-  func: async (services, data, session) => {
+  func: async (services, data) => {
     await services.db.deleteAccount(data.accountId)
 
-    await services.auditLog.write({
+    await services.auditLog?.write({
       type: 'account.deleted',
       source: 'explicit',
       metadata: { accountId: data.accountId },
@@ -27,7 +27,7 @@ export const deleteAccount = pikkuFunc<{ accountId: string }, void>({
 - `audit: true` — **best-effort** durability: events are buffered during the invocation and flushed when it ends. A failed flush logs a warning but doesn't fail the request.
 - `audit: { durability: 'transactional' }` — each event is written to the sink immediately, inside the invocation.
 
-Actor information (`userId`, `orgId`, `pikkuUserId`), the function ID, wire type/ID, and trace ID are filled in automatically from the wire — you only supply the event `type` and any `metadata`.
+User identity (`userId`, `orgId`, `pikkuUserId`), the function ID, wire type/ID, and trace ID are filled in automatically from the wire — you only supply the event `type` and any `metadata`.
 
 If a function without audit config calls `auditLog.write()`, the event is dropped and a one-time warning is logged telling you to set `audit: true`.
 
@@ -57,8 +57,8 @@ different answers.
 
 ### `facets?(): Promise<AuditFacets>`
 
-Distinct users and types across the whole trail. Paired with `query` — asking
-for facets inside a query costs two extra scans, which is why they are separate.
+Distinct users and types across the whole trail, for populating filter controls.
+Kept separate from `query` because computing it costs two extra scans.
 
 ## AuditEvent
 
@@ -69,7 +69,7 @@ for facets inside a query costs two extra scans, which is why they are separate.
 | `outcome` | `'success'`, `'failed'`, or `'denied'` |
 | `occurredAt` | ISO timestamp (set automatically) |
 | `functionId`, `wireType`, `wireId`, `traceId` | Where the event came from (set automatically) |
-| `actor` | `{ userId?, orgId?, pikkuUserId? }` (resolved from the session) |
+| `userIdentity` | `{ userId?, orgId?, pikkuUserId? }` (resolved from the session and wire) |
 | `input`, `metadata` | Event payload |
 
 ## Implementations

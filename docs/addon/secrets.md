@@ -36,4 +36,4 @@ This maps the addon's `PACKAGE_API_KEY` to your application's `ACME_SERVICE_API_
 
 ## How It Works
 
-When the addon calls `secrets.getSecretJSON('PACKAGE_API_CREDENTIALS')`, Pikku transparently looks up `ACME_SERVICE_CREDENTIALS` instead. The addon code doesn't need to know about your naming conventions.
+When the addon calls `(await secrets.getSecret('PACKAGE_API_CREDENTIALS')).reveal()`, Pikku transparently looks up `ACME_SERVICE_CREDENTIALS` instead. The addon code doesn't need to know about your naming conventions.

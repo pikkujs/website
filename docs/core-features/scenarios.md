@@ -11,15 +11,19 @@ A scenario is a workflow that drives your app the way users do. Its steps run as
 
 ## Your First Scenario
 
-Define a scenario with `pikkuScenario` — it has the same shape as a workflow function, but every `workflow.do` step names an exposed RPC **and who performs it**. From the [online shop template](https://github.com/pikkujs/fabric/tree/main/templates/online-shop-template):
+Define a scenario with `pikkuScenario` — it has the same shape as a workflow function, but every `scenario.do` step names an exposed RPC **and who performs it**. `pikkuScenario` is generated into `#pikku/scenarios`, alongside `pikkuScenarioStep` and `pikkuFeature`. From the [online shop example](https://github.com/pikkujs/pikku/tree/main/examples/online-shop):
 
 ```typescript @snippet scenarioBasics
 ```
 
-Because scenarios are workflows, steps are recorded durably — a replayed run returns cached step results instead of re-invoking them. `workflow.expectEventually` is the scenario-only polling step: it re-invokes the RPC as the actor until the predicate passes or the timeout fails the scenario (using it in a plain workflow raises [PKU675](/docs/pikku-cli/errors/pku675)). Tune the polling with `within` (total time budget, e.g. `'30s'`) and `interval` (milliseconds between attempts) — both optional.
+Because scenarios are workflows, steps are recorded durably — a replayed run returns cached step results instead of re-invoking them. `scenario.expectEventually` is the scenario-only polling step: it re-invokes the RPC as the actor until the predicate passes or the timeout fails the scenario (using it in a plain workflow raises [PKU675](/docs/pikku-cli/errors/pku675)). Tune the polling with `within` (total time budget, default `'30s'`) and `interval` (poll interval, default `'1s'`; a number is milliseconds) — both optional.
 
 :::info Actor steps never dispatch internally
-Every `workflow.do` in a scenario must carry `{ actor }`. Steps without an actor are refused when running against an environment — a scenario run against staging or production can never accidentally touch local services or queues.
+Every `scenario.do` in a scenario must carry `{ actor }`. Steps without an actor are refused when running against an environment — a scenario run against staging or production can never accidentally touch local services or queues.
+:::
+
+:::warning What a scenario body may do
+A scenario body runs against a live target, so it may only destructure `logger` and `config` from its services — anything else is a [PKU673](/docs/pikku-cli/errors/pku673) codegen error. Reach the app through actors instead. Every scenario must also assert: a flow of only `given`/`when` steps that never reaches a `then` (or an `expectEventually`/`expectError`/`expectService`/`expectScore` helper) is a [PKU680](/docs/pikku-cli/errors/pku680) error.
 :::
 
 :::warning No state reset
@@ -28,7 +32,7 @@ Scenarios run against live environments — including production. Nothing resets
 
 ## Conversing with AI Agents
 
-For agent-powered apps, deterministic RPC calls only test half the product. `actor.converse()` lets an actor hold a free-form conversation with one of your [AI agents](../wiring/ai-agents/index.md) — in persona. An LLM plays the actor (using the `personality` and `jobTitle` from the registry), drives the agent over the real transport as the signed-in actor, answers the agent's tool-approval requests in character, and returns a verdict:
+For agent-powered apps, deterministic RPC calls only test half the product. `actor.converse()` lets an actor hold a free-form conversation with one of your [AI agents](../wiring/ai-agents/index.md) — in persona. An LLM plays the actor (using the `personality` and `jobTitle` from the persona declaration), drives the agent over the real transport as the signed-in actor, answers the agent's tool-approval requests in character, and returns a verdict:
 
 ```typescript @snippet scenarioConverse
 ```
@@ -45,38 +49,72 @@ The verdict contains `passed`, the persona's `reasoning`, and the full `transcri
 
 In a typed project, `agent` is constrained to the generated union of your agent names.
 
+## Declared Steps and Features
+
+When one intent spans several RPCs, or you want the same behaviour driven through a browser or the websocket, declare it as a `pikkuScenarioStep` instead of an inline `scenario.do`. A step declares one binding per surface (`default`, `browser`, `cli`), names itself with a `template` for the report, and is referenced from a scenario by name through `scenario.given`/`when`/`then`:
+
+```typescript
+import { pikkuScenarioStep } from '#pikku/scenarios'
+
+export const buysTheItem = pikkuScenarioStep<{ name: string }, { name: string }>({
+  name: 'buysTheItem',
+  description: 'puts one item in the basket',
+  template: 'buys the {name}',
+  actor: true,
+  default: async (_services, { name }, { actor }) => {
+    const item = await actor.invoke('findItemByName', { name })
+    await actor.invoke('addToBasket', { itemId: item.id })
+    return { name }
+  },
+})
+```
+
+`pikkuFeature({ name, scenarios: [...] })` groups scenarios the way Gherkin's `Feature:` groups `Scenario:`. Browser bindings need `@pikku/playwright` installed; running with `--run default` (the default) skips scenarios containing browser steps rather than failing them.
+
 ## Actors and Environments
 
-An actor is a normal user row in your system, flagged as an actor. Declare the registry and target environments in `pikku.config.json`:
+An actor is a declared **persona** — a normal user row in your system, materialised and signed in by the run. Declare the people once in code with `definePersonas`:
+
+```typescript
+// src/personas.virtual-user.ts
+import { definePersonas } from '#pikku/scopes/pikku-personas.gen.js'
+
+definePersonas({
+  shopper: {
+    name: 'Sam Shopper',
+    jobTitle: 'Retail customer',
+    personality: 'Impatient, skims instructions, expects things to just work',
+    account: {}, // email + password
+  },
+  admin: {
+    name: 'Ops Admin',
+    jobTitle: 'Operations admin',
+    account: {},
+  },
+})
+```
+
+Target environments are top-level in `pikku.config.json`, and the actor addresses are derived from the persona name and `scenarios.emailDomain`:
 
 ```json title="pikku.config.json"
 {
-  "scenarios": {
-    "actors": {
-      "shopper": {
-        "email": "shopper@actors.example.com",
-        "name": "Sam Shopper",
-        "jobTitle": "Retail customer",
-        "personality": "Impatient, skims instructions, expects things to just work"
-      },
-      "admin": {
-        "email": "admin@actors.example.com",
-        "jobTitle": "Operations admin"
-      }
-    },
-    "environments": {
-      "staging": { "apiUrl": "https://staging.example.com/api" },
-      "production": {
-        "apiUrl": "https://app.example.com/api",
-        "signInPath": "/auth/actor-sign-in",
-        "rpcPath": "/rpc"
-      }
+  "environments": {
+    "staging": { "apiUrl": "https://staging.example.com/api" },
+    "production": {
+      "apiUrl": "https://app.example.com/api",
+      "appUrl": "https://app.example.com",
+      "signInPath": "/auth/actor-sign-in",
+      "rpcPath": "/rpc",
+      "production": true
     }
+  },
+  "scenarios": {
+    "emailDomain": "actors.example.com"
   }
 }
 ```
 
-The CLI generates a typed actor registry from this config, and scenarios receive it as `actors` on the workflow wire. Actor login is **lazy**: the first `invoke` signs the actor in (via the Better Auth actor plugin) and the session is cached for the actor's lifetime. `personality` and `jobTitle` power the console's scenario screen and the persona in `converse`.
+The CLI generates a typed persona registry from `definePersonas`, and scenarios receive it as `actors` on the scenario wire. `signInPath` defaults to `/auth/sign-in/actor` and `rpcPath` to `/rpc`; `SCENARIO_ACTOR_SECRET` never appears here. Actor login is **lazy**: the first `invoke` signs the actor in (via the Better Auth actor plugin) and the session is cached for the actor's lifetime. `personality` and `jobTitle` power the console's scenario screen and the persona in `converse`.
 
 ## Running Scenarios
 

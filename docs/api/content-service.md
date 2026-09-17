@@ -8,8 +8,8 @@ The ContentService provides file storage and management capabilities. It support
 Direct file uploads into Pikku functions (streaming multipart data) are not yet fully supported. The recommended pattern is to generate a signed upload URL client-side and have the client upload directly to storage.
 :::
 
-Every method takes a single arguments object that includes the `bucket` to
-operate on.
+Every method takes a single arguments object. The storage methods include the
+`bucket` to operate on; `signURL` is the exception, taking the URL itself.
 
 ## Methods
 
@@ -17,7 +17,7 @@ operate on.
 
 Generates a signed URL for uploading a file directly to storage.
 
-- **`args`:** `{ bucket, fileKey, contentType, size? }`
+- **`args`:** `{ bucket, fileKey, contentType, size?, visibility? }`
 - **Returns:** `UploadURLResult` — `{ uploadUrl, assetKey, uploadHeaders?, uploadMethod? }`. The client `PUT`s (or `POST`s) the file to `uploadUrl`; `assetKey` is the finalized storage key.
 
 ### `signContentKey(args): Promise<string>`
@@ -130,8 +130,8 @@ import { B2Content } from '@pikku/backblaze'
 
 const content = new B2Content(
   {
-    applicationKeyId: await secrets.getSecret('B2_KEY_ID'),
-    applicationKey: await secrets.getSecret('B2_APP_KEY'),
+    applicationKeyId: (await secrets.getSecret('B2_KEY_ID')).reveal(),
+    applicationKey: (await secrets.getSecret('B2_APP_KEY')).reveal(),
     bucketId: 'your-b2-bucket-id',
   },
   logger

@@ -188,7 +188,7 @@ import { pikkuAddonServices } from '#pikku/addon/setup'
 
 export const createSingletonServices = pikkuAddonServices(
   async (config, { secrets }) => {
-    const apiKey = await secrets.getSecretJSON<string>('SENDGRID_API_KEY')
+    const apiKey = (await secrets.getSecret<string>('SENDGRID_API_KEY')).reveal()
     const sendgrid = new SendgridService(apiKey)
     return { sendgrid }
   }
@@ -347,7 +347,7 @@ The `delegated` block describes the upstream's own login operation so end-users 
 With a `delegated` block the generator:
 
 - Forces `--credential bearer` (the credential *is* the upstream token) and emits a credential schema of `{ token, expiresAt?, tenantId? }`.
-- Emits a self-contained `src/<name>-upstream-auth.ts` exporting `authenticate<Name>Upstream(credentials, baseUrl)` — it performs the login call, extracts the token via `tokenPath`, and maps the claims onto an identity object compatible with the [`delegatedAuth()` Better Auth plugin](/docs/middleware/better-auth#delegated-sign-in-upstream-credentials).
+- Emits a self-contained `src/<name>-upstream-auth.ts` exporting `authenticate<Name>Upstream(credentials, baseUrl)` — it performs the login call, extracts the token via `tokenPath`, and maps the claims onto an identity object compatible with the [`pikkuDelegatedAuth()` Better Auth plugin](/docs/middleware/better-auth#delegated-sign-in-upstream-credentials).
 - Generates wire services that check token expiry per call and throw `UnauthorizedError` when the session is missing or expired — the consumer's re-auth signal.
 - Records `authConfig: true` in the addon's `pikku.config.json` for provenance.
 

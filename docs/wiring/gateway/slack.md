@@ -102,8 +102,8 @@ export const slackInstall = pikkuSessionlessFunc<void, { url: string }>({
 export const slackCallback = pikkuSessionlessFunc<{ code: string }, void>({
   func: async ({ secrets, database }, { code }) => {
     const result = await exchangeSlackOAuthCode({
-      clientId: await secrets.getSecret('SLACK_CLIENT_ID'),
-      clientSecret: await secrets.getSecret('SLACK_CLIENT_SECRET'),
+      clientId: (await secrets.getSecret('SLACK_CLIENT_ID')).reveal(),
+      clientSecret: (await secrets.getSecret('SLACK_CLIENT_SECRET')).reveal(),
       code,
       redirectUri: 'https://app.example.com/slack/callback',
     })
@@ -169,7 +169,7 @@ export const slackSignatureMiddleware = async (services, wire, next) => {
   const body = await wire.http.request.text()
 
   const valid = verifySlackSignature(
-    await services.secrets.getSecret('SLACK_SIGNING_SECRET'),
+    (await services.secrets.getSecret('SLACK_SIGNING_SECRET')).reveal(),
     signature,
     timestamp,
     body

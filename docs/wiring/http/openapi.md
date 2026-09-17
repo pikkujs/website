@@ -69,6 +69,7 @@ wireHTTP({
   route: '/users/:userId/todos',
   func: createTodo,
   auth: true,
+  tags: ['todos'],
 })
 ```
 
@@ -78,8 +79,7 @@ Becomes:
 paths:
   /users/{userId}/todos:
     post:
-      operationId: createTodo
-      summary: Create a todo
+      description: This endpoint handles the POST request for the route /users/:userId/todos.
       tags: [todos]
       parameters:
         - name: userId
@@ -87,11 +87,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTodoInput'
       responses:
         '200':
           description: Successful response
@@ -105,14 +100,10 @@ paths:
 
 | Pikku Feature | OpenAPI Mapping |
 |---------------|-----------------|
-| Route parameters (`:id`) | Path parameters |
-| Function input schema | Request body (POST/PUT/PATCH) or query params (GET) |
-| Function output schema | Response body |
-| Function `title` | Operation summary |
-| Function `description` | Operation description |
-| Function `tags` | Operation tags |
-| Auth requirement | Security scheme reference |
-| Error types | Error response schemas |
+| Route parameters (`:id`) | Path parameters (`string`) |
+| Wiring `tags` | Operation `tags` (falls back to the first path segment) |
+| Wiring `query` (POST only) | Query parameters |
+| Function output schema | `200` response body |
 
 ### Security Schemes
 
@@ -130,32 +121,24 @@ components:
       scheme: bearer
 ```
 
-Routes with `auth: true` reference these schemes automatically.
+These are declared globally on the document (either scheme satisfies them). You can replace them, and the document-level `security` requirement, through `additionalInfo.securitySchemes` and `additionalInfo.security`.
 
 ### Schema Conversion
 
-Input and output schemas defined via Standard Schema (Zod, ArkType, etc.) are compiled to JSON Schema and then converted to OpenAPI-compatible schemas using `@openapi-contrib/json-schema-to-openapi-schema`.
+Schemas defined via Standard Schema (Zod, ArkType, etc.) are compiled to JSON Schema and then converted to OpenAPI-compatible schemas using `@openapi-contrib/json-schema-to-openapi-schema`.
 
-## Function Metadata
+## Operation Metadata
 
-Add `title`, `description`, and `tags` to your functions for richer API documentation:
-
-```typescript
-export const createTodo = pikkuFunc<CreateTodoInput, CreateTodoOutput>({
-  title: 'Create a todo',
-  description: 'Creates a new todo item for the specified user.',
-  tags: ['todos'],
-  func: async (services, data) => {
-    // ...
-  }
-})
-```
+Operation `tags` come from the wiring's `tags` (falling back to the first path segment). The function's own `title`, `description` and `tags` are used elsewhere in Pikku but do not change the generated spec.
 
 ## Current Limitations
 
 The OpenAPI generation covers the core specification but has some gaps:
 
 - **Permissions** — Permission requirements are not yet reflected in the spec
+- **Descriptions** — The typed `wireHTTP` config has no `description` field, so operations fall back to a generated sentence
+- **Request bodies** — Function input schemas are not yet emitted, so operations have no `requestBody`
+- **Per-route security** — The default security schemes are declared document-wide; a route's `auth` does not add its own requirement
 - **Detailed error codes** — Error responses are included but not exhaustive
 - **Parameter types** — Path and query parameters default to `string` type
 - **Example values** — Input/output examples are not yet generated

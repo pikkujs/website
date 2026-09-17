@@ -12,7 +12,9 @@ The Logger interface is minimal by design — it matches the common subset of po
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/logger.ts
 ```
 
-Each method accepts either a string message or a structured object:
+Each method accepts a string message. `info`, `warn` and `error` also accept a
+structured object, and `error` accepts an `Error`; `debug` and `trace` take a
+string only:
 
 ```typescript
 logger.info('User signed in')
@@ -62,9 +64,10 @@ https://github.com/pikkujs/pikku/blob/main/packages/services/pino/src/pino.ts
 
 ```typescript
 import { PinoLogger } from '@pikku/pino'
+import { LogLevel } from '@pikku/core/services'
 
 const logger = new PinoLogger()
-logger.setLevel('info') // Uses LogLevel enum mapping
+logger.setLevel(LogLevel.info)
 ```
 
 The `PinoLogger` exposes the underlying `pino.Logger` instance via `logger.pino` for advanced configuration.
@@ -83,7 +86,8 @@ const logger = winston.createLogger({
 
 ## Log Levels
 
-Use `setLevel()` to control verbosity:
+Use `setLevel()` to control verbosity. `LogLevel` is an enum ordered from most
+to least verbose: `trace`, `debug`, `info`, `warn`, `error`, `critical`.
 
 ```typescript
 import { LogLevel } from '@pikku/core/services'

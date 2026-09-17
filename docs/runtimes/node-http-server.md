@@ -63,7 +63,8 @@ The third constructor argument:
 | `mcpJson` | `object` | Parsed `.pikku/mcp/mcp.gen.json` — mounts an MCP server when non-empty |
 | `mcpPath` | `string` | Path the MCP server is mounted at (default `/mcp`) |
 | `dispatchJobs` | `boolean` | Mount `POST /__pikku/queue-job` and `/__pikku/scheduler-job` so a trusted dispatcher can deliver queue jobs and scheduled tasks to this container |
-| `dispatchSecret` | `string` | Shared secret required in the `x-pikku-dispatch` header on the dispatch routes |
+| `dispatchSecret` | `string` | Shared secret required in the `x-pikku-dispatch` header on the dispatch routes (fail-closed: without one every dispatch request is rejected and a warning is logged at startup) |
+| `contentSigningJWT` | `JWTService` | The JWT service that signed the content service's URLs; defaults to `singletonServices.jwt`, and signed asset reads are rejected when neither is available |
 
 ### WebSockets
 
@@ -85,12 +86,14 @@ See [WS Handler](./ws-handler.md) for the full WebSocket setup.
 
 ### Dispatch routes
 
-When a container target has no platform queue or cron binding of its own, a trusted dispatcher (e.g. Pikku Fabric) can deliver jobs over HTTP. Always set a secret — without one the routes accept any caller and a warning is logged at startup:
+When a container target has no platform queue or cron binding of its own, a trusted dispatcher (e.g. Pikku Fabric) can deliver jobs over HTTP. Always set a secret — without one every dispatch request is rejected and a warning is logged at startup:
 
 ```typescript
 const server = new PikkuNodeHTTPServer(config, logger, {
   dispatchJobs: true,
-  dispatchSecret: await singletonServices.secrets.getSecret('PIKKU_DISPATCH_SECRET'),
+  dispatchSecret: (
+    await singletonServices.secrets.getSecret('PIKKU_DISPATCH_SECRET')
+  ).reveal(),
 })
 ```
 
