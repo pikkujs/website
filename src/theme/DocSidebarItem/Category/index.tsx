@@ -235,6 +235,9 @@ export default function DocSidebarItemCategory({
           style={{display: 'flex', flexGrow: 1, alignItems: 'center', justifyContent: 'space-between'}}>
           <span className='flex-1'>{label}</span>
           <SidebarWiringIcons wirings={item.customProps?.wirings} />
+          {/* How many pages sit under this group. It is what makes the
+              navigator read as an index of the docs rather than a menu. */}
+          <span className="doc-nav-count">{items.length}</span>
         </Link>
         {href && collapsible && (
           <CollapseButton

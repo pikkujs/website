@@ -1,0 +1,408 @@
+/* ============================================================
+   Docs shell
+   ------------------------------------------------------------
+   Every doc page is its own route with its own pre-rendered
+   HTML. Within the docs plugin, though, DocRoot stays mounted
+   across those routes — the navigator, its scroll position and
+   its expanded state survive navigation and only the content
+   pane re-renders. So this file builds the frame once and the
+   pages fall into it.
+
+   Three columns:  navigator | content pane | rail
+   The navigator and rail hold still; the pane changes.
+
+   This file owns the docs *layout* — column widths, the type
+   scale, the navigator and the rail. docs.css keeps the Infima
+   token mapping and the component skins (admonitions, cards,
+   pagination, tags). One owner per concern: rules for the
+   sidebar do not belong anywhere else, which is what went wrong
+   with the unscoped `.menu__*` block that used to sit in
+   custom.css.
+
+   Everything is scoped under `html.docs-wrapper`, the class
+   Docusaurus puts on the document for docs routes, so none of
+   it reaches the marketing pages.
+   ============================================================ */
+
+html.docs-wrapper {
+  --doc-sidebar-width: 268px;
+
+  /* One scale, shared by the reference panels and the prose guides.
+     Divergence here is what made the docs read as fifteen folders. */
+  --doc-h1:      clamp(28px, 3.2vw, 38px);
+  --doc-h2:      23px;
+  --doc-h3:      16.5px;
+  --doc-h4:      14.5px;
+  --doc-body:    15px;
+  --doc-small:   13.5px;
+  --doc-label:   10.5px;   /* uppercase mono labels */
+
+  --doc-measure: 72ch;     /* running text; tables and code opt out */
+  --doc-pane-pad: 40px;
+
+  --doc-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --doc-sans:  'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --doc-mono:  'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+/* ════════════════════════════════════════════════════════════
+   1. The frame
+   ════════════════════════════════════════════════════════════ */
+
+/* Infima's `.container` is what gives a doc page its article
+   proportions — a centred, max-width column with its own padding.
+   The pane is the width now; the *paragraph* gets the measure,
+   further down. */
+html.docs-wrapper main > .container {
+  max-width: none !important;
+  padding: 0 !important;
+}
+
+html.docs-wrapper .doc-shell > .row {
+  margin: 0;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+/* Content pane */
+html.docs-wrapper .doc-shell > .row > .col:first-child {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none !important;
+  padding: 26px var(--doc-pane-pad) 64px;
+}
+
+/* Rail — fixed, not a percentage column, so the pane keeps the
+   remainder at every width. */
+html.docs-wrapper .doc-shell > .row > .col--3 {
+  flex: 0 0 216px;
+  width: 216px;
+  max-width: 216px;
+  padding: 26px 22px 64px 0;
+}
+
+@media (max-width: 1320px) {
+  html.docs-wrapper { --doc-pane-pad: 28px; }
+}
+
+/* Below Docusaurus's desktop breakpoint the navigator is already a
+   drawer and the rail is already collapsed into a summary — the pane
+   just takes the width. It collapses, it does not shrink. */
+@media (max-width: 996px) {
+  html.docs-wrapper { --doc-pane-pad: 20px; }
+
+  html.docs-wrapper .doc-shell > .row > .col:first-child {
+    padding-top: 16px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   2. The navigator
+   ════════════════════════════════════════════════════════════ */
+
+html.docs-wrapper .theme-doc-sidebar-container {
+  background: var(--paper-bg-alt);
+  border-right: 1px solid var(--paper-border) !important;
+}
+
+html.docs-wrapper .theme-doc-sidebar-menu {
+  padding: 18px 10px 40px;
+}
+
+/* Rows are mono because they are structure, not voice: the navigator,
+   its counts, the breadcrumb and the labels are the app frame; the
+   serif belongs to the document inside it. */
+html.docs-wrapper .menu__link {
+  font-family: var(--doc-mono);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--paper-text-muted);
+  border-radius: 5px;
+  padding: 4px 9px;
+  transition: background 0.1s, color 0.1s;
+}
+
+html.docs-wrapper .menu__link:hover {
+  background: var(--paper-bg-dark);
+  color: var(--paper-text-body);
+  text-decoration: none;
+}
+
+html.docs-wrapper .menu__link--active:not(.menu__link--sublist) {
+  background: var(--paper-accent-bg);
+  color: var(--paper-accent) !important;
+  font-weight: 500;
+}
+
+/* Group headings — small caps, quiet, and not pretending to be a row
+   you click even when they happen to link somewhere. */
+html.docs-wrapper .menu__link--sublist {
+  font-family: var(--doc-mono);
+  font-size: var(--doc-label);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--paper-text-faint);
+  padding: 6px 9px;
+  margin-top: 14px;
+}
+
+html.docs-wrapper
+  .theme-doc-sidebar-item-category-level-1
+  > .menu__list-item-collapsible
+  > .menu__link--sublist:hover {
+  background: transparent;
+  color: var(--paper-text-body);
+}
+
+html.docs-wrapper .menu__list-item-collapsible--active > .menu__link--sublist,
+html.docs-wrapper .menu__link--sublist.menu__link--active {
+  color: var(--paper-accent) !important;
+  background: transparent;
+}
+
+/* Child count, from the Category swizzle. */
+html.docs-wrapper .doc-nav-count {
+  font-family: var(--doc-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--paper-text-faint);
+  font-variant-numeric: tabular-nums;
+  padding-left: 8px;
+}
+
+html.docs-wrapper .menu__link--sublist:hover .doc-nav-count {
+  color: var(--paper-text-muted);
+}
+
+/* Nested lists indent rather than draw a rule. In a dense list a rule
+   per level is four borders competing with the column border already
+   at the edge. */
+html.docs-wrapper .menu__list .menu__list {
+  border-left: none;
+  margin-left: 0;
+  padding-left: 9px;
+}
+
+html.docs-wrapper .menu__list-item:not(:first-child) {
+  margin-top: 1px;
+}
+
+html.docs-wrapper .menu__caret {
+  padding: 0 8px;
+}
+
+html.docs-wrapper .menu__caret::before {
+  background: var(--ifm-menu-link-sublist-icon) 50% / 1.1rem 1.1rem no-repeat;
+  opacity: 0.45;
+}
+
+/* ════════════════════════════════════════════════════════════
+   3. The page header — once, from the shell
+   ════════════════════════════════════════════════════════════ */
+
+html.docs-wrapper .theme-doc-breadcrumbs {
+  margin-bottom: 14px;
+}
+
+html.docs-wrapper .breadcrumbs__item,
+html.docs-wrapper .breadcrumbs__link {
+  font-family: var(--doc-mono);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+
+html.docs-wrapper .theme-doc-markdown > header > h1,
+html.docs-wrapper article > header > h1,
+html.docs-wrapper .markdown > h1:first-child {
+  font-family: var(--doc-serif);
+  font-weight: 500;
+  font-size: var(--doc-h1);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--paper-text);
+  margin: 0 0 20px;
+  text-wrap: balance;
+}
+
+/* ════════════════════════════════════════════════════════════
+   4. The content pane
+   ════════════════════════════════════════════════════════════ */
+
+html.docs-wrapper .markdown {
+  font-size: var(--doc-body);
+  line-height: 1.7;
+  color: var(--paper-text-body);
+}
+
+/* Full-width is the pane, not the paragraph: running text keeps a
+   measure, and the things that genuinely need the width opt out. */
+html.docs-wrapper .markdown > p,
+html.docs-wrapper .markdown > ul,
+html.docs-wrapper .markdown > ol,
+html.docs-wrapper .markdown > blockquote,
+html.docs-wrapper .markdown > h1,
+html.docs-wrapper .markdown > h2,
+html.docs-wrapper .markdown > h3,
+html.docs-wrapper .markdown > h4 {
+  max-width: var(--doc-measure);
+}
+
+html.docs-wrapper .markdown > table,
+html.docs-wrapper .markdown > pre,
+html.docs-wrapper .markdown > details,
+html.docs-wrapper .markdown > .row,
+html.docs-wrapper .markdown > .tabs-container,
+html.docs-wrapper .markdown > div[class*='codeBlock'],
+html.docs-wrapper .markdown > div[class*='theme-code-block'] {
+  max-width: none;
+}
+
+html.docs-wrapper .markdown h2 {
+  font-family: var(--doc-serif);
+  font-weight: 500;
+  font-size: var(--doc-h2);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--paper-text);
+  margin-top: 2.4em;
+  margin-bottom: 0.5em;
+  text-wrap: balance;
+}
+
+html.docs-wrapper .markdown h3 {
+  font-family: var(--doc-sans);
+  font-weight: 600;
+  font-size: var(--doc-h3);
+  color: var(--paper-text);
+  margin-top: 1.9em;
+  margin-bottom: 0.45em;
+}
+
+html.docs-wrapper .markdown h4 {
+  font-family: var(--doc-mono);
+  font-weight: 600;
+  font-size: var(--doc-h4);
+  color: var(--paper-text);
+  margin-top: 1.6em;
+  margin-bottom: 0.4em;
+}
+
+html.docs-wrapper .markdown > hr {
+  max-width: none;
+  border: none;
+  border-top: 1px solid var(--paper-border);
+  margin: 2.6em 0;
+}
+
+/* Wide content scrolls inside its own container so the pane never
+   scrolls sideways. */
+html.docs-wrapper .markdown table {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  font-size: var(--doc-small);
+}
+
+html.docs-wrapper .markdown table th {
+  font-family: var(--doc-mono);
+  font-size: var(--doc-label);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--paper-text-faint);
+}
+
+/* ════════════════════════════════════════════════════════════
+   5. The rail
+   ════════════════════════════════════════════════════════════ */
+
+html.docs-wrapper .theme-doc-toc-desktop {
+  top: calc(var(--ifm-navbar-height) + 26px);
+}
+
+html.docs-wrapper .table-of-contents {
+  border-left: none;
+  padding: 0;
+  font-size: var(--doc-small);
+}
+
+html.docs-wrapper .table-of-contents::before {
+  content: 'On this page';
+  display: block;
+  font-family: var(--doc-mono);
+  font-size: var(--doc-label);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--paper-text-faint);
+  padding-bottom: 9px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--paper-border);
+}
+
+/* Nested lists inside the rail already carry the hierarchy through
+   indentation; only the marker changes on the current item. */
+html.docs-wrapper .table-of-contents .table-of-contents {
+  padding-left: 11px;
+}
+
+html.docs-wrapper .table-of-contents .table-of-contents::before {
+  content: none;
+}
+
+html.docs-wrapper .table-of-contents__link {
+  display: block;
+  color: var(--paper-text-muted) !important;
+  font-size: var(--doc-small);
+  line-height: 1.45;
+  padding: 4px 0 4px 10px;
+  border-left: 2px solid var(--paper-border);
+  transition: color 0.1s, border-color 0.1s;
+}
+
+html.docs-wrapper .table-of-contents__link:hover {
+  color: var(--paper-text-body) !important;
+  border-left-color: var(--paper-border-strong);
+  text-decoration: none;
+}
+
+html.docs-wrapper .table-of-contents__link--active {
+  color: var(--paper-accent) !important;
+  border-left-color: var(--paper-accent);
+  font-weight: 500;
+}
+
+/* Mobile TOC — the same label, folded. */
+html.docs-wrapper .theme-doc-toc-mobile {
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+html.docs-wrapper .theme-doc-toc-mobile button {
+  font-family: var(--doc-mono);
+  font-size: var(--doc-label);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--paper-text-faint);
+}
+
+/* ════════════════════════════════════════════════════════════
+   6. Page footer
+   ════════════════════════════════════════════════════════════ */
+
+html.docs-wrapper .theme-doc-footer {
+  margin-top: 48px;
+  padding-top: 18px;
+  border-top: 1px solid var(--paper-border);
+}
+
+html.docs-wrapper .pagination-nav {
+  max-width: none;
+}
