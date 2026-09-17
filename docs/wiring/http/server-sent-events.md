@@ -79,6 +79,37 @@ return { todos, timestamp, count: todos.length }
 
 Use `channel.close()` when the stream has a defined end (like a fixed number of updates). For open-ended streams, omit it and let the client disconnect.
 
+## When a stream fails
+
+Once a response is committed to streaming, an error can no longer be an HTTP status — the status and headers are already sent. Pikku instead announces the failure as frames on the open stream and closes it:
+
+```json
+{"type":"error","errorText":"Internal server error"}
+{"type":"done"}
+```
+
+Only a registered Pikku error's message reaches the client; anything else is reported as `Internal server error`, with the real message logged server-side.
+
+A stream whose client parses a different event protocol needs the failure in that protocol, or the error arrives as a parser crash with the message nowhere in sight. `streamProtocol` says which one the route speaks:
+
+```typescript
+wireHTTP({
+  method: 'get',
+  route: '/agent/stream',
+  func: streamAgent,
+  sse: true,
+  streamProtocol: 'agui',
+})
+```
+
+With `'agui'` the same failure arrives as a single AG-UI event, and nothing follows it:
+
+```json
+{"type":"RUN_ERROR","message":"Internal server error"}
+```
+
+The default is `'pikku'`. The generated agent stream routes set `'agui'` for you, so an AG-UI client (`HttpAgent`, `usePikkuAgentRuntime`) renders a failed run rather than throwing on the frame.
+
 ## Client-Side Usage
 
 ### Using EventSource API
