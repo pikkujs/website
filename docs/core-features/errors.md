@@ -10,7 +10,7 @@ In Pikku, errors are mapped to HTTP status codes and messages. When you throw an
 
 ## Built-in Errors
 
-Pikku provides a comprehensive set of built-in error classes covering all standard HTTP status codes. They all come from [`#pikku/error`](/docs/api-reference/enhance/error):
+Pikku provides a comprehensive set of built-in error classes covering all standard HTTP status codes. They all come from [`#pikku/error`](/api#app/error):
 
 ### Authentication & Authorization (4xx)
 

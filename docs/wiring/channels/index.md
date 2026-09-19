@@ -212,7 +212,7 @@ export const onMessage = pikkuChannelFunc<
   { message: string },
   { message: string; timestamp: number }
 >({
-  func: async (services, data, { channel }) => {
+  func: async (_services, data, { channel }) => {
     // Access opening data throughout the connection
     const room = channel.openingData.room
 
@@ -228,7 +228,7 @@ This data is available in all lifecycle handlers and doesn't change during the c
 Inside channel functions, you have access to the `channel` object:
 
 ```typescript
-func: async (services, data, { channel }) => {
+func: async (_services, data, { channel }) => {
   channel.channelId          // Unique connection ID
   channel.openingData        // Data from connection URL
   channel.send(data)         // Send data to this client
@@ -398,4 +398,4 @@ The channel uses `auth: true` so only the logged-in user can subscribe to their 
 
 - [Wiring Channels](./channel-route.md)
 - [WebSocket Client](./websocket-client.md) - Type-safe client generation
-- [`#pikku/channel` API reference](/docs/api-reference/wire/channel) - every export on the channel door
+- [`#pikku/channel` in the SDK explorer](/api#app/channel) - every export on the channel door

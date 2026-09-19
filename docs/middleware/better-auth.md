@@ -63,9 +63,9 @@ export const auth = pikkuBetterAuth(async ({ secrets, kysely }) => {
 
 That's the whole setup. Run `npx pikku dev` (or `npx pikku all`) and the CLI generates:
 
-- `pikku/auth.gen.ts` — the `/api/auth{/*splat}` HTTP wiring using `createAuthHandler`
-- `pikku/auth-middleware.gen.ts` — `addHTTPMiddleware('*', [...])` with the right session middleware
-- `pikku/auth-secrets.gen.ts` — a `defineSecret` for `BETTER_AUTH_SECRET` and one for each configured social provider (e.g. `GITHUB_OAUTH`), so the platform knows which credentials to collect
+- `pikku/auth/auth.gen.ts` — the `/api/auth{/*splat}` HTTP wiring using `createAuthHandler`
+- `pikku/auth/auth-middleware.gen.ts` — `addHTTPMiddleware('*', [...])` with the right session middleware
+- `pikku/auth/auth-secrets.gen.ts` — a `defineSecret` for `BETTER_AUTH_SECRET` and one for each configured social provider (e.g. `GITHUB_OAUTH`), so the platform knows which credentials to collect
 
 Better Auth owns its own tables (`user`, `session`, `account`, `verification`) — run `pikku db migrate` to create them.
 
@@ -153,16 +153,17 @@ When running inside Next.js, mount the handler as a route instead of relying on 
 ```typescript title="app/api/auth/[...all]/route.ts"
 import { toNextJsAuthHandler } from '@pikku/next'
 import { auth } from '../../../../src/auth'
-import { createConfig, createSingletonServices } from '../../../../src/services'
+import { createSingletonServices } from '../../../../src/services'
+import { createConfig } from '../../../../src/config'
 
-export const { GET, POST } = toNextJsAuthHandler(
+export const { GET, POST, PATCH, PUT, DELETE } = toNextJsAuthHandler(
   auth,
   createConfig,
   createSingletonServices
 )
 ```
 
-`toNextJsAuthHandler` accepts your `pikkuBetterAuth` factory plus the config/services creators, resolves the instance once, and returns Next.js `GET`/`POST` route handlers. It also re-exports Better Auth's `nextCookies` plugin for server-action cookie handling.
+`toNextJsAuthHandler` accepts your `pikkuBetterAuth` factory plus the config/services creators, resolves the instance once, and returns Next.js `GET`/`POST`/`PATCH`/`PUT`/`DELETE` route handlers. It also re-exports Better Auth's `nextCookies` plugin for server-action cookie handling.
 
 ## Actors (synthetic test users)
 
@@ -239,5 +240,5 @@ When you generate an addon from an OpenAPI spec with `pikku new addon --auth-con
 
 - [User Sessions](/docs/core-features/user-sessions) — how sessions flow through Pikku functions
 - [Middleware](/docs/core-features/middleware) — how middleware ordering works
-- [API reference: guard/auth](/docs/api-reference/guard/auth) — the rest of the `#pikku/auth` door
+- [`#pikku/auth` in the SDK explorer](/api#app/auth) — the rest of the door
 - [API Key](/docs/middleware/auth-apikey) / [JWT](/docs/middleware/auth-jwt) / [Cookie](/docs/middleware/auth-cookie) — lighter-weight alternatives

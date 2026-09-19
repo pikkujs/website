@@ -141,7 +141,7 @@ import { pikkuWorkflowFunc } from '#pikku/workflow'
 export const onboardingWorkflow = pikkuWorkflowFunc<
   { email: string; userId: string },
   { success: boolean }
->(async (services, data, { workflow }) => {
+>(async (_services, data, { workflow }) => {
   // Step 1: Create user profile (RPC step - runs in queue worker)
   await workflow.do(
     'Create user profile in database',
@@ -200,4 +200,4 @@ The [Pikku Console](/docs/console) renders your workflows as interactive visual 
 - **[Getting Started](./getting-started.md)**: Set up workflows in your project
 - **[Step Types](./steps.md)**: Learn about RPC, inline, and sleep steps
 - **[Configuration](./configuration.md)**: Configure state storage and execution modes
-- **[`#pikku/workflow` API reference](/docs/api-reference/orchestrate/workflow)**: Every export on the workflow door
+- **[`#pikku/workflow` in the SDK explorer](/api#app/workflow)**: Every export on the workflow door

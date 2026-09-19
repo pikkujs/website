@@ -230,4 +230,4 @@ From the [online shop template](https://github.com/pikkujs/fabric/tree/main/temp
 ## Next Steps
 
 - [Queue Client](./client.md) - Adding and monitoring jobs with type safety
-- [`#pikku/queue` API reference](/docs/api-reference/wire/queue) - every export on the queue door
+- [`#pikku/queue` in the SDK explorer](/api#app/queue) - every export on the queue door

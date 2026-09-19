@@ -167,7 +167,7 @@ Triggers can also start [graph workflows](../workflows/index.md) instead of simp
 wireTrigger({
   name: 'order-received',
   func: processOrderWorkflow,
-  graph: true  // The target is a graph workflow
+  description: 'Starts the order-processing workflow when an order arrives'
 })
 ```
 
@@ -184,7 +184,7 @@ export const myTrigger = pikkuTriggerFunc<Input, Output>({
   tags: ['redis', 'realtime'],
   input: InputSchema,   // Standard Schema for input validation
   output: OutputSchema,  // Standard Schema for output validation
-  func: async (services, input, { trigger }) => {
+  func: async (_services, input, { trigger }) => {
     // ...
   }
 })
@@ -250,4 +250,4 @@ In production you'd replace the `logger.warn` with a Slack notification, a resto
 - [Functions](../../core-features/functions.md) — Understanding Pikku functions
 - [Workflows](../workflows/index.md) — Multi-step processes triggered by events
 - [Scheduled Tasks](../scheduled-tasks.md) — Time-based triggers
-- [`#pikku/trigger` API reference](/docs/api-reference/wire/trigger) — every export on the trigger door
+- [`#pikku/trigger` in the SDK explorer](/api#app/trigger) — every export on the trigger door

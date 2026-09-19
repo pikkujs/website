@@ -191,7 +191,7 @@ wireHTTP({
 })
 ```
 
-Your function can then send incremental updates through the `channel` object on the third (wire) argument: `async (services, data, { channel }) => ...`. See [Server-Sent Events](./server-sent-events.md) for more details.
+Your function can then send incremental updates through the `channel` object on the third (wire) argument: `async (_services, data, { channel }) => ...`. See [Server-Sent Events](./server-sent-events.md) for more details.
 
 ## How Data Flows
 
@@ -285,4 +285,4 @@ See [Errors](../../core-features/errors.md) for more on error handling.
 - [OpenAPI Documentation](./openapi.md)
 - [CORS Configuration](./cors.md)
 - [Fetch Client](./fetch-client.md) - Type-safe HTTP client generation
-- [`#pikku/http` API reference](/docs/api-reference/wire/http) - every export on the HTTP door
+- [`#pikku/http` in the SDK explorer](/api#app/http) - every export on the HTTP door

@@ -27,7 +27,7 @@ import { pikkuPermission } from '#pikku/auth'
 There is **no bare `#pikku`**. `import { pikkuFunc } from '#pikku'` does not
 resolve — the alias only ever matches a subpath.
 
-The [API Reference](/docs/api-reference) lists every door and everything it
+The [SDK explorer](/api) lists every door and everything it
 exports, and `npx pikku doc` prints the same thing for the version you have
 installed.
 

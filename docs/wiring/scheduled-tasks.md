@@ -170,12 +170,13 @@ Middleware is important for scheduled tasks since they don't have automatic obse
 
 ```typescript
 import { pikkuMiddleware } from '#pikku/middleware'
+import { InvalidMiddlewareWireError } from '#pikku/error'
 
 export const schedulerMetrics = pikkuMiddleware(
   async ({ logger }, { scheduledTask }, next) => {
     // Guard for scheduled task interaction
     if (!scheduledTask) {
-      throw new InvalidMiddlewareInteractionError(
+      throw new InvalidMiddlewareWireError(
         'schedulerMetrics middleware can only be used with scheduled tasks'
       )
     }
@@ -340,4 +341,4 @@ From the [online shop template](https://github.com/pikkujs/fabric/tree/main/temp
 - [Middleware](../core-features/middleware.md) - Adding observability to scheduled tasks
 - [RPC](./rpcs/index.md) - Orchestrating complex workflows
 - [Errors](../core-features/errors.md) - Error handling patterns
-- [`#pikku/scheduler` API reference](/docs/api-reference/wire/scheduler) - every export on the scheduler door
+- [`#pikku/scheduler` in the SDK explorer](/api#app/scheduler) - every export on the scheduler door

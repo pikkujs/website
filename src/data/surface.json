@@ -1,5 +1,5 @@
 {
-  "version": "0.12.140",
+  "version": "0.12.146",
   "entryPoints": [
     {
       "id": "app",
@@ -1111,12 +1111,11 @@
               "name": "wireAddon",
               "kind": "function",
               "origin": {
-                "via": "core",
-                "subpath": "./addon"
+                "via": "generated"
               },
               "summary": "Installs an addon into this project: its functions, wirings and scopes become part of the app, under the namespace and options given here.",
-              "docs": "Installs an addon into this project: its functions, wirings and scopes become\npart of the app, under the namespace and options given here.",
-              "signature": "(config: WireAddonConfig) => void",
+              "docs": "Installs an addon into this project: its functions, wirings and scopes become\npart of the app, under the namespace and options given here.\n\n`mcp: true` offers every function the addon itself declared as a tool; a list\nnames the functions to offer, checked against the ones the addon publishes.",
+              "signature": "<Package extends string>(config: Omit<WireAddonConfig, \"package\" | \"mcp\"> & { package: Package; mcp?: boolean | AddonFunctionName<Package>[]; }) => void",
               "members": [
                 {
                   "line": "auth?: boolean",
@@ -1127,8 +1126,8 @@
                   "doc": "Credentials this instance may read on top of the ones it declared."
                 },
                 {
-                  "line": "credentialOverrides?: CredentialOverrides",
-                  "doc": "Points a credential the addon reads at a different key in this deployment, and — in the object form — decides whether it is per-user or deployment-wide. An addon declares a default; the wiring decides."
+                  "line": "credentialOverrides?: Record<string, string>",
+                  "doc": "Points a credential the addon reads at a different key in this deployment."
                 },
                 {
                   "line": "globalCredentials?: string",
@@ -1139,16 +1138,12 @@
                   "doc": "Hands over the whole `SecretService` unscoped. The value is the reason, recorded in the deploy manifest."
                 },
                 {
-                  "line": "mcp?: boolean",
-                  "doc": "Offers the addon's functions to MCP clients as tools, without wiring each one."
+                  "line": "mcpPath?: string",
+                  "doc": "Serves this addon's tools as their own MCP endpoint at this path, instead of adding them to the project's single `/mcp` surface. A path is the grouping unit: one project can carry many connectors, each with its own `tools/list`, and each compiled into its own deployment unit so a client that talks to one never loads the others. Unset puts the addon's tools on the default surface with everything else."
                 },
                 {
                   "line": "name: string",
                   "doc": "How this instance is addressed. One package may be wired more than once, and the name is what tells the instances apart."
-                },
-                {
-                  "line": "package: string",
-                  "doc": "The npm package the addon ships in."
                 },
                 {
                   "line": "rpcEndpoint?: string",
@@ -1174,9 +1169,6 @@
                   "line": "variableOverrides?: Record<string, string>",
                   "doc": "Points a variable the addon reads at a different key in this deployment."
                 }
-              ],
-              "examples": [
-                "wireAddon({\n  name: 'stripe',\n  package: '@pikku/addon-stripe',\n  scopes: ['payments:charge'],\n})"
               ]
             },
             {
@@ -2191,8 +2183,7 @@
                   "line": "getAllStatus: () => Promise<CredentialStatus[]>"
                 },
                 {
-                  "line": "getMissing: () => Promise<CredentialStatus[]>",
-                  "doc": "The secrets a deployment still has to supply. An optional one is absent from this list however it is stored: `optional` already declares that absence is supported, which is why `getSecret` resolves `undefined` for it rather than throwing. Reporting it as missing contradicts that, and buries the required secrets someone actually has to go and configure. `getAllStatus` still reports it, flagged."
+                  "line": "getMissing: () => Promise<CredentialStatus[]>"
                 },
                 {
                   "line": "getSecret: { <K>(key: K): Promise<SecretResult<CredentialsMap[K]>>; <T>(key: string): Promise<SecretValue<T>>; }",
@@ -6532,8 +6523,7 @@
                   "line": "getAllStatus: () => Promise<CredentialStatus[]>"
                 },
                 {
-                  "line": "getMissing: () => Promise<CredentialStatus[]>",
-                  "doc": "The secrets a deployment still has to supply. An optional one is absent from this list however it is stored: `optional` already declares that absence is supported, which is why `getSecret` resolves `undefined` for it rather than throwing. Reporting it as missing contradicts that, and buries the required secrets someone actually has to go and configure. `getAllStatus` still reports it, flagged."
+                  "line": "getMissing: () => Promise<CredentialStatus[]>"
                 },
                 {
                   "line": "getSecret: { <K>(key: K): Promise<SecretResult<CredentialsMap[K]>>; <T>(key: string): Promise<SecretValue<T>>; }",

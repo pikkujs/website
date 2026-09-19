@@ -252,7 +252,7 @@ wireTriggerSource({
 })
 ```
 
-See [Triggers](../wiring/triggers/index.md) for more details on how triggers work, and the [`#pikku/addon` reference](/docs/api-reference/enhance/addon) for every option `wireAddon` takes.
+See [Triggers](../wiring/triggers/index.md) for more details on how triggers work, and the [`#pikku/addon` door in the SDK explorer](/api#app/addon) for every option `wireAddon` takes.
 
 ## Multiple Addons
 

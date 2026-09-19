@@ -10,7 +10,7 @@ Secrets let you declare what sensitive values your application needs using schem
 
 ## Defining Secrets
 
-Use `defineSecret`, from [`#pikku/secrets`](/docs/api-reference/enhance/secrets), to declare a secret with its schema:
+Use `defineSecret`, from [`#pikku/secrets`](/api#app/secrets), to declare a secret with its schema:
 
 ```typescript
 import { defineSecret } from '#pikku/secrets'
@@ -76,6 +76,9 @@ There's no client class to construct. The credential service owns the token and 
 
 ```typescript
 const cred = await wire.getCredential?.<{ accessToken: string }>('github')
+if (!cred?.accessToken) {
+  throw new UnauthorizedError('Connect GitHub first')
+}
 
 const response = await fetch('https://api.github.com/user', {
   headers: { Authorization: `Bearer ${cred.accessToken}` },

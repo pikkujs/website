@@ -58,7 +58,7 @@ The middleware:
 
 ## Built-in Middleware
 
-Pikku provides built-in middleware for common authentication and CORS patterns via [`#pikku/middleware`](/docs/api-reference/enhance/middleware):
+Pikku provides built-in middleware for common authentication and CORS patterns via [`#pikku/middleware`](/api#app/middleware):
 
 ### Bearer Token Authentication
 
@@ -265,7 +265,7 @@ Use wire-specific middleware for:
 
 ### HTTP Transport Middleware
 
-For HTTP routes specifically, you can apply middleware globally or per-prefix:
+For HTTP routes specifically, you can apply middleware globally or per route pattern:
 
 ```typescript
 import { addHTTPMiddleware } from '#pikku/middleware'
@@ -285,7 +285,7 @@ Use HTTP transport middleware for:
 - Security headers for all HTTP responses
 - Admin section protection
 - API versioning concerns
-- Different auth strategies per route prefix
+- Different auth strategies per route pattern
 
 ### Global & Tag Middleware
 
@@ -312,9 +312,9 @@ Middleware executes from the broadest scope inward to the most specific. Think o
 
 1. **Global middleware** - Every wiring (`addGlobalMiddleware([...])`)
 2. **Transport-specific middleware** - All HTTP routes (`addHTTPMiddleware('*', [...])`)
-3. **Prefix-based middleware** - HTTP routes matching prefix (`addHTTPMiddleware('/prefix', [...])`)
-4. **Wire-specific middleware** - Defined in `wireHTTP`/`wireChannel`/etc.
-5. **Tag middleware** - Wirings carrying a matching tag (`addTagMiddleware('tag', [...])`)
+3. **Pattern-based middleware** - HTTP routes matching an anchored glob (`addHTTPMiddleware('/prefix/*', [...])`)
+4. **Tag middleware** - Wirings carrying a matching tag (`addTagMiddleware('tag', [...])`)
+5. **Wire-specific middleware** - Defined in `wireHTTP`/`wireChannel`/etc.
 6. **Function-level middleware** - Defined in function config
 
 After the function completes, they run in reverse order (onion model).
@@ -325,8 +325,8 @@ Example showing all scopes:
 // Transport-specific - all HTTP routes
 addHTTPMiddleware('*', [corsHeaders])
 
-// Prefix-based - matches /api/v1
-addHTTPMiddleware('/api/v1', [apiKeyValidation])
+// Pattern-based - matches everything under /api/v1
+addHTTPMiddleware('/api/v1/*', [apiKeyValidation])
 
 // Function definition
 export const updateSettings = pikkuFunc<SettingsInput, Settings>({
@@ -349,7 +349,7 @@ wireHTTP({
 
 For this request, middleware runs in this order:
 1. `corsHeaders` (transport-specific - all HTTP)
-2. `apiKeyValidation` (prefix-based - matches '/api/v1')
+2. `apiKeyValidation` (pattern-based - matches '/api/v1/*')
 3. `auditLog` (wire-specific)
 4. `validateSettings` (function-level)
 5. **Your function runs**
@@ -445,7 +445,7 @@ export const conditionalCache = pikkuMiddleware(async (_services, wire, next) =>
 
 Pikku automatically generates and validates schemas based on your TypeScript types. No middleware needed for input validation - it happens before your function runs.
 
-If validation fails, Pikku throws an [`UnprocessableContentError`](/docs/api-reference/enhance/error) (HTTP 422) carrying the validator's report of which fields failed.
+If validation fails, Pikku throws an [`UnprocessableContentError`](/api#app/error) (HTTP 422) carrying the validator's report of which fields failed.
 
 ## Best Practices
 

@@ -49,4 +49,4 @@ Addons can include:
 - [Creating Addons](./creating.md) — scaffolding, services, contracts, publishing
 - [Consuming Addons](./consuming.md) — installing one and wiring what it declares
 - [Shipping Database Tables](./database.md) — an addon that needs tables, without creating any
-- [The addon surface](/docs/api-reference/addons) — every export available under `#pikku/addon/*`, door by door
+- [The addon surface](/api#addon) — every export available under `#pikku/addon/*`, door by door

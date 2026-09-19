@@ -38,7 +38,7 @@ This separation means you can use different session strategies per protocol whil
 
 ## Pikku Session Middleware
 
-Pikku ships session-aware middleware in [`#pikku/middleware`](/docs/api-reference/enhance/middleware):
+Pikku ships session-aware middleware in [`#pikku/middleware`](/api#app/middleware):
 
 - **[`authCookie`](/docs/middleware/auth-cookie)** – Cookie-based sessions for HTTP
 - **[`authBearer`](/docs/middleware/auth-jwt)** – Bearer/JWT token sessions

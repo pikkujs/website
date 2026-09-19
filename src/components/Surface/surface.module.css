@@ -1,0 +1,792 @@
+/* ════════════════════════════════════════════════════════════════
+   The surface explorer's chrome.
+
+   Every page on this site is paper — cream ground, Newsreader, an orange-red
+   accent — and every one of them puts its code on ink: the warm near-black of
+   --paper-code-bg that the terminals and the homepage's ink band already use.
+   This page is that slab at full bleed. It is not a fourth palette and it is
+   not the console's blue; it is the dark surface the site already owns, which
+   is why the navbar above it stays paper.
+
+   The local --ex-* tokens exist so the mapping from the site's palette to a
+   dense application surface is written down once, at the top, rather than
+   guessed at in forty declarations.
+   ════════════════════════════════════════════════════════════════ */
+
+.shell {
+  /* ground */
+  --ex-bg: var(--paper-code-bg);
+  --ex-rail: var(--paper-code-bg-bar);
+  --ex-line: var(--paper-code-border);
+  /* Hairlines inside a pane, where --ex-line is already the pane's edge. */
+  --ex-line-soft: rgba(242, 239, 231, 0.055);
+  --ex-line-hard: rgba(242, 239, 231, 0.11);
+
+  /* ink type, at the three weights tokens.css defines for this ground */
+  --ex-text: var(--paper-on-dark-text);
+  --ex-body: var(--paper-on-dark-body);
+  --ex-faint: var(--paper-on-dark-faint);
+
+  /* the accent, lifted for the dark ground */
+  --ex-accent: var(--paper-accent-on-dark);
+  --ex-accent-line: rgba(232, 131, 74, 0.32);
+  --ex-accent-tint: rgba(232, 131, 74, 0.09);
+  --ex-accent-fill: rgba(232, 131, 74, 0.15);
+
+  --ex-hover: rgba(242, 239, 231, 0.04);
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: calc(100vh - var(--ifm-navbar-height));
+  overflow: hidden;
+  background: var(--ex-bg);
+  font-family: 'Geist', -apple-system, sans-serif;
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  padding: 80px 20px;
+  color: var(--ex-body);
+  font-size: 15px;
+}
+
+/* ── toolbar ──────────────────────────────────────────────── */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 18px;
+  height: 52px;
+  border-bottom: 1px solid var(--ex-line);
+  background: var(--ex-rail);
+}
+
+.icon {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.iconBtn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--ex-line-hard);
+  border-radius: 7px;
+  background: none;
+  color: var(--ex-faint);
+  cursor: pointer;
+}
+
+/* The entry-point switch. Which door you came through reframes every leaf
+   below it, so it sits in the toolbar rather than at the top of the nav. */
+.doors {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--ex-line);
+  border-radius: 8px;
+  background: var(--ex-hover);
+}
+
+.door {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--ex-body);
+  font: inherit;
+  font-size: 12.5px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.door:hover {
+  color: var(--ex-text);
+}
+
+.door[aria-pressed='true'] {
+  background: var(--ex-accent-fill);
+  color: var(--ex-accent);
+}
+
+/* The drawer's copy of the entry-point switch, which only exists below the
+   breakpoint where the toolbar's copy has room. */
+.navDoors {
+  display: none;
+}
+
+.search {
+  position: relative;
+  flex: 1;
+  max-width: 460px;
+}
+
+.search input {
+  width: 100%;
+  padding: 7px 34px 7px 12px;
+  border: 1px solid var(--ex-line);
+  border-radius: 8px;
+  background: var(--ex-bg);
+  color: var(--ex-text);
+  font: inherit;
+  font-size: 13.5px;
+}
+
+.search input::placeholder {
+  color: var(--ex-faint);
+}
+
+.search input:focus {
+  outline: none;
+  border-color: var(--ex-accent-line);
+  box-shadow: 0 0 0 3px var(--ex-accent-tint);
+}
+
+.search input::-webkit-search-cancel-button {
+  filter: invert(1);
+  opacity: 0.4;
+}
+
+.slash {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  padding: 1px 6px;
+  border: 1px solid var(--ex-line-hard);
+  border-radius: 4px;
+  color: var(--ex-faint);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.search input:focus + .slash {
+  opacity: 0;
+}
+
+.count {
+  margin-left: auto;
+  color: var(--ex-faint);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+/* ── panes ────────────────────────────────────────────────── */
+
+.panes {
+  display: grid;
+  /* The panel is the half you read; the list is the half you scan. It takes
+     roughly half of what is left after the navigator, and stops growing once
+     a signature has more room than any signature needs. */
+  grid-template-columns: 262px minmax(0, 1fr) clamp(420px, 42vw, 820px);
+  min-height: 0;
+}
+
+.nav,
+.doc,
+.panel {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ── navigator ────────────────────────────────────────────── */
+
+.nav {
+  padding: 14px 10px 40px;
+  border-right: 1px solid var(--ex-line);
+  background: var(--ex-rail);
+}
+
+/* The six steps, in build order. It is the order you meet these doors while
+   writing a service, which is the only ordering that teaches anything —
+   alphabetical would put `#pikku/agent` before `#pikku/function`. */
+.navStep {
+  padding: 16px 10px 6px;
+  color: var(--ex-faint);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.navStep:first-child {
+  padding-top: 4px;
+}
+
+.navRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--ex-body);
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.navRow:hover {
+  background: var(--ex-line-soft);
+  color: var(--ex-text);
+}
+
+.navRow[aria-current] {
+  background: var(--ex-accent-fill);
+  color: var(--ex-accent);
+}
+
+.navName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navCount {
+  flex: none;
+  color: var(--ex-faint);
+  font-size: 11px;
+}
+
+.navRow[aria-current] .navCount {
+  color: var(--ex-accent);
+}
+
+/* ── the door document ────────────────────────────────────── */
+
+.doc {
+  padding: 30px 34px 80px;
+}
+
+.docHead {
+  max-width: 62ch;
+  margin-bottom: 26px;
+}
+
+.step {
+  margin-bottom: 10px;
+  color: var(--ex-accent);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+
+.docHead h1 {
+  margin: 0 0 12px;
+  color: var(--ex-text);
+  font-family: 'Geist Mono', monospace;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+}
+
+.docHead p {
+  margin: 0 0 10px;
+  color: var(--ex-body);
+  font-size: 14px;
+  line-height: 1.62;
+}
+
+.docHead code {
+  padding: 0 4px;
+  border: none;
+  border-radius: 4px;
+  background: var(--ex-line-soft);
+  color: var(--ex-body);
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+}
+
+/* One bordered surface of full-width rows, as the console draws a list pane. */
+.rows {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ex-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  width: 100%;
+  padding: 13px 16px;
+  border: none;
+  border-bottom: 1px solid var(--ex-line-soft);
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: var(--ex-hover);
+}
+
+.row[aria-current] {
+  background: var(--ex-accent-tint);
+  box-shadow: inset 2px 0 0 var(--ex-accent);
+}
+
+.rowMain {
+  display: block;
+  min-width: 0;
+  flex: 1;
+}
+
+.rowTop {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.sym {
+  color: var(--ex-text);
+  font-family: 'Geist Mono', monospace;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.rowSummary {
+  display: block;
+  max-width: 68ch;
+  color: var(--ex-body);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.undocumented {
+  color: var(--ex-faint);
+  font-style: italic;
+}
+
+/* The import line is the answer to the question a reference page is usually
+   asked — it belongs on the row, not two clicks away. */
+.rowImport {
+  display: block;
+  margin-top: 6px;
+  color: var(--ex-faint);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11.5px;
+}
+
+.rowOrigin {
+  flex: none;
+  padding-top: 2px;
+  color: var(--ex-faint);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  text-align: right;
+}
+
+.empty {
+  padding: 44px 8px;
+  color: var(--ex-faint);
+  font-size: 14px;
+}
+
+.empty code {
+  padding: 0 4px;
+  border: none;
+  border-radius: 4px;
+  background: var(--ex-line-soft);
+  color: var(--ex-body);
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+}
+
+/* ── badges ───────────────────────────────────────────────── */
+
+.badge {
+  flex: none;
+  padding: 1.5px 7px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.2px;
+}
+
+.function {
+  border-color: var(--ex-accent-line);
+  background: var(--ex-accent-tint);
+  color: var(--ex-accent);
+}
+
+.class {
+  border-color: rgba(111, 179, 192, 0.3);
+  background: rgba(111, 179, 192, 0.1);
+  color: var(--paper-code-teal);
+}
+
+.const,
+.enum,
+.namespace {
+  border-color: var(--ex-line-hard);
+  background: var(--ex-line-soft);
+  color: var(--ex-body);
+}
+
+.deprecated {
+  border-color: rgba(239, 68, 68, 0.28);
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+}
+
+/* Where a search result lives. Only search shows it — inside one door every
+   row would carry the same specifier, which is the heading above them. */
+.fromDoor {
+  color: var(--ex-faint);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+}
+
+/* ── detail panel ─────────────────────────────────────────── */
+
+.panel {
+  border-left: 1px solid var(--ex-line);
+  background: var(--ex-rail);
+}
+
+.panelEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  height: 100%;
+  padding: 40px 34px;
+}
+
+.keys {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+}
+
+.keys > div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.keys dt {
+  min-width: 42px;
+  padding: 1px 6px;
+  border: 1px solid var(--ex-line-hard);
+  border-radius: 5px;
+  color: var(--ex-body);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  text-align: center;
+}
+
+.keys dd {
+  margin: 0;
+  color: var(--ex-faint);
+  font-size: 12.5px;
+}
+
+.panelEmpty p {
+  max-width: 26ch;
+  margin: 0;
+  color: var(--ex-faint);
+  font-size: 13.5px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.panelHead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--ex-line);
+  background: var(--ex-rail);
+}
+
+.closeBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--ex-faint);
+  cursor: pointer;
+}
+
+.closeBtn:hover {
+  background: var(--ex-line-soft);
+  color: var(--ex-text);
+}
+
+.panelBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 18px 16px 60px;
+}
+
+.prose {
+  margin: 0 0 9px;
+  color: var(--ex-body);
+  font-size: 13.5px;
+  line-height: 1.66;
+}
+
+.prose:last-child {
+  margin-bottom: 0;
+}
+
+.lab {
+  margin-bottom: 7px;
+  color: var(--ex-faint);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+
+.code {
+  margin: 0 0 9px;
+  padding: 10px 12px;
+  border: 1px solid var(--ex-line-soft);
+  border-radius: 8px;
+  background: var(--ex-bg);
+  color: var(--ex-body);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11.8px;
+  line-height: 1.62;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.code:last-child {
+  margin-bottom: 0;
+}
+
+.wrap {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.members {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--ex-line-soft);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.member {
+  padding: 9px 12px;
+  background: var(--ex-bg);
+}
+
+/* The direct child is the member's own signature line — a `code` nested in
+   its doc prose is an inline span and must stay inline. */
+.member > code {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--ex-text);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11.8px;
+  word-break: break-word;
+}
+
+.member p {
+  margin: 4px 0 0;
+  color: var(--ex-faint);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+/* A signature is the least readable true thing on the page, so it is folded
+   and labelled with its own length — that number is the warning. */
+.sig summary {
+  color: var(--ex-faint);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
+.sig[open] summary {
+  margin-bottom: 7px;
+  color: var(--ex-body);
+}
+
+.originLine {
+  padding-top: 14px;
+  border-top: 1px solid var(--ex-line-soft);
+  color: var(--ex-faint);
+  font-size: 12px;
+}
+
+.scrim {
+  display: none;
+}
+
+/* ── narrow ───────────────────────────────────────────────── */
+
+/* The panel docks until there is no room for three columns, then becomes a
+   sheet over the list it came from. */
+@media (max-width: 1180px) {
+  .panes {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+
+  .panel {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    z-index: 30;
+    width: min(560px, 92%);
+    height: calc(100vh - var(--ifm-navbar-height));
+    transform: translateX(100%);
+    transition: transform 0.18s ease;
+    box-shadow: -18px 0 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .panel[data-open] {
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .bar {
+    gap: 10px;
+    padding: 0 12px;
+  }
+
+  .iconBtn {
+    display: flex;
+  }
+
+  /* The count is the first thing to go: it is reassurance, not navigation. */
+  .count {
+    display: none;
+  }
+
+
+  .slash {
+    display: none;
+  }
+
+  .panes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nav {
+    position: fixed;
+    top: var(--ifm-navbar-height);
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform 0.18s ease;
+  }
+
+  .shell[data-nav='open'] .nav {
+    transform: none;
+  }
+
+  .barDoors {
+    display: none;
+  }
+
+  .navDoors {
+    display: flex;
+    margin: 0 4px 6px;
+  }
+
+  .shell[data-nav='open'] .scrim {
+    display: block;
+    position: fixed;
+    inset: var(--ifm-navbar-height) 0 0;
+    z-index: 35;
+    border: none;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .doc {
+    padding: 22px 16px 70px;
+  }
+
+  .panel {
+    width: 100%;
+    height: 82vh;
+    top: auto;
+    transform: translateY(100%);
+    border-left: none;
+    border-top: 1px solid var(--ex-line-hard);
+    border-radius: 14px 14px 0 0;
+  }
+
+  .panel[data-open] {
+    transform: none;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .rowOrigin {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .panel {
+    transition: none;
+  }
+}
+
+/* Inline code inside a doc comment's prose. It sits in running text at 13px,
+   so it takes a tint rather than a box — a bordered chip per backticked name
+   would turn a two-line summary into a row of buttons. */
+.inlineCode {
+  padding: 0 3px;
+  border: none;
+  border-radius: 3px;
+  background: var(--ex-line-soft);
+  color: var(--ex-text);
+  font-family: 'Geist Mono', monospace;
+  font-size: 0.92em;
+}

@@ -174,111 +174,11 @@ const sidebars: SidebarsConfig = {
       ],
     },
     {
-      type: 'category',
-      label: 'API Reference',
-      description:
-        'Every export pikku gives you, by the door you import it from',
-      link: { type: 'doc', id: 'api-reference/index' },
-      items: [
-        {
-          type: 'category',
-          label: 'Create a function',
-          link: { type: 'doc', id: 'api-reference/create/index' },
-          items: [
-            'api-reference/create/function',
-            'api-reference/create/setup',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Enhance it',
-          link: { type: 'doc', id: 'api-reference/enhance/index' },
-          items: [
-            'api-reference/enhance/error',
-            'api-reference/enhance/middleware',
-            'api-reference/enhance/secrets',
-            'api-reference/enhance/variables',
-            'api-reference/enhance/addon',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Wire it up',
-          link: { type: 'doc', id: 'api-reference/wire/index' },
-          items: [
-            {
-              type: 'doc',
-              id: 'api-reference/wire/http',
-              customProps: { wirings: ['http'] },
-            },
-            {
-              type: 'doc',
-              id: 'api-reference/wire/channel',
-              customProps: { wirings: ['websocket'] },
-            },
-            {
-              type: 'doc',
-              id: 'api-reference/wire/queue',
-              customProps: { wirings: ['queue'] },
-            },
-            {
-              type: 'doc',
-              id: 'api-reference/wire/scheduler',
-              customProps: { wirings: ['cron'] },
-            },
-            {
-              type: 'doc',
-              id: 'api-reference/wire/cli',
-              customProps: { wirings: ['cli'] },
-            },
-            {
-              type: 'doc',
-              id: 'api-reference/wire/mcp',
-              customProps: { wirings: ['mcp'] },
-            },
-            {
-              type: 'doc',
-              id: 'api-reference/wire/trigger',
-              customProps: { wirings: ['trigger'] },
-            },
-            {
-              type: 'doc',
-              id: 'api-reference/wire/gateway',
-              customProps: { wirings: ['gateway'] },
-            },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Guard it',
-          link: { type: 'doc', id: 'api-reference/guard/index' },
-          items: ['api-reference/guard/auth', 'api-reference/guard/scopes'],
-        },
-        {
-          type: 'category',
-          label: 'Orchestrate it',
-          link: { type: 'doc', id: 'api-reference/orchestrate/index' },
-          items: [
-            {
-              type: 'doc',
-              id: 'api-reference/orchestrate/workflow',
-              customProps: { wirings: ['workflow'] },
-            },
-            {
-              type: 'doc',
-              id: 'api-reference/orchestrate/agent',
-              customProps: { wirings: ['bot'] },
-            },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Test it',
-          link: { type: 'doc', id: 'api-reference/test/index' },
-          items: ['api-reference/test/scenarios'],
-        },
-        'api-reference/addons',
-      ],
+      // Not a doc: the surface is published once, as the explorer at /api.
+      type: 'link',
+      label: 'SDK',
+      href: '/api',
+      description: 'Every export pikku gives you, by the door you import it from',
     },
     {
       type: 'category',

@@ -91,6 +91,7 @@ const config: Config = {
     tailwindPlugin,
     require.resolve('./plugins/addon-catalogue.js'),
     require.resolve('./plugins/openapi-catalogue.js'),
+    require.resolve('./plugins/api-reference-redirects.js'),
   ],
 
   presets: [
@@ -223,6 +224,10 @@ const config: Config = {
           position: 'right',
           label: 'Docs',
         },
+        // The whole import surface as one navigable page, which is where the
+        // 28 generated api-reference pages went. Named the way the console
+        // names it.
+        { to: '/api', label: 'SDK', position: 'right' },
         // {
         //   type: 'docSidebar',
         //   sidebarId: 'skills',

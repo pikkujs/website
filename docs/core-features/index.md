@@ -124,7 +124,7 @@ import { wireHTTP } from '#pikku/http'
 import { wireScheduler } from '#pikku/scheduler'
 ```
 
-Function definers live behind [`#pikku/function`](/docs/api-reference/create/function), each transport behind its own wiring door (`#pikku/http`, `#pikku/queue`, `#pikku/scheduler`, …), and the rest — errors, middleware, secrets, variables, permissions — behind theirs. The [API reference](/docs/api-reference) lists every door and what it exports. These files are regenerated whenever you change your functions or wirings — don't edit them manually.
+Function definers live behind [`#pikku/function`](/api#app/function), each transport behind its own wiring door (`#pikku/http`, `#pikku/queue`, `#pikku/scheduler`, …), and the rest — errors, middleware, secrets, variables, permissions — behind theirs. The [API reference](/api) lists every door and what it exports. These files are regenerated whenever you change your functions or wirings — don't edit them manually.
 
 For more details, see [Import Patterns](/docs/advanced/import-patterns) and [Generated Files](/docs/pikku-cli/generated-files).
 

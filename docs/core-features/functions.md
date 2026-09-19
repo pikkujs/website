@@ -12,7 +12,7 @@ The beauty of Pikku functions is that they're **transport-agnostic**. Write your
 
 ## Your First Function
 
-Here's a simple function that fetches a book from a database. The definers live behind the [`#pikku/function`](/docs/api-reference/create/function) door the CLI generates:
+Here's a simple function that fetches a book from a database. The definers live behind the [`#pikku/function`](/api#app/function) door the CLI generates:
 
 ```typescript
 import { pikkuFunc } from '#pikku/function'
@@ -83,9 +83,7 @@ If you need access to transport-specific information (like HTTP headers or WebSo
 
 ```typescript
 func: async ({ database }, data, { http }) => {
-  if (http) {
-    const userAgent = http.headers['user-agent']
-  }
+  const userAgent = http?.request?.header('user-agent')
   // Destructure what you need: { http }, { channel }, { queue }, etc.
 }
 ```

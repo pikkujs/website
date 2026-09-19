@@ -37,10 +37,10 @@ New to Pikku? Start here:
 
 ### Looking something up
 
-- [API Reference](/docs/api-reference) — Every export, by the door you import it from
-- [`#pikku/function`](/docs/api-reference/create/function) — `pikkuFunc` and friends
-- [`#pikku/http`](/docs/api-reference/wire/http) — `wireHTTP`, `defineHTTPRoutes`
-- [`#pikku/error`](/docs/api-reference/enhance/error) — every error class and its status
+- [SDK](/api) — Every export, by the door you import it from
+- [`#pikku/function`](/api#app/function) — `pikkuFunc` and friends
+- [`#pikku/http`](/api#app/http) — `wireHTTP`, `defineHTTPRoutes`
+- [`#pikku/error`](/api#app/error) — every error class and its status
 - [CLI errors](/docs/pikku-cli/errors) — what a `PKUxxx` code means and how to clear it
 
 Or run `npx pikku doc` for the same thing in your terminal, generated from the

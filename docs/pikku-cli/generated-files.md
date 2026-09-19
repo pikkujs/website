@@ -271,7 +271,7 @@ import { pikkuFunc } from '#pikku/function'
 import { wireHTTP } from '#pikku/http'
 ```
 
-The doors are `function`, `middleware`, `setup`, `error`, `http`, `channel`, `gateway`, `trigger`, `scheduler`, `queue`, `workflow`, `scenarios`, `mcp`, `agent`, `cli`, `addon`, `secrets`, `credentials`, `scopes`, `analytics`, `variables`, and `auth`. There is no single re-export hub and no bare `#pikku` — see [Import Patterns](/docs/advanced/import-patterns) for the full alias setup, and the [API Reference](/docs/api-reference) for what each door exports.
+The doors are `function`, `middleware`, `setup`, `error`, `http`, `channel`, `gateway`, `trigger`, `scheduler`, `queue`, `workflow`, `scenarios`, `mcp`, `agent`, `cli`, `addon`, `secrets`, `credentials`, `scopes`, `analytics`, `variables`, and `auth`. There is no single re-export hub and no bare `#pikku` — see [Import Patterns](/docs/advanced/import-patterns) for the full alias setup, and the [SDK explorer](/api) for what each door exports.
 
 ### `pikku-services.gen.ts`
 

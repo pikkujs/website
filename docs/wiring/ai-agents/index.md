@@ -61,7 +61,7 @@ Optional properties:
 |----------|------|---------|-------------|
 | `tools` | `Function[]` | — | Pikku functions the agent can call |
 | `agents` | `Agent[]` | — | Sub-agents this agent can delegate to |
-| `memory` | `AIAgentMemoryConfig` | — | Conversation and working memory config |
+| `memory` | `AgentMemoryConfig` | — | Conversation and working memory config |
 | `maxSteps` | `number` | `10` | Maximum tool-call iterations per message |
 | `toolChoice` | `'auto' \| 'required' \| 'none'` | `'auto'` | How the model selects tools |
 | `temperature` | `number` | — | Model temperature override |
@@ -69,7 +69,7 @@ Optional properties:
 | `tags` | `string[]` | — | Tags for filtering and organization |
 | `middleware` | `Middleware[]` | — | Pikku middleware applied to the agent |
 | `channelMiddleware` | `ChannelMiddleware[]` | — | Middleware for the streaming channel |
-| `aiMiddleware` | `PikkuAIMiddlewareHooks[]` | — | AI-specific middleware hooks |
+| `agentMiddleware` | `PikkuAgentMiddlewareHooks[]` | — | Hooks around each step and each tool call |
 | `permissions` | `PermissionGroup` | — | Permission requirements for accessing the agent |
 
 ### Tools
@@ -170,7 +170,7 @@ The agent outputs partial JSON updates. Setting a field to `null` deletes it. Up
 
 ### Streaming
 
-Agents stream responses through Pikku channels. The stream emits `AIStreamEvent` objects:
+Agents stream responses through Pikku channels. The stream emits `AgentStreamEvent` objects:
 
 | Event Type | Description |
 |------------|-------------|
@@ -292,7 +292,7 @@ takes precedence over the agent definition.
 AI middleware hooks let you intercept and transform at three points in the agent execution:
 
 ```typescript
-const myMiddleware: PikkuAIMiddlewareHooks = {
+const myMiddleware: PikkuAgentMiddlewareHooks = {
   // Before the LLM call — modify messages or instructions
   modifyInput: async (services, { messages, instructions }) => {
     return { messages, instructions: instructions + '\nBe concise.' }
@@ -315,7 +315,7 @@ const myMiddleware: PikkuAIMiddlewareHooks = {
 export const agent = pikkuAgent({
   name: 'my-agent',
   // ...
-  aiMiddleware: [myMiddleware],
+  agentMiddleware: [myMiddleware],
 })
 ```
 
@@ -521,4 +521,4 @@ The [Pikku Console](/docs/console) provides a built-in chat interface for your A
 - **[Credentials](/docs/wiring/credentials/)**: Per-user credentials and OAuth2 for agent tools
 - **[Functions](/docs/core-features/functions)**: Understand how Pikku functions work as agent tools
 - **[Middleware](/docs/core-features/middleware)**: Apply middleware to agent tool calls
-- **[`#pikku/agent` API reference](/docs/api-reference/orchestrate/agent)**: Every export on the agent door
+- **[`#pikku/agent` in the SDK explorer](/api#app/agent)**: Every export on the agent door

@@ -517,55 +517,55 @@ const SURFACE_GROUPS: {
     name: 'Create a function',
     blurb: 'The definers every wiring eventually points at, and the config and services they run against.',
     doors: [
-      { door: 'function', to: '/docs/api-reference/create/function' },
-      { door: 'setup', to: '/docs/api-reference/create/setup' },
+      { door: 'function', to: '/api#app/function' },
+      { door: 'setup', to: '/api#app/setup' },
     ],
   },
   {
     name: 'Enhance it',
     blurb: 'Errors, middleware, secrets, variables and addons — what wraps a function without changing it.',
     doors: [
-      { door: 'error', to: '/docs/api-reference/enhance/error' },
-      { door: 'middleware', to: '/docs/api-reference/enhance/middleware' },
-      { door: 'secrets', to: '/docs/api-reference/enhance/secrets' },
-      { door: 'variables', to: '/docs/api-reference/enhance/variables' },
-      { door: 'addon', to: '/docs/api-reference/enhance/addon' },
+      { door: 'error', to: '/api#app/error' },
+      { door: 'middleware', to: '/api#app/middleware' },
+      { door: 'secrets', to: '/api#app/secrets' },
+      { door: 'variables', to: '/api#app/variables' },
+      { door: 'addon', to: '/api#app/addon' },
     ],
   },
   {
     name: 'Wire it up',
     blurb: 'One wire* call per protocol. The function does not change; only how the world reaches it does.',
     doors: [
-      { door: 'http', to: '/docs/api-reference/wire/http' },
-      { door: 'channel', to: '/docs/api-reference/wire/channel' },
-      { door: 'queue', to: '/docs/api-reference/wire/queue' },
-      { door: 'scheduler', to: '/docs/api-reference/wire/scheduler' },
-      { door: 'cli', to: '/docs/api-reference/wire/cli' },
-      { door: 'mcp', to: '/docs/api-reference/wire/mcp' },
-      { door: 'trigger', to: '/docs/api-reference/wire/trigger' },
-      { door: 'gateway', to: '/docs/api-reference/wire/gateway' },
+      { door: 'http', to: '/api#app/http' },
+      { door: 'channel', to: '/api#app/channel' },
+      { door: 'queue', to: '/api#app/queue' },
+      { door: 'scheduler', to: '/api#app/scheduler' },
+      { door: 'cli', to: '/api#app/cli' },
+      { door: 'mcp', to: '/api#app/mcp' },
+      { door: 'trigger', to: '/api#app/trigger' },
+      { door: 'gateway', to: '/api#app/gateway' },
     ],
   },
   {
     name: 'Guard it',
     blurb: 'Who may call a function, and under which scope or role.',
     doors: [
-      { door: 'auth', to: '/docs/api-reference/guard/auth' },
-      { door: 'scopes', to: '/docs/api-reference/guard/scopes' },
+      { door: 'auth', to: '/api#app/auth' },
+      { door: 'scopes', to: '/api#app/scopes' },
     ],
   },
   {
     name: 'Orchestrate it',
     blurb: 'Workflows and agents — composing functions into something longer-lived than one call.',
     doors: [
-      { door: 'agent', to: '/docs/api-reference/orchestrate/agent' },
-      { door: 'workflow', to: '/docs/api-reference/orchestrate/workflow' },
+      { door: 'agent', to: '/api#app/agent' },
+      { door: 'workflow', to: '/api#app/workflow' },
     ],
   },
   {
     name: 'Test it',
     blurb: 'Features, scenarios and steps that drive the whole system the way a user would.',
-    doors: [{ door: 'scenarios', to: '/docs/api-reference/test/scenarios' }],
+    doors: [{ door: 'scenarios', to: '/api#app/scenarios' }],
   },
 ];
 
@@ -602,7 +602,7 @@ function ApiSurfaceSection() {
           The same surface prints in your terminal — <code>npx pikku doc</code> for the index,{' '}
           <code>npx pikku doc http</code> for one door, <code>npx pikku doc --ai</code> for the version
           a coding agent should read. Writing an addon instead? The parallel doors live under{' '}
-          <code>#pikku/addon/*</code>. <Link to="/docs/api-reference">Browse the API reference →</Link>
+          <code>#pikku/addon/*</code>. <Link to="/api">Browse the SDK →</Link>
         </p>
       </Wrap>
     </Section>

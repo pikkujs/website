@@ -10,7 +10,7 @@ Variables let you declare non-sensitive configuration your application needs usi
 
 ## Defining Variables
 
-Use `defineVariable`, from [`#pikku/variables`](/docs/api-reference/enhance/variables), to declare a variable with its schema:
+Use `defineVariable`, from [`#pikku/variables`](/api#app/variables), to declare a variable with its schema:
 
 ```typescript
 import { defineVariable } from '#pikku/variables'

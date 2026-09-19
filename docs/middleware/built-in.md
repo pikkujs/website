@@ -38,6 +38,7 @@ addHTTPMiddleware('*', [
 | `headers` | `string[]` | `Content-Type, Authorization, x-api-key` | Allowed request headers. |
 | `credentials` | `boolean` | `false` | Sets `Access-Control-Allow-Credentials`. |
 | `maxAge` | `number` | `86400` | Preflight cache duration in seconds. |
+| `exposeHeaders` | `string[]` | `[]` | Response headers exposed to the browser via `Access-Control-Expose-Headers`. |
 
 When `origin` is `true` or an array, a `Vary: Origin` header is added so caches don't serve one origin's response to another.
 
@@ -88,5 +89,5 @@ It activates only when the `PIKKU_REMOTE_SECRET` secret is configured — withou
 ## Related
 
 - [Middleware](/docs/core-features/middleware) — how middleware ordering and priorities work
-- [API reference: enhance/middleware](/docs/api-reference/enhance/middleware) — everything on the `#pikku/middleware` door
+- [`#pikku/middleware` in the SDK explorer](/api#app/middleware) — everything on the door
 - [Better Auth](/docs/middleware/better-auth) / [JWT](/docs/middleware/auth-jwt) / [API Key](/docs/middleware/auth-apikey) — authentication middleware

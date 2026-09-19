@@ -144,7 +144,7 @@ For long-running operations, stream progress updates using `channel.send()`:
 
 ```typescript
 export const buildApp = pikkuSessionlessFunc({
-  func: async (services, data, { channel }) => {
+  func: async (_services, data, { channel }) => {
     if (channel) {
       await channel.send({ type: 'progress', step: 'Installing', percent: 0 })
     }
@@ -228,4 +228,4 @@ A field with no entry in `options` is still accepted as `--field`; an entry is h
 - **[Remote CLI](./remote-cli.md)** - Invoke remote functions over a WebSocket channel
 - **[Core Functions](../../core-features/functions.md)** - Understanding Pikku functions
 - **[Middleware](../../core-features/middleware.md)** - Adding middleware to CLI commands
-- **[`#pikku/cli` API reference](/docs/api-reference/wire/cli)** - every export on the CLI door
+- **[`#pikku/cli` in the SDK explorer](/api#app/cli)** - every export on the CLI door

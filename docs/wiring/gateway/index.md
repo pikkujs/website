@@ -269,11 +269,11 @@ If your handler returns an outbound message with `text`, `richContent`, or `atta
 Inside your handler and middleware, `wire.gateway` provides context about the current gateway:
 
 ```typescript
-func: async (services, data, wire) => {
-  wire.gateway.gatewayName   // 'whatsapp'
-  wire.gateway.senderId      // '+1234567890'
-  wire.gateway.platform      // 'whatsapp' (from adapter.name)
-  wire.gateway.send(msg)     // Send a proactive message
+func: async (_services, data, { gateway }) => {
+  gateway.gatewayName   // 'whatsapp'
+  gateway.senderId      // '+1234567890'
+  gateway.platform      // 'whatsapp' (from adapter.name)
+  gateway.send(msg)     // Send a proactive message
 }
 ```
 
@@ -281,7 +281,9 @@ Use `wire.gateway.send()` when you need to send additional messages beyond the a
 
 ## Middleware and Permissions
 
-Gateways support the full middleware and permission system:
+Gateways support the full middleware system. Permissions are not a gateway
+option — declare them on the handler function itself with
+`pikkuFunc({ …, permissions })`:
 
 ```typescript
 wireGateway({
@@ -289,9 +291,8 @@ wireGateway({
   type: 'webhook',
   route: '/webhooks/slack',
   adapter: slackAdapter,
-  func: handleMessage,
+  func: handleMessage,        // put `permissions: [isAdmin]` on handleMessage
   middleware: [rateLimitMiddleware, loggingMiddleware],
-  permissions: [isAdmin],
   auth: false,  // Default is true
 })
 ```
@@ -358,4 +359,4 @@ wireGateway({
 })
 ```
 
-Your handler function stays the same — the adapter normalizes platform differences. Use `wire.gateway.platform` if you need platform-specific behavior. See the [`#pikku/gateway` API reference](/docs/api-reference/wire/gateway) for every export on the door.
+Your handler function stays the same — the adapter normalizes platform differences. Use `wire.gateway.platform` if you need platform-specific behavior. See the [`#pikku/gateway` door in the SDK explorer](/api#app/gateway) for every export on the door.

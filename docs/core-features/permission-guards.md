@@ -12,7 +12,7 @@ Permissions should be independent checks that don't depend on execution order or
 
 ## Your First Permission
 
-A permission is a function that returns a boolean. `pikkuPermission` comes from [`#pikku/auth`](/docs/api-reference/guard/auth):
+A permission is a function that returns a boolean. `pikkuPermission` comes from [`#pikku/auth`](/api#app/auth):
 
 ```typescript
 import { pikkuPermission } from '#pikku/auth'

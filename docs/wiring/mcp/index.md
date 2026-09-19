@@ -35,7 +35,7 @@ When you define an MCP function with TypeScript types:
 
 ```typescript
 export const getProjectDocs = pikkuMCPResourceFunc<{ section: string }>(
-  async (services, data, { mcp }) => { ... }
+  async (_services, data, { mcp }) => { ... }
 )
 ```
 
@@ -188,4 +188,4 @@ export const getFile = pikkuMCPResourceFunc<{ path: string }>(
 - [MCP Tools](./tools.md) - Actions AI agents can invoke
 - [MCP Resources](./resources.md) - Data sources for AI agents
 - [MCP Prompts](./prompts.md) - Template generators for AI interactions
-- [`#pikku/mcp` API reference](/docs/api-reference/wire/mcp) - every export on the MCP door
+- [`#pikku/mcp` in the SDK explorer](/api#app/mcp) - every export on the MCP door
