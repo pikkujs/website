@@ -1,50 +1,89 @@
 import React from 'react';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
+import { testimonials } from '@site/data/testimonials';
 import { NavbarPageToggle } from '../components/HomepageShared';
-import { PaperPage, Terminal } from '../components/PaperLayout';
+import { CodeCard, PaperPage, Terminal } from '../components/PaperLayout';
 import { StackMatrix } from '../components/StackMatrix';
 import styles from './index.module.css';
 
-/* ── Click-to-copy command chip ──────────────────────────────── */
+/* ── Click-to-copy command chip ──────────────────────────────────
+   Awaits the write, handles the rejection, and announces the result —
+   clipboard access is denied often enough (insecure origin, permission
+   policy, Safari outside a user gesture) that a silent failure means the
+   reader thinks they copied a command they did not.
+   ──────────────────────────────────────────────────────────────── */
 function CopyCmd({ cmd }: { cmd: string }) {
-  const [copied, setCopied] = React.useState(false);
-  const copy = () => {
-    navigator.clipboard.writeText(cmd);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1600);
+  const [state, setState] = React.useState<'idle' | 'copied' | 'failed'>('idle');
+  const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  React.useEffect(() => () => clearTimeout(timer.current), []);
+
+  const copy = async () => {
+    clearTimeout(timer.current);
+    try {
+      await navigator.clipboard.writeText(cmd);
+      setState('copied');
+    } catch {
+      setState('failed');
+    }
+    timer.current = setTimeout(() => setState('idle'), 1800);
   };
+
   return (
-    <button type="button" className={styles.heroCmd} onClick={copy} title="Copy to clipboard">
-      {copied ? '✓ copied' : cmd}
-    </button>
+    <>
+      <button
+        type="button"
+        className={styles.heroCmd}
+        onClick={copy}
+        aria-label={`Copy ${cmd} to clipboard`}
+      >
+        {state === 'copied' ? '✓ copied' : state === 'failed' ? 'select to copy' : cmd}
+      </button>
+      <span className={styles.srOnly} role="status">
+        {state === 'copied' ? 'Copied' : state === 'failed' ? 'Copy failed — select the command to copy it' : ''}
+      </span>
+    </>
   );
 }
 
 /* ════════════════════════════════════════════════════════════════
    Hero
+
+   The headline is the sharpest sentence the old page had, which was
+   buried two thousand pixels down in a section body. The lede's job is
+   to say what this is — the previous one never used the word TypeScript.
    ════════════════════════════════════════════════════════════════ */
 function Hero() {
   return (
     <header className={styles.hero}>
       <div className={styles.wrap}>
+        {/* The headline runs the full measure above both columns -- at 72px
+            across 1076px it breaks to two lines on its own, and the column
+            split below reads as a consequence of it rather than a container
+            it has to fit inside. */}
+        <div className={styles.heroHead}>
+          <div className={styles.kicker}>Open-source core · self-hostable · MIT + BUSL</div>
+          <h1 className={styles.h1}>
+            Most frameworks hand you a router and a <em>to-do list.</em>
+          </h1>
+        </div>
         <div className={styles.heroGrid}>
           <div>
-            <div className={styles.kicker}>Open source · self-hostable · MIT</div>
-            <h1 className={styles.h1}>
-              Run a whole platform from <em>one command.</em>
-            </h1>
             <p className={styles.lede}>
-              One command gives your team a complete backend on their machine — database, auth, content,
-              email, secrets, workflows — <strong>identical to what ships to production.</strong> Nothing to
-              install and nothing to assemble before the first line of code. When you ship it, deploy onto
-              your own infrastructure — or let Fabric run it for you.
+              Pikku is a TypeScript backend framework with the platform already attached — database,
+              auth, secrets, email, queues, workflows and a console. Write a function once, wire it to
+              HTTP, WebSocket, cron, queue, RPC or MCP. Deploy it onto your own infrastructure, or let
+              Fabric run it.
             </p>
             <div className={styles.heroActions}>
               <Link href="/getting-started" className={styles.btnPrimary}>Get started</Link>
-              <Link href="#platform" className={styles.btnGhost}>See how it works</Link>
-              <CopyCmd cmd="npx pikku dev" />
+              <Link href="#how-it-works" className={styles.btnGhost}>See how it works</Link>
+              <CopyCmd cmd="npm create pikku@latest" />
             </div>
+            <p className={styles.twoLine}>
+              two commands — scaffold, then <code>npx pikku dev</code>
+            </p>
           </div>
           <Terminal />
         </div>
@@ -59,7 +98,7 @@ function Hero() {
 function TrustStrip() {
   const logos: { name: string; url: string; img?: string }[] = [
     { name: 'marta', img: 'marta-dark.svg', url: 'https://marta.de' },
-    { name: 'BambooRose', url: 'https://bamboorose.com' },
+    { name: 'BambooRose', img: 'bamboorose-light.png', url: 'https://bamboorose.com' },
     { name: 'HeyGermany', img: 'heygermany-light.svg', url: 'https://hey-germany.com' },
     { name: 'Calligraphy Cut', img: 'calligraphycut-light.svg', url: 'https://calligraphy-cut.com' },
   ];
@@ -86,55 +125,16 @@ function TrustStrip() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Platform — "The whole stack, the moment you start"
-   ════════════════════════════════════════════════════════════════ */
-function PlatformSection() {
-  const cells = [
-    { n: '01', title: 'Database & types', href: '/docs/storage', body: 'Point it at Postgres, MySQL, SQLite or D1 — it reads your schema and generates end-to-end types automatically. No setup, no drift.' },
-    { n: '02', title: 'SSO', href: '/docs/middleware/better-auth', body: 'Standard OAuth and OIDC out of the box. Point it at Google, Microsoft, Okta — or any provider — and your team signs in. Nothing to build.' },
-    { n: '03', title: 'Content & secrets', href: '/docs/core-features/secrets', body: 'A managed content layer and type-safe secrets, handled the same way on a laptop as in production.' },
-    { n: '04', title: 'Email, with previews', href: '/docs/api/email-service', body: 'Generate transactional email and preview every message live in the console — before a single one is sent.' },
-    { n: '05', title: 'Workflows & agents', href: '/docs/wiring/workflows', body: 'Durable, restart-proof workflows and AI agents run natively — no separate engine to operate.' },
-    { n: '06', title: 'One binary', href: '/docs/deploy', body: 'The entire platform is a single command. No container orchestration to maintain just to run "hello world."' },
-    { n: '07', title: 'Audit trails', href: '/docs/api/audit-service', body: 'Every action can leave a record — who, what, when — no matter which entry point it came through. History your auditors will actually accept.', wide: true },
-  ];
+   What it is — the definition, before any inventory of features.
 
-  return (
-    <section id="platform" className={styles.sectionAlt}>
-      <div className={styles.wrap}>
-        <div className={styles.eyebrow}>The whole stack, the moment you start</div>
-        <h2 className={styles.h2}>A production platform, <em>not a starter kit.</em></h2>
-        <p className={styles.secLede}>
-          Most frameworks hand you a router and a to-do list. Pikku boots the entire thing — and what
-          your engineers build against locally is exactly what runs live.
-        </p>
-        <div className={styles.platformGrid}>
-          {cells.map((c) => (
-            <Link
-              key={c.n}
-              href={c.href}
-              className={`${styles.cell}${c.wide ? ` ${styles.cellWide}` : ''}`}
-            >
-              <div className={styles.cellNum}>{c.n}</div>
-              <h3>{c.title}</h3>
-              <p>{c.body}</p>
-              <span className={styles.cellGo} aria-hidden="true">Read the docs →</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   What Pikku is — the adapter story and the parity story, one diagram
+   This used to sit a thousand pixels below a feature grid, which meant
+   the page listed what Pikku has before saying what Pikku is.
    ════════════════════════════════════════════════════════════════ */
 function WhatPikkuIsSection() {
   return (
-    <section id="what-it-is" className={styles.section}>
+    <section id="how-it-works" className={styles.section}>
       <div className={styles.wrap}>
-        <div className={styles.eyebrow}>What Pikku is</div>
+        <div className={styles.eyebrow}>How it works</div>
         <h2 className={styles.h2}>Everything plugs in. <em>Nothing locks in.</em></h2>
         <p className={styles.secLede}>
           This isn't a new stack asking you to abandon the one you have. You write functions and say
@@ -143,9 +143,8 @@ function WhatPikkuIsSection() {
         </p>
         <StackMatrix />
         <p className={styles.matrixCaption}>
-          The top two bands never change. That's the whole parity claim:{' '}
-          <code>pikku dev</code> and <code>pikku deploy</code> run the same code against the same
-          libraries — only the bottom row swaps.
+          The top bands never change. That's the whole parity claim: the same code, the same
+          libraries, the same generated clients — only the bottom row swaps.
         </p>
       </div>
     </section>
@@ -153,52 +152,182 @@ function WhatPikkuIsSection() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Addons — the ecosystem story: a package declares, the app wires
+   The console — one real screenshot.
+
+   The carousel this replaces had fifteen tabs and fourteen "screenshot
+   coming" placeholders. Naming the rest in prose costs nothing and
+   promises nothing that cannot be shown.
    ════════════════════════════════════════════════════════════════ */
-function AddonsSection() {
-  const addons = [
+const OTHER_SCREENS = [
+  'functions', 'APIs', 'workflows', 'emails', 'agents', 'scenarios',
+  'users', 'roles and scopes', 'audit', 'secrets', 'credentials',
+  'auth providers', 'workflow runs', 'agent threads',
+];
+
+function ConsoleSection() {
+  return (
+    <section id="console" className={styles.sectionAlt}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>The console</div>
+        <h2 className={styles.h2}>See everything running. <em>Nothing is a black box.</em></h2>
+        <p className={styles.secLede}>
+          Every function, its wirings, its permissions and its last run — in a console that ships with
+          the framework and runs on your machine.
+        </p>
+
+        <div className={styles.screenshotFrame}>
+          <div className={styles.screenshotChrome}>
+            <span className={styles.termDot} style={{ background: '#e06c5b' }} />
+            <span className={styles.termDot} style={{ background: '#e0b34b' }} />
+            <span className={styles.termDot} style={{ background: '#79b06a' }} />
+            <span className={styles.screenshotAddr}>localhost:3000/console</span>
+          </div>
+          <img
+            src="/img/console-screenshot.webp"
+            alt="The Pikku console, showing every function in the system"
+            loading="lazy"
+          />
+        </div>
+
+        <p className={styles.consoleRest}>
+          <strong>Fourteen more screens ship with it</strong> — {OTHER_SCREENS.join(', ')}. The admin
+          half is the internal tool you were going to build anyway, except it already knows your
+          permissions, and every change it makes lands in the same audit trail as everything else.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Scenarios.
+
+   Deliberately the one h2 on this page that does not use the
+   "Assertion. Counter-assertion." construction every other heading uses —
+   five in a row had turned a house voice into a reflex.
+
+   Every claim here is checked against source, because the first draft of
+   this section undersold it to about a third of its real size:
+     - given/when/then phases      core/.../scenario-step.types.ts:21
+     - surfaces browser|cli|default            same file:49
+     - --run / --strict / --coverage / --video  cli/src/cli.wiring.ts:746-793
+     - V8 precise coverage via CDP   core/src/services/v8-coverage-service.ts
+     - video + ffmpeg re-encode      @pikku/playwright src/capture.ts
+     - click by accessible name      examples/online-shop/.../browser.steps.ts:314
+   The code card is the real journey.scenario.ts from the online-shop example.
+
+   What is NOT claimed, having checked: no .feature files (@pikku/cucumber is
+   deprecated — "Deleted, Pikku end-to-end tests are written with
+   pikkuScenario"), no load testing, no fuzzing, no contract testing.
+   ════════════════════════════════════════════════════════════════ */
+function ScenariosSection() {
+  const surfaces: { flag: string; title: string; body: string }[] = [
     {
-      pkg: '@pikku/addon-admin',
-      call: 'admin:listUsers',
-      body: 'The user directory, roles and scopes, credentials and the audit trail — as ordinary RPCs you can call from anywhere in your app.',
+      flag: '--run default',
+      title: 'Server-side',
+      body: 'Every step is an RPC through that person’s authenticated client — real sign-in, real middleware, real permission checks. Never internal dispatch. This is the fast path.',
     },
     {
-      pkg: '@pikku/addon-console',
-      call: 'npx pikku dev',
-      body: 'The local build surface: every function, wiring and service on one page, editing the code on your laptop as you go.',
+      flag: '--run browser',
+      title: 'Through a browser',
+      body: 'A real Chromium, driven by Playwright. Steps click by the label a person would look for, so a control nobody can find fails the step instead of passing on a test id.',
     },
     {
-      pkg: '@pikku/addon-graph',
-      call: 'graph:editFields',
-      body: 'Native transforms your workflow graphs can reference by name, so a step that reshapes data needs no function of its own.',
+      flag: '--run cli',
+      title: 'Over the websocket',
+      body: 'The same journey driven the way a connected client drives it, so the transport your realtime users are on is exercised by the same file.',
     },
   ];
 
   return (
-    <section id="addons" className={styles.sectionAlt}>
+    <section id="scenarios" className={styles.section}>
       <div className={styles.wrap}>
-        <div className={styles.eyebrow}>Addons</div>
-        <h2 className={styles.h2}>Install a capability. <em>Call it by name.</em></h2>
-        <p className={styles.addonLede}>
-          An addon is an npm package of functions, services, contracts and even database tables.
-          Install it, map its secrets onto your own infrastructure, and its functions are reachable
-          as <code>namespace:function</code> — fully typed, sharing your logger, your database and
-          your auth.
+        <div className={styles.eyebrow}>Scenarios</div>
+        <h2 className={styles.h2}>Write the journey once. Run it as a human.</h2>
+        <p className={styles.secLede}>
+          A scenario is given, when, then — in TypeScript. Each step names what a person is
+          trying to do, the code that does it, and who is doing it. Declare the people your app is
+          for, and the same file becomes your end-to-end test, your staging smoke test and your
+          production health check.
         </p>
-        <div className={styles.addonGrid}>
-          {addons.map((a) => (
-            <div key={a.pkg} className={styles.addonCard}>
-              <div className={styles.addonPkg}>{a.pkg}</div>
-              <div className={styles.addonCall}>{a.call}</div>
-              <p>{a.body}</p>
+
+        <div className={styles.scenGrid}>
+          <div className={styles.scenPoints}>
+            <div className={styles.scenPoint}>
+              <h3>Prose, not glue</h3>
+              <p>
+                Every step carries a <code>template</code>, so a run reports itself in English —
+                given, when and then, with the actor&rsquo;s name in the sentence. Gherkin&rsquo;s
+                readability, without a <code>.feature</code> file and a step-definition layer
+                drifting apart from each other.
+              </p>
+            </div>
+            <div className={styles.scenPoint}>
+              <h3>Coverage from the journey</h3>
+              <p>
+                <code>--coverage</code> snapshots precise V8 coverage around each scenario — the
+                same backend, whether the journey drove it by clicking or by RPC. Not which lines
+                your unit tests touched. Which of your functions no real journey has ever reached.
+                That is a shorter list, and a more alarming one.
+              </p>
+            </div>
+            <div className={styles.scenPoint}>
+              <h3>Failures arrive with the evidence</h3>
+              <p>
+                Video of the run, the screenshot at the moment it broke, console errors, page
+                errors, failed requests. Every scenario records; by default only the failures are
+                kept. They play back in the console, captioned with who was driving.
+              </p>
+            </div>
+          </div>
+
+          <CodeCard filename="journey.scenario.ts">
+            <pre>
+              <code>{`export const shopperBuysAnItem = pikkuScenario({
+  title: 'A shopper fills a basket and checks out',
+  tags: ['journey'],
+  func: async (_services, _data, { scenario, actors }) => {
+    const visitor = actors.visitor
+
+    await scenario.then('opens the app',
+      'opensPage', { path: '/app' }, { actor: visitor })
+
+    await scenario.then('clicks through to the catalogue',
+      'clicks', { name: 'Catalogue' }, { actor: visitor })
+
+    await scenario.then('sees a mug for sale',
+      'seesText', { text: 'Enamel coffee mug' }, { actor: visitor })
+
+    // Eight buttons say "Add to basket". This one is the mug's.
+    await scenario.then('adds it to the basket',
+      'clicksNear',
+      { near: 'Enamel coffee mug', name: 'Add to basket' },
+      { actor: visitor })
+  },
+})`}</code>
+            </pre>
+          </CodeCard>
+        </div>
+
+        {/* The three surfaces. This is the part the first draft missed entirely:
+            one file, three ways of driving it, chosen at run time by a flag. */}
+        <div className={styles.scenSurfaces}>
+          {surfaces.map((s) => (
+            <div key={s.flag} className={styles.scenSurface}>
+              <code className={styles.scenSurfaceFlag}>{s.flag}</code>
+              <h4>{s.title}</h4>
+              <p>{s.body}</p>
             </div>
           ))}
         </div>
+
         <p className={styles.matrixCaption}>
-          An addon declares; the app that installs it decides what gets mounted — so nothing appears
-          on your API because a dependency felt like it. Write your own with{' '}
-          <code>npx pikku new addon</code>, or point it at an OpenAPI spec and get a typed one out.{' '}
-          <Link href="/docs/addon">Read the addon docs →</Link>
+          The prose is a contract. Run with <code>--strict</code> and a{' '}
+          <code>then</code> that no witness checked on the surface its sentence claims is a
+          failure, not a quiet pass. And when a deterministic script is not enough —{' '}
+          <code>pikku persona run</code> hands a declared person to a model to play in character
+          against a real environment. That one asserts nothing: it works your API as them and
+          reports back what came out that should not have.
         </p>
       </div>
     </section>
@@ -206,41 +335,54 @@ function AddonsSection() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Platform ready — what you'd otherwise spend two quarters building
+   Day one — the platform work, on the page's one dark band.
+
+   This merges what used to be two sections making the same argument
+   three and a half thousand pixels apart.
    ════════════════════════════════════════════════════════════════ */
 function PlatformReadySection() {
-  const cards: Array<{ title: string; cost: string; body: React.ReactNode }> = [
+  const cards: { title: string; cost: string; body: React.ReactNode }[] = [
     {
-      title: 'Sign-in your customers already have',
       cost: 'usually a quarter of work',
-      body: <>Built on standard OAuth and OIDC. Provide credentials for Google, Microsoft, Okta — or any provider — and an organisation signs in with the accounts it already manages. <strong>No authentication code to write, review or own.</strong></>,
+      title: 'Sign-in your customers already have',
+      body: <>Standard OAuth and OIDC. Point it at Google, Microsoft, Okta — or any provider you already pay for — and an organisation signs in with the accounts it already manages.</>,
     },
     {
-      title: 'A history your auditors accept',
       cost: 'usually a separate system',
-      body: <>Decide what to audit and Pikku records who did what, and when — across every entry point, not just the ones someone remembered to instrument. <strong>Compliance-grade history with nothing extra to run.</strong></>,
+      title: 'A history your auditors accept',
+      body: <>Every action leaves a record — who, what, when — no matter which entry point it came through, not just the ones someone remembered to instrument.</>,
     },
     {
-      title: 'Multitenancy that was there from the start',
       cost: 'usually a rewrite',
-      body: <>Organisations and tenants are first-class — isolated data, scoped access, and fine-grained permissions wired through every entry point. <strong>The thing that is painful to retrofit, already done.</strong></>,
+      title: 'Multitenancy from the start',
+      body: <>Organisations and tenants are first-class — isolated data, scoped access, permissions wired through every entry point. The thing that is painful to retrofit, already done.</>,
     },
     {
-      title: "Safe tools for the people who aren't engineers",
       cost: 'usually a backlog item forever',
-      body: <>Turn any capability into a command your ops and support teams can run — carrying the same auth, the same permissions and the same audit trail as everything else. <strong>Internal tooling that cannot quietly go around the rules.</strong></>,
+      title: 'Secrets that never touch a .env',
+      body: <>One interface locally and in production. Swap to Secrets Manager or Vault without touching a function.</>,
+    },
+    {
+      cost: 'usually a week of plumbing',
+      title: 'Database and types from your schema',
+      body: <>Point it at Postgres, SQLite or D1. It reads your schema and generates end-to-end types — no setup, no drift.</>,
+    },
+    {
+      cost: 'usually a separate vendor',
+      title: 'Email with live previews',
+      body: <>Compose transactional mail and preview every message in the console before a single one is sent.</>,
     },
   ];
 
   return (
-    <section id="platform-ready" className={styles.sectionDark}>
+    <section id="platform" className={styles.sectionInk}>
       <div className={styles.wrap}>
-        <div className={styles.eyebrow}>Platform ready</div>
+        <div className={styles.eyebrow}>Day one</div>
         <h2 className={styles.h2}>The work that usually comes <em>after launch.</em></h2>
         <p className={styles.secLede}>
           SSO, audit, multitenancy and granular permissions are the things that hold a deal up
-          eighteen months from now. They are in the open-source binary on day one, not behind a
-          sales call or a future quarter.
+          eighteen months from now. They are in the open-source binary from the first command — not
+          behind a sales call or a future quarter.
         </p>
         <div className={styles.entGrid}>
           {cards.map((c) => (
@@ -251,162 +393,26 @@ function PlatformReadySection() {
             </div>
           ))}
         </div>
-        <p className={styles.entFoot}>
-          Engineers who want to see the code —{' '}
-          <Link href="/developers">it's all on the developer page →</Link>
-        </p>
       </div>
     </section>
   );
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Two surfaces, two audiences.
+   Where it runs — one decision, one section.
 
-   @pikku/addon-console is the local surface — it edits code, so it belongs
-   on a laptop. @pikku/addon-admin is the deployed one — the user directory,
-   roles and scopes, credentials and the audit trail, as ordinary RPCs, which
-   is what someone operating a live system actually needs.
-   ════════════════════════════════════════════════════════════════ */
-type Slide = { id: string; label: string; blurb: string; src?: string };
-
-const CONSOLE_GROUPS: {
-  id: string;
-  name: string;
-  tagline: string;
-  slides: Slide[];
-}[] = [
-  {
-    id: 'console',
-    name: 'Console — while you build',
-    tagline: 'Runs on your laptop and edits code: change a function body, a template, an agent config, and the server picks it up.',
-    slides: [
-      { id: 'overview', label: 'Overview', blurb: 'Every function, wiring and service in the system, on one page.', src: '/img/console-screenshot.webp' },
-      { id: 'functions', label: 'Functions', blurb: 'Read a function body, change it, and watch the server pick it up.' },
-      { id: 'apis', label: 'APIs', blurb: 'Every route, channel and RPC with its real types — call any of them from here.' },
-      { id: 'workflow', label: 'Workflows', blurb: 'The graph as written, next to the runs that went through it.' },
-      { id: 'emails', label: 'Emails', blurb: 'Edit a template and preview the message before one is ever sent.' },
-      { id: 'agents', label: 'Agents', blurb: 'Tune an agent config, then run it in the playground against real tools.' },
-      { id: 'scenarios', label: 'Scenarios', blurb: 'The end-to-end tests, and what they covered on the last run.' },
-    ],
-  },
-  {
-    id: 'admin',
-    name: 'Admin — once it is live',
-    tagline: 'Ships with the deployment for whoever operates it. Changes take effect on the running system — no deploy, no engineer, everything audited.',
-    slides: [
-      { id: 'users', label: 'Users', blurb: 'The directory — invite, ban, reset a password, revoke every session someone has open.' },
-      { id: 'scopes', label: 'Roles & scopes', blurb: 'Build a role, grant scopes, move people in and out of it while the system runs.' },
-      { id: 'audit', label: 'Audit', blurb: 'Who did what, when, and through which entry point — including every change made on these screens.' },
-      { id: 'secrets', label: 'Secrets', blurb: 'Read and rotate secrets in place, without a redeploy to pick them up.' },
-      { id: 'credentials', label: 'Credentials', blurb: 'Per-user provider credentials — set, inspect status, revoke.' },
-      { id: 'auth-providers', label: 'Auth providers', blurb: 'Which identity providers are live, and for whom.' },
-      { id: 'workflow', label: 'Workflow runs', blurb: 'What is in flight, what paused for approval, what failed and where.' },
-      { id: 'agents/threads', label: 'AI conversations', blurb: 'Every agent thread, message by message, with the tool calls it made.' },
-    ],
-  },
-];
-
-function ConsoleSection() {
-  const [g, setG] = React.useState(0);
-  const [i, setI] = React.useState(0);
-  const group = CONSOLE_GROUPS[g];
-  const slide = group.slides[i];
-  const go = (d: number) => setI((n) => (n + d + group.slides.length) % group.slides.length);
-  const pickGroup = (n: number) => { setG(n); setI(0); };
-
-  return (
-    <section id="console" className={styles.sectionAlt}>
-      <div className={styles.wrap}>
-        <div className={styles.eyebrow}>The console</div>
-        <h2 className={styles.h2}>See everything running. <em>Nothing is a black box.</em></h2>
-        <p className={styles.secLede}>
-          Two surfaces, both shipped with the platform, both running against the exact system in
-          front of you. One is for building it. The other is for whoever has to operate it after
-          you've stopped touching it.
-        </p>
-
-        <div className={styles.groupToggle} role="tablist" aria-label="Console surface">
-          {CONSOLE_GROUPS.map((gr, n) => (
-            <button
-              key={gr.id}
-              type="button"
-              role="tab"
-              aria-selected={n === g}
-              className={`${styles.groupBtn} ${n === g ? styles.groupBtnOn : ''}`}
-              onClick={() => pickGroup(n)}
-            >
-              {gr.name}
-            </button>
-          ))}
-        </div>
-        <p className={styles.groupTagline}>{group.tagline}</p>
-
-        <div className={styles.carousel}>
-          <div className={styles.carTabs} role="tablist" aria-label={`${group.name} pages`}>
-            {group.slides.map((sl, n) => (
-              <button
-                key={sl.id}
-                type="button"
-                role="tab"
-                aria-selected={n === i}
-                className={`${styles.carTab} ${n === i ? styles.carTabOn : ''}`}
-                onClick={() => setI(n)}
-              >
-                {sl.label}
-              </button>
-            ))}
-          </div>
-
-          <div className={styles.carStage}>
-            <button type="button" className={styles.carArrow} onClick={() => go(-1)} aria-label="Previous page">‹</button>
-
-            <div className={styles.carFrame} key={`${group.id}-${slide.id}`}>
-              <div className={styles.screenshotChrome}>
-                <span className={styles.termDot} style={{ background: '#e06c5b' }} />
-                <span className={styles.termDot} style={{ background: '#e0b34b' }} />
-                <span className={styles.termDot} style={{ background: '#79b06a' }} />
-                <span className={styles.screenshotAddr}>localhost:3000/console/{slide.id}</span>
-              </div>
-              {slide.src ? (
-                <img src={slide.src} alt={`Pikku Console — ${slide.label}`} loading="lazy" />
-              ) : (
-                <div className={styles.carPlaceholder}>
-                  <span className={styles.carPlaceholderLabel}>{slide.label}</span>
-                  <span className={styles.carPlaceholderNote}>screenshot coming</span>
-                </div>
-              )}
-            </div>
-
-            <button type="button" className={styles.carArrow} onClick={() => go(1)} aria-label="Next page">›</button>
-          </div>
-
-          <p className={styles.carBlurb}>
-            <span className={styles.carBlurbLabel}>{slide.label}</span>
-            {slide.blurb}
-          </p>
-        </div>
-
-        <p className={styles.consoleFoot}>
-          The admin half is the internal tool you were going to build anyway — users, roles,
-          secrets, audits — except it already knows your permissions, and every change it makes
-          lands in the same audit trail as everything else.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-/* ════════════════════════════════════════════════════════════════
-   Deploy — the open-source path, positioned plainly
+   Deploy and Fabric were two sections for the same choice. The provider
+   flags here are the ones the CLI actually accepts; `-p aws` is not one
+   of them, and used to be printed on this page as copyable text.
    ════════════════════════════════════════════════════════════════ */
 function DeploySection() {
   const tiers: {
     title: string;
     who: string;
     body: string;
-    cmd: React.ReactNode;
+    cmd?: React.ReactNode;
     featured?: boolean;
+    link?: { href: string; label: string };
   }[] = [
     {
       title: 'Standalone',
@@ -416,28 +422,36 @@ function DeploySection() {
       featured: true,
     },
     {
-      title: 'Your cloud, serverful',
-      who: 'A long-running server you control.',
-      body: 'Deploy to any host that runs Node or Bun — a VM, a container, your existing platform. Nothing about the application changes.',
-      cmd: <><span className={styles.thl}>pikku</span> deploy apply -p aws</>,
+      title: 'AWS',
+      who: 'Your account, your bill.',
+      body: 'Generates serverless.yml and Lambda entry points — API Gateway for HTTP and WebSocket, SQS for queues, EventBridge for schedules, S3 for files, SSM for secrets. Azure is the same deal, one flag away.',
+      cmd: <><span className={styles.thl}>pikku</span> deploy apply -p serverless</>,
     },
     {
-      title: 'Your cloud, serverless',
-      who: 'Scales to zero, and back.',
-      body: 'Every function becomes the primitive its wiring implies — Lambda and SQS on AWS, Workers and Queues on Cloudflare. Same code, no rewrite.',
+      title: 'Cloudflare',
+      who: 'Workers and Containers.',
+      body: 'Workers, Durable Objects, Queues, Cron Triggers, D1 and R2 — including the stateful bits most edge runtimes make you give up. Anything that cannot run in a Worker is bundled as a container and proxied through a Durable Object.',
       cmd: <><span className={styles.thl}>pikku</span> deploy apply -p cloudflare</>,
+    },
+    {
+      title: 'Fabric',
+      who: "Or don't host it at all.",
+      body: 'The same application, hosted and observable, with an assistant that understands your data and your logic because Pikku already describes them. A deploy target, not a different product.',
+      /* No `cmd`: the other three chips hold copyable shell, so putting
+         English in that slot — in the class that marks the binary, no less —
+         read as a fourth command, or as a truncated one. */
+      link: { href: 'https://pikkufabric.com', label: 'Explore Fabric →' },
     },
   ];
 
   return (
     <section id="deploy" className={styles.section}>
       <div className={styles.wrap}>
-        <div className={styles.eyebrow}>When you're ready to ship</div>
-        <h2 className={styles.h2}>Deploy it. Host it yourself. <em>Pick server or serverless.</em></h2>
+        <div className={styles.eyebrow}>Where it runs</div>
+        <h2 className={styles.h2}>Host it yourself. <em>Or don't.</em></h2>
         <p className={styles.secLede}>
-          One command, and it's live on infrastructure you own. The choice between a long-running
-          server and functions that scale to zero is a flag — not an architecture you commit to on
-          day one and regret on day four hundred.
+          The same functions, the same wirings, the same generated clients. Only the backing services
+          change — and your own <code>createSingletonServices</code> always has the last word.
         </p>
         <div className={styles.tiers}>
           {tiers.map((t) => (
@@ -445,8 +459,10 @@ function DeploySection() {
               <h3>{t.title}</h3>
               <div className={styles.tierWho}>{t.who}</div>
               <p>{t.body}</p>
-              <code className={styles.tierCode}>{t.cmd}</code>
-              <span className={styles.pillOss}>open source</span>
+              {t.cmd && <code className={styles.tierCode}>{t.cmd}</code>}
+              {t.link && (
+                <Link href={t.link.href} className={styles.tierLink}>{t.link.label}</Link>
+              )}
             </div>
           ))}
         </div>
@@ -456,30 +472,51 @@ function DeploySection() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Fabric — the managed option, stated once
+   Proof — the homepage had four logos and not one customer word.
    ════════════════════════════════════════════════════════════════ */
-function FabricSection() {
+function ProofSection() {
+  const t = testimonials[0];
   return (
-    <section id="fabric" className={styles.section} style={{ paddingTop: 0 }}>
+    <section id="proof" className={styles.sectionAlt}>
       <div className={styles.wrap}>
-        <div className={styles.fabricCard}>
-          <div>
-            <div className={styles.fabricEyebrow}>Fabric — the managed home for Pikku</div>
-            <h2 className={styles.fabricH2}>
-              Or don't host it at all. <em>We'll run it.</em>
-            </h2>
-            <p className={styles.fabricP}>
-              The same application, hosted and observable, with an assistant that understands your
-              data and your logic because Pikku already describes them. Push and forget.
-            </p>
-            <p className={styles.fabricP}>
-              Nothing about your code changes when you move either way — Fabric is a deploy target,
-              not a different product.
-            </p>
-            <Link href="https://pikkufabric.com" className={styles.fabricBtn}>
-              Explore Fabric
+        <div className={styles.eyebrow}>Proof</div>
+        <blockquote className={styles.quote}>
+          <p>“{t.quote}”</p>
+          <cite className={styles.quoteCite}>
+            <b>{t.author}</b> — {t.role}, {t.company}
+          </cite>
+        </blockquote>
+      </div>
+    </section>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Where to go next — one labelled departure block.
+
+   This replaces eleven links scattered through six sections, most of
+   them firing into /docs before the product had been defined.
+   ════════════════════════════════════════════════════════════════ */
+const EXITS = [
+  { label: 'For engineers', title: 'Pikku for developers', href: '/developers' },
+  { label: 'The ecosystem', title: 'Addons & OpenAPI', href: '/addons' },
+  { label: 'Performance', title: 'Benchmarks', href: '/benchmarks' },
+  { label: 'Reference', title: 'Documentation', href: '/docs' },
+];
+
+function NextSection() {
+  return (
+    <section id="next" className={styles.section}>
+      <div className={styles.wrap}>
+        <div className={styles.eyebrow}>Where to go next</div>
+        <h2 className={styles.h2}>Pick your depth.</h2>
+        <div className={styles.nextGrid}>
+          {EXITS.map((e) => (
+            <Link key={e.href} href={e.href} className={styles.nextCard}>
+              <span className={styles.nextLabel}>{e.label}</span>
+              <span className={styles.nextTitle}>{e.title}</span>
             </Link>
-          </div>
+          ))}
         </div>
       </div>
     </section>
@@ -487,7 +524,7 @@ function FabricSection() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   CTA
+   CTA — the last thing read, so it gets the strongest line.
    ════════════════════════════════════════════════════════════════ */
 function CTASection() {
   return (
@@ -495,22 +532,15 @@ function CTASection() {
       <div className={styles.wrap}>
         <div className={styles.eyebrow} style={{ textAlign: 'center' }}>Try it now</div>
         <h2 className={styles.h2} style={{ margin: '0 auto 22px', textAlign: 'center' }}>
-          A complete platform is one command away.
+          Two commands. <em>A whole platform.</em>
         </h2>
         <p className={styles.secLede} style={{ margin: '0 auto', textAlign: 'center' }}>
           No account. No installation. No setup. Run it and watch the whole system come up.
         </p>
-        <div className={styles.ctaTerm}>
-          <Terminal />
-        </div>
         <div className={styles.ctaActions}>
           <Link href="/getting-started" className={styles.btnPrimary}>Read the quick start</Link>
           <Link href="https://github.com/pikkujs/pikku" className={styles.btnGhost}>Star on GitHub</Link>
         </div>
-        <p className={styles.engNote}>
-          Engineers — curious how it works underneath?{' '}
-          <Link href="/developers">See Pikku for developers →</Link>
-        </p>
       </div>
     </section>
   );
@@ -522,20 +552,20 @@ function CTASection() {
 export default function Home() {
   return (
     <Layout
-      title="Pikku — Run a whole platform from one command."
-      description="One command gives your team a complete backend — database, auth, email, workflows, agents — identical to what ships to production. Deploy anywhere, including fully managed."
+      title="Pikku — a TypeScript backend framework with the platform attached."
+      description="Write a function once and wire it to HTTP, WebSocket, cron, queue, RPC or MCP. Database, auth, secrets, email, workflows and a console included. Deploy anywhere, including fully managed."
     >
       <NavbarPageToggle isDeveloperPage={false} />
       <PaperPage>
         <Hero />
         <TrustStrip />
-        <PlatformSection />
         <WhatPikkuIsSection />
-        <AddonsSection />
-        <PlatformReadySection />
         <ConsoleSection />
+        <ScenariosSection />
+        <PlatformReadySection />
         <DeploySection />
-        <FabricSection />
+        <ProofSection />
+        <NextSection />
         <CTASection />
       </PaperPage>
     </Layout>

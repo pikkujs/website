@@ -74,6 +74,12 @@
   --paper-code-bg-bar:     #1f1c16;
   --paper-code-border:     #2a2720;
 
+  /* Text that sits on --paper-code-bg. Used by the ink section band
+     as well as the terminal widgets. */
+  --paper-on-dark-text:    #f2efe7;   /* headings on ink        */
+  --paper-on-dark-body:    #c8c2b4;   /* body copy on ink       */
+  --paper-on-dark-faint:   #8f887a;   /* labels on ink, 5.2:1   */
+
   /* Markdown code blocks (light theme) */
   --paper-code-light-bg:       #f2efe7;   /* warm cream code bg         */
   --paper-code-light-bar:      #e8e4da;   /* title bar                  */
@@ -94,7 +100,10 @@
   --paper-text:            #1a1814;   /* headings               */
   --paper-text-body:       #3a362e;   /* body copy              */
   --paper-text-muted:      #6b6559;   /* secondary / captions   */
-  --paper-text-faint:      #9a9387;   /* labels / timestamps    */
+  /* 4.5:1 or better on all three paper grounds (#f7f5f0 / #fffefb / #efece4).
+     The label layer runs at 10.5-12px, which leaves no room for a third
+     text tier that is meaningfully lighter than --paper-text-muted. */
+  --paper-text-faint:      #6F6A61;   /* labels / timestamps    */
 
   /* Accent — orange-red */
   --paper-accent:          #c2410c;

@@ -39,7 +39,9 @@
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--paper-text-faint);
+  /* Section labels are navigation, not decoration -- they take the muted
+     tier, not the faint one, so they hold up at 12px. */
+  color: var(--paper-text-muted);
   margin-bottom: 16px;
 }
 

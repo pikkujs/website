@@ -85,7 +85,7 @@ Eliminate the copy-paste-drift cycle. Instead of writing separate handlers for e
 
 ## Customer Language
 **How they describe the problem:**
-- "So many places in my code base have like three entry points: CLI, public HTTP API and internally from within the API"
+- "So many places in my code base have like three entry points: CLI, public (sometimes protected) HTTP API and internally from within the API"
 - "With Nest it's a pain because you basically have to start the whole API up just to run a CLI command"
 - "Would be so nice having everything just an invoke away"
 
@@ -105,7 +105,7 @@ Eliminate the copy-paste-drift cycle. Instead of writing separate handlers for e
 ## Proof Points
 **Production users:** HeyGermany, marta, BambooRose, Calligraphy Cut
 **Testimonials:**
-> "So many places in my code base have like three entry points: CLI, public HTTP API and internally from within the API. Would be so nice having everything just an invoke away. With Nest it's a pain because you basically have to start the whole API up just to run CLI command." — Alex Harley, CTO @ Bamboo Rose
+> "So many places in my code base have like three entry points: CLI, public (sometimes protected) HTTP API and internally from within the API. Would be so nice having everything just an invoke away. With Nest it's a pain because you basically have to start the whole API up just to run CLI command." — Alex Harley, Co-founder, Superbridge
 **Open source:** MIT licensed, GitHub at pikkujs/pikku
 
 ## Primary CTA

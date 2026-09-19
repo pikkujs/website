@@ -13,6 +13,7 @@
 .h1          { composes: h1          from '../components/PaperLayout/paper.module.css'; }
 .h2          { composes: h2          from '../components/PaperLayout/paper.module.css'; }
 .secLede     { composes: lead        from '../components/PaperLayout/paper.module.css'; }
+.lede        { composes: lead        from '../components/PaperLayout/paper.module.css'; }
 .wrap        { composes: wrap        from '../components/PaperLayout/paper.module.css'; }
 .btnPrimary  { composes: btnPrimary  from '../components/PaperLayout/paper.module.css'; }
 .btnGhost    { composes: btnGhost    from '../components/PaperLayout/paper.module.css'; }
@@ -20,14 +21,24 @@
 /* ── Hero ──────────────────────────────────────────────────── */
 .hero { padding: 96px 0 64px; }
 
+/* The headline sits above the split, not inside the left column. It runs
+   the full 1076px measure, so the 72px setting breaks where the sentence
+   wants to break rather than where a 1.05fr track forces it. */
+.heroHead { margin-bottom: 40px; }
+.heroHead .h1 { margin-bottom: 0; }
+
+/* Now that the headline is out of the left column, the copy column is the
+   shorter of the two -- start-aligned, so both columns hang off the same
+   line under the headline instead of the text floating mid-terminal. */
 .heroGrid {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
+  grid-template-columns: 1fr 1fr;
   gap: 56px;
-  align-items: center;
+  align-items: start;
 }
 
 @media (max-width: 900px) { .heroGrid { grid-template-columns: 1fr; gap: 44px; } }
+@media (max-width: 900px) { .heroHead { margin-bottom: 32px; } }
 
 .kicker {
   font-family: 'Geist Mono', monospace;
@@ -42,7 +53,7 @@
 
 .kicker::before { content: ''; width: 28px; height: 1px; background: var(--paper-accent); flex-shrink: 0; }
 
-.heroActions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.heroActions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-top: 30px; }
 
 .heroCmd {
   font-family: 'Geist Mono', monospace;
@@ -171,14 +182,105 @@
 .parityList li::before { content: ''; position: absolute; left: 0; top: 26px; width: 14px; height: 1px; background: var(--paper-accent); }
 
 /* ── Enterprise ────────────────────────────────────────────── */
-.entGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 50px; }
+/* The page's one genuinely dark band.
+
+   `.sectionDark` is the shared cream alt-section used on ten other pages
+   (--paper-bg-dark is #efece4, an 8% step off the page ground), so it is
+   left alone. This is local: nine sections over ~7000px need one tonal
+   anchor, and the hero terminal already established #16140f as the ink. */
+.sectionInk {
+  padding: 88px 0;
+  background:
+    radial-gradient(120% 90% at 50% 0%, #211d16 0%, rgba(33, 29, 22, 0) 62%),
+    var(--paper-code-bg);
+  border-top: 1px solid var(--paper-code-border);
+  border-bottom: 1px solid var(--paper-code-border);
+}
+.sectionInk .eyebrow { color: var(--paper-on-dark-faint); }
+.sectionInk .h2      { color: var(--paper-on-dark-text); }
+.sectionInk .h2 em   { color: var(--paper-accent-on-dark); }
+.sectionInk .secLede { color: var(--paper-on-dark-body); }
+
+.entGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 50px; }
+@media (max-width: 1000px) { .entGrid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 760px) { .entGrid { grid-template-columns: 1fr; } }
 
-.entCard { border: 1px solid var(--paper-border); border-radius: 14px; padding: 32px 30px; background: var(--paper-bg-alt); transition: all 0.2s; min-width: 0; }
-.entCard:hover { border-color: var(--paper-border-strong); box-shadow: 0 14px 40px -24px var(--paper-shadow-lg); }
-.entCard h3 { font-family: 'Newsreader', Georgia, serif; font-size: 23px; font-weight: 500; margin-bottom: 10px; letter-spacing: -0.5px; color: var(--paper-text); }
-.entCard p  { color: var(--paper-text-muted); font-size: 15.5px; line-height: 1.6; margin: 0; }
+.entCard { border: 1px solid var(--paper-code-border); border-radius: 14px; padding: 32px 30px; background: var(--paper-code-bg-bar); transition: border-color 0.2s, box-shadow 0.2s; min-width: 0; }
+.entCard:hover { border-color: #3d382d; box-shadow: 0 14px 40px -20px rgba(0, 0, 0, 0.6); }
+.entCard h3 { font-family: 'Newsreader', Georgia, serif; font-size: 23px; font-weight: 500; margin-bottom: 10px; letter-spacing: -0.5px; color: var(--paper-on-dark-text); }
+.entCard p  { color: var(--paper-on-dark-body); font-size: 15.5px; line-height: 1.6; margin: 0; }
 
+
+/* ── Scenarios ──────────────────────────────────── */
+.scenGrid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 52px;
+  align-items: start;
+  margin-top: 46px;
+}
+@media (max-width: 940px) { .scenGrid { grid-template-columns: 1fr; gap: 38px; } }
+
+.scenPoints { display: flex; flex-direction: column; gap: 28px; }
+
+.scenPoint h3 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 21px; font-weight: 500; letter-spacing: -0.4px;
+  color: var(--paper-text); margin-bottom: 7px;
+}
+.scenPoint p { font-size: 15.5px; line-height: 1.6; color: var(--paper-text-muted); margin: 0; }
+
+/* Flag names inside prose. Same treatment as .matrixCaption code so the
+   two CLI references on this page read as the same kind of thing. */
+.scenPoint p code {
+  font-family: 'Geist Mono', monospace; font-size: 12.5px;
+  background: var(--paper-bg-dark); border: none; padding: 1px 6px;
+  border-radius: 4px; color: var(--paper-text-body);
+}
+
+/* The three surfaces.
+
+   Full width under the split, not a fourth item in the points column: the
+   `--run` triad is one choice with three answers, and a row of three says
+   that where a fourth bullet would have buried it. */
+.scenSurfaces {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin-top: 52px;
+  background: var(--paper-border);
+  border: 1px solid var(--paper-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+@media (max-width: 860px) { .scenSurfaces { grid-template-columns: 1fr; } }
+
+.scenSurface {
+  background: var(--paper-bg-alt);
+  padding: 26px 24px 28px;
+}
+
+.scenSurfaceFlag {
+  display: inline-block;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  color: var(--paper-accent);
+  background: none; border: none; padding: 0;
+  margin-bottom: 12px;
+}
+
+.scenSurface h4 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 19px; font-weight: 500; letter-spacing: -0.3px;
+  color: var(--paper-text); margin: 0 0 7px;
+}
+
+.scenSurface p {
+  font-size: 14.5px; line-height: 1.58;
+  color: var(--paper-text-muted); margin: 0;
+}
 
 /* ── Console screenshots ───────────────────────────────────── */
 
@@ -190,8 +292,11 @@
 .screenshotFrame img { width: 100%; display: block; }
 
 /* ── Deploy tiers ──────────────────────────────────────────── */
-.tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 50px; }
-@media (max-width: 860px) { .tiers { grid-template-columns: 1fr; } }
+/* Two across, not four. `pikku deploy apply -p standalone` is ~240px at
+   12.5px Geist Mono; four columns inside .wrap leave the code chip ~171px,
+   so every command wrapped mid-flag at every width above the breakpoint. */
+.tiers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 50px; }
+@media (max-width: 600px) { .tiers { grid-template-columns: 1fr; } }
 
 .tier { border: 1px solid var(--paper-border); border-radius: 16px; padding: 34px 30px; background: var(--paper-bg-alt); display: flex; flex-direction: column; transition: all 0.2s; }
 .tier:hover { transform: translateY(-3px); box-shadow: 0 20px 50px -30px var(--paper-shadow-xl); }
@@ -406,3 +511,83 @@
   padding-top: 24px; border-top: 1px solid var(--paper-border);
   font-size: 15px; line-height: 1.6; color: var(--paper-text-muted);
 }
+
+
+/* ── Added with the homepage restructure ───────────────────── */
+
+/* Screen-reader status for the copy button — a silent clipboard
+   failure otherwise leaves the reader believing they copied. */
+.srOnly {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+.twoLine {
+  margin: 14px 0 0;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px; color: var(--paper-text-faint);
+}
+.twoLine code {
+  font-family: inherit; font-size: inherit; border: none;
+  background: var(--paper-bg-dark); padding: 1px 6px;
+  border-radius: 4px; color: var(--paper-text-body);
+}
+
+/* The screens we cannot show yet, named in prose rather than
+   promised with fourteen empty placeholder frames. */
+.consoleRest {
+  margin: 26px auto 0; max-width: 72ch; text-align: center;
+  font-size: 15.5px; line-height: 1.7; color: var(--paper-text-muted);
+}
+.consoleRest strong { color: var(--paper-text); font-weight: 500; }
+
+/* ── Deploy: Fabric's pointer out ──────────────────────────── */
+.tierLink {
+  align-self: flex-start;
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-family: 'Geist Mono', monospace; font-size: 12px;
+  color: var(--paper-accent) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid transparent;
+}
+.tierLink:hover { border-color: var(--paper-accent); }
+
+/* ── Proof ─────────────────────────────────────────────────── */
+.quote { margin: 26px 0 0; max-width: 62ch; }
+.quote p {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: clamp(21px, 2.6vw, 27px); line-height: 1.45;
+  font-style: italic; color: var(--paper-text); margin: 0 0 20px;
+}
+.quoteCite {
+  font-family: 'Geist Mono', monospace; font-size: 12px;
+  font-style: normal; color: var(--paper-text-muted);
+}
+.quoteCite b { color: var(--paper-text); font-weight: 500; }
+
+/* ── Where to go next ──────────────────────────────────────── */
+.nextGrid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 14px; margin-top: 30px;
+}
+@media (max-width: 900px) { .nextGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .nextGrid { grid-template-columns: 1fr; } }
+
+.nextCard {
+  display: flex; flex-direction: column; gap: 7px;
+  border: 1px solid var(--paper-border); border-radius: 14px;
+  padding: 22px 20px; background: var(--paper-bg-alt);
+  text-decoration: none !important; color: inherit;
+  transition: border-color 0.18s, transform 0.18s;
+}
+.nextCard:hover {
+  border-color: var(--paper-border-strong);
+  transform: translateY(-2px);
+}
+.nextLabel {
+  font-family: 'Geist Mono', monospace; font-size: 11px;
+  letter-spacing: 0.9px; text-transform: uppercase;
+  color: var(--paper-text-muted);
+}
+.nextTitle { font-size: 16.5px; font-weight: 500; color: var(--paper-text); }

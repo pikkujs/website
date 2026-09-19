@@ -43,7 +43,7 @@ const ADAPTED_WIRINGS: Adapted[] = [
   { name: 'mcp', backing: "@modelcontextprotocol/sdk — Anthropic's own" },
   {
     name: 'cli',
-    backing: 'ours',
+    backing: 'ours — local or remote',
     ownReason: 'Every framework CLI we tried pulled in more than it ran. This one also calls a remote deployment, not just localhost.',
   },
 ];
@@ -51,7 +51,7 @@ const ADAPTED_WIRINGS: Adapted[] = [
 /* Not wirings — the services a function is handed, and the library behind each. */
 const ADAPTED_SERVICES: Adapted[] = [
   { name: 'auth', backing: 'Better Auth' },
-  { name: 'database', backing: 'Kysely — Postgres, MySQL, SQLite, D1' },
+  { name: 'database', backing: 'Kysely — Postgres, SQLite, D1' },
   { name: 'files', backing: 'S3 · Backblaze B2 · local disk' },
   { name: 'schema', backing: 'ajv · cfworker' },
 ];
@@ -86,7 +86,7 @@ const TARGETS: Target[] = [
   {
     id: 'standalone',
     cmd: 'pikku deploy apply -p standalone',
-    who: 'One executable',
+    who: 'Your own box',
     note: 'Bundles the API, the console and your frontend into a single Node bundle or compiled Bun binary — one file to copy onto a box, or wrap as a desktop app.',
     services: [
       { role: 'http', impl: 'bundled server' },
@@ -101,29 +101,29 @@ const TARGETS: Target[] = [
     ],
   },
   {
-    id: 'aws',
-    cmd: 'pikku deploy apply -p aws',
-    who: 'Your AWS account',
-    note: 'Each wiring becomes the AWS primitive it should have been all along. Your account, your bill, no lock-in.',
+    id: 'serverless',
+    cmd: 'pikku deploy apply -p serverless',
+    who: 'AWS',
+    note: 'Generates serverless.yml and Lambda entry points, so each wiring becomes the AWS primitive it should have been all along. Your account, your bill, no lock-in.',
     services: [
       { role: 'http', impl: 'Lambda + API Gateway' },
-      { role: 'channels', impl: 'Lambda' },
+      { role: 'channels', impl: 'API Gateway WebSocket' },
       { role: 'queues', impl: 'SQS' },
       { role: 'schedules', impl: 'EventBridge' },
       { role: 'workflow state', impl: 'your database' },
-      { role: 'database', impl: 'Postgres' },
+      { role: 'database', impl: 'your own — RDS, Neon, wherever' },
       { role: 'files', impl: 'S3' },
-      { role: 'secrets', impl: 'Secrets Manager' },
+      { role: 'secrets', impl: 'SSM Parameter Store' },
       { role: 'email', impl: 'your provider' },
     ],
   },
   {
     id: 'cloudflare',
     cmd: 'pikku deploy apply -p cloudflare',
-    who: 'The edge',
-    note: 'The same functions, mapped onto the Workers platform — including the stateful bits most edge runtimes make you give up.',
+    who: 'Cloudflare',
+    note: 'The same functions, mapped onto the Workers platform — including the stateful bits most edge runtimes make you give up. Anything that cannot run in a Worker is bundled as a container and proxied through a Durable Object.',
     services: [
-      { role: 'http', impl: 'Workers' },
+      { role: 'http', impl: 'Workers, or Containers' },
       { role: 'channels', impl: 'Durable Objects' },
       { role: 'queues', impl: 'Cloudflare Queues' },
       { role: 'schedules', impl: 'Cron Triggers' },
@@ -131,6 +131,23 @@ const TARGETS: Target[] = [
       { role: 'database', impl: 'D1' },
       { role: 'files', impl: 'R2' },
       { role: 'secrets', impl: 'Workers secrets' },
+      { role: 'email', impl: 'your provider' },
+    ],
+  },
+  {
+    id: 'azure',
+    cmd: 'pikku deploy apply -p azure',
+    who: 'Azure',
+    note: 'Generates v4 entry points with code-based trigger registration, host.json and the infra manifest.',
+    services: [
+      { role: 'http', impl: 'Azure Functions' },
+      { role: 'channels', impl: 'Web PubSub' },
+      { role: 'queues', impl: 'Storage Queues' },
+      { role: 'schedules', impl: 'Timer triggers' },
+      { role: 'workflow state', impl: 'your database' },
+      { role: 'database', impl: 'your own — Azure SQL, Postgres, wherever' },
+      { role: 'files', impl: 'Blob Storage' },
+      { role: 'secrets', impl: 'app settings' },
       { role: 'email', impl: 'your provider' },
     ],
   },
@@ -245,6 +262,14 @@ export function StackMatrix() {
                 <span className={styles.tabWho}>{t.who}</span>
               </button>
             ))}
+            <a
+              className={styles.tabAsk}
+              href="https://github.com/pikkujs/pikku/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              request your own →
+            </a>
           </div>
 
           <div
@@ -264,6 +289,11 @@ export function StackMatrix() {
                 </li>
               ))}
             </ul>
+            <p className={styles.panelFoot}>
+              Defaults only — these are handed to your{' '}
+              <code>createSingletonServices</code>, and whatever you construct there
+              comes back out and wins.
+            </p>
           </div>
         </div>
       </div>
