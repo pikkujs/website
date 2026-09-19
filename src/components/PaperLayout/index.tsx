@@ -80,7 +80,7 @@ export function CodeCard({ filename, badge, icon, sourceUrl, children }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className={styles.codeCard}>
+    <div className={styles.codeCard} data-code-ink="">
       <div className={styles.codeCardBar}>
         {icon}
         <span className={styles.codeCardFilename}>{filename}</span>

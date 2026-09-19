@@ -96,6 +96,28 @@
   --paper-code-light-punct:    #6b6559;   /* punctuation                */
   --paper-code-light-hl:       rgba(176, 48, 0, 0.08);  /* highlighted line */
 
+  /* ── Prism token colours ──────────────────────────────
+     The Prism theme in docusaurus.config.ts is written in terms of these,
+     so every colour arrives as an inline `var(--code-*)` on the token and
+     resolves against whatever surface the block is sitting on. That is the
+     only way to reach these tokens: prism-react-renderer styles them inline,
+     and an inline style beats any stylesheet rule that is not !important.
+
+     The default is the warm light set, because almost every code block on
+     this site sits on paper. A block on the ink slab opts out with
+     `data-code-ink` — see CodeCard in src/components/PaperLayout. */
+  --code-bg:      var(--paper-code-light-bg);
+  --code-plain:   var(--paper-code-light-text);
+  --code-kw:      var(--paper-code-light-kw);
+  --code-str:     var(--paper-code-light-str);
+  --code-num:     var(--paper-code-light-num);
+  --code-cmt:     var(--paper-code-light-cmt);
+  --code-fn:      var(--paper-code-light-fn);
+  --code-type:    var(--paper-code-light-type);
+  --code-prop:    var(--paper-code-light-prop);
+  --code-op:      var(--paper-code-light-op);
+  --code-punct:   var(--paper-code-light-punct);
+
   /* Text */
   --paper-text:            #1a1814;   /* headings               */
   --paper-text-body:       #3a362e;   /* body copy              */
@@ -225,4 +247,23 @@ html[data-accent-mode="mono"] {
   --wire-console:   #888888;
   --wire-secrets:   #888888;
   --wire-benchmarks:#888888;
+}
+
+/* ── Code on the ink slab ─────────────────────────────────
+   Same roles as the light set above, measured against --paper-code-bg
+   (#16140f). The warm half (keywords, numbers) is the site accent and its
+   amber; the cool half (strings, properties) is the terminal's teal, so a
+   code card and the terminal beside it read as one surface. */
+[data-code-ink] {
+  --code-bg:      var(--paper-code-bg);
+  --code-plain:   var(--paper-code-text);
+  --code-kw:      var(--paper-accent-on-dark);
+  --code-str:     var(--paper-code-teal);
+  --code-num:     var(--paper-code-hl);
+  --code-cmt:     var(--paper-code-dim);
+  --code-fn:      var(--paper-code-green);
+  --code-type:    #d7b3e8;
+  --code-prop:    #9fc3cf;
+  --code-op:      #b3ab99;
+  --code-punct:   var(--paper-on-dark-faint);
 }

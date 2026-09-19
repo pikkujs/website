@@ -210,85 +210,11 @@ html.blog-wrapper .avatar__photo {
   color: var(--paper-text) !important;
 }
 
-/* ── Prism token colours — light warm theme ──────────────── */
-[data-paper-page] .markdown .token.comment,
-[data-paper-page] .markdown .token.prolog,
-[data-paper-page] .markdown .token.doctype,
-[data-paper-page] .markdown .token.cdata {
-  color: var(--paper-code-light-cmt);
-  font-style: italic;
-}
-
-[data-paper-page] .markdown .token.keyword,
-[data-paper-page] .markdown .token.rule,
-[data-paper-page] .markdown .token.atrule,
-[data-paper-page] .markdown .token.important,
-[data-paper-page] .markdown .token.builtin,
-[data-paper-page] .markdown .token.tag {
-  color: var(--paper-code-light-kw);
-  font-weight: 500;
-}
-
-[data-paper-page] .markdown .token.string,
-[data-paper-page] .markdown .token.attr-value,
-[data-paper-page] .markdown .token.regex,
-[data-paper-page] .markdown .token.template-string,
-[data-paper-page] .markdown .token.template-punctuation {
-  color: var(--paper-code-light-str);
-}
-
-[data-paper-page] .markdown .token.number,
-[data-paper-page] .markdown .token.boolean,
-[data-paper-page] .markdown .token.constant,
-[data-paper-page] .markdown .token.symbol,
-[data-paper-page] .markdown .token.unit,
-[data-paper-page] .markdown .token.hexcode {
-  color: var(--paper-code-light-num);
-}
-
-[data-paper-page] .markdown .token.function,
-[data-paper-page] .markdown .token.function-variable,
-[data-paper-page] .markdown .token.method {
-  color: var(--paper-code-light-fn);
-}
-
-[data-paper-page] .markdown .token.class-name,
-[data-paper-page] .markdown .token.maybe-class-name {
-  color: var(--paper-code-light-type);
-}
-
-[data-paper-page] .markdown .token.property,
-[data-paper-page] .markdown .token.property-access,
-[data-paper-page] .markdown .token.attr-name,
-[data-paper-page] .markdown .token.parameter {
-  color: var(--paper-code-light-prop);
-}
-
-[data-paper-page] .markdown .token.operator,
-[data-paper-page] .markdown .token.entity,
-[data-paper-page] .markdown .token.url,
-[data-paper-page] .markdown .token.namespace {
-  color: var(--paper-code-light-op);
-}
-
-[data-paper-page] .markdown .token.punctuation {
-  color: var(--paper-code-light-punct);
-}
-
-[data-paper-page] .markdown .token.selector,
-[data-paper-page] .markdown .token.char {
-  color: var(--paper-code-light-str);
-}
-
-[data-paper-page] .markdown .token.inserted {
-  color: var(--paper-code-light-str);
-  background: rgba(26, 92, 58, 0.08);
-}
-
-[data-paper-page] .markdown .token.deleted {
-  color: var(--paper-code-light-kw);
-  background: rgba(176, 48, 0, 0.08);
-}
+/* Prism token colours are NOT set here. prism-react-renderer paints each
+   token with an inline style, which wins over any rule in this file — a
+   palette written here silently does nothing. The theme lives in
+   docusaurus.config.ts and is written in `var(--code-*)`, defined in
+   tokens.css, so the same tokens re-resolve on the ink slab. */
 
 [data-paper-page] .markdown blockquote {
   border-left: 3px solid var(--paper-accent);

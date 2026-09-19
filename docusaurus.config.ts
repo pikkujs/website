@@ -1,6 +1,57 @@
-import { themes as prismThemes } from 'prism-react-renderer';
+import type { PrismTheme } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+
+/**
+ * prism-react-renderer paints tokens with inline styles, which beat every
+ * stylesheet rule that is not !important — so a theme picked from its bundled
+ * set (this was `dracula`) cannot be restyled per surface from CSS, and the
+ * warm palette in blog.css never applied. Written in CSS variables instead,
+ * the inline style is `color: var(--code-kw)` and resolves against whatever
+ * the block is sitting on: paper by default, ink inside `[data-code-ink]`.
+ * The values live in src/css/tokens.css.
+ */
+const paperPrism: PrismTheme = {
+  plain: { color: 'var(--code-plain)', backgroundColor: 'var(--code-bg)' },
+  styles: [
+    {
+      types: ['comment', 'prolog', 'doctype', 'cdata'],
+      style: { color: 'var(--code-cmt)', fontStyle: 'italic' },
+    },
+    {
+      types: ['keyword', 'atrule', 'rule', 'important', 'builtin', 'tag', 'selector'],
+      style: { color: 'var(--code-kw)' },
+    },
+    {
+      types: ['string', 'attr-value', 'char', 'regex', 'url', 'inserted'],
+      style: { color: 'var(--code-str)' },
+    },
+    {
+      types: ['number', 'boolean', 'constant', 'symbol', 'unit', 'deleted'],
+      style: { color: 'var(--code-num)' },
+    },
+    {
+      types: ['function', 'function-variable', 'method'],
+      style: { color: 'var(--code-fn)' },
+    },
+    {
+      types: ['class-name', 'maybe-class-name'],
+      style: { color: 'var(--code-type)' },
+    },
+    {
+      types: ['property', 'property-access', 'attr-name', 'parameter', 'variable'],
+      style: { color: 'var(--code-prop)' },
+    },
+    {
+      types: ['operator', 'entity', 'namespace'],
+      style: { color: 'var(--code-op)' },
+    },
+    {
+      types: ['punctuation'],
+      style: { color: 'var(--code-punct)' },
+    },
+  ],
+};
 import tailwindPlugin from "./plugins/tailwind-config.cjs";
 
 const npm2YarnConfig = {
@@ -293,8 +344,10 @@ const config: Config = {
       copyright: `MIT License · Copyright © 2020–${new Date().getFullYear()} Yasser Fadl & Pikku Contributors.`,
     },
     prism: {
-      theme: prismThemes.dracula,
-      darkTheme: prismThemes.dracula,
+      // One theme: colorMode is locked to dark, so darkTheme is the one that
+      // is ever used — but both are set so the pair cannot drift.
+      theme: paperPrism,
+      darkTheme: paperPrism,
     },
   } satisfies Preset.ThemeConfig,
 };
