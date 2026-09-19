@@ -14,8 +14,8 @@ const result = await workflow.do(
   'rpcFunctionName',
   inputData,
   {
-    retries: 3,           // Optional: number of retry attempts (default: 0)
-    retryDelay: '1s'      // Optional: delay between retries (default: 0)
+    retries: 3,           // Optional: number of retry attempts (default: 5)
+    retryDelay: '1s'      // Optional: fixed delay; omitted → exponential backoff
   }
 )
 ```
@@ -44,8 +44,11 @@ const payment = await workflow.do(
 
 ### Retry Options
 
-- **`retries`**: (number) Number of retry attempts after initial failure. Total attempts = retries + 1. Default: 0 (no retries)
-- **`retryDelay`**: (string | number) Delay between retries. Supports duration strings like `'5s'`, `'1min'` or milliseconds as number. Default: 0
+- **`retries`**: (number) Retry attempts after the initial failure. Total attempts = retries + 1. Default: `5` (`DEFAULT_STEP_RETRIES`).
+- **`retryDelay`**: (string | number) Fixed delay between retries (`'5s'`, `'1min'`, or ms). Omitted, retried steps use exponential backoff. Pass `'exponential'` to force it.
+- **`description`**: (string) Human-readable description of the step.
+- **`onError`**: (string) Compensation RPC to invoke when the step ultimately fails.
+- **`actor`**: (string) Actor the step runs as.
 
 ### Accessing Workflow Context in RPC Functions
 
@@ -102,8 +105,8 @@ const result = await workflow.do(
     return someValue
   },
   {
-    retries: 3,           // Optional: number of retry attempts (default: 0)
-    retryDelay: '1s'      // Optional: delay between retries (default: 0)
+    retries: 3,           // Optional: number of retry attempts (default: 5)
+    retryDelay: '1s'      // Optional: fixed delay; omitted → exponential backoff
   }
 )
 ```
@@ -197,32 +200,39 @@ await workflow.sleep('Wait 1 day before follow-up', '1440min')
 
 ## Workflow Cancellation
 
-Workflows can be cancelled programmatically using the `workflow.cancel()` method. This is useful for conditional cancellation based on business logic.
+Workflows cancel themselves by throwing `WorkflowCancelledException`, which the
+runner recognises. Its constructor takes `(runId, reason?)`.
 
 ### Syntax
 
 ```typescript
-await workflow.cancel(reason)
+throw new WorkflowCancelledException(workflow.runId, reason)
 ```
 
 ### Example
 
 ```typescript
-import { pikkuWorkflowFunc } from '#pikku/workflow'
+import { pikkuWorkflowFunc, WorkflowCancelledException } from '#pikku/workflow'
 
 export const orderWorkflow = pikkuWorkflowFunc<
   { orderId: string; amount: number },
   { success: boolean }
->(async (services, data, { workflow }) => {
+>(async ({ logger }, data, { workflow }) => {
   // Cancel if amount is invalid
   if (data.amount <= 0) {
-    await workflow.cancel(`Invalid order amount: ${data.amount}`)
+    throw new WorkflowCancelledException(
+      workflow.runId,
+      `Invalid order amount: ${data.amount}`
+    )
   }
 
   // Cancel if order is already cancelled in database
   const order = await workflow.do('Fetch order', 'getOrder', { orderId: data.orderId })
   if (order.status === 'cancelled') {
-    await workflow.cancel(`Order ${data.orderId} was already cancelled`)
+    throw new WorkflowCancelledException(
+      workflow.runId,
+      `Order ${data.orderId} was already cancelled`
+    )
   }
 
   // Continue with order processing...
@@ -239,7 +249,7 @@ All step results are cached in the workflow state. When a workflow resumes (afte
 ### Example: Replay behavior
 
 ```typescript
-export const workflow = pikkuWorkflowFunc(async (services, data, { workflow }) => {
+export const workflow = pikkuWorkflowFunc(async (_services, data, { workflow }) => {
   // First execution
   const user = await workflow.do('Create user', 'createUser', data) // ✓ Executes
   const crm = await workflow.do('Add to CRM', async () => crmApi.create()) // ✓ Executes
@@ -287,14 +297,14 @@ Once a workflow starts, don't rearrange steps:
 
 ```typescript
 // ❌ WRONG: Adding step before completed steps
-export const workflow = pikkuWorkflowFunc(async (services, data, { workflow }) => {
+export const workflow = pikkuWorkflowFunc(async (_services, data, { workflow }) => {
   await workflow.do('New step', ...) // ← DON'T INSERT HERE if workflow already running
   await workflow.do('Existing step 1', ...)
   await workflow.do('Existing step 2', ...)
 })
 
 // ✓ CORRECT: Add new steps at end
-export const workflow = pikkuWorkflowFunc(async (services, data, { workflow }) => {
+export const workflow = pikkuWorkflowFunc(async (_services, data, { workflow }) => {
   await workflow.do('Existing step 1', ...)
   await workflow.do('Existing step 2', ...)
   await workflow.do('New step', ...) // ← Safe to add here

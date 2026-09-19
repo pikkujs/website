@@ -73,7 +73,6 @@ Read-only service for querying agent runs (used by the [Console](/docs/console))
 import { MongoDBAgentRunService } from '@pikku/mongodb'
 
 const agentRunService = new MongoDBAgentRunService(mongo.db)
-await agentRunService.init()
 ```
 
 ### MongoDBWorkflowService
@@ -95,7 +94,6 @@ Read-only workflow run queries (used by the Console).
 import { MongoDBWorkflowRunService } from '@pikku/mongodb'
 
 const workflowRunService = new MongoDBWorkflowRunService(mongo.db)
-await workflowRunService.init()
 ```
 
 ### MongoDBChannelStore
@@ -127,7 +125,10 @@ Multi-instance deployment tracking.
 ```typescript
 import { MongoDBDeploymentService } from '@pikku/mongodb'
 
-const deploymentService = new MongoDBDeploymentService(mongo.db)
+const deploymentService = new MongoDBDeploymentService(
+  { heartbeatInterval: 10_000, heartbeatTtl: 30_000 },
+  mongo.db
+)
 await deploymentService.init()
 ```
 
@@ -198,9 +199,7 @@ const secrets = new MongoDBSecretService(mongo.db, {
 // Initialize all services (creates collections and indexes)
 await Promise.all([
   agentStorage.init(),
-  agentRunService.init(),
   workflowService.init(),
-  workflowRunService.init(),
   channelStore.init(),
   eventHubStore.init(),
   secrets.init(),
@@ -220,7 +219,7 @@ const singletonServices = await createSingletonServices(config, {
 
 ## Collections
 
-Each service creates its own collections with appropriate indexes on `init()`. You don't need to set up any schema ahead of time — just call `init()` and MongoDB handles the rest.
+Most services create their own collections with appropriate indexes on `init()`. You don't need to set up any schema ahead of time — just call `init()` and MongoDB handles the rest. `MongoDBAgentRunService` and `MongoDBWorkflowRunService` have no `init()`; they read from collections the other services create.
 
 | Service | Collections Created |
 |---------|-------------------|

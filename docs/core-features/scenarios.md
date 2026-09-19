@@ -134,6 +134,18 @@ npx pikku scenario run production --tags checkout
 |--------|-------|-------------|
 | `--flows` | `-f` | Comma-separated scenario names to run (default: all) |
 | `--tags` | `-t` | Comma-separated tags — run scenarios matching any |
+| `--features` | | Comma-separated feature names (`pikkuFeature` exports) — the feature is the run unit, so its hooks run once around the group |
+| `--exclude-tags` | | Comma-separated tags to hold back — scenarios matching any are skipped, unless named directly with `--flows` |
+| `--coverage` | | Reset/snapshot server coverage per scenario (the target must run with `--coverage`); writes `coverage/scenario-coverage.json` |
+| `--run` | | Which surface every actor drives the system through: `browser`, `cli`, or `default` (server-side, the fast path). Defaults to `default` |
+| `--strict` | | Fail rather than pass a `then` that has no witness for `--run` |
+| `--spawn` | | Start `pikku dev` on the environment's `apiUrl` for the run and stop it afterwards |
+| `--keep-alive` | | With `--spawn`, leave the server running after the run (dev loop) |
+| `--trace` | | Keep every stack frame on a failure. Without it, only the project's own frames are shown |
+| `--screenshots` | | Write the screenshots scenarios ask for to disk, under `.pikku/scenario-runs/<run>/<scenario>` |
+| `--video` | | Which scenarios keep their recording: `failed` (the default), `all`, or `off` |
+| `--api-url` | | Override the environment's `apiUrl` for this run |
+| `--app-url` | | Override the environment's `appUrl` for this run — one url, or `<app>=<url>` pairs, comma-separated |
 
 Scenarios run sequentially (they're stories; parallel actors would share cookie jars) and report `PASS`/`FAIL` per scenario with durations. A non-zero exit code on any failure makes them CI-friendly.
 

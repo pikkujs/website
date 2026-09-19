@@ -54,7 +54,7 @@ export const createIssueMCP = pikkuMCPToolFunc<
   { title: string; description: string; priority: 'low' | 'medium' | 'high' }
 >({
   description: 'Create a new issue in the tracker',
-  func: async (services, data, { rpc }) => {
+  func: async (_services, data, { rpc }) => {
     const issue = await rpc.invoke('createIssue', data)
 
     return [
@@ -163,7 +163,7 @@ export const processOrder = pikkuFunc<
 // MCP adapter
 export const processOrderMCP = pikkuMCPToolFunc<{ orderId: string }>({
   description: 'Process an order end-to-end',
-  func: async (services, data, { rpc }) => {
+  func: async (_services, data, { rpc }) => {
     const result = await rpc.invoke('processOrder', data)
 
     return [
@@ -205,7 +205,7 @@ For operations with visual output, you can return images (base64-encoded):
 ```typescript
 export const generateChartMCP = pikkuMCPToolFunc<{ datasetId: string }>({
   description: 'Generate a chart from a dataset',
-  func: async (services, data, { rpc }) => {
+  func: async (_services, data, { rpc }) => {
     const chartData = await rpc.invoke('generateChart', data)
 
     return [
@@ -236,7 +236,7 @@ import { auditMiddleware } from './middleware.js'
 export const processOrder = pikkuMCPToolFunc<{ orderId: string }>({
   // Required
   description: 'Process an order end-to-end',
-  func: async (services, data, { rpc }) => {
+  func: async (_services, data, { rpc }) => {
     const result = await rpc.invoke('processOrder', data)
     return [{ type: 'text', text: `Processed order ${result.orderId}` }]
   },

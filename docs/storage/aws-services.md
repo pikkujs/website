@@ -44,6 +44,9 @@ const contentService = new S3Content(
 
 ### Features
 
+- **Logical buckets** — `config.bucketName` is the real S3 bucket. The `bucket`
+  field every `ContentService` call takes is a logical bucket, stored as a path
+  prefix inside it (`<bucket>/<key>`).
 - **Signed uploads** — `getUploadURL()` generates presigned S3 PUT URLs (1 hour expiry)
 - **Signed downloads** — `signContentKey()` and `signURL()` use CloudFront signing
 - **File operations** — `readFile()`, `writeFile()`, `copyFile()`, `deleteFile()`
@@ -52,20 +55,28 @@ const contentService = new S3Content(
 ### Usage
 
 ```typescript
+// Every method takes a single options object, and `bucket` is a logical
+// bucket — a path prefix inside `config.bucketName`, not a second S3 bucket.
+
 // Generate upload URL for client-side upload
-const { uploadUrl, assetKey } = await contentService.getUploadURL(
-  'uploads/photo.jpg',
-  'image/jpeg'
-)
+const { uploadUrl, assetKey } = await contentService.getUploadURL({
+  bucket: 'uploads',
+  fileKey: 'photo.jpg',
+  contentType: 'image/jpeg',
+})
 
 // Sign a download URL (expires in 1 hour)
-const signedUrl = await contentService.signContentKey(
-  'uploads/photo.jpg',
-  new Date(Date.now() + 3600_000)
-)
+const signedUrl = await contentService.signContentKey({
+  bucket: 'uploads',
+  contentKey: 'photo.jpg',
+  dateLessThan: new Date(Date.now() + 3600_000),
+})
 
 // Read file as stream
-const stream = await contentService.readFile('uploads/photo.jpg')
+const stream = await contentService.readFile({
+  bucket: 'uploads',
+  key: 'photo.jpg',
+})
 ```
 
 See [ContentService API](/docs/api/content-service) for the full interface.
@@ -156,12 +167,8 @@ On the worker side, use `runSQSQueueWorker` from `@pikku/lambda` to process mess
 import { runSQSQueueWorker } from '@pikku/lambda'
 
 export const sqsHandler: SQSHandler = async (event) => {
-  const singletonServices = await coldStart()
-  return await runSQSQueueWorker({
-    singletonServices,
-    createWireServices,
-    event,
-  })
+  const { logger } = await coldStart()
+  return await runSQSQueueWorker(logger, event)
 }
 ```
 

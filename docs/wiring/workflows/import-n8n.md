@@ -59,8 +59,8 @@ Every unmapped node is a stub that throws. Classify each by its JSDoc marker:
   — the stub function, the graph node, or a missing `@pikku/addon-*` dependency.
 - **Report missing integrations** rather than writing a bespoke client for one
   workflow; an addon is the reusable form.
-- Finish by compiling: `pikku all` (or `pikku tsc`) should pass with no
-  surviving stubs.
+- Finish by compiling: `pikku all --tsc` (or `--tsc-summary` for a compact
+  CI-friendly report) should pass with no surviving stubs.
 
 ## Next Steps
 

@@ -70,6 +70,9 @@ starts.
 | `pikku fabric changes list\|show\|file\|claim\|ask\|shot\|done` | The change board for a project |
 | `pikku fabric projects` | Projects you can reach |
 
+This is the subset you will reach for day to day. `pikku fabric --help` lists
+every command, and `pikku fabric <command> --help` its flags.
+
 ## Secrets, variables and data
 
 ```bash
@@ -87,11 +90,14 @@ than connecting with credentials.
 ## Addons
 
 ```bash
-pikku fabric addon verify|publish|add
+pikku fabric addon verify [dir]
+pikku fabric addon publish [dir]
+pikku fabric addon add <id>
 ```
 
-`verify` and `publish` work on an addon package; `add` installs a published addon
-into the current project.
+`verify` and `publish` take the addon package directory (defaulting to the
+current one); `add` takes a registry id and installs that published addon into
+the current project.
 
 ## Next Steps
 

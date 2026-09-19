@@ -101,11 +101,8 @@ export const getUserInfo = pikkuFunc<
 })
 
 // MCP adapter - transforms output for AI agents
-export const getUserInfoMCP = pikkuMCPResourceFunc<
-  { userId: string },
-  MCPResourceResponse
->({
-  func: async (services, data, { rpc }) => {
+export const getUserInfoMCP = pikkuMCPResourceFunc<{ userId: string }>(
+  async (_services, data, { rpc }) => {
     // Call the function via RPC
     const user = await rpc.invoke('getUserInfo', data)
 
@@ -116,8 +113,15 @@ export const getUserInfoMCP = pikkuMCPResourceFunc<
         text: JSON.stringify(user)
       }
     ]
-  },
+  }
+)
+
+// `title`, `description` and `tags` live on the wiring, not the function
+wireMCPResource({
+  uri: 'users/{userId}',
   title: 'Get user information (MCP adapter)',
+  description: 'Fetch a user profile as an MCP resource',
+  func: getUserInfoMCP,
   tags: ['mcp', 'users']
 })
 ```
@@ -194,7 +198,7 @@ export const orchestrator = pikkuFunc<
   { resourceId: string },
   { complete: boolean }
 >({
-  func: async (services, data, { rpc, session }) => {
+  func: async (_services, data, { rpc, session }) => {
     // This RPC call inherits session from orchestrator
     // Auth and permissions are still checked
     await rpc.invoke('restrictedOperation', {
@@ -253,7 +257,7 @@ export const safeWorkflow = pikkuFunc<
 ```typescript
 // ❌ Bad - wrapping simple service call in RPC
 export const getCard = pikkuFunc<{ cardId: string }, Card>({
-  func: async (services, data, { rpc }) => {
+  func: async (_services, data, { rpc }) => {
     return await rpc.invoke('loadCard', { cardId: data.cardId })
   }
 })

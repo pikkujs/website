@@ -71,7 +71,7 @@ export const lifecycle = pikkuServerLifecycle<SingletonServices>({
   },
 
   afterStart: async ({ logger, variables }) => {
-    if (variables.get("SEED_DEV_DATA") === "true") {
+    if ((await variables.get("SEED_DEV_DATA")) === "true") {
       await seedTodos();
       logger.info("Seeded development data");
     }

@@ -31,13 +31,11 @@ interface EmailResult {
 }
 
 export const sendEmail = pikkuSessionlessFunc<EmailJob, EmailResult>(
-  async (services, jobData) => {
-    const { logger } = services
-    
+  async ({ emailService, logger }, jobData) => {
     logger.info('Sending email', { to: jobData.to, subject: jobData.subject })
     
     try {
-      const result = await services.emailService.send({
+      const result = await emailService.send({
         to: jobData.to,
         subject: jobData.subject,
         body: jobData.body,
@@ -139,21 +137,19 @@ interface ImageResult {
 }
 
 export const processImage = pikkuSessionlessFunc<ImageJob, ImageResult>(
-  async (services, jobData) => {
-    const { logger } = services
-    
+  async ({ imageService, logger, storageService }, jobData) => {
     logger.info('Processing image', { 
       imageUrl: jobData.imageUrl, 
       userId: jobData.userId 
     })
     
     // Download image
-    const imageBuffer = await services.imageService.download(jobData.imageUrl)
+    const imageBuffer = await imageService.download(jobData.imageUrl)
     
     // Apply operations
     let processedImage = imageBuffer
     for (const operation of jobData.operations) {
-      processedImage = await services.imageService.apply(
+      processedImage = await imageService.apply(
         processedImage, 
         operation.type, 
         operation.params
@@ -161,18 +157,18 @@ export const processImage = pikkuSessionlessFunc<ImageJob, ImageResult>(
     }
     
     // Generate thumbnail
-    const thumbnail = await services.imageService.resize(processedImage, {
+    const thumbnail = await imageService.resize(processedImage, {
       width: 200,
       height: 200
     })
     
     // Upload processed images
-    const processedUrl = await services.storageService.upload(
+    const processedUrl = await storageService.upload(
       processedImage,
       `processed/${jobData.userId}/${Date.now()}.jpg`
     )
     
-    const thumbnailUrl = await services.storageService.upload(
+    const thumbnailUrl = await storageService.upload(
       thumbnail,
       `thumbnails/${jobData.userId}/${Date.now()}.jpg`
     )
@@ -263,9 +259,7 @@ interface ExportResult {
 }
 
 export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
-  async (services, jobData) => {
-    const { logger } = services
-    
+  async ({ dataService, exportService, logger, notificationService, storageService }, jobData) => {
     logger.info('Starting data export', { 
       dataType: jobData.dataType,
       format: jobData.format,
@@ -273,7 +267,7 @@ export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
     })
     
     // Fetch data based on type and filters
-    const data = await services.dataService.fetch({
+    const data = await dataService.fetch({
       type: jobData.dataType,
       filters: jobData.filters,
       dateRange: jobData.dateRange
@@ -282,20 +276,20 @@ export const exportData = pikkuSessionlessFunc<ExportJob, ExportResult>(
     logger.info('Data fetched', { recordCount: data.length })
     
     // Generate export file
-    const exportFile = await services.exportService.generate({
+    const exportFile = await exportService.generate({
       data,
       format: jobData.format,
       fileName: `${jobData.dataType}_export_${Date.now()}.${jobData.format}`
     })
     
     // Upload to storage
-    const fileUrl = await services.storageService.upload(
+    const fileUrl = await storageService.upload(
       exportFile.buffer,
       `exports/${jobData.userId}/${exportFile.fileName}`
     )
     
     // Send notification email
-    await services.notificationService.send({
+    await notificationService.send({
       userId: jobData.userId,
       type: 'export_complete',
       data: { fileUrl, fileName: exportFile.fileName }
@@ -356,11 +350,12 @@ async function initiateDataExport(
 async function checkExportStatus(jobId: string) {
   const job = await queueClient.getJob('data-export', jobId)
   
+  const [status, metadata] = await Promise.all([job.status(), job.metadata?.()])
   return {
-    status: job.status,
-    progress: job.progress,
+    status,
+    progress: metadata?.progress,
     result: job.result,
-    error: job.error
+    error: metadata?.error,
   }
 }
 ```
@@ -394,9 +389,7 @@ export const sendNotification = pikkuSessionlessFunc<
   NotificationJob,
   NotificationResult[]
 >(
-  async (services, jobData) => {
-    const { logger } = services
-    
+  async ({ logger, notificationService, userService }, jobData) => {
     logger.info('Processing notification', {
       userId: jobData.userId,
       type: jobData.type,
@@ -404,7 +397,7 @@ export const sendNotification = pikkuSessionlessFunc<
     })
     
     // Get user notification preferences
-    const userPrefs = await services.userService.getNotificationPreferences(
+    const userPrefs = await userService.getNotificationPreferences(
       jobData.userId
     )
     
@@ -424,7 +417,7 @@ export const sendNotification = pikkuSessionlessFunc<
     
     for (const channel of enabledChannels) {
       try {
-        const result = await services.notificationService.send({
+        const result = await notificationService.send({
           userId: jobData.userId,
           channel,
           template: jobData.template,
@@ -538,7 +531,9 @@ async function sendBatchNotifications(notifications: NotificationJob[]) {
   
   for (const [priority, batch] of Object.entries(groupedByPriority)) {
     const queueName = `notifications-${priority === 'urgent' ? 'urgent' : priority}`
-    const batchJobIds = await queueClient.addBatch(queueName, batch)
+    const batchJobIds = await Promise.all(
+      batch.map((job) => queueClient.add(queueName, job))
+    )
     jobIds.push(...batchJobIds)
   }
   
@@ -568,8 +563,7 @@ interface CleanupResult {
 }
 
 export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
-  async (services, jobData) => {
-    const { logger } = services
+  async ({ cacheService, databaseService, logService, logger, storageService }, jobData) => {
     const startTime = Date.now()
     
     logger.info('Starting cleanup', {
@@ -585,7 +579,7 @@ export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
     try {
       switch (jobData.type) {
         case 'files':
-          const fileResult = await services.storageService.cleanup({
+          const fileResult = await storageService.cleanup({
             olderThan: jobData.olderThan,
             dryRun: jobData.dryRun
           })
@@ -594,7 +588,7 @@ export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
           break
           
         case 'logs':
-          const logResult = await services.logService.cleanup({
+          const logResult = await logService.cleanup({
             olderThan: jobData.olderThan,
             dryRun: jobData.dryRun
           })
@@ -603,7 +597,7 @@ export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
           break
           
         case 'cache':
-          const cacheResult = await services.cacheService.cleanup({
+          const cacheResult = await cacheService.cleanup({
             olderThan: jobData.olderThan,
             dryRun: jobData.dryRun
           })
@@ -612,7 +606,7 @@ export const runCleanup = pikkuSessionlessFunc<CleanupJob, CleanupResult>(
           break
           
         case 'database':
-          const dbResult = await services.databaseService.cleanup({
+          const dbResult = await databaseService.cleanup({
             olderThan: jobData.olderThan,
             dryRun: jobData.dryRun
           })
@@ -685,7 +679,9 @@ async function scheduleCleanup() {
     }
   ]
   
-  const jobIds = await queueClient.addBatch('cleanup-tasks', cleanupJobs)
+  const jobIds = await Promise.all(
+    cleanupJobs.map((job) => queueClient.add('cleanup-tasks', job))
+  )
   return jobIds
 }
 
@@ -759,11 +755,24 @@ try {
 
 ### 4. Timeout Handling
 
-Set appropriate timeouts based on job complexity:
+There is no per-job `timeout` option. How long a worker may hold a job is a
+worker-side setting — `lockDuration` (milliseconds) for push-based backends
+like BullMQ, `visibilityTimeout` (seconds) for poll-based ones — so set it on
+the worker's `config` and enqueue jobs without it:
 
 ```typescript
-const timeout = jobData.complexity === 'high' ? 1800000 : 300000
-await queueClient.add('processing-queue', jobData, { timeout })
+wireQueueWorker({
+  name: 'processing-queue',
+  func: processJob,
+  config: {
+    lockDuration: 1800000,
+  },
+})
+
+await queueClient.add('processing-queue', jobData)
 ```
+
+Each queue service reports which keys it supports; unsupported ones are dropped
+with a warning rather than silently ignored.
 
 These examples show how to build robust, scalable background processing systems with Pikku queues. Each pattern can be adapted to your specific use case while maintaining type safety and reliability.

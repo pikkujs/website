@@ -125,7 +125,7 @@ export const checkWorkflowStatus = pikkuSessionlessFunc<
   }
 
   return {
-    status: run.status,        // 'running' | 'completed' | 'failed' | 'cancelled'
+    status: run.status,        // 'running' | 'completed' | 'failed' | 'cancelled' | 'suspended'
     output: run.output,        // Output data if completed
     error: run.error,          // Error details if failed
     createdAt: run.createdAt,  // Creation timestamp

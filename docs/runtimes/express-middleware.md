@@ -49,10 +49,10 @@ app.listen(3000)
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `respondWith404` | `boolean` | `false` | Return 404 for routes not matched by Pikku (set `true` if Pikku handles all routes) |
-| `logRoutes` | `boolean` | `false` | Log registered Pikku routes on startup |
-| `loadSchemas` | `boolean` | `false` | Load JSON schemas for validation |
-| `coerceDataFromSchema` | `boolean` | `false` | Coerce top-level input values to match the function's schema before validation — comma-separated strings become arrays, `date-time` strings become `Date` objects. Useful when query or path parameters feed typed inputs. |
+| `respondWith404` | `boolean` | `true` | Return 404 for routes not matched by Pikku (set `false` when Express serves its own routes alongside Pikku) |
+| `logRoutes` | `boolean` | — | Log registered Pikku routes on startup |
+| `loadSchemas` | `boolean` | — | Load JSON schemas for validation |
+| `coerceDataFromSchema` | `boolean` | `true` | Coerce top-level input values to match the function's schema before validation — comma-separated strings become arrays, `date-time` strings become `Date` objects. Useful when query or path parameters feed typed inputs. |
 
 ## Full Server (`PikkuExpressServer`)
 

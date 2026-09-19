@@ -108,8 +108,9 @@ The `BullServiceFactory` from `@pikku/queue-bullmq` manages the lifecycle of all
 ```typescript
 import { BullServiceFactory } from '@pikku/queue-bullmq'
 
-// Connects to Redis via the REDIS_URL env var by default.
-// Pass ioredis ConnectionOptions to override (e.g. { host, port }).
+// Defaults to ioredis' own default connection (localhost:6379).
+// Pass ioredis ConnectionOptions to override (e.g. { host, port }),
+// or parse REDIS_URL yourself.
 const bullFactory = new BullServiceFactory()
 await bullFactory.init()
 ```
@@ -130,6 +131,12 @@ needed:
 
 ```typescript
 import './.pikku/pikku-bootstrap.gen.js'
+
+// createSingletonServices must have run first — registerQueues reads the
+// logger out of the initialised singleton services.
+const singletonServices = await createSingletonServices(config, {
+  queueService: bullFactory.getQueueService(),
+})
 
 const queueWorkers = bullFactory.getQueueWorkers()
 await queueWorkers.registerQueues()
@@ -166,7 +173,7 @@ const schedulerService = bullFactory.getSchedulerService()
 const singletonServices = await createSingletonServices(config, {
   queueService: bullFactory.getQueueService(),
   schedulerService,
-  workflowService: new RedisWorkflowService(process.env.REDIS_URL),
+  workflowService: new RedisWorkflowService(process.env.REDIS_URL!),
 })
 
 // Register queue workers (includes the workflow queues)

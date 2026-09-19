@@ -184,7 +184,7 @@ export const checkInventory = pikkuSessionlessFunc<
   { productId: string },
   { available: boolean }
 >({
-  func: async (services, { productId }, { graph }) => {
+  func: async (_services, { productId }, { graph }) => {
     const stock = await getStock(productId)
 
     if (stock.discontinued) {
@@ -227,7 +227,7 @@ export const updateProgress = pikkuSessionlessFunc<
   { step: string },
   { updated: boolean }
 >({
-  func: async (services, { step }, { graph }) => {
+  func: async (_services, { step }, { graph }) => {
     const state = await graph.getState()
     const completedSteps = (state.completedSteps as string[]) || []
 

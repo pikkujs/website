@@ -15,8 +15,9 @@ When your application runs across multiple instances (microservices, scaled depl
 1. Each instance registers with DeploymentService (ID, endpoint, functions)
 2. Instances send periodic heartbeats to stay active
 3. When rpc.remote('functionName', data) is called:
-   a. DeploymentService finds which instance hosts that function
-   b. Pikku makes an HTTP POST to that instance's endpoint
+   a. Pikku hands the call to DeploymentService.invoke(funcName, data, ...)
+   b. The deployment service invokes the function on that instance - it owns
+      resolving the target and the transport
    c. The result is returned to the caller
 4. On shutdown, instances deregister themselves
 ```
@@ -127,7 +128,12 @@ interface DeploymentService {
   init(): Promise<void>
   start(config: DeploymentConfig): Promise<void>
   stop(): Promise<void>
-  findFunction(name: string): Promise<DeploymentInfo[]>
+  invoke(
+    funcName: string,
+    data: unknown,
+    session?: unknown,
+    traceId?: string
+  ): Promise<unknown>
 }
 
 interface DeploymentConfig {

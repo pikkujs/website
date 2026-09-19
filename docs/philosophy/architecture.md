@@ -359,6 +359,7 @@ wireHTTP({
 
 wireChannel({
   name: 'admin-events',
+  route: '/admin-events',
   onConnect: handleAdminConnect,
   tags: ['admin', 'events']
 })

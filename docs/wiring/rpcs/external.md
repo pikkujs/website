@@ -34,10 +34,10 @@ import { pikkuSessionlessFunc } from '#pikku/function'
 
 // Generic RPC caller function
 export const rpcCaller = pikkuSessionlessFunc<
-  { name: string; data: unknown },
+  { rpcName: string; data: unknown },
   unknown
->(async (services, { name, data }, { rpc }) => {
-  return await rpc.exposed(name, data)
+>(async (_services, { rpcName, data }, { rpc }) => {
+  return await rpc.exposed(rpcName, data)
 })
 
 // Wire it to HTTP

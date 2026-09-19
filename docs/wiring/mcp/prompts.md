@@ -31,8 +31,8 @@ export const dynamicPromptGenerator = pikkuMCPPromptFunc<{
   topic: string
   complexity: 'beginner' | 'intermediate' | 'advanced'
   includeExamples?: boolean
-}>(async (services, { topic, complexity, includeExamples = false }) => {
-  services.logger.info(
+}>(async ({ logger }, { topic, complexity, includeExamples = false }) => {
+  logger.info(
     `Generating progressive enhancement content for: ${topic} (${complexity})`
   )
 

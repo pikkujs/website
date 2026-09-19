@@ -15,7 +15,7 @@ Pikku integrates with Next.js App Router, letting you call Pikku functions from 
 Install the runtime package:
 
 ```bash
-npm install @pikku/next
+npm install @pikku/next @pikku/core
 ```
 
 Configure the CLI to generate the Next.js integration files in `pikku.config.json`:

@@ -34,12 +34,13 @@ const workflowService = new RedisWorkflowService(redis)
 await workflowService.init()
 ```
 
-**Constructor:** `new RedisWorkflowService(connectionOrConfig, keyPrefix?)`
+**Constructor:** `new RedisWorkflowService(connectionOrConfig, keyPrefix = 'workflows', options?: WorkflowQueueOptions)`
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `connectionOrConfig` | `Redis \| RedisOptions \| string` | — | ioredis connection, options, or URL |
-| `keyPrefix` | `string` | `'pikku:'` | Key prefix for all Redis keys |
+| `keyPrefix` | `string` | `'workflows'` | Key prefix for all Redis keys |
+| `options` | `WorkflowQueueOptions` | `{}` | Workflow queue overrides |
 
 ### RedisWorkflowRunService
 

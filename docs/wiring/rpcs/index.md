@@ -18,7 +18,7 @@ Internal RPCs are function-to-function calls within your application. Use `rpc.i
 import { pikkuFunc } from '#pikku/function'
 
 export const processOrder = pikkuFunc<OrderInput, OrderResult>({
-  func: async (services, data, { rpc }) => {
+  func: async (_services, data, { rpc }) => {
     // Internal RPC - calls another function
     const totals = await rpc.invoke('calculateOrderTotal', {
       items: data.items
@@ -78,7 +78,7 @@ Remote RPCs let you invoke functions hosted on other instances — across micros
 
 ```typescript
 export const processOrder = pikkuFunc<OrderInput, OrderResult>({
-  func: async (services, data, { rpc }) => {
+  func: async (_services, data, { rpc }) => {
     // Remote RPC - calls a function on another instance
     const result = await rpc.remote('generateInvoice', {
       orderId: data.orderId

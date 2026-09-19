@@ -11,7 +11,8 @@ The Kysely packages provide storage implementations using the [Kysely](https://k
 
 | Package | Database | Driver |
 |---------|----------|--------|
-| `@pikku/kysely` | PostgreSQL | `postgres.js` via `kysely-postgres-js` |
+| `@pikku/kysely` | — | Dialect-agnostic services, plugins and schemas (required by all of the below) |
+| `@pikku/kysely-postgres` | PostgreSQL | `postgres.js` via `kysely-postgres-js` |
 | `@pikku/kysely-mysql` | MySQL | `mysql2` via `kysely` |
 | `@pikku/kysely-sqlite` | SQLite | `better-sqlite3` via `kysely` |
 | `@pikku/kysely-node-sqlite` | SQLite | Node's built-in `node:sqlite` |
@@ -23,7 +24,7 @@ All packages export the same service interfaces — choose the one matching your
 
 **PostgreSQL:**
 ```bash
-npm install @pikku/kysely kysely kysely-postgres-js postgres
+npm install @pikku/kysely @pikku/kysely-postgres kysely kysely-postgres-js postgres
 ```
 
 **MySQL:**
@@ -50,7 +51,7 @@ bun add @pikku/kysely-sqlite @pikku/kysely-bun-sqlite kysely
 Connection manager and database abstraction. All other Kysely services require an instance of this.
 
 ```typescript
-import { PikkuKysely } from '@pikku/kysely'
+import { PikkuKysely } from '@pikku/kysely-postgres'
 import postgres from 'postgres'
 
 const sql = postgres(process.env.DATABASE_URL!)
@@ -58,13 +59,14 @@ const db = new PikkuKysely(logger, sql)
 await db.init()
 ```
 
-**Constructor:** `new PikkuKysely(logger, connectionOrConfig, defaultSchemaName?)`
+**Constructor:** `new PikkuKysely(logger, connectionOrConfig, defaultSchemaName?, poolConfig?)`
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `logger` | `Logger` | — | Pikku logger instance |
-| `connectionOrConfig` | `postgres.Sql \| postgres.Options` | — | Postgres connection or config |
+| `connectionOrConfig` | `postgres.Sql \| postgres.Options \| string` | — | Postgres connection, config object, or connection string |
 | `defaultSchemaName` | `string` | — | Default schema for table creation |
+| `poolConfig` | `PostgresConfig` | — | Connection pool overrides |
 
 ### KyselyAgentStorageService
 
@@ -211,8 +213,8 @@ async function customQuery(db: Kysely<KyselyPikkuDB>) {
 ## Full Example
 
 ```typescript
+import { PikkuKysely } from '@pikku/kysely-postgres'
 import {
-  PikkuKysely,
   KyselyAgentStorageService,
   KyselyAgentRunService,
   KyselyWorkflowService,

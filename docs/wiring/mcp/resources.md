@@ -55,7 +55,7 @@ export const getUserInfo = pikkuFunc<
 
 // MCP adapter - just formats the response for AI agents
 export const getUserInfoMCP = pikkuMCPResourceFunc<{ userId: string }>(
-  async (services, data, { rpc }) => {
+  async (_services, data, { rpc }) => {
     const user = await rpc.invoke('getUserInfo', data)
 
     return [
@@ -109,7 +109,7 @@ Then the MCP adapter:
 
 ```typescript
 export const getProjectReadmeMCP = pikkuMCPResourceFunc<void>(
-  async (services, data, { rpc }) => {
+  async (_services, _data, { rpc }) => {
     const readme = await rpc.invoke('getProjectReadme', {})
 
     return [
@@ -148,7 +148,7 @@ The MCP adapter that formats results:
 
 ```typescript
 export const searchDocsMCP = pikkuMCPResourceFunc<{ query: string; limit?: number }>(
-  async (services, data, { rpc }) => {
+  async (_services, data, { rpc }) => {
     const results = await rpc.invoke('searchDocs', data)
 
     // Return multiple resource objects
@@ -246,7 +246,7 @@ The MCP adapter just formats the result:
 
 ```typescript
 export const getFileMCP = pikkuMCPResourceFunc<{ path: string }>(
-  async (services, data, { rpc }) => {
+  async (_services, data, { rpc }) => {
     const file = await rpc.invoke('getFile', data)
 
     return [
@@ -291,7 +291,7 @@ The MCP adapter returns multiple resource objects:
 
 ```typescript
 export const getRelatedDocsMCP = pikkuMCPResourceFunc<{ docId: string }>(
-  async (services, data, { rpc }) => {
+  async (_services, data, { rpc }) => {
     const result = await rpc.invoke('getRelatedDocs', data)
 
     // Return the main doc and all related docs

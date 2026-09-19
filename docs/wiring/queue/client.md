@@ -16,15 +16,24 @@ When you run `npx pikku`, Pikku generates a type-safe queue client:
 ```typescript
 // .pikku/pikku-queue.gen.ts
 import type { QueueService, QueueJob } from '@pikku/core/queue'
+import type { Safe } from '@pikku/core/classification'
+import type { QueueMap, TypedPikkuQueue } from './queue/pikku-queue-workers-wirings-map.gen.d.js'
 
-export class PikkuQueue {
+export class PikkuQueue implements TypedPikkuQueue {
   constructor(private queueService: QueueService) {}
 
   // Type-safe methods for each registered queue
   async add<Name extends keyof QueueMap>(
     queueName: Name,
-    data: QueueMap[Name]['input'],
-    options?: JobOptions
+    data: Safe<QueueMap[Name]['input']>,
+    options?: {
+      priority?: number
+      delay?: number
+      attempts?: number
+      removeOnComplete?: number
+      removeOnFail?: number
+      jobId?: string
+    }
   ): Promise<string>
 
   async getJob<Name extends keyof QueueMap>(
@@ -83,12 +92,15 @@ const jobId = await queueClient.add('email-queue',
     priority: 1,             // Job priority (lower = higher priority)
     delay: 5000,             // Wait 5 seconds before processing
     attempts: 5,             // Retry up to 5 times
-    backoff: { type: 'exponential', delay: 1000 },
     removeOnComplete: 100,   // Keep last 100 completed jobs
     jobId: 'unique-job-1'    // Custom job ID
   }
 )
 ```
+
+The generated client narrows the option type to the keys above. Core's
+`JobOptions` carries more — `backoff`, for example — but those are only
+reachable through the untyped `queueService` directly.
 
 ## Job Monitoring
 
@@ -160,7 +172,7 @@ Not yet implemented
 
 Cancel jobs that haven't started processing:
 
-```typescript
+```typescript title="Not implemented"
 const jobId = await queueClient.add('long-task', taskData)
 // Remove if needed
 await queueClient.remove('long-task', jobId)
@@ -174,10 +186,10 @@ Not yet implemented
 
 Manually retry failed jobs:
 
-```typescript
+```typescript title="Not implemented"
 const job = await queueClient.getJob('email-queue', jobId)
 
-if (job.status === 'failed') {
+if ((await job.status()) === 'failed') {
   const newJobId = await queueClient.retry('email-queue', jobId)
   console.log('Job retried with new ID:', newJobId)
 }
