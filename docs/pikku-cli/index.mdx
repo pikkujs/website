@@ -289,6 +289,26 @@ npx pikku skills install --client     # Only skills tagged installGroups: [clien
 npx pikku skills install --update     # Overwrite existing skills
 ```
 
+When the target agent dispatches subagents, `--agent pi` also projects one agent
+definition per skill that declares an `agent:` block in its frontmatter. Skills
+without one are installed as instructions only: a reference skill has no
+post-condition to judge, and an agent whose acceptance is nothing is a subagent
+sent to read what its caller could have read itself.
+
+```bash
+npx pikku skills install --agent pi --agent-dir ~/.pi/agents
+npx pikku skills install --agent pi --agent-skill-dir .agents/skills
+npx pikku skills install --agent pi --agent-extensions guard,model-router
+```
+
+`--agent-dir` writes the projected agents somewhere other than beside the skills,
+for a host that discovers subagents from a global directory rather than from the
+repository. `--agent-skill-dir` tells those agents where the skills will end up,
+for a host that relocates them after installing. `--agent-extensions` belongs to
+whoever runs the agent rather than to the instructions it follows — a sandbox
+fences its writers and routes their model; the same skill on a developer's
+checkout needs neither.
+
 ### `pikku meta`
 
 Inspect project metadata in machine-readable form (for planners and tooling).
