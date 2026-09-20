@@ -194,6 +194,39 @@ usePikkuQuery('getUser', { wrong: 'field' })
 usePikkuInfiniteQuery('getUser', { userId: '123' })
 ```
 
+## Dates come back mixed, and the type system won't tell you
+
+The generated clients run `transformDates` over every response. It revives **fully-zoned
+ISO-8601 instants** — `2026-03-14T08:12:00Z`, `2026-03-14T08:12:00.000+01:00` — into `Date`
+objects, and leaves everything else exactly as the server sent it. A bare `2026-03-14`, a
+zoneless `2026-03-14T08:12:00` and an impossible `2026-02-31T00:00:00Z` all stay strings.
+
+So a field's runtime type follows the **value**, not the schema: the same column can arrive
+as a `Date` from one row and a string from the next. Both ways of getting this wrong
+compile:
+
+```tsx
+const { data } = usePikkuQuery('listOrders', {})
+
+// ❌ Throws at runtime — there is no string to slice
+<Text>{data.createdAt.split('T')[0]}</Text>
+
+// ❌ Throws "Objects are not valid as a React child (found: [object Date])"
+//    and drops the route into its error boundary
+<Text>{data.createdAt}</Text>
+```
+
+Format before rendering, with a library that accepts either:
+
+```tsx
+import dayjs from 'dayjs'
+
+<Text>{dayjs(data.createdAt).format('D MMM YYYY, HH:mm')}</Text>
+```
+
+Coercing instead of formatting (`` `${d}` ``, `String(d)`) does not crash, but prints
+`Mon Jun 15 2026 02:00:00 GMT+0200`.
+
 ## Next Steps
 
 - [Exposed RPCs](./external.md) — How functions get exposed to clients
