@@ -136,6 +136,30 @@ export const runDatabaseOperations = pikkuSessionlessFunc<void, void>({
 })
 ```
 
+### Calling an addon over HTTP
+
+`rpc.invoke` reaches any addon function. `rpc.exposed`, which is what the generated `POST /rpc/:rpcName` endpoint forwards to, only reaches the functions you choose to expose. By default that is whatever the addon itself marked `expose: true`. `wireAddon`'s `expose` option overrides it for that instance:
+
+```typescript title="wirings/addons.wirings.ts"
+import { wireAddon } from '#pikku/addon'
+
+// Exactly these two, whether or not the addon marked them exposed
+wireAddon({ name: 'shop', package: '@acme/addon-shop', expose: ['getOrder', 'listOrders'] })
+
+// Nothing from this instance is reachable through rpc.exposed
+wireAddon({ name: 'billing', package: '@acme/addon-billing', expose: false })
+```
+
+| `expose` | Reachable through `rpc.exposed` |
+|----------|---------------------------------|
+| unset or `true` | the functions the addon declared `expose: true` |
+| `false` | none |
+| `['a', 'b']` | exactly `a` and `b` |
+
+The list is typed against the functions the addon publishes, and a name it doesn't publish fails the build with [PKU343](../pikku-cli/errors/pku343.md). The setting belongs to the instance, so two `wireAddon` calls for the same package can expose different things. Deploys follow it too: the unit that serves an addon's `/rpc` routes only carries the functions its wiring exposes. `rpc.invoke` from your own functions isn't affected, because a unit whose code invokes an addon function bundles that addon itself.
+
+`expose` controls what can be reached, not who can call it. An exposed function still runs its own `auth` and permissions, plus the instance's `auth` and `scopes`. If you list a sessionless function and none of those gate it, it is public.
+
 ## Type Safety
 
 The CLI generates type definitions for all addon functions. Your IDE provides full autocompletion and type checking for both inputs and outputs:
