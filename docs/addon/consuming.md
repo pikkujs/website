@@ -156,7 +156,7 @@ wireAddon({ name: 'billing', package: '@acme/addon-billing', expose: false })
 | `false` | none |
 | `['a', 'b']` | exactly `a` and `b` |
 
-The list is typed against the functions the addon publishes, and a name it doesn't publish fails the build with [PKU343](../pikku-cli/errors/pku343.md). The setting belongs to the instance, so two `wireAddon` calls for the same package can expose different things. Deploys follow it too: an addon's deploy unit only carries the functions its wiring exposes.
+The list is typed against the functions the addon publishes, and a name it doesn't publish fails the build with [PKU343](../pikku-cli/errors/pku343.md). The setting belongs to the instance, so two `wireAddon` calls for the same package can expose different things. Deploys follow it too: the unit that serves an addon's `/rpc` routes only carries the functions its wiring exposes. `rpc.invoke` from your own functions isn't affected, because a unit whose code invokes an addon function bundles that addon itself.
 
 `expose` controls what can be reached, not who can call it. An exposed function still runs its own `auth` and permissions, plus the instance's `auth` and `scopes`. If you list a sessionless function and none of those gate it, it is public.
 
