@@ -78,6 +78,9 @@ my-integration/
 │   ├── services.ts                     # Service factory (pikkuAddonServices)
 │   ├── my-integration-api.service.ts   # API client class
 │   ├── my-integration.types.ts         # Zod schemas for API types
+│   ├── functions/                      # With --openapi, one pair per operation:
+│   │   ├── getRepo.function.ts         #   the function
+│   │   └── getRepo.schemas.ts          #   its input/output schemas
 │   ├── my-integration.secret.ts        # Secret definition (with --secret)
 │   ├── my-integration.variable.ts      # Variable definition (with --variable)
 │   └── my-integration.credential.ts    # Credential wiring (with --credential/--oauth)
@@ -216,22 +219,40 @@ export const createWireServices = pikkuAddonWireServices(
 
 ### Write Functions
 
-Functions use your injected services like any other Pikku function:
+Functions use your injected services like any other Pikku function. Declare their
+schemas in a file of their own, one that never imports `#pikku`:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/addon/function'
+```typescript title="src/functions/mailSend.schemas.ts"
 import { z } from 'zod'
+
+export const MailSendInput = z.object({
+  to: z.string(),
+  subject: z.string(),
+  body: z.string(),
+})
+export const MailSendOutput = z.object({ success: z.boolean() })
+```
+
+```typescript title="src/functions/mailSend.function.ts"
+import { pikkuSessionlessFunc } from '#pikku/addon/function'
+import { MailSendInput, MailSendOutput } from './mailSend.schemas.js'
 
 export const mailSend = pikkuSessionlessFunc({
   description: 'Sends an email through SendGrid',
-  input: z.object({ to: z.string(), subject: z.string(), body: z.string() }),
-  output: z.object({ success: z.boolean() }),
+  input: MailSendInput,
+  output: MailSendOutput,
   func: async ({ sendgrid }, data) => {
     await sendgrid.request('POST', '/mail/send', { body: data })
     return { success: true }
   },
 })
 ```
+
+`pikku all` loads the file that declares each schema to turn it into JSON Schema.
+Inside an addon, `#pikku` resolves through the package's `imports` into `dist/`,
+which the first build has not written yet — so a schema declared next to a
+`#pikku` import fails with `Could not convert Zod schema … Cannot find module
+…/dist/.pikku/…`, and the addon never builds from a clean checkout.
 
 ### Export Functions
 
@@ -290,7 +311,7 @@ addon reaches.
 When you pass `--openapi`, the CLI parses the spec and generates:
 
 - Zod schemas for all request/response types
-- Function files for each API operation
+- A function file for each API operation, with its schemas in a sibling `<operation>.schemas.ts`
 - Typed API service with correct endpoints
 - MCP tool metadata (with `--mcp`)
 
