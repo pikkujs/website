@@ -46,9 +46,12 @@ whole table and `pikku:console:secrets` grants both secret leaves.
 An externally hosted Console cannot carry the session cookie, so it
 authenticates with `Authorization: Bearer <PIKKU_CONSOLE_TOKEN>` instead. The
 session that bearer token mints holds the two roots — `admin` and `pikku` —
-rather than a `*` wildcard, so it reaches every Console capability and none of
-the scopes your own app declares. Nothing needs configuring for that path
-beyond setting the secret.
+rather than a `*` wildcard, so it reaches every Console capability without
+reaching your app's other roots. Because a root grants everything beneath it,
+though, it **does** reach any scope your app declares under `admin` or
+`pikku` — an `admin:billing:refund` of your own, say. Treat the token as an administrator
+credential, or keep your own scopes under roots of your own. Nothing needs
+configuring for that path beyond setting the secret.
 
 ## Granting less than everything
 

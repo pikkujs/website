@@ -1,4 +1,4 @@
-# AGENTS.md — pikku.dev
+# CLAUDE.md — pikku.dev
 
 ## Rule one: the website never writes code
 

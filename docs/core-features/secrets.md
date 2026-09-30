@@ -74,7 +74,7 @@ auth-facing services type is bounded by `SecretlessServices<Services>`, which is
 `Omit<Services, 'secrets'>`. Destructuring `secrets` inside a `pikkuFunc` body
 is a compile error, not a lint:
 
-```
+```text
 Property 'secrets' does not exist on type 'WiredServices'
 ```
 

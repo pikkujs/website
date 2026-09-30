@@ -123,7 +123,7 @@ whole reason these are two commands and not one boot-time reconciliation.
 
 An addon declares its own scopes with `defineScope` exactly as an app does, and
 they are merged into the host's `ScopeId` union when the addon is wired — that
-is what lets one of your roles grant a scope an addon defined.
+is what lets one of your roles grant an addon-defined scope.
 
 Two rules govern the merge, and both bite at the **root** level:
 

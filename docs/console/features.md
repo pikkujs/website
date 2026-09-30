@@ -9,7 +9,7 @@ ai: true
 
 The Console sidebar groups your application into a handful of sections — **Run**, **Data**, **Config**, **Users**, and **Changes** — plus an overview dashboard. Everything is derived from the registry the Pikku CLI generates, so it always matches your code.
 
-Each section below is gated on its own scope, so you can hand someone the workflow pages without handing them your secrets — see [Console Scopes](./scopes.md).
+Most sections are gated on their own `pikku:console:*` scope, so you can hand someone the workflow pages without handing them your secrets. [Console Scopes](./scopes.md) lists every scope the Console declares; the user directory is the exception, gated on the separate `admin` tree instead.
 
 ## Overview
 
