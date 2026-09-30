@@ -162,6 +162,23 @@ npx pikku new addon my-integration --camel-case   # Convert snake_case to camelC
 
 `new addon` also takes `--display-name`, `--description`, `--category` (default `General`), `--dir/-d` to choose where the package lands, `--no-test` to skip the test harness, and `--no-build` to skip install + build. The package is created at `<scaffold.addonDir>/addon-<name>` (default: the current working directory).
 
+### `pikku app`
+
+Every app command lives here. An app is an entry in [`frontends`](./configuration.md#frontends).
+
+```bash
+npx pikku app new admin --serves staff --personas manager   # a second frontend, from the starter template
+npx pikku app list                                          # every app, where it lives, how it ships
+
+npx pikku app native init admin                  # package it as a desktop/mobile app
+npx pikku app native init admin --android --plugins store,biometric
+npx pikku app native add admin haptics           # add native plugins
+npx pikku app native upgrade admin               # re-apply the config to the project
+npx pikku app native check                       # compare every native project with the config
+```
+
+`native init` takes `--desktop`, `--android` and `--ios` (platforms), `--identifier`, `--product-name`, `--url <origin>` (open a deployed server instead of bundling the UI), `--bundle-server` (ship the compiled server inside a desktop app) and `--plugins`. The flags are saved into `frontends.<name>.native`; every later command reads the config. See [Native Apps](../deploy/native-apps.md).
+
 ### `pikku enable`
 
 Enable Pikku features by setting `scaffold.<feature> = true` in `pikku.config.json`:
@@ -203,7 +220,7 @@ npx pikku deploy apply --from-plan       # Deploy from existing plan output
 npx pikku deploy info                    # Show current deployment state
 ```
 
-`plan` and `apply` accept `--provider/-p` (default: `cloudflare`), `--runtime node|bun` for the standalone provider (bundle.js vs compiled executable, default `node`), and `--result-file <path>` to write a structured JSON result. `apply` also takes `--desktop` (generate a `src-tauri/` shell that runs the compiled binary as a sidecar) and `--desktop-url` (point that shell at an already-deployed server instead of bundling one). `info` takes `--provider`.
+`plan` and `apply` accept `--provider/-p` (default: `cloudflare`), `--runtime node|bun` for the standalone provider (bundle.js vs compiled executable, default `node`), and `--result-file <path>` to write a structured JSON result. A standalone `--runtime bun` apply also installs the compiled binary into every native app with `native.bundleServer` set. `info` takes `--provider`.
 
 **Providers:** `cloudflare` (default), `serverless`, `azure`, `standalone` — extendable via the `deploy.providers` map in `pikku.config.json`
 

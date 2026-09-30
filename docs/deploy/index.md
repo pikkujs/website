@@ -456,7 +456,9 @@ Install the dialect the build needs — `@pikku/kysely-node-sqlite` for a node
 bundle, `@pikku/kysely-bun-sqlite` for a compiled bun binary, or
 `@pikku/kysely-postgres` — or the bundle cannot resolve it.
 
-Adding `--desktop` to a `--runtime bun` build also generates a Tauri shell that runs the binary as a sidecar; `--desktop-url` points that shell at an already-deployed server and bundles nothing. Desktop builds are unsigned and do not auto-update.
+The frontend it embeds is the one in `frontends` that sets `serve` — see [Frontends](../pikku-cli/configuration.md#frontends). Build it first; the deploy reads `dist` and never builds it.
+
+A `--runtime bun` build also installs the compiled binary into every native app whose `native.bundleServer` is set, so the desktop app runs its own server as a sidecar. See [Native Apps](./native-apps.md).
 
 Good for self-hosted deployments, on-premise, edge devices, or handing someone an app.
 
