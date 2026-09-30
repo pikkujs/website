@@ -48,6 +48,7 @@ const EXTRA_ROOTS = [
 ]
 const OUTPUT_FILE      = path.resolve(__dirname, '../src/data/snippets.json')
 const OUTPUT_META_FILE = path.resolve(__dirname, '../src/data/snippets-meta.json')
+const OUTPUT_REVISION_FILE = path.resolve(__dirname, '../src/data/snippets-revision.json')
 
 if (!fs.existsSync(SUBMODULE_SRC)) {
   console.error('[extract-snippets] Submodule not initialised. Run: git submodule update --init .pikku-core')
@@ -170,6 +171,14 @@ if (problems.length > 0) {
 fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true })
 fs.writeFileSync(OUTPUT_FILE, JSON.stringify(all, null, 2) + '\n')
 fs.writeFileSync(OUTPUT_META_FILE, JSON.stringify(origins, null, 2) + '\n')
+
+/* Source links point at the commit the snippets were extracted from, not at
+   main, so a link never lands on a file that has since moved or changed. */
+const revision = execSync('git rev-parse HEAD', {
+  cwd: SUBMODULE_ROOT,
+  encoding: 'utf8',
+}).trim()
+fs.writeFileSync(OUTPUT_REVISION_FILE, JSON.stringify({ revision }, null, 2) + '\n')
 
 const count = Object.keys(all).length
 console.log(`[extract-snippets] Wrote ${count} snippet${count !== 1 ? 's' : ''} → src/data/snippets.json`)

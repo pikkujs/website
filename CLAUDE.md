@@ -60,7 +60,8 @@ Details worth knowing:
 - **`pikku.config.json` carries no comments**, so its `scenarios` block is
   extracted by name as `scenarioConfig` in `scripts/extract-snippets.js`.
 - **`snippets-meta.json` records where each snippet came from**, and
-  `snippetSourceUrl(name)` turns that into a GitHub link. Show it. A sample that
+  `snippetSourceUrl(name)` turns that into a GitHub link pinned to the
+  submodule commit recorded in `snippets-revision.json`. Show it. A sample that
   links back to a compiling file is the whole point of this rule.
 - **An invalid region fails the sync.** A `@snippet start` with no matching
   end, or a name used twice, makes `npm run sync-snippets` exit non-zero and

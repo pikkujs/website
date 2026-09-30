@@ -1,6 +1,9 @@
 import snippetsMeta from '../data/snippets-meta.json'
+import snippetsRevision from '../data/snippets-revision.json'
 
-const GITHUB_REPO = 'https://github.com/pikkujs/pikku/blob/main'
+/* The .pikku-core commit sync-snippets extracted from, so a source link shows
+   exactly the code the page renders rather than whatever main holds now. */
+const GITHUB_REPO = `https://github.com/pikkujs/pikku/blob/${snippetsRevision.revision}`
 const SNIPPET_ROOT = 'examples/online-shop/src'
 
 /**
