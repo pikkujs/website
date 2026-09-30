@@ -26,21 +26,42 @@ npm install @pikku/redis ioredis
 Workflow orchestration with Redis persistence using hashes and sorted sets.
 
 ```typescript
-import { RedisWorkflowService } from '@pikku/redis'
+import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
 import Redis from 'ioredis'
 
 const redis = new Redis(process.env.REDIS_URL!)
-const workflowService = new RedisWorkflowService(redis)
+const leaseService = new RedisLeaseService(redis)
+const workflowService = new RedisWorkflowService(redis, { leaseService })
 await workflowService.init()
 ```
 
-**Constructor:** `new RedisWorkflowService(connectionOrConfig, keyPrefix = 'workflows', options?: WorkflowQueueOptions)`
+**Constructor:** `new RedisWorkflowService(connectionOrConfig, options: WorkflowServiceOptions & { keyPrefix?: string })`
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `connectionOrConfig` | `Redis \| RedisOptions \| string` | — | ioredis connection, options, or URL |
-| `keyPrefix` | `string` | `'workflows'` | Key prefix for all Redis keys |
-| `options` | `WorkflowQueueOptions` | `{}` | Workflow queue overrides |
+| `connectionOrConfig` | `Redis \| RedisOptions \| string \| undefined` | — | ioredis connection, options, or URL |
+| `options.leaseService` | `LeaseService` | — | Required. Locks runs and steps; register the same instance as `leaseService` |
+| `options.keyPrefix` | `string` | `'workflows'` | Key prefix for all Redis keys |
+| `options.queueStrategy`, `queueConcurrency`, `queueGroupConcurrency` | `WorkflowQueueOptions` | — | Workflow queue overrides |
+
+### RedisLeaseService
+
+Named leases on Redis, shared by every process that uses the same server. The
+workflow service takes one to keep one orchestrator per run; your own
+functions can take it from `leaseService`. Every lease is judged by Redis's own
+clock, so a worker whose clock runs fast can neither take a live lease nor
+stretch its own.
+
+```typescript
+import { RedisLeaseService } from '@pikku/redis'
+
+const leaseService = new RedisLeaseService(redis)
+```
+
+**Constructor:** `new RedisLeaseService(connectionOrConfig, { keyPrefix? })` —
+`connectionOrConfig` is a `Redis` instance, `RedisOptions`, a URL, or
+`undefined`; `keyPrefix` defaults to `'pikku'`. There is no `init()`; call
+`close()` on shutdown.
 
 ### RedisWorkflowRunService
 
@@ -125,6 +146,7 @@ Redis keys use the configured prefix (default `pikku:`) with the following patte
 
 ```typescript
 import {
+  RedisLeaseService,
   RedisWorkflowService,
   RedisChannelStore,
   RedisAgentRunService,
@@ -133,13 +155,15 @@ import Redis from 'ioredis'
 
 const redis = new Redis(process.env.REDIS_URL!)
 
-const workflowService = new RedisWorkflowService(redis)
+const leaseService = new RedisLeaseService(redis)
+const workflowService = new RedisWorkflowService(redis, { leaseService })
 await workflowService.init()
 
 const channelStore = new RedisChannelStore(redis)
 await channelStore.init()
 
 const singletonServices = await createSingletonServices(config, {
+  leaseService,
   workflowService,
   channelStore,
   agentRunService: new RedisAgentRunService(redis),

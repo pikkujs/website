@@ -95,10 +95,15 @@ const agentRunService = new KyselyAgentRunService(db.kysely)
 
 Workflow orchestration with Kysely.
 
+It locks runs and steps on the lease service you pass it — on PostgreSQL
+[`PgKyselyLeaseService`](./postgresql#pgkyselyleaseservice), on MySQL
+`MySQLKyselyLeaseService`, on SQLite [`KyselyLeaseService`](#kyselyleaseservice).
+Register the same instance as `leaseService`.
+
 ```typescript
 import { KyselyWorkflowService } from '@pikku/kysely'
 
-const workflowService = new KyselyWorkflowService(db.kysely)
+const workflowService = new KyselyWorkflowService(db.kysely, { leaseService })
 await workflowService.init()
 ```
 
@@ -110,6 +115,20 @@ Read-only workflow run queries for the Console.
 import { KyselyWorkflowRunService } from '@pikku/kysely'
 
 const workflowRunService = new KyselyWorkflowRunService(db.kysely)
+```
+
+### KyselyLeaseService
+
+Named leases on `pikku_lease`, for SQLite. It reads the clock of
+the process asking, which is only safe when every process shares one host: on
+PostgreSQL use `PgKyselyLeaseService`, and on MySQL `MySQLKyselyLeaseService`,
+which judge leases by the database's clock.
+
+```typescript
+import { KyselyLeaseService } from '@pikku/kysely'
+
+const leaseService = new KyselyLeaseService(db.kysely)
+await leaseService.init()
 ```
 
 ### KyselyChannelStore
@@ -213,7 +232,7 @@ async function customQuery(db: Kysely<KyselyPikkuDB>) {
 ## Full Example
 
 ```typescript
-import { PikkuKysely } from '@pikku/kysely-postgres'
+import { PikkuKysely, PgKyselyLeaseService } from '@pikku/kysely-postgres'
 import {
   KyselyAgentStorageService,
   KyselyAgentRunService,
@@ -230,13 +249,17 @@ await db.init()
 const agentStorage = new KyselyAgentStorageService(db.kysely)
 await agentStorage.init()
 
-const workflowService = new KyselyWorkflowService(db.kysely)
+const leaseService = new PgKyselyLeaseService(db.kysely)
+await leaseService.init()
+
+const workflowService = new KyselyWorkflowService(db.kysely, { leaseService })
 await workflowService.init()
 
 const singletonServices = await createSingletonServices(config, {
   agentStorage,
   agentRunState: agentStorage,
   agentRunService: new KyselyAgentRunService(db.kysely),
+  leaseService,
   workflowService,
   agentRunner: new VercelAgentRunner({
     openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),
@@ -258,10 +281,32 @@ import {
   MySQLKyselyEventHubStore,
   MySQLKyselyDeploymentService,
   MySQLKyselySecretService,
+  MySQLKyselyLeaseService,
 } from '@pikku/kysely-mysql'
 ```
 
-Usage is identical to the PostgreSQL versions — pass a `Kysely<KyselyPikkuDB>` instance backed by a MySQL dialect.
+Usage is identical to the PostgreSQL versions — pass a `Kysely<KyselyPikkuDB>` instance backed by a MySQL dialect:
+
+```typescript
+const leaseService = new MySQLKyselyLeaseService(db)
+await leaseService.init()
+
+const workflowService = new MySQLKyselyWorkflowService(db, { leaseService })
+await workflowService.init()
+```
+
+pikku ships no MySQL migrations, and the runtime tables' `text` primary keys
+are not indexable on MySQL, so create the tables yourself with `varchar` keys.
+The lease table:
+
+```sql
+create table pikku_lease (
+  `key` varchar(255) primary key,
+  holder text not null,
+  token integer not null,
+  expires_at bigint not null
+);
+```
 
 ## SQLite (`@pikku/kysely-sqlite`)
 
@@ -270,6 +315,7 @@ All services have SQLite equivalents with the `SQLite` prefix. The package also 
 ```typescript
 import Database from 'better-sqlite3'
 import { createSQLiteKysely } from '@pikku/kysely-sqlite'
+import { KyselyLeaseService } from '@pikku/kysely'
 import {
   SQLiteKyselyAgentStorageService,
   SQLiteKyselyAgentRunService,
@@ -285,6 +331,12 @@ const db = createSQLiteKysely(new Database('./pikku.db'))
 
 const agentStorage = new SQLiteKyselyAgentStorageService(db)
 await agentStorage.init()
+
+const leaseService = new KyselyLeaseService(db)
+await leaseService.init()
+
+const workflowService = new SQLiteKyselyWorkflowService(db, { leaseService })
+await workflowService.init()
 ```
 
 SQLite is used by the Cloudflare D1 integration (`@pikku/cloudflare/d1`) under the hood.
@@ -302,6 +354,12 @@ const db = createNodeSqliteKysely({ filename: './pikku.db' })
 
 const agentStorage = new SQLiteKyselyAgentStorageService(db)
 await agentStorage.init()
+
+const leaseService = new KyselyLeaseService(db)
+await leaseService.init()
+
+const workflowService = new SQLiteKyselyWorkflowService(db, { leaseService })
+await workflowService.init()
 ```
 
 ## Cleanup

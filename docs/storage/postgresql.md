@@ -132,10 +132,21 @@ const agentRunService = new PgKyselyAgentRunService(pikkuKysely.kysely)
 
 Workflow orchestration with PostgreSQL persistence.
 
-```typescript
-import { PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+It locks runs and steps on the [`PgKyselyLeaseService`](#pgkyselyleaseservice)
+you pass it; register the same instance as `leaseService`.
 
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+```typescript
+import {
+  PgKyselyLeaseService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
+
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+  leaseService,
+})
 await workflowService.init() // Creates tables
 ```
 
@@ -148,6 +159,34 @@ import { PgKyselyWorkflowRunService } from '@pikku/kysely-postgres'
 
 const workflowRunService = new PgKyselyWorkflowRunService(pikkuKysely.kysely)
 ```
+
+### PgKyselyLeaseService
+
+Named leases shared by every process on the database. The workflow engine uses
+it to keep one orchestrator per run; your own functions can take it from
+`leaseService`.
+
+A lease is not a mutex. It ends when it is released or when it runs out, so a
+holder that stalls past its expiry loses the key without knowing. Anything the
+body writes that must not come from a stale holder should check the lease's
+`token`, which rises every time the key changes hands.
+
+```typescript
+import { holdLease } from '@pikku/core/services'
+import { PgKyselyLeaseService } from '@pikku/kysely-postgres'
+
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
+
+// Renewed every 10s while the body runs; a crashed holder blocks others for 30s.
+await holdLease(leaseService, 'nightly-report', async (lease, signal) => {
+  // signal aborts if the lease is lost while this runs
+})
+```
+
+Leases are written and judged on the database's clock (`clock_timestamp()`),
+so workers whose clocks disagree still agree on who holds a key. The table is
+`pikku_lease`; `pikku db generate` writes it.
 
 ### PgKyselyChannelStore
 
@@ -221,6 +260,7 @@ import {
   PikkuKysely,
   PgKyselyAgentStorageService,
   PgKyselyAgentRunService,
+  PgKyselyLeaseService,
   PgKyselyWorkflowService,
 } from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
@@ -233,13 +273,19 @@ await pikkuKysely.init()
 const agentStorage = new PgKyselyAgentStorageService(pikkuKysely.kysely)
 await agentStorage.init()
 
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+  leaseService,
+})
 await workflowService.init()
 
 const singletonServices = await createSingletonServices(config, {
   agentStorage,
   agentRunState: agentStorage,
   agentRunService: new PgKyselyAgentRunService(pikkuKysely.kysely),
+  leaseService,
   workflowService,
   agentRunner: new VercelAgentRunner({
     openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),

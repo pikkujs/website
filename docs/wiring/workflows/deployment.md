@@ -30,7 +30,7 @@ npm install @pikku/queue-bullmq @pikku/redis
 ```typescript
 import { PikkuExpressServer } from '@pikku/express'
 import { BullServiceFactory } from '@pikku/queue-bullmq'
-import { RedisWorkflowService } from '@pikku/redis'
+import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
 import { InMemoryTriggerService } from '@pikku/core/services'
 import { createConfig, createSingletonServices } from './services.js'
 import '#pikku/pikku-bootstrap.gen.js'
@@ -42,8 +42,11 @@ async function main() {
   const bullFactory = new BullServiceFactory()
   await bullFactory.init()
 
-  // 2. Create workflow state store (Redis-backed)
-  const workflowService = new RedisWorkflowService(process.env.REDIS_URL)
+  // 2. Create workflow state store (Redis-backed), locking runs on Redis leases
+  const leaseService = new RedisLeaseService(process.env.REDIS_URL)
+  const workflowService = new RedisWorkflowService(process.env.REDIS_URL, {
+    leaseService,
+  })
 
   // 3. Create scheduler
   const schedulerService = bullFactory.getSchedulerService()
@@ -52,6 +55,7 @@ async function main() {
   const singletonServices = await createSingletonServices(config, {
     queueService: bullFactory.getQueueService(),
     schedulerService,
+    leaseService,
     workflowService,
   })
 
@@ -92,7 +96,11 @@ npm install @pikku/queue-pg-boss @pikku/kysely-postgres
 ```typescript
 import { PikkuExpressServer } from '@pikku/express'
 import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
-import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import {
+  PikkuKysely,
+  PgKyselyLeaseService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 import { InMemoryTriggerService, ConsoleLogger } from '@pikku/core/services'
 import { createConfig, createSingletonServices } from './services.js'
@@ -116,19 +124,26 @@ async function main() {
   // 2. Create scheduler
   const schedulerService = pgBossFactory.getSchedulerService()
 
-  // 3. Create workflow state store (PostgreSQL-backed); init() creates its tables
-  const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+  // 3. One orchestrator per run at a time, across every worker
+  const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+  await leaseService.init()
+
+  // 4. Create workflow state store (PostgreSQL-backed); init() creates its tables
+  const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+    leaseService,
+  })
   await workflowService.init()
 
-  // 4. Build singleton services
+  // 5. Build singleton services
   const singletonServices = await createSingletonServices(config, {
     logger,
     queueService: pgBossFactory.getQueueService(),
     schedulerService,
+    leaseService,
     workflowService,
   })
 
-  // 5. Start HTTP server (config, logger)
+  // 6. Start HTTP server (config, logger)
   const appServer = new PikkuExpressServer(
     { ...config, port: 4002, hostname: 'localhost' },
     singletonServices.logger
@@ -137,11 +152,11 @@ async function main() {
   await appServer.init()
   await appServer.start()
 
-  // 6. Register and start queue workers (includes the workflow queues)
+  // 7. Register and start queue workers (includes the workflow queues)
   const pgBossQueueWorkers = pgBossFactory.getQueueWorkers()
   await pgBossQueueWorkers.registerQueues()
 
-  // 7. Start triggers and scheduler
+  // 8. Start triggers and scheduler
   await schedulerService.start()
   const triggerService = new InMemoryTriggerService()
   await triggerService.start()
@@ -156,12 +171,40 @@ PG Boss creates its tables automatically on `init()`. The `PgKyselyWorkflowServi
 
 Set `DATABASE_URL` to your PostgreSQL connection string.
 
+## One Orchestrator Per Run
+
+Every step that finishes sends its run back to the orchestrator queue, so with
+several workers two passes over the same run can arrive at once. Only one may
+run at a time:
+
+| State store | Lease service to pass it |
+|---|---|
+| `RedisWorkflowService` | `RedisLeaseService` (`@pikku/redis`) |
+| `PgKyselyWorkflowService` | `PgKyselyLeaseService` (`@pikku/kysely-postgres`) |
+| `MySQLKyselyWorkflowService` | `MySQLKyselyLeaseService` (`@pikku/kysely-mysql`) |
+| SQLite | `KyselyLeaseService` (`@pikku/kysely`) |
+| `MongoDBWorkflowService` | Any of the above; `@pikku/mongodb` ships none |
+
+Every persistent workflow service takes the lease service as a required
+constructor option, `{ leaseService }`, and locks runs and steps on it; there
+are no database-specific locks underneath. Register the same instance in your
+singleton services as `leaseService`. Each pass holds `workflow-run:<runId>`. A
+pass that finds the run held does not fail and does not spend the queue's
+retries: it wakes the run again a second later and lets the holder finish.
+
+On the SQL stores the lease lives in the `pikku_lease` table, which
+`pikku db generate` writes for any project that runs workflows. A lease is
+judged by the database's clock (Redis's, for `RedisLeaseService`), never by the
+clock of the worker asking, so a worker whose clock runs fast cannot take a run
+another worker still holds. `InMemoryLeaseService` from `@pikku/core/services`
+works for a single process only.
+
 ## Startup Order
 
 The initialization order matters:
 
 1. **Queue factory** — `init()` connects to Redis/PostgreSQL
-2. **Workflow service** — `init()` creates tables (PG Boss only)
+2. **Lease + workflow service** — the lease service is passed to the workflow service; `init()` creates tables (PG Boss only)
 3. **Singleton services** — wires everything together
 4. **Scheduler + workflow setServices** — connects to singleton services
 5. **HTTP server** — starts accepting requests

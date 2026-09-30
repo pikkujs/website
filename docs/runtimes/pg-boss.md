@@ -173,7 +173,11 @@ await queueWorkers.registerQueues()
 
 ```typescript
 import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
-import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import {
+  PikkuKysely,
+  PgKyselyLeaseService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 import './.pikku/pikku-bootstrap.gen.js'
 
@@ -183,7 +187,12 @@ await pgBossFactory.init()
 const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
 await pikkuKysely.init()
 
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+  leaseService,
+})
 await workflowService.init()
 
 const schedulerService = pgBossFactory.getSchedulerService()
@@ -191,6 +200,7 @@ const schedulerService = pgBossFactory.getSchedulerService()
 const singletonServices = await createSingletonServices(config, {
   queueService: pgBossFactory.getQueueService(),
   schedulerService,
+  leaseService,
   workflowService,
 })
 
