@@ -224,8 +224,9 @@ import dayjs from 'dayjs'
 <Text>{dayjs(data.createdAt).format('D MMM YYYY, HH:mm')}</Text>
 ```
 
-Coercing instead of formatting (`` `${d}` ``, `String(d)`) does not crash, but prints
-`Mon Jun 15 2026 02:00:00 GMT+0200`.
+Coercing a revived `Date` instead of formatting it (`` `${d}` ``, `String(d)`) does not crash,
+but prints `Date.prototype.toString()` in the runtime's own time zone and locale format —
+something like `Mon Jun 15 2026 02:00:00 GMT+0200`, and not the same on every device.
 
 ## Next Steps
 
