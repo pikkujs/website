@@ -77,7 +77,7 @@
   --paper-code-dark-kw:        #f0845c;   /* keywords / tags            */
   --paper-code-dark-str:       #8fbf8a;   /* strings / template lits    */
   --paper-code-dark-num:       #e0b34b;   /* numbers / booleans         */
-  --paper-code-dark-cmt:       #6f695c;   /* comments (italic)          */
+  --paper-code-dark-cmt:       #8a8478;   /* comments (italic) — 4.95:1 */
   --paper-code-dark-fn:        #8ab6e0;   /* functions                  */
   --paper-code-dark-type:      #c9a0dc;   /* types / class names        */
   --paper-code-dark-prop:      #7fc4c4;   /* properties / attr-names    */

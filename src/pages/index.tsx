@@ -95,8 +95,7 @@ function CopyCmd({ cmd }: { cmd: string }) {
     setTimeout(() => setState('idle'), 2000);
   };
 
-  const label =
-    state === 'copied' ? '✓ copied' : state === 'failed' ? 'press ⌘C to copy' : cmd;
+  const label = state === 'copied' ? '✓ copied' : cmd;
 
   return (
     <button
@@ -106,6 +105,11 @@ function CopyCmd({ cmd }: { cmd: string }) {
       aria-label={`Copy command: ${cmd}`}
     >
       <span className={styles.heroCmdText}>{label}</span>
+      {state === 'failed' && (
+        <span className={styles.heroCmdHint} aria-hidden="true">
+          copy failed — select the command to copy it
+        </span>
+      )}
       <span className={styles.srOnly} role="status" aria-live="polite">
         {state === 'copied' ? 'Copied to clipboard' : state === 'failed' ? 'Copy failed' : ''}
       </span>
@@ -118,15 +122,17 @@ function CodeCarousel({ slides }: { slides: { label: string; code: React.ReactNo
   const [i, setI] = React.useState(0);
   const tabs = React.useRef<(HTMLButtonElement | null)[]>([]);
 
-  const go = (next: number) => {
+  /* Only arrow keys inside the tablist move focus, as the roving tabindex
+     pattern requires; the ← → buttons keep it so they can be pressed again. */
+  const go = (next: number, focusTab = false) => {
     const n = (next + slides.length) % slides.length;
     setI(n);
-    tabs.current[n]?.focus();
+    if (focusTab) tabs.current[n]?.focus();
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowRight') { e.preventDefault(); go(i + 1); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); go(i - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(i + 1, true); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(i - 1, true); }
   };
 
   return (
