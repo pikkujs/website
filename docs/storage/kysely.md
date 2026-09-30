@@ -112,6 +112,20 @@ import { KyselyWorkflowRunService } from '@pikku/kysely'
 const workflowRunService = new KyselyWorkflowRunService(db.kysely)
 ```
 
+### KyselyLockService
+
+Named, lease-based locks on `pikku_lock`, for SQLite. It reads the clock of
+the process asking, which is only safe when every process shares one host: on
+PostgreSQL use `PgKyselyLockService`, and on MySQL `MySQLKyselyLockService`,
+which judge leases by the database's clock.
+
+```typescript
+import { KyselyLockService } from '@pikku/kysely'
+
+const lockService = new KyselyLockService(db.kysely)
+await lockService.init()
+```
+
 ### KyselyChannelStore
 
 WebSocket channel and subscription persistence.
@@ -258,10 +272,24 @@ import {
   MySQLKyselyEventHubStore,
   MySQLKyselyDeploymentService,
   MySQLKyselySecretService,
+  MySQLKyselyLockService,
 } from '@pikku/kysely-mysql'
 ```
 
 Usage is identical to the PostgreSQL versions — pass a `Kysely<KyselyPikkuDB>` instance backed by a MySQL dialect.
+
+pikku ships no MySQL migrations, and the runtime tables' `text` primary keys
+are not indexable on MySQL, so create the tables yourself with `varchar` keys.
+The lock table:
+
+```sql
+create table pikku_lock (
+  `key` varchar(255) primary key,
+  holder text not null,
+  token integer not null,
+  expires_at bigint not null
+);
+```
 
 ## SQLite (`@pikku/kysely-sqlite`)
 

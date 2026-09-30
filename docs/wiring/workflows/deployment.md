@@ -92,7 +92,11 @@ npm install @pikku/queue-pg-boss @pikku/kysely-postgres
 ```typescript
 import { PikkuExpressServer } from '@pikku/express'
 import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
-import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import {
+  PikkuKysely,
+  PgKyselyLockService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 import { InMemoryTriggerService, ConsoleLogger } from '@pikku/core/services'
 import { createConfig, createSingletonServices } from './services.js'
@@ -120,15 +124,20 @@ async function main() {
   const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
   await workflowService.init()
 
-  // 4. Build singleton services
+  // 4. One orchestrator per run at a time, across every worker
+  const lockService = new PgKyselyLockService(pikkuKysely.kysely)
+  await lockService.init()
+
+  // 5. Build singleton services
   const singletonServices = await createSingletonServices(config, {
     logger,
     queueService: pgBossFactory.getQueueService(),
     schedulerService,
     workflowService,
+    lockService,
   })
 
-  // 5. Start HTTP server (config, logger)
+  // 6. Start HTTP server (config, logger)
   const appServer = new PikkuExpressServer(
     { ...config, port: 4002, hostname: 'localhost' },
     singletonServices.logger
@@ -137,11 +146,11 @@ async function main() {
   await appServer.init()
   await appServer.start()
 
-  // 6. Register and start queue workers (includes the workflow queues)
+  // 7. Register and start queue workers (includes the workflow queues)
   const pgBossQueueWorkers = pgBossFactory.getQueueWorkers()
   await pgBossQueueWorkers.registerQueues()
 
-  // 7. Start triggers and scheduler
+  // 8. Start triggers and scheduler
   await schedulerService.start()
   const triggerService = new InMemoryTriggerService()
   await triggerService.start()
@@ -155,6 +164,30 @@ main()
 PG Boss creates its tables automatically on `init()`. The `PgKyselyWorkflowService` also runs its schema setup on `init()`.
 
 Set `DATABASE_URL` to your PostgreSQL connection string.
+
+## One Orchestrator Per Run
+
+Every step that finishes sends its run back to the orchestrator queue, so with
+several workers two passes over the same run can arrive at once. Only one may
+run at a time:
+
+| State store | What serialises a run |
+|---|---|
+| `RedisWorkflowService` | Redis itself; nothing to register |
+| `PgKyselyWorkflowService` | `PgKyselyLockService` (`@pikku/kysely-postgres`) |
+| `MySQLKyselyWorkflowService` | `MySQLKyselyLockService` (`@pikku/kysely-mysql`) |
+| SQLite | `KyselyLockService` (`@pikku/kysely`) |
+
+On the SQL stores each pass holds `workflow-run:<runId>` from the `lockService`
+you register. A pass that finds the run held does not fail and does not spend
+the queue's retries: it wakes the run again a second later and lets the holder
+finish. A queued app with no `lockService` still runs, unserialised, and says
+so once in its log.
+
+The lock lives in the `pikku_lock` table, which `pikku db generate` writes for
+any project that runs workflows. A lease is judged by the database's clock,
+never by the clock of the worker asking, so a worker whose clock runs fast
+cannot take a run another worker still holds.
 
 ## Startup Order
 

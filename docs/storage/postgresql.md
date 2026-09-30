@@ -149,6 +149,27 @@ import { PgKyselyWorkflowRunService } from '@pikku/kysely-postgres'
 const workflowRunService = new PgKyselyWorkflowRunService(pikkuKysely.kysely)
 ```
 
+### PgKyselyLockService
+
+Named, lease-based locks shared by every process on the database. The workflow
+engine uses it to keep one orchestrator per run; your own functions can take it
+from `lockService`.
+
+```typescript
+import { PgKyselyLockService } from '@pikku/kysely-postgres'
+
+const lockService = new PgKyselyLockService(pikkuKysely.kysely)
+await lockService.init()
+
+await lockService.withLock('nightly-report', async (lease, signal) => {
+  // signal aborts if the lease is lost while this runs
+})
+```
+
+Leases are written and judged on the database's clock (`clock_timestamp()`),
+so workers whose clocks disagree still agree on who holds a key. The table is
+`pikku_lock`; `pikku db generate` writes it.
+
 ### PgKyselyChannelStore
 
 WebSocket channel and subscription persistence.
