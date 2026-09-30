@@ -307,7 +307,6 @@ Configure deployment providers and settings.
 | `deploy.serverlessIncompatible` | `string[]` | Service names that can't run in serverless — any function that reaches one is routed to the server target |
 | `deploy.defaultTarget` | `"serverless"` \| `"server"` | Default deploy target for functions without an explicit `deploy` flag (default: `serverless`) |
 | `deploy.grouping` | `object` | How many deployment units the app's functions collapse into — `{ strategy: "services" \| "function" \| "single", rules: [{ unit, tags?, addon?, routes? }] }` (`services` is the default). See [Deployment unit grouping](../deploy/index.md#deployment-unit-grouping) |
-| `deploy.desktop` | `object` | Desktop shell settings used by `pikku deploy apply --desktop`: `{ identifier?, url? }` |
 
 ## Addon Mode
 
@@ -451,25 +450,46 @@ Configure lint rules. The first three are evaluated by codegen; the last by
 | `wireServicesFactoryType` | `string` | Which wire services factory to use when multiple exist (same as `--wire-services-factory-type`) |
 | `tests.outputDir` | `string` | Output directory for the old `pikku tests` harness. Scenarios own coverage now and no current command reads this key |
 
-### Serving a Frontend
+### Frontends
+
+`frontends` is the one list of the project's apps. `pikku app`, `pikku serve`,
+`pikku deploy`, Fabric and native builds all read it.
 
 ```json
 {
-  "frontend": {
-    "dir": "apps/web/dist",
-    "urlPrefix": "/",
-    "spaFallback": true
+  "frontends": {
+    "web": {
+      "cwd": "apps/web",
+      "primary": true,
+      "kind": "spa",
+      "dev": { "command": ["bun", "run", "dev"], "port": 7105, "healthPath": "/" },
+      "serve": { "urlPrefix": "/", "spaFallback": true }
+    },
+    "admin": {
+      "cwd": "apps/admin",
+      "serves": "staff",
+      "personas": ["manager"],
+      "native": { "identifier": "com.acme.admin", "platforms": ["desktop", "android"] }
+    }
   }
 }
 ```
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `dir` | `string` | Required. Directory of built frontend output, resolved relative to the config file |
-| `urlPrefix` | `string` | Where the frontend is mounted (default: `/`) |
-| `spaFallback` | `boolean` | Serve `index.html` for a path under the prefix that no route and no file claimed (default: `true`) |
+| `cwd` | `string` | Required. The frontend's project directory, where its `package.json` is, relative to the config file |
+| `dist` | `string` | Its build output, relative to `cwd` (default: `dist`). Pikku reads it and never builds it |
+| `primary` | `boolean` | The main app. Exactly one frontend should set it |
+| `deploy` | `boolean` | Whether Fabric deploys it |
+| `kind` | `"spa"` \| `"ssr"` \| `"static"` | How it renders. An `ssr` frontend cannot be bundled into a native app |
+| `dev` | `object` | `{ command, port, healthPath }` — how the dev runner starts it |
+| `serves` / `personas` | `string` / `string[]` | Who the app is for |
+| `serve` | `object` | Serve `dist` from the pikku server's own origin: `{ urlPrefix?, spaFallback? }` (defaults `/` and `true`). At most one frontend may set it |
+| `native` | `object` | Package it as a desktop or mobile app. Written by `pikku app native init` — see [Native Apps](../deploy/native-apps.md) |
 
-This names *output*, not a project: `pikku serve` and `pikku deploy` read the directory and never build it. `pikku dev` ignores it — a frontend dev server owns that job and proxies API calls back to pikku.
+`serve` names *output*, not a project: `pikku serve` and `pikku deploy` read
+`dist` and never build it. `pikku dev` ignores it — a frontend dev server owns
+that job and proxies API calls back to pikku, which is what keeps HMR working.
 
 ### Output File Overrides
 
