@@ -56,7 +56,7 @@ The rest of the interface is runtime plumbing, grouped by concern:
 
 | Group | Methods | Called by |
 |-------|---------|-----------|
-| Run state | `createRun`, `updateRunStatus`, `withRunLock`, `close` | Workflow runtime |
+| Run state | `createRun`, `updateRunStatus`, `withRunLease`, `close` | Workflow runtime |
 | Orchestration | `orchestrateWorkflow`, `runWorkflowJob`, `executeWorkflowSleepCompleted`, `wireQueueWorkers` | Workflow runtime / queue workers |
 | Step state | `insertStepState`, `getStepState`, `setStepRunning`, `setStepScheduled`, `setStepResult`, `setStepChildRunId`, `setStepError`, `createRetryAttempt` | Step executor |
 | Step execution | `executeWorkflowStep` | Queue workers |

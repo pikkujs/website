@@ -94,7 +94,7 @@ import { PikkuExpressServer } from '@pikku/express'
 import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
 import {
   PikkuKysely,
-  PgKyselyLockService,
+  PgKyselyLeaseService,
   PgKyselyWorkflowService,
 } from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
@@ -125,8 +125,8 @@ async function main() {
   await workflowService.init()
 
   // 4. One orchestrator per run at a time, across every worker
-  const lockService = new PgKyselyLockService(pikkuKysely.kysely)
-  await lockService.init()
+  const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+  await leaseService.init()
 
   // 5. Build singleton services
   const singletonServices = await createSingletonServices(config, {
@@ -134,7 +134,7 @@ async function main() {
     queueService: pgBossFactory.getQueueService(),
     schedulerService,
     workflowService,
-    lockService,
+    leaseService,
   })
 
   // 6. Start HTTP server (config, logger)
@@ -174,17 +174,17 @@ run at a time:
 | State store | What serialises a run |
 |---|---|
 | `RedisWorkflowService` | Redis itself; nothing to register |
-| `PgKyselyWorkflowService` | `PgKyselyLockService` (`@pikku/kysely-postgres`) |
-| `MySQLKyselyWorkflowService` | `MySQLKyselyLockService` (`@pikku/kysely-mysql`) |
-| SQLite | `KyselyLockService` (`@pikku/kysely`) |
+| `PgKyselyWorkflowService` | `PgKyselyLeaseService` (`@pikku/kysely-postgres`) |
+| `MySQLKyselyWorkflowService` | `MySQLKyselyLeaseService` (`@pikku/kysely-mysql`) |
+| SQLite | `KyselyLeaseService` (`@pikku/kysely`) |
 
-On the SQL stores each pass holds `workflow-run:<runId>` from the `lockService`
+On the SQL stores each pass holds `workflow-run:<runId>` from the `leaseService`
 you register. A pass that finds the run held does not fail and does not spend
 the queue's retries: it wakes the run again a second later and lets the holder
-finish. A queued app with no `lockService` still runs, unserialised, and says
+finish. A queued app with no `leaseService` still runs, unserialised, and says
 so once in its log.
 
-The lock lives in the `pikku_lock` table, which `pikku db generate` writes for
+The lease lives in the `pikku_lease` table, which `pikku db generate` writes for
 any project that runs workflows. A lease is judged by the database's clock,
 never by the clock of the worker asking, so a worker whose clock runs fast
 cannot take a run another worker still holds.

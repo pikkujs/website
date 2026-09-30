@@ -149,26 +149,33 @@ import { PgKyselyWorkflowRunService } from '@pikku/kysely-postgres'
 const workflowRunService = new PgKyselyWorkflowRunService(pikkuKysely.kysely)
 ```
 
-### PgKyselyLockService
+### PgKyselyLeaseService
 
-Named, lease-based locks shared by every process on the database. The workflow
-engine uses it to keep one orchestrator per run; your own functions can take it
-from `lockService`.
+Named leases shared by every process on the database. The workflow engine uses
+it to keep one orchestrator per run; your own functions can take it from
+`leaseService`.
+
+A lease is not a mutex. It ends when it is released or when it runs out, so a
+holder that stalls past its expiry loses the key without knowing. Anything the
+body writes that must not come from a stale holder should check the lease's
+`token`, which rises every time the key changes hands.
 
 ```typescript
-import { PgKyselyLockService } from '@pikku/kysely-postgres'
+import { holdLease } from '@pikku/core/services'
+import { PgKyselyLeaseService } from '@pikku/kysely-postgres'
 
-const lockService = new PgKyselyLockService(pikkuKysely.kysely)
-await lockService.init()
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
 
-await lockService.withLock('nightly-report', async (lease, signal) => {
+// Renewed every 10s while the body runs; a crashed holder blocks others for 30s.
+await holdLease(leaseService, 'nightly-report', async (lease, signal) => {
   // signal aborts if the lease is lost while this runs
 })
 ```
 
 Leases are written and judged on the database's clock (`clock_timestamp()`),
 so workers whose clocks disagree still agree on who holds a key. The table is
-`pikku_lock`; `pikku db generate` writes it.
+`pikku_lease`; `pikku db generate` writes it.
 
 ### PgKyselyChannelStore
 
