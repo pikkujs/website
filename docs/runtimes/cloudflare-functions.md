@@ -217,11 +217,15 @@ import {
   CloudflareWorkflowService,
   CloudflareAgentStorageService,
 } from '@pikku/cloudflare/d1'
+import { KyselyLeaseService } from '@pikku/kysely'
 
 const kysely = createD1Kysely(env.MY_D1_DATABASE)
-const workflowService = new CloudflareWorkflowService(kysely)
+const leaseService = new KyselyLeaseService(kysely)
+const workflowService = new CloudflareWorkflowService(kysely, { leaseService })
 const agentStorage = new CloudflareAgentStorageService(kysely)
 ```
+
+`CloudflareWorkflowService` locks runs and steps on the `leaseService` it is given; register the same instance as the app's `leaseService`.
 
 ### Queue Service
 
