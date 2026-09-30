@@ -62,6 +62,10 @@ Details worth knowing:
 - **`snippets-meta.json` records where each snippet came from**, and
   `snippetSourceUrl(name)` turns that into a GitHub link. Show it. A sample that
   links back to a compiling file is the whole point of this rule.
+- **An invalid region fails the sync.** A `@snippet start` with no matching
+  end, or a name used twice, makes `npm run sync-snippets` exit non-zero and
+  write nothing, rather than ship a page that renders `undefined` or the wrong
+  code.
 
 ### What this rule does not cover
 

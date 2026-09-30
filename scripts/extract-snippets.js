@@ -109,10 +109,10 @@ function extractSnippets(content, { format = true, file = '' } = {}) {
     for (const collected of open.values()) collected.push(line)
   }
 
-  // A region with no matching `@snippet end` yields nothing, which reaches the
-  // site as a page rendering `undefined` rather than as a build failure.
+  // A region with no matching `@snippet end` yields nothing, which would reach
+  // the site as a page rendering `undefined` — so it fails the sync instead.
   for (const name of open.keys()) {
-    console.warn(`[extract-snippets] Unclosed snippet "${name}" in ${file} — no @snippet end, so it was not emitted`)
+    problems.push(`Unclosed snippet "${name}" in ${file} — no @snippet end`)
   }
 
   return snippets
@@ -120,6 +120,10 @@ function extractSnippets(content, { format = true, file = '' } = {}) {
 
 // ── Main ───────────────────────────────────────────────────
 
+/* Every definition problem is collected and reported together, and nothing is
+   written while any remain: a stale snippets.json is better than one that
+   silently drops a region or shows the wrong one. */
+const problems = []
 const all     = {}
 const origins = {} // snippet name → file path (for collision warnings)
 
@@ -137,7 +141,8 @@ for (const root of roots) {
 
     for (const [name, code] of Object.entries(snippets)) {
       if (origins[name]) {
-        console.warn(`[extract-snippets] Duplicate snippet "${name}" in ${rel} (already from ${origins[name]})`)
+        problems.push(`Duplicate snippet "${name}" in ${rel} (already from ${origins[name]})`)
+        continue
       }
       all[name]     = code
       origins[name] = rel
@@ -154,6 +159,12 @@ if (fs.existsSync(CONFIG_FILE)) {
     all.scenarioConfig = JSON.stringify({ scenarios: config.scenarios }, null, 2)
     origins.scenarioConfig = '../pikku.config.json'
   }
+}
+
+if (problems.length > 0) {
+  for (const problem of problems) console.error(`[extract-snippets] ${problem}`)
+  console.error(`[extract-snippets] ${problems.length} invalid snippet definition${problems.length !== 1 ? 's' : ''} — nothing written`)
+  process.exit(1)
 }
 
 fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true })
