@@ -93,13 +93,28 @@ For durable, resumable workflows use a storage backend — see [Storage Backends
 
 ## Registration
 
-```typescript
-import { PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+Every persistent workflow service takes a required `leaseService`, which it
+locks runs and steps on — see
+[One Orchestrator Per Run](/docs/wiring/workflows/deployment#one-orchestrator-per-run).
+Register the same instance as `leaseService`. `InMemoryWorkflowService` takes
+none.
 
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+```typescript
+import {
+  PgKyselyLeaseService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
+
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+  leaseService,
+})
 await workflowService.init()
 
 const singletonServices = await createSingletonServices(config, {
+  leaseService,
   workflowService,
 })
 ```

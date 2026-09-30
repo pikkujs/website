@@ -45,24 +45,39 @@ Add a `workflowService` to your singleton services. The execution mode is
 decided automatically: if a `queueService` is also present, workflows run
 remotely via queue workers; otherwise they run inline.
 
+Every persistent workflow service takes a required `leaseService`, which it
+locks runs and steps on; register the same instance as `leaseService` too.
+
 **PostgreSQL (Kysely):**
 ```typescript
-import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import {
+  PikkuKysely,
+  PgKyselyLeaseService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 
 const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
 await pikkuKysely.init()
 
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+  leaseService,
+})
 await workflowService.init()
 ```
 
 **Redis:**
 ```typescript
-import { RedisWorkflowService } from '@pikku/redis'
+import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
 
-// (connection | RedisOptions | url | undefined, keyPrefix = 'workflows')
-const workflowService = new RedisWorkflowService(process.env.REDIS_URL)
+// (connection | RedisOptions | url | undefined, { leaseService, keyPrefix = 'workflows' })
+const leaseService = new RedisLeaseService(process.env.REDIS_URL)
+const workflowService = new RedisWorkflowService(process.env.REDIS_URL, {
+  leaseService,
+})
 ```
 
 ### 3. Generate workflow types
@@ -110,11 +125,14 @@ For testing, simply don't configure a queue service. When no `queueService` is a
 
 ```typescript
 // In your services setup - omit queueService for inline mode
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+  leaseService,
+})
 await workflowService.init()
 
 const singletonServices = await createSingletonServices(config, {
   logger,
+  leaseService,
   workflowService,
   // queueService: ... (omit for inline mode)
 })

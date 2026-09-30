@@ -132,10 +132,21 @@ const agentRunService = new PgKyselyAgentRunService(pikkuKysely.kysely)
 
 Workflow orchestration with PostgreSQL persistence.
 
-```typescript
-import { PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+It locks runs and steps on the [`PgKyselyLeaseService`](#pgkyselyleaseservice)
+you pass it; register the same instance as `leaseService`.
 
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+```typescript
+import {
+  PgKyselyLeaseService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
+
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+  leaseService,
+})
 await workflowService.init() // Creates tables
 ```
 
@@ -249,6 +260,7 @@ import {
   PikkuKysely,
   PgKyselyAgentStorageService,
   PgKyselyAgentRunService,
+  PgKyselyLeaseService,
   PgKyselyWorkflowService,
 } from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
@@ -261,13 +273,19 @@ await pikkuKysely.init()
 const agentStorage = new PgKyselyAgentStorageService(pikkuKysely.kysely)
 await agentStorage.init()
 
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+await leaseService.init()
+
+const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+  leaseService,
+})
 await workflowService.init()
 
 const singletonServices = await createSingletonServices(config, {
   agentStorage,
   agentRunState: agentStorage,
   agentRunService: new PgKyselyAgentRunService(pikkuKysely.kysely),
+  leaseService,
   workflowService,
   agentRunner: new VercelAgentRunner({
     openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),

@@ -79,10 +79,18 @@ const agentRunService = new MongoDBAgentRunService(mongo.db)
 
 Implements `WorkflowService` for workflow run orchestration and step state management.
 
+It locks runs and steps on the lease service you pass it. `@pikku/mongodb`
+ships no lease service, so pair it with
+[`RedisLeaseService`](./redis#redisleaseservice), a Kysely lease service, or
+`InMemoryLeaseService` from `@pikku/core/services` when only one process runs.
+Register the same instance as `leaseService`.
+
 ```typescript
 import { MongoDBWorkflowService } from '@pikku/mongodb'
+import { RedisLeaseService } from '@pikku/redis'
 
-const workflowService = new MongoDBWorkflowService(mongo.db)
+const leaseService = new RedisLeaseService(process.env.REDIS_URL)
+const workflowService = new MongoDBWorkflowService(mongo.db, { leaseService })
 await workflowService.init()
 ```
 
@@ -182,13 +190,15 @@ import {
   MongoDBEventHubStore,
   MongoDBSecretService,
 } from '@pikku/mongodb'
+import { RedisLeaseService } from '@pikku/redis'
 
 const mongo = new PikkuMongoDB(logger, process.env.MONGODB_URI!, 'pikku')
 await mongo.init()
 
 const agentStorage = new MongoDBAgentStorageService(mongo.db)
 const agentRunService = new MongoDBAgentRunService(mongo.db)
-const workflowService = new MongoDBWorkflowService(mongo.db)
+const leaseService = new RedisLeaseService(process.env.REDIS_URL)
+const workflowService = new MongoDBWorkflowService(mongo.db, { leaseService })
 const workflowRunService = new MongoDBWorkflowRunService(mongo.db)
 const channelStore = new MongoDBChannelStore(mongo.db)
 const eventHubStore = new MongoDBEventHubStore(mongo.db)
@@ -209,6 +219,7 @@ const singletonServices = await createSingletonServices(config, {
   agentStorage,
   agentRunState: agentStorage,
   agentRunService,
+  leaseService,
   workflowService,
   workflowRunService,
   channelStore,

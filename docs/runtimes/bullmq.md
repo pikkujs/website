@@ -162,18 +162,22 @@ await schedulerService.start()
 
 ```typescript
 import { BullServiceFactory } from '@pikku/queue-bullmq'
-import { RedisWorkflowService } from '@pikku/redis'
+import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
 import './.pikku/pikku-bootstrap.gen.js'
 
 const bullFactory = new BullServiceFactory()
 await bullFactory.init()
 
 const schedulerService = bullFactory.getSchedulerService()
+const leaseService = new RedisLeaseService(process.env.REDIS_URL!)
 
 const singletonServices = await createSingletonServices(config, {
   queueService: bullFactory.getQueueService(),
   schedulerService,
-  workflowService: new RedisWorkflowService(process.env.REDIS_URL!),
+  leaseService,
+  workflowService: new RedisWorkflowService(process.env.REDIS_URL!, {
+    leaseService,
+  }),
 })
 
 // Register queue workers (includes the workflow queues)

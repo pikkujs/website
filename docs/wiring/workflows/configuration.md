@@ -32,13 +32,21 @@ more granular control, retries, and scaling.
 
 Workflows require a `workflowService` service in your singleton services. Choose between PostgreSQL or Redis.
 
+Every persistent workflow service takes a required `leaseService`, which it
+locks runs and steps on. Register the same instance as `leaseService` — see
+[One Orchestrator Per Run](./deployment.md#one-orchestrator-per-run).
+
 ### Option 1: PostgreSQL + pg-boss
 
 Use PostgreSQL for both state storage and queue. The `PgBossServiceFactory`
 provides the queue service; `PgKyselyWorkflowService` provides workflow state.
 
 ```typescript
-import { PikkuKysely, PgKyselyWorkflowService } from '@pikku/kysely-postgres'
+import {
+  PikkuKysely,
+  PgKyselyLeaseService,
+  PgKyselyWorkflowService,
+} from '@pikku/kysely-postgres'
 import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
 import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
 
@@ -49,11 +57,17 @@ export const createSingletonServices = async (config, { logger }) => {
   const pgBossFactory = new PgBossServiceFactory(process.env.DATABASE_URL!)
   await pgBossFactory.init()
 
-  const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely)
+  const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
+  await leaseService.init()
+
+  const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
+    leaseService,
+  })
   await workflowService.init()
 
   return {
     queueService: pgBossFactory.getQueueService(),
+    leaseService,
     workflowService,
     // ... other services
   }
@@ -68,11 +82,11 @@ services — no queue service means workflows run inline.
 ### Option 2: Redis + BullMQ
 
 Use Redis for both state storage and queue. The `BullServiceFactory` provides
-the queue service; `RedisWorkflowService(connection, keyPrefix = 'workflows')`
-provides workflow state.
+the queue service; `RedisWorkflowService(connection, { leaseService, keyPrefix = 'workflows' })`
+provides workflow state, and `RedisLeaseService` locks its runs.
 
 ```typescript
-import { RedisWorkflowService } from '@pikku/redis'
+import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
 import { BullServiceFactory } from '@pikku/queue-bullmq'
 
 export const createSingletonServices = async (config, { logger }) => {
@@ -80,10 +94,14 @@ export const createSingletonServices = async (config, { logger }) => {
   await bullFactory.init()
 
   // connection: Redis | RedisOptions | url | undefined
-  const workflowService = new RedisWorkflowService(process.env.REDIS_URL)
+  const leaseService = new RedisLeaseService(process.env.REDIS_URL)
+  const workflowService = new RedisWorkflowService(process.env.REDIS_URL, {
+    leaseService,
+  })
 
   return {
     queueService: bullFactory.getQueueService(),
+    leaseService,
     workflowService,
     // ... other services
   }
