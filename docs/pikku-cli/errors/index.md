@@ -77,6 +77,8 @@ Errors from `wireAddon` / `wireRemoteAddon` declarations and addon authoring rul
 | PKU341 | Addon MCP Function Not Found         | [View](./pku341.md) |
 | PKU343 | Addon Exposed Function Not Found     | [View](./pku343.md) |
 | PKU344 | Addon Expose Not Static              | [View](./pku344.md) |
+| PKU345 | Extension Manifest Is Not Static     | [View](./pku345.md) |
+| PKU346 | Extension Declares No Screens        | [View](./pku346.md) |
 | PKU920 | Addon Wiring Not Allowed             | [View](./pku920.md) |
 | PKU921 | Addon Contract Handlers Not Allowed  | [View](./pku921.md) |
 
