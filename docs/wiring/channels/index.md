@@ -289,6 +289,29 @@ export const onMessage = pikkuChannelFunc<
 })
 ```
 
+## Middleware on a Channel
+
+A channel has two kinds of middleware. `middleware` wraps the connection (it runs on connect, where the session is established). `channelMiddleware` wraps every message, which is where things like rate limiting or tracing belong. Channel middleware is declared with `pikkuChannelMiddleware` and `pikkuChannelMiddlewareFactory`, and can be attached to every channel with a given tag using `addChannelMiddleware`. See [Channel Middleware](../../core-features/middleware.md#channel-middleware).
+
+## Calling the Client with channel.remote
+
+Usually the client calls the server. Sometimes the server needs to ask the client something, like reading the contents of the user's local working tree. `pikkuRemoteChannelFunc` declares a capability the connected client answers, and any `wireChannel` function can call it as `channel.remote(name, input)`.
+
+There's no `func`: your side owns the contract (the input and output types), the client owns the body.
+
+```typescript
+import { pikkuRemoteChannelFunc } from '#pikku/function'
+
+export const localCheckoutOutput = z.object({ sha: z.string(), branch: z.string() })
+
+export const localCheckout = pikkuRemoteChannelFunc({
+  description: 'Read the current commit and branch of your working tree',
+  output: localCheckoutOutput,
+})
+```
+
+The `description` is what a person is shown when asked to approve the call, so write it for them rather than for the caller.
+
 ## Real-time Pub/Sub with EventHub
 
 The `eventHub` service provides transport-agnostic pub/sub, allowing you to broadcast messages to multiple channels, Server-Sent Events, or any other subscriber. This is especially useful in stateless/serverless environments where you need to coordinate between connections.

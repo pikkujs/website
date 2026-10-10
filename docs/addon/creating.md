@@ -183,6 +183,20 @@ defineCredential({
 
 See [Credentials](/docs/wiring/credentials/) for the full reference.
 
+### Create Config
+
+If your addon needs a config, use `pikkuAddonConfig` rather than `pikkuConfig`. An app's `pikkuConfig` factory runs before anything else exists. In an addon, the parent application has already built its services, so `pikkuAddonConfig` hands you `AddonBaseServices` (logger, variables, secrets) and you can read them while building the config:
+
+```typescript
+// config.ts
+import { pikkuAddonConfig } from '#pikku/addon/setup'
+
+export const createConfig = pikkuAddonConfig(async ({ variables }) => {
+  const region = await variables.get('SENDGRID_REGION')
+  return { region: region ?? 'us' }
+})
+```
+
 ### Create Services
 
 Use `pikkuAddonServices` to create your service factory. It receives the consumer's shared services (logger, secrets, variables):

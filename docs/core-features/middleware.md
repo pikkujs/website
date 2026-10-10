@@ -306,6 +306,96 @@ Use global and tag middleware for:
 - Alerting on failures
 - Cross-cutting auth for a tagged group of functions
 
+## Channel Middleware
+
+Regular middleware wraps a single request. A channel is different: it's one long connection carrying many messages. `wireChannel`'s `middleware` option wraps the connection (it runs on connect, where the session gets established), but a lot of channel concerns, like rate limiting or tracing, belong on **every message**. That's what channel middleware is for.
+
+It has a different shape from `pikkuMiddleware`: it receives the event passing through, and passes it (or a changed version of it) on to `next`:
+
+```typescript
+import { pikkuChannelMiddleware } from '#pikku/middleware'
+
+export const traceAgentStream = pikkuChannelMiddleware<any, AgentStreamEvent>(
+  async ({ logger }, event, next) => {
+    logger.debug({ event: 'agent_stream', type: event.type })
+    await next(event)
+  }
+)
+```
+
+Attach it with `channelMiddleware` on the channel:
+
+```typescript
+wireChannel({
+  name: 'chat',
+  route: '/chat',
+  channelMiddleware: [traceAgentStream],
+  // ...
+})
+```
+
+### Channel Middleware Factories
+
+When the middleware needs options, use `pikkuChannelMiddlewareFactory`. One definition can then be wired several times with different configuration:
+
+```typescript
+import { pikkuChannelMiddlewareFactory } from '#pikku/middleware'
+
+export const tagChannelEvents = pikkuChannelMiddlewareFactory(
+  (channelName: string) =>
+    async ({ logger }, event, next) => {
+      logger.debug({ event: 'channel_event', channel: channelName })
+      await next(event)
+    }
+)
+```
+
+### By Tag
+
+Like HTTP and tag middleware, you can keep the channels themselves free of the wiring. `addChannelMiddleware` attaches channel middleware to every channel carrying the given tag:
+
+```typescript
+import { addChannelMiddleware } from '#pikku/middleware'
+
+// Every channel tagged 'orders' runs this on its messages
+addChannelMiddleware('orders', [tagChannelEvents('order-status')])
+```
+
+See [Channels](/docs/wiring/channels) for the rest of the channel wiring.
+
+## Agent Middleware
+
+An AI agent run isn't a request either, it's a loop of model turns and tool calls. `pikkuAgentMiddleware` declares hooks for that loop instead of a single `next` chain. You provide only the hooks you need:
+
+- `modifyInput` - rewrite the messages and instructions the model is about to see, before each turn
+- `modifyOutput` - rewrite the finished output of a turn, after streaming completes
+- `modifyOutputStream` - see the output as it streams, for redaction or live inspection. It gets its own `state`, which persists across chunks
+- `beforeToolCall` - rewrite the arguments the model chose for a tool
+- `afterToolCall` - replace a tool's result before the model sees it
+- `afterStep` - observe the end of each model turn (it can't change anything)
+- `onError` - runs when a turn throws, for logging and cleanup (it doesn't swallow the error)
+
+```typescript
+import { pikkuAgentMiddleware } from '#pikku/middleware'
+
+export const countAgentCharacters = pikkuAgentMiddleware<{
+  charCount: number
+}>({
+  modifyInput: async ({ logger }, { messages, instructions }) => {
+    logger.info({ event: 'agent_input', messages: messages.length })
+    return { messages, instructions }
+  },
+  modifyOutputStream: async (_services, { event, state }) => {
+    if (event.type === 'text-delta') {
+      state.charCount = (state.charCount ?? 0) + event.text.length
+    }
+    return event
+  },
+})
+```
+
+Pass it to an agent through its `agentMiddleware` option. See [AI Agents](/docs/wiring/ai-agents) for the full picture.
+
 ## Execution Order
 
 Middleware executes from the broadest scope inward to the most specific. Think of it like layers of an onion - the outer layers run first:
