@@ -75,7 +75,7 @@ Cron expressions are interpreted as **UTC** by default (unless your runtime spec
 
 For different schedules across environments:
 
-The `schedule` is just a string, so it can come from config: pass `config.backupSchedule` and use `'0 2 * * *'` in production and `'0 */4 * * *'` in development.
+The `schedule` is just a string, so it can come from config. In the snippet above, `wireMaintenance` takes the schedule as an argument; pass `'0 2 * * *'` in production and `'0 */4 * * *'` in development.
 
 ## Middleware
 
@@ -93,7 +93,7 @@ Middleware is important for scheduled tasks since they don't have automatic obse
 
 Apply middleware to all wirings (including scheduled tasks) with `addGlobalMiddleware`, or to a shared tag with `addTagMiddleware`:
 
-The `addGlobalMiddleware([schedulerMetrics, alertMiddleware])` call in the snippet above applies a list of middleware to every wiring. To scope it to a shared tag instead, use `addTagMiddleware`.
+The `addGlobalMiddleware([schedulerMetrics])` call in the snippet above applies a list of middleware to every wiring. To scope it to a shared tag instead, use `addTagMiddleware`.
 
 ## Error Handling
 

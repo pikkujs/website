@@ -15,19 +15,19 @@ Add `version` to any function definition:
 ```typescript @snippet shopVersionedItem
 ```
 
-The trailing `V2` is stripped because it matches the version, so the second export registers as `createUser@v2` rather than `createUserV2@v2`.
+The trailing `V2` is stripped because it matches the version, so the second export registers as `getItem@v2` rather than `getItemV2@v2`.
 
-The CLI inspector reads the `version` property and generates versioned function IDs using the `@v` separator — so `createUser` with `version: 2` becomes `createUser@v2` internally.
+The CLI inspector reads the `version` property and generates versioned function IDs using the `@v` separator — so `getItem` with `version: 2` becomes `getItem@v2` internally.
 
 ### How Versions Resolve
 
-- **Base name** (`createUser`) always points to the **latest** version
-- **Versioned name** (`createUser@v1`) points to that exact version
+- **Base name** (`getItem`) always points to the **latest** version
+- **Versioned name** (`getItem@v1`) points to that exact version
 - If you have an unversioned function alongside versioned ones, the unversioned one automatically becomes `latest + 1`
 
-So with `createUserV1` pinned as `version: 1` and a plain `createUser` without a version, the plain one becomes `createUser@v2`.
+So with `getItemV1` pinned as `version: 1` and a plain `getItem` without a version, the plain one becomes `getItem@v2`.
 
-The ID comes from the exported name with a matching `V<n>` suffix removed, so `getBookV1` with `version: 1` becomes `getBook@v1`. Use `override: 'getBook'` when the export cannot follow that convention (for example `legacyGetBook`).
+The ID comes from the exported name with a matching `V<n>` suffix removed, so `getItemV1` with `version: 1` becomes `getItem@v1`. Use `override: 'getItem'` when the export cannot follow that convention (for example `legacyGetItem`).
 
 ### Calling Versioned Functions
 

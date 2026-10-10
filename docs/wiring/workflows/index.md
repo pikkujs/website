@@ -144,7 +144,7 @@ From the [online shop template](https://github.com/pikkujs/fabric/tree/main/temp
 ```typescript @snippet checkoutWorkflow
 ```
 
-Each step's result is cached by name (`ctx.steps['validate-basket']`, `ctx.steps['create-order']`), so if the workflow restarts after a failure the completed steps are replayed from the store — no duplicate charges, no duplicate orders.
+Each step's result is cached by its step name (`'Validate basket'`, `'Create order'`, `'Process payment'`), so if the workflow restarts after a failure the completed steps are replayed from the store — no duplicate charges, no duplicate orders.
 
 ## Next Steps
 

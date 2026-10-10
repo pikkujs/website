@@ -67,9 +67,9 @@ For Redis, install `@pikku/redis` and construct the two services from the same c
 npx pikku
 ```
 
-## Example: User Onboarding Workflow
+## Example: Order Follow-Up Workflow
 
-Here's the workflow from the templates showing all three step types:
+Here's a workflow showing all three step types (RPC, inline and sleep):
 
 ```typescript @snippet wa-wf-quick-example
 ```

@@ -194,7 +194,7 @@ From the [online shop template](https://github.com/pikkujs/fabric/tree/main/temp
 ```typescript @snippet orderStatusChannel
 ```
 
-The channel uses `auth: true` so only the logged-in user can subscribe to their order updates. The `onMessage` handler accepts a discriminated union — here a single `subscribe` message type — so the client can tell the server which order to watch.
+Each function takes an `orderId` and uses the `eventHub` to subscribe (or unsubscribe) the connection's `channel.channelId` to the `order:<orderId>` topic. The client tells the server which order to watch by sending that `orderId`, and anything published to the topic is pushed down the connection. Wire both as actions on a channel with `auth: true` so only logged-in users can subscribe.
 
 ## Next Steps
 

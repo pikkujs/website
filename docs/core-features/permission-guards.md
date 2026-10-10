@@ -22,7 +22,7 @@ Use them in your function:
 ```typescript @snippet co-permission-on-func
 ```
 
-Each key is a separate permission group, and groups use **OR logic** - the function executes if *either* `auth` or `admin` passes. To require both checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
+Each key is a separate permission group, and groups use **OR logic** - the function executes if *either* `auth` or `owner` passes. To require both checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
 
 ### Session-Only Checks with `pikkuAuth`
 

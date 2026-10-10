@@ -20,7 +20,7 @@ Here are MCP functions and wiring from the templates, showing a tool, a resource
 ```typescript @snippet wa-mcp-first-wiring
 ```
 
-That's it! AI agents can now request your documentation. Pikku automatically:
+That's it! AI agents can now create catalogue items, read an item by URI and ask for recommendations. Pikku automatically:
 - **Generates JSON schemas** from your TypeScript types (during `npx pikku`)
 - **Validates the input** against your function's type
 - **Calls your function** with clean, typed data

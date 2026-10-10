@@ -58,7 +58,7 @@ From the [online shop template](https://github.com/pikkujs/fabric/tree/main/temp
 ```typescript @snippet shopRoutes
 ```
 
-All 13 routes share the `auth: false` default. Admin routes (`createCategory`, `createItem`, `updateItem`) override that with `auth: true`. The whole group registers with a single `wireHTTPRoutes` call.
+All 14 routes inherit the group's `auth: false` default. The ones that need a session (`createCategory`, `createItem`, `updateItem`, `getProfile` and the order routes) override it with `auth: true`; the catalogue and basket routes stay open to guests. The group is registered with a single `wireHTTPRoutes` call (see above).
 
 ## When to Use What
 

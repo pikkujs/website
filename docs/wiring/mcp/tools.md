@@ -19,7 +19,7 @@ Let's create a tool that adjusts stock levels. Both the domain function and MCP 
 
 There's no separate wiring step for tools — exporting a `pikkuMCPToolFunc` registers it. The tool name comes from the export name (override it with the `name` option).
 
-Now your business logic in `adjustStock` can be used from HTTP, WebSocket, queues, or MCP - and `adjustStockMCP` just makes it MCP-compatible.
+Now your business logic in `adjustStock` can be used from HTTP, WebSocket, queues, or MCP - and `adjustStockMCP` just makes it MCP-compatible. The adapter reaches the domain layer with `rpc.invoke` (here it calls the `updateItem` function) and only formats the reply.
 
 ## Exposing Any Function with `mcp: true`
 
@@ -90,7 +90,7 @@ From the [online shop template](https://github.com/pikkujs/fabric/tree/main/temp
 ```typescript @snippet mcpTools
 ```
 
-Note that `listCategories`, `listItems`, `getItem`, `getBasket`, and `addToBasket` are the exact same functions already wired to HTTP routes — no duplication of business logic.
+Note that `listCategories`, `listItems` and `getItem` are the exact same functions already wired to HTTP routes — no duplication of business logic.
 
 ## Next Steps
 

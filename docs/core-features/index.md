@@ -51,7 +51,7 @@ Let's look at what a function looks like. Here is `listItems` from the online-sh
 ```typescript @snippet listItems
 ```
 
-The function receives your **services** (like `kysely` and `logger`) as its first argument and validated **input data** as its second. It knows nothing about HTTP.
+The function receives your **services** (like `kysely`) as its first argument and validated **input data** as its second. It knows nothing about HTTP.
 
 The wiring lives separately, in a file under `src/wirings/`:
 

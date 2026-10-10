@@ -32,13 +32,12 @@ Wire an HTTP endpoint that calls any exposed function:
 External clients call it:
 
 ```bash
-POST /rpc/greet
+POST /rpc/checkItemAvailability
 Content-Type: application/json
 
 {
   "data": {
-    "name": "Alice",
-    "greeting": "Hello"
+    "itemId": "item-001"
   }
 }
 ```
@@ -47,9 +46,9 @@ Response:
 
 ```json
 {
-  "message": "Hello, Alice!",
-  "timestamp": 1234567890000,
-  "serverPort": 3001
+  "available": true,
+  "stock": 12,
+  "name": "Blue Mug"
 }
 ```
 

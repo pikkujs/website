@@ -34,11 +34,11 @@ Exposed RPCs expose your functions to external clients via HTTP POST endpoints. 
 **Clients call it:**
 
 ```bash
-POST /rpc/calculateOrderTotal
+POST /rpc/checkItemAvailability
 Content-Type: application/json
 
 {
-  "items": [{ "price": 10 }, { "price": 20 }]
+  "data": { "itemId": "item-001" }
 }
 ```
 

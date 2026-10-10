@@ -74,7 +74,7 @@ The queue system will automatically:
 
 ## Monitoring Job Progress
 
-For long-running jobs, you can report progress using the `queue` object destructured from services:
+For long-running jobs, you can report progress using the `queue` object from the wire (the third argument to your function):
 
 ```typescript @snippet queueJobControl
 ```

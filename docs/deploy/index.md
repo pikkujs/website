@@ -163,7 +163,7 @@ Most projects tag the wiring rather than the function:
 ```typescript @snippet httpSingleRoute
 ```
 
-A rule matching `todos` picks up `getTodos` from that wiring. The same holds for
+Add a `tags` array to a wiring like this one, and a rule matching one of those tags picks up `getItem` from that wiring. The same holds for
 `wireQueueWorker`, `wireScheduler`, `wireChannel` and the MCP wirings — a
 function inherits the tags of every wiring that points at it, unioned with any
 it declares itself.

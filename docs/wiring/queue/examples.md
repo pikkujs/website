@@ -17,7 +17,7 @@ The worker takes the message as its input, sends it, and returns nothing. The te
 ```typescript @snippet sendOrderConfirmation
 ```
 
-Tuning is a matter of the worker's `config`. Email is I/O bound, so a larger `batchSize` is cheap, and keeping the last few hundred completed and failed jobs makes debugging easier:
+Tuning is a matter of the worker's `config`. Email is I/O bound, so a larger `batchSize` is cheap, and keeping the last 100 completed jobs makes debugging easier:
 
 ```typescript @snippet queueConfig
 ```
