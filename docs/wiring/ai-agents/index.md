@@ -526,6 +526,34 @@ function ApprovalPanel() {
 | `initialMessages` | `any[]` | Pre-populate the chat |
 | `onFinish` | `() => void` | Called when a response completes |
 
+## Scoring Agent Runs
+
+A scorer grades a finished agent run and returns a `{ score, reason }` pair. There are two ways to declare one, and both give you the same kind of thing back, so the rest of Pikku treats them alike.
+
+| | `pikkuAgentScorer` | `pikkuAgentJudge` |
+|---|---|---|
+| Who grades | A function you write, in-process | Another model |
+| Good for | Anything you can check in code: did the run call the right tool, stay under a step budget, mention a product | Qualities code can't express: is the answer helpful, on-brand, actually responsive |
+| Core field | `score(input, services)`, which reads the run and returns `{ score, reason }` | `goal`, the rubric: what a good answer looks like, phrased as the goal it should meet |
+| Services | Gets your own services as the second argument | Runs on the model you name in `model` |
+
+Both take:
+
+- `name`: unique per project, and how the score is identified in results.
+- `description`: one line for whoever reads the score later.
+- `sampleRate`: a number from 0 to 1, the fraction of live runs to grade. It defaults to all of them, so turn it down for expensive judges.
+- `requiresReference`: grade against a known-correct answer. A scorer that needs one is test-only. Live traffic has no answer key, so the runtime never samples it.
+
+A judge adds a few more:
+
+- `model`: the model that grades. It is not the model under test.
+- `prompt`: replaces the generated rubric prompt outright when `goal` can't express the framing you want. The `{ score, reason }` response is still forced.
+- `toolCalls`: how much of the run's trajectory the judge sees. `off` shows none, `names` shows which tools were called, `full` shows everything. It defaults to `names`: enough to tell a tool-backed answer from an invented one, without sending a third-party model the rows your tools returned.
+
+Pick a scorer first. It's free, deterministic and fast. Reach for a judge when the thing you care about is a judgement call, and use `sampleRate` to keep the cost in check.
+
+<!-- TODO snippet: agent-scorer-and-judge — a pikkuAgentScorer and a pikkuAgentJudge for the shop assistant, in the template -->
+
 ## Agents as Workflow Nodes
 
 A [graph workflow](/docs/wiring/workflows/graph-workflows) node can reference an agent by name, just like an RPC function or a sub-workflow. The node runs the agent with the standard agent input (`message`, `threadId`, `resourceId`), and the node's result is the agent's output — so downstream nodes can `ref()` its fields:
