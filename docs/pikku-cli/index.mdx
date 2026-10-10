@@ -479,27 +479,53 @@ npx pikku examples add -n <name> -e <entity>  # Write it into this project
 
 Inspect and maintain the knowledge base — what this app is, in the language its users use.
 
+The knowledge base is the `knowledge/` folder at your repo root: markdown notes (slices, entities, decisions, questions...) about what the app *means*, for whoever picks the project up next, human or agent. Pikku already knows every function, route and table from the generated meta, so the notes cover what a generator can't derive: why a rule was chosen, what it rules out, what's still unanswered. A note's `resource:` frontmatter (`func:revokeGrant, table:grant`) points at the code it's about, and each section keeps an `index.md` listing its notes. These commands keep all that honest. The layout, note fields and section meanings are in [Knowledge Base](/docs/core-features/knowledge).
+
 ```bash
 npx pikku knowledge validate        # Check the knowledge base against the app-project profile
 npx pikku knowledge index           # Refresh every index.md to list the notes actually in it
 npx pikku knowledge index --check   # Report stale indexes without writing — a CI gate
-npx pikku knowledge next            # Say the one thing to do next
+npx pikku knowledge gaps            # List notes no change builds yet
+npx pikku knowledge plan <...>      # A changeset's technical plan (below)
 ```
+
+| Subcommand | What it does | Options |
+| --- | --- | --- |
+| `validate` | Checks the base against the app-project profile: every note typed, every section indexed, every slice gated, and every `resource:` still pointing at something that exists. Also lists code things (functions and so on) that no note describes ("orphans"). | none |
+| `index` | Rewrites each section's `index.md` so it lists the notes actually in it. Only the generated block is replaced; the prose around it is left alone. | `--check` (default `false`): report stale indexes without writing anything |
+| `gaps` | Lists notes that no change builds yet: new ones, ones edited since they were built, or ones merged with items deferred. Notes already filed as a change are left out. | none |
+| `plan` | See below | see below |
+
+All of them also take the global options (`--config/-c`, `--log-level/-l`, `--output text|json`).
+
+**Exit codes.**
+
+- `validate` exits `1` when it finds an error (the base contradicts itself). Warnings alone don't fail it. The orphans are reported as a single `PKU960` warning ("N things in the code that no note describes"), so `npx pikku knowledge validate --fail-on-warn` is how you make missing coverage fail a pipeline. Without it, orphans are just printed (the first ten, then "and N more").
+- `index --check` exits `1` if any index is stale and prints which files; plain `index` writes them and exits `0`.
+- `gaps` only reports. It reads the project's changes (the same store `pikku changes` uses), so it needs a project context to run.
 
 #### `pikku knowledge plan`
 
-A milestone's technical plan — the shape of the work, checked before it is built rather than after.
+A changeset's technical plan — the shape of the work, checked before it is built rather than after.
 
 ```bash
-npx pikku knowledge plan schema                    # Print the plan schema
-npx pikku knowledge plan show <milestone>          # Print a milestone's plan
-npx pikku knowledge plan show <milestone> --for-build   # Render it as the ordered list of work
-npx pikku knowledge plan progress <milestone>      # What the milestone still owes its plan
-npx pikku knowledge plan set <milestone> <file>    # Validate a plan and write it
-npx pikku knowledge plan defer <milestone> <item> --reason "..."  # Move an item to the next pass
+npx pikku knowledge plan schema                          # Print the plan schema
+npx pikku knowledge plan show <changeset>                # Print a changeset's plan
+npx pikku knowledge plan show <changeset> --for-build    # Render it as the ordered list of work
+npx pikku knowledge plan progress <changeset>            # What the changeset still owes its plan
+npx pikku knowledge plan set <changeset> <file>          # Validate a plan and write it
+npx pikku knowledge plan defer <changeset> <item> --reason "..."  # Move an item to the next pass
 ```
 
-`progress` reads from the generated meta rather than from what was claimed, and `set` writes nothing if the plan does not validate against its milestone note.
+| Subcommand | Arguments | Options | What it does |
+| --- | --- | --- | --- |
+| `schema` | none | none | Prints the plan schema, so you write a plan against what is enforced rather than guessing. |
+| `show` | `<changeset>` | `--for-build` (default `false`): render as the ordered list of work a build follows, rather than as stored | Prints the changeset's plan. |
+| `progress` | `<changeset>` | none | Says what the changeset still owes its plan, read from the generated meta rather than from what was claimed. Output is grouped as DONE, MISSING, DEFERRED and PROBLEMS. |
+| `set` | `<changeset> <file>` | none | Validates the plan and writes it, or writes nothing and tells you what's wrong (and prints the schema). |
+| `defer` | `<changeset> <item>` | `--reason/-r`: why this item can't land in the first pass | Moves one first-pass item to the next pass with the reason on the record. |
+
+Exit codes: `progress` exits `1` until the plan's first pass is built, which is what a merge gate reads. A `MISSING` item can be built or deferred; a `PROBLEM` (it exists but does something else) is never deferred, you fix it. `set` and `defer` exit `1` when they refuse, and `show` exits `1` if there's no plan to show.
 
 ### `pikku import`
 
