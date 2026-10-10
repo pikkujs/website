@@ -1,5 +1,5 @@
 ---
-name: pikku-error-doc
+name: pikku-website-error-doc
 description: "Use when the user wants to write or update a CLI error reference page for the Pikku documentation. These are pages in docs/pikku-cli/errors/ with codes like PKU400, PKU685, etc. Triggered by: 'document error PKU400', 'write an error page for PKUxxx', 'add an error reference for X', 'the CLI throws PKUxxx — document it'."
 metadata:
   version: 1.0.0

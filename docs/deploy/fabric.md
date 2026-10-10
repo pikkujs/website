@@ -58,20 +58,63 @@ starts.
 
 ## Operate
 
-| Command | What it reads |
-| --- | --- |
-| `pikku fabric status` | Current stage status |
-| `pikku fabric logs` | Stage logs |
-| `pikku fabric report` | A consolidated report for a stage |
-| `pikku fabric metrics` | Time-series metrics |
-| `pikku fabric trace` | Request traces |
-| `pikku fabric errors` | Recent errors |
-| `pikku fabric findings list\|flush\|clear` | Verification findings |
-| `pikku fabric changes list\|show\|file\|claim\|ask\|shot\|done` | The change board for a project |
-| `pikku fabric projects` | Projects you can reach |
+| Command                                                                      | What it reads                                                    |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `pikku fabric status`                                                        | Current stage status                                             |
+| `pikku fabric logs`                                                          | Stage logs                                                       |
+| `pikku fabric report`                                                        | A consolidated report for a stage                                |
+| `pikku fabric metrics`                                                       | Time-series metrics                                              |
+| `pikku fabric trace`                                                         | Request traces                                                   |
+| `pikku fabric errors`                                                        | Recent errors                                                    |
+| `pikku fabric findings list\|flush\|clear`                                   | Verification findings                                            |
+| `pikku fabric changes list\|show\|file\|next\|claim\|ask\|reply\|shot\|done` | The change board for a project — see [below](#the-changes-queue) |
+| `pikku fabric projects`                                                      | Projects you can reach                                           |
 
 This is the subset you will reach for day to day. `pikku fabric --help` lists
 every command, and `pikku fabric <command> --help` its flags.
+
+## The changes queue
+
+Someone reviewing a deployed stage circles what is wrong and files it; each
+filing becomes an item on the project's change board, numbered `#1`, `#2`, …
+The checkout linked to that project is where the items get worked. An item can
+be named by its number (`7`, `#7`) from inside the linked checkout, or by its
+uuid from anywhere.
+
+```bash
+pikku fabric changes next --claim --claimed-by claude-code   # wait for work, claim it
+pikku fabric changes show 7                                  # read an item and its thread
+pikku fabric changes done --change-id 7 --note "…"            # close it, recording branch and commit
+```
+
+`next` blocks until there is something to do, prints it and exits, so a harness
+can run it in the background and be woken on exit. It is woken by the project's
+change events the moment an item is filed or answered, re-reads the board each
+time, and still checks every three minutes as a safety net. A just-filed item is
+held for about a minute so a batch being typed arrives together; `next` sleeps
+exactly until the soonest held item becomes claimable, and `list` and `show`
+print when that is (`claimable at 14:05`). If the event stream is unavailable it
+falls back to checking every `--interval` seconds.
+
+| exit code | meaning                                                             |
+| --------- | ------------------------------------------------------------------- |
+| `0`       | work printed — claimed items, and/or answers to questions you asked |
+| `2`       | `--timeout` or `--once` found nothing                               |
+| `3`       | the session was refused; run `pikku fabric login`                   |
+| `1`       | anything else, such as fabric unreachable for minutes               |
+
+There are three ways to speak on an item's thread, and they differ in what they
+do to its status:
+
+| command                               | status afterwards                               | use it for                                               |
+| ------------------------------------- | ----------------------------------------------- | -------------------------------------------------------- |
+| `ask --change-id <id> --question "…"` | `needs_answer` — parked until the filer answers | a decision only they can make; `--option` offers choices |
+| `reply <id> --message "…"`            | unchanged                                       | "not doing this, because…", "blocked on X"               |
+| `done --change-id <id> --note "…"`    | `done`                                          | what was changed                                         |
+
+`reply --image path` attaches a screenshot as evidence, for instance of what you
+saw when an issue would not reproduce; `shot` attaches rendered options for the
+filer to pick between.
 
 ## Secrets, variables and data
 

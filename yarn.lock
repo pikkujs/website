@@ -3546,7 +3546,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openapi-contrib/json-schema-to-openapi-schema@npm:^4.3.1":
+"@openapi-contrib/json-schema-to-openapi-schema@npm:^4.3.4":
   version: 4.3.4
   resolution: "@openapi-contrib/json-schema-to-openapi-schema@npm:4.3.4"
   dependencies:
@@ -3706,21 +3706,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pikku/inspector@npm:^0.12.56":
-  version: 0.12.56
-  resolution: "@pikku/inspector@npm:0.12.56"
+"@pikku/inspector@npm:^0.12.89":
+  version: 0.12.89
+  resolution: "@pikku/inspector@npm:0.12.89"
   dependencies:
-    "@openapi-contrib/json-schema-to-openapi-schema": "npm:^4.3.1"
+    "@openapi-contrib/json-schema-to-openapi-schema": "npm:^4.3.4"
     openapi-types: "npm:^12.1.3"
-    path-to-regexp: "npm:^8.3.0"
-    ts-json-schema-generator: "npm:2.9.1-next.16"
-    tsx: "npm:^4.21.0"
+    path-to-regexp: "npm:^8.4.2"
+    ts-json-schema-generator: "npm:2.9.1-next.18"
+    tsx: "npm:^4.23.12"
     typescript: "npm:^6.0.3"
-    zod: "npm:^4.3.6"
+    zod: "npm:^4.4.3"
     zod-to-ts: "npm:^2.1.0"
   peerDependencies:
-    "@pikku/core": ^0.12.80
-  checksum: 10/d5376478f6c7dff39c02f537132e98d49ef469cddbe1dcb917f17577250102e06abd813949858a791a17fc3f9e389c52ee1dc5e696ac0177feb1e25c6a780552
+    "@pikku/core": ^0.12.123
+  checksum: 10/993af6768771a5b09f1c45daa8ac86f1d82ebfbf8bb6a957a1e49e78ab46dbb654886175d4452b68ba2a8cf55468322400d844c3f5beb843df4db957cd242848
   languageName: node
   linkType: hard
 
@@ -11610,7 +11610,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^8.3.0":
+"path-to-regexp@npm:^8.4.2":
   version: 8.4.2
   resolution: "path-to-regexp@npm:8.4.2"
   checksum: 10/70fd2cbce0b962cbcf4d312af07818bfce2bae11c09cf3bd86be99c0e30168238a1a7b02b18b452e73f075897df04597d30d63e56da7be41eecfc37998693389
@@ -11679,7 +11679,7 @@ __metadata:
     "@docusaurus/tsconfig": "npm:^3.9.2"
     "@docusaurus/types": "npm:^3.9.2"
     "@mdx-js/react": "npm:^3.1.1"
-    "@pikku/inspector": "npm:^0.12.56"
+    "@pikku/inspector": "npm:^0.12.89"
     "@saucelabs/theme-github-codeblock": "npm:^0.3.0"
     "@stackblitz/sdk": "npm:^1.11.0"
     "@tailwindcss/postcss": "npm:^4.1.17"
@@ -14406,9 +14406,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-json-schema-generator@npm:2.9.1-next.16":
-  version: 2.9.1-next.16
-  resolution: "ts-json-schema-generator@npm:2.9.1-next.16"
+"ts-json-schema-generator@npm:2.9.1-next.18":
+  version: 2.9.1-next.18
+  resolution: "ts-json-schema-generator@npm:2.9.1-next.18"
   dependencies:
     "@types/json-schema": "npm:^7.0.15"
     commander: "npm:^14.0.3"
@@ -14420,7 +14420,7 @@ __metadata:
     typescript: "npm:>=5.9 <7"
   bin:
     ts-json-schema-generator: bin/ts-json-schema-generator.js
-  checksum: 10/59dc1bfa9cc615152cc9e336400e7990a75c214a950ea5dcfd68b33f9792a3f51935904f1fd22bab135413452f779038fe5e2d5b4689dfe40304708371155528
+  checksum: 10/331ad754af61fa92c641e01ba53005f2b932ca8622004c67491b3b1bb87be5e41e882177678b6c6d575a7508bf6c8d171ea46e2a536e1f3ab980742c2f153a54
   languageName: node
   linkType: hard
 
@@ -14438,9 +14438,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.21.0":
-  version: 4.23.0
-  resolution: "tsx@npm:4.23.0"
+"tsx@npm:^4.23.12":
+  version: 4.23.15
+  resolution: "tsx@npm:4.23.15"
   dependencies:
     esbuild: "npm:~0.28.0"
     fsevents: "npm:~2.3.3"
@@ -14449,7 +14449,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10/66f8b85ea0593da3267ac15ddf5a24b0283373a7e00a57445fab871d779ca1fa240fa6eb4839fb57eedad7b314a34f4ff70889e9786d2829993f14b3f7b7f209
+  checksum: 10/f531aca9143a8ba08cf3053bd403a8b036d7bfffacc83c611486215d8cd41febad754d89f02c0bf92e55b747518b9ea124bfe76b55262b40be850f3ee938e4ff
   languageName: node
   linkType: hard
 
@@ -15391,10 +15391,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^4.3.6":
-  version: 4.4.3
-  resolution: "zod@npm:4.4.3"
-  checksum: 10/804b9a42aa8f35f2b3c5a8dff906291cb749115f83ee2afe3576d70b5b5c53c965365c7f4967690647a9c54af9838ff232a85ff9577a0a36c44b68bc6cdefe36
+"zod@npm:^4.4.3":
+  version: 4.6.5
+  resolution: "zod@npm:4.6.5"
+  checksum: 10/db004952e4dc6eab38b70f0cdef9251a65da84f5d08c5a0ef85e2590cfa9c477544ce734161ff5c05f89a15f0967137607a7feb16716195e04965f030db47213
   languageName: node
   linkType: hard
 
