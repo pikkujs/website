@@ -64,6 +64,7 @@ Errors from `pikkuAgent` model and tool declarations.
 | PKU153 | Agent Tool Not Found         | [View](./pku153.md) |
 | PKU154 | Agent Tool Missing Description | [View](./pku154.md) |
 | PKU155 | Agent Scorer Not Found       | [View](./pku155.md) |
+| PKU156 | Agent Provider Options Unreadable | [View](./pku156.md) |
 
 ## Addon Errors
 
@@ -95,6 +96,7 @@ Errors from `pikkuScenario` flows and their steps.
 | PKU679 | Scenario Not Extractable             | [View](./pku679.md) |
 | PKU680 | Scenario Has No Assertion            | [View](./pku680.md) |
 | PKU681 | Scenario Step Prose Names Its Actor  | [View](./pku681.md) |
+| PKU682 | Scenario Has No Feature              | [View](./pku682.md) |
 
 ## Secret Boundary Errors
 
