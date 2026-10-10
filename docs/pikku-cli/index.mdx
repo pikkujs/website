@@ -63,7 +63,7 @@ npx pikku bootstrap
 
 ### `pikku dev`
 
-Start a local development server with all services wired. Watch mode and hot module reload are on by default, and the [Console](/docs/console) is available at `http://localhost:3000/console`.
+Start a local development server with all services wired. Watch mode and hot module reload are on by default.
 
 ```bash
 npx pikku dev
@@ -82,7 +82,6 @@ Start a server using the bundled bun or node runner — no watch, no codegen. Fo
 ```bash
 npx pikku serve
 npx pikku serve --port 8080
-npx pikku serve --console        # Also serve the Console same-origin at /console
 npx pikku serve --model cheap:openai/gpt-5-nano
 ```
 
@@ -168,7 +167,6 @@ Enable Pikku features by setting `scaffold.<feature> = true` in `pikku.config.js
 
 ```bash
 npx pikku enable rpc          # Enable public RPC endpoint
-npx pikku enable console      # Enable console functions
 npx pikku enable scenarios    # Enable scenario instrumentation functions
 npx pikku enable agent        # Enable public agent endpoints
 npx pikku enable workflow     # Enable workflow workers
@@ -289,6 +287,8 @@ npx pikku skills install --client     # Only skills tagged installGroups: [clien
 npx pikku skills install --update     # Overwrite existing skills
 ```
 
+`skills install` also takes three flags for hosts that relocate or fence their agents: `--agent-extensions` (comma-separated extension paths every projected agent loads), `--agent-dir` (where to write projected agents, overriding the harness default), and `--agent-skill-dir` (the skill directory a projected agent points at).
+
 ### `pikku meta`
 
 Inspect project metadata in machine-readable form (for planners and tooling).
@@ -345,6 +345,28 @@ npx pikku scenario run staging --api-url https://sandbox.example.com --app-url h
 ```
 
 `--video` takes `failed` (the default), `all`, or `off`. `--api-url` and `--app-url` override the environment for one run; `--app-url` also accepts `<app>=<url>` pairs for products whose personas sign into different frontends.
+
+`pikku scenario guide` writes the user guide your suite already contains, as markdown: each page's editorial prose merged with the steps and screenshots the latest run recorded.
+
+```bash
+npx pikku scenario guide
+npx pikku scenario guide --docs docs --output out/guide   # defaults: docs, <outDir>/guide
+npx pikku scenario guide --run-id <id>                    # build from a specific run
+npx pikku scenario guide --allow-undocumented             # report undocumented features instead of failing
+npx pikku scenario guide --artifact-base /docs/_media/    # prefix for figure paths
+```
+
+### `pikku examples`
+
+Worked examples of the things that are easy to get wrong and hard to discover. Read one, or write it into your project already renamed onto your own entity.
+
+```bash
+npx pikku examples list                    # Every example, with what it's for
+npx pikku examples list --group scenario   # Only names starting with this (-g)
+npx pikku examples show <name> --entity Order   # Print one, renamed onto your entity (-n, -e)
+npx pikku examples add --name <name> --entity Order   # Write it into this project
+npx pikku examples add --name <name> --app web        # --app / -a: which frontend a screen belongs to
+```
 
 ### `pikku persona`
 
@@ -473,7 +495,59 @@ npx pikku logout --url https://api.example.com
 
 ### `pikku fabric`
 
-PikkuFabric commands (login, link, deploy, domains, secrets, logs, …). Run `npx pikku fabric` to see the subcommands.
+The PikkuFabric command group. Most commands take `--branch/-b` to pick the stage and `--api-url` to override the fabric-api URL for one call; `--json` gives machine-readable output where noted. [Deploying with Fabric](/docs/deploy/fabric) covers the workflow; this is the command map.
+
+| Command | What it does |
+|---|---|
+| `fabric login` | Authenticate against fabric-api. `--api-key`, `--token`, `--api-url`, `--console-url`, `--no-browser` (just print the link) |
+| `fabric init <repo>` | Adopt an existing git repo as a fabric project. `--name`, `--branch` (default `main`), `--organization`, `--force` (replace `fabric.config.json`), `--api-url` |
+| `fabric link` | Register the current repo as a project and queue an initial deploy. `--github`, `--gitea` (host it on fabric's git server), `--repo-name`, `--organization`, `--api-url` |
+| `fabric validate` | Check the project structure for fabric compatibility, with fix hints. `--skip-typecheck` |
+| `fabric smoke` | Clean-room smoke test in a temp worktree: install, codegen, migrate, check `pikku dev` starts. `--keep-temp`, `--timeout-seconds`, `--startup-timeout-seconds`, `--port` |
+| `fabric status` | Linked project status (active and in-flight deploy) |
+| `fabric projects` | Projects in your organization, with ids (works unlinked) |
+| `fabric deploy apply [branch]` | Build and deploy a branch or production. `--production`, `--ref`, `--deployment-id`, `--detach`, `--auto-approve/-y`, `--allow-destructive`, `--timeout` (seconds, default 900), `--json` |
+| `fabric deploy list` / `units` | Recent deployments / deployed worker units for a branch (`-b`) |
+| `fabric rollback <branch> [target]` | Roll live back to a previous artifact. `--list`, `--dry-run`, `--yes/-y` |
+| `fabric secrets set\|list\|delete\|rotate` | Stage-scoped secrets. `set <name>` takes `--value` (else prompts or reads stdin) and `--force`; `list` takes `--json`; `delete <name>` and `rotate` take `--force` |
+| `fabric variables set\|get <name>` | Stage-scoped variables. `set --value` is read as JSON when it parses; `get --json` |
+| `fabric domains list\|add\|remove` | Custom domains for production. `add <hostname> --target api\|app` (default `api`) |
+| `fabric db schema` | Live stage database schema (`-b`) |
+| `fabric logs` | Stream or fetch logs. `-b`, `--deployment`, `--level`, `--since` (e.g. `15m`), `--follow/-f`, `--json` |
+| `fabric metrics` | Request rate, error rate and latency. `-b`, `--hours` (default 24), `--function`, `--json` |
+| `fabric trace <traceId>` | Every event for one trace. `-b`, `--json` |
+| `fabric errors` | Recent error-level events with trace ids. `-b`, `--function` |
+| `fabric addon verify\|publish [dir]` | Check an addon directory is ready, then publish it to the community registry |
+| `fabric addon add <id>` | Install a registry addon into `addons/` (`--dir` overrides `addons.addonDir`) |
+| `fabric llm key` | Mint or reuse a developer-scoped Fabric AI gateway key. `--shell`, `--env`, `--json` |
+| `fabric report [title]` | Report a finding (something about pikku that cost you time). Takes `--kind product\|harness`, `--expected`, `--actual`, `--repro`, `--workaround`, `--proposal`, `--unresolved`, `--stdin` and more; see `pikku fabric report --help` |
+| `fabric findings list\|flush\|clear` | Findings held locally because they couldn't be sent: list, send, or discard them |
+
+#### `pikku fabric changes`
+
+The todo list filed from inside a deployed stage. Read what's open, file what was decided elsewhere, claim a batch, ask what you need to know, and tick items off.
+
+```bash
+npx pikku fabric changes list                         # Open changes, grouped the way they'll be worked
+npx pikku fabric changes show --change-id <id>        # One change with its thread and circled elements
+npx pikku fabric changes file --title "Group totals" --route /checkout
+npx pikku fabric changes claim --change-ids a,b --title "Checkout polish"
+npx pikku fabric changes ask --change-id <id> --question "Reprice them?" --option "Reprice" --option "Leave"
+npx pikku fabric changes shot --change-id <id> --label "Grouped totals" --image shot.png
+npx pikku fabric changes done --change-id <id> --note "Fixed in the totals row"
+```
+
+| Subcommand | Options |
+|---|---|
+| `list` | `--project-id/-p`, `--stage-id`, `--route`, `--group-id`, `--pickup-only`, `--include-done`, `--limit` (default 50, max 200) |
+| `show` | `--change-id` |
+| `file` | `--project-id/-p`, `--stage-id`, `--branch`, `--title/-t`, `--body`, `--body-file`, `--route`, `--locale` |
+| `claim` | `--project-id/-p`, `--group-id`, `--change-ids`, `--title`, `--claimed-by`, `--lease-minutes` (default 30) |
+| `ask` | `--change-id`, `--question/-q`, `--option` (repeatable), `--author-name` |
+| `shot` | `--change-id`, `--label`, `--image` or `--image-base64`, `--content-type`, `--kind option\|evidence` (default `option`), `--author-name` |
+| `done` | `--change-id`, `--branch`, `--head-commit`, `--note`, `--author-name` |
+
+Every `changes` subcommand also accepts `--api-url`.
 
 ## Global Options
 
@@ -504,7 +578,7 @@ These flags work with any command:
 ### Development
 
 ```bash
-# Run the whole platform locally, Console included
+# Run the whole platform locally
 npx pikku dev
 
 # Or just watch mode with hot reload, no server
