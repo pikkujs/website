@@ -45,7 +45,7 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 │   └── index.ts                       # #pikku/setup
 │
 ├── services/
-│   └── pikku-meta-service.gen.ts      # LocalMetaService subclass
+│   └── pikku-meta-service.gen.ts      # LocalMetaService subclass (stubbed out of deploy bundles)
 │
 ├── function/
 │   ├── pikku-function-types.gen.ts    # pikkuFunc, pikkuSessionlessFunc, etc.
@@ -189,6 +189,7 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 │   ├── pikku-roles.gen.ts             # SystemRoleName union + declared roles
 │   ├── pikku-roles-meta.gen.json
 │   ├── pikku-flags.gen.ts             # FeatureFlagName union + declared flags
+│   ├── pikku-flags-manifest.gen.ts    # Runtime flag manifest
 │   ├── pikku-flags-meta.gen.json
 │   ├── pikku-personas.gen.ts          # Typed definePersonas + PersonaId union
 │   ├── pikku-personas-meta.gen.json
@@ -241,13 +242,40 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 │   ├── pikku-package.gen.ts           # Addon package registration
 │   ├── pikku-addon-types.gen.ts       # Addon config/service types
 │   └── index.ts                       # #pikku/addon
+│
+└── console/
+    └── pikku-addon-meta.gen.json      # Addon metadata (path set by addonMetaJsonFile)
 ```
 
 Any wiring's `.gen.json` meta can also have a `-verbose.gen.json` sibling (`pikku-http-wirings-meta-verbose.gen.json`, `myWorkflow-verbose.gen.json`); the minimal copy ships to every runtime, while the verbose one is read off disk by tooling and documentation.
 
 Not every directory is generated for every project — only the ones relevant to your wirings. If you don't use workflows, there's no `workflow/` directory. In addon mode (`"addon": true`) the whole tree is written one level deeper, at `outDir/addon/`, so every leaf an addon authors resolves as `#pikku/addon/<leaf>`.
 
+The scaffold files sit in subfolders of `scaffold.pikkuDir` (`rpc/`, `agent/`, `workflow/`, `webhook/`, `realtime/` for `events`, `remote-jobs/`, `analytics/`, `feature-flags/`, `virtual-user/`, `graph/`). `rpc`, `remoteRpc`, `webhook`, `workflow`, `agent`, `virtualUser` and `events` each also get a `<name>.schemas.gen.ts` beside them (`rpc-public.schemas.gen.ts`, `events.schemas.gen.ts`, …) holding their input/output schemas. With `scaffold.events` on and `clientFiles.fetchFile` set, `clientFiles.realtimeFile` defaults to `realtime.gen.ts` next to the fetch client.
+
 A few generated files live **outside** `outDir`, in your source tree, because the inspector needs to scan them like regular code: the Better Auth wiring (`auth.gen.ts`, plus `auth-secrets.gen.ts` and `auth-middleware.gen.ts` beside it) at the `authFile` path, the feature scaffold files (`rpc-public.gen.ts`, `analytics.gen.ts`, `feature-flags.gen.ts`, `virtual-user.gen.ts`, `agent.gen.ts`, `workflow-routes.gen.ts`, `events.gen.ts`, `rpc-remote.gen.ts`, `remote-jobs.gen.ts`, `webhook.gen.ts`, `graph.wirings.gen.ts`) under `scaffold.pikkuDir`, and `db/annotations.gen.json` beside the authored `db/annotations.ts`.
+
+## What Each Command Writes
+
+Most commands write into `outDir`. These are the ones that write somewhere else, or write something you might not expect:
+
+| Command | Output |
+|---|---|
+| `pikku` / `pikku all` | Everything in the tree above, plus the scaffold files and the client files you've configured |
+| `pikku bootstrap` | Only the type files — the `*-types.gen.ts` leaves and the setup types |
+| `pikku schemas` | `schemas/` JSON schema files and `schemas/register.gen.ts` |
+| `pikku fetch`, `websocket`, `rpc`, `react-query`, `tanstack-start`, `realtime`, `queue-service`, `nextjs` | The matching `clientFiles` path (skipped if unset) |
+| `pikku openapi` | `openAPI.outputFile` |
+| `pikku emails generate` | `email/pikku-emails.gen.ts` and `email/pikku-emails-meta.gen.json` |
+| `pikku db migrate` / `codegen` | `db/schema.gen.ts` and `db/zod.gen.ts` (the rest of `db/` comes with a full run) |
+| `pikku audit` | `.pikku/audit.json` |
+| `pikku semver` | `.pikku/changes.gen.json` (or the `--out` path; `--emit` writes the snapshot instead) |
+| `pikku dist` | Copies `.gen.json` meta and hand-authored `.d.ts` into the tsc output directory |
+| `pikku scenario run --screenshots` | `.pikku/scenario-runs/<run>/<scenario>/` |
+| `pikku scenario run --coverage` | `coverage/scenario-coverage.json` |
+| `pikku scenario guide` | Markdown under `<outDir>/guide` (or `--output`) |
+| `pikku versions init` | `versions.pikku.json` |
+| `pikku binary` | The path in `binary.output` |
 
 ## Key Files
 
@@ -301,6 +329,7 @@ This is why `pikkuFunc` "just works" with autocomplete for your services and ses
 
 Files ending in `.gen.json` contain static metadata used by:
 
+- **Tooling** — anything that needs to list functions, routes, agents and workflows without loading your code
 - **The deploy pipeline** — analyzes what needs to be deployed
 - **OpenAPI generation** — builds API specs from HTTP metadata
 - **MCP servers** — exposes tool/resource/prompt catalogs

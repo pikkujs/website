@@ -29,7 +29,7 @@ The `pikku.config.json` file configures how the Pikku CLI scans your codebase an
 | `extends` | `string` | ❌ | Path to another `pikku.config.json` to inherit from |
 | `ignoreFiles` | `string[]` | ❌ | Glob patterns to skip (default: `["**/*.test.ts", "**/*.spec.ts", "**/node_modules/**", "**/dist/**"]`) |
 | `globalHTTPPrefix` | `string` | ❌ | Prefix prepended to all HTTP routes (e.g., `/api/v1`). Trailing slashes are stripped |
-| `metaLocale` | `string` | ❌ | BCP-47 language tag for the meta that gets rendered back to your team — function/step descriptions, feature and scenario names (default: `"en"`). Identifiers stay English; the language the app speaks to users is a separate setting |
+| `metaLocale` | `string` | ❌ | BCP-47 language tag for the meta rendered back to your team — function/step descriptions, feature and scenario names (default: `"en"`). Identifiers stay English; the language the app speaks to users is a separate setting |
 | `$schema` | `string` | ❌ | JSON schema URL for editor autocomplete |
 
 In addon mode (`"addon": true`) the generated tree roots at `outDir/addon`, so every leaf an addon authors is reached as `#pikku/addon/<leaf>`.
@@ -101,32 +101,84 @@ The `scaffold` section controls where `pikku new` puts generated files and which
 | `permissionDir` | `string` | Where `pikku new permission` puts files (default: `<srcDirectories[0]>/permissions`) |
 | `addonDir` | `string` | Base directory for `pikku new addon`; the package is created at `<addonDir>/addon-<name>` (default: current working directory) |
 
-**Feature flags** — set via `pikku enable <feature>` or directly in config.
+### Feature flags
 
-Each flag says only whether the *surface exists*, and where its file goes. It never says who may call the surface: authentication is declared on the function, its wiring, its scopes and its addon, and enforced there on every call.
+Feature flags are the keys that switch a generated surface on. Set them with `pikku enable <feature>` or by hand. (`pikku enable` also writes `scaffold.pikkuDir: "pikku"` if you haven't set one.)
+
+Each flag says only whether the *surface exists* and where its file goes. It never says who may call the surface: authentication is declared on the function, its wiring, its scopes and its addon, and enforced there on every call.
 
 | Value | Meaning |
 |---|---|
 | `true` | the surface exists, at its default path under `pikkuDir` |
-| `{ "path": "src/my.gen.ts" }` | the surface exists and is written to `path` instead |
-| `false` | the surface is not generated |
+| `{ "path": "src/my.gen.ts" }` | the surface exists and is written to `path` instead (relative to `rootDir`, or absolute) |
+| `false` or absent | the surface is not generated |
 
-Only `path` is accepted as an object key. A bare string and the old `auth` key are both refused by the loader with an explicit message.
+Only `path` is accepted as an object key. A bare string, an unknown key, and the old `auth` key are all refused when the config loads, with a message saying so. `graph` and `webhook` are plain booleans: no `path` override.
 
-| Option | Description |
-|--------|-------------|
-| `rpc` | Generate the public RPC endpoint (`rpc-public.gen.ts`) |
-| `analytics` | Generate the typed `POST /analytics` ingest (`analytics.gen.ts`) |
-| `featureFlags` | Generate the `GET /feature-flags` read wire (`feature-flags.gen.ts`) |
-| `scenarios` | Generate scenario instrumentation functions (`scenarios.gen.ts`) |
-| `virtualUser` | Generate the virtual-user run/read RPCs (`virtual-user.gen.ts`). Requires at least one declared persona |
-| `agent` | Generate agent endpoints (`agent.gen.ts`) |
-| `workflow` | Generate workflow routes (`workflow-routes.gen.ts`) |
-| `events` | Generate the realtime events channel + SSE stream (`events.gen.ts`) |
-| `remoteRpc` | Generate the remote internal RPC queue worker + HTTP endpoint (`rpc-remote.gen.ts`) |
-| `remoteJobs` | Generate the remote job inbox routes for queue and scheduled work (`remote-jobs.gen.ts`) |
-| `webhook` | Generate the outgoing webhook delivery queue worker (`webhook.gen.ts`). Boolean only — no path override |
-| `graph` | Wire the addon-graph package so `pikkuWorkflowGraph` can reference its native transforms (`graph.wirings.gen.ts`). Boolean only — no path override |
+| Flag | Generates | Default path (under `pikkuDir`) | `pikku enable` |
+|---|---|---|---|
+| `rpc` | `POST /rpc/:rpcName` | `rpc/rpc-public.gen.ts` | `rpc` |
+| `agent` | Agent HTTP endpoints | `agent/agent.gen.ts` | `agent` |
+| `workflow` | Workflow HTTP routes | `workflow/workflow-routes.gen.ts` | `workflow` |
+| `events` | `/events` WebSocket channel + `/events/:topic` SSE | `realtime/events.gen.ts` | `events` |
+| `remoteRpc` | Remote internal RPC worker + `POST /remote/rpc/:rpcName` | `rpc/rpc-remote.gen.ts` | `remote-rpc` |
+| `remoteJobs` | Job inbox routes for queue and scheduled work | `remote-jobs/remote-jobs.gen.ts` | `remote-jobs` |
+| `webhook` | Outgoing webhook delivery queue worker | `webhook/webhook.gen.ts` | `webhook` |
+| `analytics` | `POST /analytics` ingest | `analytics/analytics.gen.ts` | none (set by hand) |
+| `featureFlags` | `GET /feature-flags` | `feature-flags/feature-flags.gen.ts` | none (set by hand) |
+| `virtualUser` | Virtual-user run/read RPCs + run worker | `virtual-user/virtual-user.gen.ts` | none (set by hand) |
+| `scenarios` | Scenario instrumentation in `pikku dev` / `pikku serve` (no file) | none | `scenarios` |
+| `graph` | The `@pikku/addon-graph` wiring | `graph/graph.wirings.gen.ts` | none (set by hand) |
+
+Every generated file is marked `.gen.ts`, is rewritten on each `pikku` run, and is picked up by the inspector like any other source file, so edit the source declarations rather than the output. When a flag is off, nothing is generated for it and any copy left at the old default path is not a source of truth.
+
+#### `rpc`
+
+Wires `POST <globalHTTPPrefix>/rpc/:rpcName` (with `auth: false` on the wire itself) so a client can call any function you've exposed over RPC. It does not expose anything new: a function is only reachable if it's marked `expose: true`, and its own auth rules still run. Turn it on when a browser or another service calls functions by name through the generated RPC client. Schemas go to `rpc-public.schemas.gen.ts` beside it. Off: there is no generic `/rpc` endpoint; the RPC client has nothing to talk to.
+
+#### `agent`
+
+Wires the public agent endpoints: `/rpc/agent/:agentName`, `/rpc/agent/:agentName/stream`, `/rpc/agent/:agentName/approve` and `/rpc/agent/:agentName/resume` (all under `globalHTTPPrefix`). Turn it on when you have AI agents and want to run them over HTTP. Off: agents still exist and can be called in-process, but have no HTTP surface.
+
+#### `workflow`
+
+Wires the workflow routes: `/workflow/:workflowName/start`, `/run`, `/approve/:runId`, `/status/:runId`, plus `/status/:runId/stream` and `/stream/full` for live status over a channel. Turn it on to start workflows and watch them from outside the backend. Off: workflows run from code only (via the workflow service); there is no HTTP way in.
+
+#### `events`
+
+Generates the realtime scaffold: a WebSocket channel at `/events` (clients subscribe and unsubscribe to topics) and an SSE route at `/events/:topic`. Both subscribe clients through the `eventHub` service, so provide one in your singleton services. When `clientFiles.fetchFile` is set and `clientFiles.realtimeFile` is not, the realtime client is written to `realtime.gen.ts` next to the fetch client. Off: no realtime channel; `pikku realtime` has nothing to point at.
+
+#### `remoteRpc`
+
+Generates a queue worker named `pikku-remote-internal-rpc` and `POST /remote/rpc/:rpcName`, both running functions marked `remote: true`. The HTTP side is guarded by pikku's remote-auth middleware rather than a user session. Turn it on when one pikku deployment calls another's internal functions. Since the worker is a queue worker, you need a queue service.
+
+#### `remoteJobs`
+
+Generates `POST /__pikku/queue-job` and `POST /__pikku/scheduler-job`, a job inbox for runtimes that have neither a queue consumer nor a clock (serverless, for instance). An external dispatcher posts a job, and pikku runs the matching queue worker or scheduled task. Both routes sit behind the `remoteJobsSecret` middleware from `@pikku/core/middleware`. Off: those runtimes can't be driven by an outside dispatcher.
+
+#### `webhook`
+
+Generates a queue worker named `pikku-outgoing-webhooks` that delivers outgoing webhooks using core's `pikkuWebhookWorkerFunc`. Boolean only. Turn it on when your app sends webhooks to customers. Since it's a queue worker, you need a queue service.
+
+#### `analytics`
+
+Generates `POST <globalHTTPPrefix>/analytics`, a typed ingest built from your `defineAnalyticsEvents` declarations. Codegen logs an error and skips the file if the project declares no events. The events metadata (`analytics/pikku-analytics-meta.gen.json`) is written whether or not this flag is on, so declaring events is useful on its own.
+
+#### `featureFlags`
+
+Generates `GET <globalHTTPPrefix>/feature-flags`, a read wire returning the flag state for the caller, from your `defineFeatureFlags` declaration (and `scopes/pikku-flags-manifest.gen.ts`). Codegen logs an error and skips the file if no flags are declared. Off: flags are still evaluated server-side; clients just can't read them over HTTP.
+
+#### `virtualUser`
+
+Generates the virtual-user surface: exposed RPCs to run a persona (`runVirtualUser`), read and list runs and their steps, and set schedules, plus a queue worker named `pikku-virtual-user-runs`. Requires at least one persona declared with `definePersonas`; with none, codegen fails with a message saying so. A scheduled tick (`tickVirtualUserSchedules`) is generated but deliberately not wired: pikku won't start spending model budget for you, so you add the `wireScheduler` yourself. The model comes from `scenarios.model`.
+
+#### `scenarios`
+
+Doesn't generate a file. When on, `pikku dev` and `pikku serve` register the scenario instrumentation (coverage reset/snapshot and service-call recording) that `pikku scenario run --coverage` relies on. It's registered at start-up rather than generated into the project, so a deployed bundle never contains it. Off: scenarios can still run against the server, but coverage endpoints aren't available.
+
+#### `graph`
+
+Wires the `@pikku/addon-graph` package (`wireAddon({ name: 'graph', package: '@pikku/addon-graph' })`) so `pikkuWorkflowGraph` can reference its native transforms such as `graph:editFields`. Boolean only. The package must be installed in your project.
 
 ## Models
 
@@ -175,6 +227,7 @@ A `model` containing `/` is used as written; a bare name that is not in this tab
 | `scenarios.emailDomain` | `string` | Mail domain a persona's address is built on (default: `personas.invalid`, a domain nobody can own) |
 | `scenarios.browserDriver` | `string` | Package driving `browser` step bindings. Anything exporting a `ScenarioBrowserProvider` works (default: `@pikku/playwright`) |
 | `scenarios.model` | `string` | Model a persona thinks with. Not the model under test; a step can override it per conversation |
+| `scenarios.reset` | `{ enabled, keep? }` | Roll the local database back to its seeded state between scenarios: the runner copies every table once, then restores the rows before each scenario (a feature's `before` hook setup is captured too). `keep` lists tables the rollback leaves alone — put session and account tables there, or every actor is signed out mid-run. Refused unless the run targets an `apiUrl` on this machine |
 
 Personas are declared in code with `definePersonas`, not in `pikku.config.json`:
 
@@ -305,6 +358,9 @@ Configure deployment providers and settings.
 | `deploy.serverlessIncompatible` | `string[]` | Service names that can't run in serverless — any function that reaches one is routed to the server target |
 | `deploy.defaultTarget` | `"serverless"` \| `"server"` | Default deploy target for functions without an explicit `deploy` flag (default: `serverless`) |
 | `deploy.grouping` | `object` | How many deployment units the app's functions collapse into — `{ strategy: "services" \| "function" \| "single", rules: [{ unit, tags?, addon?, routes? }] }` (`services` is the default). See [Deployment unit grouping](../deploy/index.md#deployment-unit-grouping) |
+| `deploy.mangleIdentifiers` | `boolean` | Rename identifiers when minifying worker bundles (default: `true`). Set `false` so a deployed worker's runtime errors name something you can search for |
+| `deploy.bundler` | `"auto"` \| `"bun"` \| `"esbuild"` | Which bundler builds deployment units. `auto` (default) uses `Bun.build` under bun and esbuild otherwise; pin `esbuild` where bun's output misbehaves |
+| `deploy.desktop` | `object` | Desktop shell settings used by `pikku deploy apply --desktop`: `{ identifier?, url? }` |
 
 ## Addon Mode
 
@@ -331,7 +387,7 @@ Or with metadata for the addon registry:
 }
 ```
 
-The addon object also accepts `serverlessIncompatible` (service names that must run on a server) and `openapi` (`version` + `hash`, stamped by `pikku new addon --openapi` to track the spec the addon was generated from). Two related top-level keys: `addonName` overrides the addon's package name in generated metadata (defaults to the `name` in `package.json`), and `addonMetaJsonFile` overrides where the addon metadata JSON is written.
+The addon object also accepts `serverlessIncompatible` (service names that must run on a server) and `openapi` (`version` + `hash`, stamped by `pikku new addon --openapi` to track the spec the addon was generated from). Two related top-level keys: `addonName` overrides the addon's package name in generated metadata (defaults to the `name` in `package.json`), and `addonMetaJsonFile` overrides where the addon metadata JSON is written (default: `{outDir}/console/pikku-addon-meta.gen.json`; the directory name is historical).
 
 ## OpenAPI Generation
 
