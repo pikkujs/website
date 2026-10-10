@@ -77,13 +77,16 @@ function dedent(lines) {
  * Marker lines themselves are never collected, so an inner marker does not leak
  * into the snippet around it.
  */
-function extractSnippets(content, rel) {
+function extractSnippets(content, rel, problems) {
   const snippets = {}
   const open = new Map()
 
   for (const line of content.split('\n')) {
     const startMatch = line.match(/\/\/\s*@snippet start\s+(\S+)/)
     if (startMatch) {
+      if (snippets[startMatch[1]] || open.has(startMatch[1])) {
+        problems.push(`Duplicate snippet "${startMatch[1]}" within ${rel}`)
+      }
       open.set(startMatch[1], [])
       continue
     }
@@ -96,7 +99,7 @@ function extractSnippets(content, rel) {
         snippets[name] = formatSnippet(dedent(collected))
         open.delete(name)
       } else {
-        console.warn(`[extract-snippets] "@snippet end ${name}" with no matching start in ${rel}`)
+        problems.push(`"@snippet end ${name}" with no matching start in ${rel}`)
       }
       continue
     }
@@ -105,7 +108,7 @@ function extractSnippets(content, rel) {
   }
 
   for (const name of open.keys()) {
-    console.warn(`[extract-snippets] "@snippet start ${name}" is never closed in ${rel}`)
+    problems.push(`"@snippet start ${name}" is never closed in ${rel}`)
   }
 
   return snippets
@@ -126,21 +129,32 @@ if (fs.existsSync(APPS_DIR)) {
     if (fs.existsSync(vite)) files.push(vite)
   }
 }
+/* Every definition problem is collected and reported together, and nothing is
+   written while any remain: a stale snippets.json is better than one that
+   silently drops a region or shows the wrong code. */
+const problems = []
 const all     = {}
 const origins = {} // snippet name → file path (for collision warnings)
 
 for (const file of files) {
   const content  = fs.readFileSync(file, 'utf8')
   const rel      = (file.startsWith(SUBMODULE_SRC + path.sep) ? path.relative(SUBMODULE_SRC, file) : path.relative(TEMPLATE_ROOT, file))
-  const snippets = extractSnippets(content, rel)
+  const snippets = extractSnippets(content, rel, problems)
 
   for (const [name, code] of Object.entries(snippets)) {
     if (origins[name]) {
-      console.warn(`[extract-snippets] Duplicate snippet "${name}" in ${rel} (already from ${origins[name]})`)
+      problems.push(`Duplicate snippet "${name}" in ${rel} (already from ${origins[name]})`)
+      continue
     }
     all[name]     = code
     origins[name] = rel
   }
+}
+
+if (problems.length > 0) {
+  for (const problem of problems) console.error(`[extract-snippets] ${problem}`)
+  console.error(`[extract-snippets] ${problems.length} invalid snippet definition${problems.length !== 1 ? 's' : ''} — nothing written`)
+  process.exit(1)
 }
 
 fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true })
