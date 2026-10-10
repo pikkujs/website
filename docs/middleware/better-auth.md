@@ -19,7 +19,7 @@ Three pieces work together:
 2. **Generated auth routes** — the CLI emits a catch-all HTTP wiring (`/api/auth{/*splat}`, GET and POST) that forwards requests to Better Auth's handler. Sign-in, sign-up, callbacks, sign-out — all of Better Auth's endpoints work without any manual wiring.
 3. **Session middleware** — the CLI registers middleware on `*` that reads the Better Auth session on each request and calls `setSession`, so `session.userId` is available in your functions like any other Pikku session.
 
-Because it all flows through normal CLI inspection, the auth routes, required secrets (`BETTER_AUTH_SECRET`, OAuth credentials), and database tables show up in the deploy manifest, the console, and `pikku db migrate` automatically.
+Because it all flows through normal CLI inspection, the auth routes, required secrets (`BETTER_AUTH_SECRET`, OAuth credentials), and database tables show up in the deploy manifest and `pikku db migrate` automatically.
 
 ## Installation
 
@@ -116,7 +116,7 @@ Both variants skip silently when a session is already set, so they stack with ot
 
 ## Social providers and SSO
 
-Add providers under `socialProviders` in your Better Auth config. The CLI reads the provider keys and emits a `defineSecret` for each one it recognizes (GitHub → `GITHUB_OAUTH`, Google → `GOOGLE_OAUTH`, and so on), so OAuth credentials are collected like any other Pikku secret — through your secret service locally, or through the console in production.
+Add providers under `socialProviders` in your Better Auth config. The CLI reads the provider keys and emits a `defineSecret` for each one it recognizes (GitHub → `GITHUB_OAUTH`, Google → `GOOGLE_OAUTH`, and so on), so OAuth credentials are collected like any other Pikku secret — through your secret service.
 
 The convention: each provider secret is an object with `clientId` and `clientSecret`, read in the factory and spread into the config:
 

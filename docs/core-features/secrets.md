@@ -93,19 +93,13 @@ See [OAuth2 Credentials](/docs/advanced/oauth2) for who runs the authorization f
 
 **Separate OAuth secrets**: Keep app secrets (`secretId`) separate from tokens (`tokenSecretId`). App secrets rarely change; tokens change frequently.
 
-## Managing Secrets with the Console
-
-The [Pikku Console](/docs/console) provides a visual interface for managing secrets per environment. You can view, set, and update secret values — including running OAuth2 authorization flows for credentials like GitHub or Stripe — without touching code or environment files.
-
-See [Console Features](/docs/console/features#secrets) for details.
-
 ## Generated Files
 
 The CLI generates typed wrappers in `.pikku/secrets/`:
 
 - `pikku-secret-types.gen.ts` — re-exports `defineSecret` and types
 - `pikku-secrets.gen.ts` — `TypedSecretService` with your `CredentialsMap`
-- `pikku-secrets-meta.gen.json` — secret metadata for Console and deploy
+- `pikku-secrets-meta.gen.json` — secret metadata for deploy
 
 ## Next Steps
 

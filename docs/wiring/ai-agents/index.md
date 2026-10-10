@@ -510,10 +510,6 @@ export const triageWorkflow = pikkuWorkflowGraph({
 
 Declare an `output` schema on the agent when downstream nodes need typed access to its result — `ref()` resolves the agent's output keys. See [Graph Workflows](/docs/wiring/workflows/graph-workflows) for the full graph syntax.
 
-## Visualizing Agents in the Console
-
-The [Pikku Console](/docs/console) provides a built-in chat interface for your AI agents, displays agent metadata, and lets you test agents interactively. See [Console Features](/docs/console/features) for details.
-
 ## Next Steps
 
 - **[Channels](/docs/wiring/channels/)**: Learn about the streaming transport used by agents

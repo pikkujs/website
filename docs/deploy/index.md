@@ -74,7 +74,7 @@ every one of them is a build and an upload.
     "grouping": {
       "strategy": "single",
       "rules": [
-        { "unit": "console", "addon": "console" },
+        { "unit": "admin", "addon": "admin" },
         { "unit": "pdf", "tags": ["pdf"] },
         { "unit": "webhooks", "routes": ["/api/webhooks/*"] }
       ]

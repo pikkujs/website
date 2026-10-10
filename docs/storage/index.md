@@ -26,9 +26,9 @@ Each backend implements one or more of these core interfaces:
 |-----------|---------|----------|
 | `AgentStorageService` | Thread, message, and working memory persistence for AI Agents | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
 | `AgentRunStateService` | Agent run tracking and tool approval state | `@pikku/kysely-postgres`, `@pikku/kysely`, `@pikku/mongodb` |
-| `AgentRunService` | Read-only agent run queries (used by the Console) | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
+| `AgentRunService` | Read-only agent run queries | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
 | `WorkflowService` | Workflow run orchestration and step state | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
-| `WorkflowRunService` | Read-only workflow run queries (used by the Console) | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
+| `WorkflowRunService` | Read-only workflow run queries | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
 | `ChannelStore` | WebSocket channel and subscription persistence | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
 | `EventHubStore` | Channel topic subscription tracking | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |
 | `DeploymentService` | Multi-instance deployment tracking | `@pikku/kysely-postgres`, `@pikku/redis`, `@pikku/kysely`, `@pikku/mongodb` |

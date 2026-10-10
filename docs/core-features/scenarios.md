@@ -114,7 +114,7 @@ Target environments are top-level in `pikku.config.json`, and the actor addresse
 }
 ```
 
-The CLI generates a typed persona registry from `definePersonas`, and scenarios receive it as `actors` on the scenario wire. `signInPath` defaults to `/auth/sign-in/actor` and `rpcPath` to `/rpc`; `SCENARIO_ACTOR_SECRET` never appears here. Actor login is **lazy**: the first `invoke` signs the actor in (via the Better Auth actor plugin) and the session is cached for the actor's lifetime. `personality` and `jobTitle` power the console's scenario screen and the persona in `converse`.
+The CLI generates a typed persona registry from `definePersonas`, and scenarios receive it as `actors` on the scenario wire. `signInPath` defaults to `/auth/sign-in/actor` and `rpcPath` to `/rpc`; `SCENARIO_ACTOR_SECRET` never appears here. Actor login is **lazy**: the first `invoke` signs the actor in (via the Better Auth actor plugin) and the session is cached for the actor's lifetime. `personality` and `jobTitle` shape the persona in `converse`.
 
 ## Running Scenarios
 

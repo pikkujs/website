@@ -1,13 +1,12 @@
 ---
 title: Shipped Addons
-description: The addons Pikku maintains — admin, console and graph
+description: The addons Pikku maintains — admin and graph
 ---
 
 # Shipped Addons
 
 Pikku publishes a small set of first-party addons alongside the framework. They
-are ordinary addons — install the package and register it with `wireAddon` — with
-one exception: the console addon is installed for you when the console is served.
+are ordinary addons — install the package and register it with `wireAddon`.
 
 ```typescript
 import { wireAddon } from '#pikku/addon'
@@ -18,11 +17,8 @@ import { wireAddon } from '#pikku/addon'
 Administration for a Pikku application, as ordinary namespaced RPCs: the user
 directory, roles and scopes, credentials, and the audit trail.
 
-It is separate from the console addon on purpose. The console addon serves a
-running dev server and reads generated metadata and project source from disk;
-this one touches nothing but the services your application already has, so it can
-be wired into a deployed serverless unit and called from your own admin screens
-without the console anywhere in sight.
+It touches nothing but the services your application already has, so it can be
+wired into a deployed serverless unit and called from your own admin screens.
 
 ```bash
 npm install @pikku/addon-admin
@@ -40,12 +36,6 @@ wireAddon({
 `globalCredentials` is required for the `admin:credential*` functions — an addon
 declares what it can read, and this is the deliberate opt-out for functions whose
 job is administering credentials themselves.
-
-## `@pikku/addon-console`
-
-The functions behind the Pikku Console UI, packaged as an addon. It is installed
-for you when the console is served; you do not normally depend on it directly.
-See [The Console](../console/index.md) for what it renders.
 
 ## `@pikku/addon-graph`
 

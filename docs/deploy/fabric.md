@@ -103,4 +103,3 @@ the current project.
 
 - **[Deploy overview](./index.md)** — providers, grouping and the deployment manifest
 - **[Storage](../storage/index.md)** — database backends, including libSQL/SQLite
-- **[The Console](../console/index.md)** — the runtime view of a deployed stage

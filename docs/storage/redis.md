@@ -65,7 +65,7 @@ const leaseService = new RedisLeaseService(redis)
 
 ### RedisWorkflowRunService
 
-Read-only workflow run queries for the [Console](/docs/console).
+Read-only workflow run queries.
 
 ```typescript
 import { RedisWorkflowRunService } from '@pikku/redis'
@@ -75,7 +75,7 @@ const workflowRunService = new RedisWorkflowRunService(redis)
 
 ### RedisAgentRunService
 
-Read-only agent run queries for the Console. Reads from Redis-backed AI state.
+Read-only agent run queries. Reads from Redis-backed AI state.
 
 ```typescript
 import { RedisAgentRunService } from '@pikku/redis'

@@ -9,7 +9,7 @@ description: Reusable function packages with namespaced RPC
 Imagine an ecosystem of plug-and-play backend modules. Need Stripe? Install `@pikku/addon-stripe` and call `stripe:createCheckout`. Need analytics? Install `@pikku/addon-posthog` and call `posthog:track`. Each addon is a complete integration - tested, typed, and ready to use.
 
 :::note Those two are illustrations, not shipping packages
-The addon mechanism is real and documented on these pages; the published first-party addons today are `@pikku/addon-admin` (users, roles and scopes, credentials, audit trail), `@pikku/addon-console` and `@pikku/addon-graph`. Every other `@pikku/addon-*` name in this section is a stand-in for an addon you or someone else would write.
+The addon mechanism is real and documented on these pages; the published first-party addons today are `@pikku/addon-admin` (users, roles and scopes, credentials, audit trail), and `@pikku/addon-graph`. Every other `@pikku/addon-*` name in this section is a stand-in for an addon you or someone else would write.
 :::
 
 "Why not just use the official SDK?" Many services don't have one - they're HTTP APIs with docs and nothing else. And even services with SDKs still require you to instantiate clients, manage secrets, handle errors, and wire everything into your application. Addons handle all of that. You install, configure secrets, and call functions.
