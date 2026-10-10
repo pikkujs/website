@@ -203,26 +203,12 @@ zoneless `2026-03-14T08:12:00` and an impossible `2026-02-31T00:00:00Z` all stay
 
 So a field's runtime type follows the **value**, not the schema: the same column can arrive
 as a `Date` from one row and a string from the next. Both ways of getting this wrong
-compile:
+compile, and both fail at runtime:
 
-```tsx
-const { data } = usePikkuQuery('listOrders', {})
+- Calling a string method on it, like `split('T')` to peel off the date part. There is no string to slice.
+- Rendering it directly as a React child. React throws "Objects are not valid as a React child (found: [object Date])" and drops the route into its error boundary.
 
-// ❌ Throws at runtime — there is no string to slice
-<Text>{data.createdAt.split('T')[0]}</Text>
-
-// ❌ Throws "Objects are not valid as a React child (found: [object Date])"
-//    and drops the route into its error boundary
-<Text>{data.createdAt}</Text>
-```
-
-Format before rendering, with a library that accepts either:
-
-```tsx
-import dayjs from 'dayjs'
-
-<Text>{dayjs(data.createdAt).format('D MMM YYYY, HH:mm')}</Text>
-```
+Format before rendering, with a date library that accepts either a `Date` or a string.
 
 Coercing a revived `Date` instead of formatting it (`` `${d}` ``, `String(d)`) does not crash,
 but prints `Date.prototype.toString()` in the runtime's own time zone and locale format —
