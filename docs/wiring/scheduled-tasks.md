@@ -14,13 +14,9 @@ Your domain functions don't need to know they're being called by a scheduler. Th
 
 Here's a scheduled task example from the templates — a daily summary and a weekly cleanup:
 
-```typescript reference title="scheduled.functions.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/scheduled.functions.ts
-```
+Source: [`scheduled.functions.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/scheduled.functions.ts)
 
-```typescript reference title="scheduled.wiring.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/scheduled.wiring.ts
-```
+Source: [`scheduled.wiring.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/scheduled.wiring.ts)
 
 That's it! Your functions will now run on their configured schedules.
 

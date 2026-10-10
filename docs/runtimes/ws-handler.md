@@ -22,6 +22,4 @@ the future if needed by providing more than one access point
 to running channels.
 :::
 
-```typescript reference title="WS start"
-https://github.com/pikkujs/pikku/blob/main/templates/ws/src/start.ts
-```
+Source: [`WS start`](https://github.com/pikkujs/pikku/blob/main/templates/ws/src/start.ts)

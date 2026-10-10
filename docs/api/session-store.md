@@ -8,9 +8,7 @@ You never call it from a function. The function runner reads from it while resol
 
 ## Interface
 
-```typescript reference title="session-store.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/session-store.ts
-```
+Source: [`session-store.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/session-store.ts)
 
 The interface is generic — `SessionStore<UserSession extends CoreUserSession = CoreUserSession>` — so an implementation can be typed against your own session shape.
 
@@ -60,9 +58,7 @@ two instances, since neither sees the other's sessions.
 
 Import `InMemorySessionStore` from `@pikku/core/services` and construct it with no arguments.
 
-```typescript reference title="in-memory-session-store.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-session-store.ts
-```
+Source: [`in-memory-session-store.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-session-store.ts)
 
 ### RedisSessionStore
 

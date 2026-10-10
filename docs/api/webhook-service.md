@@ -10,9 +10,7 @@ The worker itself is generated: set the `scaffold.webhook` feature flag in your 
 
 ## Interface
 
-```typescript reference title="webhook-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/webhook-service.ts
-```
+Source: [`webhook-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/webhook-service.ts)
 
 ## Members
 
@@ -112,9 +110,7 @@ Import `QueueWebhookService` from `@pikku/core/services` and construct it with y
 delivery row and attach its `deliveryId` without re-implementing signing or the
 retry policy.
 
-```typescript reference title="queue-webhook-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/queue-webhook-service.ts
-```
+Source: [`queue-webhook-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/queue-webhook-service.ts)
 
 ### KyselyWebhookService
 
@@ -129,9 +125,7 @@ Import `KyselyWebhookService` from `@pikku/kysely`, construct it with your queue
 wires this without generating the tables fails at boot rather than on the first
 send.
 
-```typescript reference title="kysely-webhook-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/kysely/src/kysely-webhook-service.ts
-```
+Source: [`kysely-webhook-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/kysely/src/kysely-webhook-service.ts)
 
 ## Registration
 

@@ -99,12 +99,8 @@ Pikku maintains an internal registry of error types and their HTTP status codes.
 
 ## Interface
 
-```typescript reference title="error-handler.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/errors/error-handler.ts
-```
+Source: [`error-handler.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/errors/error-handler.ts)
 
 ## Complete Error List
 
-```typescript reference title="errors.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/errors/errors.ts
-```
+Source: [`errors.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/errors/errors.ts)

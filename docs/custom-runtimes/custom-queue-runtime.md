@@ -14,25 +14,19 @@ Creating a custom queue runtime in Pikku involves implementing two classes: `Que
 
 Handle job publishing and retrieval:
 
-```typescript reference title="PgBossQueueService"
-https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/pg-boss-queue-service.ts
-```
+Source: [`PgBossQueueService`](https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/pg-boss-queue-service.ts)
 
 ### 2. Create Your QueueWorkers Implementation
 
 Handle job processing and worker lifecycle:
 
-```typescript reference title="PgBossQueueWorkers"
-https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/pg-boss-queue-worker.ts
-```
+Source: [`PgBossQueueWorkers`](https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/pg-boss-queue-worker.ts)
 
 ### 3. Create Mapping Utilities
 
 Convert between Pikku types and your queue library:
 
-```typescript reference title="pg-boss Utils"
-https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/utils.ts
-```
+Source: [`pg-boss Utils`](https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/utils.ts)
 
 ## Key Implementation Requirements
 
@@ -46,9 +40,7 @@ In your worker processor, call `runQueueJob` from `@pikku/core/queue` with the j
 
 Use the registration helper to validate and register workers:
 
-```typescript reference title="Queue Registration Helper"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/register-queue-helper.ts
-```
+Source: [`Queue Registration Helper`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/register-queue-helper.ts)
 
 ### Configuration Mapping
 

@@ -7,9 +7,7 @@ The EmailService sends outbound email — plain text, HTML, or rendered template
 
 ## Interface
 
-```typescript reference title="email-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/email-service.ts
-```
+Source: [`email-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/email-service.ts)
 
 ## Methods
 
@@ -56,9 +54,7 @@ Logs the email as structured JSON to the console instead of sending — the deve
 
 Import `LocalEmailService` from `@pikku/core/services` and construct it with no arguments.
 
-```typescript reference title="local-email-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-email-service.ts
-```
+Source: [`local-email-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-email-service.ts)
 
 ### Production providers
 

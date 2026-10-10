@@ -86,20 +86,14 @@ Returns the top-level property keys of a compiled schema. Useful for CLI argumen
 
 ## Interface
 
-```typescript reference title="schema-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/schema-service.ts
-```
+Source: [`schema-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/schema-service.ts)
 
 ## Source
 
 ### AJV Schema Service
 
-```typescript reference title="ajv-schema-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/schema-ajv/src/ajv-schema-service.ts
-```
+Source: [`ajv-schema-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/schema-ajv/src/ajv-schema-service.ts)
 
 ### Cloudflare Worker Schema Service
 
-```typescript reference title="cfworker-json-schema.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/schema-cfworker/src/cfworker-json-schema.ts
-```
+Source: [`cfworker-json-schema.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/schema-cfworker/src/cfworker-json-schema.ts)

@@ -10,9 +10,7 @@ Channels routes in Pikku serve as the entry points for handling Channels (as of 
 
 An channel route is a configuration object that defines the behavior for a specific channel request. Here is an example that demonstrates setting up routes for an event service:
 
-```typescript reference title="events.channel.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/channel.wiring.ts
-```
+Source: [`events.channel.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/channel.wiring.ts)
 
 ### Channel Open
 

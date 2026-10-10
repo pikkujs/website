@@ -9,9 +9,7 @@ Credentials are addressed by `name` and an optional `userId`: omit `userId` for 
 
 ## Interface
 
-```typescript reference title="credential-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/credential-service.ts
-```
+Source: [`credential-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/credential-service.ts)
 
 ## Methods
 
@@ -61,9 +59,7 @@ In-memory storage — fine for development, lost on restart.
 
 Import `LocalCredentialService` from `@pikku/core/services` and construct it with no arguments.
 
-```typescript reference title="local-credential-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-credential-service.ts
-```
+Source: [`local-credential-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-credential-service.ts)
 
 ### KyselyCredentialService
 
@@ -75,9 +71,7 @@ Import `KyselyCredentialService` from `@pikku/kysely`, construct it with your Ky
 
 Wraps any `CredentialService` with a typed credential map, so `get('stripe')` returns the declared type instead of `unknown`. The Pikku CLI generates the map from your `defineCredential` declarations.
 
-```typescript reference title="typed-credential-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/typed-credential-service.ts
-```
+Source: [`typed-credential-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/typed-credential-service.ts)
 
 ## Registration
 

@@ -6,9 +6,7 @@ The session is managed through the **wire** (the 3rd function argument), not a s
 
 ## Interface
 
-```typescript reference title="user-session-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/user-session-service.ts
-```
+Source: [`user-session-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/user-session-service.ts)
 
 The interface is generic — `SessionService<UserSession extends CoreUserSession>` — and `PikkuSessionService` takes an optional [`SessionStore`](./session-store) for persistence.
 

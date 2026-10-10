@@ -16,13 +16,9 @@ A trigger has two parts:
 
 Here's a complete trigger example from the templates. The source polls an event using `setInterval`, and the target function processes the payload:
 
-```typescript reference title="trigger.functions.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/trigger.functions.ts
-```
+Source: [`trigger.functions.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/trigger.functions.ts)
 
-```typescript reference title="trigger.wiring.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/trigger.wiring.ts
-```
+Source: [`trigger.wiring.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/trigger.wiring.ts)
 
 The trigger function:
 1. Receives services and input configuration

@@ -7,9 +7,7 @@ The GatewayService manages the lifecycle of listener gateways — the adapters t
 
 ## Interface
 
-```typescript reference title="gateway-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/gateway-service.ts
-```
+Source: [`gateway-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/gateway-service.ts)
 
 ## Methods
 
@@ -29,9 +27,7 @@ Starts every registered listener gateway unconditionally — the right choice fo
 
 Import `LocalGatewayService` from `@pikku/core/services`, construct it with no arguments and await `start()`. On shutdown, await `stop()`.
 
-```typescript reference title="local-gateway-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-gateway-service.ts
-```
+Source: [`local-gateway-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-gateway-service.ts)
 
 :::info
 In a multi-instance deployment, running `LocalGatewayService` on every instance means every instance opens its own platform connection. Implement `GatewayService` with leader election (or similar coordination) so exactly one instance holds the listeners.

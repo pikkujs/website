@@ -10,9 +10,7 @@ Without it registered, no user can hold any scope, so every function declaring `
 
 ## Interface
 
-```typescript reference title="scope-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/scope-service.ts
-```
+Source: [`scope-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/scope-service.ts)
 
 Eighteen methods, none optional — an implementation has to answer all of them.
 
@@ -148,9 +146,7 @@ Import `KyselyScopeService` from `@pikku/kysely`, construct it with your Kysely 
 `init()` requires the scope schema rather than creating it — if the tables are
 missing it throws, telling you to run `pikku db generate` then `pikku db migrate`.
 
-```typescript reference title="kysely-scope-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/kysely/src/kysely-scope-service.ts
-```
+Source: [`kysely-scope-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/kysely/src/kysely-scope-service.ts)
 
 :::info
 `pikku scopes audit`, `pikku scopes prune`, `pikku roles audit` and

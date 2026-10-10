@@ -8,9 +8,7 @@ The Logger interface provides structured logging across all Pikku services and f
 
 The Logger interface is minimal by design — it matches the common subset of popular logging libraries:
 
-```typescript reference title="logger.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/logger.ts
-```
+Source: [`logger.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/logger.ts)
 
 Each method accepts a string message. `info`, `warn` and `error` also accept a
 structured object, and `error` accepts an `Error`; `debug` and `trace` take a
@@ -37,9 +35,7 @@ Reveal it first if you genuinely mean to log it.
 
 The default logger that wraps `console.*`. No additional packages required:
 
-```typescript reference title="logger-console.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/logger-console.ts
-```
+Source: [`logger-console.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/logger-console.ts)
 
 Import `ConsoleLogger` from `@pikku/core/services` and construct it with no arguments.
 
@@ -51,9 +47,7 @@ For production use with structured JSON output, use the [Pino](https://getpino.i
 npm install @pikku/pino pino
 ```
 
-```typescript reference title="pino.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/pino/src/pino.ts
-```
+Source: [`pino.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/pino/src/pino.ts)
 
 Import `PinoLogger` from `@pikku/pino`, construct it with no arguments, and set the level with `setLevel(LogLevel.info)` using `LogLevel` from `@pikku/core/services`.
 

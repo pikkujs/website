@@ -7,9 +7,7 @@ The TriggerService manages [Trigger](/docs/wiring/triggers) subscriptions — it
 
 ## Interface
 
-```typescript reference title="trigger-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/trigger-service.ts
-```
+Source: [`trigger-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/trigger-service.ts)
 
 ## Methods
 
@@ -29,9 +27,7 @@ Single-owner, in-process implementation: one process runs all triggers, with no 
 
 Import `InMemoryTriggerService` from `@pikku/core/services`, construct it with no arguments and await `start()`. On shutdown, await `stop()`.
 
-```typescript reference title="in-memory-trigger-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-trigger-service.ts
-```
+Source: [`in-memory-trigger-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-trigger-service.ts)
 
 :::info
 Like the [GatewayService](./gateway-service), running the in-memory implementation on every instance of a multi-instance deployment duplicates subscriptions — coordinate ownership (leader election) if you scale out.

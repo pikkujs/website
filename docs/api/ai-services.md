@@ -16,9 +16,7 @@ Four singleton services power [AI Agents](/docs/wiring/ai-agents): a runner that
 
 Executes model calls: streaming and non-streaming agent steps, plus optional modality methods.
 
-```typescript reference title="agent-runner-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/agent-runner-service.ts
-```
+Source: [`agent-runner-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/agent-runner-service.ts)
 
 ### `run(params: AgentRunnerParams): Promise<AgentStepResult>`
 
@@ -56,9 +54,7 @@ Construct `VercelAgentRunner` with one provider factory per provider name, for e
 
 Persists conversation threads, messages, and working memory (scoped per thread or per resource).
 
-```typescript reference title="agent-storage-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/agent-storage-service.ts
-```
+Source: [`agent-storage-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/agent-storage-service.ts)
 
 | Method | Description |
 |--------|-------------|
@@ -73,9 +69,7 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/agent-stor
 
 Tracks agent run lifecycle and pending tool approvals (used for human-in-the-loop tools).
 
-```typescript reference title="agent-run-state-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/agent-run-state-service.ts
-```
+Source: [`agent-run-state-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/agent-run-state-service.ts)
 
 | Method | Description |
 |--------|-------------|

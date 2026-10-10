@@ -79,15 +79,11 @@ A typical upload function takes a `filename` and `contentType` and returns `{ up
 
 Reads and writes from the local file system:
 
-```typescript reference title="local-content.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-content.ts
-```
+Source: [`local-content.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-content.ts)
 
 ### AWS S3
 
-```typescript reference title="s3-content.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/s3-content.ts
-```
+Source: [`s3-content.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/s3-content.ts)
 
 ### Backblaze B2
 
@@ -99,12 +95,8 @@ npm install @pikku/backblaze
 
 Construct `B2Content` from `@pikku/backblaze` with an object holding `applicationKeyId`, `applicationKey` and `bucketId`, plus your logger. Read the two keys through the secret service and call `reveal()` on each.
 
-```typescript reference title="b2-content.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/backblaze/src/b2-content.ts
-```
+Source: [`b2-content.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/backblaze/src/b2-content.ts)
 
 ## Interface
 
-```typescript reference title="content-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/content-service.ts
-```
+Source: [`content-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/content-service.ts)

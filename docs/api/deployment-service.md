@@ -7,9 +7,7 @@ The DeploymentService handles service discovery and remote RPC dispatch between 
 
 ## Interface
 
-```typescript reference title="deployment-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/deployment-service.ts
-```
+Source: [`deployment-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/deployment-service.ts)
 
 ## Methods
 

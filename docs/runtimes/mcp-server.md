@@ -45,25 +45,19 @@ After creating your project, you'll have these key files:
 
 Define your MCP endpoints (tools, resources, prompts):
 
-```typescript reference title="mcp.functions.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/mcp.functions.ts
-```
+Source: [`mcp.functions.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/mcp.functions.ts)
 
 ### MCP Registration
 
 Register your functions as MCP endpoints:
 
-```typescript reference title="mcp.wiring.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/mcp.wiring.ts
-```
+Source: [`mcp.wiring.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/mcp.wiring.ts)
 
 ### MCP Server Runtime
 
 The main server that handles MCP protocol communication:
 
-```typescript reference title="start.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/mcp-server/src/start.ts
-```
+Source: [`start.ts`](https://github.com/pikkujs/pikku/blob/main/templates/mcp-server/src/start.ts)
 
 The template runs over **stdio** by default. Run it with `--http` (and optionally
 `MCP_PORT`, default `3000`) to serve the same endpoints over HTTP instead —

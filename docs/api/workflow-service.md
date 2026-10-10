@@ -9,9 +9,7 @@ Most of its methods are called by the Pikku workflow runtime, not by your functi
 
 ## Interface
 
-```typescript reference title="workflow-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/workflow-service.ts
-```
+Source: [`workflow-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/workflow-service.ts)
 
 ## Key Methods
 
@@ -74,9 +72,7 @@ In-process execution with no persistence — the default in development. Runs ar
 
 Import `InMemoryWorkflowService` from `@pikku/core/services` and construct it with no arguments.
 
-```typescript reference title="in-memory-workflow-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-workflow-service.ts
-```
+Source: [`in-memory-workflow-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-workflow-service.ts)
 
 ### Persistent backends
 

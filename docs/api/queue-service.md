@@ -10,9 +10,7 @@ Two features other than queue workers depend on it. Outgoing webhooks are delive
 
 ## Interface
 
-```typescript reference title="queue.types.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/queue.types.ts
-```
+Source: [`queue.types.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/queue.types.ts)
 
 ## Members
 
@@ -93,9 +91,7 @@ warning and strips the claim instead of sending it unsigned — every other opti
 is forwarded untouched, and `supportsResults` and `getJob` pass straight through
 to the wrapped service.
 
-```typescript reference title="signed-queue-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/signed-queue-service.ts
-```
+Source: [`signed-queue-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/signed-queue-service.ts)
 
 ## Worker job context
 
@@ -131,9 +127,7 @@ works in development is not relying on shared object references.
 
 Import `InMemoryQueueService` from `@pikku/core/services` and construct it with no arguments.
 
-```typescript reference title="in-memory-queue-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-queue-service.ts
-```
+Source: [`in-memory-queue-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-queue-service.ts)
 
 ### Shipping backends
 

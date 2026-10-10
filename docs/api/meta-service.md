@@ -10,9 +10,7 @@ Every `relativePath` argument is relative to the `.pikku` root directory, except
 
 ## Interface
 
-```typescript reference title="meta-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/meta-service.ts
-```
+Source: [`meta-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/meta-service.ts)
 
 Thirty-five members. Three are optional: `basePath`, `readPackageFile` and `readPackageDir`.
 
@@ -152,9 +150,7 @@ Notes on its behaviour, since it is what most apps run:
 - Addon package roots are resolved by walking Node's module search paths from
   the project root, and cached per package name.
 
-```typescript reference title="meta-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/meta-service.ts
-```
+Source: [`meta-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/meta-service.ts)
 
 ## Registration
 

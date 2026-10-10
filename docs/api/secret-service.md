@@ -54,20 +54,14 @@ service factory (or middleware) and hand the resolved value to a service:
 to it in memory and falls back to environment variables through the variables
 service:
 
-```typescript reference title="local-secrets.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-secrets.ts
-```
+Source: [`local-secrets.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-secrets.ts)
 
 ### AWS Secrets Manager
 
 `AWSSecrets` from `@pikku/aws-services`:
 
-```typescript reference title="aws-secrets.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/aws-secrets.ts
-```
+Source: [`aws-secrets.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/aws-services/src/aws-secrets.ts)
 
 ## Interface
 
-```typescript reference title="secret-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/secret-service.ts
-```
+Source: [`secret-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/secret-service.ts)

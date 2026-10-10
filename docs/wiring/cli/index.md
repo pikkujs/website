@@ -42,13 +42,9 @@ Run commands that invoke functions on a remote server over a WebSocket channel. 
 
 Here are CLI wiring and renderers from the templates, showing a full todo CLI with list, add, show, complete, and delete commands:
 
-```typescript reference title="cli.wiring.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/cli.wiring.ts
-```
+Source: [`cli.wiring.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/cli.wiring.ts)
 
-```typescript reference title="cli.render.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/cli.render.ts
-```
+Source: [`cli.render.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/cli.render.ts)
 
 Now you can use your CLI:
 

@@ -21,9 +21,7 @@ If a function without audit config calls `auditLog.write()`, the event is droppe
 
 ## Interface
 
-```typescript reference title="audit-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/audit-service.ts
-```
+Source: [`audit-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/audit-service.ts)
 
 ## Methods
 

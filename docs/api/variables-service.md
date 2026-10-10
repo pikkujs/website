@@ -50,15 +50,11 @@ Deletes a variable by name.
 `LocalVariablesService` from `@pikku/core/services`, constructed with
 `process.env` by default:
 
-```typescript reference title="local-variables.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-variables.ts
-```
+Source: [`local-variables.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-variables.ts)
 
 For Cloudflare Workers, pass the `env` object from the Workers handler into the
 service — `new LocalVariablesService(env)`.
 
 ## Interface
 
-```typescript reference title="variables-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/variables-service.ts
-```
+Source: [`variables-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/variables-service.ts)

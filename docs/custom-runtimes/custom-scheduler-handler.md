@@ -21,6 +21,4 @@ In the case of serverless, this is all that's actually needed, since the runtime
 
 The rest of it is integrating it with your prefered cron library. The following is the implementation of the `InMemorySchedulerService` provided for non-serverless invocation.
 
-```typescript reference title="InMemorySchedulerService"
-https://github.com/pikkujs/pikku/blob/main/packages/schedule/src/in-memory-scheduler-service.ts
-```
+Source: [`InMemorySchedulerService`](https://github.com/pikkujs/pikku/blob/main/packages/schedule/src/in-memory-scheduler-service.ts)

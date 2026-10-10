@@ -14,13 +14,9 @@ Your domain functions don't need to know they're being called from a queue. They
 
 Here's a queue worker from the templates — it processes todo reminder jobs:
 
-```typescript reference title="queue.functions.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/queue.functions.ts
-```
+Source: [`queue.functions.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/queue.functions.ts)
 
-```typescript reference title="queue.wiring.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/queue.wiring.ts
-```
+Source: [`queue.wiring.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/queue.wiring.ts)
 
 ## Queue Functions
 

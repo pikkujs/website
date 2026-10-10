@@ -62,6 +62,4 @@ A typical Express setup:
 
 ## Source
 
-```typescript reference title="in-memory-scheduler-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/schedule/src/in-memory-scheduler-service.ts
-```
+Source: [`in-memory-scheduler-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/schedule/src/in-memory-scheduler-service.ts)

@@ -7,9 +7,7 @@ The SchedulerService manages scheduled tasks — recurring cron-wired tasks and 
 
 ## Interface
 
-```typescript reference title="scheduler-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/scheduler-service.ts
-```
+Source: [`scheduler-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/scheduler-service.ts)
 
 ## Methods
 
@@ -71,9 +69,7 @@ Distributed, persistent scheduling backed by [pg-boss](https://github.com/timgit
 npm install @pikku/queue-pg-boss
 ```
 
-```typescript reference title="pg-boss-scheduler-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/pg-boss-scheduler-service.ts
-```
+Source: [`pg-boss-scheduler-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/pg-boss-scheduler-service.ts)
 
 ### BullSchedulerService
 
@@ -83,9 +79,7 @@ Distributed, persistent scheduling backed by [BullMQ](https://bullmq.io) (Redis)
 npm install @pikku/queue-bullmq
 ```
 
-```typescript reference title="bull-scheduler-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/queue-bullmq/src/bull-scheduler-service.ts
-```
+Source: [`bull-scheduler-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/queue-bullmq/src/bull-scheduler-service.ts)
 
 ## Registration
 

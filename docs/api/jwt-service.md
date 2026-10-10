@@ -47,12 +47,8 @@ Decodes and validates a JWT, returning the payload.
 
 Pikku provides a JOSE-based implementation:
 
-```typescript reference title="jose-jwt-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/services/jose/src/jose-jwt-service.ts
-```
+Source: [`jose-jwt-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/services/jose/src/jose-jwt-service.ts)
 
 ## Interface
 
-```typescript reference title="jwt-service.ts"
-https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/jwt-service.ts
-```
+Source: [`jwt-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/jwt-service.ts)

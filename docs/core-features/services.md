@@ -98,9 +98,7 @@ Key points:
 - Pikku automatically merges wire services with singleton services, so your functions have access to both
 - Don't spread `...singletonServices` – Pikku handles that for you
 
-```typescript reference title="services.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/services.ts
-```
+Source: [`services.ts`](https://github.com/pikkujs/pikku/blob/main/templates/functions/src/services.ts)
 
 ## Service Management Philosophy
 

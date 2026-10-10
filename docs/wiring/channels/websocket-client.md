@@ -16,6 +16,4 @@ In order to do so you can run `npx pikku websocket` and will need to have a `web
 
 ## Example Websocket Client
 
-```typescript reference title="websocket.ts"
-https://github.com/pikkujs/yarn-workspace-starter/blob/main/apps/cli/bin/websocket.ts
-```
+Source: [`websocket.ts`](https://github.com/pikkujs/yarn-workspace-starter/blob/main/apps/cli/bin/websocket.ts)
