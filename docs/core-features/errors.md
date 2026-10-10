@@ -68,6 +68,46 @@ Pikku provides a comprehensive set of built-in error classes covering all standa
 | `HTTPVersionNotSupportedError` | 505 | HTTP version not supported |
 | `MaxComputeTimeReachedError` | 524 | Function exceeded time limit (serverless) |
 
+### Errors the Framework Throws
+
+A few errors aren't yours to throw, they come from Pikku itself when something is wired wrong. They're all `PikkuError`s with a registered status, so they show up as proper responses rather than crashes.
+
+| Error Class | Status Code | When you'll see it |
+|------------|-------------|--------------------|
+| `MissingServiceError` | 500 | A service the code needs isn't in your singleton services. The message names it, so register it in your services factory. |
+| `PikkuMissingMetaError` | 500 | A queue worker, trigger source or workflow is running but its generated metadata isn't there. Re-run `npx pikku all` and make sure the generated `.pikku` output is the one you're deploying. |
+| `LocalEnvironmentOnlyError` | 403 | A function that only makes sense in local development (it edits your source, for example) was called somewhere it isn't enabled. |
+
+You can throw `MissingServiceError` and `LocalEnvironmentOnlyError` yourself when a function depends on an optional service:
+
+```typescript
+import { MissingServiceError } from '#pikku/error'
+
+func: async ({ jwt }, data) => {
+  if (!jwt) {
+    throw new MissingServiceError('JWT service is required')
+  }
+  // ...
+}
+```
+
+`PikkuMissingMetaError` is a different story: it's a sign the generated files are stale, not something to handle. When a queue job hits it through the remote-jobs entry point, it's turned into a `BadRequestError`, and the Node and Cloudflare queue handlers treat it as "don't retry", since retrying can't conjure metadata that isn't there.
+
+### Expected vs Unexpected Errors
+
+Some errors are the system working as intended: a missing role, an expired token, a validation failure. Others are bugs. Pikku draws that line with `isExpectedError`:
+
+```typescript
+import { isExpectedError } from '@pikku/core/errors'
+
+isExpectedError(new NotFoundError())               // true
+isExpectedError(new TypeError('x is undefined'))   // false
+```
+
+An error is expected if it's a `PikkuError`, or if it carries `expected: true`. That second case exists because errors don't survive a trip through storage. When a workflow step fails, the error is serialized (message, stack, code) and later rebuilt as a plain `Error`, which would lose its `PikkuError` class. Pikku records the `expected` flag on the way in, so the rebuilt error is still recognisable.
+
+What it buys you: callers can log an expected error's message alone and keep the full stack for the ones that deserve it. The CLI does exactly this, printing just the message for expected errors and the full stack for everything else.
+
 ### Usage Example
 
 ```typescript

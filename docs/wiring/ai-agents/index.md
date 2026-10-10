@@ -188,6 +188,21 @@ Agents stream responses through Pikku channels. The stream emits `AgentStreamEve
 
 Events from sub-agents include `agent` and `session` fields so clients can track which agent produced which output.
 
+### Streaming over a channel
+
+You don't have to write the streaming plumbing yourself. `agentStream` is a ready-made function that runs an agent and sends its events (`text-delta`, `tool-call`, `usage` and the rest from the table above) to the client as they happen, instead of making the caller wait for the whole run. It's the streaming counterpart of `agent`. Wire it to a channel (or any transport that can carry a stream) and you're done:
+
+```typescript
+wireHTTP({
+  method: 'post',
+  route: '/agents/shop/stream',
+  func: agentStream('shopAssistant'),
+  auth: true,
+})
+```
+
+The agent name is typed against your generated agent map, so a typo is a compile error. The function takes `{ agentName?, message, threadId, resourceId }`; leave the name out of the call (`agentStream()`) and the client picks the agent by passing `agentName` in its input.
+
 ### Tool Approval (Human-in-the-Loop)
 
 You can require user approval before certain tools execute. This is configured via the `requiresToolApproval` option when streaming:
@@ -202,7 +217,7 @@ await rpc.agent.stream('my-agent', {
 
 | Mode | Behavior |
 |------|----------|
-| `'explicit'` | Only tools marked with `requiresApproval: true` in their function metadata need approval (default) |
+| `'explicit'` | Only tools marked with `approvalRequired: true` in their function config need approval (default) |
 | `'all'` | Every tool call requires approval |
 | `false` | No approval required |
 
@@ -221,6 +236,54 @@ await rpc.agent.resume('run_abc', {
   approved: true
 })
 ```
+
+### Readable approval prompts
+
+By default the approver sees a tool name and raw arguments, which isn't much to decide on. Give the function an `approvalDescription` and the `approval-request` event carries a sentence a person can read instead. Build it with `pikkuApprovalDescription`; it receives your services and the exact input of the pending call:
+
+```typescript
+export const deleteTodoApproval = pikkuApprovalDescription(
+  async ({ todoStore }, { id }) => {
+    const todo = await todoStore.get(id)
+    return `Delete todo: "${todo.title}"`
+  }
+)
+
+export const deleteTodo = pikkuFunc({
+  approvalRequired: true,
+  approvalDescription: deleteTodoApproval,
+  func: async ({ todoStore }, { id }) => {
+    await todoStore.delete(id)
+  },
+})
+```
+
+Like the other `pikku*` factories, it exists so the build can tree-shake the services it uses. If the description throws, the approval is still raised, just without the text. A gate never disappears because its label failed to render.
+
+### Answering a paused run
+
+A run that hits a gated tool stops and waits, and something has to answer. Pikku ships two ready-made functions for that, so you only wire them to whatever transport your approvers use:
+
+- `agentResume()` answers **one** pending approval: `{ runId, toolCallId, approved }`. The run then carries on.
+- `agentApprove(agentName)` answers **every** pending approval for a run in one call: `{ runId, approvals: [{ toolCallId, approved }] }`. Handy when the model asked for several things in the same step.
+
+```typescript
+wireHTTP({
+  method: 'post',
+  route: '/agents/ops/approve',
+  func: agentApprove('opsAgent'),
+  auth: true,
+})
+
+wireHTTP({
+  method: 'post',
+  route: '/agents/ops/resume',
+  func: agentResume(),
+  auth: true,
+})
+```
+
+Both need a session and RPC, so they sit behind your normal auth like any other function.
 
 ## Required Services
 
