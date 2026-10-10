@@ -174,10 +174,12 @@ npx pikku app native init admin                  # package it as a desktop/mobil
 npx pikku app native init admin --android --plugins store,biometric
 npx pikku app native add admin haptics           # add native plugins
 npx pikku app native upgrade admin               # re-apply the config to the project
-npx pikku app native check                       # compare every native project with the config
+npx pikku app native check [name]                # compare native projects with the config, and apps with each other
 ```
 
-`native init` takes `--desktop`, `--android` and `--ios` (platforms), `--identifier`, `--product-name`, `--url <origin>` (open a deployed server instead of bundling the UI), `--bundle-server` (ship the compiled server inside a desktop app) and `--plugins`. The flags are saved into `frontends.<name>.native`; every later command reads the config. See [Native Apps](../deploy/native-apps.md).
+`app new <slug>` requires `--serves <group>` and `--personas <ids>`, and takes `--template`, `--primary` and `--install` (default on). `app list` shows each app's directory, kind, who it serves, and for native apps the identifier, platforms, mode (`bundle`, `url`, `sidecar`) and plugins.
+
+`native init` takes `--desktop`, `--android` and `--ios` (platforms), `--identifier`, `--product-name`, `--url <origin>` (open a deployed server instead of bundling the UI), `--bundle-server` (ship the compiled server inside a desktop app) and `--plugins` (`store`, `dialog`, `clipboard-manager`, `os`, `notification`, `geolocation`, and the mobile-only `biometric`, `haptics`, `barcode-scanner`, `nfc`). With no platform flag you get desktop, Android and iOS, or desktop alone with `--bundle-server`. `native add <name> <plugins...>` takes the plugins as arguments. `native init` is safe to re-run. The flags are saved into `frontends.<name>.native`; every later command reads the config. See [Native Apps](../deploy/native-apps.md).
 
 ### `pikku enable`
 
@@ -220,7 +222,7 @@ npx pikku deploy apply --from-plan       # Deploy from existing plan output
 npx pikku deploy info                    # Show current deployment state
 ```
 
-`plan` and `apply` accept `--provider/-p` (default: `cloudflare`), `--runtime node|bun` for the standalone provider (bundle.js vs compiled executable, default `node`), and `--result-file <path>` to write a structured JSON result. A standalone `--runtime bun` apply also installs the compiled binary into every native app with `native.bundleServer` set. `info` takes `--provider`.
+`plan` and `apply` accept `--provider/-p` (default: `cloudflare`), `--runtime node|bun` for the standalone provider (bundle.js vs compiled executable, default `node`), and `--result-file <path>` to write a structured JSON result. A standalone `--runtime bun` apply also installs the compiled binary into every native app with `native.bundleServer` set, as `src-tauri/binaries/<name>-<target triple>`. The trigger is the config, not a flag; there is no `--desktop` option. `info` takes `--provider`.
 
 **Providers:** `cloudflare` (default), `serverless`, `azure`, `standalone` — extendable via the `deploy.providers` map in `pikku.config.json`
 
