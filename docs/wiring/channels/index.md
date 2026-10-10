@@ -299,15 +299,7 @@ Usually the client calls the server. Sometimes the server needs to ask the clien
 
 There's no `func`: your side owns the contract (the input and output types), the client owns the body.
 
-```typescript
-import { pikkuRemoteChannelFunc } from '#pikku/function'
-
-export const localCheckoutOutput = z.object({ sha: z.string(), branch: z.string() })
-
-export const localCheckout = pikkuRemoteChannelFunc({
-  description: 'Read the current commit and branch of your working tree',
-  output: localCheckoutOutput,
-})
+```typescript @snippet remoteChannelFunc
 ```
 
 The `description` is what a person is shown when asked to approve the call, so write it for them rather than for the caller.

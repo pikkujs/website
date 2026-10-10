@@ -235,21 +235,7 @@ await rpc.agent.resume('run_abc', {
 
 By default the approver sees a tool name and raw arguments, which isn't much to decide on. Give the function an `approvalDescription` and the `approval-request` event carries a sentence a person can read instead. Build it with `pikkuApprovalDescription`; it receives your services and the exact input of the pending call:
 
-```typescript
-export const deleteTodoApproval = pikkuApprovalDescription(
-  async ({ todoStore }, { id }) => {
-    const todo = await todoStore.get(id)
-    return `Delete todo: "${todo.title}"`
-  }
-)
-
-export const deleteTodo = pikkuFunc({
-  approvalRequired: true,
-  approvalDescription: deleteTodoApproval,
-  func: async ({ todoStore }, { id }) => {
-    await todoStore.delete(id)
-  },
-})
+```typescript @snippet approvalDescription
 ```
 
 Like the other `pikku*` factories, it exists so the build can tree-shake the services it uses. If the description throws, the approval is still raised, just without the text. A gate never disappears because its label failed to render.
@@ -552,7 +538,20 @@ A judge adds a few more:
 
 Pick a scorer first. It's free, deterministic and fast. Reach for a judge when the thing you care about is a judgement call, and use `sampleRate` to keep the cost in check.
 
-<!-- TODO snippet: agent-scorer-and-judge — a pikkuAgentScorer and a pikkuAgentJudge for the shop assistant, in the template -->
+A scorer, for something code can check. This one fails a run that quotes a price without looking the item up:
+
+```typescript @snippet agentScorer
+```
+
+A judge, for the judgement call:
+
+```typescript @snippet agentJudge
+```
+
+To grade a live agent, list the scorers on it with `scorers`. The entries are the scorers' exported names (here `pricesComeFromTools` and `answersTheShopper`), and the generated types only accept names that exist in your project:
+
+```typescript @snippet aiAgent
+```
 
 ## Agents as Workflow Nodes
 

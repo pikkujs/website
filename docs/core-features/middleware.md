@@ -32,22 +32,7 @@ graph LR
 
 Let's write middleware that tracks response time:
 
-```typescript
-import { pikkuMiddleware } from '#pikku/middleware'
-
-export const responseTime = pikkuMiddleware(async ({ logger }, wire, next) => {
-  const start = Date.now()
-
-  // Call next middleware/function
-  await next()
-
-  // After function completes
-  const duration = Date.now() - start
-  logger.info(`Request completed in ${duration}ms`)
-
-  // For HTTP, you can set headers
-  wire.http?.response?.header('X-Response-Time', `${duration}ms`)
-})
+```typescript @snippet firstMiddleware
 ```
 
 The middleware:
@@ -58,130 +43,51 @@ The middleware:
 
 ## Built-in Middleware
 
-Pikku provides built-in middleware for common authentication and CORS patterns via [`#pikku/middleware`](/api#app/middleware):
+Pikku provides built-in middleware for common authentication and CORS patterns via [`#pikku/middleware`](/api#app/middleware). Each one is a factory that returns middleware, so you build it with its options and then pass it to `addHTTPMiddleware('*', [...])` (or any other scope below).
 
 ### Bearer Token Authentication
 
-```typescript
-import { authBearer } from '#pikku/middleware'
+With no token configured it decodes the bearer token with the JWT service. Give it a `token` and it compares in constant time against a fixed `value`, or against a secret resolved per request through `secretId`:
 
-// JWT mode (default) - decodes bearer tokens using the JWT service
-addHTTPMiddleware('*', [authBearer()])
-
-// Static token mode - validates against a fixed token
-addHTTPMiddleware('*', [
-  authBearer({
-    token: {
-      value: process.env.API_TOKEN,
-      userSession: { userId: 'system', role: 'admin' }
-    }
-  })
-])
+```typescript @snippet bearerAuth
 ```
 
 ### API Key Authentication
 
-```typescript
-import { authAPIKey } from '#pikku/middleware'
-
-// Look for API key in x-api-key header
-addHTTPMiddleware('*', [authAPIKey({ source: 'header' })])
-
-// Look in query parameter
-addHTTPMiddleware('*', [authAPIKey({ source: 'query' })])
-
-// Check both header and query
-addHTTPMiddleware('*', [authAPIKey({ source: 'all' })])
+```typescript @snippet apiKeyAuth
 ```
 
 ### Cookie-Based Authentication
 
-```typescript
-import { authCookie } from '#pikku/middleware'
-
-addHTTPMiddleware('*', [
-  authCookie({
-    name: 'session',
-    expiresIn: { value: 30, unit: 'day' },
-    options: {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      path: '/'
-    }
-  })
-])
+```typescript @snippet cookieAuth
 ```
 
 ### CORS
 
-```typescript
-import { cors } from '#pikku/middleware'
+```typescript @snippet corsMiddleware
+```
 
-// Allow all origins
-addHTTPMiddleware('*', [cors()])
+### Requiring an Origin
 
-// Specific origin with credentials
-addHTTPMiddleware('*', [
-  cors({
-    origin: 'https://app.example.com',
-    credentials: true,
-  })
-])
+`cors()` only sets response headers, and the browser is what enforces them: a non-browser client ignores them and the request still runs. `requireOrigin` rejects with a 403 before your function body unless the request's `Origin` is this app's own or one you list. A missing `Origin` is rejected too. It stops another site's page posting to an unauthenticated route. It is not flood control.
 
-// Multiple origins
-addHTTPMiddleware('*', [
-  cors({
-    origin: ['https://app.example.com', 'https://admin.example.com'],
-  })
-])
+```typescript @snippet requireOrigin
 ```
 
 ## Middleware Factories
 
 Use `pikkuMiddlewareFactory` to create configurable middleware:
 
-```typescript
-import { pikkuMiddlewareFactory, pikkuMiddleware } from '#pikku/middleware'
-
-// A real rate limiter belongs in a shared store; this keeps the example local.
-const counts = new Map<string, number>()
-
-export const rateLimit = pikkuMiddlewareFactory<{
-  maxRequests: number
-  windowMs: number
-}>(({ maxRequests, windowMs }) =>
-  pikkuMiddleware(async (_services, { http }, next) => {
-    if (!http) return next()
-
-    const ip = http.request.header('x-forwarded-for') || 'unknown'
-    const key = `ratelimit:${ip}`
-    const count = counts.get(key) || 0
-
-    if (count >= maxRequests) {
-      throw new TooManyRequestsError()
-    }
-
-    counts.set(key, count + 1)
-    setTimeout(() => counts.delete(key), windowMs).unref?.()
-    return next()
-  })
-)
-
-// Usage — patterns are anchored globs, so '/api/*' covers the subtree
-addHTTPMiddleware('/api/*', [
-  rateLimit({ maxRequests: 100, windowMs: 60000 })
-])
+```typescript @snippet middlewareFactory
 ```
 
-All built-in middleware (`authBearer`, `authAPIKey`, `authCookie`, `cors`) are implemented using `pikkuMiddlewareFactory`.
+All built-in middleware (`authBearer`, `authAPIKey`, `authCookie`, `cors`, `requireOrigin`) are implemented using `pikkuMiddlewareFactory`.
 
 ## Middleware Signature
 
-```typescript
-pikkuMiddleware(async (services, wire, next) => {
-  // Your middleware logic
-})
+Every middleware has the same three parameters:
+
+```typescript @snippet middlewareSignature
 ```
 
 **Parameters:**
@@ -197,28 +103,7 @@ Middleware receives **only singleton services** in the first parameter, not wire
 
 A common use case is extracting authentication info:
 
-```typescript
-export const authMiddleware = pikkuMiddleware(async ({ jwt }, { http, setSession }, next) => {
-  let token = null
-
-  if (http) {
-    token = http.request.header('Authorization')?.replace('Bearer ', '')
-  }
-
-  if (token) {
-    try {
-      const payload = await jwt.decode(token)
-      setSession({
-        userId: payload.userId,
-        role: payload.role
-      })
-    } catch (e) {
-      // Invalid token - continue without session
-    }
-  }
-
-  await next()
-})
+```typescript @snippet authMiddleware
 ```
 
 ## Middleware Scopes
@@ -229,15 +114,7 @@ Pikku lets you apply middleware at different scopes. Understanding these scopes 
 
 Applied directly in your function definition:
 
-```typescript
-export const createOrder = pikkuFunc<OrderInput, Order>({
-  func: async ({ database }, data) => {
-    return await database.insert('orders', data)
-  },
-  middleware: [validateOrder, checkInventory],
-  title: 'Create a new order',
-  tags: ['orders']
-})
+```typescript @snippet functionMiddleware
 ```
 
 Use function-level middleware for:
@@ -247,37 +124,21 @@ Use function-level middleware for:
 
 ### Wire-Specific Middleware
 
-Applied when wiring a function to a transport:
+Applied when wiring a function to a transport. Here a scheduled task records how long each run took:
 
-```typescript
-wireHTTP({
-  method: 'post',
-  route: '/orders',
-  func: createOrder,
-  middleware: [rateLimit({ maxRequests: 100, windowMs: 60000 }), auditLog]
-})
+```typescript @snippet cronMiddleware
 ```
 
 Use wire-specific middleware for:
-- Transport-specific concerns (rate limiting for HTTP)
+- Transport-specific concerns (rate limiting for HTTP, timing for scheduled tasks)
 - Route-specific logging or auditing
 - Overriding behavior for a specific endpoint
 
 ### HTTP Transport Middleware
 
-For HTTP routes specifically, you can apply middleware globally or per route pattern:
+For HTTP routes specifically, you can apply middleware globally (`'*'`) or per route pattern, such as everything under `/orders`:
 
-```typescript
-import { addHTTPMiddleware } from '#pikku/middleware'
-
-// All HTTP routes will run this middleware
-addHTTPMiddleware('*', [corsHeaders, securityHeaders])
-
-// All routes starting with /admin will run this middleware (anchored glob)
-addHTTPMiddleware('/admin/*', [requireAuth, requireAdmin])
-
-// All routes starting with /api/v1 will run this middleware
-addHTTPMiddleware('/api/v1/*', [apiKeyValidation])
+```typescript @snippet httpMiddleware
 ```
 
 Use HTTP transport middleware for:
@@ -291,14 +152,7 @@ Use HTTP transport middleware for:
 
 To apply middleware across every wiring (HTTP, Channel, Queue, Scheduler, MCP, CLI, Workflow, Agent), use `addGlobalMiddleware`. To apply it to any wiring carrying a specific tag, use `addTagMiddleware`:
 
-```typescript
-import { addGlobalMiddleware, addTagMiddleware } from '#pikku/middleware'
-
-// Every wiring runs this middleware
-addGlobalMiddleware([telemetryMiddleware])
-
-// Any wiring tagged 'admin' runs this middleware
-addTagMiddleware('admin', [requireAdmin])
+```typescript @snippet tagMiddleware
 ```
 
 Use global and tag middleware for:
@@ -312,53 +166,23 @@ Regular middleware wraps a single request. A channel is different: it's one long
 
 It has a different shape from `pikkuMiddleware`: it receives the event passing through, and passes it (or a changed version of it) on to `next`:
 
-```typescript
-import { pikkuChannelMiddleware } from '#pikku/middleware'
-
-export const traceAgentStream = pikkuChannelMiddleware<any, AgentStreamEvent>(
-  async ({ logger }, event, next) => {
-    logger.debug({ event: 'agent_stream', type: event.type })
-    await next(event)
-  }
-)
+```typescript @snippet channelMiddleware
 ```
 
-Attach it with `channelMiddleware` on the channel:
-
-```typescript
-wireChannel({
-  name: 'chat',
-  route: '/chat',
-  channelMiddleware: [traceAgentStream],
-  // ...
-})
-```
+Attach it with the `channelMiddleware` option on `wireChannel`, for example `channelMiddleware: [traceAgentStream]`.
 
 ### Channel Middleware Factories
 
 When the middleware needs options, use `pikkuChannelMiddlewareFactory`. One definition can then be wired several times with different configuration:
 
-```typescript
-import { pikkuChannelMiddlewareFactory } from '#pikku/middleware'
-
-export const tagChannelEvents = pikkuChannelMiddlewareFactory(
-  (channelName: string) =>
-    async ({ logger }, event, next) => {
-      logger.debug({ event: 'channel_event', channel: channelName })
-      await next(event)
-    }
-)
+```typescript @snippet channelMiddlewareFactory
 ```
 
 ### By Tag
 
 Like HTTP and tag middleware, you can keep the channels themselves free of the wiring. `addChannelMiddleware` attaches channel middleware to every channel carrying the given tag:
 
-```typescript
-import { addChannelMiddleware } from '#pikku/middleware'
-
-// Every channel tagged 'orders' runs this on its messages
-addChannelMiddleware('orders', [tagChannelEvents('order-status')])
+```typescript @snippet addChannelMiddleware
 ```
 
 See [Channels](/docs/wiring/channels) for the rest of the channel wiring.
@@ -375,23 +199,7 @@ An AI agent run isn't a request either, it's a loop of model turns and tool call
 - `afterStep` - observe the end of each model turn (it can't change anything)
 - `onError` - runs when a turn throws, for logging and cleanup (it doesn't swallow the error)
 
-```typescript
-import { pikkuAgentMiddleware } from '#pikku/middleware'
-
-export const countAgentCharacters = pikkuAgentMiddleware<{
-  charCount: number
-}>({
-  modifyInput: async ({ logger }, { messages, instructions }) => {
-    logger.info({ event: 'agent_input', messages: messages.length })
-    return { messages, instructions }
-  },
-  modifyOutputStream: async (_services, { event, state }) => {
-    if (event.type === 'text-delta') {
-      state.charCount = (state.charCount ?? 0) + event.text.length
-    }
-    return event
-  },
-})
+```typescript @snippet agentMiddleware
 ```
 
 Pass it to an agent through its `agentMiddleware` option. See [AI Agents](/docs/wiring/ai-agents) for the full picture.
@@ -411,124 +219,41 @@ After the function completes, they run in reverse order (onion model).
 
 Example showing all scopes:
 
-```typescript
-// Transport-specific - all HTTP routes
-addHTTPMiddleware('*', [corsHeaders])
-
-// Pattern-based - matches everything under /api/v1
-addHTTPMiddleware('/api/v1/*', [apiKeyValidation])
-
-// Function definition
-export const updateSettings = pikkuFunc<SettingsInput, Settings>({
-  func: async ({ database }, data) => {
-    return await database.update('settings', data)
-  },
-  middleware: [validateSettings],  // Function-level
-  title: 'Update system settings',
-  tags: ['settings']
-})
-
-// Wiring
-wireHTTP({
-  method: 'patch',
-  route: '/api/v1/settings',
-  func: updateSettings,
-  middleware: [auditLog]  // Wire-specific
-})
+```typescript @snippet middlewareOrder
 ```
 
 For this request, middleware runs in this order:
-1. `corsHeaders` (transport-specific - all HTTP)
+1. `securityHeaders` (transport-specific - all HTTP)
 2. `apiKeyValidation` (pattern-based - matches '/api/v1/*')
-3. `auditLog` (wire-specific)
-4. `validateSettings` (function-level)
-5. **Your function runs**
-6. `validateSettings` (after)
-7. `auditLog` (after)
-8. `apiKeyValidation` (after)
-9. `corsHeaders` (after)
+3. `rateLimit` (wire-specific)
+4. `validatePriceChange` (function-level)
+5. `auditPriceChange` (function-level)
+6. **Your function runs**
+7. `auditPriceChange` (after)
+8. `validatePriceChange` (after)
+9. `rateLimit` (after)
+10. `apiKeyValidation` (after)
+11. `securityHeaders` (after)
 
 ## Wire Object
 
 Middleware receives a `wire` object that varies by transport:
 
-```typescript
-export const transportAware = pikkuMiddleware(async (services, wire, next) => {
-  if (wire.http) {
-    // HTTP-specific: request, response
-    const userAgent = wire.http.request.header('User-Agent')
-    wire.http.response.header('X-Custom', 'value')
-  }
-
-  if (wire.channel) {
-    // Channel-specific: channelId, openingData, send, close
-    const channelId = wire.channel.channelId
-    const openingData = wire.channel.openingData
-  }
-
-  if (wire.queue) {
-    // Queue-specific: queueName, jobId, updateProgress, fail, discard
-    const jobId = wire.queue.jobId
-  }
-
-  if (wire.scheduledTask) {
-    // Scheduler-specific: name, schedule, executionTime, skip
-    const schedule = wire.scheduledTask.schedule
-  }
-
-  await next()
-})
+```typescript @snippet transportAware
 ```
 
 ## Error Handling
 
 Middleware can catch and transform errors:
 
-```typescript
-export const errorHandler = pikkuMiddleware(async ({ logger }, wire, next) => {
-  try {
-    await next()
-  } catch (error) {
-    logger.error('Request failed', {
-      error: error.message,
-      stack: error.stack
-    })
-
-    // For HTTP, you can set custom error responses
-    wire.http?.response?.status(500)
-    wire.http?.response?.header('X-Error-Id', generateErrorId())
-
-    // Re-throw to let Pikku handle it
-    throw error
-  }
-})
+```typescript @snippet errorHandlerMiddleware
 ```
 
 ## Conditional Middleware
 
 Sometimes you only want middleware to run in certain conditions:
 
-```typescript
-// A shared store the rest of the app writes into (a Map here for brevity)
-const responseCache = new Map<string, unknown>()
-
-export const conditionalCache = pikkuMiddleware(async (_services, wire, next) => {
-  // Only cache GET requests
-  if (wire.http?.request.method() !== 'get') {
-    return await next()
-  }
-
-  const cacheKey = wire.http.request.path()
-  const cached = responseCache.get(cacheKey)
-
-  if (cached !== undefined) {
-    // Short-circuit - serve the cached response without calling next()
-    wire.http.response.json(cached)
-    return
-  }
-
-  await next()
-})
+```typescript @snippet conditionalCache
 ```
 
 ## Automatic Schema Validation
@@ -539,46 +264,20 @@ If validation fails, Pikku throws an [`UnprocessableContentError`](/api#app/erro
 
 ## Best Practices
 
-**Destructure services** - Helps Pikku tree-shake unused services:
-```typescript
-// ✅ Good - only bundles logger
-pikkuMiddleware(({ logger }, wire, next) => { ... })
-
-// ❌ Bad - bundles all services
-pikkuMiddleware((services, wire, next) => { ... })
-```
+**Destructure services** - Helps Pikku tree-shake unused services. Destructure only what you need (`({ logger }, wire, next)`) rather than taking the whole `services` object, which bundles every service.
 
 :::tip Transport-Agnostic vs Transport-Specific Middleware
 **Prefer function-level middleware for transport-agnostic logic** - Logging, metrics, validation, etc. should work regardless of whether your function is called via HTTP, WebSocket, or queue.
 
 **Use transport-specific middleware (like `addHTTPMiddleware`) for HTTP-only concerns** - Things like cookie parsing, CORS headers, or security headers that only make sense for HTTP. These middleware should throw `InvalidMiddlewareWireError` if used on non-HTTP transports to fail fast:
 
-```typescript
-import { InvalidMiddlewareWireError } from '#pikku/error'
-
-export const cookieParser = pikkuMiddleware(async (services, wire, next) => {
-  if (!wire.http) {
-    throw new InvalidMiddlewareWireError()
-  }
-  // Parse cookies from HTTP request
-  await next()
-})
-
-// Apply only to HTTP routes
-addHTTPMiddleware('*', [cookieParser, corsHeaders])
+```typescript @snippet cookieParser
 ```
 
 This ensures your middleware fails fast if accidentally used on the wrong transport, rather than silently doing nothing or causing subtle bugs.
 :::
 
-**Keep middleware focused** - Each middleware should do one thing well:
-```typescript
-// ✅ Good - separate concerns
-[authMiddleware, loggingMiddleware, metricsMiddleware]
-
-// ❌ Bad - doing too much
-[authLoggingMetricsMiddleware]
-```
+**Keep middleware focused** - Each middleware should do one thing well. Separate auth, logging and metrics into their own middleware and list them side by side, rather than writing one that does all three.
 
 ## Next Steps
 

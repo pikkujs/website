@@ -98,109 +98,26 @@ What it buys you: callers can log an expected error's message alone and keep the
 
 ### Usage Example
 
-```typescript
-import { NotFoundError, ForbiddenError, TooManyRequestsError } from '#pikku/error'
-
-export const getBook = pikkuFunc<{ bookId: string }, Book>({
-  func: async ({ database, rateLimit }, data, { session }) => {
-    // Check rate limit
-    if (!await rateLimit.check(session.userId)) {
-      throw new TooManyRequestsError()
-    }
-
-    // Fetch book
-    const book = await database.query('book', { id: data.bookId })
-    if (!book) {
-      throw new NotFoundError()
-    }
-
-    // Check permissions
-    if (book.isPrivate && book.ownerId !== session.userId) {
-      throw new ForbiddenError()
-    }
-
-    return book
-  },
-  title: 'Get a book by ID',
-  tags: ['books']
-})
+```typescript @snippet errorUsage
 ```
 
 ## Custom Errors
 
-You can create custom error classes for domain-specific errors:
+You can create custom error classes for domain-specific errors. Extend `PikkuError` and register each class with `addError`, giving it the HTTP status and message it should produce:
 
-```typescript
-import { PikkuError, addError } from '#pikku/error'
-
-export class BookLimitExceededError extends PikkuError {}
-export class InvalidISBNError extends PikkuError {}
-export class OutOfStockError extends PikkuError {}
-
-addError(BookLimitExceededError, {
-  status: 400,
-  message: 'You have reached your book borrowing limit'
-})
-
-addError(InvalidISBNError, {
-  status: 400,
-  message: 'The provided ISBN is not valid'
-})
-
-addError(OutOfStockError, {
-  status: 409,
-  message: 'This book is currently out of stock'
-})
+```typescript @snippet addError
 ```
 
-Then use them in your functions:
+Then throw them from your functions:
 
-```typescript
-export const borrowBook = pikkuFunc<{ bookId: string }, BorrowReceipt>({
-  func: async ({ database }, data, { session }) => {
-    // Check user's borrow limit
-    const borrowCount = await database.count('borrows', {
-      userId: session.userId,
-      returned: false
-    })
-
-    if (borrowCount >= 5) {
-      throw new BookLimitExceededError()
-    }
-
-    // Check stock
-    const book = await database.query('book', { id: data.bookId })
-    if (book.stock === 0) {
-      throw new OutOfStockError()
-    }
-
-    // Create borrow record
-    return await database.insert('borrows', {
-      userId: session.userId,
-      bookId: data.bookId,
-      borrowedAt: new Date()
-    })
-  },
-  title: 'Borrow a book',
-  tags: ['books']
-})
+```typescript @snippet customErrorUsage
 ```
 
 ## Error Messages and Customization
 
 You can override the default error message when throwing:
 
-```typescript
-// Use default message
-throw new NotFoundError()
-
-// Custom message
-throw new NotFoundError('Book with this ISBN does not exist')
-
-// With additional context
-const error = new BookLimitExceededError()
-error.message = `You have borrowed ${borrowCount} books. Maximum is 5.`
-throw error
+```typescript @snippet errorMessages
 ```
 
 ## PikkuError Base Class
@@ -212,14 +129,9 @@ All Pikku errors extend `PikkuError`, which handles JavaScript's quirks with Err
 - Error names are properly set
 - Errors work consistently in monorepos
 
-Always extend `PikkuError` (not `Error`) when creating custom errors:
+Always extend `PikkuError` (not `Error`) when creating custom errors. A class that extends plain `Error` may not be recognised by `instanceof` or mapped to a status in every context, such as across workspaces:
 
-```typescript
-// ✅ Correct
-export class MyCustomError extends PikkuError {}
-
-// ❌ Wrong - may not work properly in all contexts
-export class MyCustomError extends Error {}
+```typescript @snippet extendPikkuError
 ```
 
 ## Protocol-Specific Behavior
@@ -258,7 +170,7 @@ Errors are automatically adapted to the protocol being used:
 
 5. **Use built-in errors when possible** – They're already mapped and well-understood
 
-6. **Group related errors** – Create custom errors for your domain (e.g., `PaymentFailedError`, `SubscriptionExpiredError`)
+6. **Group related errors** – Create custom errors for your domain (e.g., `PaymentDeclinedError`, `SubscriptionExpiredError`)
 
 ## Summary
 
