@@ -192,13 +192,7 @@ Events from sub-agents include `agent` and `session` fields so clients can track
 
 You don't have to write the streaming plumbing yourself. `agentStream` is a ready-made function that runs an agent and sends its events (`text-delta`, `tool-call`, `usage` and the rest from the table above) to the client as they happen, instead of making the caller wait for the whole run. It's the streaming counterpart of `agent`. Wire it to a channel (or any transport that can carry a stream) and you're done:
 
-```typescript
-wireHTTP({
-  method: 'post',
-  route: '/agents/shop/stream',
-  func: agentStream('shopAssistant'),
-  auth: true,
-})
+```typescript @snippet aiAgentStream
 ```
 
 The agent name is typed against your generated agent map, so a typo is a compile error. The function takes `{ agentName?, message, threadId, resourceId }`; leave the name out of the call (`agentStream()`) and the client picks the agent by passing `agentName` in its input.
@@ -267,20 +261,7 @@ A run that hits a gated tool stops and waits, and something has to answer. Pikku
 - `agentResume()` answers **one** pending approval: `{ runId, toolCallId, approved }`. The run then carries on.
 - `agentApprove(agentName)` answers **every** pending approval for a run in one call: `{ runId, approvals: [{ toolCallId, approved }] }`. Handy when the model asked for several things in the same step.
 
-```typescript
-wireHTTP({
-  method: 'post',
-  route: '/agents/ops/approve',
-  func: agentApprove('opsAgent'),
-  auth: true,
-})
-
-wireHTTP({
-  method: 'post',
-  route: '/agents/ops/resume',
-  func: agentResume(),
-  auth: true,
-})
+```typescript @snippet aiAgentApprove
 ```
 
 Both need a session and RPC, so they sit behind your normal auth like any other function.
