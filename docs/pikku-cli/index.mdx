@@ -421,6 +421,19 @@ npx pikku roles audit     # Report system roles in the database no longer declar
 npx pikku roles prune --yes
 ```
 
+### `pikku examples`
+
+Worked examples of the things that are easy to get wrong and hard to discover. Read one, or write it straight into your project, already named for your own entity.
+
+```bash
+npx pikku examples list                       # Every example, with what each one is for
+npx pikku examples list --group scenario      # Only the examples whose name starts with "scenario"
+npx pikku examples show -n <name> -e <entity> # Print one example, renamed onto your entity
+npx pikku examples add -n <name> -e <entity>  # Write it into this project
+```
+
+`--entity` (`-e`) is the domain symbol the example's own entity is renamed onto, so a recipe written about an `order` comes out about your `invoice`. `show` prints it along with everything the recipe says about itself. `add` writes it into the project, or says what is in the way and writes nothing. In a project with more than one frontend, `--app` (`-a`) picks which one a screen belongs to.
+
 ### `pikku knowledge`
 
 Inspect and maintain the knowledge base — what this app is, in the language its users use.
