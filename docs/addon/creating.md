@@ -185,7 +185,7 @@ See [Credentials](/docs/wiring/credentials/) for the full reference.
 
 ### Create Config
 
-If your addon needs a config, use `pikkuAddonConfig` rather than `pikkuConfig`. An app's `pikkuConfig` factory runs before anything else exists. In an addon, the parent application has already built its services, so `pikkuAddonConfig` hands you `AddonBaseServices` (logger, variables, secrets) and you can read them while building the config:
+If your addon needs a config, use `pikkuAddonConfig` rather than `pikkuConfig`. An app's `pikkuConfig` factory runs before anything else exists. In an addon, the parent application has already built its services, so `pikkuAddonConfig` hands you `AddonBaseServices` (logger, variables, secrets) and you can read them while building the config.
 
 Export the factory from your addon's `config.ts`. It receives those base services, so you can read a variable (a `SENDGRID_REGION`, say) with `variables.get`, fall back to a default when it isn't set, and return the config object.
 
