@@ -27,15 +27,7 @@ Tears down all active trigger subscriptions. Call on graceful shutdown.
 
 Single-owner, in-process implementation: one process runs all triggers, with no distributed claiming. On fire, it invokes the target through the RPC service.
 
-```typescript
-import { InMemoryTriggerService } from '@pikku/core/services'
-
-const triggerService = new InMemoryTriggerService()
-await triggerService.start()
-
-// On shutdown
-await triggerService.stop()
-```
+Import `InMemoryTriggerService` from `@pikku/core/services`, construct it with no arguments and await `start()`. On shutdown, await `stop()`.
 
 ```typescript reference title="in-memory-trigger-service.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-trigger-service.ts

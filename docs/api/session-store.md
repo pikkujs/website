@@ -58,11 +58,7 @@ naming the channel and telling you to configure `sessionStore`.
 A `Map`. Correct for a single process and for tests; useless the moment you run
 two instances, since neither sees the other's sessions.
 
-```typescript
-import { InMemorySessionStore } from '@pikku/core/services'
-
-const sessionStore = new InMemorySessionStore()
-```
+Import `InMemorySessionStore` from `@pikku/core/services` and construct it with no arguments.
 
 ```typescript reference title="in-memory-session-store.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-session-store.ts
@@ -75,11 +71,7 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-
 (default `pikku`), and an optional TTL in seconds — the only implementation that
 expires sessions on its own.
 
-```typescript
-import { RedisSessionStore } from '@pikku/redis'
-
-const sessionStore = new RedisSessionStore(process.env.REDIS_URL!)
-```
+Import `RedisSessionStore` from `@pikku/redis` and construct it with your Redis URL.
 
 ### KyselySessionStore
 
@@ -88,29 +80,15 @@ const sessionStore = new RedisSessionStore(process.env.REDIS_URL!)
 schema rather than creating it, and throws telling you to run `pikku db generate`
 and `pikku db migrate` if the tables are missing.
 
-```typescript
-import { KyselySessionStore } from '@pikku/kysely'
-
-const sessionStore = new KyselySessionStore(db.kysely)
-await sessionStore.init()
-```
+Import `KyselySessionStore` from `@pikku/kysely`, construct it with your Kysely instance and await `init()`.
 
 ### MongoDBSessionStore
 
 [`@pikku/mongodb`](/docs/storage/mongodb). A `pikkuUserSessions` collection keyed
 by `_id`. Also has an `init()` to call before use.
 
-```typescript
-import { MongoDBSessionStore } from '@pikku/mongodb'
-
-const sessionStore = new MongoDBSessionStore(db)
-await sessionStore.init()
-```
+Import `MongoDBSessionStore` from `@pikku/mongodb`, construct it with your database handle and await `init()`.
 
 ## Registration
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  sessionStore: new RedisSessionStore(process.env.REDIS_URL!),
-})
-```
+Pass the store under the `sessionStore` key when you build the singleton services.

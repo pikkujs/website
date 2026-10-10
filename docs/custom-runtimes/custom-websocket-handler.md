@@ -29,19 +29,7 @@ For local channels, the lifecycle events mirror the typical WebSocket flow:
 
 When a connection is upgraded, we obtain a channel handler which is our interface to the Pikku framework:
 
-```typescript
-const request = new UWSPikkuHTTPRequest(req, res)
-const response = new UWSPikkuHTTPResponse(res)
-
-// Services are resolved from Pikku's global state,
-// set up by importing the generated bootstrap.
-const channelHandler = await runLocalChannel({
-  channelId: crypto.randomUUID().toString(),
-  request,
-  response,
-  route: req.getUrl() as string,
-})
-```
+On upgrade, wrap the raw request and response in your runtime's `PikkuHTTPRequest` and `PikkuHTTPResponse` implementations (`UWSPikkuHTTPRequest(req, res)` and `UWSPikkuHTTPResponse(res)` for uWS). Then call `runLocalChannel` with a fresh `channelId` (`crypto.randomUUID().toString()`), the `request`, the `response`, and the `route` (`req.getUrl()`). It returns a `channelHandler`. Services are resolved from Pikku's global state, set up by importing the generated bootstrap.
 
 ### 2) `onOpen`
 
@@ -55,48 +43,19 @@ Upon opening the connection, we:
 We perform both these actions so that Pikku remains minimal and does not need to wrap the underlying WebSocket objects.
 :::
 
-```typescript
-open: (ws) => {
-  const { channelHandler } = ws.getUserData()
-  channelHandler.registerOnSend((data) => {
-    if (isSerializable(data)) {
-      ws.send(JSON.stringify(data))
-    } else {
-      ws.send(data as any)
-    }
-  })
-  eventHub.onChannelOpened(channelHandler.channelId, ws)
-  channelHandler.open()
-}
-```
+In the `open` handler, take `channelHandler` from the socket's user data and call `channelHandler.registerOnSend(...)` with a callback that writes to the socket: `JSON.stringify` the data when it is serializable (`isSerializable`), otherwise send it as-is. Then tell the event hub with `eventHub.onChannelOpened(channelHandler.channelId, ws)` and call `channelHandler.open()`.
 
 ### 3) `onMessage`
 
 Incoming messages are decoded and passed to the channel handler. If a response is generated (supporting direct responses similar to AWS Lambda WebSocket functions), it is sent back to the client:
 
-```typescript
-message: async (ws, message, isBinary) => {
-  const { channelHandler } = ws.getUserData()
-  const data = isBinary ? message : decoder.decode(message)
-  const result = await channelHandler.message(data)
-  if (result) {
-    // TODO: Handle binary responses as needed
-    ws.send(JSON.stringify(result))
-  }
-}
-```
+In the `message` handler, take `channelHandler` from the user data. Decode the payload (binary stays as-is, text goes through a decoder), pass it to `await channelHandler.message(data)`, and if a result comes back, send it to the socket as JSON. Binary responses are left for you to handle as needed.
 
 ### 4) `onClose`
 
 When the connection closes, we clean up by notifying the EventHub and closing the channel handler:
 
-```typescript
-close: (ws) => {
-  const { channelHandler } = ws.getUserData()
-  eventHub.onChannelClosed(channelHandler.channelId)
-  channelHandler.close()
-}
-```
+In the `close` handler, take `channelHandler` from the user data, call `eventHub.onChannelClosed(channelHandler.channelId)`, and then `channelHandler.close()`.
 
 ---
 

@@ -137,14 +137,7 @@ Failed jobs are automatically retried with PostgreSQL-backed persistence:
 
 The `PgBossServiceFactory` from `@pikku/queue-pg-boss` manages the lifecycle of all pg-boss components:
 
-```typescript
-import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
-
-const pgBossFactory = new PgBossServiceFactory({
-  connectionString: process.env.DATABASE_URL!,
-})
-await pgBossFactory.init()
-```
+Import `PgBossServiceFactory` from `@pikku/queue-pg-boss`, construct it with your connection (`{ connectionString: process.env.DATABASE_URL }`), and `await pgBossFactory.init()`.
 
 ### Key Methods
 
@@ -162,65 +155,23 @@ Get the workers from the factory and call `registerQueues()`. The job runner is
 wired automatically when you import the generated bootstrap, so no extra setup is
 needed (build singleton services before registering so the logger is available):
 
-```typescript
-import './.pikku/pikku-bootstrap.gen.js'
-
-const queueWorkers = pgBossFactory.getQueueWorkers()
-await queueWorkers.registerQueues()
-```
+Import the generated bootstrap, then call `registerQueues()` on `pgBossFactory.getQueueWorkers()`.
 
 ### Full Setup with Workflows
 
-```typescript
-import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
-import {
-  PikkuKysely,
-  PgKyselyLeaseService,
-  PgKyselyWorkflowService,
-} from '@pikku/kysely-postgres'
-import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
-import './.pikku/pikku-bootstrap.gen.js'
+The full setup, in order:
 
-const pgBossFactory = new PgBossServiceFactory(process.env.DATABASE_URL!)
-await pgBossFactory.init()
-
-const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
-await pikkuKysely.init()
-
-const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
-await leaseService.init()
-
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
-  leaseService,
-})
-await workflowService.init()
-
-const schedulerService = pgBossFactory.getSchedulerService()
-
-const singletonServices = await createSingletonServices(config, {
-  queueService: pgBossFactory.getQueueService(),
-  schedulerService,
-  leaseService,
-  workflowService,
-})
-
-// Register queue workers (includes the workflow queues)
-const queueWorkers = pgBossFactory.getQueueWorkers()
-await queueWorkers.registerQueues()
-
-// Start the scheduler
-await schedulerService.start()
-```
+1. Import the generated bootstrap, create a `PgBossServiceFactory` with `process.env.DATABASE_URL`, and `await pgBossFactory.init()`.
+2. Create a `PikkuKysely` (from `@pikku/kysely-postgres`) with the logger and the same URL, and `await init()` on it.
+3. Create a `PgKyselyLeaseService` over `pikkuKysely.kysely` and `init()` it. Then create a `PgKyselyWorkflowService` over the same Kysely instance with `{ leaseService }` and `init()` that too.
+4. Get `schedulerService` from `pgBossFactory.getSchedulerService()`.
+5. Call `createSingletonServices(config, ...)` with `queueService` (from `pgBossFactory.getQueueService()`), `schedulerService`, `leaseService` and `workflowService`.
+6. Call `registerQueues()` on `pgBossFactory.getQueueWorkers()`. This includes the workflow queues.
+7. Call `schedulerService.start()`.
 
 ### Graceful Shutdown
 
-```typescript
-process.on('SIGTERM', async () => {
-  await schedulerService.stop()
-  await pgBossFactory.close()
-  process.exit(0)
-})
-```
+On `SIGTERM`, await `schedulerService.stop()`, then `pgBossFactory.close()`, then exit the process.
 
 ## Advantages
 

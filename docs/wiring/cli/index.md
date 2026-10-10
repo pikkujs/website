@@ -77,84 +77,34 @@ Pikku automatically:
 
 Use `<required>` and `[optional]` syntax to declare positionals:
 
-```typescript
-pikkuCLICommand({
-  parameters: '<package> [version]',
-  func: installPackage,
-  description: 'Install a package'
-})
+```typescript @snippet wb-cli-parameters
 ```
 
 ### Options and Flags
 
 Options are CLI flags with optional short forms:
 
-```typescript
-options: {
-  environment: {
-    description: 'Target environment',
-    short: 'e',
-    default: 'dev'
-  },
-  dryRun: {
-    description: 'Simulate without applying changes',
-    short: 'd',
-    default: false
-  }
-}
-```
+Options are declared on the command as `options: { name: { description, short, default } }`. For example `environment` with `short: 'e'` and `default: 'dev'`, and `dryRun` with `short: 'd'` and `default: false`. The full list of properties is in the [Option Properties](#option-properties) table below.
 
 ### Nested Commands
 
 Build hierarchical CLI structures with subcommands:
 
-```typescript
-import { wireCLI, pikkuCLICommand } from '#pikku/cli'
-
-wireCLI({
-  program: 'my-tool',
-  commands: {
-    user: {
-      description: 'User management',
-      subcommands: {
-        create: pikkuCLICommand({ /* ... */ }),
-        list: pikkuCLICommand({ /* ... */ }),
-        delete: pikkuCLICommand({ /* ... */ })
-      }
-    }
-  }
-})
+```typescript @snippet wb-cli-nested
 ```
 
 ### Custom Renderers
 
 Renderers control how function output appears in the console:
 
-```typescript
-const userListRenderer = pikkuCLIRender<{ users: Array<User> }>(
-  (services, data) => {
-    console.table(data.users)
-  }
-)
+```typescript @snippet cliRenderer
 ```
 
 ### Streaming Progress
 
 For long-running operations, stream progress updates using `channel.send()`:
 
-```typescript
-export const buildApp = pikkuSessionlessFunc({
-  func: async (_services, data, { channel }) => {
-    if (channel) {
-      await channel.send({ type: 'progress', step: 'Installing', percent: 0 })
-    }
-    // ... work ...
-    if (channel) {
-      await channel.send({ type: 'progress', step: 'Compiling', percent: 50 })
-    }
-    // ... more work ...
-  }
-})
+```typescript @snippet wb-cli-progress
 ```
 
 ## Configuration Reference

@@ -16,35 +16,7 @@ npm install @pikku/bun-server
 
 ## Setup
 
-```typescript title="src/start.ts"
-import { PikkuBunServer, BunEventHubService } from '@pikku/bun-server'
-import { InMemorySchedulerService } from '@pikku/schedule'
-import { createConfig, createSingletonServices } from './services.js'
-import './.pikku/pikku-bootstrap.gen.js'
-
-async function main(): Promise<void> {
-  const config = await createConfig()
-  const schedulerService = new InMemorySchedulerService()
-  const eventHub = new BunEventHubService()
-  const singletonServices = await createSingletonServices(config, {
-    schedulerService,
-    eventHub,
-  })
-
-  const server = new PikkuBunServer(
-    { ...config, port: 4002, hostname: 'localhost' },
-    singletonServices.logger,
-    { eventHub }
-  )
-  server.enableExitOnSignals()
-  await server.init()
-  await server.start()
-
-  await schedulerService.start()
-}
-
-main()
-```
+The entry file (`src/start.ts`) imports `PikkuBunServer` and `BunEventHubService` from `@pikku/bun-server`, `InMemorySchedulerService` from `@pikku/schedule`, and the generated bootstrap. It creates the config, an `InMemorySchedulerService` and a `BunEventHubService`, and passes both to `createSingletonServices`. It then constructs `new PikkuBunServer({ ...config, port: 4002, hostname: 'localhost' }, singletonServices.logger, { eventHub })`, calls `enableExitOnSignals()`, awaits `init()` and `start()`, and finally starts the scheduler with `schedulerService.start()`.
 
 `init()` compiles schemas and logs the registered routes and channels; `start()` boots `Bun.serve`. `enableExitOnSignals()` wires SIGINT/SIGTERM to a graceful shutdown that stops singleton services first.
 
@@ -74,15 +46,7 @@ Server options (third constructor argument):
 
 If your project has MCP tools, resources, or prompts, the server can mount them on the same port. Import the generated JSON statically so bundlers inline it:
 
-```typescript title="src/start.ts"
-import mcpJson from './.pikku/mcp/mcp.gen.json' with { type: 'json' }
-
-const server = new PikkuBunServer(
-  { ...config, port: 4002 },
-  singletonServices.logger,
-  { eventHub, mcpJson, mcpPath: '/mcp' }
-)
-```
+Import the generated `.pikku/mcp/mcp.gen.json` (with `with { type: 'json' }`) as `mcpJson`, and pass it to the server's third argument next to `eventHub`: `{ eventHub, mcpJson, mcpPath: '/mcp' }`.
 
 `@pikku/modelcontextprotocol` is a peer dependency and is only imported dynamically when `mcpJson` is provided and non-empty.
 

@@ -12,17 +12,7 @@ Addons define secrets with their own `secretId` naming conventions. Secret overr
 
 Override secrets when wiring the addon:
 
-```typescript
-import { wireAddon } from '#pikku/addon'
-
-wireAddon({
-  name: 'ext',
-  package: '@pikku/my-addon',
-  secretOverrides: {
-    PACKAGE_API_KEY: 'ACME_SERVICE_API_KEY',
-  },
-})
-```
+Pass `secretOverrides` to `wireAddon`: a map from the addon's secret id to the secret id your application stores it under. Here, `wireAddon({ name: 'ext', package: '@pikku/my-addon', secretOverrides: { PACKAGE_API_KEY: 'ACME_SERVICE_API_KEY' } })`.
 
 This maps the addon's `PACKAGE_API_KEY` to your application's `ACME_SERVICE_API_KEY`.
 

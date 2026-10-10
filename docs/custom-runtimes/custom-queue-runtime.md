@@ -40,16 +40,7 @@ https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/u
 
 All queue implementations must call `runQueueJob()` to execute jobs:
 
-```typescript
-import { runQueueJob } from '@pikku/core/queue'
-
-// In your worker processor — singleton services are resolved
-// from Pikku's global state (set up by the bootstrap import)
-await runQueueJob({
-  job,            // QueueJob: { id, queueName, data, ... }
-  updateProgress, // optional: report progress back to the queue
-})
-```
+In your worker processor, call `runQueueJob` from `@pikku/core/queue` with the job (a `QueueJob`: `{ id, queueName, data, ... }`) and, optionally, an `updateProgress` callback to report progress back to the queue. Singleton services are resolved from Pikku's global state, which the bootstrap import sets up.
 
 ### Worker Registration
 
@@ -63,15 +54,13 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/regis
 
 Define supported and unsupported configurations:
 
-```typescript
-const configMappings: QueueConfigMapping = {
-  supported: {
-    batchSize: 'teamSize',         // Maps to pg-boss teamSize
-    pollInterval: 'intervalSeconds', // Maps to polling interval
-  },
-  unsupported: {
-    lockDuration: 'Managed internally by pg-boss',
-    visibilityTimeout: 'Uses PostgreSQL locks instead'
-  }
-}
-```
+The mapping is a `QueueConfigMapping` with two parts, shown here for pg-boss:
+
+| Part | Pikku option | Maps to |
+| --- | --- | --- |
+| `supported` | `batchSize` | pg-boss `teamSize` |
+| `supported` | `pollInterval` | pg-boss `intervalSeconds` (the polling interval) |
+| `unsupported` | `lockDuration` | "Managed internally by pg-boss" |
+| `unsupported` | `visibilityTimeout` | "Uses PostgreSQL locks instead" |
+
+The `unsupported` entries carry the explanation shown to users who set those options.

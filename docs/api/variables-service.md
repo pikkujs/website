@@ -18,9 +18,7 @@ Retrieves a single variable by name, typed as `T` (defaults to `string`).
 
 Retrieves multiple variables in a single batch operation, mirroring `SecretService.getSecrets`. Missing variables are omitted rather than throwing, so callers must handle keys that may be absent at runtime.
 
-```typescript
-const { FOO, BAR } = await variables.getVariables<{ FOO: string; BAR: string }>(['FOO', 'BAR'])
-```
+`getVariables` takes a list of names and returns an object keyed by name, so `getVariables(['FOO', 'BAR'])` gives you `FOO` and `BAR`.
 
 ### `getAll(): Promise<Record<string, string | undefined>> | Record<string, string | undefined>`
 
@@ -42,18 +40,7 @@ Deletes a variable by name.
 
 ## Usage Example
 
-```typescript
-export const myFunction = pikkuFunc<void, { apiUrl: string; debug: boolean }>(
-  async (services) => {
-    const apiUrl = await services.variables.get('API_URL')
-    const allVars = await services.variables.getAll()
-
-    return {
-      apiUrl: apiUrl ?? '',
-      debug: allVars.DEBUG === 'true'
-    }
-  }
-)
+```typescript @snippet co-variables-service
 ```
 
 ## Implementations

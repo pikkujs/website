@@ -17,23 +17,7 @@ When you run `pikku`, the CLI:
 3. **Determines required services** by analyzing which services each filtered function uses
 4. **Generates a bootstrap** that imports only the needed functions, plus a services map marking only the services they need as required
 
-```typescript
-// Your code - write once
-export const getUser = pikkuFunc({
-  func: async ({ database }) => { /* ... */ }
-})
-
-export const deleteUser = pikkuFunc({
-  func: async ({ database, audit }) => { /* ... */ }
-})
-
-export const getStatus = pikkuFunc({
-  func: async ({ cache }) => { /* ... */ }
-})
-
-wireHTTP({ route: '/users/:id', func: getUser })
-wireHTTP({ route: '/admin/users/:id', func: deleteUser })
-wireHTTP({ route: '/status', func: getStatus })
+```typescript @snippet co-treeshake-wiring
 ```
 
 ### Deploying Everything
@@ -72,11 +56,7 @@ Include only functions wired to routes matching `/admin`.
 
 Tag your functions:
 
-```typescript
-export const generateReport = pikkuFunc({
-  func: async ({ database }) => { /* ... */ },
-  tags: ['reports', 'background']
-})
+```typescript @snippet co-treeshake-tags
 ```
 
 Then filter:
@@ -109,53 +89,13 @@ Pikku analyzes which services your filtered functions actually use and writes th
 
 When a build's filter set is fixed, only the services it needs have to exist:
 
-```typescript
-// Your services.ts — import only what this deployment needs
-import { createCache } from '../services/cache'
-
-export const createSingletonServices = pikkuServices(async () => {
-  return {
-    cache: await createCache(),
-    // database and audit are NOT imported or loaded
-  }
-})
-```
+In your `services.ts`, import only what this deployment needs. A deployment that only needs the cache imports `createCache` and returns `{ cache: await createCache() }`; the database and audit services are never imported or loaded.
 
 ### 2. Dynamic Filtering (For Shared Bundles)
 
 When you need one bundle to serve multiple filtered deployments, Pikku uses conditional loading:
 
-```typescript
-import { requiredSingletonServices } from '#pikku/pikku-services.gen.js'
-
-export const createSingletonServices = pikkuServices(async (config) => {
-  const logger = new ConsoleLogger()
-  const cache = new RedisCache()
-
-  // Only create JWT service if it's actually needed
-  let jwt: JWTService | undefined
-  if (requiredSingletonServices.jwt) {
-    const { JoseJWTService } = await import('@pikku/jose')
-    jwt = new JoseJWTService(
-      async () => [{ id: 'my-key', value: 'secret' }],
-      logger
-    )
-  }
-
-  // Only create database if needed
-  let database: Database | undefined
-  if (requiredSingletonServices.database) {
-    database = await createDatabase(config.databaseUrl)
-  }
-
-  return {
-    logger,
-    cache,
-    jwt,
-    database,
-  }
-})
-```
+Read `requiredSingletonServices` from the generated `#pikku/pikku-services.gen.js` and only build what is flagged. Create the logger and cache always; create the JWT service (dynamically importing `JoseJWTService` from `@pikku/jose`) only when `requiredSingletonServices.jwt` is true; create the database only when `requiredSingletonServices.database` is true; and return whichever services you built.
 
 The `pikkuServices` wrapper ensures type safety and proper integration with Pikku's service system.
 
@@ -234,21 +174,6 @@ The generated bootstrap (`#pikku/pikku-bootstrap.gen.js`) imports only the
 filtered functions and registers them in Pikku's state. Your runtime entry point
 imports that bootstrap and hands the wired services to a runtime server:
 
-```typescript
-import { PikkuExpressServer } from '@pikku/express'
-import { createConfig } from './config.js'
-import { createSingletonServices } from './services.js'
-import '#pikku/pikku-bootstrap.gen.js' // only the filtered functions are registered
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-const server = new PikkuExpressServer(
-  { ...config, port: 3000, hostname: 'localhost' },
-  singletonServices.logger
-)
-await server.init()
-await server.start()
-```
+Start the server as usual: create the config and singleton services, import `#pikku/pikku-bootstrap.gen.js` (only the filtered functions are registered), then create a `PikkuExpressServer` with your config plus a `port` and `hostname` and the logger, and call `init()` and `start()`.
 
 The generated code is readable and straightforward - no magic.

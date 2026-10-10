@@ -10,109 +10,29 @@ Testing Pikku functions is straightforward - they're just functions that take se
 
 ## Basic Testing
 
-```typescript
-import { test } from 'node:test'
-import * as assert from 'node:assert'
-import { getBook } from './books.function.js'
-
-test('should return book by ID', async () => {
-  // Mock your services
-  const mockServices = {
-    database: {
-      query: async () => ({ id: '123', title: 'Test Book' })
-    }
-  }
-
-  // Call the function directly
-  const result = await getBook.func(
-    mockServices as any,
-    { bookId: '123' },
-    {} as any // wire (holds session and transport info)
-  )
-
-  assert.equal(result.title, 'Test Book')
-})
+```typescript @snippet co-test-direct-call
 ```
 
 That's it. No special framework, no custom test utilities - just mock the services your function needs and call `.func()`.
 
 ## Testing with Sessions
 
-```typescript
-test('should use session userId', async () => {
-  const mockServices = {
-    database: {
-      query: async (table: string, where: any) => {
-        assert.equal(where.userId, 'user-123')
-        return { id: '1', name: 'User Profile' }
-      }
-    }
-  }
-
-  const session = { userId: 'user-123' }
-
-  // Session is passed on the wire object (third parameter)
-  await getProfile.func(mockServices as any, {}, { session } as any)
-})
+```typescript @snippet co-test-session
 ```
 
 ## Testing Errors
 
-```typescript
-import { NotFoundError } from '#pikku/error'
-
-test('should throw NotFoundError', async () => {
-  const mockServices = {
-    database: {
-      query: async () => null
-    }
-  }
-
-  await assert.rejects(
-    getBook.func(mockServices as any, { bookId: 'invalid' }, {} as any),
-    NotFoundError
-  )
-})
+```typescript @snippet co-test-error
 ```
 
 ## Reusable Mocks
 
 Create mock factories if you're repeating yourself:
 
-```typescript
-// test-utils.ts
-export const createMockServices = (overrides = {}) => ({
-  database: {
-    query: async () => null,
-    insert: async (table, data) => ({ id: 'mock-id', ...data }),
-    ...overrides.database
-  },
-  logger: {
-    info: () => {},
-    warn: () => {},
-    error: () => {},
-    ...overrides.logger
-  },
-  ...overrides
-})
+```typescript @snippet co-test-mock-helper
 ```
 
-Use in tests:
-
-```typescript
-import { createMockServices } from './test-utils.js'
-
-test('should create order', async () => {
-  const services = createMockServices({
-    database: {
-      insert: async () => ({ id: '456', status: 'pending' })
-    }
-  })
-
-  const result = await createOrder.func(services as any, { productId: 'abc' }, {} as any)
-  assert.equal(result.id, '456')
-})
-```
+The helper lets each test override only the service it cares about, as the second half of the snippet shows.
 
 ## End-to-End Testing
 

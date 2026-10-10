@@ -45,49 +45,25 @@ The generated `pikku()` function gives you typed access to your Pikku functions 
 
 ### Server Actions
 
-```typescript
-async function addTodo(text: string) {
-  'use server'
-  await pikku().post('/todo', { text })
-}
-```
+Inside a function marked with the `'use server'` directive, call `pikku().post('/todo', { text })` to run the mutation.
 
 ### SSR Data Loading
 
 Load data directly in server components:
 
-```typescript
-export default async function TodoPage() {
-  const todos: Todos = await pikku().get('/todos', null)
-  return <TodosCard todos={todos} />
-}
-```
+In an async server component, fetch with `pikku().get('/todos', null)` and pass the typed result to your component (here a `TodosCard`).
 
 ### Static SSR (No Session)
 
 For data loading that doesn't depend on the user session (e.g., build-time rendering), use `staticGet` to skip reading headers:
 
-```typescript
-export default async function PublicPage() {
-  const posts = await pikku().staticGet('/posts', null)
-  return <PostList posts={posts} />
-}
-```
+For pages that can be statically rendered, use `pikku().staticGet('/posts', null)` in the async server component instead.
 
 ## API Route Handler
 
 Mount Pikku as a Next.js API route handler for external HTTP access. The handler is `pikkuAPIRequest`, exported from the file configured as `nextBackendFile`:
 
-```typescript
-// app/api/[...route]/route.ts
-import { pikkuAPIRequest } from '@/pikku-nextjs.gen.js'
-
-export const GET = pikkuAPIRequest
-export const POST = pikkuAPIRequest
-export const PUT = pikkuAPIRequest
-export const PATCH = pikkuAPIRequest
-export const DELETE = pikkuAPIRequest
-```
+Create `app/api/[...route]/route.ts`, import `pikkuAPIRequest` from `@/pikku-nextjs.gen.js`, and export it under each HTTP method name you want served: `GET`, `POST`, `PUT`, `PATCH` and `DELETE`.
 
 ## Sub-path Exports
 
@@ -101,13 +77,7 @@ export const DELETE = pikkuAPIRequest
 
 Use `getSession` to read the user session from a Next.js request (e.g., in middleware or API routes):
 
-```typescript
-import { getSession } from '@pikku/next/pikku-session'
-
-const session = await getSession(request, singletonServices, [
-  authBearerMiddleware(),
-])
-```
+Import `getSession` from `@pikku/next/pikku-session` and call `getSession(request, singletonServices, [authBearerMiddleware()])` to resolve the session with the middleware you pass.
 
 ## How It Works
 

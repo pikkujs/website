@@ -72,10 +72,7 @@ a backend supplies the persistence hooks.
 
 In-process execution with no persistence — the default in development. Runs are lost on restart.
 
-```typescript
-import { InMemoryWorkflowService } from '@pikku/core/services'
-const workflowService = new InMemoryWorkflowService()
-```
+Import `InMemoryWorkflowService` from `@pikku/core/services` and construct it with no arguments.
 
 ```typescript reference title="in-memory-workflow-service.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-workflow-service.ts
@@ -99,22 +96,6 @@ locks runs and steps on — see
 Register the same instance as `leaseService`. `InMemoryWorkflowService` takes
 none.
 
-```typescript
-import {
-  PgKyselyLeaseService,
-  PgKyselyWorkflowService,
-} from '@pikku/kysely-postgres'
-
-const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
-await leaseService.init()
-
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
-  leaseService,
-})
-await workflowService.init()
-
-const singletonServices = await createSingletonServices(config, {
-  leaseService,
-  workflowService,
-})
-```
+1. Construct a `PgKyselyLeaseService` from `@pikku/kysely-postgres` over your Kysely instance and await `init()`.
+2. Construct a `PgKyselyWorkflowService` over the same Kysely instance, passing `{ leaseService }`, and await `init()`.
+3. Pass both under the `leaseService` and `workflowService` keys when you build the singleton services.

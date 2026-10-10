@@ -25,26 +25,7 @@ npm install @pikku/queue-nats
 
 ## Setup
 
-```typescript title="src/start.ts"
-import { NatsServiceFactory } from '@pikku/queue-nats'
-import './.pikku/pikku-bootstrap.gen.js'
-
-const natsFactory = new NatsServiceFactory({
-  servers: process.env.NATS_URL ?? 'nats://localhost:4222',
-  streamName: 'pikku-jobs',
-  subjectPrefix: 'pikku',
-})
-await natsFactory.init()
-
-const singletonServices = await createSingletonServices(config, {
-  queueService: natsFactory.getQueueService(),
-  schedulerService: natsFactory.getSchedulerService(),
-})
-
-const queueWorkers = natsFactory.getQueueWorkers()
-await queueWorkers.registerQueues()
-await natsFactory.getSchedulerService().start()
-```
+In `src/start.ts`, import `NatsServiceFactory` from `@pikku/queue-nats` and the generated bootstrap. Construct the factory with `servers` (from `NATS_URL`, defaulting to `nats://localhost:4222`), `streamName: 'pikku-jobs'` and `subjectPrefix: 'pikku'`, then `await natsFactory.init()`. Pass `queueService: natsFactory.getQueueService()` and `schedulerService: natsFactory.getSchedulerService()` to `createSingletonServices`. Finally, call `registerQueues()` on `natsFactory.getQueueWorkers()` and start the scheduler with `natsFactory.getSchedulerService().start()`.
 
 `init()` connects, creates (or converges) the JetStream stream, and constructs
 the queue, worker and scheduler services. As with every queue backend, the job
@@ -92,12 +73,7 @@ have it fail a readiness probe or exit for a supervisor to restart.
 
 ## Shutdown
 
-```typescript
-process.on('SIGTERM', async () => {
-  await natsFactory.close()
-  process.exit(0)
-})
-```
+On `SIGTERM`, await `natsFactory.close()` and exit the process.
 
 `close()` stops the scheduler and workers, then drains the connection — flushing
 pending acks and letting in-flight publishes land rather than dropping them.

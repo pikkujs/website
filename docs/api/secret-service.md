@@ -36,38 +36,14 @@ Retrieves multiple secrets in a single batch operation. Returns a map of key →
 `SecretValue` for successfully fetched secrets; missing keys are omitted rather
 than throwing, so callers must handle keys that may be absent at runtime.
 
-```typescript
-const values = await secrets.getSecrets<{ FOO: string; BAR: { id: string } }>(['FOO', 'BAR'])
-const foo = values.FOO?.reveal()
-const bar = values.BAR?.reveal()
-```
+`getSecrets` takes a list of ids and returns an object keyed by id, so `getSecrets(['FOO', 'BAR'])` gives you `values.FOO` and `values.BAR`. Each entry is a wrapper (or undefined when missing): call `reveal()` to read the value.
 
 ## Usage Example
 
 `secrets` is stripped from the services a function receives, so read secrets in a
 service factory (or middleware) and hand the resolved value to a service:
 
-```typescript
-import { pikkuServices } from '#pikku/setup'
-import { LocalSecretService } from '@pikku/core/services'
-
-interface DatabaseConfig {
-  host: string
-  username: string
-  password: string
-  database: string
-}
-
-export const createSingletonServices = pikkuServices(async (config) => {
-  const secrets = new LocalSecretService()
-  const dbConfig = (
-    await secrets.getSecret<DatabaseConfig>('DATABASE_CONFIG')
-  ).reveal()
-
-  const database = await createConnection(dbConfig)
-
-  return { config, secrets, database }
-})
+```typescript @snippet co-secret-client
 ```
 
 ## Implementations

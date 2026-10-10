@@ -14,34 +14,12 @@ Permissions should be independent checks that don't depend on execution order or
 
 A permission is a function that returns a boolean. `pikkuPermission` comes from [`#pikku/auth`](/api#app/auth):
 
-```typescript
-import { pikkuPermission } from '#pikku/auth'
-
-export const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
-  return session?.userId != null
-})
-
-export const requireAdmin = pikkuPermission(async (_services, _data, { session }) => {
-  return session?.role === 'admin'
-})
+```typescript @snippet co-permission-basic
 ```
 
 Use them in your function:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-
-export const deleteUser = pikkuFunc<{ userId: string }, void>({
-  func: async ({ database }, data) => {
-    await database.delete('users', { where: { id: data.userId } })
-  },
-  permissions: {
-    auth: requireAuth,
-    admin: requireAdmin
-  },
-  title: 'Delete a user',
-  tags: ['users']
-})
+```typescript @snippet co-permission-on-func
 ```
 
 Each key is a separate permission group, and groups use **OR logic** - the function executes if *either* `auth` or `admin` passes. To require both checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
@@ -50,21 +28,12 @@ Each key is a separate permission group, and groups use **OR logic** - the funct
 
 When a check only needs the session and no request data - a role or a feature gate - use `pikkuAuth` from the same `#pikku/auth` door. It receives `(services, session)` and is marked as an auth check, which is how agent tooling can tell it apart from an ordinary permission:
 
-```typescript
-import { pikkuAuth } from '#pikku/auth'
-
-export const isAdmin = pikkuAuth(async (_services, session) => {
-  return session?.role === 'admin'
-})
+```typescript @snippet shopIsAuthenticated
 ```
 
 ## Permission Signature
 
-```typescript
-pikkuPermission<DataType>(
-  async (services, data, { session }) => boolean
-)
-```
+The shape is `pikkuPermission<DataType>(async (services, data, { session }) => boolean)`: the services you need, the typed data, and the wire, returning a boolean.
 
 Parameters:
 - **services** - Your singleton services only (destructure what you need). Wire services are not available in permissions.
@@ -81,116 +50,27 @@ Permissions receive **only singleton services** in the first parameter, not wire
 
 Permissions can inspect the request data:
 
-```typescript
-export const requireOwnership = pikkuPermission<{ resourceId: string }>(
-  async ({ database }, data, { session }) => {
-    if (!session?.userId) return false
-
-    const resource = await database.query('resources', {
-      where: { id: data.resourceId }
-    })
-
-    return resource?.ownerId === session.userId
-  }
-)
+```typescript @snippet shopIsOrderOwner
 ```
 
-Use it in a function with matching data type:
-
-```typescript
-export const updateResource = pikkuFunc<
-  { resourceId: string; content: string },
-  Resource
->({
-  func: async ({ database }, data) => {
-    return await database.update('resources', {
-      where: { id: data.resourceId },
-      data: { content: data.content }
-    })
-  },
-  permissions: {
-    auth: requireAuth,
-    owner: requireOwnership  // Uses resourceId from data
-  },
-  title: 'Update a resource',
-  tags: ['resources']
-})
-```
+Use it in a function by listing it under `permissions`, as in the first example (`owner: requireOwnership`). The data type of the permission must match the function's input.
 
 ## Permission Groups
 
-You can compose multiple permissions:
-
-```typescript
-export const requirePremium = pikkuPermission(async ({ database }, _data, { session }) => {
-  if (!session?.userId) return false
-
-  const dbUser = await database.query('users', {
-    where: { id: session.userId }
-  })
-
-  return dbUser?.isPremium === true
-})
-
-// Use multiple permissions together
-export const getPremiumContent = pikkuFunc<{ contentId: string }, Content>({
-  func: async ({ database }, data) => {
-    return await database.query('premium_content', {
-      where: { id: data.contentId }
-    })
-  },
-  permissions: {
-    auth: requireAuth,
-    premium: requirePremium
-  },
-  title: 'Get premium content',
-  tags: ['content']
-})
-```
+You can compose multiple permissions. List as many as you need under `permissions`, each under its own key: for example `auth: requireAuth` next to `premium: requirePremium`, where the second permission looks up the user's record and checks an `isPremium` flag.
 
 ## Complex Permissions
 
-Permissions can perform complex queries:
+Permissions can perform complex queries, such as a quota check that counts a user's open orders, or an activity check that reads when their basket was last updated:
 
-```typescript
-export const withinQuota = pikkuPermission(async ({ database }, _data, { session }) => {
-  if (!session?.userId) return false
-
-  const usage = await database.query('api_usage', {
-    where: {
-      userId: session.userId,
-      date: new Date().toISOString().split('T')[0]
-    }
-  })
-
-  return (usage?.requestCount || 0) < 1000  // Daily limit
-})
-
-export const activeSubscription = pikkuPermission(
-  async ({ database }, _data, { session }) => {
-    if (!session?.userId) return false
-
-    const sub = await database.query('subscriptions', {
-      where: { userId: session.userId }
-    })
-
-    if (!sub) return false
-
-    return new Date(sub.expiresAt) > new Date()
-  }
-)
+```typescript @snippet co-permission-quota
 ```
 
 ## Global Permissions
 
 Permissions live on the function definition. To apply an app-wide baseline that **every** function must additionally satisfy, use `addGlobalPermission`:
 
-```typescript
-import { addGlobalPermission } from '#pikku/auth'
-import { requireAuth } from './permissions.js'
-
-// Every function now also requires a valid session
-addGlobalPermission([requireAuth])
+```typescript @snippet co-permission-global
 ```
 
 Global permissions form an independent **AND** gate: they can only ever *narrow* access. Each function still enforces its own `permissions` in full — a broad global (e.g. `requireAuth`) can never satisfy a stricter function's own requirement (e.g. `requireOwnership`).
@@ -203,29 +83,7 @@ Wire-, tag-, and HTTP-route-level permissions (`addHTTPPermission`, `addTagPermi
 
 If a permission throws an error, it's treated as a server error (500), not unauthorized (403):
 
-```typescript
-// ✅ Good - returns false for unauthorized
-export const requireOwnership = pikkuPermission(async ({ database }, data, { session }) => {
-  if (!session?.userId) return false
-
-  try {
-    const resource = await database.query('resources', {
-      where: { id: data.resourceId }
-    })
-    return resource?.ownerId === session.userId
-  } catch (error) {
-    // Database error - let it throw (500)
-    throw error
-  }
-})
-
-// ❌ Bad - throws for unauthorized
-export const requireOwnership = pikkuPermission(async ({ database }, data, { session }) => {
-  if (!session?.userId) {
-    throw new Error('Not authenticated')  // This returns 500, not 403!
-  }
-  // ...
-})
+```typescript @snippet co-permission-throw-vs-false
 ```
 
 Use `return false` for authorization failures. Only throw for actual errors.
@@ -243,14 +101,7 @@ Permission groups are evaluated until one passes (short-circuiting), and permiss
 
 When you list multiple permissions as object keys, **any one can pass** (OR logic):
 
-```typescript
-permissions: {
-  owner: requireOwner,            // Can pass if it is theirs
-  teamMember: requireTeamMember,  // OR if they are on the owning team
-  assignee: requireAssignee       // OR if it is assigned to them
-}
-// Request proceeds if ANY permission returns true
-```
+Permissions under the same function are OR'd: list `owner`, `teamMember` and `assignee` side by side and the request proceeds if any one of them returns true.
 
 Each key is a different way of being entitled to *this row*. That is what OR is
 for here — and it is why "is an admin" is not one of them: an admin is entitled
@@ -261,12 +112,7 @@ something.
 
 To require multiple permissions to pass simultaneously, use arrays:
 
-```typescript
-permissions: {
-  authAndVerified: [requireAuth, requireEmailVerified]  // Both must pass
-}
-// Request proceeds only if ALL permissions in the array return true
-```
+To require several permissions together, put them in an array under one key, for example `authAndVerified: [requireAuth, requireEmailVerified]`. The request proceeds only if every permission in the array returns true.
 
 Don't depend on execution order - each permission should be an independent check.
 
@@ -274,139 +120,32 @@ Don't depend on execution order - each permission should be an independent check
 
 **auth** flag controls whether a session is required:
 
-```typescript
-// Requires session to exist (default)
-export const getProfile = pikkuFunc({
-  func: async ({ database }, _data, { session }) => {
-    // session is guaranteed to exist
-    return await database.query('users', { where: { id: session?.userId } })
-  },
-  auth: true,  // Default
-  title: 'Get user profile',
-  tags: ['users']
-})
-
-// No session required
-export const getPublicContent = pikkuFunc({
-  func: async ({ database }, data) => {
-    return await database.query('content', { where: { id: data.id } })
-  },
-  auth: false,
-  title: 'Get public content',
-  tags: ['content']
-})
+```typescript @snippet co-auth-flags
 ```
 
 **permissions** run additional checks after auth:
 
-```typescript
-export const deleteAccount = pikkuFunc({
-  func: async ({ database }, _data, { session }) => {
-    await database.delete('users', { where: { id: session?.userId } })
-  },
-  auth: true,  // Session required
-  permissions: {
-    verified: requireEmailVerified,  // Additional check
-    notBanned: requireNotBanned      // Additional check
-  },
-  title: 'Delete account',
-  tags: ['users']
-})
+```typescript @snippet co-auth-with-permissions
 ```
 
 ## Reusable Permissions
 
 Define permissions once, reuse everywhere:
 
-```typescript
-// permissions.ts
-export const requireAuth = pikkuPermission(async (_services, _data, { session }) => {
-  return session?.userId != null
-})
-
-// Note what is NOT here: a `requireAdmin` comparing a role column. "Is an
-// admin" is a fact about the caller, not about a row, so it belongs in
-// `scopes`. Every permission below asks about the *data* instead.
-export const requireTeamMember = pikkuPermission<{ teamId: string }>(
-  async ({ database }, data, { session }) => {
-    if (!session?.userId) return false
-    const membership = await database.query('memberships', {
-      where: { teamId: data.teamId, userId: session.userId }
-    })
-    return membership != null
-  }
-)
-
-export const requireOwnership = pikkuPermission<{ resourceId: string }>(
-  async ({ database }, data, { session }) => {
-    if (!session?.userId) return false
-    const resource = await database.query('resources', {
-      where: { id: data.resourceId }
-    })
-    return resource?.ownerId === session.userId
-  }
-)
-```
+Keep your permissions in one `permissions.ts` file. A `requireAuth` that checks `session?.userId != null` is the baseline. Note what is *not* there: a `requireAdmin` comparing a role column. "Is an admin" is a fact about the caller, not about a row, so it belongs in `scopes`. Every permission asks about the *data* instead, such as `requireTeamMember` (a membership row exists for this team and user) and `requireOwnership` (the resource's `ownerId` is the session user).
 
 Then import and use:
 
-```typescript
-import { requireAuth, requireTeamMember, requireOwnership } from './permissions.js'
-
-export const updateResource = pikkuFunc({
-  func: async ({ database }, data) => { /* ... */ },
-  permissions: {
-    auth: requireAuth,
-    owner: requireOwnership
-  },
-  title: 'Update resource',
-  tags: ['resources']
-})
-
-export const deleteUser = pikkuFunc({
-  func: async ({ database }, data) => { /* ... */ },
-  // The capability is a scope; being on the owning team is a permission.
-  // Both run: scopes AND together first, then permissions OR across keys.
-  scopes: ['admin:users:remove'],
-  permissions: {
-    teamMember: requireTeamMember
-  },
-  title: 'Delete user',
-  tags: ['users']
-})
-```
+Import the permissions where you define functions and use them by key. A resource update takes `permissions: { auth: requireAuth, owner: requireOwnership }`. A user deletion takes `scopes: ['admin:users:remove']` for the capability and `permissions: { teamMember: requireTeamMember }` for being on the owning team. Both run: scopes AND together first, then permissions OR across keys.
 
 ## Permission Factories
 
 For permissions that need configuration parameters, use `pikkuPermissionFactory`:
 
-```typescript
-import { pikkuPermissionFactory, pikkuPermission } from '#pikku/auth'
-
-export const requireRole = pikkuPermissionFactory<{ role: string }>(({ role }) => {
-  return pikkuPermission(async (_services, _data, { session }) => {
-    if (!session || session.role !== role) {
-      return false
-    }
-    return true
-  })
-})
+```typescript @snippet co-permission-factory
 ```
 
-Use the factory to create configured permissions:
-
-```typescript
-export const deleteUser = pikkuFunc<{ userId: string }, void>({
-  func: async ({ database }, data) => {
-    await database.delete('users', { where: { id: data.userId } })
-  },
-  permissions: {
-    admin: requireRole({ role: 'admin' })
-  },
-  title: 'Delete a user',
-  tags: ['users']
-})
-```
+Calling the factory with `{ role: 'admin' }` gives a configured permission you can put under any key, as `deleteUser` does above.
 
 Permission factories are useful when you have similar permission logic that varies by a parameter - roles, resource types, feature flags, etc.
 
@@ -414,62 +153,15 @@ Permission factories are useful when you have similar permission logic that vari
 
 **Keep permissions focused** - One check per permission:
 
-```typescript
-// ✅ Good - single responsibility
-export const requireAuth = pikkuPermission(...)
-export const requireOwnership = pikkuPermission(...)
-export const requireVerified = pikkuPermission(...)
-
-permissions: {
-  auth: requireAuth,
-  ownership: requireOwnership,
-  verified: requireVerified
-}
-
-// ❌ Bad - doing too much, and one of the checks is not a permission at all
-export const requireEverything = pikkuPermission(async (services, data, { session }) => {
-  if (!session?.userId) return false
-  if (session.role !== 'admin') return false   // ← belongs in `scopes`
-  if (!session.emailVerified) return false
-  // Too many concerns
-})
-```
+Keep each permission to a single responsibility: separate `requireAuth`, `requireOwnership` and `requireVerified` permissions, each registered under its own key, rather than one `requireEverything` that checks the session, a role and email verification at once. A role check in particular belongs in `scopes`, not in a permission.
 
 **Optimize expensive checks** - Cache when possible:
 
-```typescript
-// ✅ Good - caches subscription check (a shared store in real apps)
-const subscriptionCache = new Map<string, string>()
-
-export const requireSubscription = pikkuPermission(
-  async ({ database }, _data, { session }) => {
-    if (!session?.userId) return false
-
-    const cacheKey = `sub:${session.userId}`
-    const cached = subscriptionCache.get(cacheKey)
-    if (cached !== undefined) return cached === 'true'
-
-    const sub = await database.query('subscriptions', {
-      where: { userId: session.userId }
-    })
-
-    const isActive = sub && new Date(sub.expiresAt) > new Date()
-    subscriptionCache.set(cacheKey, isActive ? 'true' : 'false')
-
-    return isActive
-  }
-)
-```
+A permission that runs on every request can cache an expensive lookup. Keep a map keyed by `sub:<userId>` holding the result of the subscription check, return the cached answer when there is one, and otherwise query once and store it. In a real app, use a shared store rather than a module-level map.
 
 **Return false, don't throw** - For authorization failures:
 
-```typescript
-// ✅ Good
-if (!session?.userId) return false
-
-// ❌ Bad
-if (!session?.userId) throw new Error('Unauthorized')  // Returns 500, not 403
-```
+Always return `false` for "not allowed". Throwing an error for an unauthenticated user surfaces as a 500, not a 403.
 
 ## Next Steps
 

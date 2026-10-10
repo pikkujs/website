@@ -45,19 +45,7 @@ Every shape accepts `attachments?: EmailAttachment[]`:
 
 ## Usage Example
 
-```typescript
-export const sendWelcomeEmail = pikkuFunc<{ email: string; name: string }, void>(
-  async (services, data) => {
-    await services.emailService.send({
-      to: data.email,
-      subject: 'Welcome!',
-      template: {
-        name: 'welcome',
-        data: { name: data.name },
-      },
-    })
-  }
-)
+```typescript @snippet co-email-send
 ```
 
 ## Implementations
@@ -66,10 +54,7 @@ export const sendWelcomeEmail = pikkuFunc<{ email: string; name: string }, void>
 
 Logs the email as structured JSON to the console instead of sending — the development default, so outbound mail leaves a trace under `pikku dev` without a provider.
 
-```typescript
-import { LocalEmailService } from '@pikku/core/services'
-const emailService = new LocalEmailService()
-```
+Import `LocalEmailService` from `@pikku/core/services` and construct it with no arguments.
 
 ```typescript reference title="local-email-service.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-email-service.ts
@@ -79,29 +64,8 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-emai
 
 Provider integrations (Resend, SES, SMTP, …) are implemented in your project — the interface is a single `send` method, so wrapping any provider SDK is a few lines:
 
-```typescript
-import type { EmailService, SendEmailInput, SendEmailResult } from '@pikku/core/services'
-
-class ResendEmailService implements EmailService {
-  constructor(private resend: Resend, private defaultFrom: string) {}
-
-  async send(input: SendEmailInput): Promise<SendEmailResult> {
-    const { data } = await this.resend.emails.send({
-      from: input.from ?? this.defaultFrom,
-      to: input.to,
-      subject: input.subject ?? '',
-      html: 'html' in input ? input.html : undefined,
-      text: 'text' in input ? input.text : undefined,
-    })
-    return { messageId: data?.id }
-  }
-}
-```
+Implement the `EmailService` interface from `@pikku/core/services`: a class with a single `send(input: SendEmailInput): Promise<SendEmailResult>` method. Inside it, map the input fields (`from`, `to`, `subject`, and `html` or `text`) onto your provider's client, falling back to a default sender when `from` is missing, and return `{ messageId }` from the provider's response. A Resend-backed service takes the `Resend` client and the default `from` address in its constructor.
 
 ## Registration
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  emailService: new LocalEmailService(),
-})
-```
+Pass the service under the `emailService` key when you build the singleton services.

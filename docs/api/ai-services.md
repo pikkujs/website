@@ -50,16 +50,7 @@ The official implementation, built on the [Vercel AI SDK](https://sdk.vercel.ai)
 npm install @pikku/ai-vercel
 ```
 
-```typescript
-import { VercelAgentRunner } from '@pikku/ai-vercel'
-import { createOpenAI } from '@ai-sdk/openai'
-import { createAnthropic } from '@ai-sdk/anthropic'
-
-const agentRunner = new VercelAgentRunner({
-  openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),
-  anthropic: createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY! }),
-})
-```
+Construct `VercelAgentRunner` with one provider factory per provider name, for example `openai` from `createOpenAI` and `anthropic` from `createAnthropic` (from `@ai-sdk/openai` and `@ai-sdk/anthropic`), each handed its API key from the environment. The instance is your `agentRunner` singleton service.
 
 ## AgentStorageService
 
@@ -125,20 +116,9 @@ The storage docs cover concrete implementations for each database — [PostgreSQ
 
 ## Registration
 
-```typescript
-import { PgKyselyAgentStorageService, PgKyselyAgentRunService } from '@pikku/kysely-postgres'
-import { VercelAgentRunner } from '@pikku/ai-vercel'
-import { createOpenAI } from '@ai-sdk/openai'
+Register the services under their keys when you build the singleton services:
 
-const agentStorage = new PgKyselyAgentStorageService(pikkuKysely.kysely)
-await agentStorage.init()
-
-const singletonServices = await createSingletonServices(config, {
-  agentStorage,
-  agentRunState: agentStorage, // same instance implements both
-  agentRunService: new PgKyselyAgentRunService(pikkuKysely.kysely),
-  agentRunner: new VercelAgentRunner({
-    openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),
-  }),
-})
-```
+- `agentStorage`: a `PgKyselyAgentStorageService` over your Kysely instance, with `init()` awaited first
+- `agentRunState`: the same storage instance, since it implements both interfaces
+- `agentRunService`: a `PgKyselyAgentRunService` over the same Kysely instance
+- `agentRunner`: a `VercelAgentRunner` built with your providers

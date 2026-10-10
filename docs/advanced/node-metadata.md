@@ -12,25 +12,7 @@ Node metadata lets you annotate your functions with visual information — displ
 
 A node is a function with extra metadata that describes how it should appear in a visual graph:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/function'
-
-export const sendEmail = pikkuSessionlessFunc<
-  { to: string; subject: string; body: string },
-  { messageId: string }
->({
-  func: async ({ emailService }, data) => {
-    return await emailService.send(data)
-  },
-  title: 'Send email',
-  description: 'Sends an email via the configured email service',
-  tags: ['email', 'notifications'],
-  node: {
-    displayName: 'Send Email',
-    category: 'notifications',
-    type: 'action',
-  }
-})
+```typescript @snippet co-node-metadata
 ```
 
 ## CoreNodeConfig

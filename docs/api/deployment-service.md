@@ -69,21 +69,7 @@ Platform-native (created by the runtime adapters, using the platform's own disco
 
 ## Registration
 
-```typescript
-import { PgKyselyDeploymentService } from '@pikku/kysely-postgres'
-
-const baseServices = await createSingletonServices(config, { logger })
-
-const deploymentService = new PgKyselyDeploymentService(
-  { heartbeatInterval: 5000, heartbeatTtl: 15000 },
-  pikkuKysely.kysely,
-  baseServices.jwt,
-  baseServices.secrets
-)
-await deploymentService.init()
-
-const singletonServices = await createSingletonServices(config, {
-  ...baseServices,
-  deploymentService,
-})
-```
+1. Build the base services first, with `createSingletonServices(config, { logger })`.
+2. Construct `PgKyselyDeploymentService` from `@pikku/kysely-postgres` with `{ heartbeatInterval: 5000, heartbeatTtl: 15000 }`, your Kysely instance, and the base services' `jwt` and `secrets`.
+3. Await `init()`.
+4. Build the singleton services again, spreading the base services and adding `deploymentService`.

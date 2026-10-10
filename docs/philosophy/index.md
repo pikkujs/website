@@ -27,28 +27,12 @@ Types drift. Logic fragments. Vendor lock-in creeps in.
 
 Write your function once:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/function'
-
-export const sendWelcomeEmail = pikkuSessionlessFunc<SendWelcomeEmailInput, { sent: boolean }>({
-  func: async ({ email }, data) => {
-    await email.send({ to: data.userEmail, subject: 'Welcome!', text: `Hello ${data.userName}!` })
-    return { sent: true }
-  }
-})
+```typescript @snippet co-philosophy-email
 ```
 
 Wire it to whatever you need:
 
-```typescript
-import { wireQueueWorker } from '#pikku/queue'
-import { wireScheduler } from '#pikku/scheduler'
-
-// Process from a background queue
-wireQueueWorker({ name: 'emails', func: sendWelcomeEmail })
-
-// Or trigger on a schedule
-wireScheduler({ name: 'dailyDigest', schedule: '0 9 * * *', func: sendDailyDigest })
+```typescript @snippet co-philosophy-wire
 ```
 
 Same business logic. Different entry points. Zero duplication.

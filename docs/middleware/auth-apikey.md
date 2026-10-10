@@ -10,20 +10,11 @@ The `authAPIKey` middleware extracts API keys from the `x-api-key` header or `ap
 
 ## Installation
 
-```typescript
-import { authAPIKey } from '#pikku/middleware'
-```
+Import `authAPIKey` from `#pikku/middleware`.
 
 ## Usage
 
-```typescript
-import { authAPIKey } from '#pikku/middleware'
-import { wireHTTP } from '#pikku/http'
-
-wireHTTP({
-  // ...
-  middleware: [authAPIKey({ source: 'header' })],
-})
+```typescript @snippet apiKeyAuth
 ```
 
 ## Options
@@ -52,14 +43,5 @@ This means API keys are JWTs — you generate them with `jwtService.encode()` an
 
 ## Example: Generating API Keys
 
-```typescript
-export const createAPIKey = pikkuFunc<{ userId: string }, { apiKey: string }>({
-  func: async ({ jwt }, data) => {
-    const apiKey = await jwt.encode(
-      { value: 365, unit: 'day' },
-      { userId: data.userId }
-    )
-    return { apiKey }
-  },
-})
+```typescript @snippet co-create-api-key
 ```

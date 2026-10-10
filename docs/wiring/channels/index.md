@@ -33,72 +33,12 @@ Clients send action-based messages like `{ action: 'subscribe', topic: 'todo-cre
 
 The recommended pattern for channel authentication is to use an explicit authentication action rather than authenticating during connection:
 
-```typescript
-// auth.function.ts
-import { pikkuChannelFunc } from '#pikku/channel'
-import { UnauthorizedError } from '#pikku/error'
-
-export const authenticate = pikkuChannelFunc<
-  { token: string },
-  { authenticated: boolean }
->({
-  func: async ({ jwt }, data, { setSession }) => {
-    try {
-      const payload = await jwt.decode(data.token)
-
-      // Set the user session for this connection
-      await setSession({
-        userId: payload.userId,
-        role: payload.role
-      })
-
-      return { authenticated: true }
-    } catch (e) {
-      throw new UnauthorizedError('Invalid token')
-    }
-  },
-  auth: false,  // Don't require auth for the authenticate action itself
-  title: 'Authenticate a WebSocket connection',
-  tags: ['auth']
-})
-
-export const sendMessage = pikkuChannelFunc<
-  { message: string },
-  { message: string; timestamp: number }
->({
-  func: async ({ database }, data, { channel, session }) => {
-    // session is guaranteed to exist because auth: true
-    const timestamp = Date.now()
-
-    await database.insert('messages', {
-      room: channel.openingData.room,
-      message: data.message,
-      userId: session.userId,
-      timestamp
-    })
-
-    return { message: data.message, timestamp }
-  },
-  auth: true,  // Require authentication
-  title: 'Send a message',
-  tags: ['chat']
-})
+```typescript @snippet wb-channel-authenticate
 ```
 
 Wire them as actions on the channel:
 
-```typescript
-wireChannel({
-  name: 'chat',
-  route: '/chat',
-  auth: true,  // Channel requires auth by default
-  onMessageWiring: {
-    action: {
-      authenticate: { func: authenticate },  // auth: false on the function
-      sendMessage: { func: sendMessage }     // auth: true on the function
-    }
-  }
-})
+```typescript @snippet wb-channel-authenticate-wiring
 ```
 
 Client flow:
@@ -120,105 +60,33 @@ Channels have three lifecycle events you can handle:
 
 Called when a client first connects:
 
-```typescript
-export const onConnect = pikkuChannelConnectionFunc<
-  { welcome: string }       // Output - sent to client
->({
-  func: async ({ logger }, data, { channel }) => {
-    logger.info('User connected to room', { room: channel.openingData.room })
-
-    // Return value is automatically sent
-    return { welcome: `Welcome to ${channel.openingData.room}!` }
-  },
-  title: 'Handle new connections',
-  tags: ['chat']
-})
+```typescript @snippet wb-channel-lifecycle
 ```
 
 ### onDisconnect
 
 Called when a client disconnects:
 
-```typescript
-export const onDisconnect = pikkuChannelDisconnectionFunc({
-  func: async ({ logger }, _data, { channel }) => {
-    logger.info('User disconnected from room', { room: channel.openingData.room })
-    // No return value - connection is closing
-  },
-  title: 'Handle disconnections',
-  tags: ['chat']
-})
-```
+`pikkuChannelDisconnectionFunc` (also in the snippet above) takes no output. It's the place to log the disconnect or release anything you held for the connection.
 
 ### onMessage
 
 Called when a client sends a message:
 
-```typescript
-export const onMessage = pikkuChannelFunc<
-  { message: string },
-  { message: string; timestamp: number }
->({
-  func: async ({ database }, data, { channel }) => {
-    const timestamp = Date.now()
-
-    await database.insert('messages', {
-      room: channel.openingData.room,
-      message: data.message,
-      timestamp
-    })
-
-    return { message: data.message, timestamp }
-  },
-  title: 'Handle incoming messages',
-  tags: ['chat']
-})
-```
+`pikkuChannelFunc` (the third function in the snippet above) receives each message and returns the reply, which is sent back to the client automatically.
 
 ## Wiring a Channel
 
 Wire your channel functions together with `wireChannel`:
 
-```typescript
-import { wireChannel } from '#pikku/channel'
-import { onConnect, onDisconnect, onMessage } from './functions/chat.function.js'
-
-wireChannel({
-  // Required
-  name: 'chat',              // Unique channel name
-  route: '/chat',            // WebSocket route
-
-  // Lifecycle handlers
-  onConnect,
-  onDisconnect,
-  onMessage,
-
-  // Optional
-  auth: true,                // Require authentication (default: true)
-  middleware: [auditMiddleware],
-  tags: ['realtime']
-})
+```typescript @snippet wb-channel-lifecycle-wiring
 ```
 
 ## Understanding ChannelData
 
 ChannelData is data extracted when the channel **first opens** - typically from URL params or query parameters, depending on the source:
 
-```typescript
-// Client connects to: ws://localhost:3000/chat?room=general
-// ChannelData = { room: 'general' }
-
-export const onMessage = pikkuChannelFunc<
-  { message: string },
-  { message: string; timestamp: number }
->({
-  func: async (_services, data, { channel }) => {
-    // Access opening data throughout the connection
-    const room = channel.openingData.room
-
-    // ... handle message
-  }
-})
+```typescript @snippet wb-channel-opening-data
 ```
 
 This data is available in all lifecycle handlers and doesn't change during the connection.
@@ -227,15 +95,13 @@ This data is available in all lifecycle handlers and doesn't change during the c
 
 Inside channel functions, you have access to the `channel` object:
 
-```typescript
-func: async (_services, data, { channel }) => {
-  channel.channelId          // Unique connection ID
-  channel.openingData        // Data from connection URL
-  channel.send(data)         // Send data to this client
-  channel.close()            // Close this connection
-  channel.state              // 'initial' | 'open' | 'closed'
-}
-```
+- `channel.channelId`: unique connection ID
+- `channel.openingData`: data from the connection URL
+- `channel.send(data)`: send data to this client
+- `channel.close()`: close this connection
+- `channel.state`: `'initial'`, `'open'` or `'closed'`
+
+There are also `setState`, `getState` and `clearState` for keeping per-connection state, and `channel.remote` for calling the client (see below).
 
 ## Sending Messages
 
@@ -245,48 +111,13 @@ There are two ways to send messages to clients:
 
 When you return a value from your channel function, it's automatically sent to the client. This approach also allows you to wire regular `pikkuFunc` functions to channels, making them reusable across transports:
 
-```typescript
-export const onMessage = pikkuChannelFunc<
-  { message: string },
-  { message: string; timestamp: number }
->({
-  func: async ({ database }, data) => {
-    const timestamp = Date.now()
-    await database.query('...')
-
-    // Automatically sent to the client
-    return { message: data.message, timestamp }
-  }
-})
-```
+The `chatMessage` function in the lifecycle snippet above does this: it returns `{ message, timestamp }`, and that object is what the client receives.
 
 ### Use channel.send()
 
 For more control, especially when sending multiple messages, use `channel.send()`:
 
-```typescript
-type StatusUpdate =
-  | { type: 'processing'; step: string }
-  | { type: 'complete'; result: ProcessResult }
-
-export const onMessage = pikkuChannelFunc<
-  { jobId: string },
-  StatusUpdate
->({
-  func: async ({ database }, data, { channel }) => {
-    // Send progress updates
-    channel.send({ type: 'processing', step: 'Loading data' })
-
-    const result = await database.query('...')
-
-    channel.send({ type: 'processing', step: 'Processing' })
-
-    // Process the job...
-
-    // Note: channel.send type is checked against Output
-    channel.send({ type: 'complete', result })
-  }
-})
+```typescript @snippet wb-channel-send
 ```
 
 ## Middleware on a Channel
@@ -310,59 +141,19 @@ The `eventHub` service provides transport-agnostic pub/sub, allowing you to broa
 
 ### Broadcasting Messages
 
-```typescript
-export const broadcastToRoom = pikkuFunc<
-  { room: string; message: string; userId: string },
-  void
->({
-  func: async ({ eventHub }, data) => {
-    // Broadcast to all subscribers of this room's topic
-    await eventHub.publish(
-      `room:${data.room}`,
-      null,  // null = broadcast to all subscribers
-      {
-        type: 'message',
-        message: data.message,
-        userId: data.userId,
-        timestamp: Date.now()
-      }
-    )
-  },
-  title: 'Broadcast message to all users in a room',
-  tags: ['chat']
-})
+```typescript @snippet wb-channel-broadcast
 ```
 
 ### Subscribing to Topics
 
 Subscribe channels to topics when they connect:
 
-```typescript
-export const onConnect = pikkuChannelConnectionFunc<
-  { welcome: string }
->({
-  func: async ({ eventHub }, data, { channel }) => {
-    const room = channel.openingData.room
-
-    // Subscribe this channel to the room's topic
-    await eventHub.subscribe(`room:${room}`, channel.channelId)
-
-    return { welcome: `Joined ${room}` }
-  }
-})
+```typescript @snippet wb-channel-room-connect
 ```
 
 ### Unsubscribing
 
-Clean up subscriptions when clients disconnect:
-
-```typescript
-export const onDisconnect = pikkuChannelDisconnectionFunc({
-  func: async ({ eventHub }, _data, { channel }) => {
-    await eventHub.unsubscribe(`room:${channel.openingData.room}`, channel.channelId)
-  }
-})
-```
+Clean up subscriptions when clients disconnect. The `leaveRoom` function in the snippet above is the disconnect side of the same pair.
 
 :::note
 Pikku automatically unsubscribes all topics when a channel disconnects (since a new channel would have a new ID). This means your application needs to resubscribe when connections are reestablished.

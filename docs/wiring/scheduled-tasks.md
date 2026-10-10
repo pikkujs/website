@@ -35,39 +35,13 @@ Scheduled functions use `pikkuVoidFunc` (an alias for `pikkuSessionlessFunc<void
 - Don't return any output
 - Don't have user sessions
 
-```typescript
-import { pikkuVoidFunc } from '#pikku/function'
-
-export const generateWeeklyReport = pikkuVoidFunc({
-  func: async ({ database, emailService, logger }) => {
-    logger.info('Generating weekly report')
-
-    const stats = await database.query('SELECT * FROM weekly_stats')
-
-    await emailService.send({
-      to: 'admin@example.com',
-      subject: 'Weekly Report',
-      template: 'weekly-report',
-      data: stats
-    })
-
-    logger.info('Weekly report sent')
-  },
-  auth: false,
-  title: 'Generate and send weekly report',
-  tags: ['reports']
-})
+```typescript @snippet wb-cron-void-func
 ```
 
 :::tip Triggering Manually
 Since scheduled functions are just regular Pikku functions, you can also wire them to HTTP endpoints for manual triggering during testing or emergencies:
 
-```typescript
-wireHTTP({
-  method: 'post',
-  route: '/admin/trigger-maintenance',
-  func: runDailyMaintenance,
-})
+```typescript @snippet wb-cron-manual-trigger
 ```
 :::
 
@@ -87,41 +61,7 @@ Cron expressions use the standard 5-field format:
 
 Common examples:
 
-```typescript
-// Every 5 minutes
-wireScheduler({
-  name: 'healthCheck',
-  schedule: '*/5 * * * *',
-  func: healthCheck
-})
-
-// Every hour at minute 30
-wireScheduler({
-  name: 'hourlyUpdate',
-  schedule: '30 * * * *',
-  func: hourlyUpdate
-})
-
-// Every day at 2:30 AM
-wireScheduler({
-  name: 'dailyBackup',
-  schedule: '30 2 * * *',
-  func: dailyBackup
-})
-
-// Every Monday at 9:00 AM
-wireScheduler({
-  name: 'weeklyReport',
-  schedule: '0 9 * * 1',
-  func: weeklyReport
-})
-
-// First day of every month at midnight
-wireScheduler({
-  name: 'monthlyBilling',
-  schedule: '0 0 1 * *',
-  func: monthlyBilling
-})
+```typescript @snippet wb-cron-expressions
 ```
 
 :::note Timezone
@@ -132,121 +72,38 @@ Cron expressions are interpreted as **UTC** by default (unless your runtime spec
 
 ### Basic Wiring
 
-```typescript
-import { wireScheduler } from '#pikku/scheduler'
-import { runMaintenance } from './functions/maintenance.function.js'
-
-wireScheduler({
-  // Required
-  name: 'runMaintenance',
-  schedule: '0 3 * * *',
-  func: runMaintenance,
-
-  // Optional
-  middleware: [loggingMiddleware],
-  tags: ['maintenance', 'critical']
-})
+```typescript @snippet wb-cron-basic-wiring
 ```
 
 ### Sourcing Schedule from Config
 
 For different schedules across environments:
 
-```typescript
-import { wireScheduler } from '#pikku/scheduler'
-import { config } from './config.js'
-import { runBackup } from './functions/backup.function.js'
-
-wireScheduler({
-  name: 'runBackup',
-  schedule: config.backupSchedule,  // '0 2 * * *' in prod, '0 */4 * * *' in dev
-  func: runBackup
-})
-```
+The `schedule` is just a string, so it can come from config: pass `config.backupSchedule` and use `'0 2 * * *'` in production and `'0 */4 * * *'` in development.
 
 ## Middleware
 
 Middleware is important for scheduled tasks since they don't have automatic observability. Add logging, metrics, or error handling:
 
-```typescript
-import { pikkuMiddleware } from '#pikku/middleware'
-import { InvalidMiddlewareWireError } from '#pikku/error'
-
-export const schedulerMetrics = pikkuMiddleware(
-  async ({ logger }, { scheduledTask }, next) => {
-    // Guard for scheduled task interaction
-    if (!scheduledTask) {
-      throw new InvalidMiddlewareWireError(
-        'schedulerMetrics middleware can only be used with scheduled tasks'
-      )
-    }
-
-    const start = Date.now()
-    const taskName = scheduledTask.name
-
-    logger.info('Scheduled task started', { task: taskName })
-
-    try {
-      await next()
-      logger.info('Scheduled task completed', {
-        task: taskName,
-        duration: Date.now() - start
-      })
-    } catch (error) {
-      logger.error('Scheduled task failed', {
-        task: taskName,
-        error: error.message,
-        duration: Date.now() - start
-      })
-      throw error
-    }
-  }
-)
+```typescript @snippet wb-cron-metrics-middleware
 ```
 
 ### Per-Schedule Middleware
 
-```typescript
-wireScheduler({
-  name: 'runMaintenance',
-  schedule: '0 3 * * *',
-  func: runMaintenance,
-  middleware: [schedulerMetrics, retryMiddleware]
-})
+```typescript @snippet wb-cron-middleware-wiring
 ```
 
 ### Global Middleware
 
 Apply middleware to all wirings (including scheduled tasks) with `addGlobalMiddleware`, or to a shared tag with `addTagMiddleware`:
 
-```typescript
-import { addGlobalMiddleware } from '#pikku/middleware'
-
-addGlobalMiddleware([schedulerMetrics, alertMiddleware])
-```
+The `addGlobalMiddleware([schedulerMetrics, alertMiddleware])` call in the snippet above applies a list of middleware to every wiring. To scope it to a shared tag instead, use `addTagMiddleware`.
 
 ## Error Handling
 
 Scheduled tasks should throw errors for failures. How errors are handled depends on your runtime:
 
-```typescript
-export const syncData = pikkuVoidFunc({
-  func: async ({ database, externalAPI, logger }) => {
-    try {
-      const data = await externalAPI.fetch()
-      await database.insert('synced_data', data)
-      logger.info('Data synced successfully')
-    } catch (error) {
-      logger.error('Data sync failed', { error: error.message })
-
-      // Throw to indicate failure
-      throw new DataSyncError(error.message)
-    }
-  },
-  auth: false,
-  title: 'Sync external data',
-  tags: ['sync']
-})
+```typescript @snippet wb-cron-error-handling
 ```
 
 Some runtimes automatically retry failed scheduled tasks, while others require middleware or external retry logic.
@@ -255,66 +112,14 @@ Some runtimes automatically retry failed scheduled tasks, while others require m
 
 You can wire multiple schedules in a single file:
 
-```typescript
-// housekeeping.schedule.ts
-import { wireScheduler } from '#pikku/scheduler'
-import {
-  cleanupOldLogs,
-  updateStatistics,
-  archiveOldData,
-  refreshCache
-} from './functions/housekeeping.function.js'
-
-// Every hour - cleanup logs
-wireScheduler({
-  name: 'cleanupOldLogs',
-  schedule: '0 * * * *',
-  func: cleanupOldLogs
-})
-
-// Every 6 hours - update stats
-wireScheduler({
-  name: 'updateStatistics',
-  schedule: '0 */6 * * *',
-  func: updateStatistics
-})
-
-// Daily at 2 AM - archive old data
-wireScheduler({
-  name: 'archiveOldData',
-  schedule: '0 2 * * *',
-  func: archiveOldData
-})
-
-// Every 15 minutes - refresh cache
-wireScheduler({
-  name: 'refreshCache',
-  schedule: '*/15 * * * *',
-  func: refreshCache
-})
+```typescript @snippet wb-cron-grouped
 ```
 
 ## Orchestrating Complex Tasks
 
 For complex workflows, use `rpc.invoke()` to orchestrate multiple operations:
 
-```typescript
-export const monthlyProcessing = pikkuVoidFunc({
-  func: async ({ logger }, data, { rpc }) => {
-    logger.info('Starting monthly processing')
-
-    // Run multiple tasks in sequence
-    await rpc.invoke('generateMonthlyReports', {})
-    await rpc.invoke('processMonthlyBilling', {})
-    await rpc.invoke('archiveMonthlyData', {})
-    await rpc.invoke('sendMonthlyNotifications', {})
-
-    logger.info('Monthly processing completed')
-  },
-  auth: false,
-  title: 'Run all monthly processing tasks',
-  tags: ['monthly', 'batch']
-})
+```typescript @snippet wb-cron-orchestrate
 ```
 
 ## Real-World Example: Shop Maintenance Jobs

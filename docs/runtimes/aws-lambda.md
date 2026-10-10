@@ -87,59 +87,21 @@ npm install @pikku/lambda
 
 Cache singleton services at the module level so they persist across warm invocations:
 
-```typescript
-import './.pikku/pikku-bootstrap.gen.js'
-
-let cachedServices: SingletonServices | undefined
-
-export const coldStart = async () => {
-  if (!cachedServices) {
-    const config = await createConfig()
-    cachedServices = await createSingletonServices(config)
-  }
-  return cachedServices
-}
-```
+Import the generated bootstrap (`.pikku/pikku-bootstrap.gen.js`) once, then keep a module-level `cachedServices` variable. A `coldStart` function creates the config and calls `createSingletonServices` the first time it runs and returns the cached services on every warm invocation after that.
 
 ### HTTP Handler
 
-```typescript
-import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda'
-import { runFetchV2 } from '@pikku/lambda/http'
-
-export const handler = async (
-  event: APIGatewayProxyEventV2
-): Promise<APIGatewayProxyResultV2> => {
-  await coldStart()
-  return runFetchV2(event)
-}
-```
+The HTTP handler takes an `APIGatewayProxyEventV2`, awaits `coldStart()`, and returns `runFetchV2(event)`, imported from `@pikku/lambda/http`. The result is an `APIGatewayProxyResultV2`.
 
 ### SQS Queue Worker
 
 Process SQS messages as Pikku queue jobs. Returns an `SQSBatchResponse` with batch item failures so failed messages are automatically retried.
 
-```typescript
-import type { SQSHandler } from 'aws-lambda'
-import { runSQSQueueWorker } from '@pikku/lambda/queue'
-
-export const handler: SQSHandler = async (event) => {
-  const { logger } = await coldStart()
-  return runSQSQueueWorker(logger, event)
-}
-```
+The SQS handler is typed as `SQSHandler`. It awaits `coldStart()` to get the `logger`, then returns `runSQSQueueWorker(logger, event)` from `@pikku/lambda/queue`.
 
 ### Scheduled Tasks
 
-```typescript
-import type { ScheduledEvent } from 'aws-lambda'
-import { runLambdaScheduled } from '@pikku/lambda/scheduled'
-
-export const handler = async (event: ScheduledEvent) => {
-  await coldStart()
-  await runLambdaScheduled(event)
-}
-```
+The scheduled handler takes a `ScheduledEvent`, awaits `coldStart()`, then awaits `runLambdaScheduled(event)` from `@pikku/lambda/scheduled`.
 
 ### WebSocket (API Gateway)
 
@@ -148,28 +110,7 @@ WebSocket connections require three separate Lambda handlers and a persistent st
 Each handler takes the Lambda event plus a `{ channelStore }` object — the store
 persists connection state across invocations:
 
-```typescript
-import {
-  connectWebsocket,
-  disconnectWebsocket,
-  processWebsocketMessage,
-} from '@pikku/lambda/websocket'
-
-export const wsConnect = async (event) => {
-  const { channelStore } = await coldStart()
-  return connectWebsocket(event, { channelStore })
-}
-
-export const wsDisconnect = async (event) => {
-  const { channelStore } = await coldStart()
-  return disconnectWebsocket(event, { channelStore })
-}
-
-export const wsMessage = async (event) => {
-  const { channelStore } = await coldStart()
-  return processWebsocketMessage(event, { channelStore })
-}
-```
+`@pikku/lambda/websocket` exports `connectWebsocket`, `disconnectWebsocket` and `processWebsocketMessage`. Export three handlers (`wsConnect`, `wsDisconnect`, `wsMessage`). Each one awaits `coldStart()`, takes `channelStore` from the services, and calls the matching function with `(event, { channelStore })`.
 
 WebSocket support requires:
 - **API Gateway WebSocket API** — a separate API Gateway configured for WebSocket
@@ -187,9 +128,4 @@ WebSocket support requires:
 
 A single Lambda file can export multiple handlers for different event sources:
 
-```typescript
-// main.ts
-export { httpHandler } from './http-handler.js'
-export { scheduledHandler } from './scheduler-handler.js'
-export { sqsHandler } from './sqs-handler.js'
-```
+If you bundle everything into one entry file (`main.ts`), re-export each handler from it: `httpHandler`, `scheduledHandler` and `sqsHandler`, each from its own file.

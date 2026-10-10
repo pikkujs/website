@@ -14,12 +14,7 @@ We recommend managing CORS through your chosen runtime environment. Each platfor
 
 For the cases where runtime configuration isn't convenient, Pikku also ships a `cors` middleware. Register it globally to set the CORS headers and answer preflight requests:
 
-```typescript
-import { addHTTPMiddleware, cors } from '#pikku/middleware'
-
-addHTTPMiddleware('*', [
-  cors({ origin: ['https://app.example.com'], credentials: true }),
-])
+```typescript @snippet wa-cors-middleware
 ```
 
 `origin` defaults to `*`, which browsers reject alongside `credentials: true` — name the origins when cookies ride along. Pikku also exports `requireOrigin`, which rejects a request with a 403 unless its `Origin` matches the app's own host (or an allowed list). Unlike CORS headers, which only a browser enforces, `requireOrigin` stops the request before the function body runs.

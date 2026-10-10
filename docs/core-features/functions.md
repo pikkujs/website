@@ -14,21 +14,7 @@ The beauty of Pikku functions is that they're **transport-agnostic**. Write your
 
 Here's a simple function that fetches a book from a database. The definers live behind the [`#pikku/function`](/api#app/function) door the CLI generates:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-
-export const getBook = pikkuFunc<{ bookId: string }, Book>({
-  func: async ({ database }, data) => {
-    try {
-      return await database.query('book', { bookId: data.bookId })
-    } catch (e) {
-      throw new NotFoundError()
-    }
-  },
-  title: 'Fetch a book by ID',
-  description: 'Returns a book from the database',
-  tags: ['books']
-})
+```typescript @snippet co-func-basic
 ```
 
 This function can now be wired to:
@@ -48,20 +34,7 @@ Think of Pikku functions like serverless functions (Lambda, Cloudflare Workers) 
 
 Pikku functions use an object configuration with a `func` property that contains your logic:
 
-```typescript
-const myFunction = pikkuFunc<InputType, OutputType>({
-  func: async ({ database, logger }, data, { session }) => {
-    // Your logic here - destructure only the services you need
-    return result
-  },
-  // Optional configuration
-  auth: true,
-  permissions: { /* ... */ },
-  title: '...',
-  description: '...',
-  tags: ['...']
-})
-```
+A function is a `pikkuFunc` config object. `func` takes the services you need, the data and the wire, and every other key is optional: `auth`, `permissions`, `title`, `description` and `tags`.
 
 Three definers cover the common shapes: `pikkuFunc` (requires a session), `pikkuSessionlessFunc` (may run without one), and `pikkuVoidFunc` (no input, no output — for scheduled tasks and cleanup). All three accept either a bare function or this config object.
 
@@ -71,21 +44,13 @@ Three definers cover the common shapes: `pikkuFunc` (requires a session), `pikku
 
 **Always destructure services** directly in the parameter list - this is critical for Pikku to tree-shake unused services and optimize your bundle:
 
-```typescript
-func: async ({ database, logger }, data) => {
-  logger.info('Fetching book', { bookId: data.bookId })
-  // Only database and logger are included in the bundle
-}
+```typescript @snippet co-func-services
 ```
 
 :::info Accessing Transport-Specific Information
 If you need access to transport-specific information (like HTTP headers or WebSocket channel info), you can destructure from the `wire` parameter:
 
-```typescript
-func: async ({ database }, data, { http }) => {
-  const userAgent = http?.request?.header('user-agent')
-  // Destructure what you need: { http }, { channel }, { queue }, etc.
-}
+```typescript @snippet co-func-wire-http
 ```
 :::
 
@@ -95,33 +60,14 @@ Pikku automatically merges data from wherever it comes from - URL paths, query p
 
 **Automatic Validation**: When a function declares an `input` schema (or its input type is listed under `schemasFromTypes` in `pikku.config.json`), Pikku generates the JSON Schema and validates all incoming data against it. If the data doesn't match, the function won't even be called - an error is returned immediately.
 
-```typescript
-type CreateBookInput = {
-  title: string
-  author: string
-  publishedYear?: number
-}
-
-export const createBook = pikkuFunc<CreateBookInput, Book>({
-  func: async ({ database }, data) => {
-    // data is guaranteed to match CreateBookInput
-    // title and author are strings, publishedYear is optional number
-    return await database.insert('book', data)
-  },
-  title: 'Create a new book',
-  tags: ['books']
-})
+```typescript @snippet co-func-typed-input
 ```
 
 **3. Wire** - Access to session and transport-specific details
 
 When you need the user's session or transport-specific information, destructure from the third parameter:
 
-```typescript
-func: async ({ database }, data, { session }) => {
-  // session IS the user session value directly
-  const userId = session?.userId
-}
+```typescript @snippet co-func-session-read
 ```
 
 ## Sessions and Authentication
@@ -130,36 +76,10 @@ By default, Pikku functions require authentication (`auth: true`). This means a 
 
 ### Authentication Functions (Login, Logout, GetMe)
 
-```typescript title="auth.functions.ts"
-import { pikkuFunc, pikkuSessionlessFunc } from '#pikku/function'
-
-export const login = pikkuSessionlessFunc<{ email: string; password: string }, { token: string; user: User }>({
-  func: async ({ jwt, userService }, data, { setSession }) => {
-    const user = await userService.verifyCredentials(data.email, data.password)
-    const token = await jwt.encode({ value: 30, unit: 'day' }, { userId: user.id })
-    await setSession({ userId: user.id })
-    return { token, user }
-  },
-  auth: false,
-  title: 'Log in'
-})
-
-export const logout = pikkuFunc<void, void>({
-  func: async (services, _data, { clearSession }) => {
-    await clearSession()
-  },
-  title: 'Log out'
-})
-
-export const getMe = pikkuFunc<void, User>({
-  func: async ({ userService }, _data, { session }) => {
-    return await userService.getUser(session.userId)
-  },
-  title: 'Get the current user'
-})
+```typescript @snippet co-func-auth-flow
 ```
 
-The `login` function uses `jwt.encode` to issue a token and returns it alongside the user. The `logout` function calls `clearSession()` to clear the session. The `getMe` function reads the current session to return the authenticated user.
+The `login` function verifies the credentials and calls `setSession` to start the session. The `logout` function calls `clearSession()` to clear the session. The `getMe` function reads the current session to return the authenticated user.
 
 The `session` from the wire parameter abstracts session storage, so it works identically whether your users are connecting via HTTP cookies, WebSocket connections, or any other transport that requires a session.
 
@@ -169,39 +89,12 @@ See [User Sessions](./user-sessions.md) for more details on session management.
 
 Functions can declare fine-grained permissions for authorization:
 
-```typescript
-export const deleteBook = pikkuFunc<{ bookId: string }, void>({
-  func: async ({ database }, data) => {
-    await database.delete('book', { bookId: data.bookId })
-  },
-  permissions: {
-    // User must be either the owner OR an admin
-    owner: requireBookOwner,
-    admin: requireAdmin
-  },
-  title: 'Delete a book',
-  tags: ['books']
-})
+```typescript @snippet co-permission-on-func
 ```
 
 Permissions are defined separately and can be reused across functions:
 
-```typescript
-// permissions.ts
-import type { PikkuPermission } from '#pikku/auth'
-
-export const requireBookOwner: PikkuPermission<{ bookId: string }> =
-  async ({ database }, data, { session }) => {
-    // session IS the user session value directly
-    if (!session?.userId) return false
-
-    const book = await database.query('book', {
-      bookId: data.bookId,
-      ownerId: session.userId
-    })
-
-    return !!book
-  }
+```typescript @snippet permissionFunction
 ```
 
 See [Permission Guards](./permission-guards.md) for more details.
@@ -210,27 +103,7 @@ See [Permission Guards](./permission-guards.md) for more details.
 
 Sometimes one function needs to call another. Use `rpc.invoke()` for this - it's for internal function-to-function calls (in the future this could also mean between microservices), and still enforces all permissions, auth, and function middleware:
 
-```typescript
-export const processOrder = pikkuFunc<{ orderId: string }, Order>({
-  func: async ({ database }, data, { rpc }) => {
-    // Orchestrate multiple domain operations
-    // Each invoke still enforces permissions and auth
-    const invoice = await rpc.invoke('generateInvoice', {
-      orderId: data.orderId
-    })
-
-    const payment = await rpc.invoke('processPayment', {
-      invoiceId: invoice.id
-    })
-
-    return await database.update('order', {
-      where: { orderId: data.orderId },
-      set: { status: 'completed', paymentId: payment.id }
-    })
-  },
-  title: 'Process an order end-to-end',
-  tags: ['orders']
-})
+```typescript @snippet rpcInternalCall
 ```
 
 :::tip
@@ -243,27 +116,7 @@ See [RPC (Remote Procedure Calls)](../wiring/rpcs/index.md) for more details on 
 
 Errors in Pikku are thrown, not returned. Use built-in error classes or extend `PikkuError`:
 
-```typescript
-import { BadRequestError, NotFoundError } from '#pikku/error'
-
-export const updateBook = pikkuFunc<UpdateBookInput, Book>({
-  func: async ({ database }, data) => {
-    if (!data.title || data.title.length < 1) {
-      throw new BadRequestError('Title is required')
-    }
-
-    try {
-      return await database.update('book', {
-        where: { bookId: data.bookId },
-        set: { title: data.title }
-      })
-    } catch (e) {
-      throw new NotFoundError('Book not found')
-    }
-  },
-  title: 'Update a book',
-  tags: ['books']
-})
+```typescript @snippet co-func-errors
 ```
 
 When called via HTTP, `BadRequestError` becomes a 400 response and `NotFoundError` becomes a 404. When called via WebSocket, they become error messages. The function doesn't need to handle this - Pikku does it automatically.
@@ -274,14 +127,7 @@ See [Errors](./errors.md) for more on error handling and creating custom errors.
 
 Functions support metadata properties for documentation and API generation:
 
-```typescript
-export const myFunc = pikkuFunc<Input, Output>({
-  func: async (services, data) => { ... },
-  title: 'A short one-liner describing what this does',
-  description: 'Optional longer description with more context',
-  tags: ['category', 'grouping'],
-})
-```
+Add `title` (a short one-liner), `description` (optional longer context) and `tags` (categories for grouping) alongside `func`.
 
 This metadata is used to:
 - Generate OpenAPI specifications for your HTTP APIs
@@ -293,26 +139,7 @@ This metadata is used to:
 
 Pikku supports runtime validation using any [Standard Schema](https://standardschema.dev) validator, such as [Zod](https://zod.dev). The schemas are also the source of the data and return types, so use either schemas or generics - never both:
 
-```typescript
-import { z } from 'zod'
-
-export const createBook = pikkuFunc({
-  func: async ({ database }, data) => {
-    return await database.insert('book', data)
-  },
-  input: z.object({
-    title: z.string().min(1),
-    author: z.string(),
-    publishedYear: z.number().optional()
-  }),
-  output: z.object({
-    id: z.string(),
-    title: z.string(),
-    author: z.string()
-  }),
-  title: 'Create a new book',
-  tags: ['books']
-})
+```typescript @snippet co-func-zod
 ```
 
 The `input` and `output` schemas provide runtime validation on top of the compile-time type checking, and `data`/the return value are inferred from them.
@@ -321,16 +148,7 @@ The `input` and `output` schemas provide runtime validation on top of the compil
 
 Control how your functions are exposed:
 
-```typescript
-export const internalHelper = pikkuFunc<Input, Output>({
-  func: async (services, data) => { ... }
-  // No flags: internal-only by default, not exposed via external RPC
-})
-
-export const publicAPI = pikkuFunc<Input, Output>({
-  func: async (services, data) => { ... },
-  expose: true  // Explicitly exposed via RPC
-})
+```typescript @snippet co-func-expose
 ```
 
 - `expose: true` - Makes the function available for external RPC calls

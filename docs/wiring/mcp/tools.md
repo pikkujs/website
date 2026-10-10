@@ -3,15 +3,7 @@
 Tools let AI agents perform actions in your application. They can create records, modify state, trigger operations, or orchestrate complex workflows.
 
 :::info Single Type Parameter
-MCP tool functions take a **single input type parameter** — the output is always `MCPToolResponse`:
-
-```typescript
-// ✅ Correct - input type only
-pikkuMCPToolFunc<InputType>
-
-// ❌ Wrong - there is no output type parameter
-pikkuMCPToolFunc<InputType, MCPToolResponse>
-```
+MCP tool functions take a **single input type parameter** — the output is always `MCPToolResponse`. Declare them as `pikkuMCPToolFunc<InputType>`. There is no output type parameter, so `pikkuMCPToolFunc<InputType, MCPToolResponse>` is an error.
 
 Alternatively, pass a schema as `input` (e.g. Zod) and the input type is inferred.
 :::
@@ -20,74 +12,20 @@ Alternatively, pass a schema as `input` (e.g. Zod) and the input type is inferre
 
 ## Your First Tool
 
-Let's create a tool that creates issues. Both the domain function and MCP adapter live in the same file:
+Let's create a tool that adjusts stock levels. Both the domain function and MCP adapter live in the same file:
 
-```typescript
-// issues.function.ts
-import { pikkuFunc } from '#pikku/function'
-import { pikkuMCPToolFunc } from '#pikku/mcp'
-
-// Domain function - reusable across all transports
-export const createIssue = pikkuFunc<
-  { title: string; description: string; priority: 'low' | 'medium' | 'high' },
-  { id: string; title: string; status: string }
->({
-  func: async ({ database, logger }, data) => {
-    logger.info('Creating issue', { title: data.title })
-
-    const issue = await database.insert('issues', {
-      title: data.title,
-      description: data.description,
-      priority: data.priority,
-      status: 'open',
-      createdAt: Date.now()
-    })
-
-    return issue
-  },
-  title: 'Create a new issue',
-  tags: ['issues']
-})
-
-// MCP adapter - just formats the response for AI agents
-export const createIssueMCP = pikkuMCPToolFunc<
-  { title: string; description: string; priority: 'low' | 'medium' | 'high' }
->({
-  description: 'Create a new issue in the tracker',
-  func: async (_services, data, { rpc }) => {
-    const issue = await rpc.invoke('createIssue', data)
-
-    return [
-      {
-        type: 'text',
-        text: `Created issue #${issue.id}: ${issue.title} (${issue.status})`
-      }
-    ]
-  },
-  title: 'Create a new issue (MCP adapter)',
-  tags: ['mcp', 'issues']
-})
+```typescript @snippet wa-mcp-tool-first
 ```
 
 There's no separate wiring step for tools — exporting a `pikkuMCPToolFunc` registers it. The tool name comes from the export name (override it with the `name` option).
 
-Now your business logic in `createIssue` can be used from HTTP, WebSocket, queues, or MCP - and `createIssueMCP` just makes it MCP-compatible.
+Now your business logic in `adjustStock` can be used from HTTP, WebSocket, queues, or MCP - and `adjustStockMCP` just makes it MCP-compatible.
 
 ## Exposing Any Function with `mcp: true`
 
 When you don't need a custom MCP response format, skip the adapter entirely: setting `mcp: true` on any Pikku function registers it as an MCP tool directly, with its input schema and description carried over:
 
-```typescript
-export const listIssues = pikkuFunc<
-  { status?: 'open' | 'closed' },
-  { issues: Issue[] }
->({
-  func: async ({ database }, data) => {
-    return { issues: await database.select('issues', data) }
-  },
-  description: 'List issues, optionally filtered by status',
-  mcp: true,
-})
+```typescript @snippet wa-mcp-expose-true
 ```
 
 Give the function a `description` — it's what the AI agent sees when deciding whether to call the tool (the inspector warns if it's missing). Use the `pikkuMCPToolFunc` adapter pattern instead when you want to control the tool's text output or combine multiple domain calls into one tool.
@@ -96,158 +34,42 @@ Give the function a `description` — it's what the AI agent sees when deciding 
 
 An installed addon's functions become tools through `wireAddon`, without a wiring each. `mcp: true` offers every function that addon declared `mcp: true` — the addon's own idea of which of its functions are tool-shaped:
 
-```typescript
-wireAddon({
-  name: 'issues',
-  package: '@acme/addon-issues',
-  mcp: true,
-})
+```typescript @snippet wa-mcp-addon-all
 ```
 
 A list instead names the tools *this* deployment offers. It is not limited to the functions the addon declared — the addon says what it thinks is tool-shaped, and the app installing it decides what a model actually gets to see:
 
-```typescript
-wireAddon({
-  name: 'issues',
-  package: '@acme/addon-issues',
-  mcp: ['listIssues', 'searchIssues'],
-})
+```typescript @snippet wa-mcp-addon-list
 ```
 
-The names are typed against the functions that addon publishes, so a typo is a compile error rather than a tool that quietly never appears. Tools arrive namespaced by the instance name — `issues:listIssues` — so the same package wired twice offers two distinct menus.
+The names are typed against the functions that addon publishes, so a typo is a compile error rather than a tool that quietly never appears. Tools arrive namespaced by the instance name — `stripe:customerGet` — so the same package wired twice offers two distinct menus.
 
 ## Complex Operations
 
 For complex workflows, invoke multiple functions via RPC:
 
-```typescript
-// Domain function
-export const processOrder = pikkuFunc<
-  { orderId: string },
-  { orderId: string; invoiceId: string; paymentId: string; status: string }
->({
-  func: async ({ database, logger }, data, { rpc }) => {
-    logger.info('Processing order', { orderId: data.orderId })
-
-    const invoice = await rpc.invoke('generateInvoice', {
-      orderId: data.orderId
-    })
-
-    const payment = await rpc.invoke('processPayment', {
-      invoiceId: invoice.id
-    })
-
-    await rpc.invoke('sendConfirmationEmail', {
-      orderId: data.orderId,
-      paymentId: payment.id
-    })
-
-    const order = await database.update('orders', {
-      where: { id: data.orderId },
-      set: { status: 'completed', completedAt: Date.now() }
-    })
-
-    return {
-      orderId: order.id,
-      invoiceId: invoice.id,
-      paymentId: payment.id,
-      status: order.status
-    }
-  },
-  title: 'Process an order end-to-end',
-  tags: ['orders']
-})
+```typescript @snippet wa-mcp-complex-domain
 ```
 
-```typescript
-// MCP adapter
-export const processOrderMCP = pikkuMCPToolFunc<{ orderId: string }>({
-  description: 'Process an order end-to-end',
-  func: async (_services, data, { rpc }) => {
-    const result = await rpc.invoke('processOrder', data)
-
-    return [
-      {
-        type: 'text',
-        text: `Processed order ${result.orderId}\nInvoice: #${result.invoiceId}\nPayment: #${result.paymentId}\nStatus: ${result.status}`
-      }
-    ]
-  },
-  title: 'Process an order (MCP adapter)',
-  tags: ['mcp', 'orders']
-})
+```typescript @snippet wa-mcp-complex-adapter
 ```
 
 ## Response Format
 
-Tools must return an array of content blocks:
+`MCPToolResponse` is an array whose entries are either `{ type: 'text', text: string }` or `{ type: 'image', data: string }`.
 
-```typescript
-type MCPToolResponse = Array<
-  | { type: 'text'; text: string }
-  | { type: 'image'; data: string }
->
-```
-
-Most tools return text responses:
-
-```typescript
-return [
-  {
-    type: 'text',
-    text: 'Operation completed successfully'
-  }
-]
-```
+Most tools return a single text block, for example `{ type: 'text', text: 'Operation completed successfully' }`.
 
 For operations with visual output, you can return images (base64-encoded):
 
-```typescript
-export const generateChartMCP = pikkuMCPToolFunc<{ datasetId: string }>({
-  description: 'Generate a chart from a dataset',
-  func: async (_services, data, { rpc }) => {
-    const chartData = await rpc.invoke('generateChart', data)
-
-    return [
-      {
-        type: 'text',
-        text: 'Generated chart:'
-      },
-      {
-        type: 'image',
-        data: chartData.base64Image
-      }
-    ]
-  },
-  title: 'Generate chart (MCP adapter)',
-  tags: ['mcp', 'charts']
-})
+```typescript @snippet wa-mcp-image-tool
 ```
 
 ## Tool Configuration
 
 All tool options live on `pikkuMCPToolFunc` itself — there is no separate wiring call:
 
-```typescript
-import { pikkuMCPToolFunc } from '#pikku/mcp'
-import { requireAdmin } from './permissions.js'
-import { auditMiddleware } from './middleware.js'
-
-export const processOrder = pikkuMCPToolFunc<{ orderId: string }>({
-  // Required
-  description: 'Process an order end-to-end',
-  func: async (_services, data, { rpc }) => {
-    const result = await rpc.invoke('processOrder', data)
-    return [{ type: 'text', text: `Processed order ${result.orderId}` }]
-  },
-
-  // Optional
-  name: 'processOrder',   // defaults to the export name
-  title: 'Process Order',
-  summary: 'Runs invoicing, payment, and confirmation',
-  middleware: [auditMiddleware],
-  tags: ['orders', 'admin']
-})
+```typescript @snippet wa-mcp-tool-config
 ```
 
 ## Why This Pattern?

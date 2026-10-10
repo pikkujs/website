@@ -9,24 +9,13 @@ ai: true
 
 Beyond the auth middleware, Pikku ships a small set of general-purpose middleware: CORS handling, telemetry logging, and remote RPC authentication. `cors` is on your app's `#pikku/middleware` door alongside `addHTTPMiddleware`; the telemetry pair isn't re-exported, so it comes straight from `@pikku/core/middleware`.
 
-```typescript
-import { cors, addHTTPMiddleware } from '#pikku/middleware'
-import { telemetryOuter, telemetryInner } from '@pikku/core/middleware'
-```
+Import `cors` and `addHTTPMiddleware` from `#pikku/middleware`, and `telemetryOuter` and `telemetryInner` from `@pikku/core/middleware`.
 
 ## CORS
 
 Handles cross-origin requests, including `OPTIONS` preflight — preflights are answered directly with `204 No Content` without hitting your functions.
 
-```typescript title="cors.ts"
-import { cors, addHTTPMiddleware } from '#pikku/middleware'
-
-addHTTPMiddleware('*', [
-  cors({
-    origin: 'https://app.example.com',
-    credentials: true,
-  }),
-])
+```typescript @snippet co-cors-global
 ```
 
 ### Options
@@ -50,16 +39,7 @@ When `origin` is `true` or an array, a `Vary: Origin` header is added so caches 
 
 There is no timeout middleware. A timeout is declared on the HTTP wiring itself, as `timeout` in **seconds**:
 
-```typescript title="wirings/report.http.ts"
-import { wireHTTP } from '#pikku/http'
-import { generateReport } from '../functions/report.function.js'
-
-wireHTTP({
-  method: 'post',
-  route: '/reports',
-  func: generateReport,
-  timeout: 30,
-})
+```typescript @snippet co-http-timeout
 ```
 
 It's a per-route number, not a chain wrapper, so there's no ordering to get right. Work that can outlast a request should be dispatched to a [queue](/docs/wiring/queue) rather than given a longer timeout.
@@ -71,11 +51,7 @@ Two middleware that emit structured JSON log entries (via `services.logger`) wit
 - **`telemetryOuter()`** — runs at `highest` priority (outermost). Captures **total** request duration including all middleware, the outcome (`ok`/`error`), and HTTP method/path/status when applicable.
 - **`telemetryInner()`** — runs at `lowest` priority (innermost, right next to the function). Captures the **function-only** duration and the authenticated `pikkuUserId`.
 
-```typescript title="telemetry.ts"
-import { telemetryOuter, telemetryInner } from '@pikku/core/middleware'
-import { addGlobalMiddleware } from '#pikku/middleware'
-
-addGlobalMiddleware([telemetryOuter(), telemetryInner()])
+```typescript @snippet co-telemetry
 ```
 
 Every entry carries the wire metadata (`traceId`, `wireType`, `wireId`) and is tagged `__pikku_telemetry: 'end'` with a `__pikku_layer` of `outer` or `inner`. Comparing the two durations tells you how much time middleware (auth, session lookup) costs per request. Both accept optional `{ environmentId, orgId }` to stamp entries in multi-tenant deployments.

@@ -106,11 +106,7 @@ The default. Signs the body, resolves the retry policy, and enqueues onto
 `NotImplementedError` and the two reads return `[]` / `null`. Its collaborators
 are constructor arguments rather than service lookups:
 
-```typescript
-import { QueueWebhookService } from '@pikku/core/services'
-
-const webhookService = new QueueWebhookService(queueService)
-```
+Import `QueueWebhookService` from `@pikku/core/services` and construct it with your queue service.
 
 `prepareDelivery` is `protected` so a store-backed subclass can persist a
 delivery row and attach its `deliveryId` without re-implementing signing or the
@@ -127,12 +123,7 @@ one `webhook_delivery` row per `send()` and one `webhook_delivery_attempt` row
 per try. The `deliveryId` doubles as the queue `jobId`, so it is stable across
 retries and gives the delivery idempotency on backends that dedupe on job id.
 
-```typescript
-import { KyselyWebhookService } from '@pikku/kysely'
-
-const webhookService = new KyselyWebhookService(queueService, db.kysely)
-await webhookService.init()
-```
+Import `KyselyWebhookService` from `@pikku/kysely`, construct it with your queue service and your Kysely instance, and await `init()`.
 
 `init()` requires the webhook schema and does not create it — a project that
 wires this without generating the tables fails at boot rather than on the first
@@ -144,12 +135,7 @@ https://github.com/pikkujs/pikku/blob/main/packages/services/kysely/src/kysely-w
 
 ## Registration
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  queueService,
-  webhookService: new QueueWebhookService(queueService),
-})
-```
+Pass your `queueService` and a `webhookService` built over it (a `QueueWebhookService`) when you build the singleton services.
 
 `pikku dev` and `pikku serve` register a `QueueWebhookService` over their
 in-memory queue, so webhooks send in development without any wiring of your own.

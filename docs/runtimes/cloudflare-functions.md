@@ -96,32 +96,7 @@ npm install @pikku/cloudflare
 
 A basic Worker entry point with HTTP and scheduled task support:
 
-```typescript
-import '../../functions/.pikku/pikku-bootstrap.gen.js'
-import { runFetch, runScheduled } from '@pikku/cloudflare'
-import { LocalVariablesService, LocalSecretService } from '@pikku/core/services'
-import { createConfig, createSingletonServices } from '../../functions/src/services.js'
-import type { ExportedHandler, Response } from '@cloudflare/workers-types'
-
-const setupServices = async (env: Record<string, string | undefined>) => {
-  const variables = new LocalVariablesService(env)
-  const config = await createConfig(variables)
-  const secrets = new LocalSecretService(variables)
-  return await createSingletonServices(config, { variables, secrets })
-}
-
-export default {
-  async fetch(request, env): Promise<Response> {
-    await setupServices(env)
-    return await runFetch(request as unknown as Request)
-  },
-
-  async scheduled(controller, env) {
-    await setupServices(env)
-    await runScheduled(controller)
-  },
-} satisfies ExportedHandler<Record<string, string>>
-```
+The worker's default export has two methods, `fetch(request, env)` and `scheduled(controller, env)`. Both first call a `setupServices(env)` helper. The helper wraps `env` in a `LocalVariablesService`, builds the config from it, creates a `LocalSecretService`, and calls `createSingletonServices(config, { variables, secrets })`. `fetch` then returns `runFetch(request)` and `scheduled` awaits `runScheduled(controller)`, both from `@pikku/cloudflare`. Remember to import the generated bootstrap at the top, and type the export with `satisfies ExportedHandler<Record<string, string>>`.
 
 `setupServices` registers the singleton services into Pikku's runtime state (via
 the imported bootstrap), so `runFetch(request)` and `runScheduled(controller)`
@@ -131,11 +106,7 @@ resolve them automatically — you don't pass services into the handlers.
 
 Cloudflare Workers access environment variables through the `env` parameter, not `process.env`. Bridge them to Pikku's `VariablesService`:
 
-```typescript
-import { LocalVariablesService } from '@pikku/core/services'
-
-const variables = new LocalVariablesService(env)
-```
+Wrap the worker's `env` in `new LocalVariablesService(env)` (from `@pikku/core/services`) so the rest of Pikku can read variables from it.
 
 ### Scheduled Tasks
 
@@ -155,26 +126,7 @@ Cloudflare Workers support WebSocket via [Durable Objects](https://developers.cl
 Extend `CloudflareWebSocketHibernationServer` and override `getParams()` to
 provide the singleton + wire services for each connection:
 
-```typescript
-import { CloudflareWebSocketHibernationServer, CloudflareEventHubService } from '@pikku/cloudflare'
-import { createWireServices } from '../../functions/src/services.js'
-import { setupServices } from './setup-services.js'
-
-export class WebSocketHibernationServer extends CloudflareWebSocketHibernationServer {
-  private singletonServices: SingletonServices | undefined
-
-  protected async getParams() {
-    if (!this.singletonServices) {
-      this.singletonServices = await setupServices(this.env)
-      this.singletonServices.eventHub = new CloudflareEventHubService(
-        this.singletonServices.logger,
-        this.ctx
-      )
-    }
-    return { singletonServices: this.singletonServices, createWireServices }
-  }
-}
-```
+Subclass `CloudflareWebSocketHibernationServer` from `@pikku/cloudflare` and override `getParams()`. On first call it runs your `setupServices(this.env)`, sets `singletonServices.eventHub` to a `new CloudflareEventHubService(logger, this.ctx)`, and caches the result. It returns `{ singletonServices, createWireServices }`.
 
 The `CloudflareWebSocketHibernationServer` handles:
 - WebSocket upgrade requests
@@ -197,33 +149,13 @@ new_classes = ["WebSocketHibernationServer"]
 Resolve the Durable Object stub and pass it to `runFetch` as the second argument
 — it detects WebSocket upgrade requests and routes them to the hibernation server:
 
-```typescript
-async fetch(request, env): Promise<Response> {
-  const singletonServices = await setupServices(env)
-  const durableObject: any = singletonServices.variables.get('WEBSOCKET_HIBERNATION_SERVER')
-  const id = durableObject.idFromName('channel-name-goes-here')
-  const webSocketHibernationServer = durableObject.get(id)
-  return await runFetch(request as unknown as Request, webSocketHibernationServer)
-}
-```
+In the worker's `fetch`, call `setupServices(env)`, then read the durable object namespace with `singletonServices.variables.get('WEBSOCKET_HIBERNATION_SERVER')`. Get an id with `idFromName('channel-name-goes-here')` and the stub with `get(id)`, and pass the stub as the second argument: `runFetch(request, webSocketHibernationServer)`.
 
 ### D1 Services
 
 The `@pikku/cloudflare/d1` sub-path provides Kysely-backed services running on Cloudflare D1 (SQLite at the edge):
 
-```typescript
-import {
-  createD1Kysely,
-  CloudflareWorkflowService,
-  CloudflareAgentStorageService,
-} from '@pikku/cloudflare/d1'
-import { KyselyLeaseService } from '@pikku/kysely'
-
-const kysely = createD1Kysely(env.MY_D1_DATABASE)
-const leaseService = new KyselyLeaseService(kysely)
-const workflowService = new CloudflareWorkflowService(kysely, { leaseService })
-const agentStorage = new CloudflareAgentStorageService(kysely)
-```
+`@pikku/cloudflare/d1` exports `createD1Kysely`, `CloudflareWorkflowService` and `CloudflareAgentStorageService`. Build a Kysely instance with `createD1Kysely(env.MY_D1_DATABASE)`, a `KyselyLeaseService` (from `@pikku/kysely`) over it, then `new CloudflareWorkflowService(kysely, { leaseService })` and `new CloudflareAgentStorageService(kysely)`.
 
 `CloudflareWorkflowService` locks runs and steps on the `leaseService` it is given; register the same instance as the app's `leaseService`.
 
@@ -231,11 +163,7 @@ const agentStorage = new CloudflareAgentStorageService(kysely)
 
 Dispatch jobs to Cloudflare Queues:
 
-```typescript
-import { CloudflareQueueService } from '@pikku/cloudflare/queue'
-
-const queueService = new CloudflareQueueService(env)
-```
+Import `CloudflareQueueService` from `@pikku/cloudflare/queue` and construct it with the worker's env: `new CloudflareQueueService(env)`.
 
 Queue bindings are resolved from `env` by converting the queue name to `SCREAMING_SNAKE_CASE` (e.g., queue name `my-jobs` looks up `env.MY_JOBS`).
 

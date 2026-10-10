@@ -48,17 +48,7 @@ Lifecycle hooks — initialize the backend connection and close it on shutdown.
 
 ## Usage Example
 
-```typescript
-export const requestPasswordReset = pikkuFunc<{ email: string }, void>(
-  async (services, data) => {
-    await services.db.createResetToken(data.email)
-
-    // Expire the token in 30 minutes
-    await services.schedulerService.scheduleRPC('30m', 'expireResetToken', {
-      email: data.email,
-    })
-  }
-)
+```typescript @snippet co-scheduler-rpc
 ```
 
 ## Implementations
@@ -71,10 +61,7 @@ Runs recurring tasks and delayed RPCs in-process — no persistence, tasks are l
 npm install @pikku/schedule
 ```
 
-```typescript
-import { InMemorySchedulerService } from '@pikku/schedule'
-const schedulerService = new InMemorySchedulerService()
-```
+Import `InMemorySchedulerService` from `@pikku/schedule` and construct it with no arguments.
 
 ### PgBossSchedulerService
 
@@ -102,8 +89,4 @@ https://github.com/pikkujs/pikku/blob/main/packages/services/queue-bullmq/src/bu
 
 ## Registration
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  schedulerService: new InMemorySchedulerService(),
-})
-```
+Pass the service under the `schedulerService` key when you build the singleton services.

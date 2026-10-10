@@ -12,22 +12,7 @@ Secrets let you declare what sensitive values your application needs using schem
 
 Use `defineSecret`, from [`#pikku/secrets`](/api#app/secrets), to declare a secret with its schema:
 
-```typescript
-import { defineSecret } from '#pikku/secrets'
-import { z } from 'zod'
-
-export const stripeSecretsSchema = z.object({
-  apiKey: z.string(),
-  webhookSecret: z.string(),
-})
-
-defineSecret({
-  name: 'stripe',
-  displayName: 'Stripe API',
-  description: 'API keys for Stripe payment processing',
-  secretId: 'STRIPE_CREDENTIALS',
-  schema: stripeSecretsSchema,
-})
+```typescript @snippet secrets
 ```
 
 Schemas are defined using [Zod](https://zod.dev).
@@ -38,33 +23,12 @@ The `secretId` is the key used to look up the secret from your secret store.
 
 `secrets` is confined to `pikkuServices`, `pikkuWireServices`, addon service factories and middleware. It is stripped from the services a function receives, and reaching for it inside a function throws. Read the secret where the service is built and hand the resulting client to your functions:
 
-```typescript
-import { pikkuServices } from '#pikku/setup'
-import { TypedSecretService } from '#pikku/secrets'
-import { LocalSecretService } from '@pikku/core/services'
-
-export const createSingletonServices = pikkuServices(
-  async (config, existingServices) => {
-    const secrets = new TypedSecretService(
-      existingServices.secrets ?? new LocalSecretService(),
-    )
-
-    const stripe = await secrets.getSecret('STRIPE_CREDENTIALS')
-    // stripe.reveal().apiKey and stripe.reveal().webhookSecret are typed
-    const client = new StripeClient(stripe.reveal().apiKey)
-
-    return { config, secrets, stripe: client }
-  },
-)
+```typescript @snippet co-secret-client
 ```
 
 `getSecret` returns a `SecretValue` wrapper, not the raw value - call `.reveal()` at the point the value reaches the network. The CLI generates the `TypedSecretService` class, which calls are typed through:
 
-```typescript
-import { TypedSecretService } from '#pikku/secrets'
-
-const secrets = new TypedSecretService(baseSecretService)
-```
+Wrap your base secret service in the generated typed one: `new TypedSecretService(baseSecretService)`, imported from `#pikku/secrets`.
 
 ## OAuth2 and Credentials
 
@@ -74,15 +38,7 @@ For OAuth2 integrations and per-user credentials, see [Credentials](/docs/wiring
 
 There's no client class to construct. The credential service owns the token and refreshes it, so a function just asks the wire for it by credential name:
 
-```typescript
-const cred = await wire.getCredential?.<{ accessToken: string }>('github')
-if (!cred?.accessToken) {
-  throw new UnauthorizedError('Connect GitHub first')
-}
-
-const response = await fetch('https://api.github.com/user', {
-  headers: { Authorization: `Bearer ${cred.accessToken}` },
-})
+```typescript @snippet co-credential-read
 ```
 
 See [OAuth2 Credentials](/docs/advanced/oauth2) for who runs the authorization flow and where the tokens end up.

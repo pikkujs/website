@@ -50,17 +50,7 @@ These middleware handle loading sessions before your functions execute and persi
 
 Define what data you want to store in sessions by creating your `UserSession` type:
 
-```typescript
-// types/application-types.d.ts
-import type { CoreUserSession } from '@pikku/core/types'
-
-interface UserSession extends CoreUserSession {
-  userId: string
-  email: string
-  role: 'user' | 'admin'
-  permissions: string[]
-}
-```
+Extend `CoreUserSession` in `types/application-types.d.ts` with your own fields, for example `userId`, `email`, a `role` of `'user' | 'admin'` and a `permissions` string array.
 
 Now your session type is available throughout your application with full type safety.
 
@@ -68,70 +58,14 @@ Now your session type is available throughout your application with full type sa
 
 Use `setSession()` to create or update a session. This typically happens in a login function:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/function'
-import { UnauthorizedError } from '#pikku/error'
-
-type LoginInput = {
-  email: string
-  password: string
-}
-
-type LoginResult = {
-  token: string
-  user: { id: string; email: string; role: string }
-}
-
-export const login = pikkuSessionlessFunc<LoginInput, LoginResult>({
-  func: async ({ database, jwt }, data, { setSession }) => {
-    // Verify credentials
-    const user = await database.query('user', { email: data.email })
-
-    if (!user || !await verifyPassword(data.password, user.passwordHash)) {
-      throw new UnauthorizedError('Invalid credentials')
-    }
-
-    // Set the session - middleware will persist it
-    setSession({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      permissions: user.permissions
-    })
-
-    // Optionally return a JWT for client-side storage
-    // (useful for mobile apps or when cookies aren't available)
-    return {
-      token: await jwt.encode({ value: 30, unit: 'day' }, { userId: user.id }),
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role
-      }
-    }
-  },
-  auth: false,  // No existing session required for login
-  title: 'Authenticate a user',
-  tags: ['auth']
-})
+```typescript @snippet co-func-auth-flow
 ```
 
 Notice we used `pikkuSessionlessFunc` and set `auth: false` – this function doesn't require an existing session since we're creating one.
 
 ## Clearing a Session (Logout)
 
-Use `clearSession()` to end a session:
-
-```typescript
-export const logout = pikkuFunc<void, { success: boolean }>({
-  func: async ({}, _data, { clearSession }) => {
-    clearSession()
-    return { success: true }
-  },
-  title: 'Logout user',
-  tags: ['auth']
-})
-```
+Use `clearSession()` to end a session, as the `logout` function in the example above does:
 
 What happens after `clearSession()` depends on the protocol:
 - **HTTP**: Session cookie is cleared
@@ -142,83 +76,26 @@ What happens after `clearSession()` depends on the protocol:
 
 In any function with `auth: true` (the default), the session is available by destructuring from the wire parameter:
 
-```typescript
-export const getProfile = pikkuFunc<void, UserProfile>({
-  func: async ({ database }, _data, { session }) => {
-    // session is guaranteed to exist because auth: true
-    return await database.query('userProfile', {
-      userId: session.userId
-    })
-  },
-  title: 'Get current user profile',
-  tags: ['user']
-})
+```typescript @snippet sessionFunction
 ```
 
 For functions that work with or without authentication, use `pikkuSessionlessFunc`:
 
-```typescript
-export const getPublicData = pikkuSessionlessFunc<void, PublicData>({
-  func: async ({ database }, _data, { session }) => {
-    // session might be undefined
-    if (session) {
-      // User is logged in, return personalized data
-      return await database.query('publicData', { userId: session.userId })
-    }
-    // Return generic data for anonymous users
-    return await database.query('publicData', { isPublic: true })
-  },
-  auth: false,
-  title: 'Get public data (personalized if logged in)',
-  tags: ['public']
-})
+```typescript @snippet co-session-optional
 ```
 
 ## Updating Session Data
 
 You can update the session anytime during a function call:
 
-```typescript
-export const updatePreferences = pikkuFunc<PreferencesInput, void>({
-  func: async ({ database }, data, { session, setSession }) => {
-    // Save to database
-    await database.update('userPreferences', {
-      where: { userId: session.userId },
-      set: data
-    })
-
-    // Update session - middleware will persist the change
-    setSession({
-      ...session,
-      preferences: data,
-      updatedAt: new Date().toISOString()
-    })
-  },
-  title: 'Update user preferences',
-  tags: ['user']
-})
+```typescript @snippet co-session-update
 ```
 
 ## Custom Middleware
 
 You can create custom [middleware](/docs/core-features/middleware) to extend session behavior:
 
-```typescript
-// Automatically update last activity timestamp
-export const refreshSessionMiddleware = pikkuMiddleware(async (
-  {},
-  { session, setSession },
-  next
-) => {
-  if (session) {
-    setSession({
-      ...session,
-      lastActivity: new Date().toISOString()
-    })
-  }
-
-  return await next()
-})
+```typescript @snippet co-session-refresh-middleware
 ```
 
 ## Summary

@@ -136,50 +136,33 @@ Or with metadata:
 
 Declare what secrets your addon needs:
 
-```typescript
-// sendgrid.secret.ts
-import { defineSecret } from '#pikku/addon/secrets'
-import { z } from 'zod'
+A secret is declared in a `*.secret.ts` file (for example `sendgrid.secret.ts`) with `defineSecret` from `#pikku/addon/secrets`. First define a Zod schema, `sendgridSecretsSchema = z.object({ apiKey: z.string() })`, then call `defineSecret` with:
 
-export const sendgridSecretsSchema = z.object({
-  apiKey: z.string(),
-})
-
-defineSecret({
-  name: 'sendgrid',
-  displayName: 'SendGrid API Key',
-  description: 'API key for sending emails',
-  secretId: 'SENDGRID_API_KEY',
-  schema: sendgridSecretsSchema,
-})
-```
+| Field | Value |
+| --- | --- |
+| `name` | `'sendgrid'` |
+| `displayName` | `'SendGrid API Key'` |
+| `description` | `'API key for sending emails'` |
+| `secretId` | `'SENDGRID_API_KEY'` |
+| `schema` | `sendgridSecretsSchema` |
 
 ### Define Credentials
 
 For per-user credentials or OAuth2:
 
-```typescript
-// google-sheets.credential.ts
-import { defineCredential } from '#pikku/addon/auth'
-import { z } from 'zod'
+A credential is declared in a `*.credential.ts` file (for example `google-sheets.credential.ts`) with `defineCredential` from `#pikku/addon/auth`. The Google Sheets example passes:
 
-defineCredential({
-  name: 'googleSheets',
-  displayName: 'Google Sheets',
-  type: 'wire',
-  schema: z.object({
-    accessToken: z.string(),
-    refreshToken: z.string().optional(),
-  }),
-  oauth2: {
-    appCredentialSecretId: 'GOOGLE_OAUTH_APP',
-    tokenSecretId: 'GOOGLE_OAUTH_TOKENS',
-    authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-    tokenUrl: 'https://oauth2.googleapis.com/token',
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  },
-})
-```
+| Field | Value |
+| --- | --- |
+| `name` | `'googleSheets'` |
+| `displayName` | `'Google Sheets'` |
+| `type` | `'wire'` |
+| `schema` | `z.object({ accessToken: z.string(), refreshToken: z.string().optional() })` |
+| `oauth2.appCredentialSecretId` | `'GOOGLE_OAUTH_APP'` |
+| `oauth2.tokenSecretId` | `'GOOGLE_OAUTH_TOKENS'` |
+| `oauth2.authorizationUrl` | `'https://accounts.google.com/o/oauth2/v2/auth'` |
+| `oauth2.tokenUrl` | `'https://oauth2.googleapis.com/token'` |
+| `oauth2.scopes` | `['https://www.googleapis.com/auth/spreadsheets']` |
 
 See [Credentials](/docs/wiring/credentials/) for the full reference.
 
@@ -193,66 +176,20 @@ Export the factory from your addon's `config.ts`. It receives those base service
 
 Use `pikkuAddonServices` to create your service factory. It receives the consumer's shared services (logger, secrets, variables):
 
-```typescript
-// services.ts
-import { SendgridService } from './sendgrid-api.service.js'
-import { pikkuAddonServices } from '#pikku/addon/setup'
-
-export const createSingletonServices = pikkuAddonServices(
-  async (config, { secrets }) => {
-    const apiKey = (await secrets.getSecret<string>('SENDGRID_API_KEY')).reveal()
-    const sendgrid = new SendgridService(apiKey)
-    return { sendgrid }
-  }
-)
-```
+In `services.ts`, wrap your factory in `pikkuAddonServices` from `#pikku/addon/setup`. Its callback receives `(config, { secrets })`: read the key with `(await secrets.getSecret<string>('SENDGRID_API_KEY')).reveal()`, build your API client (`new SendgridService(apiKey)`), and return it as `{ sendgrid }`.
 
 For per-user credentials, use `pikkuAddonWireServices` instead — the credential is resolved per-request via the wire:
 
-```typescript
-// services.ts
-import { StripeService } from './stripe-api.service.js'
-import { pikkuAddonWireServices } from '#pikku/addon/setup'
-
-export const createWireServices = pikkuAddonWireServices(
-  async ({ variables }, wire) => {
-    const cred = await wire.getCredential<{ apiKey: string }>('stripe')
-    const stripe = new StripeService(cred)
-    return { stripe }
-  }
-)
-```
+For per-request services, export `createWireServices` built with `pikkuAddonWireServices` from `#pikku/addon/setup`. Its callback receives `({ variables }, wire)`: get the user's credential with `wire.getCredential<{ apiKey: string }>('stripe')`, build `new StripeService(cred)`, and return it as `{ stripe }`.
 
 ### Write Functions
 
 Functions use your injected services like any other Pikku function. Declare their
 schemas in a file of their own, one that never imports `#pikku`:
 
-```typescript title="src/functions/mailSend.schemas.ts"
-import { z } from 'zod'
+In `src/functions/mailSend.schemas.ts`, define two Zod schemas: `MailSendInput` is an object with string `to`, `subject` and `body`, and `MailSendOutput` is an object with a boolean `success`.
 
-export const MailSendInput = z.object({
-  to: z.string(),
-  subject: z.string(),
-  body: z.string(),
-})
-export const MailSendOutput = z.object({ success: z.boolean() })
-```
-
-```typescript title="src/functions/mailSend.function.ts"
-import { pikkuSessionlessFunc } from '#pikku/addon/function'
-import { MailSendInput, MailSendOutput } from './mailSend.schemas.js'
-
-export const mailSend = pikkuSessionlessFunc({
-  description: 'Sends an email through SendGrid',
-  input: MailSendInput,
-  output: MailSendOutput,
-  func: async ({ sendgrid }, data) => {
-    await sendgrid.request('POST', '/mail/send', { body: data })
-    return { success: true }
-  },
-})
-```
+In `src/functions/mailSend.function.ts`, export `mailSend` built with `pikkuSessionlessFunc` from `#pikku/addon/function`. Give it a `description` (`'Sends an email through SendGrid'`), the `input` and `output` schemas above, and a `func` that receives `{ sendgrid }` and the data, calls `sendgrid.request('POST', '/mail/send', { body: data })`, and returns `{ success: true }`.
 
 `pikku all` loads the file that declares each schema to turn it into JSON Schema.
 Inside an addon, `#pikku` resolves through the package's `imports` into `dist/`,
@@ -264,10 +201,7 @@ which the first build has not written yet — so a schema declared next to a
 
 Export all functions from `src/index.ts`:
 
-```typescript
-export { mailSend } from './functions/mail/send.function.js'
-export { listCreate } from './functions/lists/create.function.js'
-```
+Re-export each function from the package entry point (`src/index.ts`), for example `mailSend` from `./functions/mail/send.function.js` and `listCreate` from `./functions/lists/create.function.js`.
 
 ## Shipping Route Contracts
 
@@ -281,25 +215,11 @@ An addon may declare contracts; it may not wire them. Calling `wireHTTP`,
 build error ([PKU920](/docs/pikku-cli/errors/pku920)) — installing your addon
 would otherwise mount endpoints the consumer never asked for.
 
-```typescript title="addon: src/todos.contract.ts"
-import { defineHTTPRoutes } from '#pikku/addon/http'
-import { listTodos } from './functions/todos/list.function.js'
-import { createTodo } from './functions/todos/create.function.js'
-
-export const todosRoutes = defineHTTPRoutes({
-  basePath: '/todos',
-  routes: [
-    { method: 'get', route: '/', func: listTodos },
-    { method: 'post', route: '/', func: createTodo },
-  ],
-})
-```
+In the addon, `src/todos.contract.ts` exports `todosRoutes`, built with `defineHTTPRoutes` from `#pikku/addon/http`. It has `basePath: '/todos'` and a list of routes: `{ method: 'get', route: '/', func: listTodos }` and `{ method: 'post', route: '/', func: createTodo }`, with both functions imported from the addon's function files.
 
 The consumer mounts it by name, and picks the path:
 
-```typescript title="consuming app: src/addons.wiring.ts"
-wireHTTPRoutes(refHTTP('todos:todosRoutes', { basePath: '/api/todos' }))
-```
+In the consuming app's `src/addons.wiring.ts`, mount it with `wireHTTPRoutes(refHTTP('todos:todosRoutes', { basePath: '/api/todos' }))`.
 
 Keep contracts free of `middleware` and `permissions` — those are the consuming
 app's policy, and the CLI rejects a contract that carries them
@@ -424,19 +344,6 @@ npx pikku versions update   # Update manifest with current hashes
 
 Addons can export trigger source functions that consumers wire to their own handlers:
 
-```typescript
-import { pikkuTriggerFunc } from '#pikku/addon/trigger'
-
-export const onChanges = pikkuTriggerFunc<
-  { table: string; events: ('INSERT' | 'UPDATE' | 'DELETE')[] },
-  { event: string; data: any }
->({
-  title: 'Postgres Changes',
-  description: 'Triggers on row changes in a PostgreSQL table',
-  func: async ({ postgres }, { table, events }, { trigger }) => {
-    // Set up LISTEN/NOTIFY, call trigger.invoke() on changes
-  },
-})
-```
+Trigger sources are built with `pikkuTriggerFunc` from `#pikku/addon/trigger`, typed with an input and an output. The Postgres example's `onChanges` takes `{ table: string; events: ('INSERT' | 'UPDATE' | 'DELETE')[] }` and emits `{ event: string; data: any }`. It has a `title` (`'Postgres Changes'`), a `description` (`'Triggers on row changes in a PostgreSQL table'`) and a `func` that receives the addon's services (`{ postgres }`), the input (`{ table, events }`) and `{ trigger }`. Inside, set up LISTEN/NOTIFY and call `trigger.invoke()` on each change.
 
 Consumers wire this to their own handler — see [Consuming Addons](./consuming.md#using-trigger-sources).

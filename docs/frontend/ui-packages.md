@@ -33,19 +33,13 @@ Viewport-bound React layout primitives — a shell, scrollable panels, a stage, 
 phone tab bar and sheet, and a nav dock. It is what keeps a desktop-style layout
 and a phone-sized app sharing one component tree.
 
-```typescript
-import {
-  Shell, ShellRow, Stage, Panel, Sheet,
-} from '@pikku/react-layout-panel'
-```
+Import `Shell`, `ShellRow`, `Stage`, `Panel` and `Sheet` from `@pikku/react-layout-panel`.
 
 ## `@pikku/workflow-graph`
 
 Renders a Pikku workflow as an interactive graph.
 
-```typescript
-import { WorkflowGraphView, WorkflowGraphFlow, createWorkflowFlow, useElkLayout } from '@pikku/workflow-graph'
-```
+Import `WorkflowGraphView`, `WorkflowGraphFlow`, `createWorkflowFlow` and `useElkLayout` from `@pikku/workflow-graph`.
 
 - `WorkflowGraphView` — the ready-made graph for a workflow's meta
 - `WorkflowGraphFlow` with `nodeTypes` / `edgeTypes` — the underlying flow for
@@ -57,9 +51,7 @@ import { WorkflowGraphView, WorkflowGraphFlow, createWorkflowFlow, useElkLayout 
 [assistant-ui](https://www.assistant-ui.com) bindings for Pikku AI agents:
 runtime, approvals and message conversion.
 
-```typescript
-import { PikkuAgentChat, useFileAttachment, modelSupportsVision } from '@pikku/assistant-ui'
-```
+Import `PikkuAgentChat`, `useFileAttachment` and `modelSupportsVision` from `@pikku/assistant-ui`.
 
 `PikkuAgentChat` is the drop-in chat surface; `useFileAttachment` handles
 upload-then-send attachments, and `modelSupportsVision` reports whether the
@@ -70,17 +62,7 @@ selected model can accept them.
 Headless browser primitives for voice conversations with Pikku AI agents:
 persistent microphone, silence detection, speech playback and barge-in.
 
-```typescript
-import {
-  VoiceSession,
-  AudioPlaybackQueue,
-  detectSilence,
-  spokenApproval,
-  interpretConsent,
-  useVoiceConversation,
-  useAudioInputs,
-} from '@pikku/voice-agents'
-```
+`@pikku/voice-agents` exports `VoiceSession`, `AudioPlaybackQueue`, `detectSilence`, `spokenApproval`, `interpretConsent`, `useVoiceConversation` and `useAudioInputs`.
 
 The package is headless on purpose — it owns microphone capture, playback and
 turn-taking, and leaves the UI to you. `spokenApproval` / `interpretConsent`

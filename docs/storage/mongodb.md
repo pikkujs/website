@@ -19,18 +19,7 @@ npm install @pikku/mongodb mongodb
 
 All MongoDB services take a `Db` instance from the MongoDB driver. Use `PikkuMongoDB` for a managed connection, or pass your own `Db` directly.
 
-```typescript
-import { PikkuMongoDB } from '@pikku/mongodb'
-
-const mongo = new PikkuMongoDB(
-  logger,
-  process.env.MONGODB_URI!,  // or an existing MongoClient
-  'my-database'
-)
-await mongo.init()
-
-// Use mongo.db with any service
-```
+Import `PikkuMongoDB` from `@pikku/mongodb` and construct it with the logger, a connection string (`process.env.MONGODB_URI`, or an existing `MongoClient`) and a database name, then `await mongo.init()`. Every service below takes `mongo.db`.
 
 **`PikkuMongoDB` constructor:**
 
@@ -49,31 +38,17 @@ If you pass a URI, `PikkuMongoDB` owns the connection and `close()` disconnects 
 
 Implements `AgentStorageService` and `AgentRunStateService` for AI Agent persistence — threads, messages, tool calls, working memory, and agent run state.
 
-```typescript
-import { MongoDBAgentStorageService } from '@pikku/mongodb'
-
-const agentStorage = new MongoDBAgentStorageService(mongo.db)
-await agentStorage.init()
-```
+`new MongoDBAgentStorageService(mongo.db)` from `@pikku/mongodb`, then `await agentStorage.init()`.
 
 Register in your singleton services:
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  agentStorage,
-  agentRunState: agentStorage, // Same instance implements both
-})
-```
+Pass the same instance for both: `createSingletonServices(config, { agentStorage, agentRunState: agentStorage })`.
 
 ### MongoDBAgentRunService
 
 Read-only service for querying agent runs.
 
-```typescript
-import { MongoDBAgentRunService } from '@pikku/mongodb'
-
-const agentRunService = new MongoDBAgentRunService(mongo.db)
-```
+`new MongoDBAgentRunService(mongo.db)` from `@pikku/mongodb`.
 
 ### MongoDBWorkflowService
 
@@ -85,75 +60,37 @@ ships no lease service, so pair it with
 `InMemoryLeaseService` from `@pikku/core/services` when only one process runs.
 Register the same instance as `leaseService`.
 
-```typescript
-import { MongoDBWorkflowService } from '@pikku/mongodb'
-import { RedisLeaseService } from '@pikku/redis'
-
-const leaseService = new RedisLeaseService(process.env.REDIS_URL)
-const workflowService = new MongoDBWorkflowService(mongo.db, { leaseService })
-await workflowService.init()
-```
+Create a `RedisLeaseService` (from `@pikku/redis`) with `process.env.REDIS_URL`, then `new MongoDBWorkflowService(mongo.db, { leaseService })` and `await workflowService.init()`.
 
 ### MongoDBWorkflowRunService
 
 Read-only workflow run queries.
 
-```typescript
-import { MongoDBWorkflowRunService } from '@pikku/mongodb'
-
-const workflowRunService = new MongoDBWorkflowRunService(mongo.db)
-```
+`new MongoDBWorkflowRunService(mongo.db)` from `@pikku/mongodb`.
 
 ### MongoDBChannelStore
 
 WebSocket channel and subscription persistence.
 
-```typescript
-import { MongoDBChannelStore } from '@pikku/mongodb'
-
-const channelStore = new MongoDBChannelStore(mongo.db)
-await channelStore.init()
-```
+`new MongoDBChannelStore(mongo.db)` from `@pikku/mongodb`, then `await channelStore.init()`.
 
 ### MongoDBEventHubStore
 
 Channel topic subscription tracking for the EventHub.
 
-```typescript
-import { MongoDBEventHubStore } from '@pikku/mongodb'
-
-const eventHubStore = new MongoDBEventHubStore(mongo.db)
-await eventHubStore.init()
-```
+`new MongoDBEventHubStore(mongo.db)` from `@pikku/mongodb`, then `await eventHubStore.init()`.
 
 ### MongoDBDeploymentService
 
 Multi-instance deployment tracking.
 
-```typescript
-import { MongoDBDeploymentService } from '@pikku/mongodb'
-
-const deploymentService = new MongoDBDeploymentService(
-  { heartbeatInterval: 10_000, heartbeatTtl: 30_000 },
-  mongo.db
-)
-await deploymentService.init()
-```
+`new MongoDBDeploymentService({ heartbeatInterval: 10_000, heartbeatTtl: 30_000 }, mongo.db)` from `@pikku/mongodb`, then `await deploymentService.init()`.
 
 ### MongoDBSecretService
 
 Encrypted secret storage with envelope encryption, key rotation, and optional audit logging.
 
-```typescript
-import { MongoDBSecretService } from '@pikku/mongodb'
-
-const secrets = new MongoDBSecretService(mongo.db, {
-  key: process.env.ENCRYPTION_KEY!,
-  keyVersion: 1,
-  audit: true,
-})
-await secrets.init()
-```
+`new MongoDBSecretService(mongo.db, { key, keyVersion: 1, audit: true })` from `@pikku/mongodb`, with `key` from `ENCRYPTION_KEY`, then `await secrets.init()`.
 
 **Config:**
 
@@ -170,63 +107,18 @@ await secrets.init()
 Persists user sessions keyed by `pikkuUserId`, so a session survives a restart
 and is shared across instances.
 
-```typescript
-import { MongoDBSessionStore } from '@pikku/mongodb'
-
-const sessionStore = new MongoDBSessionStore(mongo.db)
-await sessionStore.init()
-```
+`new MongoDBSessionStore(mongo.db)` from `@pikku/mongodb`, then `await sessionStore.init()`.
 
 ## Full Example
 
-```typescript
-import { PikkuMongoDB } from '@pikku/mongodb'
-import {
-  MongoDBAgentStorageService,
-  MongoDBAgentRunService,
-  MongoDBWorkflowService,
-  MongoDBWorkflowRunService,
-  MongoDBChannelStore,
-  MongoDBEventHubStore,
-  MongoDBSecretService,
-} from '@pikku/mongodb'
-import { RedisLeaseService } from '@pikku/redis'
+A complete setup, in order:
 
-const mongo = new PikkuMongoDB(logger, process.env.MONGODB_URI!, 'pikku')
-await mongo.init()
-
-const agentStorage = new MongoDBAgentStorageService(mongo.db)
-const agentRunService = new MongoDBAgentRunService(mongo.db)
-const leaseService = new RedisLeaseService(process.env.REDIS_URL)
-const workflowService = new MongoDBWorkflowService(mongo.db, { leaseService })
-const workflowRunService = new MongoDBWorkflowRunService(mongo.db)
-const channelStore = new MongoDBChannelStore(mongo.db)
-const eventHubStore = new MongoDBEventHubStore(mongo.db)
-const secrets = new MongoDBSecretService(mongo.db, {
-  key: process.env.ENCRYPTION_KEY!,
-})
-
-// Initialize all services (creates collections and indexes)
-await Promise.all([
-  agentStorage.init(),
-  workflowService.init(),
-  channelStore.init(),
-  eventHubStore.init(),
-  secrets.init(),
-])
-
-const singletonServices = await createSingletonServices(config, {
-  agentStorage,
-  agentRunState: agentStorage,
-  agentRunService,
-  leaseService,
-  workflowService,
-  workflowRunService,
-  channelStore,
-  eventHubStore,
-  secrets,
-})
-```
+1. Create `PikkuMongoDB` with the logger, `MONGODB_URI` and a database name, and `await init()`.
+2. Create `MongoDBAgentStorageService`, `MongoDBAgentRunService`, `MongoDBWorkflowRunService`, `MongoDBChannelStore` and `MongoDBEventHubStore`, each over `mongo.db`.
+3. Create a `RedisLeaseService` from `REDIS_URL`, then `MongoDBWorkflowService` over `mongo.db` with `{ leaseService }`.
+4. Create `MongoDBSecretService` with the encryption key.
+5. Initialise everything that has an `init()` (agent storage, workflow service, channel store, event hub store, secrets) with `Promise.all`. This creates the collections and indexes.
+6. Call `createSingletonServices(config, ...)` with `agentStorage`, `agentRunState` (the same `agentStorage`), `agentRunService`, `leaseService`, `workflowService`, `workflowRunService`, `channelStore`, `eventHubStore` and `secrets`.
 
 ## Collections
 

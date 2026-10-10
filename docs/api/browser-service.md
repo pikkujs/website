@@ -26,17 +26,7 @@ installed.
 
 ## Interface
 
-```typescript
-import type {
-  BrowserService,
-  BrowserSession,
-  BrowserSessionInfo,
-  BrowserLaunchOptions,
-  BrowserLimits,
-  Browser,
-  Page,
-} from '@pikku/browser'
-```
+The types are exported from `@pikku/browser`: `BrowserService`, `BrowserSession`, `BrowserSessionInfo`, `BrowserLaunchOptions`, `BrowserLimits`, plus the `Browser` and `Page` types re-exported from puppeteer.
 
 | Method | Returns | Description |
 | --- | --- | --- |
@@ -46,46 +36,16 @@ import type {
 | `sessions()` | `Promise<BrowserSessionInfo[]>` | List live sessions |
 | `limits?()` | `Promise<BrowserLimits>` | Platform limits, when the provider reports them |
 
-```typescript
-interface BrowserSession {
-  sessionId: string
-  browser: Browser
-  /** Return the session to the pool, kept warm for reuse (CF: `disconnect`). */
-  release(): Promise<void>
-}
-
-interface BrowserSessionInfo {
-  sessionId: string
-  startTime?: number
-  /** Set when a client is currently attached (mirrors CF's connectionId). */
-  connectionId?: string
-}
-
-interface BrowserLaunchOptions {
-  /** ms to keep the session alive after the last client releases it. */
-  keepAlive?: number
-}
-
-interface BrowserLimits {
-  activeSessions: number
-  maxConcurrentSessions: number
-  allowedBrowserAcquisitions?: number
-}
-```
+| Type | Fields |
+| --- | --- |
+| `BrowserSession` | `sessionId: string`, `browser: Browser`, and `release()`, which returns the session to the pool and keeps it warm for reuse (Cloudflare: `disconnect`) |
+| `BrowserSessionInfo` | `sessionId: string`, optional `startTime`, and an optional `connectionId` that is set while a client is attached (mirrors Cloudflare's `connectionId`) |
+| `BrowserLaunchOptions` | `keepAlive?: number`, the milliseconds to keep the session alive after the last client releases it |
+| `BrowserLimits` | `activeSessions: number`, `maxConcurrentSessions: number`, and an optional `allowedBrowserAcquisitions` |
 
 ## LocalBrowserService
 
-```typescript
-import { LocalBrowserService } from '@pikku/browser'
-
-const browserService = new LocalBrowserService({
-  logger,
-  // Path to a system Chrome/Chromium. Defaults to $PUPPETEER_EXECUTABLE_PATH,
-  // else puppeteer-core resolves the installed `chrome` channel.
-  executablePath: process.env.CHROME_PATH,
-  maxConcurrentSessions: 4,
-})
-```
+Construct `LocalBrowserService` from `@pikku/browser` with an options object. The options are listed below; `maxConcurrentSessions: 4` and `executablePath` taken from `CHROME_PATH` are typical.
 
 | Option | Type | Description |
 | --- | --- | --- |
@@ -100,16 +60,11 @@ reuses it, and the idle timer closes it once `keepAlive` elapses.
 
 ## Usage
 
-```typescript
-const session = await browserService.acquire({ keepAlive: 30_000 })
-try {
-  const page = await session.browser.newPage()
-  await page.goto('https://example.com')
-  return await page.title()
-} finally {
-  await session.release()
-}
-```
+The usage pattern is acquire, work, release:
+
+1. Call `acquire({ keepAlive: 30000 })` to get a session.
+2. Open a page with `session.browser.newPage()`, navigate with `page.goto(...)`, and read what you need (for example `page.title()`).
+3. Call `session.release()` in a `finally` block so the session returns to the pool even when the work throws.
 
 Provide the service through your singleton services (under a key of your
 choosing) and hand it to whichever functions or agent tools need it. Scenario

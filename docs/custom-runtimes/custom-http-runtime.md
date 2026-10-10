@@ -37,19 +37,7 @@ https://github.com/pikkujs/pikku/blob/main/packages/runtimes/express-middleware/
 
 The `fetchData` method will find the correct route to run, check permissions / authentication, validate data against the schema and map any errors to their HTTP responses. Services are resolved from Pikku's global state, which is set up by importing the generated bootstrap.
 
-```typescript title="Pikku Middleware"
-import { fetchData } from '@pikku/core/http'
-
-await fetchData(
-    new ExpressPikkuHTTPRequest(req),
-    new ExpressPikkuHTTPResponse(res),
-    {
-        // Whether we want to allow the route handler to return a 404,
-        // or not do anything if the route isn't found
-        respondWith404: true,
-    }
-)
-```
+In your middleware, call `fetchData` from `@pikku/core/http` with three arguments: your request wrapper (`new ExpressPikkuHTTPRequest(req)`), your response wrapper (`new ExpressPikkuHTTPResponse(res)`), and an options object. The one option shown is `respondWith404`: set it to `true` to let the route handler return a 404, or to `false` to do nothing when the route isn't found.
 
 ### Wiring this with express
 

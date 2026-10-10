@@ -70,88 +70,11 @@ The trigger source (the thing listening for events) often runs on a different ma
 
 ### Redis Pub/Sub
 
-```typescript
-import { pikkuTriggerFunc } from '#pikku/trigger'
-
-export const redisSubscribe = pikkuTriggerFunc<
-  { channels: string[] },
-  { channel: string; message: any }
->({
-  title: 'Redis Subscribe',
-  description: 'Subscribes to Redis pub/sub channels',
-  func: async ({ redis }, { channels }, { trigger }) => {
-    const subscriber = redis.duplicate()
-
-    subscriber.on('message', (channel, message) => {
-      trigger.invoke({
-        channel,
-        message: JSON.parse(message)
-      })
-    })
-
-    await subscriber.subscribe(...channels)
-
-    return async () => {
-      await subscriber.unsubscribe()
-      await subscriber.quit()
-    }
-  }
-})
-```
+A Redis trigger source is a `pikkuTriggerFunc` with `{ channels: string[] }` as its input and `{ channel, message }` as its output. In `func`, duplicate the Redis client, listen for `message` events and call `trigger.invoke({ channel, message: JSON.parse(message) })`, then subscribe to the channels. Return a teardown function that unsubscribes and quits the duplicated client.
 
 ### PostgreSQL Change Streams
 
-```typescript
-import { pikkuTriggerFunc } from '#pikku/trigger'
-
-export const postgresChanges = pikkuTriggerFunc<
-  { table: string; events: ('INSERT' | 'UPDATE' | 'DELETE')[] },
-  { event: string; table: string; data: any }
->({
-  title: 'Postgres Changes',
-  description: 'Triggers on row changes in a PostgreSQL table',
-  func: async ({ postgres }, { table, events }, { trigger }) => {
-    const client = await postgres.connect()
-    const channel = `pikku_notify_${table}`
-
-    // Create notification trigger on the table
-    await client.query(`
-      CREATE OR REPLACE FUNCTION pikku_notify_${table}()
-      RETURNS trigger AS $$
-      BEGIN
-        PERFORM pg_notify('${channel}', json_build_object(
-          'event', TG_OP,
-          'table', TG_TABLE_NAME,
-          'data', row_to_json(NEW)
-        )::text);
-        RETURN NEW;
-      END;
-      $$ LANGUAGE plpgsql;
-    `)
-
-    for (const event of events) {
-      await client.query(`
-        CREATE OR REPLACE TRIGGER pikku_trigger_${table}_${event.toLowerCase()}
-        AFTER ${event} ON ${table}
-        FOR EACH ROW EXECUTE FUNCTION pikku_notify_${table}();
-      `)
-    }
-
-    client.on('notification', (msg) => {
-      if (msg.channel === channel && msg.payload) {
-        trigger.invoke(JSON.parse(msg.payload))
-      }
-    })
-
-    await client.query(`LISTEN ${channel}`)
-
-    return async () => {
-      await client.query(`UNLISTEN ${channel}`)
-      client.release()
-    }
-  }
-})
-```
+A Postgres source takes `{ table, events }` (the events being `INSERT`, `UPDATE` and `DELETE`) and fires `{ event, table, data }`. In `func`, connect a client, create a `pg_notify` function and a trigger on the table for each event, listen for `notification` messages on the channel and call `trigger.invoke(JSON.parse(payload))`, then run `LISTEN`. The teardown runs `UNLISTEN` and releases the client.
 
 ### Polling
 
@@ -163,13 +86,7 @@ Note that `pikkuTriggerFunc` supports both the config object syntax (with `title
 
 Triggers can also start [graph workflows](../workflows/index.md) instead of simple RPC calls:
 
-```typescript
-wireTrigger({
-  name: 'order-received',
-  func: processOrderWorkflow,
-  description: 'Starts the order-processing workflow when an order arrives'
-})
-```
+Declare the trigger with `wireTrigger({ name, func, description })`, as in the low-stock example below. When `func` is a workflow, the trigger starts a new workflow execution each time it fires.
 
 When the trigger fires, it starts a new workflow execution instead of calling a single function.
 
@@ -177,39 +94,13 @@ When the trigger fires, it starts a new workflow execution instead of calling a 
 
 Like other Pikku functions, trigger sources support metadata for documentation and organization:
 
-```typescript
-export const myTrigger = pikkuTriggerFunc<Input, Output>({
-  title: 'My Trigger',
-  description: 'Detailed description of what this trigger does',
-  tags: ['redis', 'realtime'],
-  input: InputSchema,   // Standard Schema for input validation
-  output: OutputSchema,  // Standard Schema for output validation
-  func: async (_services, input, { trigger }) => {
-    // ...
-  }
-})
-```
+A trigger source takes these options: `title`, `description`, `tags`, `input` and `output` (Standard Schemas for validation), and `func`, which receives the services, the input and `{ trigger }`.
 
 ## Trigger Service
 
 Triggers are managed by a `TriggerService` that handles their lifecycle. Pikku provides `InMemoryTriggerService` for single-process deployments:
 
-```typescript
-import { InMemoryTriggerService } from '@pikku/core/services'
-
-const triggerService = new InMemoryTriggerService()
-
-const singletonServices = await createSingletonServices(config, {
-  triggerService,
-})
-
-// After server startup, start triggers. The trigger service reads its
-// singleton + wire services from the generated bootstrap automatically.
-await triggerService.start()
-
-// On shutdown
-await triggerService.stop()
-```
+Create an `InMemoryTriggerService` (from `@pikku/core/services`) and pass it to `createSingletonServices` as `triggerService`. After the server starts, call `await triggerService.start()`; the service reads its singleton and wire services from the generated bootstrap automatically. On shutdown, call `await triggerService.stop()`.
 
 The `InMemoryTriggerService`:
 1. Reads all `wireTrigger` and `wireTriggerSource` registrations from state
@@ -219,12 +110,7 @@ The `InMemoryTriggerService`:
 
 ### TriggerService Interface
 
-```typescript
-interface TriggerService {
-  start(): Promise<void>
-  stop(): Promise<void>
-}
-```
+A `TriggerService` has two methods, `start()` and `stop()`, both returning a promise.
 
 For workflows that use both queues and triggers, initialize the trigger service after the queue and workflow services are ready.
 

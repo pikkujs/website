@@ -14,15 +14,7 @@ Lifecycle hooks are where that work goes. They run around your server starting a
 
 Export a `pikkuServerLifecycle` from anywhere in your `srcDirectories`:
 
-```typescript title="src/lifecycle.ts"
-import { pikkuServerLifecycle } from "@pikku/core/utils";
-import type { SingletonServices } from "../types/application-types.js";
-
-export const lifecycle = pikkuServerLifecycle<SingletonServices>({
-  afterStart: async ({ logger }) => {
-    logger.info("Server ready");
-  },
-});
+```typescript @snippet co-lifecycle-minimal
 ```
 
 That's the whole setup. There's no registration step — the Pikku CLI finds the export by static analysis, the same way it finds your functions and wirings.
@@ -60,28 +52,7 @@ Use `beforeStart` for anything that must be true before the first request lands 
 
 ## A Fuller Example
 
-```typescript title="src/lifecycle.ts"
-import { pikkuServerLifecycle } from "@pikku/core/utils";
-import type { SingletonServices } from "../types/application-types.js";
-
-export const lifecycle = pikkuServerLifecycle<SingletonServices>({
-  beforeStart: async ({ kysely, logger }) => {
-    await migrateToLatest(kysely);
-    logger.info("Database up to date");
-  },
-
-  afterStart: async ({ logger, variables }) => {
-    if ((await variables.get("SEED_DEV_DATA")) === "true") {
-      await seedTodos();
-      logger.info("Seeded development data");
-    }
-  },
-
-  beforeStop: async ({ queueService, logger }) => {
-    await queueService.drain();
-    logger.info("Queue drained");
-  },
-});
+```typescript @snippet co-lifecycle
 ```
 
 Note that hooks read configuration through the `variables` service, exactly like your functions do — `process.env` doesn't belong here either.

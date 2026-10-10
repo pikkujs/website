@@ -15,17 +15,7 @@ The CLI picks up `defineCredential()` calls, generates typed wrappers, and makes
 
 Use `defineCredential` from `#pikku/auth`. The call itself is a no-op at runtime — the CLI reads it via AST and generates metadata.
 
-```typescript
-import { defineCredential } from '#pikku/auth'
-import { z } from 'zod'
-
-defineCredential({
-  name: 'stripe',
-  displayName: 'Stripe API Key',
-  description: 'API key for Stripe payment processing',
-  type: 'wire',
-  schema: z.object({ apiKey: z.string() }),
-})
+```typescript @snippet wa-cred-define
 ```
 
 ### Configuration
@@ -49,23 +39,7 @@ defineCredential({
 
 For services that use OAuth2, add an `oauth2` block. Pikku handles the authorization flow, token exchange, and refresh.
 
-```typescript
-defineCredential({
-  name: 'google-sheets',
-  displayName: 'Google Sheets',
-  type: 'wire',
-  schema: z.object({
-    accessToken: z.string(),
-    refreshToken: z.string().optional(),
-  }),
-  oauth2: {
-    appCredentialSecretId: 'GOOGLE_OAUTH_APP',
-    tokenSecretId: 'GOOGLE_OAUTH_TOKENS',
-    authorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
-    tokenUrl: 'https://oauth2.googleapis.com/token',
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  },
-})
+```typescript @snippet wa-cred-oauth2
 ```
 
 ### OAuth2 Configuration
@@ -86,36 +60,14 @@ The `appCredentialSecretId` points to a [secret](/docs/core-features/secrets) th
 
 A platform-level Slack credential shared by the entire app:
 
-```typescript
-defineCredential({
-  name: 'slack',
-  displayName: 'Slack',
-  type: 'singleton',
-  schema: z.object({
-    accessToken: z.string(),
-    refreshToken: z.string().optional(),
-  }),
-  oauth2: {
-    appCredentialSecretId: 'SLACK_OAUTH_APP',
-    tokenSecretId: 'SLACK_OAUTH_TOKENS',
-    authorizationUrl: 'https://slack.com/oauth/v2/authorize',
-    tokenUrl: 'https://slack.com/api/oauth.v2.access',
-    scopes: ['chat:write', 'channels:read'],
-  },
-})
+```typescript @snippet wa-cred-singleton
 ```
 
 ## Simple API Key Example
 
 Not everything needs OAuth. For plain API keys or bearer tokens:
 
-```typescript
-defineCredential({
-  name: 'hmac-key',
-  displayName: 'HMAC Signing Key',
-  type: 'wire',
-  schema: z.object({ secretKey: z.string() }),
-})
+```typescript @snippet wa-cred-api-key
 ```
 
 ## AI Agent Integration
@@ -124,17 +76,7 @@ When an AI agent calls a tool that belongs to an addon requiring a credential, P
 
 This happens automatically — you don't need to write any credential-checking logic in your tools. The agent resumes once the credential is provided.
 
-```typescript
-// The agent just lists its tools — credential checks happen at runtime
-export const assistant = pikkuAgent({
-  name: 'assistant',
-  description: 'A helpful assistant with integrations',
-  goal: 'Help the user with their integrations.',
-  model: 'openai/gpt-4o-mini',
-  tools: [listSheets, createSheet, sendSlackMessage],
-  // If listSheets requires 'google-sheets' credential and the user
-  // hasn't connected it, the agent pauses and asks the client to collect it.
-})
+```typescript @snippet wa-cred-agent
 ```
 
 ## Generated Files

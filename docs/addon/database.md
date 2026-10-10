@@ -66,10 +66,7 @@ An addon that genuinely has no tables is not this case: it publishes `{}` and is
 
 Wire the addon as normal — there is no separate registration for its schema:
 
-```typescript
-import { wireAddon } from '#pikku/addon'
-
-wireAddon({ name: 'labels', package: '@my-org/addon-labels' })
+```typescript @snippet rt-wire-addon-labels
 ```
 
 Then:

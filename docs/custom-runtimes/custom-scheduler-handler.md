@@ -11,14 +11,7 @@ The easiest way to write your own scheduler is by referencing the one already cr
 
 The core of it is the following:
 
-```typescript
-import { getScheduledTasks, runScheduledTask } from '@pikku/core/scheduler'
-
-const run = async (name: string) => {
-    const scheduledTasks = getScheduledTasks()
-    await runScheduledTask({ name })
-}
-```
+Import `getScheduledTasks` and `runScheduledTask` from `@pikku/core/scheduler`. Your runner takes a task `name`, and calls `await runScheduledTask({ name })`. `getScheduledTasks()` returns the registered tasks, so you can use it to find what to schedule.
 
 :::info
 In the case of serverless, this is all that's actually needed, since the runtime is responsible for invoking the method.

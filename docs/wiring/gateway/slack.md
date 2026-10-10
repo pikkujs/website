@@ -19,33 +19,14 @@ npm install @pikku/gateway-slack @slack/web-api
 
 One adapter serves **all** workspaces. Slack sends a `team_id` with every event, and the adapter resolves the right bot token per workspace via your `tokenResolver`:
 
-```typescript title="adapters/slack.ts"
-import { SlackGatewayAdapter } from '@pikku/gateway-slack'
+Create one `SlackGatewayAdapter` from `@pikku/gateway-slack`, with two options:
 
-export const slackAdapter = new SlackGatewayAdapter({
-  // Look up the bot token for a workspace (e.g. from your database,
-  // stored there by the OAuth install flow below)
-  tokenResolver: async (teamId) => {
-    const install = await db.getSlackInstall(teamId)
-    return install?.botToken ?? null
-  },
-  signingSecret: process.env.SLACK_SIGNING_SECRET!,
-})
-```
+- `tokenResolver`: an async function that takes a `teamId` and returns that workspace's bot token (or `null`). Look it up wherever your OAuth install flow stored it, for example your database.
+- `signingSecret`: your Slack app's signing secret, read from your secrets or environment.
 
-```typescript title="slack.wiring.ts"
-import { wireGateway } from '#pikku/gateway'
-import { slackAdapter } from './adapters/slack.js'
-import { handleMessage } from './functions/gateway.functions.js'
+Export the adapter so your handler and your wiring can both import it.
 
-wireGateway({
-  name: 'slack',
-  type: 'webhook',
-  route: '/webhooks/slack',
-  adapter: slackAdapter,
-  func: handleMessage,
-})
-```
+Wire it like any other webhook gateway: `wireGateway` with `name: 'slack'`, `type: 'webhook'`, `route: '/webhooks/slack'`, `adapter` set to your Slack adapter, and `func` set to your handler. The generic webhook wiring is shown on the [gateway introduction](./index.md#webhook).
 
 The adapter handles Slack's `url_verification` challenge automatically, parses `event_callback` payloads (`message` and `app_mention` events) into the normalized `GatewayInboundMessage`, ignores bot messages to prevent loops, and maps Slack files to gateway attachments.
 
@@ -53,27 +34,10 @@ The adapter handles Slack's `url_verification` challenge automatically, parses `
 
 Slack replies need channel and thread context, which the generic `senderId`-based send doesn't carry. Use `SlackGatewayHelper` inside your handler — it binds sends to the same team, channel, and thread the message came from:
 
-```typescript title="functions/gateway.functions.ts"
-import { pikkuFunc } from '#pikku/function'
-import { SlackGatewayHelper } from '@pikku/gateway-slack'
-import { slackAdapter } from '../adapters/slack.js'
+In your handler, build the helper from the inbound message and the adapter with `new SlackGatewayHelper(message, slackAdapter)`. Then:
 
-export const handleMessage = pikkuFunc<
-  GatewayInboundMessage,
-  GatewayOutboundMessage
->({
-  func: async ({ logger }, message) => {
-    const slack = new SlackGatewayHelper(message, slackAdapter)
-
-    // Send an interim message to the same thread
-    await slack.sendText('Thinking…')
-
-    // Return the final reply (auto-sent, thread-aware)
-    return slack.reply('Here is the answer!')
-  },
-  title: 'Handle Slack messages',
-})
-```
+- `slack.sendText('Thinking…')` sends an interim message to the same thread.
+- `return slack.reply('Here is the answer!')` returns the final reply, which Pikku sends for you, thread-aware.
 
 The helper also exposes `replyBlocks(blocks)` for [Block Kit](https://api.slack.com/block-kit) rich messages, and `metadata` getters (`teamId`, `channelId`, `threadTs`).
 
@@ -81,41 +45,10 @@ The helper also exposes `replyBlocks(blocks)` for [Block Kit](https://api.slack.
 
 For a multi-workspace app, wire two HTTP routes — one that redirects to Slack's consent screen, one that exchanges the callback code for a bot token:
 
-```typescript title="functions/slack-oauth.functions.ts"
-import { pikkuSessionlessFunc } from '#pikku/function'
-import {
-  buildSlackInstallUrl,
-  exchangeSlackOAuthCode,
-  RECOMMENDED_BOT_SCOPES,
-} from '@pikku/gateway-slack'
+Wire two sessionless functions to HTTP routes:
 
-export const slackInstall = pikkuSessionlessFunc<void, { url: string }>({
-  func: async ({ variables }) => ({
-    url: buildSlackInstallUrl({
-      clientId: await variables.get('SLACK_CLIENT_ID'),
-      scopes: RECOMMENDED_BOT_SCOPES,
-      redirectUri: 'https://app.example.com/slack/callback',
-    }),
-  }),
-})
-
-export const slackCallback = pikkuSessionlessFunc<{ code: string }, void>({
-  func: async ({ secrets, database }, { code }) => {
-    const result = await exchangeSlackOAuthCode({
-      clientId: (await secrets.getSecret('SLACK_CLIENT_ID')).reveal(),
-      clientSecret: (await secrets.getSecret('SLACK_CLIENT_SECRET')).reveal(),
-      code,
-      redirectUri: 'https://app.example.com/slack/callback',
-    })
-    // Store the token — this is what tokenResolver reads later
-    await database.saveSlackInstall(result.teamId, {
-      teamName: result.teamName,
-      botToken: result.botToken,
-      botUserId: result.botUserId,
-    })
-  },
-})
-```
+- **Install**: returns `{ url }` built with `buildSlackInstallUrl({ clientId, scopes: RECOMMENDED_BOT_SCOPES, redirectUri })`. Read the client id from your variables.
+- **Callback**: takes `{ code }` and calls `exchangeSlackOAuthCode({ clientId, clientSecret, code, redirectUri })`, with the client id and secret read from your secrets. The result carries `teamId`, `teamName`, `botToken` and `botUserId`. Store the token against the team id; that's what `tokenResolver` reads later.
 
 `RECOMMENDED_BOT_SCOPES` covers the usual agent-integration set: mentions, channel/group/IM history, `chat:write`, `commands`, and `users:read`.
 
@@ -127,59 +60,17 @@ The adapter caches one `WebClient` per workspace. After rotating a token, call `
 
 Slash commands arrive as form-encoded POSTs on their own route, not through the Events API. Parse them with `parseSlashCommand`:
 
-```typescript title="functions/slack-command.functions.ts"
-import { pikkuSessionlessFunc } from '#pikku/function'
-import {
-  parseSlashCommand,
-  respondToSlashCommand,
-} from '@pikku/gateway-slack'
+Wire a sessionless function to the slash command route. Inside it:
 
-export const slackCommand = pikkuSessionlessFunc<unknown, unknown>({
-  func: async ({ logger }, data) => {
-    const cmd = parseSlashCommand(data)
-    // "/myapp install addon" → subcommand: 'install', argsList: ['addon']
-
-    if (cmd.subcommand === 'status') {
-      // Respond within 3 seconds: return the response body directly
-      return { response_type: 'ephemeral', text: 'All systems go.' }
-    }
-
-    // Longer work: acknowledge now, respond later via response_url
-    void doSlowThing().then((result) =>
-      respondToSlashCommand(cmd.responseUrl, {
-        response_type: 'in_channel',
-        text: result,
-      })
-    )
-    return { response_type: 'ephemeral', text: 'Working on it…' }
-  },
-})
-```
+1. Call `parseSlashCommand(data)`. For `/myapp install addon` you get `subcommand: 'install'` and `argsList: ['addon']`, plus the `responseUrl`.
+2. To answer within Slack's 3-second limit, return the response body directly, for example `{ response_type: 'ephemeral', text: 'All systems go.' }`.
+3. For longer work, return an acknowledgement now and, when the work finishes, call `respondToSlashCommand(cmd.responseUrl, { response_type: 'in_channel', text })`.
 
 ## Verifying Request Signatures
 
 Slack signs every request with HMAC-SHA256. Verify signatures in middleware so spoofed events never reach your handler:
 
-```typescript title="middleware/slack-signature.ts"
-import { verifySlackSignature } from '@pikku/gateway-slack'
-
-export const slackSignatureMiddleware = async (services, wire, next) => {
-  const signature = wire.http.request.header('x-slack-signature')
-  const timestamp = wire.http.request.header('x-slack-request-timestamp')
-  const body = await wire.http.request.text()
-
-  const valid = verifySlackSignature(
-    (await services.secrets.getSecret('SLACK_SIGNING_SECRET')).reveal(),
-    signature,
-    timestamp,
-    body
-  )
-  if (!valid) {
-    throw new Error('Invalid Slack signature')
-  }
-  await next()
-}
-```
+Write a middleware that reads the `x-slack-signature` and `x-slack-request-timestamp` headers and the raw request body from `wire.http.request`, then calls `verifySlackSignature(signingSecret, signature, timestamp, body)` with the signing secret from your secrets. If it returns false, throw; otherwise call `next()`.
 
 `verifySlackSignature` also rejects requests older than five minutes, defending against replay attacks.
 

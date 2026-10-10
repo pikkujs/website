@@ -47,34 +47,7 @@ The channel is then available at `ws://localhost:3000/cli`.
 
 If you run your own server, attach the WebSocket handler from `@pikku/ws`:
 
-```typescript
-import { PikkuExpressServer } from '@pikku/express'
-import { WebSocketServer } from 'ws'
-import { DEFAULT_WS_MAX_PAYLOAD, pikkuWebsocketHandler } from '@pikku/ws'
-import { createConfig } from './config.js'
-import { createSingletonServices } from './services.js'
-import '#pikku/pikku-bootstrap.gen.js'
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-const appServer = new PikkuExpressServer(
-  { ...config, port: 4002, hostname: 'localhost' },
-  singletonServices.logger
-)
-await appServer.init()
-await appServer.start()
-
-const wss = new WebSocketServer({
-  noServer: true,
-  maxPayload: DEFAULT_WS_MAX_PAYLOAD,
-})
-pikkuWebsocketHandler({
-  server: appServer.getHttpServer(),
-  wss,
-  logger: singletonServices.logger,
-})
-```
+To run your own server, create your Express server (`PikkuExpressServer` from `@pikku/express`) with your config and singleton services, `init()` and `start()` it, then create a `WebSocketServer` from `ws` with `noServer: true` and `maxPayload: DEFAULT_WS_MAX_PAYLOAD`. Pass the HTTP server, the `wss` and your logger to `pikkuWebsocketHandler` from `@pikku/ws`. Import `#pikku/pikku-bootstrap.gen.js` once so the generated wirings are registered.
 
 ## Client Usage
 
@@ -120,21 +93,5 @@ The generated client sends credentials with the WebSocket connection: `PIKKU_API
 
 Renderers for remote CLI run on the client, so the only service they can reach is `logger`. Reaching for any other service fails generation, because there is no service container on the client to resolve it from.
 
-```typescript
-import { pikkuCLIRender } from '#pikku/cli'
-
-// ✅ Good (logger only)
-export const renderer = pikkuCLIRender((services, data) => {
-  services.logger.info(data.message)
-})
-
-// ✅ Good (no services at all)
-export const renderer = pikkuCLIRender((_, data) => {
-  console.log(data.message)
-})
-
-// ❌ Bad (needs a service the client doesn't have)
-export const renderer = pikkuCLIRender((services, data) => {
-  services.database // Generation fails
-})
+```typescript @snippet wb-cli-remote-renderers
 ```

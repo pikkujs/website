@@ -25,15 +25,7 @@ npm install @pikku/redis ioredis
 
 Workflow orchestration with Redis persistence using hashes and sorted sets.
 
-```typescript
-import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
-import Redis from 'ioredis'
-
-const redis = new Redis(process.env.REDIS_URL!)
-const leaseService = new RedisLeaseService(redis)
-const workflowService = new RedisWorkflowService(redis, { leaseService })
-await workflowService.init()
-```
+Import `RedisLeaseService` and `RedisWorkflowService` from `@pikku/redis`, and `Redis` from `ioredis`. Create the client with `new Redis(process.env.REDIS_URL)`, then `new RedisLeaseService(redis)` and `new RedisWorkflowService(redis, { leaseService })`, and `await workflowService.init()`.
 
 **Constructor:** `new RedisWorkflowService(connectionOrConfig, options: WorkflowServiceOptions & { keyPrefix?: string })`
 
@@ -52,11 +44,7 @@ functions can take it from `leaseService`. Every lease is judged by Redis's own
 clock, so a worker whose clock runs fast can neither take a live lease nor
 stretch its own.
 
-```typescript
-import { RedisLeaseService } from '@pikku/redis'
-
-const leaseService = new RedisLeaseService(redis)
-```
+`new RedisLeaseService(redis)` from `@pikku/redis`.
 
 **Constructor:** `new RedisLeaseService(connectionOrConfig, { keyPrefix? })` —
 `connectionOrConfig` is a `Redis` instance, `RedisOptions`, a URL, or
@@ -67,43 +55,25 @@ const leaseService = new RedisLeaseService(redis)
 
 Read-only workflow run queries.
 
-```typescript
-import { RedisWorkflowRunService } from '@pikku/redis'
-
-const workflowRunService = new RedisWorkflowRunService(redis)
-```
+`new RedisWorkflowRunService(redis)` from `@pikku/redis`.
 
 ### RedisAgentRunService
 
 Read-only agent run queries. Reads from Redis-backed AI state.
 
-```typescript
-import { RedisAgentRunService } from '@pikku/redis'
-
-const agentRunService = new RedisAgentRunService(redis)
-```
+`new RedisAgentRunService(redis)` from `@pikku/redis`.
 
 ### RedisChannelStore
 
 WebSocket channel and subscription persistence.
 
-```typescript
-import { RedisChannelStore } from '@pikku/redis'
-
-const channelStore = new RedisChannelStore(redis)
-await channelStore.init()
-```
+`new RedisChannelStore(redis)` from `@pikku/redis`, then `await channelStore.init()`.
 
 ### RedisDeploymentService
 
 Multi-instance deployment tracking with heartbeat.
 
-```typescript
-import { RedisDeploymentService } from '@pikku/redis'
-
-const deploymentService = new RedisDeploymentService(config, redis)
-await deploymentService.init()
-```
+`new RedisDeploymentService(config, redis)` from `@pikku/redis`, then `await deploymentService.init()`.
 
 ### RedisSessionStore
 
@@ -111,22 +81,14 @@ Persists user sessions keyed by `pikkuUserId`, so a session survives a restart
 and is shared across instances. The optional third argument sets a TTL in
 seconds; leave it off and sessions do not expire.
 
-```typescript
-import { RedisSessionStore } from '@pikku/redis'
-
-const sessionStore = new RedisSessionStore(redis, 'pikku', 60 * 60 * 24)
-```
+`new RedisSessionStore(redis, 'pikku', 60 * 60 * 24)` from `@pikku/redis`. The second argument is the key prefix and the third is the TTL in seconds (here one day).
 
 ### RedisEventHubStore
 
 Tracks which channels are subscribed to which topics, so a broadcast reaches
 subscribers on every instance rather than only the one holding the socket.
 
-```typescript
-import { RedisEventHubStore } from '@pikku/redis'
-
-const eventHubStore = new RedisEventHubStore(redis)
-```
+`new RedisEventHubStore(redis)` from `@pikku/redis`.
 
 ## Key Structure
 
@@ -144,28 +106,9 @@ Redis keys use the configured prefix (default `pikku:`) with the following patte
 
 ## Full Example
 
-```typescript
-import {
-  RedisLeaseService,
-  RedisWorkflowService,
-  RedisChannelStore,
-  RedisAgentRunService,
-} from '@pikku/redis'
-import Redis from 'ioredis'
+A typical setup, in order:
 
-const redis = new Redis(process.env.REDIS_URL!)
-
-const leaseService = new RedisLeaseService(redis)
-const workflowService = new RedisWorkflowService(redis, { leaseService })
-await workflowService.init()
-
-const channelStore = new RedisChannelStore(redis)
-await channelStore.init()
-
-const singletonServices = await createSingletonServices(config, {
-  leaseService,
-  workflowService,
-  channelStore,
-  agentRunService: new RedisAgentRunService(redis),
-})
-```
+1. Create the client with `new Redis(process.env.REDIS_URL)`.
+2. Create `RedisLeaseService`, then `RedisWorkflowService` with `{ leaseService }` and `init()` it.
+3. Create `RedisChannelStore` and `init()` it.
+4. Call `createSingletonServices(config, ...)` with `leaseService`, `workflowService`, `channelStore` and `agentRunService: new RedisAgentRunService(redis)`.

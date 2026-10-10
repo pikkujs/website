@@ -35,19 +35,7 @@ With the `fetchFile` above, the generated file is importable as `#pikku/pikku-fe
 
 ### Using it directly
 
-```typescript
-import { pikkuFetch } from '#pikku/pikku-fetch.gen.js'
-
-pikkuFetch.setServerUrl('http://localhost:4002')
-
-const todos = await pikkuFetch.get('/todos', { userId: 'user1' })
-const todo = await pikkuFetch.post('/todos', {
-  title: 'The Pikku Guide',
-  priority: 'high',
-  userId: 'user1',
-})
-const completed = await pikkuFetch.post('/todos/:id/complete', { id: todo.id })
-await pikkuFetch.delete('/todos/:id', { id: todo.id })
+```typescript @snippet fetchClient
 ```
 
 The first argument is the route pattern as written in `wireHTTP` (including `:params`). The data argument carries path params, query params and the body merged into one object — the same shape the function receives.
@@ -70,31 +58,12 @@ Non-2xx responses throw a `PikkuFetchError` (from `@pikku/fetch`) carrying the s
 
 ### Using it with React
 
-In a React app, pass the class to `createPikku` from `@pikku/react` so the fetch instance is shared by the RPC and realtime clients:
-
-```tsx
-import { createPikku, PikkuProvider } from '@pikku/react'
-import { PikkuFetch } from '#pikku/pikku-fetch.gen.js'
-import { PikkuRPC } from '#pikku/pikku-rpc.gen.js'
-
-const pikku = createPikku(PikkuFetch, PikkuRPC, {
-  serverUrl: 'http://localhost:4002',
-})
-```
+In a React app, pass the class to `createPikku` from `@pikku/react` so the fetch instance is shared by the RPC and realtime clients. Pass `PikkuFetch` (from `#pikku/pikku-fetch.gen.js`) and `PikkuRPC` (from `#pikku/pikku-rpc.gen.js`) to `createPikku` from `@pikku/react`, together with your `serverUrl`. The returned object is what you hand to `PikkuProvider`.
 
 `createPikku` accepts the same options as `PikkuFetch` (`transformDate`, `credentials`, `mode`, `cache`, `authHeaders`) plus `serverUrl`. Inside components, `usePikkuFetch()` returns the instance.
 
 ### Configuration options
 
-```typescript
-import { PikkuFetch } from '#pikku/pikku-fetch.gen.js'
-
-const client = new PikkuFetch({
-  serverUrl: 'https://api.example.com',
-  transformDate: true,        // turn date-like strings into Date objects
-  credentials: 'include',     // forward cookies
-  authHeaders: { apiKey: '...' },
-})
-```
+Construct `PikkuFetch` directly with the same options: `serverUrl`, `transformDate` (turn date-like strings into `Date` objects), `credentials` (for example `'include'` to forward cookies) and `authHeaders` (for example an `apiKey`).
 
 For additional functionality or feature requests, please submit an issue on the [Pikku repository](https://github.com/pikkujs/pikku).

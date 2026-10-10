@@ -52,28 +52,7 @@ Functions don't access the `SessionService` directly — its operations are
 exposed on the **wire** (the 3rd function argument) as `session`, `getSession()`,
 `setSession()`, and `clearSession()`:
 
-```typescript
-// Read and update the session
-export const touchSession = pikkuFunc<void, { ok: boolean }>(
-  async (services, data, { session, setSession }) => {
-    if (!session) return { ok: false }
-
-    await setSession({
-      ...session,
-      lastActiveAt: new Date().toISOString()
-    })
-
-    return { ok: true }
-  }
-)
-
-// Log out
-export const logout = pikkuFunc<void, { success: boolean }>(
-  async (services, data, { clearSession }) => {
-    await clearSession()
-    return { success: true }
-  }
-)
+```typescript @snippet co-user-session-service
 ```
 
 ## Persistence

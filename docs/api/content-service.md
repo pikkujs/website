@@ -67,39 +67,11 @@ Reads an entire file from storage into a `Buffer`.
 
 ## Usage Example
 
-```typescript
-interface RequestUploadInput {
-  filename: string
-  contentType: string
-}
+A typical upload function takes a `filename` and `contentType` and returns `{ uploadUrl, downloadUrl, assetKey }`:
 
-interface RequestUploadOutput {
-  uploadUrl: string
-  downloadUrl: string
-  assetKey: string
-}
-
-export const requestUpload = pikkuFunc<RequestUploadInput, RequestUploadOutput>(
-  async (services, data) => {
-    // Generate a signed URL so the client can upload directly to storage
-    const { uploadUrl, assetKey } = await services.content.getUploadURL({
-      bucket: 'uploads',
-      fileKey: data.filename,
-      contentType: data.contentType,
-    })
-
-    // Generate a time-limited download URL (expires in 1 hour)
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
-    const downloadUrl = await services.content.signContentKey({
-      bucket: 'uploads',
-      contentKey: assetKey,
-      dateLessThan: expiresAt,
-    })
-
-    return { uploadUrl, downloadUrl, assetKey }
-  }
-)
-```
+1. Call `content.getUploadURL({ bucket, fileKey, contentType })` to get a signed URL the client uploads to directly, along with the `assetKey`.
+2. Call `content.signContentKey({ bucket, contentKey: assetKey, dateLessThan })` with an expiry (for example one hour from now) to get a time-limited download URL.
+3. Return the three values.
 
 ## Implementations
 
@@ -125,18 +97,7 @@ npm install @pikku/backblaze
 
 `B2Content` talks to the Backblaze B2 native API. It uses a single underlying B2 bucket — logical buckets passed via the ContentService API are stored as path prefixes within it.
 
-```typescript
-import { B2Content } from '@pikku/backblaze'
-
-const content = new B2Content(
-  {
-    applicationKeyId: (await secrets.getSecret('B2_KEY_ID')).reveal(),
-    applicationKey: (await secrets.getSecret('B2_APP_KEY')).reveal(),
-    bucketId: 'your-b2-bucket-id',
-  },
-  logger
-)
-```
+Construct `B2Content` from `@pikku/backblaze` with an object holding `applicationKeyId`, `applicationKey` and `bucketId`, plus your logger. Read the two keys through the secret service and call `reveal()` on each.
 
 ```typescript reference title="b2-content.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/services/backblaze/src/b2-content.ts

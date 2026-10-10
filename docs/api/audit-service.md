@@ -9,19 +9,7 @@ The AuditService is the durable sink for audit events — who did what, when, th
 
 Auditing is opt-in per function. Set `audit` on the function definition:
 
-```typescript
-export const deleteAccount = pikkuFunc<{ accountId: string }, void>({
-  audit: true, // or { durability: 'transactional' }
-  func: async (services, data) => {
-    await services.db.deleteAccount(data.accountId)
-
-    await services.auditLog?.write({
-      type: 'account.deleted',
-      source: 'explicit',
-      metadata: { accountId: data.accountId },
-    })
-  },
-})
+```typescript @snippet co-audit-function
 ```
 
 - `audit: true` — **best-effort** durability: events are buffered during the invocation and flushed when it ends. A failed flush logs a warning but doesn't fail the request.
@@ -78,26 +66,16 @@ Kept separate from `query` because computing it costs two extra scans.
 
 Discards all events — the default when auditing isn't configured.
 
-```typescript
-import { NoopAuditService } from '@pikku/core/services'
-const audit = new NoopAuditService()
-```
+Import `NoopAuditService` from `@pikku/core/services` and construct it with no arguments.
 
 ### KyselyAuditService
 
 Durable SQL storage via [`@pikku/kysely`](/docs/storage/kysely):
 
-```typescript
-import { KyselyAuditService } from '@pikku/kysely'
-const audit = new KyselyAuditService(db.kysely)
-```
+Import `KyselyAuditService` from `@pikku/kysely` and pass it your Kysely instance, `new KyselyAuditService(db.kysely)`.
 
 ## Registration
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  audit: new KyselyAuditService(db.kysely),
-})
-```
+Pass the sink under the `audit` key when you build the singleton services, for example a `KyselyAuditService` over your Kysely instance.
 
 The per-invocation `auditLog` is created by the runtime for each wire from this sink — you don't register it yourself.

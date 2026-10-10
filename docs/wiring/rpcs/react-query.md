@@ -47,28 +47,7 @@ npm install @tanstack/react-query @pikku/react
 
 Wrap your app with both the React Query and Pikku providers:
 
-```tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { PikkuProvider, createPikku } from '@pikku/react'
-import { PikkuFetch } from '#pikku/pikku-fetch.gen.js'
-import { PikkuRPC } from '#pikku/pikku-rpc.gen.js'
-
-const queryClient = new QueryClient()
-
-const pikku = createPikku(PikkuFetch, PikkuRPC, {
-  serverUrl: 'https://api.example.com'
-})
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <PikkuProvider pikku={pikku}>
-        {/* your app */}
-      </PikkuProvider>
-    </QueryClientProvider>
-  )
-}
-```
+Wrap the app in a React Query `QueryClientProvider` (with a `QueryClient`) and, inside it, a `PikkuProvider`. Build the `pikku` object you hand to `PikkuProvider` with `createPikku(PikkuFetch, PikkuRPC, { serverUrl })`, importing `PikkuFetch` from `#pikku/pikku-fetch.gen.js` and `PikkuRPC` from `#pikku/pikku-rpc.gen.js`. `createPikku`, `PikkuProvider` come from `@pikku/react`.
 
 ## Hooks
 
@@ -76,48 +55,19 @@ function App() {
 
 For reading data. Wraps `useQuery` with type-safe RPC name and input:
 
-```tsx
-import { usePikkuQuery } from '#pikku/pikku-react-query.gen.js'
-
-function UserProfile({ userId }: { userId: string }) {
-  const { data, isLoading, error } = usePikkuQuery('getUser', { userId })
-
-  if (isLoading) return <p>Loading...</p>
-  if (error) return <p>Error: {error.message}</p>
-
-  // data is fully typed — matches your function's output type
-  return <h1>{data.name}</h1>
-}
-```
+Call `usePikkuQuery(name, input)` with an RPC name and its input, for example `usePikkuQuery('getUser', { userId })`. It returns the usual React Query result (`data`, `isLoading`, `error`, and the rest), and `data` is fully typed to match your function's output type.
 
 The query key is automatically set to `[name, data]`, so queries with different inputs cache separately.
 
 You can pass any standard `useQuery` options as the third argument:
 
-```tsx
-usePikkuQuery('getUser', { userId }, { staleTime: 5000, refetchInterval: 10000 })
-```
+Options go in the third argument: `usePikkuQuery('getUser', { userId }, { staleTime: 5000, refetchInterval: 10000 })`.
 
 ### `usePikkuMutation`
 
 For writes. Wraps `useMutation`:
 
-```tsx
-import { usePikkuMutation } from '#pikku/pikku-react-query.gen.js'
-
-function CreateTodo() {
-  const { mutate, isPending } = usePikkuMutation('createTodo')
-
-  return (
-    <button
-      disabled={isPending}
-      onClick={() => mutate({ title: 'Buy milk' })}
-    >
-      Add Todo
-    </button>
-  )
-}
-```
+Call `usePikkuMutation(name)` with an RPC name, for example `usePikkuMutation('createTodo')`. It returns the usual mutation result (`mutate`, `isPending`, and the rest), and you run it with `mutate({ title: 'Buy milk' })`.
 
 The `mutate` callback is typed — it only accepts your function's input type and the result matches the output type.
 
@@ -127,42 +77,11 @@ For paginated data. Only available for functions whose output includes `nextCurs
 
 The recommended way to build one is `pikkuListFunc` (from `#pikku/function`), which bakes in the standard `ListInput`/`ListOutput` cursor contract (`cursor`/`limit`/`sort`/`filter`/`search` in, `{ rows, nextCursor, totalCount }` out) so every paginated RPC in your app shares one shape:
 
-```typescript
-import { pikkuListFunc } from '#pikku/function'
-
-// Qualifies for infinite query because ListOutput always includes nextCursor
-export const listItems = pikkuListFunc<{ status?: string }, { id: string; label: string }>({
-  func: async ({ kysely }, input) => {
-    // input.cursor / input.limit / input.filter / input.sort / input.search are typed
-    return { rows: [...], nextCursor: '...', totalCount: 42 }
-  },
-  expose: true,
-})
-```
+A `pikkuListFunc<Filter, Row>({ func, expose: true })` takes the typed list input and returns `{ rows, nextCursor, totalCount }`. The `func` receives `cursor`, `limit`, `filter`, `sort` and `search` already typed.
 
 A plain `pikkuFunc`/`pikkuSessionlessFunc` with an ad-hoc output containing `nextCursor` also works — `pikkuListFunc` just gives you the shared shape for free instead of hand-rolling it each time.
 
-```tsx
-import { usePikkuInfiniteQuery } from '#pikku/pikku-react-query.gen.js'
-
-function ItemList() {
-  const { data, fetchNextPage, hasNextPage } = usePikkuInfiniteQuery(
-    'listItems',
-    { limit: 20 }
-  )
-
-  return (
-    <>
-      {data?.pages.flatMap(page => page.rows).map(item => (
-        <div key={item.id}>{item.label}</div>
-      ))}
-      {hasNextPage && (
-        <button onClick={() => fetchNextPage()}>Load more</button>
-      )}
-    </>
-  )
-}
-```
+Call `usePikkuInfiniteQuery('listItems', { limit: 20 })`. It returns `data.pages` (each page has `rows`), plus `fetchNextPage` and `hasNextPage`. Flatten `data.pages` to render every row, and render a "Load more" button that calls `fetchNextPage()` while `hasNextPage` is true.
 
 The cursor handling is wired up automatically — `getNextPageParam` and `initialPageParam` are set for you. You just pass the input data without `nextCursor` (it's managed by the infinite query).
 
@@ -180,19 +99,10 @@ If your project uses [Workflows](../workflows/index.md), the generated file also
 
 The generated hooks are type-checked at compile time. Invalid RPC names, wrong input shapes, and incorrect usage all produce TypeScript errors:
 
-```tsx
-// ✅ Compiles — correct name and input
-usePikkuQuery('getUser', { userId: '123' })
-
-// ❌ TypeScript error — unknown RPC name
-usePikkuQuery('doesNotExist', {})
-
-// ❌ TypeScript error — wrong input type
-usePikkuQuery('getUser', { wrong: 'field' })
-
-// ❌ TypeScript error — output has no nextCursor
-usePikkuInfiniteQuery('getUser', { userId: '123' })
-```
+- A correct name and input compiles: `usePikkuQuery('getUser', { userId: '123' })`.
+- An unknown RPC name is a TypeScript error.
+- A wrong input type is a TypeScript error.
+- Using `usePikkuInfiniteQuery` on a function whose output has no `nextCursor` is a TypeScript error.
 
 ## Dates come back mixed, and the type system won't tell you
 

@@ -28,53 +28,20 @@ Decodes and validates a JWT, returning the payload.
 
 ## Usage Example
 
-```typescript
-interface UserTokenPayload {
-  userId: string
-  email: string
-  role: string
-}
-
-// Issue a token on login
-export const login = pikkuFunc<
-  { email: string; password: string },
-  { token: string }
->(async (services, data) => {
-  const user = await services.db.getUserByEmail(data.email)
-  if (!user || !await services.db.verifyPassword(data.password, user.passwordHash)) {
-    throw new UnauthorizedError('Invalid credentials')
-  }
-
-  const token = await services.jwt.encode<UserTokenPayload>(
-    { value: 24, unit: 'hour' },
-    {
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-    }
-  )
-
-  return { token }
-})
-
-// Validate a token (typically done in middleware, not in functions directly)
-const payload = await services.jwt.decode<UserTokenPayload>(
-  token,
-  new UnauthorizedError('Invalid or expired token')
-)
+```typescript @snippet co-jwt-encode-decode
 ```
 
 ## Relative Time Format
 
 `expiresIn` is a `RelativeTimeInput` — `{ value: number, unit: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'year' }` — exported from `@pikku/core/utils`:
 
-```typescript
-await services.jwt.encode({ value: 30, unit: 'second' }, payload) // 30 seconds
-await services.jwt.encode({ value: 15, unit: 'minute' }, payload) // 15 minutes
-await services.jwt.encode({ value: 2, unit: 'hour' }, payload)    // 2 hours
-await services.jwt.encode({ value: 7, unit: 'day' }, payload)     // 7 days
-await services.jwt.encode({ value: 1, unit: 'week' }, payload)    // 1 week
-```
+| Unit | Example call |
+| --- | --- |
+| `second` | `encode({ value: 30, unit: 'second' }, payload)`, valid for 30 seconds |
+| `minute` | `{ value: 15, unit: 'minute' }`, 15 minutes |
+| `hour` | `{ value: 2, unit: 'hour' }`, 2 hours |
+| `day` | `{ value: 7, unit: 'day' }`, 7 days |
+| `week` | `{ value: 1, unit: 'week' }`, 1 week |
 
 ## Implementation
 

@@ -10,31 +10,11 @@ The `authCookie` middleware reads session data from a named cookie on incoming r
 
 ## Installation
 
-```typescript
-import { authCookie } from '#pikku/middleware'
-```
+Import `authCookie` from `#pikku/middleware`.
 
 ## Usage
 
-```typescript
-import { authCookie } from '#pikku/middleware'
-import { wireHTTP } from '#pikku/http'
-
-wireHTTP({
-  // ...
-  middleware: [
-    authCookie({
-      name: 'session',
-      expiresIn: { value: 30, unit: 'day' },
-      options: {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-        path: '/',
-      },
-    }),
-  ],
-})
+```typescript @snippet cookieAuth
 ```
 
 ## Options
@@ -80,18 +60,5 @@ This two-phase approach means sessions are automatically refreshed — when a lo
 
 ## Example: Login Flow
 
-```typescript
-export const login = pikkuFunc<
-  { username: string; password: string },
-  { success: boolean }
->({
-  func: async ({ users }, data, { setSession }) => {
-    const user = await users.verify(data.username, data.password)
-    if (!user) throw new UnauthorizedError()
-
-    // This triggers the cookie middleware to set the cookie in the response
-    await setSession({ userId: user.id, role: user.role })
-    return { success: true }
-  },
-})
+```typescript @snippet co-cookie-login
 ```

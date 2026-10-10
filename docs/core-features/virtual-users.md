@@ -17,23 +17,7 @@ You write almost nothing for this. The function meta becomes the catalogue of th
 
 A virtual user *is* a persona while it runs — there's no second declaration. Everything about who it is lives in `definePersonas` (see [Scenarios](./scenarios.md#actors-and-environments)). The fields that matter here:
 
-```typescript
-// src/personas.virtual-user.ts
-import { definePersonas } from '#pikku/scopes/pikku-personas.gen.js'
-
-definePersonas({
-  sam: {
-    name: 'Sam Shopper',
-    jobTitle: 'Retail customer',
-    roles: ['customer'],
-    personality: 'Impatient, skims instructions, expects things to just work',
-    goals: ['Buy something cheap before the sale ends'],
-    disposition: 'careless',
-    tuning: { repeatRate: 0.3 },
-    fixtures: ['fixtures/receipt.pdf'],
-    environments: ['staging'],
-  },
-})
+```typescript @snippet definePersonas
 ```
 
 | Field | What it does for a virtual user |
@@ -168,14 +152,7 @@ A `VirtualUserScheduleStore` (`@pikku/kysely` ships `KyselyVirtualUserScheduleSt
 - The gap to the next run is **drawn between** the min and max intervals, not fixed, because a real user doesn't keep an appointment. Defaults are 6 to 24 hours (`DEFAULT_MIN_INTERVAL_MS`, `DEFAULT_MAX_INTERVAL_MS`). Via `setVirtualUserSchedule` the minimum is 1 minute.
 - There's **no timer** in Pikku. The row is the schedule: something outside asks which rows are due. The scaffold also generates `tickVirtualUserSchedules` but wires it to nothing, since a scaffolded cron would start spending money the moment you ran `pikku all`. You wire it when you mean it:
 
-```typescript
-wireScheduler({
-  name: 'virtualUsers',
-  schedule: '0 * * * *',
-  middleware: [virtualUserPlatformSession],
-  func: tickVirtualUserSchedules,
-})
-```
+Wire the tick as a scheduler task named `virtualUsers` on the schedule `0 * * * *` (hourly), running `tickVirtualUserSchedules` with the `virtualUserPlatformSession` middleware.
 
 `virtualUserPlatformSession` gives the tick a session carrying `virtualUser:run`, because it starts runs through `runVirtualUser`, the same gated front door a person uses. Each tick, for every due persona: skip it if its previous run is still going (`in-flight`), mark a run stranded for more than two hours as failed (`STALE_RUN_AFTER_MS`), then **claim** the persona (a compare-and-set on `nextRunAt`) *before* dispatching, so two overlapping ticks can't both start the same user. If dispatch throws, the persona waits a full interval rather than being retried every minute.
 

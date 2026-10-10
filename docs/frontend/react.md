@@ -21,19 +21,7 @@ npm install @pikku/react
 `PikkuProvider` puts it on React context. Do both once at the app root — hooks
 outside the provider throw.
 
-```tsx
-import { PikkuProvider, createPikku } from '@pikku/react'
-import { PikkuFetch } from '#pikku/pikku-fetch.gen.js'
-import { PikkuRPC } from '#pikku/pikku-rpc.gen.js'
-import { PikkuRealtime } from '#pikku/pikku-realtime.gen.js'
-
-const pikku = createPikku(PikkuFetch, PikkuRPC, PikkuRealtime, {
-  serverUrl: 'https://api.example.com',
-})
-
-export function App() {
-  return <PikkuProvider pikku={pikku}>{/* your app */}</PikkuProvider>
-}
+```tsx @snippet co-react-provider
 ```
 
 The realtime class is optional: pass it when the app subscribes to channels or

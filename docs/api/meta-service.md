@@ -135,11 +135,7 @@ what this is for.
 The one implementation that ships. Reads the `.pikku` directory off disk, caching
 every parsed file after the first read.
 
-```typescript
-import { LocalMetaService } from '@pikku/core/services/local-meta'
-
-const metaService = new LocalMetaService('/path/to/.pikku')
-```
+Import `LocalMetaService` from `@pikku/core/services/local-meta` and construct it with the path to your `.pikku` directory.
 
 Notes on its behaviour, since it is what most apps run:
 
@@ -166,13 +162,7 @@ You do not normally construct this yourself. `pikku` generates
 `.pikku/services/pikku-meta-service.gen.ts`, a `PikkuMetaService` subclass with
 your output directory baked into its constructor:
 
-```typescript
-import { PikkuMetaService } from '#pikku/services/pikku-meta-service.gen.js'
-
-const singletonServices = await createSingletonServices(config, {
-  metaService: new PikkuMetaService(),
-})
-```
+Import `PikkuMetaService` from the generated `#pikku/services/pikku-meta-service.gen.js` and pass an instance under the `metaService` key when you build the singleton services.
 
 `pikku dev` and `pikku serve` register a `LocalMetaService` pointed at the same
 directory, so it works in development with no wiring of your own.

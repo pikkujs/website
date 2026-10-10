@@ -16,10 +16,7 @@ Each method accepts a string message. `info`, `warn` and `error` also accept a
 structured object, and `error` accepts an `Error`; `debug` and `trace` take a
 string only:
 
-```typescript
-logger.info('User signed in')
-logger.info({ userId: 'user-123', action: 'sign-in' })
-logger.error(new Error('Connection failed'))
+```typescript @snippet co-logger-usage
 ```
 
 `info`, `warn`, `error`, `debug` and `setLevel(level)` are required. Two members
@@ -44,11 +41,7 @@ The default logger that wraps `console.*`. No additional packages required:
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/logger-console.ts
 ```
 
-```typescript
-import { ConsoleLogger } from '@pikku/core/services'
-
-const logger = new ConsoleLogger()
-```
+Import `ConsoleLogger` from `@pikku/core/services` and construct it with no arguments.
 
 ### PinoLogger
 
@@ -62,13 +55,7 @@ npm install @pikku/pino pino
 https://github.com/pikkujs/pikku/blob/main/packages/services/pino/src/pino.ts
 ```
 
-```typescript
-import { PinoLogger } from '@pikku/pino'
-import { LogLevel } from '@pikku/core/services'
-
-const logger = new PinoLogger()
-logger.setLevel(LogLevel.info)
-```
+Import `PinoLogger` from `@pikku/pino`, construct it with no arguments, and set the level with `setLevel(LogLevel.info)` using `LogLevel` from `@pikku/core/services`.
 
 The `PinoLogger` exposes the underlying `pino.Logger` instance via `logger.pino` for advanced configuration.
 
@@ -76,32 +63,17 @@ The `PinoLogger` exposes the underlying `pino.Logger` instance via `logger.pino`
 
 Any object that implements the `Logger` interface works. If your logging library already has `info`, `warn`, `error`, and `debug` methods, you can cast it directly:
 
-```typescript
-import winston from 'winston'
-
-const logger = winston.createLogger({
-  transports: [new winston.transports.Console()],
-}) as unknown as Logger
-```
+Create the logger with `winston.createLogger({ transports: [new winston.transports.Console()] })` and cast it to the `Logger` interface.
 
 ## Log Levels
 
 Use `setLevel()` to control verbosity. `LogLevel` is an enum ordered from most
 to least verbose: `trace`, `debug`, `info`, `warn`, `error`, `critical`.
 
-```typescript
-import { LogLevel } from '@pikku/core/services'
-
-logger.setLevel(LogLevel.debug) // Show all logs
-logger.setLevel(LogLevel.warn)  // Only warnings and errors
-```
+Call `setLevel` with a `LogLevel` from `@pikku/core/services`: `LogLevel.debug` shows all logs, `LogLevel.warn` shows only warnings and errors.
 
 ## Registration
 
 Pass the logger when creating singleton services:
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  logger: new PinoLogger(),
-})
-```
+Pass the logger under the `logger` key when you build the singleton services, for example `new PinoLogger()`.

@@ -21,31 +21,7 @@ Add Pikku to an existing Fastify app. Your non-Pikku routes and plugins work alo
 npm install @pikku/fastify-plugin
 ```
 
-```typescript
-import Fastify from 'fastify'
-import pikkuFastifyPlugin from '@pikku/fastify-plugin'
-
-import './.pikku/pikku-bootstrap.gen.js'
-
-const app = Fastify()
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-app.register(pikkuFastifyPlugin, {
-  pikku: {
-    logger: singletonServices.logger,
-    respondWith404: true,
-    logRoutes: true,
-    loadSchemas: true,
-  }
-})
-
-// Your own Fastify routes still work
-app.get('/custom', async () => ({ hello: 'world' }))
-
-await app.listen({ port: 3000 })
-```
+Create a Fastify instance, import the generated bootstrap, and build your config and singleton services. Register the plugin with `app.register(pikkuFastifyPlugin, { pikku: { ... } })`, where `pikkuFastifyPlugin` is the default export of `@pikku/fastify-plugin`. The `pikku` options are `logger`, `respondWith404: true`, `logRoutes: true` and `loadSchemas: true`. Your own Fastify routes keep working beside it, and you finish with `await app.listen({ port: 3000 })`.
 
 Calling `createSingletonServices` registers the services into Pikku's global
 state (the bootstrap import wires up the function and wire-service registry), so
@@ -67,27 +43,7 @@ For projects where Pikku handles everything:
 npm install @pikku/fastify
 ```
 
-```typescript
-import './.pikku/pikku-bootstrap.gen.js'
-import { PikkuFastifyServer } from '@pikku/fastify'
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-const server = new PikkuFastifyServer(config, singletonServices.logger)
-
-// Access the underlying Fastify app if needed
-// server.app.register(myPlugin)
-
-await server.init()
-
-process.on('SIGINT', async () => {
-  await server.stop()
-  process.exit(0)
-})
-
-await server.start()
-```
+Import the generated bootstrap and `PikkuFastifyServer` from `@pikku/fastify`. After creating the config and singleton services, construct `new PikkuFastifyServer(config, singletonServices.logger)`. The underlying Fastify app is on `server.app` if you need to register your own plugins. Await `server.init()`, register a `SIGINT` handler that awaits `server.stop()` and exits, and then await `server.start()`.
 
 The full server config extends `CoreConfig` with:
 

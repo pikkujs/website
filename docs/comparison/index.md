@@ -13,27 +13,9 @@ This page explains the key architectural differences.
 
 Most frameworks tightly bind functions to a transport layer:
 
-```typescript
-// Express — function is an HTTP handler
-app.post('/users', async (req, res) => {
-  const user = await createUser(req.body)
-  res.json(user)
-})
+In Express the function is an HTTP handler: `app.post('/users', ...)` reads `req.body`, calls `createUser` and answers with `res.json(user)`. In Pikku the function is transport-agnostic, and you wire it to as many transports as you like:
 
-// Pikku — function is transport-agnostic
-export const createUser = pikkuSessionlessFunc<CreateUserInput, User>({
-  func: async (services, data) => {
-    return await services.database.insert('users', data)
-  }
-})
-
-// Then wire it to any transport
-wireHTTP({ auth: false, method: 'post', route: '/users', func: createUser })
-wireQueueWorker({ name: 'user-creation', func: createUser })
-wireCLI({
-  program: 'users',
-  commands: { create: pikkuCLICommand({ auth: false, func: createUser }) }
-})
+```typescript @snippet co-comparison-pikku
 ```
 
 The same function works across HTTP, WebSockets, queues, CLI, MCP, and scheduled tasks — without any modification.

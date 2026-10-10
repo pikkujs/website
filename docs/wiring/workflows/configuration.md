@@ -41,38 +41,14 @@ locks runs and steps on. Register the same instance as `leaseService` — see
 Use PostgreSQL for both state storage and queue. The `PgBossServiceFactory`
 provides the queue service; `PgKyselyWorkflowService` provides workflow state.
 
-```typescript
-import {
-  PikkuKysely,
-  PgKyselyLeaseService,
-  PgKyselyWorkflowService,
-} from '@pikku/kysely-postgres'
-import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
-import { PgBossServiceFactory } from '@pikku/queue-pg-boss'
+Install `@pikku/kysely-postgres` and `@pikku/queue-pg-boss`. Create the `PikkuKysely`, lease service and `PgKyselyWorkflowService` as follows, then create a `PgBossServiceFactory` for the queue:
 
-export const createSingletonServices = async (config, { logger }) => {
-  const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
-  await pikkuKysely.init()
+1. `new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)`, then `await pikkuKysely.init()`.
+2. `new PgKyselyLeaseService(pikkuKysely.kysely)`, then `await leaseService.init()`.
+3. `new PgKyselyWorkflowService(pikkuKysely.kysely, { leaseService })`, then `await workflowService.init()`.
+4. `new PgBossServiceFactory(process.env.DATABASE_URL!)`, then `await pgBossFactory.init()`.
 
-  const pgBossFactory = new PgBossServiceFactory(process.env.DATABASE_URL!)
-  await pgBossFactory.init()
-
-  const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
-  await leaseService.init()
-
-  const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
-    leaseService,
-  })
-  await workflowService.init()
-
-  return {
-    queueService: pgBossFactory.getQueueService(),
-    leaseService,
-    workflowService,
-    // ... other services
-  }
-}
-```
+Return `queueService: pgBossFactory.getQueueService()`, `leaseService` and `workflowService` from `createSingletonServices`.
 
 The PostgreSQL state service creates its run/step tables on `init()`.
 
@@ -85,28 +61,7 @@ Use Redis for both state storage and queue. The `BullServiceFactory` provides
 the queue service; `RedisWorkflowService(connection, { leaseService, keyPrefix = 'workflows' })`
 provides workflow state, and `RedisLeaseService` locks its runs.
 
-```typescript
-import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
-import { BullServiceFactory } from '@pikku/queue-bullmq'
-
-export const createSingletonServices = async (config, { logger }) => {
-  const bullFactory = new BullServiceFactory()
-  await bullFactory.init()
-
-  // connection: Redis | RedisOptions | url | undefined
-  const leaseService = new RedisLeaseService(process.env.REDIS_URL)
-  const workflowService = new RedisWorkflowService(process.env.REDIS_URL, {
-    leaseService,
-  })
-
-  return {
-    queueService: bullFactory.getQueueService(),
-    leaseService,
-    workflowService,
-    // ... other services
-  }
-}
-```
+Install `@pikku/redis` and `@pikku/queue-bullmq`. Construct `new RedisLeaseService(process.env.REDIS_URL)` and `new RedisWorkflowService(process.env.REDIS_URL, { leaseService })`, create a `BullServiceFactory` and `await bullFactory.init()`, then return `queueService: bullFactory.getQueueService()`, `leaseService` and `workflowService` from `createSingletonServices`. The connection argument is a Redis instance, `RedisOptions`, a URL, or `undefined`.
 
 The Redis state service stores data in Redis hashes with the given key prefix.
 
@@ -129,91 +84,21 @@ The `workflowService` provides methods to query and interact with workflow runs:
 
 Get workflow run details by ID:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/function'
-
-export const checkWorkflowStatus = pikkuSessionlessFunc<
-  { runId: string },
-  { status: string; output?: any }
->(async ({ workflowService }, data) => {
-  const run = await workflowService!.getRun(data.runId)
-
-  if (!run) {
-    throw new Error(`Workflow not found: ${data.runId}`)
-  }
-
-  return {
-    status: run.status,        // 'running' | 'completed' | 'failed' | 'cancelled' | 'suspended'
-    output: run.output,        // Output data if completed
-    error: run.error,          // Error details if failed
-    createdAt: run.createdAt,  // Creation timestamp
-  }
-})
+```typescript @snippet wa-wf-get-run
 ```
 
 ### getRunHistory(runId)
 
 Get all step attempts for a workflow run in chronological order:
 
-```typescript
-export const getWorkflowHistory = pikkuSessionlessFunc<
-  { runId: string },
-  Array<any>
->(async ({ workflowService }, data) => {
-  const history = await workflowService!.getRunHistory(data.runId)
-
-  // Each entry includes:
-  // - stepName: Step description
-  // - status: 'succeeded' | 'failed'
-  // - attemptCount: Attempt number (1, 2, 3, ...)
-  // - result: Step result (if succeeded)
-  // - error: Error details (if failed)
-  // - createdAt: Timestamp
-
-  return history
-})
+```typescript @snippet wa-wf-get-run-history
 ```
 
 ### Polling for Completion
 
 Example of polling for workflow completion:
 
-```typescript
-export const triggerAndWait = pikkuSessionlessFunc<
-  { input: any },
-  any
->(async ({ workflowService, logger }, data, { rpc }) => {
-  // Start workflow
-  const { runId } = await rpc.startWorkflow('myWorkflow', data.input)
-
-  // Poll for completion
-  const maxAttempts = 30
-  const pollIntervalMs = 1000
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const run = await workflowService!.getRun(runId)
-
-    if (!run) {
-      throw new Error(`Workflow not found: ${runId}`)
-    }
-
-    if (run.status === 'completed') {
-      return run.output
-    }
-
-    if (run.status === 'failed') {
-      throw new Error(run.error?.message || 'Workflow failed')
-    }
-
-    if (run.status === 'cancelled') {
-      throw new Error('Workflow was cancelled')
-    }
-
-    await new Promise(resolve => setTimeout(resolve, pollIntervalMs))
-  }
-
-  throw new Error(`Workflow timeout after ${maxAttempts} attempts`)
-})
+```typescript @snippet wa-wf-poll
 ```
 
 ## Running Workflow Workers

@@ -20,22 +20,7 @@ npm install @pikku/node-http-server
 
 ## Setup
 
-```typescript title="src/start.ts"
-import { PikkuNodeHTTPServer } from '@pikku/node-http-server'
-import { createConfig, createSingletonServices } from './services.js'
-import './.pikku/pikku-bootstrap.gen.js'
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-const server = new PikkuNodeHTTPServer(
-  { ...config, port: 3000, hostname: '0.0.0.0', healthCheckPath: '/health-check' },
-  singletonServices.logger
-)
-server.enableExitOnSignals()
-await server.init()
-await server.start()
-```
+In `src/start.ts`, import `PikkuNodeHTTPServer` from `@pikku/node-http-server` and the generated bootstrap, then create the config and singleton services. Construct `new PikkuNodeHTTPServer({ ...config, port: 3000, hostname: '0.0.0.0', healthCheckPath: '/health-check' }, singletonServices.logger)`, call `enableExitOnSignals()`, and await `init()` and then `start()`.
 
 ## Configuration
 
@@ -70,17 +55,7 @@ The third constructor argument:
 
 The server itself only handles HTTP. Add channels by hooking the upgrade event:
 
-```typescript title="src/start.ts"
-import { WebSocketServer } from 'ws'
-import { pikkuWebsocketHandler } from '@pikku/ws'
-
-const server = new PikkuNodeHTTPServer(config, logger, {
-  configureServer: (httpServer) => {
-    const wss = new WebSocketServer({ noServer: true })
-    pikkuWebsocketHandler({ server: httpServer, wss, logger })
-  },
-})
-```
+Pass a `configureServer` callback in the third constructor argument. It receives the underlying `httpServer`; create a `WebSocketServer` from `ws` with `{ noServer: true }` and call `pikkuWebsocketHandler({ server: httpServer, wss, logger })` (from `@pikku/ws`).
 
 See [WS Handler](./ws-handler.md) for the full WebSocket setup.
 
@@ -88,14 +63,7 @@ See [WS Handler](./ws-handler.md) for the full WebSocket setup.
 
 When a container target has no platform queue or cron binding of its own, a trusted dispatcher (e.g. Pikku Fabric) can deliver jobs over HTTP. Always set a secret — without one every dispatch request is rejected and a warning is logged at startup:
 
-```typescript
-const server = new PikkuNodeHTTPServer(config, logger, {
-  dispatchJobs: true,
-  dispatchSecret: (
-    await singletonServices.secrets.getSecret('PIKKU_DISPATCH_SECRET')
-  ).reveal(),
-})
-```
+Pass `dispatchJobs: true` and a `dispatchSecret` in the third constructor argument. Read the secret with `(await singletonServices.secrets.getSecret('PIKKU_DISPATCH_SECRET')).reveal()`.
 
 Responses follow the worker contract: `204` acknowledged, `422` don't retry (missing meta / discarded), `503` retry, `401` bad secret.
 

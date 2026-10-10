@@ -19,16 +19,7 @@ npm install @pikku/kysely-postgres
 
 All services take a Kysely instance. Create one with `PikkuKysely`, then pass `pikkuKysely.kysely` to each service:
 
-```typescript
-import { PikkuKysely } from '@pikku/kysely-postgres'
-import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
-
-const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(
-  logger,
-  process.env.DATABASE_URL!
-)
-await pikkuKysely.init()
-```
+Import `PikkuKysely` and the `KyselyPikkuDB` type from `@pikku/kysely-postgres`. Construct `new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL)` and `await pikkuKysely.init()`. The Kysely instance is `pikkuKysely.kysely`.
 
 **Constructor:** `new PikkuKysely(logger, connectionOrConfig, defaultSchemaName?, poolConfig?)`
 
@@ -52,14 +43,7 @@ await pikkuKysely.init()
 | `statementTimeout` | Server-side `statement_timeout` in ms — cancels runaway queries so they can't pin the pool |
 | `prepare` | Set `false` behind a transaction-mode pooler (pgBouncer, Supabase pooler) that can't use prepared statements |
 
-```typescript
-const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(
-  logger,
-  process.env.DATABASE_URL!,
-  undefined,
-  { maxPool: 20, statementTimeout: 30_000, prepare: false }
-)
-```
+Pass an options object as the fourth argument (the third is `undefined`): `{ maxPool: 20, statementTimeout: 30_000, prepare: false }`.
 
 ## Services
 
@@ -67,21 +51,11 @@ const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(
 
 Implements both `AgentStorageService` and `AgentRunStateService` for AI Agent persistence.
 
-```typescript
-import { PgKyselyAgentStorageService } from '@pikku/kysely-postgres'
-
-const agentStorage = new PgKyselyAgentStorageService(pikkuKysely.kysely)
-await agentStorage.init() // Creates tables
-```
+`new PgKyselyAgentStorageService(pikkuKysely.kysely)` from `@pikku/kysely-postgres`, then `await agentStorage.init()` to create the tables.
 
 Register in your singleton services — the same instance implements both interfaces:
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  agentStorage,
-  agentRunState: agentStorage, // Same instance implements both
-})
-```
+Pass the same instance for both: `createSingletonServices(config, { agentStorage, agentRunState: agentStorage })`.
 
 **AgentStorageService methods:**
 
@@ -111,11 +85,7 @@ const singletonServices = await createSingletonServices(config, {
 
 Read-only service for querying agent runs.
 
-```typescript
-import { PgKyselyAgentRunService } from '@pikku/kysely-postgres'
-
-const agentRunService = new PgKyselyAgentRunService(pikkuKysely.kysely)
-```
+`new PgKyselyAgentRunService(pikkuKysely.kysely)` from `@pikku/kysely-postgres`.
 
 **Methods:**
 
@@ -135,30 +105,13 @@ Workflow orchestration with PostgreSQL persistence.
 It locks runs and steps on the [`PgKyselyLeaseService`](#pgkyselyleaseservice)
 you pass it; register the same instance as `leaseService`.
 
-```typescript
-import {
-  PgKyselyLeaseService,
-  PgKyselyWorkflowService,
-} from '@pikku/kysely-postgres'
-
-const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
-await leaseService.init()
-
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
-  leaseService,
-})
-await workflowService.init() // Creates tables
-```
+Create `new PgKyselyLeaseService(pikkuKysely.kysely)` and `await init()` it. Then `new PgKyselyWorkflowService(pikkuKysely.kysely, { leaseService })` and `await workflowService.init()`, which creates the tables. Both come from `@pikku/kysely-postgres`.
 
 ### PgKyselyWorkflowRunService
 
 Read-only service for querying workflow runs.
 
-```typescript
-import { PgKyselyWorkflowRunService } from '@pikku/kysely-postgres'
-
-const workflowRunService = new PgKyselyWorkflowRunService(pikkuKysely.kysely)
-```
+`new PgKyselyWorkflowRunService(pikkuKysely.kysely)` from `@pikku/kysely-postgres`.
 
 ### PgKyselyLeaseService
 
@@ -171,18 +124,7 @@ holder that stalls past its expiry loses the key without knowing. Anything the
 body writes that must not come from a stale holder should check the lease's
 `token`, which rises every time the key changes hands.
 
-```typescript
-import { holdLease } from '@pikku/core/services'
-import { PgKyselyLeaseService } from '@pikku/kysely-postgres'
-
-const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
-await leaseService.init()
-
-// Renewed every 10s while the body runs; a crashed holder blocks others for 30s.
-await holdLease(leaseService, 'nightly-report', async (lease, signal) => {
-  // signal aborts if the lease is lost while this runs
-})
-```
+Import `holdLease` from `@pikku/core/services`, and create and `init()` a `PgKyselyLeaseService`. Then call `holdLease(leaseService, 'nightly-report', async (lease, signal) => { ... })`. The lease is renewed every 10 seconds while the body runs, and a crashed holder blocks others for 30 seconds. `signal` aborts if the lease is lost while the body runs.
 
 Leases are written and judged on the database's clock (`clock_timestamp()`),
 so workers whose clocks disagree still agree on who holds a key. The table is
@@ -192,33 +134,19 @@ so workers whose clocks disagree still agree on who holds a key. The table is
 
 WebSocket channel and subscription persistence.
 
-```typescript
-import { PgKyselyChannelStore } from '@pikku/kysely-postgres'
-
-const channelStore = new PgKyselyChannelStore(pikkuKysely.kysely)
-await channelStore.init() // Creates tables
-```
+`new PgKyselyChannelStore(pikkuKysely.kysely)` from `@pikku/kysely-postgres`, then `await channelStore.init()` to create the tables.
 
 ### PgKyselyEventHubStore
 
 Tracks channel topic subscriptions for pub/sub across instances.
 
-```typescript
-import { PgKyselyEventHubStore } from '@pikku/kysely-postgres'
-
-const eventHubStore = new PgKyselyEventHubStore(pikkuKysely.kysely)
-```
+`new PgKyselyEventHubStore(pikkuKysely.kysely)` from `@pikku/kysely-postgres`.
 
 ### PgEventHubService
 
 A full `EventHubService` implementation backed by Postgres LISTEN/NOTIFY — real-time pub/sub across multiple server instances without Redis. Each process holds one dedicated LISTEN connection; publishes fan out locally first, then NOTIFY delivers the event to every other instance's connected WebSocket clients.
 
-```typescript
-import { PgEventHubService } from '@pikku/kysely-postgres'
-
-const eventHub = new PgEventHubService(process.env.DATABASE_URL!)
-await eventHub.init()
-```
+`new PgEventHubService(process.env.DATABASE_URL)` from `@pikku/kysely-postgres`, then `await eventHub.init()`.
 
 :::info
 Postgres caps NOTIFY payloads at 8 kB. Keep event data small — for large payloads publish an ID and fetch the full record on the receiving side.
@@ -228,75 +156,25 @@ Postgres caps NOTIFY payloads at 8 kB. Keep event data small — for large paylo
 
 Encrypted per-user credential storage (OAuth tokens, per-user API keys), re-exported from `@pikku/kysely`.
 
-```typescript
-import { KyselyCredentialService } from '@pikku/kysely-postgres'
-
-const credentialService = new KyselyCredentialService(pikkuKysely.kysely, {
-  key: process.env.ENCRYPTION_KEY!,
-})
-await credentialService.init()
-```
+`new KyselyCredentialService(pikkuKysely.kysely, { key })` from `@pikku/kysely-postgres`, with `key` from `ENCRYPTION_KEY`, then `await credentialService.init()`.
 
 ### PgKyselyDeploymentService
 
 Tracks multi-instance deployments with heartbeat monitoring.
 
-```typescript
-import { PgKyselyDeploymentService } from '@pikku/kysely-postgres'
-
-const deploymentService = new PgKyselyDeploymentService(
-  { heartbeatInterval: 5000, heartbeatTtl: 15000 },
-  pikkuKysely.kysely,
-  singletonServices.jwt,
-  singletonServices.secrets
-)
-await deploymentService.init()
-```
+`new PgKyselyDeploymentService(...)` from `@pikku/kysely-postgres` takes four arguments: a config `{ heartbeatInterval: 5000, heartbeatTtl: 15000 }`, `pikkuKysely.kysely`, `singletonServices.jwt` and `singletonServices.secrets`. Then `await deploymentService.init()`.
 
 ## Full Example
 
-```typescript
-import {
-  PikkuKysely,
-  PgKyselyAgentStorageService,
-  PgKyselyAgentRunService,
-  PgKyselyLeaseService,
-  PgKyselyWorkflowService,
-} from '@pikku/kysely-postgres'
-import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
-import { VercelAgentRunner } from '@pikku/ai-vercel'
-import { createOpenAI } from '@ai-sdk/openai'
+A typical setup, in order:
 
-const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
-await pikkuKysely.init()
-
-const agentStorage = new PgKyselyAgentStorageService(pikkuKysely.kysely)
-await agentStorage.init()
-
-const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
-await leaseService.init()
-
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
-  leaseService,
-})
-await workflowService.init()
-
-const singletonServices = await createSingletonServices(config, {
-  agentStorage,
-  agentRunState: agentStorage,
-  agentRunService: new PgKyselyAgentRunService(pikkuKysely.kysely),
-  leaseService,
-  workflowService,
-  agentRunner: new VercelAgentRunner({
-    openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),
-  }),
-})
-```
+1. Create `PikkuKysely<KyselyPikkuDB>` with the logger and `DATABASE_URL`, and `await init()`.
+2. Create `PgKyselyAgentStorageService` over `pikkuKysely.kysely` and `init()` it.
+3. Create `PgKyselyLeaseService` and `init()` it, then `PgKyselyWorkflowService` with `{ leaseService }` and `init()` that.
+4. Call `createSingletonServices(config, ...)` with `agentStorage`, `agentRunState` (the same `agentStorage`), `agentRunService` (a `PgKyselyAgentRunService`), `leaseService`, `workflowService`, and an `agentRunner`: `new VercelAgentRunner({ openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY }) })` using `@pikku/ai-vercel` and `@ai-sdk/openai`.
 
 ## Cleanup
 
 Close the connection when shutting down:
 
-```typescript
-await pikkuKysely.close()
-```
+On shutdown, await `pikkuKysely.close()`.

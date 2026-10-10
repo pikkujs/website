@@ -49,36 +49,17 @@ Every persistent workflow service takes a required `leaseService`, which it
 locks runs and steps on; register the same instance as `leaseService` too.
 
 **PostgreSQL (Kysely):**
-```typescript
-import {
-  PikkuKysely,
-  PgKyselyLeaseService,
-  PgKyselyWorkflowService,
-} from '@pikku/kysely-postgres'
-import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
+For PostgreSQL, install `@pikku/kysely-postgres` and build the services in this order:
 
-const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
-await pikkuKysely.init()
-
-const leaseService = new PgKyselyLeaseService(pikkuKysely.kysely)
-await leaseService.init()
-
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
-  leaseService,
-})
-await workflowService.init()
-```
+1. `new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)`, then `await pikkuKysely.init()`.
+2. `new PgKyselyLeaseService(pikkuKysely.kysely)`, then `await leaseService.init()`.
+3. `new PgKyselyWorkflowService(pikkuKysely.kysely, { leaseService })`, then `await workflowService.init()`.
 
 **Redis:**
-```typescript
-import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
+For Redis, install `@pikku/redis` and construct the two services from the same connection (a Redis instance, `RedisOptions`, a URL, or `undefined`):
 
-// (connection | RedisOptions | url | undefined, { leaseService, keyPrefix = 'workflows' })
-const leaseService = new RedisLeaseService(process.env.REDIS_URL)
-const workflowService = new RedisWorkflowService(process.env.REDIS_URL, {
-  leaseService,
-})
-```
+1. `new RedisLeaseService(process.env.REDIS_URL)`.
+2. `new RedisWorkflowService(process.env.REDIS_URL, { leaseService })`. It also accepts a `keyPrefix` option (default `'workflows'`).
 
 ### 3. Generate workflow types
 
@@ -90,8 +71,7 @@ npx pikku
 
 Here's the workflow from the templates showing all three step types:
 
-```typescript reference title="workflow.functions.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/workflow.functions.ts
+```typescript @snippet wa-wf-quick-example
 ```
 
 Each `pikkuWorkflowFunc` exported from a `*.workflow.ts` / functions file is discovered and registered automatically by `npx pikku` — there is no separate wiring call. The execution mode (inline vs remote) is determined automatically based on whether a queue service is configured in your singleton services.
@@ -112,31 +92,14 @@ The CLI generates queue workers for:
 
 `rpc.startWorkflow` lives on the wire object (the 3rd function argument) and resolves to `{ runId }`:
 
-```typescript
-const { runId } = await rpc.startWorkflow('onboarding', {
-  email: 'user@example.com',
-  userId: 'user-123'
-})
+```typescript @snippet wa-wf-start
 ```
 
 ## Testing with Inline Mode
 
 For testing, simply don't configure a queue service. When no `queueService` is available in your singleton services, workflows automatically run inline:
 
-```typescript
-// In your services setup - omit queueService for inline mode
-const workflowService = new PgKyselyWorkflowService(pikkuKysely.kysely, {
-  leaseService,
-})
-await workflowService.init()
-
-const singletonServices = await createSingletonServices(config, {
-  logger,
-  leaseService,
-  workflowService,
-  // queueService: ... (omit for inline mode)
-})
-```
+Build the workflow service and the lease service exactly as above, and pass `leaseService` and `workflowService` to your `createSingletonServices` call, but leave `queueService` out. With no `queueService` among the singleton services, workflows run inline.
 
 Workflows themselves need no wiring call — exporting a `pikkuWorkflowFunc` is enough for it to be registered.
 

@@ -23,8 +23,7 @@ Graph workflows define multi-step processes declaratively as a graph of nodes. I
 
 ## Basic Example
 
-```typescript reference title="graph.graph.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/graph.graph.ts
+```typescript @snippet wa-graph-basic
 ```
 
 ## Structure
@@ -33,44 +32,15 @@ A graph workflow has three main parts:
 
 ### nodes
 
-Maps node IDs to the function each node runs. A node can name an RPC function, a registered workflow (run as a child workflow), or a registered [AI agent](/docs/wiring/ai-agents/) (run as an agent):
-
-```typescript
-nodes: {
-  createUser: 'userCreate',      // node ID -> RPC function name
-  sendWelcome: 'emailSend',
-  classify: 'ticket-classifier', // an AI agent name works too
-  updateCRM: 'crmUserCreate',
-}
-```
+`nodes` maps each node ID to the function it runs. In the example above `validate: 'validateBasket'` means the node `validate` calls the RPC function `validateBasket`. The value can also be a registered workflow name or an AI agent name.
 
 ### config
 
-Configures each node's input, flow control, and error handling:
-
-```typescript
-config: {
-  createUser: {
-    next: 'sendWelcome',           // which node runs next
-    onError: 'handleError',        // error handler node
-  },
-  sendWelcome: {
-    input: (ref) => ({             // map inputs from other nodes
-      to: ref('createUser', 'email'),
-      name: ref('createUser', 'name'),
-    }),
-  },
-}
-```
+`config` is keyed by node ID. `next` names the node that runs after this one, `onError` names an error handler node, and `input` maps this node's input from other nodes, using the `ref` helper it is handed.
 
 ### description and tags
 
-Optional metadata for documentation and filtering:
-
-```typescript
-description: 'User onboarding workflow',
-tags: ['onboarding', 'users'],
-```
+`description` and `tags` are optional metadata for documentation and filtering. Both appear on the graph in the example above.
 
 ## References with ref()
 
@@ -78,21 +48,11 @@ The `ref()` function connects nodes by referencing outputs from previous nodes o
 
 ### Reference workflow input
 
-```typescript
-input: (ref) => ({
-  userId: ref('input', 'userId'),    // from workflow input
-  email: ref('input', 'email'),
-})
-```
+To reference the workflow input, pass `'trigger'` as the node ID, as in `ref('trigger', 'basketId')`.
 
 ### Reference node output
 
-```typescript
-input: (ref) => ({
-  orderId: ref('validateOrder', 'orderId'),   // from validateOrder node output
-  total: ref('processPayment', 'chargedAmount'),
-})
-```
+To reference another node's output, pass that node's ID and the output field, as in `ref('validate', 'totalCents')`.
 
 The CLI generates types so `ref()` provides autocomplete for both node IDs and output fields.
 
@@ -105,32 +65,7 @@ A node's function name doesn't have to be an RPC — it can also be:
 
 An agent node takes the standard agent input — `message`, `threadId`, and `resourceId`:
 
-```typescript
-import { pikkuWorkflowGraph } from '#pikku/workflow'
-
-export const triageWorkflow = pikkuWorkflowGraph({
-  description: 'Classify a support ticket with an AI agent, then route it',
-  nodes: {
-    classify: 'ticket-classifier',   // AI agent
-    escalate: 'ticketEscalate',      // RPC function
-  },
-  config: {
-    classify: {
-      input: (ref) => ({
-        message: ref('input', 'message'),
-        threadId: ref('input', 'ticketId'),
-        resourceId: ref('input', 'userId'),
-      }),
-      next: 'escalate',
-    },
-    escalate: {
-      input: (ref) => ({
-        // 'category' comes from the agent's output schema
-        category: ref('classify', 'category'),
-      }),
-    },
-  },
-})
+```typescript @snippet wa-graph-agent-node
 ```
 
 The generated `pikkuWorkflowGraph` wrapper type-checks all three kinds of names, and `ref()` on an agent node resolves the keys of the agent's `output` schema. Give the agent an `output` schema if downstream nodes need typed access to its result — see [AI Agents](/docs/wiring/ai-agents/).
@@ -141,118 +76,51 @@ The generated `pikkuWorkflowGraph` wrapper type-checks all three kinds of names,
 
 Nodes run one after another:
 
-```typescript
-config: {
-  step1: { next: 'step2' },
-  step2: { next: 'step3' },
-  step3: { /* no next = workflow ends */ },
-}
+```typescript @snippet wa-graph-sequential
 ```
 
 ### Parallel
 
 Multiple nodes run concurrently:
 
-```typescript
-config: {
-  fetchData: {
-    next: ['sendEmail', 'updateCRM', 'logActivity'],  // all three run in parallel
-  },
-}
+```typescript @snippet wa-graph-parallel
 ```
 
 ### Branching
 
-Route to different nodes based on function logic:
-
-```typescript
-config: {
-  checkInventory: {
-    next: {
-      inStock: 'processOrder',
-      outOfStock: 'notifyBackorder',
-      discontinued: 'refundCustomer',
-    },
-  },
-}
-```
+Set `next` to an object whose keys are branch names and whose values are node IDs, for example `next: { inStock: 'processOrder', outOfStock: 'notifyBackorder', discontinued: 'refundCustomer' }`.
 
 In your RPC function, call `graph.branch()` to select the path:
 
-```typescript
-export const checkInventory = pikkuSessionlessFunc<
-  { productId: string },
-  { available: boolean }
->({
-  func: async (_services, { productId }, { graph }) => {
-    const stock = await getStock(productId)
-
-    if (stock.discontinued) {
-      graph.branch('discontinued')
-    } else if (stock.quantity > 0) {
-      graph.branch('inStock')
-    } else {
-      graph.branch('outOfStock')
-    }
-
-    return { available: stock.quantity > 0 }
-  },
-})
+```typescript @snippet wa-graph-branch-fn
 ```
 
 ## Error Handling
 
 Route errors to handler nodes with `onError`:
 
-```typescript
-config: {
-  processPayment: {
-    next: 'sendConfirmation',
-    onError: 'handlePaymentError',   // runs if processPayment fails
-  },
-  handlePaymentError: {
-    input: (ref) => ({
-      orderId: ref('input', 'orderId'),
-    }),
-  },
-}
+```typescript @snippet wa-graph-on-error
 ```
 
 ## State Management
 
 Store and retrieve state across the workflow using `graph.setState()` and `graph.getState()`:
 
-```typescript
-export const updateProgress = pikkuSessionlessFunc<
-  { step: string },
-  { updated: boolean }
->({
-  func: async (_services, { step }, { graph }) => {
-    const state = await graph.getState()
-    const completedSteps = (state.completedSteps as string[]) || []
-
-    await graph.setState('completedSteps', [...completedSteps, step])
-    await graph.setState('lastUpdated', new Date().toISOString())
-
-    return { updated: true }
-  },
-})
+```typescript @snippet wa-graph-state
 ```
 
 ## Graph Wire Context
 
 Functions running in a graph workflow receive a `graph` object on the **wire** (the 3rd function argument, alongside `rpc`/`http`/etc. — not a service):
 
-```typescript
-interface PikkuGraphWire {
-  runId: string              // workflow run ID
-  graphName: string          // workflow name
-  nodeId: string             // current node ID
-  branch: (key: string) => void
-  setState: (name: string, value: unknown) => Promise<void>
-  getState: () => Promise<Record<string, unknown>>
-}
-```
+| Field | Type | Description |
+|-------|------|-------------|
+| `runId` | `string` | Workflow run ID |
+| `graphName` | `string` | Workflow name |
+| `nodeId` | `string` | Current node ID |
+| `branch` | `(key: string) => void` | Pick which `next` branch runs |
+| `setState` | `(name: string, value: unknown) => Promise<void>` | Store a value for the run |
+| `getState` | `() => Promise<Record<string, unknown>>` | Read the stored state |
 
 ## Starting a Graph Workflow
 

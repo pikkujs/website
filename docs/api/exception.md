@@ -10,11 +10,7 @@ Pikku provides a comprehensive set of HTTP-based exception classes that automati
 
 The base class for all Pikku exceptions, extending the standard JavaScript Error class.
 
-```typescript
-class PikkuError extends Error {
-  constructor(message: string = 'An error occurred')
-}
-```
+`PikkuError` extends `Error` and takes one optional argument, the message, which defaults to `'An error occurred'`.
 
 ## Common HTTP Exceptions
 
@@ -72,113 +68,33 @@ Server acting as gateway didn't receive timely response from upstream server.
 
 ## Usage Examples
 
-```typescript
-import { BadRequestError, UnauthorizedError, ForbiddenError, NotFoundError, ConflictError, InternalServerError } from '#pikku/error'
-
-// Validate input
-export const createUser = pikkuFunc<
-  { email: string; password: string },
-  { userId: string }
->(async (services, data) => {
-  if (!isValidEmail(data.email)) {
-    throw new BadRequestError('Invalid email format')
-  }
-
-  const existingUser = await services.database.getUserByEmail(data.email)
-  if (existingUser) {
-    throw new ConflictError('User with this email already exists')
-  }
-
-  const userId = await services.database.createUser(data)
-  return { userId }
-})
-
-// Authorization
-export const getResource = pikkuFunc<
-  { resourceId: string },
-  { resource: Resource }
->(async (services, data, { session }) => {
-  const resource = await services.database.getResource(data.resourceId)
-  if (!resource) {
-    throw new NotFoundError(`Resource ${data.resourceId} not found`)
-  }
-
-  if (resource.ownerId !== session.userId && session.role !== 'admin') {
-    throw new ForbiddenError('Access denied')
-  }
-
-  return { resource }
-})
+```typescript @snippet co-exception-usage
 ```
 
 ## Custom Error Messages
 
 You can provide custom error messages when throwing exceptions:
 
-```typescript
-// Default message
-throw new BadRequestError()
-
-// Custom message
-throw new BadRequestError('Username must be at least 3 characters long')
-
-// Dynamic message
-throw new NotFoundError(`User with ID ${userId} not found`)
+```typescript @snippet co-exception-messages
 ```
 
 ## Error Handling Integration
 
 Pikku automatically converts thrown exceptions to appropriate HTTP responses:
 
-```typescript
-// This function throws a BadRequestError
-const validateData: CorePikkuFunction<{ age: number }, { valid: boolean }> = async (services, data) => {
-  if (data.age < 0) {
-    throw new BadRequestError('Age cannot be negative')
-  }
-  return { valid: true }
-}
-
-// When called via HTTP, this automatically returns:
-// HTTP 400 Bad Request
-// {
-//   "name": "BadRequestError",
-//   "message": "Age cannot be negative",
-//   "errorId": "<trace id>"
-// }
-```
+A function that throws `BadRequestError('Age cannot be negative')` is returned over HTTP as a `400 Bad Request` with a JSON body holding the error `name` (`BadRequestError`), the `message`, and an `errorId` that is the trace id.
 
 ## Error Response Structure
 
 All Pikku exceptions automatically generate consistent error responses:
 
-```typescript
-// Exception thrown in function
-throw new ForbiddenError('Insufficient permissions')
-
-// Automatically becomes HTTP response:
-// Status: 403 Forbidden
-// Body: {
-//   "name": "ForbiddenError",
-//   "message": "Insufficient permissions",
-//   "errorId": "<trace id>"
-// }
-```
+Throwing `ForbiddenError('Insufficient permissions')` inside a function becomes a `403 Forbidden` response whose body holds the `name` (`ForbiddenError`), the `message` and the `errorId` trace id.
 
 ## Error Registration
 
 Pikku maintains an internal registry of error types and their HTTP status codes. You can also register custom errors:
 
-```typescript
-import { PikkuError, addError } from '#pikku/error'
-
-class CustomBusinessError extends PikkuError {}
-
-// Register with custom status code
-addError(CustomBusinessError, {
-  status: 422,
-  message: 'Business rule violation'
-})
+```typescript @snippet addError
 ```
 
 ## Interface

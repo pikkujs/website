@@ -36,14 +36,7 @@ Point the CLI at a shim output file in your Start app via `pikku.config.json`:
 
 Running `npx pikku tanstack-start` (or the full `npx pikku` codegen) generates a `makeApi()` shim that wraps the typed `PikkuRPC` client:
 
-```typescript title="routes/cards.tsx"
-import { createFileRoute } from '@tanstack/react-router'
-import { makeApi } from '../pikku-start.gen.js'
-
-export const Route = createFileRoute('/cards')({
-  loader: () => makeApi().invoke('listCards', {}),
-})
-```
+In a route file such as `routes/cards.tsx`, import `makeApi` from `../pikku-start.gen.js` and call it in the route's loader: `createFileRoute('/cards')({ loader: () => makeApi().invoke('listCards', {}) })`.
 
 Every call is fully typed against your backend's RPC map — input and output types come straight from your Pikku function signatures.
 
@@ -55,32 +48,11 @@ The shim reads the API base URL from `import.meta.env.VITE_API_URL` and throws i
 
 `toTanStackStartAuthHandler` turns your auth instance into a Start server-route handler:
 
-```typescript title="routes/api/auth/$.ts"
-import { createServerFileRoute } from '@tanstack/react-start/server'
-import { toTanStackStartAuthHandler } from '@pikku/tanstack-start'
-import { auth } from '../../../auth.js'
-
-const handler = toTanStackStartAuthHandler(auth)
-
-export const ServerRoute = createServerFileRoute('/api/auth/$').methods({
-  GET: handler,
-  POST: handler,
-})
-```
+In `routes/api/auth/$.ts`, wrap your Better Auth instance with `toTanStackStartAuthHandler(auth)` from `@pikku/tanstack-start`. Create the route with `createServerFileRoute('/api/auth/$')` and map both `GET` and `POST` to that handler through `.methods({ ... })`.
 
 If your backend defines auth as a Pikku Better Auth **factory** (`pikkuBetterAuth(...)`), pass the factory plus your config and services creators — the handler resolves them lazily on first request:
 
-```typescript title="routes/api/auth/$.ts"
-import { toTanStackStartAuthHandler } from '@pikku/tanstack-start'
-import { pikkuAuth } from 'backend/src/auth.js'
-import { createConfig, createSingletonServices } from 'backend/src/services.js'
-
-const handler = toTanStackStartAuthHandler(
-  pikkuAuth,
-  createConfig,
-  createSingletonServices
-)
-```
+In a monorepo, also pass the backend's `createConfig` and `createSingletonServices` as the second and third arguments: `toTanStackStartAuthHandler(pikkuAuth, createConfig, createSingletonServices)`, importing `pikkuAuth` and the factories from your backend package.
 
 ### Cookies
 

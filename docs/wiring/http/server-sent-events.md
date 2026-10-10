@@ -14,12 +14,10 @@ Pikku supports SSE on `GET` routes: when a route is wired with `sse: true`, ever
 
 Here are SSE functions and wiring from the templates, showing a progress stream and a periodic update stream:
 
-```typescript reference title="sse.functions.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/sse.functions.ts
+```typescript @snippet wa-sse-functions
 ```
 
-```typescript reference title="sse.wiring.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/sse.wiring.ts
+```typescript @snippet wa-sse-wiring
 ```
 
 Everything an SSE client receives comes from `channel.send()` calls in your function:
@@ -41,18 +39,7 @@ Everything an SSE client receives comes from `channel.send()` calls in your func
 
 For operations with discrete steps — report progress as you go, then return the final result:
 
-```typescript
-if (channel) {
-  channel.send({ status: 'started', processed: 0, total })
-  for (let i = 0; i < todos.length; i++) {
-    channel.send({ status: 'processing', processed: i + 1, total })
-  }
-  channel.send({ status: 'complete', processed: total, total })
-  channel.close()
-}
-
-// Returned to non-SSE callers of the same function
-return { status: 'complete', processed: total, total }
+```typescript @snippet wa-sse-progress
 ```
 
 Send the final message explicitly and call `channel.close()` when the stream is done — the return value is not sent to SSE clients.
@@ -61,20 +48,7 @@ Send the final message explicitly and call `channel.close()` when the stream is 
 
 For ongoing streams — set up an interval, send updates, and return the current snapshot for non-SSE callers:
 
-```typescript
-if (channel) {
-  let count = 0
-  const interval = setInterval(async () => {
-    channel.send({ todos, timestamp, count: todos.length })
-    if (++count >= 6) {
-      clearInterval(interval)
-      channel.close()  // Close explicitly when the stream is finished
-    }
-  }, 5000)
-}
-
-// Returned to non-SSE callers
-return { todos, timestamp, count: todos.length }
+```typescript @snippet wa-sse-periodic
 ```
 
 Use `channel.close()` when the stream has a defined end (like a fixed number of updates). For open-ended streams, omit it and let the client disconnect.
@@ -92,14 +66,7 @@ Only a registered Pikku error's message reaches the client; anything else is rep
 
 A stream whose client parses a different event protocol needs the failure in that protocol, or the error arrives as a parser crash with the message nowhere in sight. `streamProtocol` says which one the route speaks:
 
-```typescript
-wireHTTP({
-  method: 'get',
-  route: '/agent/stream',
-  func: streamAgent,
-  sse: true,
-  streamProtocol: 'agui',
-})
+```typescript @snippet wa-sse-stream-protocol
 ```
 
 With `'agui'` the same failure arrives as a single AG-UI event, and nothing follows it:
@@ -114,60 +81,23 @@ The default is `'pikku'`. The generated agent stream routes set `'agui'` for you
 
 ### Using EventSource API
 
-```javascript
-const eventSource = new EventSource('/todos/progress', { withCredentials: true })
-
-eventSource.onmessage = function(event) {
-  const data = JSON.parse(event.data)
-  console.log('Received:', data)
-
-  if (data.status === 'complete') {
-    eventSource.close()
-  }
-}
-
-eventSource.onerror = function(error) {
-  console.error('SSE error:', error)
-  eventSource.close()
-}
-```
+In the browser, open a native `EventSource` on the route with `withCredentials: true`, parse each `event.data` as JSON in `onmessage`, and call `eventSource.close()` once you see the terminal status (or when `onerror` fires) so the browser stops reconnecting.
 
 ### Typed client (Pikku Fetch)
 
 The generated fetch client can consume the stream directly:
 
-```typescript
-import { pikkuFetch } from '#pikku/pikku-fetch.gen.js'
-
-pikkuFetch.setServerUrl('http://localhost:4002')
-
-const stream = pikkuFetch.subscribeToSSE('/todos/progress', (event) => {
-  console.log('Received:', event)
-})
-
-// Later, to stop listening
-stream.close()
+```typescript @snippet wa-fetch-subscribe-sse
 ```
 
 ### Clients that can't stream
 
 A route with `sse: true` is always streamed, so a client that needs a single JSON response should call a non-SSE wiring of the same function instead of the SSE route:
 
-```typescript
-// Streamed
-wireHTTP({ method: 'get', route: '/todos/progress', func: processTodosProgress, sse: true })
-
-// Single response, same function
-wireHTTP({ method: 'get', route: '/todos/progress.json', func: processTodosProgress })
+```typescript @snippet wa-sse-dual-wiring
 ```
 
-```javascript
-async function fetchTodosProgress() {
-  const response = await fetch('/todos/progress.json')
-  const data = await response.json()
-  updateUI(data)
-}
-```
+A plain `fetch('/todos/progress.json')` followed by `response.json()` then gets the single response.
 
 The `if (channel)` guard in the function is what lets it serve both: it streams when a channel is present and just returns its value otherwise.
 
@@ -188,25 +118,12 @@ Consider WebSockets ([channels](../channels/index.md)) instead if you need:
 
 **Send an initial message** — an SSE client has nothing to render until the first event arrives:
 
-```typescript
-// ✅ Good - first message arrives immediately
-if (channel) {
-  channel.send(initialState)
-  // ... stream updates
-}
-return initialState
+```typescript @snippet wa-sse-initial-message
 ```
 
 **Use `channel.close()` only when the stream is finished** — for open-ended streams, let the client disconnect:
 
-```typescript
-// ✅ Finite stream - close when done
-if (count >= maxUpdates) {
-  clearInterval(interval)
-  channel.close()
-}
-
-// ✅ Open-ended stream - omit channel.close(), client disconnects when done
+```typescript @snippet wa-sse-finite-close
 ```
 
 **Send the final message before `channel.close()`** — the return value is not part of the stream, so a terminal event that clients wait for has to be sent explicitly.

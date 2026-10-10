@@ -8,38 +8,12 @@ RPC steps call other Pikku functions via queue workers. They execute asynchronou
 
 ### Syntax
 
-```typescript
-const result = await workflow.do(
-  'Step description',
-  'rpcFunctionName',
-  inputData,
-  {
-    retries: 3,           // Optional: number of retry attempts (default: 5)
-    retryDelay: '1s'      // Optional: fixed delay; omitted → exponential backoff
-  }
-)
+```typescript @snippet wa-wf-rpc-step-syntax
 ```
 
 ### Example
 
-```typescript
-// Call the createUserProfile RPC function
-const user = await workflow.do(
-  'Create user profile in database',
-  'createUserProfile',
-  { email: data.email, userId: data.userId }
-)
-
-// With retry options
-const payment = await workflow.do(
-  'Process payment',
-  'processPayment',
-  { amount: 100, userId: data.userId },
-  {
-    retries: 2,          // Retry up to 2 times (3 total attempts)
-    retryDelay: '5s'     // Wait 5 seconds between retries
-  }
-)
+```typescript @snippet wa-wf-rpc-step-example
 ```
 
 ### Retry Options
@@ -54,34 +28,7 @@ const payment = await workflow.do(
 
 RPC functions can access workflow step information through the `workflowStep` parameter:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/function'
-
-export const processPayment = pikkuSessionlessFunc<
-  { amount: number; userId: string },
-  { success: boolean }
->({
-  func: async ({ logger }, data, { workflowStep }) => {
-    // Access workflow context
-    if (workflowStep) {
-      const attempt = workflowStep.attemptCount  // Current attempt number (1, 2, 3, ...)
-      const runId = workflowStep.runId           // Workflow run ID
-      const stepId = workflowStep.stepId         // Current step ID
-
-      logger.info(`Payment attempt ${attempt} for run ${runId}`)
-
-      // Different behavior based on attempt count
-      if (attempt === 1) {
-        // First attempt - might fail
-      } else {
-        // Retry attempt - use different strategy
-      }
-    }
-
-    // Process payment...
-    return { success: true }
-  }
-})
+```typescript @snippet wa-wf-workflow-step-wire
 ```
 
 ### When to use RPC steps
@@ -97,46 +44,12 @@ Inline steps execute code immediately within the workflow process. Results are c
 
 ### Syntax
 
-```typescript
-const result = await workflow.do(
-  'Step description',
-  async () => {
-    // Your code here
-    return someValue
-  },
-  {
-    retries: 3,           // Optional: number of retry attempts (default: 5)
-    retryDelay: '1s'      // Optional: fixed delay; omitted → exponential backoff
-  }
-)
+```typescript @snippet wa-wf-inline-step-syntax
 ```
 
 ### Example
 
-```typescript
-// Create user in CRM system
-const crmUser = await workflow.do(
-  'Create user in CRM system',
-  async () => {
-    return await crmApi.createUser({
-      email: user.email,
-      name: user.name,
-      source: 'signup'
-    })
-  }
-)
-
-// With retry options for flaky external API
-const analyticsUser = await workflow.do(
-  'Create analytics profile',
-  async () => {
-    return await analyticsApi.createProfile(user)
-  },
-  {
-    retries: 2,          // Retry up to 2 times if API fails
-    retryDelay: '3s'     // Wait 3 seconds between retries
-  }
-)
+```typescript @snippet wa-wf-inline-step-example
 ```
 
 ### When to use inline steps
@@ -151,19 +64,7 @@ const analyticsUser = await workflow.do(
 
 On replay, inline steps are never re-executed:
 
-```typescript
-// First execution
-const crmUser = await workflow.do(
-  'Create user in CRM',
-  async () => crmApi.createUser(...) // ✓ Creates user in CRM
-)
-await workflow.sleep('Wait 5min', '5min')
-
-// After sleep (replay)
-const crmUser = await workflow.do(
-  'Create user in CRM',
-  async () => crmApi.createUser(...) // ✗ SKIPPED - uses cached crmUser
-)
+```typescript @snippet wa-wf-inline-caching
 ```
 
 Without caching, the CRM user would be created twice!
@@ -174,9 +75,7 @@ Sleep steps create time-based delays in workflows. They schedule the workflow to
 
 ### Syntax
 
-```typescript
-await workflow.sleep('Step description', duration)
-```
+`await workflow.sleep(description, duration)`
 
 Duration formats:
 - Seconds: `'5s'`, `'30s'`, `'120s'`
@@ -185,10 +84,7 @@ Duration formats:
 
 ### Example
 
-```typescript
-await workflow.sleep('Wait 5 minutes before sending email', '5min')
-await workflow.sleep('Wait 30 seconds before retry', '30s')
-await workflow.sleep('Wait 1 day before follow-up', '1440min')
+```typescript @snippet wa-wf-sleep-examples
 ```
 
 ### When to use sleep steps
@@ -205,39 +101,11 @@ runner recognises. Its constructor takes `(runId, reason?)`.
 
 ### Syntax
 
-```typescript
-throw new WorkflowCancelledException(workflow.runId, reason)
-```
+`throw new WorkflowCancelledException(workflow.runId, reason)`
 
 ### Example
 
-```typescript
-import { pikkuWorkflowFunc, WorkflowCancelledException } from '#pikku/workflow'
-
-export const orderWorkflow = pikkuWorkflowFunc<
-  { orderId: string; amount: number },
-  { success: boolean }
->(async ({ logger }, data, { workflow }) => {
-  // Cancel if amount is invalid
-  if (data.amount <= 0) {
-    throw new WorkflowCancelledException(
-      workflow.runId,
-      `Invalid order amount: ${data.amount}`
-    )
-  }
-
-  // Cancel if order is already cancelled in database
-  const order = await workflow.do('Fetch order', 'getOrder', { orderId: data.orderId })
-  if (order.status === 'cancelled') {
-    throw new WorkflowCancelledException(
-      workflow.runId,
-      `Order ${data.orderId} was already cancelled`
-    )
-  }
-
-  // Continue with order processing...
-  return { success: true }
-})
+```typescript @snippet wa-wf-cancellation
 ```
 
 When cancelled, the workflow run status is set to `'cancelled'` and execution stops immediately.
@@ -248,67 +116,24 @@ All step results are cached in the workflow state. When a workflow resumes (afte
 
 ### Example: Replay behavior
 
-```typescript
-export const workflow = pikkuWorkflowFunc(async (_services, data, { workflow }) => {
-  // First execution
-  const user = await workflow.do('Create user', 'createUser', data) // ✓ Executes
-  const crm = await workflow.do('Add to CRM', async () => crmApi.create()) // ✓ Executes
-  await workflow.sleep('Wait', '5min')                               // ✓ Schedules
-
-  // --- 5 minutes pass ---
-
-  // Replay (orchestrator restarts workflow)
-  const user = await workflow.do('Create user', 'createUser', data) // ✗ Skipped (cached)
-  const crm = await workflow.do('Add to CRM', async () => crmApi.create()) // ✗ Skipped (cached)
-  await workflow.sleep('Wait', '5min')                               // ✗ Skipped (cached)
-  await workflow.do('Send email', 'sendEmail', { user })             // ✓ Executes (new)
-})
+```typescript @snippet wa-wf-replay
 ```
 
 ## Best Practices
 
 ### 1. Descriptive step names
 
-Use clear, specific descriptions:
-
-```typescript
-// Good
-await workflow.do('Create user profile for john@example.com', ...)
-
-// Bad
-await workflow.do('Step 1', ...)
-```
+Good: a name that says what the step does for whom, like `'Create user profile for john@example.com'`. Bad: `'Step 1'`.
 
 ### 2. Use RPC for heavy operations
 
-Use RPC steps for CPU-intensive or long-running tasks:
-
-```typescript
-// Good: Heavy computation via RPC
-await workflow.do('Generate report', 'generateMonthlyReport', { month: 'Jan' })
-
-// Bad: Heavy computation inline (blocks orchestrator)
-await workflow.do('Generate report', async () => heavyComputation())
-```
+Good: hand heavy computation to an RPC step, like `workflow.do('Generate report', 'generateMonthlyReport', { month: 'Jan' })`. Bad: running it inline with `workflow.do('Generate report', async () => heavyComputation())`, which blocks the orchestrator.
 
 ### 3. Don't modify step order
 
 Once a workflow starts, don't rearrange steps:
 
-```typescript
-// ❌ WRONG: Adding step before completed steps
-export const workflow = pikkuWorkflowFunc(async (_services, data, { workflow }) => {
-  await workflow.do('New step', ...) // ← DON'T INSERT HERE if workflow already running
-  await workflow.do('Existing step 1', ...)
-  await workflow.do('Existing step 2', ...)
-})
-
-// ✓ CORRECT: Add new steps at end
-export const workflow = pikkuWorkflowFunc(async (_services, data, { workflow }) => {
-  await workflow.do('Existing step 1', ...)
-  await workflow.do('Existing step 2', ...)
-  await workflow.do('New step', ...) // ← Safe to add here
-})
+```typescript @snippet wa-wf-step-order
 ```
 
 ## Next Steps

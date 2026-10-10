@@ -12,29 +12,7 @@ Pikku provides built-in OAuth2 support for managing access tokens to third-party
 
 Use `defineCredential` with an `oauth2` block to register an OAuth2 integration:
 
-```typescript
-import { z } from 'zod'
-import { defineCredential } from '#pikku/auth'
-
-export const githubTokenSchema = z.object({
-  accessToken: z.string(),
-  refreshToken: z.string().optional(),
-})
-
-defineCredential({
-  name: 'github',
-  displayName: 'GitHub',
-  description: 'GitHub API access for repository operations',
-  type: 'wire',
-  schema: githubTokenSchema,
-  oauth2: {
-    appCredentialSecretId: 'GITHUB_OAUTH_APP',
-    tokenSecretId: 'GITHUB_OAUTH_TOKENS',
-    authorizationUrl: 'https://github.com/login/oauth/authorize',
-    tokenUrl: 'https://github.com/login/oauth/access_token',
-    scopes: ['repo', 'read:user'],
-  },
-})
+```typescript @snippet shopCredential
 ```
 
 | Property | Type | Description |
@@ -56,19 +34,7 @@ defineCredential({
 
 The `appCredentialSecretId` references a secret containing your OAuth2 application credentials:
 
-```typescript
-import { defineSecret } from '#pikku/secrets'
-
-defineSecret({
-  name: 'githubOAuthApp',
-  displayName: 'GitHub OAuth App',
-  description: 'GitHub OAuth application credentials',
-  secretId: 'GITHUB_OAUTH_APP',
-  schema: z.object({
-    clientId: z.string(),
-    clientSecret: z.string().optional(), // Optional for PKCE flows
-  }),
-})
+```typescript @snippet co-oauth-app-secret
 ```
 
 Set this secret with your OAuth app's client ID and secret (via your secret service).
@@ -77,22 +43,7 @@ Set this secret with your OAuth app's client ID and secret (via your secret serv
 
 You never write the token exchange. The CLI turns every `oauth2` declaration into an entry in the generated `CREDENTIAL_OAUTH2_CONFIGS`, and `@pikku/better-auth` turns those into one provider per credential:
 
-```typescript title="auth.ts"
-import { pikkuCredentialOAuth, credentialOAuthProviders } from '@pikku/better-auth'
-import { CREDENTIAL_OAUTH2_CONFIGS } from '#pikku/credentials/pikku-credentials.gen.js'
-
-plugins: [
-  pikkuCredentialOAuth({
-    config: await credentialOAuthProviders(
-      CREDENTIAL_OAUTH2_CONFIGS,
-      secrets,
-      logger
-    ),
-    scopeService,
-    logger,
-  }),
-]
-```
+Add `pikkuCredentialOAuth` to the `plugins` array of your Better Auth config, with `config` set to `await credentialOAuthProviders(CREDENTIAL_OAUTH2_CONFIGS, secrets, logger)` (the configs come from the generated `pikku-credentials.gen.js`), plus your `scopeService` and `logger`. Both helpers are exported from `@pikku/better-auth`.
 
 The credential name is the provider id, so linking an account is what makes `getCredential(name)` resolve. `BetterAuthCredentialService` reads the token out of better-auth's `account` table, which refreshes it on read rather than serving a stale one; credentials without an `oauth2` block fall through to whatever `CredentialService` you passed it as a fallback.
 
@@ -102,24 +53,7 @@ A credential whose app secret isn't configured yet is skipped with a warning rat
 
 Functions read the token off the wire, by credential name:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-import { UnauthorizedError } from '#pikku/error'
-
-export const listRepos = pikkuFunc<void, { names: string[] }>({
-  func: async (services, _data, wire) => {
-    const cred = await wire.getCredential?.<{ accessToken: string }>('github')
-    if (!cred?.accessToken) {
-      throw new UnauthorizedError('Connect GitHub first')
-    }
-
-    const response = await fetch('https://api.github.com/user/repos', {
-      headers: { Authorization: `Bearer ${cred.accessToken}` },
-    })
-    const repos = (await response.json()) as Array<{ name: string }>
-    return { names: repos.map((repo) => repo.name) }
-  },
-})
+```typescript @snippet co-credential-read
 ```
 
 Addons do the same thing inside `pikkuAddonWireServices`, resolving the token once and handing it to the API service — see [Creating Addons](/docs/addon/creating).

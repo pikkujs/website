@@ -26,37 +26,7 @@ mount onto your own app with `app.any` / `app.ws`. Services come from Pikku's
 global state, populated when you call `createSingletonServices` (and the bootstrap
 import), so the handlers only need a `logger`:
 
-```typescript
-import * as uWS from 'uWebSockets.js'
-import { pikkuHTTPHandler, pikkuWebsocketHandler } from '@pikku/uws-handler'
-
-import './.pikku/pikku-bootstrap.gen.js'
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-const app = uWS.App()
-
-// HTTP handler
-app.any(
-  '/*',
-  pikkuHTTPHandler({
-    logger: singletonServices.logger,
-    logRoutes: true,
-    loadSchemas: true,
-  })
-)
-
-// WebSocket handler (optional)
-app.ws(
-  '/*',
-  pikkuWebsocketHandler({
-    logger: singletonServices.logger,
-  })
-)
-
-app.listen(3000, () => console.log('Listening on 3000'))
-```
+Import `uWebSockets.js` and the generated bootstrap, create the config and singleton services, and create `uWS.App()`. Register the HTTP handler with `app.any('/*', pikkuHTTPHandler({ logger, logRoutes: true, loadSchemas: true }))`. If you need WebSockets, add `app.ws('/*', pikkuWebsocketHandler({ logger }))`. Both handlers come from `@pikku/uws-handler`. End with `app.listen(3000, ...)`.
 
 ## Full Server (`PikkuUWSServer`)
 
@@ -66,27 +36,7 @@ For projects where Pikku handles everything:
 npm install @pikku/uws
 ```
 
-```typescript
-import './.pikku/pikku-bootstrap.gen.js'
-import { PikkuUWSServer } from '@pikku/uws'
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-const server = new PikkuUWSServer(config, singletonServices.logger)
-
-// Access the underlying uWS app if needed
-// server.app.get('/custom', ...)
-
-await server.init()
-
-process.on('SIGINT', async () => {
-  await server.stop()
-  process.exit(0)
-})
-
-await server.start()
-```
+Import the generated bootstrap and `PikkuUWSServer` from `@pikku/uws`. After creating the config and singleton services, construct `new PikkuUWSServer(config, singletonServices.logger)`. The underlying uWS app is on `server.app` if you need to add your own routes. Await `server.init()`, register a `SIGINT` handler that awaits `server.stop()` and exits, and then await `server.start()`.
 
 The full server config extends `CoreConfig` with:
 
@@ -106,21 +56,6 @@ The `@pikku/ws` package provides a WebSocket handler using the [`ws`](https://gi
 npm install @pikku/ws ws
 ```
 
-```typescript
-import { pikkuWebsocketHandler } from '@pikku/ws'
-import { Server } from 'http'
-import { WebSocketServer } from 'ws'
-
-const server = new Server()
-const wss = new WebSocketServer({ noServer: true })
-
-pikkuWebsocketHandler({
-  server,
-  wss,
-  logger: singletonServices.logger,
-})
-
-server.listen(4002, 'localhost')
-```
+Create a plain `http` `Server` and a `WebSocketServer` from `ws` with `{ noServer: true }`. Call `pikkuWebsocketHandler({ server, wss, logger })` from `@pikku/ws`, then `server.listen(4002, 'localhost')`.
 
 See the [WebSocket runtime guide](./ws-handler) for the full setup.

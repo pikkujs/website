@@ -85,15 +85,7 @@ as somebody it is not.
 
 Signing is opt-in and lives in a wrapper rather than in each backend:
 
-```typescript
-import { SignedQueueService } from '@pikku/core/queue'
-
-const queueService = new SignedQueueService(
-  bullFactory.getQueueService(),
-  secrets,
-  logger
-)
-```
+Import `SignedQueueService` from `@pikku/core/queue` and wrap the underlying queue service: `new SignedQueueService(bullFactory.getQueueService(), secrets, logger)`.
 
 It signs `JobOptions.pikkuUserId` against the queue name and the payload using
 the `PIKKU_QUEUE_IDENTITY_SECRET` secret. With that secret missing it logs a
@@ -124,23 +116,7 @@ argument) — `queue` on the wire exists only inside a worker invocation. Both e
 classes, plus `wireQueueWorker` and `runQueueJob`, are exported from
 `@pikku/core/queue`:
 
-```typescript
-export const processReminder = pikkuSessionlessFunc<
-  { todoId: string },
-  { sent: boolean }
->(async ({ db, emailService }, { todoId }, { queue }) => {
-  await queue.updateProgress(25)
-
-  const todo = await db.getTodo(todoId)
-  if (!todo) {
-    await queue.discard('Todo not found')
-    return { sent: false }
-  }
-
-  await emailService.sendReminder(todo)
-  await queue.updateProgress(100)
-  return { sent: true }
-})
+```typescript @snippet queueJobControl
 ```
 
 ## Implementations
@@ -153,11 +129,7 @@ and serialization semantics of a real broker — the payload is JSON round-tripp
 before the worker sees it, and attempts are retried with backoff — so a job that
 works in development is not relying on shared object references.
 
-```typescript
-import { InMemoryQueueService } from '@pikku/core/services'
-
-const queueService = new InMemoryQueueService()
-```
+Import `InMemoryQueueService` from `@pikku/core/services` and construct it with no arguments.
 
 ```typescript reference title="in-memory-queue-service.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/in-memory-queue-service.ts
@@ -183,16 +155,7 @@ already depends on.
 BullMQ and pg-boss expose a factory that shares one connection between the queue
 service, the workers and the scheduler:
 
-```typescript
-import { BullServiceFactory } from '@pikku/queue-bullmq'
-
-const bullFactory = new BullServiceFactory()
-await bullFactory.init()
-
-const singletonServices = await createSingletonServices(config, {
-  queueService: bullFactory.getQueueService(),
-})
-```
+Create a `BullServiceFactory` from `@pikku/queue-bullmq`, await `init()`, and pass `getQueueService()` under the `queueService` key when you build the singleton services.
 
 Registering the queue service alone gives you the producer side. To *run* the
 workers, start the matching `QueueWorkers` adapter (`bullFactory.getQueueWorkers()`)

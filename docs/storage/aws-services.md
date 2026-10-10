@@ -25,22 +25,7 @@ npm install @pikku/aws-services
 
 File storage using S3 with CloudFront signed URLs:
 
-```typescript
-import { S3Content } from '@pikku/aws-services'
-
-const contentService = new S3Content(
-  {
-    bucketName: 'my-bucket',
-    region: 'us-east-1',
-    endpoint: undefined, // Optional: for LocalStack or custom endpoints
-  },
-  logger,
-  {
-    keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,
-    privateKey: process.env.CLOUDFRONT_PRIVATE_KEY!,
-  }
-)
-```
+Import `S3Content` from `@pikku/aws-services` and construct it with three arguments: a config object (`bucketName`, `region`, and an optional `endpoint` for LocalStack or custom endpoints), your `logger`, and a CloudFront config with `keyPairId` and `privateKey` (here read from `CLOUDFRONT_KEY_PAIR_ID` and `CLOUDFRONT_PRIVATE_KEY`).
 
 ### Features
 
@@ -54,30 +39,13 @@ const contentService = new S3Content(
 
 ### Usage
 
-```typescript
-// Every method takes a single options object, and `bucket` is a logical
-// bucket — a path prefix inside `config.bucketName`, not a second S3 bucket.
+Every method takes a single options object, and `bucket` is a logical bucket (a path prefix inside `config.bucketName`), not a second S3 bucket.
 
-// Generate upload URL for client-side upload
-const { uploadUrl, assetKey } = await contentService.getUploadURL({
-  bucket: 'uploads',
-  fileKey: 'photo.jpg',
-  contentType: 'image/jpeg',
-})
-
-// Sign a download URL (expires in 1 hour)
-const signedUrl = await contentService.signContentKey({
-  bucket: 'uploads',
-  contentKey: 'photo.jpg',
-  dateLessThan: new Date(Date.now() + 3600_000),
-})
-
-// Read file as stream
-const stream = await contentService.readFile({
-  bucket: 'uploads',
-  key: 'photo.jpg',
-})
-```
+| Method | Options | Returns |
+| --- | --- | --- |
+| `getUploadURL` | `bucket`, `fileKey`, `contentType` | `{ uploadUrl, assetKey }` for a client-side upload |
+| `signContentKey` | `bucket`, `contentKey`, `dateLessThan` (a `Date`, e.g. one hour from now) | a signed download URL |
+| `readFile` | `bucket`, `key` | the file as a stream |
 
 See [ContentService API](/docs/api/content-service) for the full interface.
 
@@ -85,31 +53,11 @@ See [ContentService API](/docs/api/content-service) for the full interface.
 
 Read-only access to AWS Secrets Manager:
 
-```typescript
-import { AWSSecrets } from '@pikku/aws-services'
-
-const secretService = new AWSSecrets({
-  awsRegion: 'us-east-1',
-})
-```
+Import `AWSSecrets` from `@pikku/aws-services` and construct it with `{ awsRegion: 'us-east-1' }`.
 
 ### Usage
 
-```typescript
-// Get a plain string secret (getSecret returns a wrapped SecretValue)
-const apiKey = (await secretService.getSecret('my-api-key')).reveal()
-
-// Get and parse a JSON secret
-const dbConfig = (
-  await secretService.getSecret<{
-    host: string
-    password: string
-  }>('database-config')
-).reveal()
-
-// Check if a secret exists
-const exists = await secretService.hasSecret('my-api-key')
-```
+`getSecret` returns a wrapped `SecretValue`, so call `.reveal()` to get the plain string: `(await secretService.getSecret('my-api-key')).reveal()`. For a JSON secret, pass the shape as the type argument (for example `getSecret<{ host: string; password: string }>('database-config')`) and reveal it the same way. `hasSecret('my-api-key')` returns whether the secret exists.
 
 :::note
 `AWSSecrets` is read-only. `setSecretJSON()` and `deleteSecret()` throw errors — use the AWS Console or CLI to manage secrets.
@@ -121,32 +69,11 @@ See [SecretService API](/docs/api/secret-service) for the full interface.
 
 Fire-and-forget job publishing to SQS queues:
 
-```typescript
-import { SQSQueueService } from '@pikku/aws-services'
-
-const queueService = new SQSQueueService({
-  region: 'us-east-1',
-  queueUrlPrefix: 'https://sqs.us-east-1.amazonaws.com/123456789/',
-  endpoint: undefined, // Optional: for LocalStack
-})
-```
+Import `SQSQueueService` from `@pikku/aws-services` and construct it with `region`, `queueUrlPrefix` (for example `https://sqs.us-east-1.amazonaws.com/123456789/`) and an optional `endpoint` for LocalStack.
 
 ### Usage
 
-```typescript
-// Add a job to a queue
-const messageId = await queueService.add('my-queue', {
-  userId: 'user-123',
-  action: 'send-email',
-})
-
-// Add with delay (max 900 seconds / 15 minutes per SQS limits)
-const delayedId = await queueService.add(
-  'my-queue',
-  { action: 'reminder' },
-  { delay: 300_000 } // 5 minutes in milliseconds
-)
-```
+Call `queueService.add(queueName, data)` to add a job; it returns the message id. Pass `{ delay }` (in milliseconds) as a third argument to delay it. SQS caps the delay at 900 seconds (15 minutes), so `{ delay: 300_000 }` is five minutes.
 
 ### Limitations
 
@@ -163,14 +90,7 @@ For job result tracking, use [BullMQ](/docs/runtimes/bullmq) or [PG Boss](/docs/
 
 On the worker side, use `runSQSQueueWorker` from `@pikku/lambda` to process messages:
 
-```typescript
-import { runSQSQueueWorker } from '@pikku/lambda'
-
-export const sqsHandler: SQSHandler = async (event) => {
-  const { logger } = await coldStart()
-  return await runSQSQueueWorker(logger, event)
-}
-```
+The SQS handler is typed as `SQSHandler`. It awaits your `coldStart()` to get the `logger`, then returns `runSQSQueueWorker(logger, event)` from `@pikku/lambda`.
 
 See [AWS Lambda — SQS Queue Worker](/docs/runtimes/aws-lambda#sqs-queue-worker) for the full setup.
 
@@ -178,12 +98,4 @@ See [AWS Lambda — SQS Queue Worker](/docs/runtimes/aws-lambda#sqs-queue-worker
 
 Register AWS services in your singleton services:
 
-```typescript
-import { S3Content, AWSSecrets, SQSQueueService } from '@pikku/aws-services'
-
-const singletonServices = await createSingletonServices(config, {
-  content: new S3Content(s3Config, logger, cloudFrontConfig),
-  secrets: new AWSSecrets({ awsRegion: 'us-east-1' }),
-  queueService: new SQSQueueService(sqsConfig),
-})
-```
+Pass all three to `createSingletonServices` as overrides: `content: new S3Content(s3Config, logger, cloudFrontConfig)`, `secrets: new AWSSecrets({ awsRegion: 'us-east-1' })` and `queueService: new SQSQueueService(sqsConfig)`.

@@ -30,13 +30,7 @@ What it does:
 
 After installing, wire it exactly like an npm addon:
 
-```typescript
-import { wireAddon } from '#pikku/addon'
-
-wireAddon({
-  name: 'invoicing',
-  package: '@acme/addon-invoicing', // the copied package's name
-})
+```typescript @snippet rt-wire-addon-local
 ```
 
 | Option | Description |
@@ -52,13 +46,7 @@ The other side of the registry is `pikku fabric addon verify` (check an addon di
 
 Wire addons in a `*.wiring.ts` file:
 
-```typescript
-import { wireAddon } from '#pikku/addon'
-
-wireAddon({
-  name: 'postgres',
-  package: '@pikku/addon-postgres',
-})
+```typescript @snippet rt-wire-addon-postgres
 ```
 
 The `name` becomes the namespace prefix for all RPC calls to that addon's functions.
@@ -67,29 +55,7 @@ The `name` becomes the namespace prefix for all RPC calls to that addon's functi
 
 Your `services.ts` provides the base services that addons need — logger, secrets, and variables. Addons receive these automatically:
 
-```typescript
-import { pikkuServices } from '#pikku/setup'
-import {
-  ConsoleLogger,
-  LocalVariablesService,
-  LocalSecretService,
-} from '@pikku/core/services'
-
-export const createSingletonServices = pikkuServices(
-  async (_config, existingServices) => {
-    const variables =
-      existingServices?.variables ?? new LocalVariablesService(process.env)
-    const secrets =
-      existingServices?.secrets ?? new LocalSecretService(variables)
-
-    return {
-      logger: existingServices?.logger ?? new ConsoleLogger(),
-      variables,
-      secrets,
-    }
-  }
-)
-```
+Your `createSingletonServices` is built with `pikkuServices` from `#pikku/setup`. An addon only needs `variables` and `secrets` to resolve its own secrets, so a minimal factory reuses `existingServices?.variables` or creates a `LocalVariablesService(process.env)`, does the same for `secrets` with a `LocalSecretService(variables)`, and returns those two plus a `logger` (`existingServices?.logger` or a `ConsoleLogger`). All three classes come from `@pikku/core/services`.
 
 The addon's service factory (created with `pikkuAddonServices`) receives your logger, secrets, and variables to build its own services on top.
 
@@ -97,57 +63,22 @@ The addon's service factory (created with `pikkuAddonServices`) receives your lo
 
 Call addon functions using the `namespace:functionName` syntax:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/function'
+Call the addon's functions through `rpc.invoke` inside any function. This example, in a `pikkuSessionlessFunc<void, void>`, uses the postgres addon's four operations, each taking a `table`:
 
-export const runDatabaseOperations = pikkuSessionlessFunc<void, void>({
-  func: async (_services, _data, { rpc }) => {
-    // Insert a row
-    await rpc.invoke('postgres:insert', {
-      table: 'users',
-      data: { name: 'alice', email: 'alice@example.com' },
-    })
+| RPC | Other input |
+| --- | --- |
+| `postgres:insert` | `data`, such as `{ name: 'alice', email: 'alice@example.com' }` |
+| `postgres:select` | `where` |
+| `postgres:update` | `data` and `where` |
+| `postgres:deleteRows` | `where` |
 
-    // Query rows
-    const users = await rpc.invoke('postgres:select', {
-      table: 'users',
-      where: {
-        conditions: [{ column: 'name', operator: '=', value: 'alice' }],
-      },
-    })
-
-    // Update rows
-    await rpc.invoke('postgres:update', {
-      table: 'users',
-      data: { email: 'new@example.com' },
-      where: {
-        conditions: [{ column: 'name', operator: '=', value: 'alice' }],
-      },
-    })
-
-    // Delete rows
-    await rpc.invoke('postgres:deleteRows', {
-      table: 'users',
-      where: {
-        conditions: [{ column: 'name', operator: '=', value: 'alice' }],
-      },
-    })
-  },
-})
-```
+A `where` is `{ conditions: [{ column: 'name', operator: '=', value: 'alice' }] }`.
 
 ### Calling an addon over HTTP
 
 `rpc.invoke` reaches any addon function. `rpc.exposed`, which is what the generated `POST /rpc/:rpcName` endpoint forwards to, only reaches the functions you choose to expose. By default that is whatever the addon itself marked `expose: true`. `wireAddon`'s `expose` option overrides it for that instance:
 
-```typescript title="wirings/addons.wirings.ts"
-import { wireAddon } from '#pikku/addon'
-
-// Exactly these two, whether or not the addon marked them exposed
-wireAddon({ name: 'shop', package: '@acme/addon-shop', expose: ['getOrder', 'listOrders'] })
-
-// Nothing from this instance is reachable through rpc.exposed
-wireAddon({ name: 'billing', package: '@acme/addon-billing', expose: false })
+```typescript @snippet rt-addon-expose
 ```
 
 | `expose` | Reachable through `rpc.exposed` |
@@ -164,21 +95,12 @@ The list is typed against the functions the addon publishes, and a name it doesn
 
 The CLI generates type definitions for all addon functions. Your IDE provides full autocompletion and type checking for both inputs and outputs:
 
-```typescript
-// TypeScript knows the exact input and output types
-const result = await rpc.invoke('stripe:customerCreate', {
-  name: 'Jane Doe',
-  email: 'jane@example.com',
-})
-// result is fully typed based on the addon's function definition
+```typescript @snippet rt-addon-typed-invoke
 ```
 
 This works through generated type maps that prefix addon function types with their namespace:
 
-```typescript
-// Generated by the CLI — you don't write this
-type FlattenedRPCMap = RPCMap & PrefixKeys<PostgresRPCMap, 'postgres'>
-```
+The CLI generates `FlattenedRPCMap` for you: it is your own `RPCMap` intersected with each addon's map under its namespace prefix (`PrefixKeys<PostgresRPCMap, 'postgres'>`). You never write it.
 
 ## Wiring Addon Route Contracts
 
@@ -187,25 +109,12 @@ a *contract*: a named group of routes with methods and paths already worked out.
 Mount one with `refHTTP`, which takes the same `namespace:name` key as
 `rpc.invoke`:
 
-```typescript
-// addons.wiring.ts
-import { wireHTTPRoutes } from '#pikku/http'
-import { refHTTP } from '#pikku/function'
-
-wireHTTPRoutes(refHTTP('todos:todosRoutes'))
-```
+In `addons.wiring.ts`, call `wireHTTPRoutes(refHTTP('todos:todosRoutes'))`, with `wireHTTPRoutes` from `#pikku/http` and `refHTTP` from `#pikku/function`.
 
 Pass a `basePath` to mount it somewhere else, and wrap it in a group config to
 apply your own middleware to everything the addon exposes:
 
-```typescript
-wireHTTPRoutes({
-  middleware: [rateLimit()],
-  routes: {
-    todos: refHTTP('todos:todosRoutes', { basePath: '/api/todos' }),
-  },
-})
-```
+`wireHTTPRoutes` also accepts a config object. Give it `middleware` (such as `[rateLimit()]`) and a `routes` map, where each entry is a `refHTTP` call that can override the mount point: `todos: refHTTP('todos:todosRoutes', { basePath: '/api/todos' })`.
 
 Group config accepts `basePath`, `tags`, `auth` and `middleware`. The addon's
 contract carries none of those by design ([PKU921](/docs/pikku-cli/errors/pku921)),
@@ -220,61 +129,16 @@ a type error rather than a route that silently never mounts.
 
 Addons can export trigger source functions that listen for events. You wire them to your own handler functions in a `*.wiring.ts` file:
 
-```typescript
-// change.wiring.ts
-import { wireTrigger, wireTriggerSource } from '#pikku/trigger'
-import { onChanges } from '@pikku/addon-postgres'
-import { onChange } from './on-change.function.js'
-
-// Declare the trigger and its handler
-wireTrigger({
-  name: 'onChange',
-  func: onChange,
-})
-
-// Wire the addon's trigger source with configuration
-wireTriggerSource({
-  name: 'onChange',
-  func: onChanges,
-  input: { events: ['DELETE', 'INSERT', 'UPDATE'], table: 'users' },
-})
-```
+In a `change.wiring.ts`, import `wireTrigger` and `wireTriggerSource` from `#pikku/trigger`, the addon's `onChanges` from `@pikku/addon-postgres`, and your own `onChange` handler. Declare the trigger with `wireTrigger({ name: 'onChange', func: onChange })`. Then wire the addon's source to it with `wireTriggerSource({ name: 'onChange', func: onChanges, input: { events: ['DELETE', 'INSERT', 'UPDATE'], table: 'users' } })`.
 
 Your handler function receives the trigger's output as typed input:
 
-```typescript
-// on-change.function.ts
-import { pikkuSessionlessFunc } from '#pikku/function'
-
-export const onChange = pikkuSessionlessFunc<
-  { event: string; data: any },
-  void
->({
-  func: async ({ logger }, data) => {
-    logger.info(`Database change: ${data.event}`, data.data)
-  },
-})
+```typescript @snippet rt-addon-trigger-handler
 ```
 
 This pattern works with any trigger source — Redis pub/sub, Telegram updates, file watchers, and more:
 
-```typescript
-// subscribe.wiring.ts
-import { wireTrigger, wireTriggerSource } from '#pikku/trigger'
-import { subscribe } from '@pikku/addon-redis'
-import { onMessage } from './on-message.function.js'
-
-wireTrigger({
-  name: 'subscribe',
-  func: onMessage,
-})
-
-wireTriggerSource({
-  name: 'subscribe',
-  func: subscribe,
-  input: { channels: new Set(['notifications']), jsonParseBody: true },
-})
-```
+The Redis addon works the same way. Import `subscribe` from `@pikku/addon-redis` and wire it with `wireTriggerSource({ name: 'subscribe', func: subscribe, input: { channels: new Set(['notifications']), jsonParseBody: true } })`, after declaring `wireTrigger({ name: 'subscribe', func: onMessage })` for your own handler.
 
 See [Triggers](../wiring/triggers/index.md) for more details on how triggers work, and the [`#pikku/addon` door in the SDK explorer](/api#app/addon) for every option `wireAddon` takes.
 
@@ -282,31 +146,16 @@ See [Triggers](../wiring/triggers/index.md) for more details on how triggers wor
 
 Wire multiple addons, each under their own namespace:
 
-```typescript
-wireAddon({ name: 'postgres', package: '@pikku/addon-postgres' })
-wireAddon({ name: 'redis', package: '@pikku/addon-redis' })
-wireAddon({ name: 'stripe', package: '@pikku/addon-stripe' })
+```typescript @snippet rt-wire-addon-multiple
 ```
 
-```typescript
-// Each addon's functions are prefixed with its namespace
-await rpc.invoke('postgres:insert', { table: 'orders', data: order })
-await rpc.invoke('redis:keySet', { key: `order:${orderId}`, value: JSON.stringify(order) })
-await rpc.invoke('stripe:chargeCreate', { amount: 2000, currency: 'usd', source: 'tok_visa' })
-```
+Each addon's functions are prefixed with its namespace. For example, `rpc.invoke('postgres:insert', { table: 'orders', data: order })`, `rpc.invoke('redis:keySet', { key, value })` (the value being a JSON string) and `rpc.invoke('stripe:chargeCreate', { amount: 2000, currency: 'usd', source: 'tok_visa' })`.
 
 ## Secret Overrides
 
 Addons define secrets with their own `secretId` names. If your application stores the same secret under a different name, you can override the mapping:
 
-```typescript
-wireAddon({
-  name: 'email',
-  package: '@pikku/addon-sendgrid',
-  secretOverrides: {
-    SENDGRID_API_KEY: 'MY_EMAIL_API_KEY',
-  },
-})
+```typescript @snippet rt-wire-addon-secret-overrides
 ```
 
 When the addon calls `(await secrets.getSecret('SENDGRID_API_KEY')).reveal()`, Pikku transparently looks up `MY_EMAIL_API_KEY` instead. The addon code doesn't need to know about your naming conventions.

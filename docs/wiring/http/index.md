@@ -14,33 +14,10 @@ Your functions don't need to know they're being called via HTTP (but you can acc
 
 Let's wire a function to an HTTP endpoint:
 
-```typescript
-// books.function.ts
-import { pikkuFunc } from '#pikku/function'
-
-export const getBook = pikkuFunc<{ bookId: string }, Book>({
-  func: async ({ database }, data) => {
-    try {
-      return await database.query('book', { bookId: data.bookId })
-    } catch (e) {
-      throw new NotFoundError()
-    }
-  },
-  title: 'Fetch a book by ID',
-  tags: ['books']
-})
+```typescript @snippet wa-http-first-function
 ```
 
-```typescript
-// get-book.http.ts
-import { wireHTTP } from '#pikku/http'
-import { getBook } from './functions/books.function.js'
-
-wireHTTP({
-  method: 'get',
-  route: '/books/:bookId',
-  func: getBook
-})
+```typescript @snippet wa-http-first-wire
 ```
 
 That's it! Your function is now available at `GET /books/:bookId`. Pikku automatically:
@@ -55,33 +32,14 @@ That's it! Your function is now available at `GET /books/:bookId`. Pikku automat
 
 The `wireHTTP` function accepts a configuration object with all routing options:
 
-```typescript
-import { wireHTTP } from '#pikku/http'
-import { deleteBook } from './functions/books.function.js'
-import { requireBookOwner, requireAdmin } from './permissions.js'
-import { auditMiddleware, setCookieMiddleware } from './middleware.js'
-
-wireHTTP({
-  // Required
-  method: 'delete',
-  route: '/books/:bookId',
-  func: deleteBook,
-
-  // Optional - Authentication
-  auth: true,  // Requires user session (default: true)
-
-  // Optional - Middleware
-  middleware: [auditMiddleware, setCookieMiddleware],
-})
+```typescript @snippet wa-http-wiring-config
 ```
 
 Let's break down each option:
 
 ### Method
 
-```typescript
-method: 'get' | 'post' | 'put' | 'patch' | 'delete' | 'head' | 'options'
-```
+The HTTP method for this route: one of `get`, `post`, `put`, `patch`, `delete`, `head` or `options`.
 
 The HTTP method for this route.
 
@@ -89,18 +47,7 @@ The HTTP method for this route.
 
 Route patterns use path parameters with `:` syntax:
 
-```typescript
-wireHTTP({
-  method: 'get',
-  route: '/books/:bookId',        // Single parameter
-  func: getBook
-})
-
-wireHTTP({
-  method: 'get',
-  route: '/authors/:authorId/books/:bookId',  // Multiple parameters
-  func: getAuthorBook
-})
+```typescript @snippet wa-http-route-params
 ```
 
 ### Func
@@ -111,14 +58,7 @@ The Pikku function to call when this route is matched. Import from your `*.funct
 
 Override the function's default authentication requirement:
 
-```typescript
-// Public endpoint - no auth required
-wireHTTP({
-  method: 'get',
-  route: '/books',
-  func: listBooks,
-  auth: false
-})
+```typescript @snippet wa-http-public-route
 ```
 
 By default, functions require authentication (`auth: true`).
@@ -127,16 +67,7 @@ By default, functions require authentication (`auth: true`).
 
 Authorization is not a wiring concern. Declare permissions on the function definition itself:
 
-```typescript
-export const deleteBook = pikkuFunc({
-  func: async ({ db }, { bookId }) => {
-    await db.deleteBook(bookId)
-  },
-  permissions: {
-    owner: requireBookOwner,
-    admin: requireAdmin
-  }
-})
+```typescript @snippet wa-http-permissions
 ```
 
 For an app-wide baseline every function must also pass, use `addGlobalPermission`. See [Permission Guards](../../core-features/permission-guards.md) for details.
@@ -145,28 +76,12 @@ For an app-wide baseline every function must also pass, use `addGlobalPermission
 
 Attach middleware that runs specifically for this wire:
 
-```typescript
-import { setCookieMiddleware, auditMiddleware } from './middleware.js'
-
-wireHTTP({
-  method: 'post',
-  route: '/login',
-  func: login,
-  middleware: [setCookieMiddleware, auditMiddleware]
-})
+```typescript @snippet wa-http-wire-middleware
 ```
 
 You can also apply middleware globally or to route patterns:
 
-```typescript
-import { addHTTPMiddleware } from '#pikku/middleware'
-import { corsMiddleware, loggingMiddleware, adminAuthMiddleware } from './middleware.js'
-
-// Global - applies to all HTTP routes
-addHTTPMiddleware('*', [corsMiddleware, loggingMiddleware])
-
-// Pattern - applies to routes matching /admin/*
-addHTTPMiddleware('/admin/*', [adminAuthMiddleware])
+```typescript @snippet wa-http-global-pattern-middleware
 ```
 
 Middleware runs in this order:
@@ -182,13 +97,7 @@ See [Middleware](../../core-features/middleware.md) for more details.
 
 Enable Server-Sent Events for GET routes:
 
-```typescript
-wireHTTP({
-  method: 'get',
-  route: '/jobs/:jobId/progress',
-  func: streamProgress,
-  sse: true  // Enables SSE
-})
+```typescript @snippet wa-http-sse-flag
 ```
 
 Your function can then send incremental updates through the `channel` object on the third (wire) argument: `async (_services, data, { channel }) => ...`. See [Server-Sent Events](./server-sent-events.md) for more details.
@@ -197,30 +106,12 @@ Your function can then send incremental updates through the `channel` object on 
 
 Pikku automatically merges data from multiple sources into a single, typed input for your function:
 
-```typescript
-// GET /books/123?includeAuthor=true
-wireHTTP({
-  method: 'get',
-  route: '/books/:bookId',
-  func: getBook
-})
-
-// Your function receives:
-// { bookId: '123', includeAuthor: true }
+```typescript @snippet wa-http-data-flow-get
 ```
 
 For POST/PUT/PATCH requests, body data is also merged:
 
-```typescript
-// POST /books with body: { title: 'My Book', author: 'Jane' }
-wireHTTP({
-  method: 'post',
-  route: '/books',
-  func: createBook
-})
-
-// Your function receives:
-// { title: 'My Book', author: 'Jane' }
+```typescript @snippet wa-http-data-flow-post
 ```
 
 If the same parameter appears in multiple places (path, query, body), they must all have the same value - otherwise Pikku throws a validation error to prevent ambiguity.
@@ -233,46 +124,12 @@ This means data sent as an array in a body will be passed in as `data.data`, sin
 
 Pikku automatically maps errors to HTTP status codes. You can use built-in errors or create custom ones:
 
-```typescript
-// errors.ts
-import { PikkuError, addError } from '#pikku/error'
-
-export class BookNotAvailableError extends PikkuError {
-}
-
-// Register the error with HTTP status code
-addError(BookNotAvailableError, {
-  status: 409,  // Conflict
-  message: 'Book is currently unavailable'
-})
+```typescript @snippet wa-http-custom-error
 ```
 
 Now use your custom error in functions:
 
-```typescript
-import { NotFoundError, BadRequestError } from '#pikku/error'
-import { BookNotAvailableError } from './errors.js'
-
-export const borrowBook = pikkuFunc<{ bookId: string }, BorrowResult>({
-  func: async ({ database }, data) => {
-    const book = await database.query('book', { bookId: data.bookId })
-
-    if (!book) {
-      throw new NotFoundError('Book not found')  // → 404
-    }
-
-    if (book.status === 'borrowed') {
-      throw new BookNotAvailableError('This book is already borrowed')  // → 409
-    }
-
-    return await database.update('book', {
-      where: { bookId: data.bookId },
-      set: { status: 'borrowed' }
-    })
-  },
-  title: 'Borrow a book',
-  tags: ['books']
-})
+```typescript @snippet wa-http-error-usage
 ```
 
 See [Errors](../../core-features/errors.md) for more on error handling.

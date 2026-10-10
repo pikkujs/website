@@ -31,34 +31,7 @@ npm install @pikku/better-auth better-auth
 
 Define your auth instance with `pikkuBetterAuth` from `#pikku/auth` — the generated wrapper types the factory against *your* singleton services, so `secrets` and `variables` come back knowing your secret names. The factory runs lazily on the first auth request, so it can pull secrets and the database off the services it's handed:
 
-```typescript title="src/auth.ts"
-import { betterAuth } from 'better-auth'
-import { pikkuBetterAuth } from '#pikku/auth'
-
-export const auth = pikkuBetterAuth(async ({ secrets, kysely }) => {
-  const { BETTER_AUTH_SECRET, GITHUB_OAUTH } = await secrets.getSecrets([
-    'BETTER_AUTH_SECRET',
-    'GITHUB_OAUTH',
-  ])
-
-  // Reveal before the guard: a SecretValue wrapper is always truthy, so
-  // testing it directly would let an empty secret through.
-  const betterAuthSecret = BETTER_AUTH_SECRET?.reveal()
-  if (!betterAuthSecret) {
-    throw new Error('Missing required secret: BETTER_AUTH_SECRET')
-  }
-
-  return betterAuth({
-    secret: betterAuthSecret,
-    database: { db: kysely, type: 'sqlite' },
-    emailAndPassword: { enabled: true },
-    // Enables the stateless session middleware (the CLI detects this)
-    session: { cookieCache: { enabled: true } },
-    socialProviders: {
-      ...(GITHUB_OAUTH ? { github: GITHUB_OAUTH.reveal() } : {}),
-    },
-  })
-})
+```typescript @snippet betterAuthConfig
 ```
 
 That's the whole setup. Run `npx pikku dev` (or `npx pikku all`) and the CLI generates:
@@ -75,28 +48,12 @@ Two middleware variants bridge Better Auth sessions into Pikku sessions. The CLI
 
 **1. `betterAuthSession`** — the full variant. Calls Better Auth's `getSession` on each request, which validates against the database. Supports cookie and bearer sessions, API keys, and impersonation.
 
-```typescript title="middleware.ts"
-import { betterAuthSession } from '@pikku/better-auth'
-import { addHTTPMiddleware } from '#pikku/middleware'
-
-addHTTPMiddleware('*', [
-  betterAuthSession({
-    // Optional: enrich the Pikku session beyond { userId }
-    mapSession: async ({ user }, services) => ({
-      userId: user.id,
-      role: user.role,
-    }),
-  }),
-])
+```typescript @snippet co-better-auth-session
 ```
 
 **2. `betterAuthStatelessSession`** — the lean variant. Verifies the signed session cookie cache using only the `BETTER_AUTH_SECRET` signing secret — no database call, no Better Auth server bundled. This is what non-auth workers and serverless functions use, and what the CLI generates when your config enables `session.cookieCache`.
 
-```typescript title="middleware.ts"
-import { betterAuthStatelessSession } from '@pikku/better-auth'
-import { addHTTPMiddleware } from '#pikku/middleware'
-
-addHTTPMiddleware('*', [betterAuthStatelessSession()])
+```typescript @snippet co-better-auth-stateless
 ```
 
 :::note Stateless tradeoff
@@ -120,12 +77,7 @@ Add providers under `socialProviders` in your Better Auth config. The CLI reads 
 
 The convention: each provider secret is an object with `clientId` and `clientSecret`, read in the factory and spread into the config:
 
-```typescript
-socialProviders: {
-  github: (await secrets.getSecret('GITHUB_OAUTH')).reveal(),
-  google: (await secrets.getSecret('GOOGLE_OAUTH')).reveal(),
-}
-```
+Add one entry per provider under `socialProviders`, each set to the revealed value of its secret, for example the `GITHUB_OAUTH` and `GOOGLE_OAUTH` secrets.
 
 Some providers (Cognito, Okta-style OIDC) also need non-secret variables like a domain or tenant id — the CLI knows about these and surfaces them as variables alongside the secret.
 
@@ -133,16 +85,7 @@ Some providers (Cognito, Okta-style OIDC) also need non-secret variables like a 
 
 Use Better Auth's own client libraries — Pikku doesn't get in the way:
 
-```typescript title="client.ts"
-import { createAuthClient } from 'better-auth/client'
-
-export const authClient = createAuthClient({
-  baseURL: 'http://localhost:3000/api/auth',
-})
-
-await authClient.signIn.email({ email, password })
-await authClient.signIn.social({ provider: 'github' })
-```
+Create a client with `createAuthClient` from `better-auth/client`, pointing `baseURL` at your auth route (such as `http://localhost:3000/api/auth`). Then sign in with `authClient.signIn.email({ email, password })` or `authClient.signIn.social({ provider: 'github' })`.
 
 After sign-in, the session cookie rides along on your Pikku fetch/websocket clients automatically (same origin), and every Pikku function sees the session.
 
@@ -150,18 +93,7 @@ After sign-in, the session cookie rides along on your Pikku fetch/websocket clie
 
 When running inside Next.js, mount the handler as a route instead of relying on the generated catch-all wiring:
 
-```typescript title="app/api/auth/[...all]/route.ts"
-import { toNextJsAuthHandler } from '@pikku/next'
-import { auth } from '../../../../src/auth'
-import { createSingletonServices } from '../../../../src/services'
-import { createConfig } from '../../../../src/config'
-
-export const { GET, POST, PATCH, PUT, DELETE } = toNextJsAuthHandler(
-  auth,
-  createConfig,
-  createSingletonServices
-)
-```
+Export the route handlers from `toNextJsAuthHandler(auth, createConfig, createSingletonServices)` (from `@pikku/next`) in `app/api/auth/[...all]/route.ts`, destructured as `GET`, `POST`, `PATCH`, `PUT` and `DELETE`.
 
 `toNextJsAuthHandler` accepts your `pikkuBetterAuth` factory plus the config/services creators, resolves the instance once, and returns Next.js `GET`/`POST`/`PATCH`/`PUT`/`DELETE` route handlers. It also re-exports Better Auth's `nextCookies` plugin for server-action cookie handling.
 
@@ -169,16 +101,7 @@ export const { GET, POST, PATCH, PUT, DELETE } = toNextJsAuthHandler(
 
 The `pikkuActor` plugin adds a `POST /sign-in/actor` endpoint used by [scenarios](/docs/core-features/testing) to sign in synthetic users during automated flows:
 
-```typescript
-import { pikkuActor } from '@pikku/better-auth'
-
-return betterAuth({
-  // ...
-  plugins: [
-    pikkuActor({ secret: (await secrets.getSecret('SCENARIO_ACTOR_SECRET')).reveal() }),
-  ],
-})
-```
+Add the `pikkuActor` plugin from `@pikku/better-auth` to the `plugins` array of your `betterAuth` config, passing `secret` set to the revealed `SCENARIO_ACTOR_SECRET` secret.
 
 Actor rows are flagged with an `actor: true` column and auto-created on first sign-in. Sign-in for a non-actor user is always refused — knowing the secret never impersonates real users — and the flag rides into the Pikku session so audits and analytics can identify synthetic traffic. A missing secret disables the endpoint entirely.
 
@@ -194,28 +117,7 @@ It adds a `POST /sign-in/delegated` endpoint that accepts `{ email, password }` 
 
 Passwords are never stored — they're forwarded to `authenticate` and discarded.
 
-```typescript title="src/auth.ts"
-import { pikkuDelegatedAuth } from '@pikku/better-auth'
-import { authenticateAcmeUpstream } from '@my-org/acme-addon'
-
-export const auth = pikkuBetterAuth(async (services) => {
-  const { credentialService } = services
-
-  return betterAuth({
-    // ...
-    plugins: [
-      pikkuDelegatedAuth({
-        authenticate: (credentials) =>
-          authenticateAcmeUpstream(credentials, 'https://api.acme.example'),
-        storeCredential: async (userId, identity) => {
-          await credentialService.set('acme', identity.credential, userId)
-        },
-        defaultRole: 'member',
-      }),
-    ],
-  })
-})
-```
+Add the `pikkuDelegatedAuth` plugin from `@pikku/better-auth` to the `plugins` array of your `betterAuth` config, with three options: `authenticate`, which hands the credentials to the upstream (for example `authenticateAcmeUpstream` from your addon); `storeCredential`, which saves the returned credential through `credentialService.set('acme', identity.credential, userId)`; and `defaultRole`, such as `'member'`.
 
 ### Options
 

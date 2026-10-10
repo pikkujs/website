@@ -12,23 +12,7 @@ Variables let you declare non-sensitive configuration your application needs usi
 
 Use `defineVariable`, from [`#pikku/variables`](/api#app/variables), to declare a variable with its schema:
 
-```typescript
-import { defineVariable } from '#pikku/variables'
-import { z } from 'zod'
-
-export const postgresParamsSchema = z.object({
-  host: z.string().default('localhost'),
-  port: z.string().default('5432'),
-  database: z.string(),
-  ssl: z.string().optional(),
-})
-
-defineVariable({
-  name: 'postgres_params',
-  displayName: 'PostgreSQL Params',
-  variableId: 'POSTGRES_PARAMS',
-  schema: postgresParamsSchema,
-})
+```typescript @snippet variables
 ```
 
 Schemas are defined using [Zod](https://zod.dev).
@@ -39,25 +23,12 @@ The `variableId` is the key used to look up the variable from your environment o
 
 Access variables through the `variables` service. When you use the generated `TypedVariablesService`, calls are fully typed:
 
-```typescript
-export const connectToDb = pikkuSessionlessFunc<void, { connected: boolean }>({
-  func: async ({ variables }, _data) => {
-    const config = await variables.get('POSTGRES_PARAMS')
-    // config.host, config.port, config.database are typed
-
-    const connection = await createConnection(config)
-    return { connected: true }
-  },
-})
+```typescript @snippet co-variables-typed
 ```
 
 The CLI generates a `TypedVariablesService` class that wraps your `VariablesService` implementation. Use it when creating your singleton services:
 
-```typescript
-import { TypedVariablesService } from '#pikku/variables'
-
-const variables = new TypedVariablesService(baseVariablesService)
-```
+Wrap your base variables service in the generated typed one: `new TypedVariablesService(baseVariablesService)`, imported from `#pikku/variables`.
 
 ## Variables vs Secrets
 
@@ -77,12 +48,7 @@ Use variables for anything you'd comfortably put in a `.env` file without encryp
 
 **Use schemas with defaults**: Define sensible defaults in your schema so the application works in development without explicit configuration:
 
-```typescript
-const redisConfigSchema = z.object({
-  host: z.string().default('localhost'),
-  port: z.string().default('6379'),
-})
-```
+Define a schema for any shape you want, such as a Redis config with a `host` that defaults to `'localhost'` and a `port` that defaults to `'6379'`, and point `defineVariable` at it.
 
 ## Generated Files
 

@@ -28,120 +28,41 @@ When your application runs across multiple instances (microservices, scaled depl
 
 Functions that should be callable from other instances need `expose: true`:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/function'
-
-export const greet = pikkuSessionlessFunc<
-  { name: string },
-  { greeting: string }
->({
-  expose: true,
-  func: async ({ logger }, data) => {
-    return { greeting: `Hello, ${data.name}!` }
-  },
-})
+```typescript @snippet rpcFunc
 ```
 
 ### 2. Wire an RPC Endpoint
 
 Create an HTTP endpoint that handles incoming remote RPC calls:
 
-```typescript
-import { wireHTTP } from '#pikku/http'
-
-const rpcCaller = pikkuSessionlessFunc<
-  { rpcName: string; data?: unknown },
-  unknown
->({
-  auth: false,
-  func: async (_services, { rpcName, data }, { rpc }) => {
-    return await rpc.exposed(rpcName, data)
-  },
-})
-
-wireHTTP({
-  route: '/rpc/:rpcName',
-  method: 'post',
-  auth: false,
-  func: rpcCaller,
-})
+```typescript @snippet wb-rpc-exposed-endpoint
 ```
 
 ### 3. Configure DeploymentService
 
 Add a deployment service to your singleton services:
 
-```typescript
-import { PgKyselyDeploymentService } from '@pikku/kysely-postgres'
-// or
-import { RedisDeploymentService } from '@pikku/redis'
-
-const deploymentService = new PgKyselyDeploymentService(
-  { heartbeatInterval: 5000, heartbeatTtl: 15000 },
-  pikkuKysely.kysely,        // a PikkuKysely instance's underlying kysely
-  singletonServices.jwt,     // used to sign forwarded sessions
-  singletonServices.secrets
-)
-await deploymentService.init()
-```
+Construct a `DeploymentService` from the backend that suits your infrastructure (see [Available Backends](#available-backends)): `PgKyselyDeploymentService` takes the heartbeat settings, a Kysely instance, the `jwt` service used to sign forwarded sessions, and `secrets`; `RedisDeploymentService` is the Redis equivalent. Add it to your singleton services as `deploymentService` and call `init()` on it.
 
 ### 4. Register the Instance
 
 On startup, register your instance with its endpoint and functions:
 
-```typescript
-await deploymentService.start({
-  deploymentId: `server-${process.env.PORT}`,
-  endpoint: `http://localhost:${process.env.PORT}`,
-  functions: ['greet', 'getUserProfile'], // exposed function names
-})
+```typescript @snippet wb-rpc-deployment-start
 ```
 
-On shutdown, deregister:
-
-```typescript
-process.on('SIGTERM', async () => {
-  await deploymentService.stop()
-  process.exit(0)
-})
-```
+The snippet above also deregisters on shutdown with `deploymentService.stop()`.
 
 ### 5. Call Remote Functions
 
 From any instance, use `rpc.remote()` to call functions on other instances:
 
-```typescript
-export const remoteGreet = pikkuSessionlessFunc<
-  { name: string },
-  { greeting: string }
->({
-  func: async ({ logger }, data, { rpc }) => {
-    return await rpc.remote('greet', data)
-  },
-})
+```typescript @snippet wb-rpc-remote-call
 ```
 
 ## RemoteService Interface
 
-```typescript
-interface DeploymentService {
-  init(): Promise<void>
-  start(config: DeploymentConfig): Promise<void>
-  stop(): Promise<void>
-  invoke(
-    funcName: string,
-    data: unknown,
-    session?: unknown,
-    traceId?: string
-  ): Promise<unknown>
-}
-
-interface DeploymentConfig {
-  deploymentId: string
-  endpoint: string
-  functions?: string[]
-}
-```
+The service you plug in implements four methods: `init()`, `start(config)` and `stop()` manage its lifecycle, and `invoke(funcName, data, session?, traceId?)` makes the call on the owning instance and resolves to its result. `start` takes a `DeploymentConfig` with a `deploymentId`, the instance's `endpoint`, and optionally the `functions` it hosts.
 
 ## Configuration
 
@@ -175,46 +96,4 @@ When `PIKKU_REMOTE_SECRET` is set, remote RPC calls automatically encrypt and fo
 
 ## Full Example
 
-```typescript
-import { PikkuExpressServer } from '@pikku/express'
-import { PikkuKysely, PgKyselyDeploymentService } from '@pikku/kysely-postgres'
-import type { KyselyPikkuDB } from '@pikku/kysely-postgres'
-import { ConsoleLogger } from '@pikku/core/services'
-import { createConfig, createSingletonServices } from './services.js'
-import '#pikku/pikku-bootstrap.gen.js'
-
-const config = await createConfig()
-const logger = new ConsoleLogger()
-
-const pikkuKysely = new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)
-await pikkuKysely.init()
-
-// Create singleton services first to get jwt + secrets
-const singletonServices = await createSingletonServices(config, { logger })
-
-const deploymentService = new PgKyselyDeploymentService(
-  { heartbeatInterval: 5000, heartbeatTtl: 15000 },
-  pikkuKysely.kysely,
-  singletonServices.jwt,
-  singletonServices.secrets
-)
-await deploymentService.init()
-
-// Re-create with deploymentService included
-const services = await createSingletonServices(config, {
-  ...singletonServices,
-  deploymentService,
-})
-
-const server = new PikkuExpressServer(
-  { ...config, port: 3001, hostname: 'localhost' },
-  services.logger
-)
-await server.init()
-await server.start()
-
-await deploymentService.start({
-  deploymentId: `server-3001`,
-  endpoint: 'http://localhost:3001',
-})
-```
+A complete setup comes down to the same steps in your server's entrypoint: create the singleton services (you need `jwt` and `secrets` first), create the deployment service from them, put it back into the singleton services as `deploymentService`, start the server, and then call `deploymentService.start({ deploymentId, endpoint })` once the server is listening. Give each instance a unique `deploymentId`, for example one derived from its port.

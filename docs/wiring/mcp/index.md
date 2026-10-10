@@ -12,14 +12,12 @@ Your domain functions don't need to know they're being called by an AI agent. Th
 
 ## Your First MCP Endpoint
 
-Here are MCP functions and wiring from the templates, showing a tool, resource, and two prompts:
+Here are MCP functions and wiring from the templates, showing a tool, a resource, and a prompt:
 
-```typescript reference title="mcp.functions.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/functions/mcp.functions.ts
+```typescript @snippet wa-mcp-first-functions
 ```
 
-```typescript reference title="mcp.wiring.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/mcp.wiring.ts
+```typescript @snippet wa-mcp-first-wiring
 ```
 
 That's it! AI agents can now request your documentation. Pikku automatically:
@@ -33,10 +31,7 @@ That's it! AI agents can now request your documentation. Pikku automatically:
 
 When you define an MCP function with TypeScript types:
 
-```typescript
-export const getProjectDocs = pikkuMCPResourceFunc<{ section: string }>(
-  async (_services, data, { mcp }) => { ... }
-)
+```typescript @snippet wa-mcp-typed-resource
 ```
 
 Pikku automatically:
@@ -59,27 +54,14 @@ Pikku automatically:
 
 Resources provide data sources for AI models - documentation, user data, search results, or any queryable information:
 
-```typescript
-export const searchCode = pikkuMCPResourceFunc<{ query: string; limit?: number }>(
-  async ({ database }, data) => {
-    const results = await database.query('code_index', {
-      where: { content: { contains: data.query } },
-      limit: data.limit ?? 20
-    })
-
-    return results.map(r => ({
-      uri: `file://${r.filePath}:${r.lineNumber}`,
-      text: r.codeSnippet
-    }))
-  }
-)
+```typescript @snippet wa-mcp-search-resource
 ```
 
 **Response format**: Array of `{ uri: string, text: string }`
 
 ### Tools
 
-Tools let AI models perform actions - creating records, running operations, or modifying state. The template's `createTodoTool` (in `mcp.functions.ts` above) is an example. Tools return an array of content blocks:
+Tools let AI models perform actions - creating records, running operations, or modifying state. `createItemTool` in the first example above is one. Tools return an array of content blocks:
 
 **Response format**: Array of `{ type: 'text', text: string } | { type: 'image', data: string }`
 
@@ -87,24 +69,7 @@ Tools let AI models perform actions - creating records, running operations, or m
 
 Prompts generate reusable prompt templates for AI interactions:
 
-```typescript
-export const codeReviewPrompt = pikkuMCPPromptFunc<{ filePath: string; context: string }>(
-  async ({ database }, data) => {
-    const file = await database.query('files', {
-      where: { path: data.filePath }
-    })
-
-    return [
-      {
-        role: 'user',
-        content: {
-          type: 'text',
-          text: `Review this code:\n\nFile: ${data.filePath}\n\nContext: ${data.context}\n\nCode:\n${file.content}`
-        }
-      }
-    ]
-  }
-)
+```typescript @snippet wa-mcp-review-prompt
 ```
 
 **Response format**: Array of `{ role: 'user' | 'assistant' | 'system', content: { type: 'text' | 'image', text: string, data?: string } }`
@@ -113,22 +78,7 @@ export const codeReviewPrompt = pikkuMCPPromptFunc<{ filePath: string; context: 
 
 Resources and prompts are wired explicitly; tools register themselves when exported:
 
-```typescript
-import { wireMCPResource, wireMCPPrompt } from '#pikku/mcp'
-import { getUserInfo, codeReviewPrompt } from './functions/mcp.functions.js'
-
-wireMCPResource({
-  uri: 'user/{userId}',
-  title: 'User Information',
-  description: 'Get user profile by ID',
-  func: getUserInfo
-})
-
-wireMCPPrompt({
-  name: 'codeReview',
-  description: 'Generate a code review prompt',
-  func: codeReviewPrompt
-})
+```typescript @snippet wa-mcp-wiring-config
 ```
 
 **Required Properties:**
@@ -148,39 +98,12 @@ AI agents can then discover and invoke your resources, tools, and prompts throug
 
 MCP functions should throw errors when operations fail. Register errors with both HTTP status codes and MCP error codes:
 
-```typescript
-import { PikkuError, addError } from '#pikku/error'
-
-export class ResourceNotFoundError extends PikkuError {}
-
-addError(ResourceNotFoundError, {
-  status: 404,
-  mcpCode: -32601,  // MCP "method not found"
-  message: 'The requested resource does not exist'
-})
+```typescript @snippet wa-mcp-error
 ```
 
 Now use your error in MCP functions:
 
-```typescript
-export const getFile = pikkuMCPResourceFunc<{ path: string }>(
-  async ({ database }, data) => {
-    const file = await database.query('files', {
-      where: { path: data.path }
-    })
-
-    if (!file) {
-      throw new ResourceNotFoundError(`File not found: ${data.path}`)
-    }
-
-    return [
-      {
-        uri: `file://${data.path}`,
-        text: file.content
-      }
-    ]
-  }
-)
+```typescript @snippet wa-mcp-error-usage
 ```
 
 ## Next Steps

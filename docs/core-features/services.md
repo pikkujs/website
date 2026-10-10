@@ -14,23 +14,7 @@ Think of services as your application's **toolbox**. Each function can pick whic
 
 Here's a minimal example – a service that manages a book collection:
 
-```typescript
-interface BookService {
-  getBook(id: string): Book | undefined;
-  createBook(book: Book): void;
-}
-
-class LocalBookService implements BookService {
-  private books = new Map<string, Book>();
-
-  getBook(id: string) {
-    return this.books.get(id);
-  }
-
-  createBook(book: Book) {
-    this.books.set(book.id, book);
-  }
-}
+```typescript @snippet co-service-interface
 ```
 
 That's it! No decorators, no base classes, no framework coupling. Just a regular TypeScript class.
@@ -39,19 +23,7 @@ That's it! No decorators, no base classes, no framework coupling. Just a regular
 
 Services are available to your functions via the first parameter. **Always destructure only the services you need**:
 
-```typescript
-export const getBook = pikkuFunc<{ bookId: string }, Book>({
-  func: async ({ books }, data) => {
-    // Only books service is included in the bundle for this function
-    const book = books.getBook(data.bookId);
-    if (!book) {
-      throw new NotFoundError("Book not found");
-    }
-    return book;
-  },
-  title: "Get a book by ID",
-  tags: ["books"],
-});
+```typescript @snippet co-service-use
 ```
 
 :::tip Tree-Shaking
@@ -73,10 +45,7 @@ Created once when the server starts and shared across all function calls. Use th
 - **Configuration** – App config loaded at startup
 - **JWT** – Token signing and verification
 
-```typescript
-// This database pool is created once and shared
-const database = new DatabasePool({ ... })
-```
+A database pool, for example, is created once in `createSingletonServices` and shared by every function.
 
 :::warning Don't Store Request State
 Since singleton services are shared across all function calls, **never** store request-specific data in them (like user IDs or session data). That's what wire services are for.
@@ -101,36 +70,11 @@ Services are defined in two files: type definitions and implementations.
 
 First, extend Pikku's type system with your services:
 
-```typescript
-// types/application-types.d.ts
-import type {
-  CoreConfig,
-  CoreSingletonServices,
-  CoreServices,
-} from "@pikku/core/types";
+Define the types in `types/application-types.d.ts`:
 
-// Define your app configuration
-export interface Config extends CoreConfig {
-  logLevel: string;
-  database: {
-    host: string;
-    port: number;
-  };
-}
-
-// Add your singleton services
-export interface SingletonServices extends CoreSingletonServices<Config> {
-  jwt: JWTService;
-  books: BookService;
-  database: DatabasePool;
-}
-
-// Main services type (combines singleton and wire services)
-export interface Services extends CoreServices<SingletonServices> {
-  // Wire-specific services are added here
-  dbTransaction: DatabaseTransaction;
-}
-```
+- `Config` extends `CoreConfig` with your own settings (a log level, database host and port).
+- `SingletonServices` extends `CoreSingletonServices<Config>` and adds your services, such as `jwt`, `books` and `database`.
+- `Services` extends `CoreServices<SingletonServices>` and adds wire-specific services, such as a `dbTransaction`.
 
 :::info Why a .d.ts file?
 Using a declaration file enforces that you only define types here, not implementations. This keeps your type definitions clean and separate from business logic.
@@ -140,64 +84,10 @@ Using a declaration file enforces that you only define types here, not implement
 
 Then implement the factories that create your services:
 
-```typescript
-// services.ts
-import { pikkuConfig, pikkuServices, pikkuWireServices } from "#pikku/setup";
+```typescript @snippet shopServices
+```
 
-export const createConfig = pikkuConfig(async () => {
-  return {
-    logLevel: "info",
-    database: {
-      host: process.env.DB_HOST || "localhost",
-      port: parseInt(process.env.DB_PORT || "5432"),
-    },
-  };
-});
-
-export const createSingletonServices = pikkuServices(
-  async (config, existingServices) => {
-    const logger = new ConsoleLogger();
-
-    if (config.logLevel) {
-      logger.setLevel(config.logLevel);
-    }
-
-    const jwt = new JoseJWTService(
-      async () => [
-        {
-          id: "my-key",
-          value: process.env.JWT_SECRET || "dev-secret",
-        },
-      ],
-      logger,
-    );
-
-    const database = new DatabasePool(config.database);
-    await database.connect();
-
-    const books = new BookService();
-
-    return {
-      config,
-      logger,
-      jwt,
-      database,
-      books,
-    };
-  },
-);
-
-export const createWireServices = pikkuWireServices(
-  async (singletonServices, wire) => {
-    // Return only the wire-specific services
-    // Pikku automatically merges these with singletonServices.
-    // Session management (session, setSession, clearSession) is built into
-    // the wire — you don't create it here.
-    return {
-      dbTransaction: new DatabaseTransaction(singletonServices.database),
-    };
-  },
-);
+```typescript @snippet shopWireServices
 ```
 
 Key points:
@@ -224,27 +114,11 @@ Pikku uses **dependency lookup** rather than dependency injection. This means:
 
 Unlike frameworks like NestJS that use decorators and automatic dependency injection:
 
-```typescript
-// NestJS approach (NOT Pikku)
-@Injectable()
-class MyService {
-  constructor(
-    @Inject("DATABASE") private db: Database,
-    @Inject("LOGGER") private logger: Logger,
-  ) {}
-}
-```
+With NestJS, a service declares its dependencies through a decorated constructor, with `@Inject("DATABASE")` and `@Inject("LOGGER")` parameters on an `@Injectable()` class.
 
 Pikku keeps it simple:
 
-```typescript
-// Pikku approach
-export const myFunction = pikkuFunc({
-  func: async ({ database, logger }, data) => {
-    // Just destructure what you need
-  },
-});
-```
+With Pikku, a function just destructures the services it needs from its first argument.
 
 | **Aspect**       | **Pikku (Dependency Lookup)**    | **NestJS (Dependency Injection)** |
 | ---------------- | -------------------------------- | --------------------------------- |
@@ -307,23 +181,7 @@ You only need to provide the services your project uses. The CLI detects which s
 
 Services can throw Pikku errors that are automatically mapped to HTTP status codes:
 
-```typescript
-import { PikkuError, addError } from "#pikku/error";
-
-export class NotEnoughPointsError extends PikkuError {}
-addError(NotEnoughPointsError, { status: 400, message: "Not enough points!" });
-
-class GameScoreService {
-  private score = 100;
-
-  deductPoints(points: number) {
-    if (points > this.score) {
-      throw new NotEnoughPointsError();
-    }
-    this.score -= points;
-    return this.score;
-  }
-}
+```typescript @snippet addError
 ```
 
 When this error is thrown from a function called via HTTP, Pikku automatically sends a 400 response. See [Errors](/docs/core-features/errors) for more details.
@@ -332,45 +190,11 @@ When this error is thrown from a function called via HTTP, Pikku automatically s
 
 Services make it easy to swap implementations based on environment:
 
-```typescript
-export const createSingletonServices = pikkuServices(
-  async (config, existingServices) => {
-    const isProduction = process.env.NODE_ENV === "production";
-
-    let storage: Storage;
-    if (isProduction) {
-      // Use S3 in production
-      storage = new S3Storage(config.aws);
-    } else {
-      // Use local filesystem in development
-      storage = new LocalStorage("./tmp");
-    }
-
-    return {
-      config,
-      storage,
-      // ... other services
-    };
-  },
-);
-```
+Pick the implementation in `createSingletonServices`: when `NODE_ENV` is `production`, create an `S3Storage` from the AWS config, otherwise a `LocalStorage` pointing at `./tmp`, and return it as `storage`.
 
 For tests, create a separate factory that returns mocked services:
 
-```typescript
-// services.test.ts
-export const createTestServices = pikkuServices(
-  async (config, existingServices) => {
-    return {
-      config,
-      logger: new NoOpLogger(),
-      database: new MockDatabase(),
-      storage: new InMemoryStorage(),
-      // ... other mocks
-    };
-  },
-);
-```
+For tests, write a `createTestServices` with `pikkuServices` that returns a no-op logger, a mock database and an in-memory storage in place of the real ones.
 
 ## Summary
 

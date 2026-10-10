@@ -118,55 +118,14 @@ This ensures:
 
 **Example:**
 
-```typescript
-// First execution
-await workflow.do('Step 1', async () => createUser()) // Executes
-await workflow.do('Step 2', async () => sendEmail()) // Executes
-await workflow.sleep('Wait', '5min')                 // Schedules timer
-
-// After 5 minutes (replay)
-await workflow.do('Step 1', async () => createUser()) // SKIPPED (cached)
-await workflow.do('Step 2', async () => sendEmail()) // SKIPPED (cached)
-await workflow.sleep('Wait', '5min')                 // SKIPPED (cached)
-await workflow.do('Step 3', async () => sendReminder()) // Executes
+```typescript @snippet wa-wf-replay
 ```
 
 ## Quick Example
 
-Here's a simple user onboarding workflow:
+Here's a simple order follow-up workflow:
 
-```typescript
-import { pikkuWorkflowFunc } from '#pikku/workflow'
-
-export const onboardingWorkflow = pikkuWorkflowFunc<
-  { email: string; userId: string },
-  { success: boolean }
->(async (_services, data, { workflow }) => {
-  // Step 1: Create user profile (RPC step - runs in queue worker)
-  await workflow.do(
-    'Create user profile in database',
-    'createUserProfile',
-    data
-  )
-
-  // Step 2: Generate welcome message (inline step - runs immediately)
-  const message = await workflow.do(
-    'Generate welcome message',
-    async () => `Welcome to our platform, ${data.email}!`
-  )
-
-  // Step 3: Wait 5 minutes before sending email
-  await workflow.sleep('Wait 5 minutes before welcome email', '5min')
-
-  // Step 4: Send welcome email (RPC step - runs in queue worker)
-  await workflow.do(
-    'Send welcome email',
-    'sendEmail',
-    { to: data.email, message }
-  )
-
-  return { success: true }
-})
+```typescript @snippet wa-wf-quick-example
 ```
 
 That's it — there is no separate wiring call. Any `pikkuWorkflowFunc` exported from a `*.workflow.ts` file in your source directories is discovered and registered by the CLI; the workflow name is derived from the exported function. Run `npx pikku` to (re)generate the workflow types and registration.
@@ -175,11 +134,7 @@ Note: Execution mode (inline vs remote) is determined automatically based on whe
 
 Start a workflow via `rpc.startWorkflow` (available on the wire object). It resolves to `{ runId }`:
 
-```typescript
-const { runId } = await rpc.startWorkflow('onboarding', {
-  email: 'user@example.com',
-  userId: 'user-123'
-})
+```typescript @snippet wa-wf-start
 ```
 
 ## Real-World Example: Checkout Workflow

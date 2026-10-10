@@ -12,8 +12,7 @@ For larger APIs, `defineHTTPRoutes` and `wireHTTPRoutes` let you organise routes
 
 Use `defineHTTPRoutes` to create a route contract:
 
-```typescript reference title="todos.http.ts"
-https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/todos.http.ts
+```typescript @snippet wa-http-define-routes
 ```
 
 `defineHTTPRoutes` doesn't register anything — it returns a route contract that can be composed and wired later.
@@ -35,47 +34,21 @@ Individual routes can still override `auth`, and their `tags`/`middleware` are m
 
 Use `wireHTTPRoutes` to register route contracts:
 
-```typescript
-// app.http.ts
-import { wireHTTPRoutes } from '#pikku/http'
-import { todosRoutes } from './routes/todos.routes.js'
-import { authRoutes } from './routes/auth.routes.js'
-
-wireHTTPRoutes({
-  routes: {
-    todos: todosRoutes,
-    auth: authRoutes,
-  },
-})
+```typescript @snippet wa-http-wire-route-groups
 ```
 
 ### Base Path
 
 Add a `basePath` to prefix all routes:
 
-```typescript
-wireHTTPRoutes({
-  basePath: '/api/v1',
-  routes: {
-    todos: todosRoutes,
-    auth: authRoutes,
-  },
-})
-// Routes become: /api/v1/todos, /api/v1/todos/:id, etc.
+```typescript @snippet wa-http-base-path
 ```
 
 ### Array of Routes
 
 You can also pass an array of routes directly:
 
-```typescript
-wireHTTPRoutes({
-  basePath: '/api',
-  routes: [
-    { method: 'get', route: '/health', func: healthCheck, auth: false },
-    { method: 'get', route: '/status', func: getStatus, auth: false },
-  ],
-})
+```typescript @snippet wa-http-route-array
 ```
 
 ## Real-World Example: Shop Routes

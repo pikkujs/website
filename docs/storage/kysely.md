@@ -50,14 +50,7 @@ bun add @pikku/kysely-sqlite @pikku/kysely-bun-sqlite kysely
 
 Connection manager and database abstraction. All other Kysely services require an instance of this.
 
-```typescript
-import { PikkuKysely } from '@pikku/kysely-postgres'
-import postgres from 'postgres'
-
-const sql = postgres(process.env.DATABASE_URL!)
-const db = new PikkuKysely(logger, sql)
-await db.init()
-```
+Import `PikkuKysely` from `@pikku/kysely-postgres` and `postgres` from the `postgres` package. Create a connection with `postgres(process.env.DATABASE_URL)`, then `new PikkuKysely(logger, sql)` and `await db.init()`. The Kysely instance is `db.kysely`.
 
 **Constructor:** `new PikkuKysely(logger, connectionOrConfig, defaultSchemaName?, poolConfig?)`
 
@@ -72,12 +65,7 @@ await db.init()
 
 Implements both `AgentStorageService` and `AgentRunStateService` for AI Agent persistence.
 
-```typescript
-import { KyselyAgentStorageService } from '@pikku/kysely'
-
-const agentStorage = new KyselyAgentStorageService(db.kysely)
-await agentStorage.init()
-```
+`new KyselyAgentStorageService(db.kysely)` from `@pikku/kysely`, then `await agentStorage.init()`.
 
 Provides the same methods as [`PgKyselyAgentStorageService`](./postgresql#pgkyselyagentstorageservice).
 
@@ -85,11 +73,7 @@ Provides the same methods as [`PgKyselyAgentStorageService`](./postgresql#pgkyse
 
 Read-only agent run queries.
 
-```typescript
-import { KyselyAgentRunService } from '@pikku/kysely'
-
-const agentRunService = new KyselyAgentRunService(db.kysely)
-```
+`new KyselyAgentRunService(db.kysely)` from `@pikku/kysely`.
 
 ### KyselyWorkflowService
 
@@ -100,22 +84,13 @@ It locks runs and steps on the lease service you pass it — on PostgreSQL
 `MySQLKyselyLeaseService`, on SQLite [`KyselyLeaseService`](#kyselyleaseservice).
 Register the same instance as `leaseService`.
 
-```typescript
-import { KyselyWorkflowService } from '@pikku/kysely'
-
-const workflowService = new KyselyWorkflowService(db.kysely, { leaseService })
-await workflowService.init()
-```
+`new KyselyWorkflowService(db.kysely, { leaseService })` from `@pikku/kysely`, then `await workflowService.init()`.
 
 ### KyselyWorkflowRunService
 
 Read-only workflow run queries.
 
-```typescript
-import { KyselyWorkflowRunService } from '@pikku/kysely'
-
-const workflowRunService = new KyselyWorkflowRunService(db.kysely)
-```
+`new KyselyWorkflowRunService(db.kysely)` from `@pikku/kysely`.
 
 ### KyselyLeaseService
 
@@ -124,176 +99,84 @@ the process asking, which is only safe when every process shares one host: on
 PostgreSQL use `PgKyselyLeaseService`, and on MySQL `MySQLKyselyLeaseService`,
 which judge leases by the database's clock.
 
-```typescript
-import { KyselyLeaseService } from '@pikku/kysely'
-
-const leaseService = new KyselyLeaseService(db.kysely)
-await leaseService.init()
-```
+`new KyselyLeaseService(db.kysely)` from `@pikku/kysely`, then `await leaseService.init()`.
 
 ### KyselyChannelStore
 
 WebSocket channel and subscription persistence.
 
-```typescript
-import { KyselyChannelStore } from '@pikku/kysely'
-
-const channelStore = new KyselyChannelStore(db.kysely)
-await channelStore.init()
-```
+`new KyselyChannelStore(db.kysely)` from `@pikku/kysely`, then `await channelStore.init()`.
 
 ### KyselyDeploymentService
 
 Multi-instance deployment tracking.
 
-```typescript
-import { KyselyDeploymentService } from '@pikku/kysely'
-
-const deploymentService = new KyselyDeploymentService(config, db.kysely)
-await deploymentService.init()
-```
+`new KyselyDeploymentService(config, db.kysely)` from `@pikku/kysely`, then `await deploymentService.init()`.
 
 ### KyselySecretService
 
 Encrypted secret storage with envelope encryption and key rotation.
 
-```typescript
-import { KyselySecretService } from '@pikku/kysely'
-
-const secrets = new KyselySecretService(db.kysely, {
-  key: process.env.ENCRYPTION_KEY!,
-  keyVersion: 1,
-})
-await secrets.init()
-```
+`new KyselySecretService(db.kysely, { key, keyVersion })` from `@pikku/kysely`, with `key` from `ENCRYPTION_KEY` and `keyVersion: 1`, then `await secrets.init()`.
 
 ### KyselyCredentialService
 
 Per-user credential storage.
 
-```typescript
-import { KyselyCredentialService } from '@pikku/kysely'
-
-const credentialService = new KyselyCredentialService(db.kysely, {
-  key: process.env.ENCRYPTION_KEY!,
-})
-await credentialService.init()
-```
+`new KyselyCredentialService(db.kysely, { key })` from `@pikku/kysely`, with `key` from `ENCRYPTION_KEY`, then `await credentialService.init()`.
 
 ### KyselyEventHubStore
 
 Channel topic subscription tracking.
 
-```typescript
-import { KyselyEventHubStore } from '@pikku/kysely'
-
-const eventHubStore = new KyselyEventHubStore(db.kysely)
-await eventHubStore.init()
-```
+`new KyselyEventHubStore(db.kysely)` from `@pikku/kysely`, then `await eventHubStore.init()`.
 
 ### KyselySessionStore
 
 Persists user sessions keyed by `pikkuUserId` — plugs into the `sessionStore` singleton service.
 
-```typescript
-import { KyselySessionStore } from '@pikku/kysely'
-
-const sessionStore = new KyselySessionStore(db.kysely)
-await sessionStore.init()
-```
+`new KyselySessionStore(db.kysely)` from `@pikku/kysely`, then `await sessionStore.init()`.
 
 ### KyselyAuditService
 
 Durable audit event storage for functions wired with `audit: true`.
 
-```typescript
-import { KyselyAuditService } from '@pikku/kysely'
-
-const audit = new KyselyAuditService(db.kysely)
-```
+`new KyselyAuditService(db.kysely)` from `@pikku/kysely`.
 
 ## Type-Safe Queries
 
 The `KyselyPikkuDB` type provides full type safety for direct Kysely queries against Pikku tables:
 
-```typescript
-import type { KyselyPikkuDB } from '@pikku/kysely'
-import type { Kysely } from 'kysely'
-
-async function customQuery(db: Kysely<KyselyPikkuDB>) {
-  return db
-    .selectFrom('aiThreads')
-    .where('resourceId', '=', 'user-123')
-    .selectAll()
-    .execute()
-}
-```
+Type your own queries against `Kysely<KyselyPikkuDB>` (both types are exported, from `kysely` and `@pikku/kysely`). Pikku's tables are available by their camelCase names, so you can, for example, select from `aiThreads` where `resourceId` equals a user id, with `selectAll().execute()`.
 
 ## Full Example
 
-```typescript
-import { PikkuKysely, PgKyselyLeaseService } from '@pikku/kysely-postgres'
-import {
-  KyselyAgentStorageService,
-  KyselyAgentRunService,
-  KyselyWorkflowService,
-} from '@pikku/kysely'
-import { VercelAgentRunner } from '@pikku/ai-vercel'
-import { createOpenAI } from '@ai-sdk/openai'
-import postgres from 'postgres'
+A typical Postgres setup, in order:
 
-const sql = postgres(process.env.DATABASE_URL!)
-const db = new PikkuKysely(logger, sql)
-await db.init()
-
-const agentStorage = new KyselyAgentStorageService(db.kysely)
-await agentStorage.init()
-
-const leaseService = new PgKyselyLeaseService(db.kysely)
-await leaseService.init()
-
-const workflowService = new KyselyWorkflowService(db.kysely, { leaseService })
-await workflowService.init()
-
-const singletonServices = await createSingletonServices(config, {
-  agentStorage,
-  agentRunState: agentStorage,
-  agentRunService: new KyselyAgentRunService(db.kysely),
-  leaseService,
-  workflowService,
-  agentRunner: new VercelAgentRunner({
-    openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY! }),
-  }),
-})
-```
+1. Create the connection with `postgres(process.env.DATABASE_URL)`, then `new PikkuKysely(logger, sql)` and `await db.init()`.
+2. Create `KyselyAgentStorageService` over `db.kysely` and `init()` it.
+3. Create `PgKyselyLeaseService` (from `@pikku/kysely-postgres`) and `init()` it, then `KyselyWorkflowService` with `{ leaseService }` and `init()` that.
+4. Call `createSingletonServices(config, ...)` with `agentStorage`, `agentRunState` (the same `agentStorage` instance), `agentRunService` (a `KyselyAgentRunService`), `leaseService`, `workflowService`, and an `agentRunner`: `new VercelAgentRunner({ openai: createOpenAI({ apiKey: process.env.OPENAI_API_KEY }) })` using `@pikku/ai-vercel` and `@ai-sdk/openai`.
 
 ## MySQL (`@pikku/kysely-mysql`)
 
 All services from `@pikku/kysely` have MySQL equivalents with the `MySQL` prefix:
 
-```typescript
-import {
-  MySQLKyselyAgentStorageService,
-  MySQLKyselyAgentRunService,
-  MySQLKyselyWorkflowService,
-  MySQLKyselyWorkflowRunService,
-  MySQLKyselyChannelStore,
-  MySQLKyselyEventHubStore,
-  MySQLKyselyDeploymentService,
-  MySQLKyselySecretService,
-  MySQLKyselyLeaseService,
-} from '@pikku/kysely-mysql'
-```
+Import the MySQL variants from `@pikku/kysely-mysql`. Each one is the plain name prefixed with `MySQLKysely`:
+
+- `MySQLKyselyAgentStorageService`
+- `MySQLKyselyAgentRunService`
+- `MySQLKyselyWorkflowService`
+- `MySQLKyselyWorkflowRunService`
+- `MySQLKyselyChannelStore`
+- `MySQLKyselyEventHubStore`
+- `MySQLKyselyDeploymentService`
+- `MySQLKyselySecretService`
+- `MySQLKyselyLeaseService`
 
 Usage is identical to the PostgreSQL versions — pass a `Kysely<KyselyPikkuDB>` instance backed by a MySQL dialect:
 
-```typescript
-const leaseService = new MySQLKyselyLeaseService(db)
-await leaseService.init()
-
-const workflowService = new MySQLKyselyWorkflowService(db, { leaseService })
-await workflowService.init()
-```
+Construct them directly over your Kysely instance `db`, without `.kysely`: `new MySQLKyselyLeaseService(db)`, then `new MySQLKyselyWorkflowService(db, { leaseService })`. `await init()` each of them.
 
 pikku ships no MySQL migrations, and the runtime tables' `text` primary keys
 are not indexable on MySQL, so create the tables yourself with `varchar` keys.
@@ -312,32 +195,13 @@ create table pikku_lease (
 
 All services have SQLite equivalents with the `SQLite` prefix. The package also provides a helper for creating the Kysely instance:
 
-```typescript
-import Database from 'better-sqlite3'
-import { createSQLiteKysely } from '@pikku/kysely-sqlite'
-import { KyselyLeaseService } from '@pikku/kysely'
-import {
-  SQLiteKyselyAgentStorageService,
-  SQLiteKyselyAgentRunService,
-  SQLiteKyselyWorkflowService,
-  SQLiteKyselyWorkflowRunService,
-  SQLiteKyselyChannelStore,
-  SQLiteKyselyEventHubStore,
-  SQLiteKyselyDeploymentService,
-  SQLiteKyselySecretService,
-} from '@pikku/kysely-sqlite'
+Create the database with `createSQLiteKysely(new Database('./pikku.db'))`, using `createSQLiteKysely` from `@pikku/kysely-sqlite` and `Database` from `better-sqlite3`. Then build the services over it, each with `await init()`:
 
-const db = createSQLiteKysely(new Database('./pikku.db'))
+- `SQLiteKyselyAgentStorageService(db)`
+- `KyselyLeaseService(db)` (from `@pikku/kysely`)
+- `SQLiteKyselyWorkflowService(db, { leaseService })`
 
-const agentStorage = new SQLiteKyselyAgentStorageService(db)
-await agentStorage.init()
-
-const leaseService = new KyselyLeaseService(db)
-await leaseService.init()
-
-const workflowService = new SQLiteKyselyWorkflowService(db, { leaseService })
-await workflowService.init()
-```
+The other SQLite variants are `SQLiteKyselyAgentRunService`, `SQLiteKyselyWorkflowRunService`, `SQLiteKyselyChannelStore`, `SQLiteKyselyEventHubStore`, `SQLiteKyselyDeploymentService` and `SQLiteKyselySecretService`, all from `@pikku/kysely-sqlite`.
 
 SQLite is used by the Cloudflare D1 integration (`@pikku/cloudflare/d1`) under the hood.
 
@@ -345,26 +209,8 @@ SQLite is used by the Cloudflare D1 integration (`@pikku/cloudflare/d1`) under t
 
 If you'd rather avoid the `better-sqlite3` native module, `@pikku/kysely-node-sqlite` (Node's built-in `node:sqlite`) and `@pikku/kysely-bun-sqlite` (Bun's `bun:sqlite`) provide drop-in Kysely dialects. Pass the resulting instance to the same `SQLiteKysely*` services:
 
-```typescript
-import { createNodeSqliteKysely } from '@pikku/kysely-node-sqlite'
-// or: import { createBunSqliteKysely } from '@pikku/kysely-bun-sqlite'
-import { SQLiteKyselyAgentStorageService } from '@pikku/kysely-sqlite'
-
-const db = createNodeSqliteKysely({ filename: './pikku.db' })
-
-const agentStorage = new SQLiteKyselyAgentStorageService(db)
-await agentStorage.init()
-
-const leaseService = new KyselyLeaseService(db)
-await leaseService.init()
-
-const workflowService = new SQLiteKyselyWorkflowService(db, { leaseService })
-await workflowService.init()
-```
+Use `createNodeSqliteKysely({ filename: './pikku.db' })` from `@pikku/kysely-node-sqlite` (or `createBunSqliteKysely` from `@pikku/kysely-bun-sqlite`) to get `db`. The services are the same as for better-sqlite3: `SQLiteKyselyAgentStorageService(db)`, `KyselyLeaseService(db)` and `SQLiteKyselyWorkflowService(db, { leaseService })`, each initialised with `await init()`.
 
 ## Cleanup
 
-```typescript
-await db.close()
-await sql.end()
-```
+On shutdown, await `db.close()` and then `sql.end()`.

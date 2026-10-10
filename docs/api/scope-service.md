@@ -143,12 +143,7 @@ with `ON DELETE CASCADE`, so deleting a user takes their grants with it.
 refuses to grant a scope that was never declared — which is how persona
 provisioning discovers a role whose declaration was never synced.
 
-```typescript
-import { KyselyScopeService } from '@pikku/kysely'
-
-const scopeService = new KyselyScopeService(db.kysely)
-await scopeService.init()
-```
+Import `KyselyScopeService` from `@pikku/kysely`, construct it with your Kysely instance and await `init()`.
 
 `init()` requires the scope schema rather than creating it — if the tables are
 missing it throws, telling you to run `pikku db generate` then `pikku db migrate`.
@@ -171,20 +166,10 @@ whose scopes live somewhere other than Kysely gets nothing from those commands.
 Declarations are inert until something writes them down, and nothing else does
 it — so sync on startup, from the generated lists:
 
-```typescript
-import { KyselyScopeService } from '@pikku/kysely'
-import { SCOPES } from '#pikku/scopes/pikku-scopes.gen.js'
-import { SYSTEM_ROLES } from '#pikku/scopes/pikku-roles.gen.js'
-
-const scopeService = new KyselyScopeService(db.kysely)
-await scopeService.init()
-await scopeService.syncScopes(SCOPES)
-await scopeService.syncSystemRoles(SYSTEM_ROLES)
-
-const singletonServices = await createSingletonServices(config, {
-  scopeService,
-})
-```
+1. Import `SCOPES` from the generated `pikku-scopes.gen.js` and `SYSTEM_ROLES` from `pikku-roles.gen.js`.
+2. Construct a `KyselyScopeService` over your Kysely instance and await `init()`.
+3. Await `syncScopes(SCOPES)` and `syncSystemRoles(SYSTEM_ROLES)`.
+4. Pass the service under the `scopeService` key when you build the singleton services.
 
 Nothing in your own code destructures `scopeService` — the generated auth layer
 is what reaches it — so the inspector adds it to your required services as soon

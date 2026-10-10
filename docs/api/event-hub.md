@@ -23,37 +23,27 @@ EventHub enables:
 
 Subscribe a channel/connection to a topic.
 
-```typescript
-await eventHub.subscribe(topic: string, channelId: string)
-```
+Signature: `subscribe(topic: string, channelId: string): Promise<void>`.
 
 **Parameters:**
 - `topic` - Topic name (e.g., `'room:lobby'`, `'user:123'`)
 - `channelId` - Unique identifier for the subscriber (typically `channel.channelId`)
 
 **Example:**
-```typescript
-// Subscribe channel to a room topic
-await eventHub.subscribe(`room:${roomId}`, channel.channelId)
-```
+Subscribe to a topic made from a prefix and an id (such as `room:` plus the room id), passing `channel.channelId` as the subscriber.
 
 ### unsubscribe()
 
 Unsubscribe a channel/connection from a topic.
 
-```typescript
-await eventHub.unsubscribe(topic: string, channelId: string)
-```
+Signature: `unsubscribe(topic: string, channelId: string): Promise<void>`.
 
 **Parameters:**
 - `topic` - Topic name to unsubscribe from
 - `channelId` - Subscriber identifier to remove
 
 **Example:**
-```typescript
-// Unsubscribe when leaving a room
-await eventHub.unsubscribe(`room:${roomId}`, channel.channelId)
-```
+Call it with the same topic and `channel.channelId` when the user leaves a room.
 
 :::note Automatic Cleanup
 Pikku automatically unsubscribes all topics when a channel disconnects. You only need to manually unsubscribe when changing subscriptions during an active connection.
@@ -63,14 +53,7 @@ Pikku automatically unsubscribes all topics when a channel disconnects. You only
 
 Publish a message to all subscribers of a topic.
 
-```typescript
-await eventHub.publish(
-  topic: string,
-  channelId: string | null,
-  data: any,
-  isBinary?: boolean
-)
-```
+Signature: `publish(topic: string, channelId: string | null, data: any, isBinary?: boolean): Promise<void>`.
 
 **Parameters:**
 - `topic` - Topic to publish to
@@ -81,115 +64,26 @@ await eventHub.publish(
 **Examples:**
 
 Broadcast to all subscribers:
-```typescript
-await eventHub.publish(
-  `room:${roomId}`,
-  null,  // Send to all
-  {
-    type: 'message',
-    text: 'Hello everyone!',
-    userId: currentUserId
-  }
-)
+```typescript @snippet co-eventhub-broadcast-all
 ```
 
 Broadcast to all except sender:
-```typescript
-await eventHub.publish(
-  `room:${roomId}`,
-  channel.channelId,  // Exclude sender
-  {
-    type: 'user_joined',
-    userId: newUserId,
-    username: newUserName
-  }
-)
+```typescript @snippet co-eventhub-exclude-sender
 ```
 
 ## Usage Patterns
 
 ### Chat Room Example
 
-```typescript
-// Connection - subscribe to room
-export const joinRoom = pikkuChannelConnectionFunc<{ welcome: string }>(
-  async ({ eventHub }, data, { channel }) => {
-    const room = channel.openingData.room
-    await eventHub.subscribe(`room:${room}`, channel.channelId)
-    return { welcome: `Welcome to ${room}!` }
-  }
-)
-
-// Message - broadcast to room (excluding sender)
-export const sendMessage = pikkuChannelFunc<{ message: string }, void>(
-  async ({ eventHub }, data, { channel, session }) => {
-    const room = channel.openingData.room
-    await eventHub.publish(
-      `room:${room}`,
-      channel.channelId, // Don't echo back to sender
-      {
-        message: data.message,
-        userId: session.userId,
-        timestamp: Date.now()
-      }
-    )
-  }
-)
-
-// Disconnect - cleanup (optional, happens automatically)
-export const leaveRoom = pikkuChannelDisconnectionFunc(
-  async ({ eventHub }, _data, { channel }) => {
-    await eventHub.unsubscribe(
-      `room:${channel.openingData.room}`,
-      channel.channelId
-    )
-  }
-)
+```typescript @snippet co-eventhub-room
 ```
 
 ### Presence System
 
-```typescript
-// Publish presence updates
-export const updatePresence = pikkuFunc<
-  { status: 'online' | 'away' | 'offline' },
-  void
->(async ({ eventHub }, data, { session }) => {
-  await eventHub.publish('presence:updates', null, {
-    userId: session.userId,
-    status: data.status,
-    timestamp: Date.now()
-  })
-})
-
-// Subscribe to presence on connect
-export const watchPresence = pikkuChannelConnectionFunc(
-  async ({ eventHub }, data, { channel }) => {
-    await eventHub.subscribe('presence:updates', channel.channelId)
-  }
-)
+```typescript @snippet co-eventhub-presence
 ```
 
 ### Notification System
 
-```typescript
-// Subscribe user to their personal notification channel
-export const connectNotifications = pikkuChannelConnectionFunc<void>(
-  async ({ eventHub }, data, { channel }) => {
-    const userId = channel.openingData.userId
-    await eventHub.subscribe(`notifications:${userId}`, channel.channelId)
-  }
-)
-
-// Trigger notification from any function
-export const sendNotification = pikkuFunc<
-  { userId: string; title: string; message: string },
-  void
->(async ({ eventHub }, data) => {
-  await eventHub.publish(`notifications:${data.userId}`, null, {
-    title: data.title,
-    message: data.message,
-    timestamp: Date.now()
-  })
-})
+```typescript @snippet co-eventhub-notifications
 ```

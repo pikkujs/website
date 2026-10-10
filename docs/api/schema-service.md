@@ -26,13 +26,7 @@ The default choice for Node.js environments. Supports format validation and defa
 npm install @pikku/schema-ajv
 ```
 
-```typescript
-import { AjvSchemaService } from '@pikku/schema-ajv'
-
-const singletonServices = await createSingletonServices(config, {
-  schema: new AjvSchemaService(logger),
-})
-```
+Import `AjvSchemaService` from `@pikku/schema-ajv` and pass `new AjvSchemaService(logger)` under the `schema` key when you build the singleton services.
 
 AJV automatically:
 - Applies default values from your schemas
@@ -49,13 +43,7 @@ For Cloudflare Workers, which don't have access to Node.js APIs that AJV depends
 npm install @pikku/schema-cfworker
 ```
 
-```typescript
-import { CFWorkerSchemaService } from '@pikku/schema-cfworker'
-
-const singletonServices = await createSingletonServices(config, {
-  schema: new CFWorkerSchemaService(logger),
-})
-```
+Import `CFWorkerSchemaService` from `@pikku/schema-cfworker` and pass `new CFWorkerSchemaService(logger)` under the `schema` key when you build the singleton services.
 
 :::note
 `CFWorkerSchemaService` deep-clones schema values before compilation to avoid mutation issues with the `@cfworker/json-schema` validator.

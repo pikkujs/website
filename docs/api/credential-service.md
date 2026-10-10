@@ -50,25 +50,7 @@ Lists all user IDs that have any credential configured.
 
 ## Usage Example
 
-```typescript
-export const connectStripe = pikkuFunc<{ apiKey: string }, void>(
-  async (services, data, { session }) => {
-    await services.credentialService.set('stripe', data.apiKey, session.userId)
-  }
-)
-
-export const chargeCustomer = pikkuFunc<{ amount: number }, void>(
-  async (services, data, { session }) => {
-    const apiKey = await services.credentialService.get<string>(
-      'stripe',
-      session.userId
-    )
-    if (!apiKey) {
-      throw new BadRequestError('Stripe is not connected')
-    }
-    // ...
-  }
-)
+```typescript @snippet co-credential-service
 ```
 
 ## Implementations
@@ -77,10 +59,7 @@ export const chargeCustomer = pikkuFunc<{ amount: number }, void>(
 
 In-memory storage — fine for development, lost on restart.
 
-```typescript
-import { LocalCredentialService } from '@pikku/core/services'
-const credentialService = new LocalCredentialService()
-```
+Import `LocalCredentialService` from `@pikku/core/services` and construct it with no arguments.
 
 ```typescript reference title="local-credential-service.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-credential-service.ts
@@ -90,14 +69,7 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-cred
 
 Encrypted SQL storage with envelope encryption and key rotation — see [Storage Backends](/docs/storage/kysely#kyselycredentialservice):
 
-```typescript
-import { KyselyCredentialService } from '@pikku/kysely'
-
-const credentialService = new KyselyCredentialService(db.kysely, {
-  key: process.env.ENCRYPTION_KEY!,
-})
-await credentialService.init()
-```
+Import `KyselyCredentialService` from `@pikku/kysely`, construct it with your Kysely instance and an options object holding the encryption `key` (read it from the environment), then await `init()`.
 
 ### TypedCredentialService (wrapper)
 
@@ -109,8 +81,4 @@ https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/typed-cred
 
 ## Registration
 
-```typescript
-const singletonServices = await createSingletonServices(config, {
-  credentialService: new LocalCredentialService(),
-})
-```
+Pass the service under the `credentialService` key when you build the singleton services.

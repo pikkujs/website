@@ -28,24 +28,7 @@ See [Middleware](../../core-features/middleware.md) for auth configuration.
 
 Wire an HTTP endpoint that calls any exposed function:
 
-```typescript
-import { wireHTTP } from '#pikku/http'
-import { pikkuSessionlessFunc } from '#pikku/function'
-
-// Generic RPC caller function
-export const rpcCaller = pikkuSessionlessFunc<
-  { rpcName: string; data: unknown },
-  unknown
->(async (_services, { rpcName, data }, { rpc }) => {
-  return await rpc.exposed(rpcName, data)
-})
-
-// Wire it to HTTP
-wireHTTP({
-  method: 'post',
-  route: '/rpc/:rpcName',
-  func: rpcCaller
-})
+```typescript @snippet wb-rpc-exposed-endpoint
 ```
 
 External clients call it:
@@ -76,19 +59,7 @@ Response:
 
 Pikku generates a type-safe `PikkuRPC` client (`pikku rpc`) for calling exposed RPCs by name:
 
-```typescript
-import { PikkuRPC } from '#pikku/pikku-rpc.gen.js'
-
-const rpc = new PikkuRPC()
-rpc.setServerUrl('https://api.example.com')
-
-// Fully type-safe RPC calls — input and output are inferred from the function
-const result = await rpc.invoke('greet', {
-  name: 'Alice',
-  greeting: 'Hello'
-})
-
-console.log(result.message)  // TypeScript knows the return type
+```typescript @snippet rpcClient
 ```
 
 The client:

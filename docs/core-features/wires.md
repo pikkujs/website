@@ -8,15 +8,7 @@ description: Transport-specific context passed to functions and middleware
 
 Every Pikku function receives three arguments: **services**, **data**, and **wire**. The wire is the transport-specific context — it tells your function _how_ it was called and gives access to transport-specific capabilities.
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-
-export const myFunc = pikkuFunc<Input, Output>({
-  func: async (services, data, wire) => {
-    // wire contains transport-specific properties
-  }
-})
-```
+The wire is the third argument of every function: `func: async (services, data, wire) => { ... }`. It holds the transport-specific properties.
 
 The same function can be called via HTTP, WebSocket, RPC, CLI, or any other transport. The wire is what changes between them.
 
@@ -49,62 +41,20 @@ The wire object (`PikkuWire`) contains these properties, all optional depending 
 
 Always destructure the wire to access only what you need:
 
-```typescript
-// HTTP-aware function
-export const getBook = pikkuFunc<{ bookId: string }, Book>({
-  func: async ({ database }, data, { http }) => {
-    const book = await database.query('book', { bookId: data.bookId })
-    // Access HTTP-specific details if needed
-    if (http?.request) {
-      const userAgent = http.request.header('user-agent')
-    }
-    return book
-  }
-})
+```typescript @snippet co-func-wire-http
 ```
 
-```typescript
-// Function that uses session
-export const getProfile = pikkuFunc<void, Profile>({
-  func: async ({ database }, _data, { session }) => {
-    return await database.query('user', { userId: session.userId })
-  }
-})
+```typescript @snippet co-func-session-read
 ```
 
-```typescript
-// Middleware destructures wire too
-const authMiddleware = pikkuMiddleware(
-  async ({ jwt }, { http, setSession }, next) => {
-    const token = http?.request?.header('authorization')
-    if (token) {
-      const session = await jwt.decode(token)
-      setSession(session)
-    }
-    await next()
-  }
-)
+```typescript @snippet co-session-refresh-middleware
 ```
 
 ## Session
 
 The session is the most commonly used wire property. When auth is enabled, the session is available directly as a value — not an accessor:
 
-```typescript
-// ✅ session is the value directly
-async (services, data, { session }) => {
-  const userId = session.userId
-}
-
-// ✅ Set a new session (e.g., after login)
-async (services, data, { setSession }) => {
-  setSession({ userId: '123', role: 'admin' })
-}
-
-// ✅ Clear the session (e.g., on logout)
-async (services, _data, { clearSession }) => {
-  clearSession()
-}
+```typescript @snippet co-session-wire-ops
 ```
 
 See [User Sessions](./user-sessions.md) for more details.
@@ -115,83 +65,42 @@ See [User Sessions](./user-sessions.md) for more details.
 
 Available when the function is called via an HTTP route:
 
-```typescript
-async (services, data, { http }) => {
-  // Request details
-  const method = http.request.method()
-  const path = http.request.path()
-  const authHeader = http.request.header('authorization')
-  const cookie = http.request.cookie('session')
-
-  // Response control
-  http.response.status(201)
-  http.response.header('X-Custom', 'value')
-  http.response.cookie('session', token, { httpOnly: true })
-}
+```typescript @snippet co-wire-http
 ```
 
 ### Channel (WebSocket / SSE)
 
 Available when the function is called via a WebSocket channel or SSE:
 
-```typescript
-async (services, data, { channel }) => {
-  // Send data to the client
-  channel.send({ message: 'hello' })
-
-  // Close the connection
-  channel.close()
-}
+```typescript @snippet co-wire-channel
 ```
 
 ### Queue
 
 Available when the function is processing a queue job:
 
-```typescript
-async (services, data, { queue }) => {
-  queue.updateProgress(50)  // Report progress
-  queue.fail('reason')      // Fail the job
-  queue.discard('reason')   // Discard without retry
-}
+```typescript @snippet queueJobControl
 ```
 
 ### Scheduled Task
 
 Available when the function runs as a scheduled task:
 
-```typescript
-async (services, _data, { scheduledTask }) => {
-  console.log(scheduledTask.name)           // Task name
-  console.log(scheduledTask.schedule)        // Cron expression
-  console.log(scheduledTask.executionTime)   // Current execution time
-  scheduledTask.skip('maintenance window')   // Skip this execution
-}
+```typescript @snippet cronSkip
 ```
 
 ### RPC
 
 Available in all contexts for calling other Pikku functions:
 
-```typescript
-async (services, data, { rpc }) => {
-  // Call another function internally
-  const result = await rpc.invoke('getUser', { userId: data.userId })
-
-  // Call a remote function
-  const remote = await rpc.remote('externalService', data)
-}
+```typescript @snippet co-wire-rpc-remote
 ```
 
 ### Trigger
 
 Available in trigger source functions:
 
-```typescript
-async (services, input, { trigger }) => {
-  // Fire the trigger when an event occurs
-  trigger.invoke({ payload: 'event data' })
-}
+```typescript @snippet co-wire-trigger
 ```
 
 ## Why Wires?

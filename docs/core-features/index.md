@@ -46,52 +46,19 @@ You should see a JSON list of todos coming back from your first Pikku function!
 
 ## Your First Function
 
-Let's look at the functions that came with the starter. Open `src/functions/todos.functions.ts`:
+Let's look at what a function looks like. Here is `listItems` from the online-shop template, a typical function in a starter's `src/functions/` folder:
 
-```typescript
-import { pikkuSessionlessFunc } from '#pikku/function'
-import { ListTodosWithUserInputSchema, TodoListResponseSchema } from '../schemas.js'
-
-/**
- * List todos for a user with optional filters.
- */
-export const listTodos = pikkuSessionlessFunc({
-  input: ListTodosWithUserInputSchema,
-  output: TodoListResponseSchema,
-  func: async ({ logger, todoStore }, { userId, completed, priority, tag }) => {
-    const uid = userId || 'user1'
-    const todos = todoStore.getTodosByUser(uid, { completed, priority, tag })
-    logger.info(`Listed ${todos.length} todos for user ${uid}`)
-    return { todos, total: todos.length }
-  },
-})
+```typescript @snippet listItems
 ```
 
-The function receives your **services** (like `logger` and `todoStore`) as its first argument and validated **input data** as its second. It knows nothing about HTTP.
+The function receives your **services** (like `kysely` and `logger`) as its first argument and validated **input data** as its second. It knows nothing about HTTP.
 
-The wiring lives separately, in `src/wirings/todos.http.ts`:
+The wiring lives separately, in a file under `src/wirings/`:
 
-```typescript
-import { defineHTTPRoutes, wireHTTPRoutes } from '#pikku/http'
-import { listTodos, getTodo, createTodo, updateTodo, deleteTodo, completeTodo } from '../functions/todos.functions.js'
-
-const todosRoutes = defineHTTPRoutes({
-  auth: false,
-  tags: ['todos'],
-  routes: {
-    list: { method: 'get', route: '/todos', func: listTodos },
-    get: { method: 'get', route: '/todos/:id', func: getTodo },
-    create: { method: 'post', route: '/todos', func: createTodo },
-    update: { method: 'put', route: '/todos/:id', func: updateTodo },
-    delete: { method: 'delete', route: '/todos/:id', func: deleteTodo },
-    complete: { method: 'post', route: '/todos/:id/complete', func: completeTodo },
-  },
-})
-
-wireHTTPRoutes({ routes: { todos: todosRoutes } })
+```typescript @snippet wireHttp
 ```
 
-You can also wire a single route with `wireHTTP({ method: 'get', route: '/todos', func: listTodos })` — route groups just make shared config (like `auth` and `tags`) easier.
+You can also wire a single route with `wireHTTP({ method: 'get', route: '/items', func: listItems })` — route groups just make shared config (like `auth` and `tags`) easier.
 
 That's it! The same functions are also wired to MCP, CLI, and WebSocket in the starter (depending on the features you selected) without changing their implementation. That's Pikku's core philosophy: **write once, run anywhere**.
 
@@ -118,11 +85,7 @@ The CLI:
 
 Everything it produces lands in the `.pikku/` directory, one barrel per concern. There is no single `#pikku` import — you import from the door for the concern you're using:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-import { wireHTTP } from '#pikku/http'
-import { wireScheduler } from '#pikku/scheduler'
-```
+Import `pikkuFunc` from `#pikku/function`, `wireHTTP` from `#pikku/http` and `wireScheduler` from `#pikku/scheduler`.
 
 Function definers live behind [`#pikku/function`](/api#app/function), each transport behind its own wiring door (`#pikku/http`, `#pikku/queue`, `#pikku/scheduler`, …), and the rest — errors, middleware, secrets, variables, permissions — behind theirs. The [API reference](/api) lists every door and what it exports. These files are regenerated whenever you change your functions or wirings — don't edit them manually.
 

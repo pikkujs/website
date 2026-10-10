@@ -160,8 +160,7 @@ must carry at least one predicate.
 :::tip Tags usually come from the wiring
 Most projects tag the wiring rather than the function:
 
-```typescript
-wireHTTP({ method: 'get', route: '/todos', func: getTodos, tags: ['todos'] })
+```typescript @snippet httpSingleRoute
 ```
 
 A rule matching `todos` picks up `getTodos` from that wiring. The same holds for

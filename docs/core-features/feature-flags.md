@@ -15,18 +15,7 @@ Flags are about **availability**, not authorization. Who is allowed to do someth
 
 Declare flags with `defineFeatureFlags`. It's a no-op at runtime; the CLI reads it from your source.
 
-```typescript
-import { defineFeatureFlags } from '#pikku/scopes'
-
-defineFeatureFlags({
-  sandboxes: {
-    description: 'Per-user sandbox environments',
-  },
-  calendar: {
-    description: 'The shared calendar',
-    anyOf: ['calendar:read', 'calendar:admin'],
-  },
-})
+```typescript @snippet co-feature-flags-define
 ```
 
 Each flag takes two optional fields:
@@ -52,16 +41,7 @@ That matters more than it sounds. Flags **fail closed** on the client: an unknow
 
 Put `featureFlag` on the function config:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-
-export const createSandbox = pikkuFunc({
-  featureFlag: 'sandboxes',
-  func: async ({ db }, data) => {
-    // ...
-  },
-})
-```
+Gate a function by setting `featureFlag` to the flag name in its `pikkuFunc` config, for example `featureFlag: 'sandboxes'`. The name is typed against the flags you have declared.
 
 When the flag is off, the call throws `FeatureUnavailableError`, a [503](./errors.md). The check runs after `scopes`, so an unauthorized caller still gets a 403 and never learns whether the feature exists.
 
@@ -71,15 +51,7 @@ The runner only enforces **availability**. It deliberately ignores `anyOf`, beca
 
 If you need to check a flag inside a function body, `assertFeatureAvailable` does what the runner does:
 
-```typescript
-import { assertFeatureAvailable } from '@pikku/core/flag'
-
-await assertFeatureAvailable(
-  'sandboxes',
-  featureFlags, // the FeatureFlagSource service
-  session,
-  { organizationId } // optional subject
-)
+```typescript @snippet co-feature-flag-assert
 ```
 
 ## How a flag resolves
@@ -96,26 +68,11 @@ Rollouts are bucketed by a hash of the flag name and the subject, so two flags a
 
 `resolveFlag` combines that state with the session into two booleans:
 
-```typescript
-type FlagState = {
-  available: boolean // switched on at all (global, caller-blind)
-  capable: boolean   // the session holds a satisfying scope from anyOf
-}
-```
+A `FlagState` has two booleans: `available` (the flag is switched on at all, global and caller-blind) and `capable` (the session holds a satisfying scope from `anyOf`).
 
 Two booleans, not one, because "you may not" (the caller's situation) and "nobody may right now" (ours) are different failures. Only `available` is enforced by the runner. `capable` is advisory and exists to hide UI. A client renders on `show`, which is `available && capable`.
 
-```typescript
-import { resolveFlag } from '@pikku/core/flag'
-
-const snapshot = await featureFlags.snapshot()
-const { available, capable } = resolveFlag(
-  'calendar',
-  ['calendar:read', 'calendar:admin'], // the flag's anyOf
-  session,
-  snapshot,
-  { organizationId } // optional subject
-)
+```typescript @snippet co-feature-flag-resolve
 ```
 
 Pass the `subject` explicitly when the session doesn't carry one. A queue worker or cron task knows its organization from its input, and resolving against no subject would skip that organization's overrides. With no subject at all, the rollout percentage is skipped rather than failed: a percentage is a statement about users, and background work is either on or off.
@@ -128,22 +85,13 @@ Flags are backed by the `featureFlags` [service](./services.md), and there are t
 
 **`FeatureFlagSource`** is the read half and the only half on the request path:
 
-```typescript
-interface FeatureFlagSource {
-  snapshot(): Promise<FlagConfigSnapshot>
-  declaredFlags?(): readonly DeclaredFlag[]
-}
-```
+`FeatureFlagSource` has a required `snapshot(): Promise<FlagConfigSnapshot>` and an optional `declaredFlags(): readonly DeclaredFlag[]`.
 
 Implement this to back flags with a third-party provider such as PostHog, Unleash or LaunchDarkly. Their UI stays the place you operate flags, and Pikku doesn't pretend to own an administration surface it doesn't have.
 
 **`FeatureFlagStore`** extends the source with administration: `syncFlags`, `listFlags`, `listOverrides`, `setEnabled`, `setRollout`, `setOverride`, `clearOverride`, `findStaleFlags` and `pruneFlags`. It's for a store Pikku owns. `@pikku/kysely` ships one, `KyselyFeatureFlagStore`:
 
-```typescript
-import { KyselyFeatureFlagStore } from '@pikku/kysely'
-
-const featureFlags = new KyselyFeatureFlagStore(kysely, { ttlMs: 30_000 })
-```
+Import `KyselyFeatureFlagStore` from `@pikku/kysely` and construct it with your Kysely instance and `{ ttlMs: 30000 }`. That is your `featureFlags` service.
 
 ### Caching and fallback
 
@@ -170,21 +118,7 @@ The booleans are the collapsed `show` value, not the two halves. Sending `availa
 
 With React, build a client with `createFeatureFlags` and read it through the hooks in [`@pikku/react`](../frontend/react.md):
 
-```tsx
-import { createFeatureFlags } from '@pikku/react'
-
-const featureFlags = createFeatureFlags<FeatureFlagName>({
-  endpoint: 'https://api.example.com/feature-flags',
-})
-```
-
-```tsx
-import { useFeatureFlag } from '@pikku/react'
-
-function SandboxButton() {
-  const enabled = useFeatureFlag<FeatureFlagName>('sandboxes')
-  return enabled ? <button>New sandbox</button> : null
-}
+```tsx @snippet co-react-feature-flags
 ```
 
 The client fetches once per session and then answers from memory, so checking a flag in a component never puts the network in front of a paint. A few options worth knowing:

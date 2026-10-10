@@ -24,10 +24,7 @@ Your `package.json` maps `#pikku/*` onto the generated output directory — one 
 
 This lets you write clean imports throughout your code:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-import { wireHTTP } from '#pikku/http'
-```
+Import `pikkuFunc` from `#pikku/function` and `wireHTTP` from `#pikku/http`.
 
 Instead of fragile relative paths like `../../.pikku/function/pikku-function-types.gen.js`.
 
@@ -283,18 +280,13 @@ Most commands write into `outDir`. These are the ones that write somewhere else,
 
 The master entry point. Importing this file registers all your functions, wirings, metadata, middleware, schemas, and addon bootstraps. Your runtime entry point should import it before doing anything else:
 
-```typescript
-import '#pikku/pikku-bootstrap.gen.js'
-```
+Import `#pikku/pikku-bootstrap.gen.js` once in your entry point.
 
 ### Door barrels (`<door>/index.ts`)
 
 Every concern directory carries an `index.ts` that `#pikku/<door>` resolves to. It re-exports that concern's generated types — so `#pikku/function` gives you `pikkuFunc` and `pikkuSessionlessFunc`, `#pikku/http` gives you `wireHTTP`, and so on:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-import { wireHTTP } from '#pikku/http'
-```
+Import `pikkuFunc` from `#pikku/function` and `wireHTTP` from `#pikku/http`.
 
 The doors are `function`, `middleware`, `setup`, `error`, `http`, `channel`, `gateway`, `trigger`, `scheduler`, `queue`, `workflow`, `scenarios`, `mcp`, `agent`, `cli`, `addon`, `secrets`, `credentials`, `scopes`, `analytics`, `variables`, and `auth`. There is no single re-export hub and no bare `#pikku` — see [Import Patterns](/docs/advanced/import-patterns) for the full alias setup, and the [SDK explorer](/api) for what each door exports.
 
@@ -310,18 +302,7 @@ Maps which singleton and wire services your project actually uses. The CLI detec
 
 This is the big one. It generates type-safe function constructors that are parameterized with your project's specific `UserSession`, `SingletonServices`, `Services`, and `Config` types:
 
-```typescript
-// These come from your application-types.d.ts
-import type { UserSession } from '../../src/application-types.d.js'
-import type { SingletonServices } from '../../src/application-types.d.js'
-import type { Services } from '../../src/application-types.d.js'
-
-// The generated pikkuFunc knows your exact types
-export function pikkuFunc<In, Out>(config: {
-  func: (services: SingletonServices, data: In, wire: PikkuWire<In, Out, true, UserSession>) => Promise<Out>
-  // ...
-}): { func: CorePikkuFunction<In, Out, SingletonServices, UserSession> }
-```
+The generated `pikkuFunc` is typed against your own `UserSession`, `SingletonServices` and `Services` from `application-types.d.ts`. Its `func` receives `(services: SingletonServices, data: In, wire: PikkuWire<In, Out, true, UserSession>)` and returns `Promise<Out>`, so your exact types flow into every function.
 
 This is why `pikkuFunc` "just works" with autocomplete for your services and session — the types are generated from your actual code.
 

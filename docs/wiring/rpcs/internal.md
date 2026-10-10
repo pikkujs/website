@@ -12,163 +12,25 @@ Internal RPCs let you call one function from another using `rpc.invoke()`. This 
 
 Let's call a function from another function:
 
-```typescript
-import { pikkuFunc, pikkuSessionlessFunc } from '#pikku/function'
-
-// Calculate order totals - reusable business logic
-export const calculateOrderTotal = pikkuSessionlessFunc<
-  { items: Array<{ price: number; quantity: number }> },
-  { subtotal: number; tax: number; total: number }
->({
-  func: async ({ database }, data) => {
-    const subtotal = data.items.reduce(
-      (sum, item) => sum + (item.price * item.quantity),
-      0
-    )
-
-    const taxRate = await database.query('config', {
-      where: { key: 'tax_rate' }
-    })
-
-    const tax = subtotal * (taxRate?.value ?? 0.08)
-    const total = subtotal + tax
-
-    return { subtotal, tax, total }
-  },
-  title: 'Calculate order totals with tax',
-  tags: ['orders']
-})
-
-// Process order - uses RPC to calculate totals
-export const processOrder = pikkuFunc<
-  { items: Array<{ price: number; quantity: number }> },
-  { orderId: string; total: number }
->({
-  func: async ({ database }, data, { rpc, session }) => {
-    // Internal RPC call
-    const totals = await rpc.invoke('calculateOrderTotal', {
-      items: data.items
-    })
-
-    const order = await database.insert('orders', {
-      userId: session.userId,
-      ...totals,
-      status: 'pending'
-    })
-
-    return {
-      orderId: order.id,
-      total: totals.total
-    }
-  },
-  auth: true,
-  title: 'Process a new order',
-  tags: ['orders']
-})
+```typescript @snippet rpcInternalCall
 ```
 
-Now `calculateOrderTotal` is reusable:
-- Called via internal RPC from `processOrder`
-- Can be wired to HTTP for price estimates
-- Can be called from CLI commands
+Here `sweepLowStock` finds the items that are running low and hands each one to `onLowStock` by name, so `onLowStock` is reusable:
+- Called via internal RPC from `sweepLowStock`
+- Can be wired to HTTP, a trigger or a CLI command
 - Can be used in queue jobs
 
 The function doesn't change - it works everywhere.
 
 ## Transforming Output for Transports
 
-RPC is perfect for calling a function and transforming its output before returning to the client:
-
-```typescript
-// Domain function - returns structured data
-export const getUserInfo = pikkuFunc<
-  { userId: string },
-  { userId: string; name: string; email: string }
->({
-  func: async ({ database }, data) => {
-    const user = await database.query('users', {
-      where: { userId: data.userId }
-    })
-
-    if (!user) {
-      throw new NotFoundError(`User not found`)
-    }
-
-    return { userId: user.userId, name: user.name, email: user.email }
-  },
-  title: 'Get user information',
-  tags: ['users']
-})
-
-// MCP adapter - transforms output for AI agents
-export const getUserInfoMCP = pikkuMCPResourceFunc<{ userId: string }>(
-  async (_services, data, { rpc }) => {
-    // Call the function via RPC
-    const user = await rpc.invoke('getUserInfo', data)
-
-    // Transform for MCP format
-    return [
-      {
-        uri: `user://${user.userId}`,
-        text: JSON.stringify(user)
-      }
-    ]
-  }
-)
-
-// `title`, `description` and `tags` live on the wiring, not the function
-wireMCPResource({
-  uri: 'users/{userId}',
-  title: 'Get user information (MCP adapter)',
-  description: 'Fetch a user profile as an MCP resource',
-  func: getUserInfoMCP,
-  tags: ['mcp', 'users']
-})
-```
+RPC is perfect for calling a function and transforming its output before returning to the client. For example, an MCP resource can call a domain function through `rpc.invoke` and reshape the result into the `{ uri, text }` entries MCP expects. The domain function stays untouched, and the MCP wiring (`wireMCPResource`, which carries the `title`, `description` and `tags`) owns the transport-specific shape. See the [MCP guide](../mcp/index.md) for a worked resource.
 
 This pattern keeps business logic in one place while adapting output for different transports (HTTP, MCP, CLI, etc.).
 
 ## Recursion with Depth Tracking
 
-RPC automatically tracks call depth to prevent infinite loops:
-
-```typescript
-export const processNestedCategories = pikkuSessionlessFunc<
-  { categoryId: string; depth?: number },
-  { processed: number }
->({
-  func: async ({ database, logger }, data, { rpc }) => {
-    logger.info('Processing category', {
-      categoryId: data.categoryId,
-      depth: rpc.depth
-    })
-
-    // Prevent infinite recursion
-    if (rpc.depth >= 10) {
-      throw new Error('Maximum recursion depth exceeded')
-    }
-
-    // Get subcategories
-    const subcategories = await database.query('categories', {
-      where: { parentId: data.categoryId }
-    })
-
-    let processed = 1
-
-    // Recursively process each subcategory
-    for (const sub of subcategories) {
-      const result = await rpc.invoke('processNestedCategories', {
-        categoryId: sub.id
-      })
-      processed += result.processed
-    }
-
-    return { processed }
-  },
-  title: 'Process nested categories recursively',
-  tags: ['categories']
-})
-```
+RPC tracks how deep a chain of calls has gone. `rpc.depth` is the current call depth, so a function that calls itself (walking a category tree, say) can read it, log it, and stop when it gets too deep.
 
 Access current depth via `rpc.depth` to:
 - Prevent infinite recursion
@@ -177,39 +39,7 @@ Access current depth via `rpc.depth` to:
 
 ## Session and Auth Inheritance
 
-Internal RPCs inherit the caller's session and still enforce auth/permissions:
-
-```typescript
-export const restrictedOperation = pikkuFunc<
-  { resourceId: string },
-  { success: boolean }
->({
-  func: async ({ database }, data, { session }) => {
-    // session is available directly - requires auth and checks permissions
-    return { success: true }
-  },
-  auth: true,
-  permissions: {
-    owner: requireResourceOwner
-  }
-})
-
-export const orchestrator = pikkuFunc<
-  { resourceId: string },
-  { complete: boolean }
->({
-  func: async (_services, data, { rpc, session }) => {
-    // This RPC call inherits session from orchestrator
-    // Auth and permissions are still checked
-    await rpc.invoke('restrictedOperation', {
-      resourceId: data.resourceId
-    })
-
-    return { complete: true }
-  },
-  auth: true  // Session is passed through
-})
-```
+Internal RPCs inherit the caller's session and still enforce auth/permissions. A function with `auth: true` or `permissions` keeps them when it's called through RPC. The caller's session is passed along, and the callee checks its own `auth` requirement and permissions against it. If the session doesn't satisfy them, the call throws, exactly as if the callee had been invoked from outside.
 
 RPC calls:
 - Inherit the caller's session
@@ -221,64 +51,14 @@ RPC calls:
 
 RPC calls throw errors just like direct function calls:
 
-```typescript
-export const safeWorkflow = pikkuFunc<
-  { orderId: string },
-  { success: boolean; error?: string }
->({
-  func: async ({ logger }, data, { rpc }) => {
-    try {
-      await rpc.invoke('validateOrder', { orderId: data.orderId })
-      await rpc.invoke('processPayment', { orderId: data.orderId })
-      await rpc.invoke('fulfillOrder', { orderId: data.orderId })
-
-      return { success: true }
-    } catch (error) {
-      logger.error('Workflow failed', {
-        orderId: data.orderId,
-        error: error.message
-      })
-
-      return {
-        success: false,
-        error: error.message
-      }
-    }
-  },
-  title: 'Process order with error handling',
-  tags: ['orders']
-})
+```typescript @snippet wb-rpc-error-handling
 ```
 
 ## When NOT to Use Internal RPC
 
-**Don't use RPC for simple service calls:**
+**Don't use RPC for simple service calls.** Don't wrap a simple service call in a second function just to call it through RPC: a `getCard` that does nothing but `rpc.invoke('loadCard', ...)` adds a hop and nothing else.
 
-```typescript
-// ❌ Bad - wrapping simple service call in RPC
-export const getCard = pikkuFunc<{ cardId: string }, Card>({
-  func: async (_services, data, { rpc }) => {
-    return await rpc.invoke('loadCard', { cardId: data.cardId })
-  }
-})
-
-export const loadCard = pikkuFunc<{ cardId: string }, Card>({
-  func: async ({ database }, data) => {
-    return await database.query('cards', { where: { id: data.cardId } })
-  }
-})
-```
-
-**Instead, call services directly:**
-
-```typescript
-// ✅ Good - call service directly for simple CRUD
-export const getCard = pikkuFunc<{ cardId: string }, Card>({
-  func: async ({ database }, data) => {
-    return await database.query('cards', { where: { id: data.cardId } })
-  }
-})
-```
+Instead, have `getCard` call the service directly (a query through `kysely`, for instance) and keep RPC for the cases below.
 
 Use RPC when:
 - Orchestrating multiple operations
@@ -289,26 +69,7 @@ Use RPC when:
 
 ## Type Safety
 
-Internal RPC calls are fully type-safe:
-
-```typescript
-// Function signature defines types
-export const calculateTax = pikkuSessionlessFunc<
-  { amount: number; rate: number },
-  { tax: number; total: number }
->({ /* ... */ })
-
-// TypeScript enforces correct input
-const result = await rpc.invoke('calculateTax', {
-  amount: 100,
-  rate: 0.08
-})
-
-// TypeScript knows the output type
-result.tax      // ✅ number
-result.total    // ✅ number
-result.invalid  // ❌ TypeScript error
-```
+Internal RPC calls are type-checked against your functions. The function name must be one that exists, the input must match that function's input type, and the result has the function's output type. A misspelled name, a wrong input field, or reading a property the output doesn't have is a compile error, not a runtime surprise.
 
 ## Next Steps
 

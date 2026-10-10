@@ -7,160 +7,66 @@ ai: true
 
 # Queue Client
 
-The Pikku queue client provides a type-safe interface for adding jobs to queues, monitoring job status, and managing job lifecycles. It's automatically generated based on your queue function definitions.
+Adding jobs and watching them is done through the `queueService` singleton service. It works from any function (and from any code that has your services), and it is the same whichever queue provider sits behind it.
 
-## Generated Queue Client
+## The Queue Service
 
-When you run `npx pikku`, Pikku generates a type-safe queue client:
+`queueService` has two methods:
 
-```typescript
-// .pikku/pikku-queue.gen.ts
-import type { QueueService, QueueJob } from '@pikku/core/queue'
-import type { Safe } from '@pikku/core/classification'
-import type { QueueMap, TypedPikkuQueue } from './queue/pikku-queue-workers-wirings-map.gen.d.js'
+| Method | What it does |
+|--------|--------------|
+| `add(queueName, data, options?)` | Adds a job to the named queue and resolves to the job id |
+| `getJob(queueName, jobId)` | Resolves to the job, or `null` if it doesn't exist |
 
-export class PikkuQueue implements TypedPikkuQueue {
-  constructor(private queueService: QueueService) {}
+It also has a `supportsResults` flag, which tells you whether the provider keeps job results (BullMQ and pg-boss do, SQS does not). The queue name is the `name` you gave to `wireQueueWorker`, and `data` is the payload your worker function takes as input.
 
-  // Type-safe methods for each registered queue
-  async add<Name extends keyof QueueMap>(
-    queueName: Name,
-    data: Safe<QueueMap[Name]['input']>,
-    options?: {
-      priority?: number
-      delay?: number
-      attempts?: number
-      removeOnComplete?: number
-      removeOnFail?: number
-      jobId?: string
-    }
-  ): Promise<string>
+Which implementation you get depends on the runtime: BullMQ, pg-boss, SQS, or the in-memory service that `pikku dev` uses locally. Your calling code stays the same.
 
-  async getJob<Name extends keyof QueueMap>(
-    queueName: Name,
-    jobId: string
-  ): Promise<QueueJob<QueueMap[Name]['input'], QueueMap[Name]['output']> | null>
-}
-```
+## Adding Jobs
 
-## Basic Usage
+Call `add` with the queue name and the payload. It returns the job id:
 
-### Setting Up the Client
-
-First, create a queue client with your chosen queue provider:
-
-```typescript
-// app.ts
-import { PikkuQueue } from '#pikku/pikku-queue.gen.js'
-import { BullServiceFactory } from '@pikku/queue-bullmq'
-
-// Create queue service (connects to Redis via REDIS_URL by default)
-const bullFactory = new BullServiceFactory()
-await bullFactory.init()
-
-// Create type-safe client
-const queueClient = new PikkuQueue(bullFactory.getQueueService())
-```
-
-### Adding Jobs
-
-Add jobs to queues with full type safety:
-
-```typescript
-// Add a simple job
-const jobId = await queueClient.add('email-queue', {
-  to: 'user@example.com',
-  subject: 'Welcome!',
-  body: 'Thanks for signing up!'
-})
-
-console.log('Job added with ID:', jobId)
+```typescript @snippet queuePublish
 ```
 
 ### Job Options
 
-Customize job behavior with options:
+The third argument customizes a single job:
 
-```typescript
-const jobId = await queueClient.add('email-queue', 
-  {
-    to: 'user@example.com',
-    subject: 'Important Update',
-    body: 'Please read this immediately.'
-  },
-  {
-    priority: 1,             // Job priority (lower = higher priority)
-    delay: 5000,             // Wait 5 seconds before processing
-    attempts: 5,             // Retry up to 5 times
-    removeOnComplete: 100,   // Keep last 100 completed jobs
-    jobId: 'unique-job-1'    // Custom job ID
-  }
-)
+```typescript @snippet wb-queue-add-job
 ```
 
-The generated client narrows the option type to the keys above. Core's
-`JobOptions` carries more — `backoff`, for example — but those are only
-reachable through the untyped `queueService` directly.
+| Option | Effect |
+|--------|--------|
+| `priority` | Job priority (lower number = higher priority) |
+| `delay` | Milliseconds to wait before the job becomes available |
+| `attempts` | How many times to try the job before giving up |
+| `removeOnComplete` | Keep the last N completed jobs |
+| `removeOnFail` | Keep the last N failed jobs |
+| `jobId` | A custom job id |
+| `backoff` | Retry backoff, as a type name or `{ type, delay }` |
+
+Not every provider honors every option. Each queue service reports which it supports, and logs the ones it drops.
 
 ## Job Monitoring
 
 ### Getting Job Status
 
-Retrieve job information and status:
+`getJob` returns a job with its `data`, its `result` (once finished), and two functions: `status()` and `metadata()`. `status()` resolves to one of `waiting`, `active`, `completed`, `failed` or `delayed`. `metadata()` carries the progress, attempt counts, timestamps and, for failed jobs, the error.
 
-```typescript
-const job = await queueClient.getJob('email-queue', jobId)
-
-if (job) {
-  console.log('Job status:', await job.status())
-  console.log('Job data:', job.data)
-  console.log('Job result:', job.result)
-  console.log('Job progress:', (await job.metadata?.())?.progress)
-}
+```typescript @snippet wb-queue-job-status
 ```
 
-### Job States
-
-`job.status()` resolves to one of several states:
-
-```typescript
-const job = await queueClient.getJob('email-queue', jobId)
-
-switch (await job.status()) {
-  case 'waiting':
-    console.log('Job is waiting to be processed')
-    break
-  case 'active':
-    console.log('Job is currently being processed')
-    break
-  case 'completed':
-    console.log('Job completed successfully:', job.result)
-    break
-  case 'failed':
-    console.log('Job failed')
-    break
-  case 'delayed':
-    console.log('Job is delayed')
-    break
-}
-```
+The progress value is whatever the worker passed to `queue.updateProgress()`, as shown on the [introduction](./index.md) page.
 
 ### Waiting for Completion
 
-Jobs expose `waitForCompletion` when the queue provider supports results (BullMQ, pg-boss — not SQS):
+Jobs expose `waitForCompletion` when the provider supports results (BullMQ, pg-boss, not SQS). Pass a timeout in milliseconds:
 
-```typescript
-const jobId = await queueClient.add('order-processing', orderData)
-const job = await queueClient.getJob('order-processing', jobId)
-
-try {
-  const result = await job.waitForCompletion?.(60000)  // Wait up to 1 minute
-
-  console.log('Order processed:', result)
-} catch (error) {
-  console.error('Job failed or timed out:', error)
-}
+```typescript @snippet wb-queue-wait-for-completion
 ```
+
+It rejects if the job fails or the timeout passes, so wrap it in `try`/`catch` when you need to handle either.
 
 ## Advanced Features
 
@@ -170,13 +76,7 @@ try {
 Not yet implemented
 :::
 
-Cancel jobs that haven't started processing:
-
-```typescript title="Not implemented"
-const jobId = await queueClient.add('long-task', taskData)
-// Remove if needed
-await queueClient.remove('long-task', jobId)
-```
+There is no `remove` method on the queue service yet, so a job that has been added can't be cancelled from the client. Use `delay` to keep a job from starting straight away, or have the worker call `queue.discard()` to drop a job it no longer needs.
 
 ### Job Retry
 
@@ -184,13 +84,4 @@ await queueClient.remove('long-task', jobId)
 Not yet implemented
 :::
 
-Manually retry failed jobs:
-
-```typescript title="Not implemented"
-const job = await queueClient.getJob('email-queue', jobId)
-
-if ((await job.status()) === 'failed') {
-  const newJobId = await queueClient.retry('email-queue', jobId)
-  console.log('Job retried with new ID:', newJobId)
-}
-```
+There is no `retry` method either. A failed job is retried by the provider according to its `attempts` and `backoff` settings. To run it again by hand, add a new job with the same payload.

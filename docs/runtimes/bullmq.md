@@ -105,15 +105,7 @@ BullMQ provides built-in monitoring capabilities:
 
 The `BullServiceFactory` from `@pikku/queue-bullmq` manages the lifecycle of all BullMQ components:
 
-```typescript
-import { BullServiceFactory } from '@pikku/queue-bullmq'
-
-// Defaults to ioredis' own default connection (localhost:6379).
-// Pass ioredis ConnectionOptions to override (e.g. { host, port }),
-// or parse REDIS_URL yourself.
-const bullFactory = new BullServiceFactory()
-await bullFactory.init()
-```
+Import `BullServiceFactory` from `@pikku/queue-bullmq`, construct it with no arguments, and `await bullFactory.init()`. With no arguments it uses ioredis' default connection (localhost:6379). Pass ioredis `ConnectionOptions` such as `{ host, port }` to override it, or parse `REDIS_URL` yourself.
 
 ### Key Methods
 
@@ -129,74 +121,28 @@ Get the workers from the factory and call `registerQueues()`. The job runner is
 wired automatically when you import the generated bootstrap, so no extra setup is
 needed:
 
-```typescript
-import './.pikku/pikku-bootstrap.gen.js'
-
-// createSingletonServices must have run first — registerQueues reads the
-// logger out of the initialised singleton services.
-const singletonServices = await createSingletonServices(config, {
-  queueService: bullFactory.getQueueService(),
-})
-
-const queueWorkers = bullFactory.getQueueWorkers()
-await queueWorkers.registerQueues()
-```
+Import the generated bootstrap, then call `createSingletonServices(config, { queueService: bullFactory.getQueueService() })`. After that, take `bullFactory.getQueueWorkers()` and `await queueWorkers.registerQueues()`. The order matters: `createSingletonServices` must run first, because `registerQueues` reads the logger out of the initialised singleton services.
 
 ### Scheduler
 
 For scheduled tasks, get the scheduler service from the factory, register it in
 your singleton services, and call `start()`:
 
-```typescript
-const schedulerService = bullFactory.getSchedulerService()
-
-const singletonServices = await createSingletonServices(config, {
-  queueService: bullFactory.getQueueService(),
-  schedulerService,
-})
-
-await schedulerService.start()
-```
+Get the scheduler with `bullFactory.getSchedulerService()`, pass it to `createSingletonServices` next to the `queueService`, and call `await schedulerService.start()` once the services exist.
 
 ### Full Setup with Workflows
 
-```typescript
-import { BullServiceFactory } from '@pikku/queue-bullmq'
-import { RedisLeaseService, RedisWorkflowService } from '@pikku/redis'
-import './.pikku/pikku-bootstrap.gen.js'
+The full setup, in order:
 
-const bullFactory = new BullServiceFactory()
-await bullFactory.init()
-
-const schedulerService = bullFactory.getSchedulerService()
-const leaseService = new RedisLeaseService(process.env.REDIS_URL!)
-
-const singletonServices = await createSingletonServices(config, {
-  queueService: bullFactory.getQueueService(),
-  schedulerService,
-  leaseService,
-  workflowService: new RedisWorkflowService(process.env.REDIS_URL!, {
-    leaseService,
-  }),
-})
-
-// Register queue workers (includes the workflow queues)
-const queueWorkers = bullFactory.getQueueWorkers()
-await queueWorkers.registerQueues()
-
-// Start the scheduler
-await schedulerService.start()
-```
+1. Import the generated bootstrap, create a `BullServiceFactory` and `await bullFactory.init()`.
+2. Get `schedulerService` from the factory, and create a `RedisLeaseService` (from `@pikku/redis`) with `process.env.REDIS_URL`.
+3. Call `createSingletonServices(config, ...)` with `queueService`, `schedulerService`, `leaseService`, and a `workflowService` built as `new RedisWorkflowService(process.env.REDIS_URL, { leaseService })`.
+4. Call `bullFactory.getQueueWorkers().registerQueues()`. This includes the workflow queues.
+5. Call `schedulerService.start()`.
 
 ### Graceful Shutdown
 
-```typescript
-process.on('SIGTERM', async () => {
-  await schedulerService.stop()
-  await queueWorkers.close()
-  process.exit(0)
-})
-```
+On `SIGTERM`, await `schedulerService.stop()`, then `queueWorkers.close()`, then exit the process.
 
 ## Error Handling
 

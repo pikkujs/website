@@ -26,29 +26,7 @@ https://github.com/pikkujs/pikku/blob/main/templates/functions/src/wirings/queue
 
 Queue functions use `pikkuSessionlessFunc` since background jobs don't have user sessions:
 
-```typescript
-export const processPayment = pikkuSessionlessFunc<
-  { orderId: string; amount: number; currency: string },
-  { transactionId: string }
->({
-  func: async ({ database, paymentService }, data) => {
-    const transaction = await paymentService.charge({
-      amount: data.amount,
-      currency: data.currency
-    })
-
-    await database.update('orders', {
-      where: { orderId: data.orderId },
-      set: { transactionId: transaction.id, status: 'paid' }
-    })
-
-    return { transactionId: transaction.id }
-  },
-  auth: false,
-  title: 'Process payment for an order',
-  tags: ['payments']
-})
-```
+A queue function takes the job payload as its input and, depending on the provider, may return a result. The `sendOrderConfirmation` worker in the example at the end of this page is a complete one: it receives `{ orderId, userId }`, loads the order and the user, and sends the email. It declares `auth: false` implicitly by being a sessionless function, and gives itself a `description` so it shows up readable in tooling.
 
 :::warning Auth and Permissions for Queue Workers
 Queue workers are **internal background jobs** without user sessions or incoming requests. They should almost always use `pikkuSessionlessFunc` with `auth: false`.
@@ -68,43 +46,7 @@ If you need portability, use `void` as the output type.
 
 Configure how your queue worker processes jobs:
 
-```typescript
-import { wireQueueWorker } from '#pikku/queue'
-import { processPayment } from './functions/payment.function.js'
-
-wireQueueWorker({
-  // Required
-  name: 'payments',
-  func: processPayment,
-
-  // Optional configuration
-  config: {
-    // Processing
-    batchSize: 3,              // Messages to process in batch/parallel
-    prefetch: 10,              // Messages to prefetch for efficiency
-    pollInterval: 5000,        // Polling interval for pull-based queues (ms)
-
-    // Timeouts
-    visibilityTimeout: 300,    // Message visibility timeout (seconds)
-    lockDuration: 30000,       // Job lock duration (ms)
-    drainDelay: 5,             // Wait time when queue is empty (seconds)
-
-    // Job Management
-    removeOnComplete: 100,     // Keep N completed jobs
-    removeOnFail: 50,          // Keep N failed jobs
-    maxStalledCount: 3,        // Max job recovery attempts
-
-    // Other
-    name: 'payment-worker',    // Worker name for monitoring
-    autorun: true,             // Auto-start processor
-  },
-
-  // Optional middleware
-  middleware: [auditMiddleware],
-
-  // Optional tags
-  tags: ['payments', 'critical']
-})
+```typescript @snippet wb-queue-worker-config
 ```
 
 :::note Configuration Availability
@@ -126,26 +68,7 @@ See [Queue Client](./client.md) for details on adding jobs, monitoring progress,
 
 Queue functions should throw errors for failures - Pikku handles the retry logic:
 
-```typescript
-export const processPayment = pikkuSessionlessFunc<PaymentInput, void>({
-  func: async ({ paymentService, logger }, data) => {
-    try {
-      await paymentService.charge(data)
-      logger.info('Payment processed', { orderId: data.orderId })
-    } catch (error) {
-      logger.error('Payment failed', {
-        orderId: data.orderId,
-        error: error.message
-      })
-
-      // Throw to trigger retry
-      throw new PaymentFailedError(error.message)
-    }
-  },
-  auth: false,
-  title: 'Process payment',
-  tags: ['payments']
-})
+```typescript @snippet wb-queue-error-handling
 ```
 
 The queue system will automatically:
@@ -157,28 +80,7 @@ The queue system will automatically:
 
 For long-running jobs, you can report progress using the `queue` object destructured from services:
 
-```typescript
-export const generateReport = pikkuSessionlessFunc<
-  { reportId: string },
-  void
->({
-  func: async ({ database }, data, { queue }) => {
-    // Update progress if queue supports it
-    if (queue?.updateProgress) {
-      await queue.updateProgress(0)
-    }
-
-    const data1 = await database.query('...')
-    await queue?.updateProgress(33)
-
-    const data2 = await database.query('...')
-    await queue?.updateProgress(66)
-
-    await generateReportFile(data1, data2)
-    await queue?.updateProgress(100)
-  },
-  auth: false
-})
+```typescript @snippet queueJobControl
 ```
 
 The `queue` object also provides:

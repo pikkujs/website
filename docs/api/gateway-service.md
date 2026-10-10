@@ -27,15 +27,7 @@ Closes all active adapters. Call on graceful shutdown.
 
 Starts every registered listener gateway unconditionally — the right choice for a single process.
 
-```typescript
-import { LocalGatewayService } from '@pikku/core/services'
-
-const gatewayService = new LocalGatewayService()
-await gatewayService.start()
-
-// On shutdown
-await gatewayService.stop()
-```
+Import `LocalGatewayService` from `@pikku/core/services`, construct it with no arguments and await `start()`. On shutdown, await `stop()`.
 
 ```typescript reference title="local-gateway-service.ts"
 https://github.com/pikkujs/pikku/blob/main/packages/core/src/services/local-gateway-service.ts

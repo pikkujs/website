@@ -12,24 +12,7 @@ Pikku has built-in function versioning. You add `version: N` to a function, and 
 
 Add `version` to any function definition:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-
-// v1 — original implementation
-export const createUser = pikkuFunc<CreateUserInput_v1, CreateUserOutput_v1>({
-  version: 1,
-  func: async (services, data) => {
-    // original logic
-  }
-})
-
-// v2 — new input/output types
-export const createUserV2 = pikkuFunc<CreateUserInput_v2, CreateUserOutput_v2>({
-  version: 2,
-  func: async (services, data) => {
-    // updated logic
-  }
-})
+```typescript @snippet shopVersionedItem
 ```
 
 The trailing `V2` is stripped because it matches the version, so the second export registers as `createUser@v2` rather than `createUserV2@v2`.
@@ -50,12 +33,7 @@ The ID comes from the exported name with a matching `V<n>` suffix removed, so `g
 
 From RPC clients, you just use the name:
 
-```typescript
-// Calls the latest version
-await rpc.invoke('createUser', { name: 'Alice' })
-
-// Calls a specific version
-await rpc.invoke('createUser@v1', { name: 'Alice' })
+```typescript @snippet co-versioning-invoke
 ```
 
 The same applies to exposed RPCs — external clients can target a specific version or let it resolve to the latest.

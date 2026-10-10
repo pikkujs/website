@@ -8,9 +8,7 @@ description: The addons Pikku maintains — admin and graph
 Pikku publishes a small set of first-party addons alongside the framework. They
 are ordinary addons — install the package and register it with `wireAddon`.
 
-```typescript
-import { wireAddon } from '#pikku/addon'
-```
+Every example below uses `wireAddon`, imported from `#pikku/addon`.
 
 ## `@pikku/addon-admin`
 
@@ -24,13 +22,7 @@ wired into a deployed serverless unit and called from your own admin screens.
 npm install @pikku/addon-admin
 ```
 
-```typescript
-wireAddon({
-  name: 'admin',
-  package: '@pikku/addon-admin',
-  globalCredentials:
-    'administering credentials means setting and clearing any of them, for any user, so it cannot be scoped to a declared set',
-})
+```typescript @snippet rt-wire-addon-global-credentials
 ```
 
 `globalCredentials` is required for the `admin:credential*` functions — an addon
@@ -43,9 +35,7 @@ Built-in `graph:*` primitives for Pikku workflow graphs — the pure transforms
 (map, cast, filter and friends) that graphs compose without needing a bespoke
 addon per operation.
 
-```typescript
-{ type: 'graph:map', input: { items: ref('fetch.output') } }
-```
+A graph step is an object with `type: 'graph:map'` and an `input`; here `input.items` is `ref('fetch.output')`, a reference to an earlier step's output.
 
 ## Next Steps
 

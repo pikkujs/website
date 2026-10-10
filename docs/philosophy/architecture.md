@@ -9,21 +9,7 @@ Pikku is built on a simple yet powerful principle: **everything is functions**. 
 
 At its core, Pikku treats all application logic as pure, testable functions. Whether you're handling HTTP requests, WebSocket connections, scheduled tasks, or RPC calls, you write the same function signatures:
 
-```typescript
-import { pikkuFunc } from '#pikku/function'
-
-// This function can be called via HTTP, WebSocket, RPC, or directly
-const getUserProfile = pikkuFunc<
-  { userId: string },
-  { name: string; email: string }
->({
-  func: async ({ database }, data) => {
-    const user = await database.getUser(data.userId)
-    return { name: user.name, email: user.email }
-  },
-  title: 'Get user profile',
-  tags: ['users']
-})
+```typescript @snippet co-arch-func
 ```
 
 The function receives:
@@ -104,30 +90,7 @@ sequenceDiagram
 
 This architecture means you can wire the same function to multiple protocols:
 
-```typescript
-import { wireHTTP } from '#pikku/http'
-import { wireChannel } from '#pikku/channel'
-
-// Wire to HTTP
-wireHTTP({
-  method: 'get',
-  route: '/users/:userId',
-  func: getUserProfile
-})
-
-// Wire to WebSocket channel
-wireChannel({
-  name: 'user-updates',
-  route: '/user-updates',
-  onMessageWiring: {
-    action: {
-      getUserProfile: { func: getUserProfile }
-    }
-  }
-})
-
-// Expose via RPC (set expose: true on the function; there is no wire* call)
-// External callers reach it at POST /rpc/:rpcName
+```typescript @snippet co-arch-wire
 ```
 
 ## Deployment Flexibility
@@ -184,70 +147,13 @@ graph LR
 ### Runtime Examples
 
 **Express Server:**
-```typescript
-import { PikkuExpressServer } from '@pikku/express'
-import { InMemorySchedulerService } from '@pikku/schedule'
-import { createConfig } from '../../functions/src/config.js'
-import { createSingletonServices } from '../../functions/src/services.js'
-import '#pikku/pikku-bootstrap.gen.js'
-
-async function main(): Promise<void> {
-  const config = await createConfig()
-  const singletonServices = await createSingletonServices(config)
-
-  const appServer = new PikkuExpressServer(
-    { ...config, port: 4002, hostname: 'localhost' },
-    singletonServices.logger
-  )
-  await appServer.init()
-  await appServer.start()
-
-  const scheduler = new InMemorySchedulerService()
-  await scheduler.start()
-}
-```
+On Express, create the config and singleton services, import the generated bootstrap, then create a `PikkuExpressServer` from `@pikku/express` with your config plus a `port` and `hostname` and the logger, and call `init()` followed by `start()`. Create an `InMemorySchedulerService` from `@pikku/schedule` and call `start()` to run scheduled tasks.
 
 **AWS Lambda:**
-```typescript
-import { runFetch } from '@pikku/lambda/http'
-import { runScheduledTask } from '@pikku/core/scheduler'
-import { APIGatewayProxyEvent, ScheduledHandler } from 'aws-lambda'
-import { coldStart } from './cold-start.js'
-import '#pikku/pikku-bootstrap.gen.js'
-
-export const httpRoute = async (event: APIGatewayProxyEvent) => {
-  await coldStart()
-  const result = await runFetch(event)
-  return result
-}
-
-export const myScheduledTask: ScheduledHandler = async () => {
-  await coldStart()
-  await runScheduledTask({
-    name: 'myScheduledTask',
-  })
-}
-```
+On AWS Lambda, import the generated bootstrap, run your cold start, and hand the event to `runFetch` from `@pikku/lambda/http`. A scheduled handler calls `runScheduledTask({ name })` from `@pikku/core/scheduler` instead.
 
 **Cloudflare Workers:**
-```typescript
-import { runFetch, runScheduled } from '@pikku/cloudflare'
-import { setupServices } from './setup-services.js'
-import { ExportedHandler } from '@cloudflare/workers-types'
-import '#pikku/pikku-bootstrap.gen.js'
-
-export default {
-  async scheduled(controller, env) {
-    await setupServices(env)
-    await runScheduled(controller)
-  },
-
-  async fetch(request, env): Promise<Response> {
-    await setupServices(env)
-    return await runFetch(request as unknown as Request)
-  },
-} satisfies ExportedHandler<Record<string, string>>
-```
+On Cloudflare, export a default object with a `fetch` handler that sets up services from `env` and returns `runFetch(request)`, and a `scheduled` handler that sets up services and calls `runScheduled(controller)`. Both come from `@pikku/cloudflare`.
 
 The same functions run unchanged across all these environments.
 
@@ -309,72 +215,19 @@ The `pikkuFuncId` serves as the universal identifier that connects your function
 2. **Export Name**: If the function is exported, uses the export name (`export const createUser = ...`)
 3. **Deterministic Fallback**: If neither above, a hash derived from the function file's path and its position in the file
 
-```typescript
-// Example 1: Exposed function - registered and callable via RPC
-export const createUser = pikkuFunc<CreateUserInput, CreateUserOutput>({
-  expose: true,
-  func: async (services, data) => {
-    // Implementation
-  }
-})
-// ✅ Included: expose: true registers it
-// ✅ Available via RPC
-
-// Example 2: Wired function - registered by its wiring
-const getUserProfile = pikkuFunc<GetUserInput, GetUserOutput>({
-  func: async (services, data) => {
-    // Implementation
-  }
-})
-
-wireHTTP({
-  method: 'get',
-  route: '/users/:id',
-  func: getUserProfile
-})
-// ✅ Included: the HTTP wiring registers it
-
-// Example 3: Internal helper - not registered
-const validateUserData = pikkuFunc<ValidationInput, ValidationOutput>({
-  func: async (services, data) => {
-    // Helper function not exported or wired
-  }
-})
-// ❌ Not registered: not wired, exposed, or invoked
-
+```typescript @snippet co-arch-registration
 ```
 
 **Tag-Based Filtering:**
 
 Tags can be declared on the function itself or on a wiring, and help organize routes, channels, and other endpoints:
 
-```typescript
-// Tags can come from the wiring...
-wireHTTP({
-  method: 'get',
-  route: '/admin/users',
-  func: getUserProfile,
-  tags: ['admin', 'users']
-})
-
-wireChannel({
-  name: 'admin-events',
-  route: '/admin-events',
-  onConnect: handleAdminConnect,
-  tags: ['admin', 'events']
-})
+```typescript @snippet co-arch-tags
 ```
 
 Tags help organize endpoints and can be used by the CLI for filtering during build processes, allowing you to include/exclude specific routes or channels based on deployment needs.
 
-```typescript
-// Generated by CLI - Function registration
-// The pikkuFuncId 'createUser' is used as the key
-import { addFunction } from '@pikku/core/function'
-import { createUser } from '../src/user.functions.js'
-
-addFunction('createUser', createUser)
-```
+The CLI registers each function under its `pikkuFuncId`, for example `addFunction('createUser', createUser)` from `@pikku/core/function`, importing the function from your source file.
 
 Generated HTTP metadata is keyed by method, then route. The same `pikkuFuncId`
 that registered the function references it here, in `http/pikku-http-wirings-meta.gen.json`:
@@ -410,25 +263,9 @@ WebSocket channels use the same identifier, in `channel/pikku-channels-meta.gen.
 
 The CLI generates type-safe client libraries that can be used in tests and frontend applications:
 
-```typescript
-// Generated HTTP client (pikku-fetch.gen.js)
-import { pikkuFetch } from '../.pikku/pikku-fetch.gen.js'
-
-// Configure the client
-pikkuFetch.setServerUrl('http://localhost:4002')
-
-// Make type-safe requests
-const res = await pikkuFetch.fetch('/hello-world', 'GET', null)
+```typescript @snippet fetchClient
 ```
 
-```typescript
-// Generated RPC client (pikku-rpc.gen.js)
-import { pikkuRPC } from '../.pikku/pikku-rpc.gen.js'
-
-// Configure the client
-pikkuRPC.setServerUrl('http://localhost:4002')
-
-// Call functions directly by name
-await pikkuRPC.invoke('helloWorld', null)
+```typescript @snippet rpcClient
 ```
 

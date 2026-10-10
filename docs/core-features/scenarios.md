@@ -53,20 +53,7 @@ In a typed project, `agent` is constrained to the generated union of your agent 
 
 When one intent spans several RPCs, or you want the same behaviour driven through a browser or the websocket, declare it as a `pikkuScenarioStep` instead of an inline `scenario.do`. A step declares one binding per surface (`default`, `browser`, `cli`), names itself with a `template` for the report, and is referenced from a scenario by name through `scenario.given`/`when`/`then`:
 
-```typescript
-import { pikkuScenarioStep } from '#pikku/scenarios'
-
-export const buysTheItem = pikkuScenarioStep<{ name: string }, { name: string }>({
-  name: 'buysTheItem',
-  description: 'puts one item in the basket',
-  template: 'buys the {name}',
-  actor: true,
-  default: async (_services, { name }, { actor }) => {
-    const item = await actor.invoke('findItemByName', { name })
-    await actor.invoke('addToBasket', { itemId: item.id })
-    return { name }
-  },
-})
+```typescript @snippet co-scenario-step
 ```
 
 `pikkuFeature({ name, scenarios: [...] })` groups scenarios the way Gherkin's `Feature:` groups `Scenario:`. Browser bindings need `@pikku/playwright` installed; running with `--run default` (the default) skips scenarios containing browser steps rather than failing them.
@@ -135,23 +122,7 @@ For polling an RPC as an actor, `scenario.expectEventually` is usually simpler. 
 
 An actor is a declared **persona** — a normal user row in your system, materialised and signed in by the run. Declare the people once in code with `definePersonas`:
 
-```typescript
-// src/personas.virtual-user.ts
-import { definePersonas } from '#pikku/scopes/pikku-personas.gen.js'
-
-definePersonas({
-  shopper: {
-    name: 'Sam Shopper',
-    jobTitle: 'Retail customer',
-    personality: 'Impatient, skims instructions, expects things to just work',
-    account: {}, // email + password
-  },
-  admin: {
-    name: 'Ops Admin',
-    jobTitle: 'Operations admin',
-    account: {},
-  },
-})
+```typescript @snippet definePersonas
 ```
 
 Target environments are top-level in `pikku.config.json`, and the actor addresses are derived from the persona name and `scenarios.emailDomain`:

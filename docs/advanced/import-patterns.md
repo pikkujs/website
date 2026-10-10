@@ -11,18 +11,18 @@ import from the door for the thing you are doing.
 
 ## One door per concern
 
-```typescript
-import { pikkuFunc, pikkuSessionlessFunc } from '#pikku/function'
-import { wireHTTP, defineHTTPRoutes, wireHTTPRoutes } from '#pikku/http'
-import { addHTTPMiddleware, pikkuMiddleware } from '#pikku/middleware'
-import { wireChannel, pikkuChannelConnectionFunc } from '#pikku/channel'
-import { wireQueueWorker } from '#pikku/queue'
-import { wireScheduler } from '#pikku/scheduler'
-import { wireCLI, pikkuCLICommand } from '#pikku/cli'
-import { wireMCPResource, wireMCPPrompt } from '#pikku/mcp'
-import { NotFoundError } from '#pikku/error'
-import { pikkuPermission } from '#pikku/auth'
-```
+| Module | Exports |
+| --- | --- |
+| `#pikku/function` | `pikkuFunc`, `pikkuSessionlessFunc` |
+| `#pikku/http` | `wireHTTP`, `defineHTTPRoutes`, `wireHTTPRoutes` |
+| `#pikku/middleware` | `addHTTPMiddleware`, `pikkuMiddleware` |
+| `#pikku/channel` | `wireChannel`, `pikkuChannelConnectionFunc` |
+| `#pikku/queue` | `wireQueueWorker` |
+| `#pikku/scheduler` | `wireScheduler` |
+| `#pikku/cli` | `wireCLI`, `pikkuCLICommand` |
+| `#pikku/mcp` | `wireMCPResource`, `wireMCPPrompt` |
+| `#pikku/error` | `NotFoundError` and the other errors |
+| `#pikku/auth` | `pikkuPermission` |
 
 There is **no bare `#pikku`**. `import { pikkuFunc } from '#pikku'` does not
 resolve — the alias only ever matches a subpath.
@@ -106,9 +106,7 @@ app wires them with `refHTTP` / `refChannel` / `refCLI`.
 Relative imports resolve to exactly the same files if you would rather not use
 the alias:
 
-```typescript
-import { pikkuSessionlessFunc } from '../../.pikku/function/index.js'
-```
+Without the alias, the same import is a relative path into the generated folder, such as `../../.pikku/function/index.js`.
 
 In a monorepo the generated imports between packages are rewritten to package
 names: `packageMappings` in `pikku.config.json` maps each source directory to

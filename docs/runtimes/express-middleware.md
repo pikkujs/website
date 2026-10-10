@@ -21,29 +21,7 @@ Add Pikku to an existing Express app. Your non-Pikku routes and middleware work 
 npm install @pikku/express-middleware
 ```
 
-```typescript
-import express from 'express'
-import { pikkuExpressMiddleware } from '@pikku/express-middleware'
-
-import './.pikku/pikku-bootstrap.gen.js'
-
-const app = express()
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-app.use(pikkuExpressMiddleware({
-  logger: singletonServices.logger,
-  respondWith404: false,  // Let Express handle unmatched routes
-  logRoutes: true,
-  loadSchemas: true,
-}))
-
-// Your own Express routes still work
-app.get('/custom', (req, res) => res.json({ hello: 'world' }))
-
-app.listen(3000)
-```
+Create an Express app, import the generated bootstrap, and build your config and singleton services. Then mount Pikku with `app.use(pikkuExpressMiddleware({ ... }))`, imported from `@pikku/express-middleware`. The options used here are `logger` (from the singleton services), `respondWith404: false` (so Express handles unmatched routes), `logRoutes: true` and `loadSchemas: true`. Your own Express routes keep working beside it, and you finish with `app.listen(3000)`.
 
 ### Options
 
@@ -62,27 +40,7 @@ For projects where Pikku handles everything, the full server provides a batterie
 npm install @pikku/express
 ```
 
-```typescript
-import './.pikku/pikku-bootstrap.gen.js'
-import { PikkuExpressServer } from '@pikku/express'
-
-const config = await createConfig()
-const singletonServices = await createSingletonServices(config)
-
-const server = new PikkuExpressServer(config, singletonServices.logger)
-
-// Access the underlying Express app if needed
-// server.app.use(myCustomMiddleware)
-
-await server.init()
-
-process.on('SIGINT', async () => {
-  await server.stop()
-  process.exit(0)
-})
-
-await server.start()
-```
+Import the generated bootstrap and `PikkuExpressServer` from `@pikku/express`. After creating the config and singleton services, construct `new PikkuExpressServer(config, singletonServices.logger)`. The underlying Express app is on `server.app` if you need to add your own middleware. Await `server.init()`, register a `SIGINT` handler that awaits `server.stop()` and exits, and then await `server.start()`.
 
 The full server config extends `CoreConfig` with:
 

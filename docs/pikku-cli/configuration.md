@@ -231,19 +231,7 @@ A `model` containing `/` is used as written; a bare name that is not in this tab
 
 Personas are declared in code with `definePersonas`, not in `pikku.config.json`:
 
-```typescript
-import { definePersonas } from '#pikku/scopes/pikku-personas.gen.js'
-
-definePersonas({
-  susan: {
-    name: 'Susan',
-    jobTitle: 'Buys for a small café',
-    roles: ['buyer'],
-    personality: 'Hunts cheap deals. Tries three coupon codes before giving up.',
-    goals: ['Get the weekly order in under five minutes'],
-    account: {},
-  },
-})
+```typescript @snippet definePersonas
 ```
 
 Addresses are never written down: each is derived from the persona id and `scenarios.emailDomain`, and codegen materialises one actor per persona for scenario runs.
