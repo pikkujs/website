@@ -26,7 +26,7 @@ When you run `pikku`, the CLI:
 pikku
 ```
 
-Generates a bootstrap that imports all three functions and marks all three services — `database`, `audit`, `cache` — as required.
+Generates a bootstrap that imports all three functions and marks the services they use — `kysely`, `auditLog`, `logger` — as required.
 
 ### Deploying Filtered Subset
 
@@ -36,9 +36,9 @@ pikku --http-routes=/status
 
 Generates a bootstrap that:
 - ✅ Imports only `getStatus`
-- ✅ Marks only the `cache` service as required
-- ❌ Does NOT import `getUser` or `deleteUser`
-- ❌ Does NOT require `database` or `audit`
+- ✅ Marks only the `logger` service as required
+- ❌ Does NOT import `getUserRecord` or `deleteUserRecord`
+- ❌ Does NOT require `kysely` or `auditLog`
 
 This means your health check endpoint has zero database connection overhead.
 
@@ -89,13 +89,13 @@ Pikku analyzes which services your filtered functions actually use and writes th
 
 When a build's filter set is fixed, only the services it needs have to exist:
 
-In your `services.ts`, import only what this deployment needs. A deployment that only needs the cache imports `createCache` and returns `{ cache: await createCache() }`; the database and audit services are never imported or loaded.
+In your `services.ts`, import only what this deployment needs. A deployment whose functions only use the logger builds just the logger; the database (`kysely`) and audit services are never imported or loaded.
 
 ### 2. Dynamic Filtering (For Shared Bundles)
 
 When you need one bundle to serve multiple filtered deployments, Pikku uses conditional loading:
 
-Read `requiredSingletonServices` from the generated `#pikku/pikku-services.gen.js` and only build what is flagged. Create the logger and cache always; create the JWT service (dynamically importing `JoseJWTService` from `@pikku/jose`) only when `requiredSingletonServices.jwt` is true; create the database only when `requiredSingletonServices.database` is true; and return whichever services you built.
+Read `requiredSingletonServices` from the generated `#pikku/pikku-services.gen.js` and only build what is flagged. Create the logger always; create the JWT service (dynamically importing `JoseJWTService` from `@pikku/jose`) only when `requiredSingletonServices.jwt` is true; create the database only when `requiredSingletonServices.kysely` is true; and return whichever services you built.
 
 The `pikkuServices` wrapper ensures type safety and proper integration with Pikku's service system.
 
