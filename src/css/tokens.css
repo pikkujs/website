@@ -206,7 +206,7 @@
 /* ── Mono accent mode ─────────────────────────────────────────
    Collapses all chromatic accent tokens to neutral grays.
    Toggle by setting data-accent-mode="mono" on <html>.
-   Mirrors the AccentModeProvider pattern from Pikku Console.
+   Accent-mode provider pattern.
    ─────────────────────────────────────────────────────────── */
 html[data-accent-mode="mono"] {
   --site-accent:          #888888;
