@@ -77,50 +77,14 @@ Not everything that happens in a story is done by a person. Sometimes a third-pa
 
 **`pikkuAddonScenarioStep`** is a step in which a third-party system acts. `addon` names the addon that wraps that service — the same name its `wireAddon` declares. These steps are the mock that consumers would otherwise hand-write, shipped and maintained with the addon:
 
-```typescript
-import { pikkuAddonScenarioStep } from '#pikku/scenarios'
-
-export const stripeReportsPayment = pikkuAddonScenarioStep<
-  { orderId: string; paymentIntentId?: string },
-  { applied: boolean }
->({
-  addon: 'stripe',
-  name: 'stripeReportsPayment',
-  description: 'delivers a payment_intent.succeeded event for an order',
-  template: 'Stripe confirms payment for {orderId}',
-  func: async (_services, { orderId, paymentIntentId }, { rpc }) => {
-    return rpc.invoke('applyStripeEvent', {
-      type: 'payment_intent.succeeded',
-      data: {
-        object: {
-          id: paymentIntentId ?? `pi_${orderId}`,
-          metadata: { orderId },
-        },
-      },
-    })
-  },
-})
+```typescript @snippet addonScenarioStep
 ```
 
 This arranges, it doesn't assert. "Stripe's webhook arrives" is a stub; "Then Stripe was charged" is an assertion, and only the first belongs in one of these steps.
 
 **`pikkuPlatformScenarioStep`** is a step in which the app acts on itself — "Given the platform has expired the trial". The subject of that sentence is your app, not a user of it, so it gets its own declaration instead of a persona with an asterisk:
 
-```typescript
-import { pikkuPlatformScenarioStep } from '#pikku/scenarios'
-
-export const shipsTheOrder = pikkuPlatformScenarioStep<
-  { orderId: string },
-  { orderId: string }
->({
-  name: 'shipsTheOrder',
-  description: 'ships an order, which is what tells the shopper it is on its way',
-  template: 'ships order {orderId}',
-  func: async (_services, { orderId }, { rpc }) => {
-    await rpc.invoke('notifyOrderShipped', { orderId })
-    return { orderId }
-  },
-})
+```typescript @snippet platformScenarioStep
 ```
 
 :::info Local tests only
@@ -133,29 +97,10 @@ A hook is setup or teardown that runs around a scenario but isn't part of the st
 
 `pikkuScenarioHook` returns the function you pass it unchanged — a hook is never registered. It exists so an inline hook is contextually typed, including the `actors` on its wire:
 
-```typescript
-import { pikkuScenarioHook } from '#pikku/scenarios'
-
-// Empties the basket before the assistant is asked to fill it. Without this,
-// a basket a previous run left full would satisfy "the basket has the mug"
-// whether or not the assistant did anything.
-const emptiesTheBasket = pikkuScenarioHook(
-  async (_services, _data, { actors }) => {
-    const basket = await actors.shopper.invoke('getBasket', {})
-    for (const item of basket.items) {
-      await actors.shopper.invoke('removeFromBasket', {
-        basketId: basket.basketId,
-        itemId: item.itemId,
-      })
-    }
-  }
-)
-
-export const shopperAsksTheAssistant = pikkuScenario({
-  before: emptiesTheBasket,
-  // ...
-})
+```typescript @snippet scenarioHook
 ```
+
+Attach it by name: `pikkuScenario({ before: emptiesTheBasket, ... })`.
 
 ## Helpers for Steps
 
@@ -165,50 +110,21 @@ Most steps just call `actor.invoke`. When a step has to reach past a persona —
 
 **`postScenarioJson(url, { body, headers, method, fetch })`** POSTs JSON and reports what came back *without throwing on a 4xx/5xx*. A refusal is the expected outcome of a permissions scenario, so it has to survive as data — you get the status and body back instead of an exception.
 
-```typescript
-const { apiUrl } = requireScenarioEnv(scenarioStep)
-const response = await postScenarioJson<{ runId?: string } | undefined>(
-  `${apiUrl}/workflow/checkoutWorkflow/start`,
-  { body: { data: { basketId, userId } } }
-)
-return { ...response, runId: response.body?.runId }
+```typescript @snippet scenarioPostJson
 ```
 
 **`readScenarioHttpResponse(res)`** drains a `Response` into something a step can carry: the parsed body (an empty one counts as no body) alongside the text it was parsed from. Reach for it when you've called `fetch` yourself.
 
 **`pollUntil(attempt, { timeoutMs, intervalMs })`** retries until `attempt` returns something other than `undefined`, or the timeout runs out (then it resolves `undefined`). It's for the eventually-consistent parts of a story — a queued job, a projection:
 
-```typescript
-const finished = await pollUntil(
-  async () => {
-    const response = await readScenarioHttpResponse<{ status?: string } | undefined>(
-      await fetch(`${apiUrl}/workflow/checkoutWorkflow/status/${run.runId}`)
-    )
-    const outcome = response.body?.status
-    return outcome && TERMINAL.includes(outcome)
-      ? { ...response, outcome }
-      : undefined
-  },
-  { timeoutMs: 30_000, intervalMs: 100 }
-)
-if (!finished) throw new Error(`Run ${run.runId} never finished`)
+```typescript @snippet scenarioPollUntil
 ```
 
 For polling an RPC as an actor, `scenario.expectEventually` is usually simpler. `pollUntil` is for when you're talking to something that isn't an RPC.
 
 **`createCookieJar(apiUrl)`** gives a step a cookie store, so a bare `fetch` can hold a session across calls. Signing up is the classic case: an actor is already signed in before its first step, so sign-up is the one flow it can't perform. The jar keeps the `Set-Cookie` the sign-up returned and replays it on the next call, the way a browser would:
 
-```typescript
-const { apiUrl } = requireScenarioEnv(scenarioStep)
-const jar = createCookieJar(apiUrl)
-await jar.fetch(`${apiUrl}/auth/sign-up/email`, {
-  method: 'POST',
-  headers: { 'content-type': 'application/json' },
-  body: JSON.stringify({ email, password, name: email }),
-})
-const session = await readScenarioHttpResponse<{
-  user?: { email?: string }
-} | null>(await jar.fetch(`${apiUrl}/auth/get-session`))
+```typescript @snippet scenarioCookieJar
 ```
 
 ## Running Programmatically

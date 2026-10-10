@@ -113,13 +113,25 @@ function extractSnippets(content, rel) {
 
 // ── Main ───────────────────────────────────────────────────
 
+const TEMPLATE_ROOT = path.resolve(__dirname, '../.template-online-shop')
 const files   = findTsFiles(SUBMODULE_SRC)
+// Frontend snippets: every app's src/ plus its vite.config.ts.
+const APPS_DIR = path.join(TEMPLATE_ROOT, 'apps')
+if (fs.existsSync(APPS_DIR)) {
+  for (const app of fs.readdirSync(APPS_DIR, { withFileTypes: true })) {
+    if (!app.isDirectory()) continue
+    const appSrc = path.join(APPS_DIR, app.name, 'src')
+    if (fs.existsSync(appSrc)) findTsFiles(appSrc, files)
+    const vite = path.join(APPS_DIR, app.name, 'vite.config.ts')
+    if (fs.existsSync(vite)) files.push(vite)
+  }
+}
 const all     = {}
 const origins = {} // snippet name → file path (for collision warnings)
 
 for (const file of files) {
   const content  = fs.readFileSync(file, 'utf8')
-  const rel      = path.relative(SUBMODULE_SRC, file)
+  const rel      = (file.startsWith(SUBMODULE_SRC + path.sep) ? path.relative(SUBMODULE_SRC, file) : path.relative(TEMPLATE_ROOT, file))
   const snippets = extractSnippets(content, rel)
 
   for (const [name, code] of Object.entries(snippets)) {
