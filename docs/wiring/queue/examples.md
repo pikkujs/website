@@ -71,7 +71,7 @@ Then pick the queue when you enqueue:
 
 ## Background Cleanup
 
-Cleanup jobs shouldn't run in parallel with themselves, so use a `batchSize` of 1 and a generous lock. To run one on a clock rather than on demand, wire the same function with `wireScheduler` instead (see [Scheduled Tasks](../scheduled-tasks.md)), or have the scheduled function enqueue the jobs.
+Cleanup work is housekeeping nobody is waiting on, so it usually runs on a clock rather than on demand. The function below is a plain void function, which `wireScheduler` can run on a schedule (see [Scheduled Tasks](../scheduled-tasks.md)). If you'd rather run it as a queue job, wire the same function with `wireQueueWorker` and use a `batchSize` of 1 so it never runs in parallel with itself.
 
 ```typescript @snippet cleanupAbandonedBaskets
 ```
