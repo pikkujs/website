@@ -1,5 +1,5 @@
 {
-  "version": "0.12.146",
+  "version": "0.12.160",
   "entryPoints": [
     {
       "id": "app",
@@ -87,7 +87,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -101,6 +101,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: undefined",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "mcp?: boolean",
@@ -216,7 +220,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -230,6 +234,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: undefined",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "func: PikkuFunction<In, Out, RequiredWires, any> | PikkuFunctionSessionless<In, Out, RequiredWires, any, any>",
@@ -358,7 +366,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -372,6 +380,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: undefined",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "func: PikkuFunction<ListInput<F, S>, ListOutput<Row>, \"rpc\" | \"session\", WiredServices> | PikkuFunctionSessionless<ListInput<F, S>, ListOutput<Row>, \"rpc\" | \"session\", WiredServices, unknown>",
@@ -489,7 +501,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -503,6 +515,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: string",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "mcp?: boolean",
@@ -600,7 +616,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -614,6 +630,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: string",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "mcp?: boolean",
@@ -753,6 +773,14 @@
                   "line": "aiEmbedding?: AIEmbeddingService"
                 },
                 {
+                  "line": "analyticsIdentity?: AnalyticsIdentityResolver",
+                  "doc": "Resolves the browser-originated half of an event's identity — vendor ids and consent — from the wire. Unset means a sink sees only what the session carries, which is enough for a product-analytics tool and not enough for an ad platform."
+                },
+                {
+                  "line": "analyticsService?: AnalyticsService",
+                  "doc": "Where product-analytics events go; unset means the logger."
+                },
+                {
                   "line": "audit?: AuditService"
                 },
                 {
@@ -777,6 +805,10 @@
                 },
                 {
                   "line": "emailService?: EmailService"
+                },
+                {
+                  "line": "featureFlags?: FeatureFlagSource",
+                  "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
                   "line": "logger: Logger"
@@ -839,7 +871,8 @@
                   "doc": "True when the session belongs to a synthetic scenario actor — lets audits/analytics address synthetic traffic"
                 },
                 {
-                  "line": "orgId?: string"
+                  "line": "orgId?: string",
+                  "doc": "The tenant the session is acting inside, when the project has more than one."
                 },
                 {
                   "line": "readonly?: boolean",
@@ -868,6 +901,14 @@
                   "line": "aiEmbedding?: AIEmbeddingService"
                 },
                 {
+                  "line": "analyticsIdentity?: AnalyticsIdentityResolver",
+                  "doc": "Resolves the browser-originated half of an event's identity — vendor ids and consent — from the wire. Unset means a sink sees only what the session carries, which is enough for a product-analytics tool and not enough for an ad platform."
+                },
+                {
+                  "line": "analyticsService?: AnalyticsService",
+                  "doc": "Where product-analytics events go; unset means the logger."
+                },
+                {
                   "line": "audit?: AuditService"
                 },
                 {
@@ -892,6 +933,10 @@
                 },
                 {
                   "line": "emailService?: EmailService"
+                },
+                {
+                  "line": "featureFlags?: FeatureFlagSource",
+                  "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
                   "line": "logger: Logger"
@@ -955,6 +1000,14 @@
                   "line": "aiEmbedding?: AIEmbeddingService"
                 },
                 {
+                  "line": "analyticsIdentity?: AnalyticsIdentityResolver",
+                  "doc": "Resolves the browser-originated half of an event's identity — vendor ids and consent — from the wire. Unset means a sink sees only what the session carries, which is enough for a product-analytics tool and not enough for an ad platform."
+                },
+                {
+                  "line": "analyticsService: AnalyticsService",
+                  "doc": "Where product-analytics events go; unset means the logger."
+                },
+                {
                   "line": "audit?: AuditService"
                 },
                 {
@@ -979,6 +1032,10 @@
                 },
                 {
                   "line": "emailService?: EmailService"
+                },
+                {
+                  "line": "featureFlags?: FeatureFlagSource",
+                  "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
                   "line": "logger: Logger"
@@ -1114,8 +1171,8 @@
                 "via": "generated"
               },
               "summary": "Installs an addon into this project: its functions, wirings and scopes become part of the app, under the namespace and options given here.",
-              "docs": "Installs an addon into this project: its functions, wirings and scopes become\npart of the app, under the namespace and options given here.\n\n`mcp: true` offers every function the addon itself declared as a tool; a list\nnames the functions to offer, checked against the ones the addon publishes.",
-              "signature": "<Package extends string>(config: Omit<WireAddonConfig, \"package\" | \"mcp\"> & { package: Package; mcp?: boolean | AddonFunctionName<Package>[]; }) => void",
+              "docs": "Installs an addon into this project: its functions, wirings and scopes become\npart of the app, under the namespace and options given here.\n\n`mcp: true` offers every function the addon itself declared as a tool; a list\nnames the functions to offer, checked against the ones the addon publishes.\n`expose` works the same way for `rpc.exposed`, and `false` exposes none.",
+              "signature": "<Package extends string>(config: Omit<WireAddonConfig, \"package\" | \"mcp\" | \"expose\"> & { package: Package; mcp?: boolean | AddonFunctionName<Package>[]; expose?: boolean | AddonFunctionName<Package>[]; }) => void",
               "members": [
                 {
                   "line": "auth?: boolean",
@@ -1126,8 +1183,8 @@
                   "doc": "Credentials this instance may read on top of the ones it declared."
                 },
                 {
-                  "line": "credentialOverrides?: Record<string, string>",
-                  "doc": "Points a credential the addon reads at a different key in this deployment."
+                  "line": "credentialOverrides?: CredentialOverrides",
+                  "doc": "Points a credential the addon reads at a different key in this deployment, and — in the object form — decides whether it is per-user or deployment-wide. An addon declares a default; the wiring decides."
                 },
                 {
                   "line": "globalCredentials?: string",
@@ -1138,8 +1195,8 @@
                   "doc": "Hands over the whole `SecretService` unscoped. The value is the reason, recorded in the deploy manifest."
                 },
                 {
-                  "line": "mcpPath?: string",
-                  "doc": "Serves this addon's tools as their own MCP endpoint at this path, instead of adding them to the project's single `/mcp` surface. A path is the grouping unit: one project can carry many connectors, each with its own `tools/list`, and each compiled into its own deployment unit so a client that talks to one never loads the others. Unset puts the addon's tools on the default surface with everything else."
+                  "line": "mcpEndpoint?: boolean | string",
+                  "doc": "Serves this addon's MCP tools on an endpoint of their own rather than folding them into the project's single `/mcp`. `true` mounts them at `/mcp/<name>`; a string is the path, used as given. This is what lets one project expose several connectors: each wired instance becomes its own MCP server, with its own tool list, so a client pointed at one never sees another's tools. Leaving it unset keeps the addon's tools on the shared endpoint, which is where they have always been."
                 },
                 {
                   "line": "name: string",
@@ -1199,11 +1256,482 @@
                   "doc": "Map a consumer-facing fn name → the remote fn name, when they differ (rare)."
                 },
                 {
-                  "line": "serverUrl: string | ((services: CoreServices) => string | Promise<string>)"
+                  "line": "serverUrl: string | ((services: CoreServices) => string | Promise<string>)",
+                  "doc": "Where the addon is deployed, e.g. `https://registry.example.com`. A function when it varies per environment."
                 },
                 {
-                  "line": "tags?: string[]"
+                  "line": "tags?: string[]",
+                  "doc": "Applied to every function the addon contributes, so tag middleware and permissions reach them."
                 }
+              ]
+            }
+          ]
+        },
+        {
+          "specifier": "#pikku/analytics",
+          "name": "analytics",
+          "step": "enhance it",
+          "summary": "The events a project can measure, declared by name so the generated ingest knows what to accept. Where they go is an AnalyticsService on singleton services; what a function records into is the analytics service on the invocation.",
+          "skill": null,
+          "symbols": [
+            {
+              "name": "AnalyticsClientContext",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Its presence, not `at`, is what marks a record as relayed from a browser — a beacon is free to omit `at`.",
+              "docs": "Its presence, not `at`, is what marks a record as relayed from a browser — a\nbeacon is free to omit `at`.",
+              "members": [
+                {
+                  "line": "at?: number",
+                  "doc": "When the browser says the event happened, in epoch milliseconds."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsEventBase",
+              "kind": "type",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "The constraint a project's declared event union is checked against.",
+              "docs": "The constraint a project's declared event union is checked against.\n\nOnly `name` is fixed, because the name is the whole of what pikku itself\nreads — everything else on an event belongs to the app and to the sinks it\nwires, and narrowing it here would make the generic useless for anyone whose\nevents carry more than a fixed set of props.",
+              "members": [
+                {
+                  "line": "name: string",
+                  "doc": "The event name, as declared in `defineAnalyticsEvents`."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsEventDefinitions",
+              "kind": "type",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Events keyed by name; each value is the schema for that event's props.",
+              "docs": "Events keyed by name; each value is the schema for that event's props."
+            },
+            {
+              "name": "AnalyticsEventPropsSchema",
+              "kind": "type",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "The schema for one event's props. The generated ingest rebuilds each member of the union as `z.object(schema.shape)` so it can attach the event name, so a schema with no `shape` — a union, a primitive, a schema from a library that does not expose one — is not something an event can be declared with, and saying so here fails at the declaration rather than in generated code.",
+              "docs": "The schema for one event's props. The generated ingest rebuilds each member\nof the union as `z.object(schema.shape)` so it can attach the event name, so\na schema with no `shape` — a union, a primitive, a schema from a library\nthat does not expose one — is not something an event can be declared with,\nand saying so here fails at the declaration rather than in generated code.",
+              "members": [
+                {
+                  "line": "~standard: StandardSchemaV1.Props<unknown, unknown>",
+                  "doc": "The Standard Schema properties."
+                },
+                {
+                  "line": "shape: Record<string, unknown>",
+                  "doc": "The object schema's fields, which the CLI reads to list an event's props."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsIdentity",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Stamped server-side from the session and never read from the request body, which is what makes an unauthenticated ingest safe to expose.",
+              "docs": "Stamped server-side from the session and never read from the request body,\nwhich is what makes an unauthenticated ingest safe to expose.",
+              "members": [
+                {
+                  "line": "anonymousId?: string",
+                  "doc": "A device-scoped id for a visitor with no session, minted by pikku rather than by a vendor. Distinct from `pikkuUserId`, which is derived from a session and is therefore absent for exactly the visitor this identifies. Without it a product-analytics sink has no honest option for anonymous traffic: keying on a shared literal collapses every visitor into one person, and dropping the event loses the whole pre-signup funnel."
+                },
+                {
+                  "line": "consent?: Record<string, boolean>",
+                  "doc": "What the visitor agreed to, keyed by purpose. A sink gated on a purpose absent here does not send. Open-ended rather than a fixed pair, because the purposes are the consent tool's vocabulary and jurisdictions do not agree on them. Undefined means the app wired no consent resolver, not that consent was refused — the gate belongs to the sink, which is where the app decides what absence means."
+                },
+                {
+                  "line": "orgId?: string",
+                  "doc": "The session's organization, when it has one."
+                },
+                {
+                  "line": "pikkuUserId?: string",
+                  "doc": "The pikku user the session resolves to; absent without a session."
+                },
+                {
+                  "line": "userId: string | null",
+                  "doc": "The session's user id, or null for a visitor with no session."
+                },
+                {
+                  "line": "vendorIds?: Record<string, string>",
+                  "doc": "Identifiers a destination keys on that pikku does not mint — GA4's `client_id`, Meta's `fbp` and `fbc`, a vendor's own device id. All of them originate in the browser, and a sink that cannot produce one does not degrade, it sends nothing usable. Resolved server-side from first-party cookies on the request, never read from the event body, on the same reasoning as the rest of this object: a crafted client call must not be able to attribute an event to someone else."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsIdentityResolver",
+              "kind": "type",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Resolves the half of the identity pikku cannot know, from the wire.",
+              "docs": "Resolves the half of the identity pikku cannot know, from the wire.\n\nA function rather than a cookie-name map because consent tools do not store\none boolean per cookie — a single encoded blob is more common — and a map\ncould only express the easy case. {@link cookieAnalyticsIdentity } covers that\neasy case."
+            },
+            {
+              "name": "AnalyticsLog",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "`services.analytics`: buffered for the invocation, flushed when it ends, always best-effort. `record` is a method rather than a property so an app can narrow `Events` in its own `SingletonServices`.",
+              "docs": "`services.analytics`: buffered for the invocation, flushed when it ends,\nalways best-effort. `record` is a method rather than a property so an app can\nnarrow `Events` in its own `SingletonServices`.",
+              "signature": "AnalyticsLog<Events>",
+              "members": [
+                {
+                  "line": "close: () => Promise<void>",
+                  "doc": "Flushes and stops accepting events; called for you when the invocation ends."
+                },
+                {
+                  "line": "flush: () => Promise<void>",
+                  "doc": "Writes what is buffered to the service now, rather than when the invocation ends."
+                },
+                {
+                  "line": "record: (event: Events, client?: AnalyticsClientContext) => Promise<void>",
+                  "doc": "Buffers an event for the invocation; pass `client` when relaying one from a browser."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsRecord",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "What an event becomes once pikku has accepted it, and the only shape an {@link AnalyticsService} is ever handed.",
+              "docs": "What an event becomes once pikku has accepted it, and the only shape an\n{@link AnalyticsService} is ever handed.\n\nDistinct from {@link AnalyticsEventInput}, which is what a caller submits:\nthe identity, the trace and the origin are stamped server-side on the way\nthrough, so a sink never has to trust — or re-derive — any of them.",
+              "members": [
+                {
+                  "line": "at?: number",
+                  "doc": "When a browser says it happened, in epoch milliseconds; only on relayed events."
+                },
+                {
+                  "line": "functionId?: string",
+                  "doc": "The function that recorded the event, when one did."
+                },
+                {
+                  "line": "name: string",
+                  "doc": "The event name."
+                },
+                {
+                  "line": "occurredAt: string",
+                  "doc": "When the server accepted the event, as an ISO timestamp."
+                },
+                {
+                  "line": "props?: Record<string, unknown>",
+                  "doc": "The validated props the event carried."
+                },
+                {
+                  "line": "source: \"server\" | \"client\"",
+                  "doc": "`client` when relayed from a browser, `server` when a function recorded it."
+                },
+                {
+                  "line": "traceId?: string",
+                  "doc": "The trace the emitting invocation belongs to."
+                },
+                {
+                  "line": "userIdentity: AnalyticsIdentity",
+                  "doc": "Who the event is attributed to, stamped from the session and cookies."
+                },
+                {
+                  "line": "wireType?: PikkuWiringTypes",
+                  "doc": "The kind of wire the event came in on."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsService",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Where accepted events go. Pikku validates, identifies and batches them; it does not store them.",
+              "docs": "Where accepted events go. Pikku validates, identifies and batches them; it\ndoes not store them.\n\nOne method, taking a batch, because a batch is what a destination is always\nhanded: the invocation buffers and flushes once, and a lone event is a batch\nof one. A single-event method beside it would be a second path every sink had\nto implement and every caller had to choose between.",
+              "members": [
+                {
+                  "line": "write: (batch: AnalyticsRecord[]) => Promise<void>",
+                  "doc": "Delivers one batch of accepted records; a rejection is logged, never surfaced to the caller."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsSink",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "One destination in a fan-out, with the events it is allowed to receive.",
+              "docs": "One destination in a fan-out, with the events it is allowed to receive.\n\n`accepts` is the app's, not the sink's: which events a destination should get\nis policy — a product-analytics tool wants everything, an ad platform wants\nthree conversions, and a consent gate reads the same way. What each event\nshould look like once it gets there is the sink's, and lives in its mapper.",
+              "members": [
+                {
+                  "line": "accepts?: ((record: AnalyticsRecord) => boolean)",
+                  "doc": "Returns true for the records this destination should get; omit to send everything."
+                },
+                {
+                  "line": "service: AnalyticsService",
+                  "doc": "The destination the filtered records are written to."
+                }
+              ]
+            },
+            {
+              "name": "anonymousAnalyticsIdentity",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Mints a device-scoped id for visitors who have no session yet.",
+              "docs": "Mints a device-scoped id for visitors who have no session yet.\n\n`httpOnly` by default, which is the honest reading of what this is for: no\nbrowser script needs it, and a cookie scripts cannot touch is both harder to\nmisuse and not subject to the seven-day cap browsers place on script-set\nones. An app that wants a vendor SDK to read it must opt out deliberately.",
+              "signature": "(options?: AnonymousAnalyticsIdentityOptions) => AnalyticsIdentityResolver",
+              "examples": [
+                "export const shopAnalyticsIdentity = composeAnalyticsIdentity(\n  cookieAnalyticsIdentity({\n    vendorIds: { gaClientId: '_ga' },\n    consent: { analytics: 'shop_consent_analytics' },\n  }),\n  anonymousAnalyticsIdentity({ requires: ['analytics'] }),\n  mintGaClientId\n)"
+              ]
+            },
+            {
+              "name": "composeAnalyticsIdentity",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Runs resolvers in order, each seeing what the ones before it produced.",
+              "docs": "Runs resolvers in order, each seeing what the ones before it produced.\n\nOrder is meaningful rather than incidental: a resolver that mints a cookie\nmay only do so once consent has been read, so the resolver reading consent\nhas to come first. Put the other way round, the minter sees no consent, mints\nnothing, and the app collects nothing — silently, which is why this threads\nstate through instead of merging independent results.\n\nA later resolver wins a key it sets, so a minter's freshly created id\nreplaces the absent one the cookie reader could not find.",
+              "signature": "(...resolvers: AnalyticsIdentityResolver[]) => AnalyticsIdentityResolver",
+              "examples": [
+                "export const shopAnalyticsIdentity = composeAnalyticsIdentity(\n  cookieAnalyticsIdentity({\n    vendorIds: { gaClientId: '_ga' },\n    consent: { analytics: 'shop_consent_analytics' },\n  }),\n  anonymousAnalyticsIdentity({ requires: ['analytics'] }),\n  mintGaClientId\n)"
+              ]
+            },
+            {
+              "name": "cookieAnalyticsIdentity",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Reads the browser-originated half of the identity off first-party cookies.",
+              "docs": "Reads the browser-originated half of the identity off first-party cookies.\n\nCovers the common case only. A consent tool that packs every purpose into one\nencoded blob needs its own resolver — which is why the resolver is a function\nand this is a helper rather than the mechanism.\n\nResolves nothing off an HTTP wire, which is correct: a cron task and a queue\nworker have no browser behind them, so any vendor id they produced would be\ninvented.",
+              "signature": "(options: CookieAnalyticsIdentityOptions) => AnalyticsIdentityResolver",
+              "members": [
+                {
+                  "line": "consent?: Record<string, string>",
+                  "doc": "Consent purpose to the cookie that grants it. The purpose is true only when the cookie is present and is not a recognised denial (`'0'`, `'false'`, `'denied'`), so a consent tool that writes a refusal rather than deleting the cookie is read as a refusal."
+                },
+                {
+                  "line": "vendorIds?: Record<string, string>",
+                  "doc": "Identity key to read it from, e.g. `{ gaClientId: '_ga' }`."
+                }
+              ],
+              "examples": [
+                "export const shopAnalyticsIdentity = composeAnalyticsIdentity(\n  cookieAnalyticsIdentity({\n    vendorIds: { gaClientId: '_ga' },\n    consent: { analytics: 'shop_consent_analytics' },\n  }),\n  anonymousAnalyticsIdentity({ requires: ['analytics'] }),\n  mintGaClientId\n)"
+              ]
+            },
+            {
+              "name": "defineAnalyticsEvents",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Declare what a module can measure. Call it as often as suits the project; the CLI unions every declaration into the ingest schema.",
+              "docs": "Declare what a module can measure. Call it as often as suits the project; the\nCLI unions every declaration into the ingest schema.\n\nIt must stay an exported const — the schema pipeline reads the value by name.\nIt registers nothing at runtime: where events go is an `AnalyticsService` on\nsingleton services.",
+              "signature": "<const Events extends AnalyticsEventDefinitions>(events: Events) => Events",
+              "examples": [
+                "export const analyticsEvents = defineAnalyticsEvents({\n  page_viewed: z.object({\n    path: z.string().max(512),\n  }),\n  signed_up: z.object({}),\n  checkout_completed: z.object({\n    amount: z.number(),\n    currency: z.string().length(3),\n  }),\n})"
+              ]
+            },
+            {
+              "name": "fanOutAnalytics",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "One `AnalyticsService` over several destinations.",
+              "docs": "One `AnalyticsService` over several destinations.\n\nA composite rather than a change to the interface, so a single-destination\napp never meets it and a sink is the same class whether it runs alone or\nbeside three others.\n\nSettled, not awaited in sequence: `flush()` runs inside the invocation, so a\nvendor that is slow must not add its latency to the request and a vendor that\nis down must not cost the others their events. A destination that throws is\nreported by the caller's existing flush guard, which already treats analytics\nas best-effort.",
+              "signature": "(sinks: ReadonlyArray<AnalyticsSink | AnalyticsService>) => AnalyticsService",
+              "examples": [
+                "export const createSingletonServices = pikkuServices(\n  async (config, existingServices) => {\n    const variables =\n      existingServices?.variables ??\n      new TypedVariablesService(new LocalVariablesService())\n    const secrets =\n      existingServices?.secrets ??\n      new TypedSecretService(new LocalSecretService(variables))\n    const logger = existingServices?.logger ?? new JsonConsoleLogger()\n    const schema = existingServices?.schema ?? new CFWorkerSchemaService(logger)\n    const emailService =\n      existingServices?.emailService ??\n      new GeneratedTemplateEmailService({\n        delegate: new LocalEmailService(),\n      })\n    // The durable audit sink. In a deployed stage fabric injects the platform's\n    // audit service; locally it falls back to a no-op so nothing is persisted.\n    const audit = existingServices?.audit ?? new NoopAuditService()\n    // kysely is injected by pikku dev (node:sqlite) or the CF Worker workflow (libsql).\n    // The template never constructs its own dialect — dialects are fabric/runtime\n    // concerns — so it must always be provided by the runtime.\n    if (!existingServices?.kysely) {\n      throw new Error(\n        'kysely service was not injected by the runtime (pikku dev / fabric)'\n      )\n    }\n    const kysely: Kysely<DB> = existingServices.kysely\n\n    // Per-user credential store (wire.getCredential) — needed by addons imported\n    // with --auth per-user/delegated. A deployed stage injects it: credentials are\n    // sealed to the stage, and only its secrets Worker holds the key. There is no\n    // fallback because there is no key to fall back to — the template used to\n    // build a `KyselyCredentialService` from a `CREDENTIALS_KEY` secret, which was\n    // the stage's own KEK handed to every unit. Outside a stage the app runs fine\n    // and credential-using addon calls fail with a clear error from the addon's\n    // wire services; wire your own `credentialService` here if you need one.\n    const credentialService = existingServices?.credentialService\n\n    // Both destinations, because they answer different questions: the logger is\n    // what makes an event visible while the app is being built, and fabric's\n    // forwarder no-ops entirely outside a deployed stage. Wired here rather than\n    // left to the default, which is the logger alone.\n    const analyticsService =\n      existingServices?.analyticsService ??\n      fanOutAnalytics([\n        new LoggerAnalyticsService(logger),\n        fabricAnalyticsService({\n          variables,\n          queueService: existingServices?.queueService,\n        }),\n      ])\n\n    return {\n      ...(existingServices ?? {}),\n      config,\n      workflowService: existingServices?.workflowService,\n      workflowRunService: existingServices?.workflowRunService,\n      variables,\n      secrets,\n      schema,\n      logger,\n      emailService,\n      audit,\n      kysely,\n      analyticsService,\n      analyticsIdentity: shopAnalyticsIdentity,\n      // Constructed once here rather than read per call: the payment provider's\n      // credentials belong to service construction, and functions cannot reach\n      // `secrets` at all (every function-facing services type is bounded by\n      // SecretlessServices).\n      ...(credentialService ? { credentialService } : {}),\n    }\n  }\n)"
+              ]
+            },
+            {
+              "name": "LoggerAnalyticsService",
+              "kind": "class",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "What an app gets before it has chosen a store. There is deliberately no noop: a validated wire with nowhere for the events to go is indistinguishable from a broken one.",
+              "docs": "What an app gets before it has chosen a store. There is deliberately no noop:\na validated wire with nowhere for the events to go is indistinguishable from\na broken one.\n\nAt `debug` so attaching a real store does not report every event twice.",
+              "signature": "new LoggerAnalyticsService(logger: Logger)",
+              "members": [
+                {
+                  "line": "logger: any"
+                },
+                {
+                  "line": "write: (batch: AnalyticsRecord[]) => Promise<void>",
+                  "doc": "Logs each record in the batch at `debug`."
+                }
+              ]
+            },
+            {
+              "name": "mintCookie",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Reads a first-party cookie, creating and setting it when absent.",
+              "docs": "Reads a first-party cookie, creating and setting it when absent.\n\nThis is how an app tracks a visitor with no vendor SDK on the page: the\nidentifiers GA4 and Meta key on are ordinary first-party cookies in a\ndocumented format, and nothing requires a browser script to be the one that\nwrites them. It is the mechanism behind server-side tagging, and the reason\npikku can offer it as a wired service rather than a second container to run.\n\nMinted once per wire, not once per call. The resolver runs for every event,\nand a second mint within one request would hand the same visitor two\nidentities — which reads downstream as two people rather than as a bug.\n\nWrites nothing on a wire with no HTTP response, and nothing once the response\nhas been sent; a cron task and a queue worker have no browser to store it,\nand a stream's headers are long gone. Both return undefined rather than\npretending.",
+              "signature": "(wire: AnyWire, name: string, options: MintCookieOptions, mint: () => string) => string | undefined",
+              "members": [
+                {
+                  "line": "actor?: ScenarioPersona<string, ScenarioRpcMap>",
+                  "doc": "The persona this step runs as, injected by the runner. Required on a `browser` binding, which cannot be provisioned without one, and on any binding whose step declares `actor: true`. A step that declares neither has no `actor` on its wire at all rather than an optional one — a pure assertion has nobody to be, and `attemptsSignIn` deliberately posts credentials instead of reusing an actor's session."
+                },
+                {
+                  "line": "actors?: ScenarioPersonas"
+                },
+                {
+                  "line": "addonNamespace?: string"
+                },
+                {
+                  "line": "audit?: { durability: AuditDurability; }"
+                },
+                {
+                  "line": "beginChanges?: (() => Promise<void>)",
+                  "doc": "Declare that everything after this line changes something. Present only on functions that are not `readonly` — a read has nothing to declare. Throws `AbandonedError` if whatever asked for this work has already gone away (an interrupted agent run, a disconnected client), so the mutation never runs and the abort is clean. Otherwise it marks the call as mutating, so an interrupt landing after this point is reported rather than silently discarded. Cooperative: a function that never calls it is assumed to have changed something, which is the safe default."
+                },
+                {
+                  "line": "browser?: PikkuBrowserWire",
+                  "doc": "Present only when the runner provisioned a browser for this step"
+                },
+                {
+                  "line": "channel?: PikkuChannel<unknown, any, (...args: any[]) => any>"
+                },
+                {
+                  "line": "clearSession?: (() => Promise<void> | void)"
+                },
+                {
+                  "line": "cli?: PikkuCLI<(...args: any[]) => any>"
+                },
+                {
+                  "line": "functionId?: string"
+                },
+                {
+                  "line": "gateway?: PikkuGateway"
+                },
+                {
+                  "line": "getCredential?: GetCredential<Record<string, unknown>>",
+                  "doc": "Get a single credential by name — lazy-loads from CredentialService on first call, sync thereafter"
+                },
+                {
+                  "line": "getCredentials?: (() => Record<string, unknown> | Promise<Record<string, unknown>>)",
+                  "doc": "Get all resolved credentials — lazy-loads from CredentialService on first call, sync thereafter"
+                },
+                {
+                  "line": "getSession?: (() => CoreUserSession | Promise<CoreUserSession> | undefined)",
+                  "doc": "Fetch the latest session (may read from backing store)"
+                },
+                {
+                  "line": "graph?: PikkuGraphWire"
+                },
+                {
+                  "line": "hasSessionChanged?: (() => boolean)"
+                },
+                {
+                  "line": "http?: PikkuHTTP<any>"
+                },
+                {
+                  "line": "logger?: Logger",
+                  "doc": "A logger scoped to this invocation, when a host attaches one. Core never sets it; services that log fall back to the singleton logger."
+                },
+                {
+                  "line": "mcp?: PikkuMCP<never>"
+                },
+                {
+                  "line": "pikkuUserId?: string"
+                },
+                {
+                  "line": "queue?: PikkuQueue"
+                },
+                {
+                  "line": "rpc: PikkuRPC",
+                  "doc": "Always present — lazily initialised on first access for every function invocation"
+                },
+                {
+                  "line": "scenario?: PikkuScenarioWire<any>"
+                },
+                {
+                  "line": "scenarioStep?: PikkuScenarioStepWire",
+                  "doc": "Present on every scenario step invocation"
+                },
+                {
+                  "line": "scheduledTask?: PikkuScheduledTask"
+                },
+                {
+                  "line": "session?: CoreUserSession"
+                },
+                {
+                  "line": "setCredential?: ((name: string, value: unknown) => void)",
+                  "doc": "Set a credential value (available in middleware)"
+                },
+                {
+                  "line": "setSession?: ((session: CoreUserSession) => Promise<void> | void)"
+                },
+                {
+                  "line": "traceId?: string",
+                  "doc": "Trace ID for distributed tracing — propagated across remote RPC calls via the x-request-id header"
+                },
+                {
+                  "line": "trigger?: PikkuTrigger<unknown>"
+                },
+                {
+                  "line": "wireId?: string"
+                },
+                {
+                  "line": "wireType?: PikkuWiringTypes"
+                },
+                {
+                  "line": "workflow?: PikkuWorkflowWire"
+                },
+                {
+                  "line": "workflowStep?: WorkflowStepWire"
+                }
+              ],
+              "examples": [
+                "const mintGaClientId: AnalyticsIdentityResolver = (wire, resolved) => {\n  const gaClientId = mintCookie(\n    wire,\n    '_ga',\n    {\n      cookie: FIRST_PARTY_YEAR,\n      requires: ['analytics'],\n      consent: resolved?.consent,\n    },\n    () => `GA1.1.${randomDigits(10)}.${Math.floor(Date.now() / 1000)}`\n  )\n  return gaClientId === undefined ? undefined : { vendorIds: { gaClientId } }\n}"
+              ]
+            },
+            {
+              "name": "randomDigits",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Cryptographically random digits, the shape both vendor formats use.",
+              "docs": "Cryptographically random digits, the shape both vendor formats use.",
+              "signature": "(length: number) => string",
+              "examples": [
+                "const mintGaClientId: AnalyticsIdentityResolver = (wire, resolved) => {\n  const gaClientId = mintCookie(\n    wire,\n    '_ga',\n    {\n      cookie: FIRST_PARTY_YEAR,\n      requires: ['analytics'],\n      consent: resolved?.consent,\n    },\n    () => `GA1.1.${randomDigits(10)}.${Math.floor(Date.now() / 1000)}`\n  )\n  return gaClientId === undefined ? undefined : { vendorIds: { gaClientId } }\n}"
               ]
             }
           ]
@@ -1326,6 +1854,21 @@
               },
               "signature": "new ExpectationFailedError(message?: string)",
               "status": 417
+            },
+            {
+              "name": "FeatureUnavailableError",
+              "kind": "class",
+              "origin": {
+                "via": "core",
+                "subpath": "./errors"
+              },
+              "signature": "new FeatureUnavailableError(feature: string)",
+              "members": [
+                {
+                  "line": "payload: { error: \"feature_unavailable\"; feature: string; }"
+                }
+              ],
+              "status": 503
             },
             {
               "name": "ForbiddenError",
@@ -2088,6 +2631,9 @@
                   "line": "origins?: string[] | ((services: CoreSingletonServices) => string[] | Promise<string[]>)",
                   "doc": "Extra allowed origins beyond the request's own host, or a resolver for them."
                 }
+              ],
+              "examples": [
+                "addToBasket: {\n  method: 'post',\n  route: '/basket/items',\n  func: addToBasket,\n  middleware: [\n    requireOrigin({\n      origins: ({ variables }) => allowedOrigins(variables),\n    }),\n  ],\n},"
               ]
             }
           ]
@@ -2183,7 +2729,8 @@
                   "line": "getAllStatus: () => Promise<CredentialStatus[]>"
                 },
                 {
-                  "line": "getMissing: () => Promise<CredentialStatus[]>"
+                  "line": "getMissing: () => Promise<CredentialStatus[]>",
+                  "doc": "The secrets a deployment still has to supply. An optional one is absent from this list however it is stored: `optional` already declares that absence is supported, which is why `getSecret` resolves `undefined` for it rather than throwing. Reporting it as missing contradicts that, and buries the required secrets someone actually has to go and configure. `getAllStatus` still reports it, flagged."
                 },
                 {
                   "line": "getSecret: { <K>(key: K): Promise<SecretResult<CredentialsMap[K]>>; <T>(key: string): Promise<SecretValue<T>>; }",
@@ -2419,7 +2966,8 @@
                   "doc": "Runs once when a client connects, before any message. Its return value is sent as the first message."
                 },
                 {
-                  "line": "onDisconnect?: PikkuFunctionConfig<void, void, \"channel\" | \"rpc\" | \"session\"> | { func?: PikkuFunctionConfig<void, void, \"channel\" | \"rpc\" | \"session\"> | undefined; middleware?: PikkuMiddleware[] | undefined; }"
+                  "line": "onDisconnect?: PikkuFunctionConfig<void, void, \"channel\" | \"rpc\" | \"session\"> | { func?: PikkuFunctionConfig<void, void, \"channel\" | \"rpc\" | \"session\"> | undefined; middleware?: PikkuMiddleware[] | undefined; }",
+                  "doc": "Runs once after the socket closes, however it closed. Nothing it returns reaches the client."
                 },
                 {
                   "line": "onMessage?: PikkuFunctionConfig<any, any, \"channel\" | \"rpc\" | \"session\">",
@@ -2876,7 +3424,7 @@
               "docs": "Type-safe helper for defining route contracts that can be composed.",
               "signature": "{ <T extends TypedHTTPRouteMap>(routes: T): TypedHTTPRouteContract<T>; <T extends TypedHTTPRouteMap>(config: TypedHTTPRoutesGroupConfig & { routes: T; }): TypedHTTPRouteContract<T>; }",
               "examples": [
-                "export const shopRoutes = defineHTTPRoutes({\n  auth: false,\n  routes: {\n    // Categories\n    listCategories: {\n      method: 'get',\n      route: '/categories',\n      func: listCategories,\n    },\n    createCategory: {\n      method: 'post',\n      route: '/categories',\n      func: createCategory,\n      auth: true,\n    },\n\n    // Items\n    listItems: { method: 'get', route: '/items', func: listItems },\n    getItem: { method: 'get', route: '/items/:itemId', func: getItem },\n    createItem: {\n      method: 'post',\n      route: '/items',\n      func: createItem,\n      auth: true,\n    },\n    updateItem: {\n      method: 'patch',\n      route: '/items/:itemId',\n      func: updateItem,\n      auth: true,\n    },\n\n    // Account\n    getProfile: {\n      method: 'get',\n      route: '/profile',\n      func: getProfile,\n      auth: true,\n    },\n\n    // Basket (sessionless — works for guests too)\n    getBasket: { method: 'get', route: '/basket', func: getBasket },\n    addToBasket: { method: 'post', route: '/basket/items', func: addToBasket },\n    removeFromBasket: {\n      method: 'delete',\n      route: '/basket/items/:itemId',\n      func: removeFromBasket,\n    },\n\n    // Orders (require auth)\n    createOrder: {\n      method: 'post',\n      route: '/orders',\n      func: createOrder,\n      auth: true,\n    },\n    listOrders: {\n      method: 'get',\n      route: '/orders',\n      func: listOrders,\n      auth: true,\n    },\n    getOrder: {\n      method: 'get',\n      route: '/orders/:orderId',\n      func: getOrder,\n      auth: true,\n    },\n    cancelOrder: {\n      method: 'post',\n      route: '/orders/:orderId/cancel',\n      func: cancelOrder,\n      auth: true,\n    },\n  },\n})"
+                "export const shopRoutes = defineHTTPRoutes({\n  auth: false,\n  routes: {\n    // Categories\n    listCategories: {\n      method: 'get',\n      route: '/categories',\n      func: listCategories,\n    },\n    createCategory: {\n      method: 'post',\n      route: '/categories',\n      func: createCategory,\n      auth: true,\n    },\n\n    // Items\n    listItems: { method: 'get', route: '/items', func: listItems },\n    getItem: { method: 'get', route: '/items/:itemId', func: getItem },\n    createItem: {\n      method: 'post',\n      route: '/items',\n      func: createItem,\n      auth: true,\n    },\n    updateItem: {\n      method: 'patch',\n      route: '/items/:itemId',\n      func: updateItem,\n      auth: true,\n    },\n\n    // Account\n    getProfile: {\n      method: 'get',\n      route: '/profile',\n      func: getProfile,\n      auth: true,\n    },\n\n    // Basket (sessionless — works for guests too)\n    getBasket: { method: 'get', route: '/basket', func: getBasket },\n    addToBasket: {\n      method: 'post',\n      route: '/basket/items',\n      func: addToBasket,\n      middleware: [\n        requireOrigin({\n          origins: ({ variables }) => allowedOrigins(variables),\n        }),\n      ],\n    },\n    removeFromBasket: {\n      method: 'delete',\n      route: '/basket/items/:itemId',\n      func: removeFromBasket,\n    },\n\n    // Orders (require auth)\n    createOrder: {\n      method: 'post',\n      route: '/orders',\n      func: createOrder,\n      auth: true,\n    },\n    listOrders: {\n      method: 'get',\n      route: '/orders',\n      func: listOrders,\n      auth: true,\n    },\n    getOrder: {\n      method: 'get',\n      route: '/orders/:orderId',\n      func: getOrder,\n      auth: true,\n    },\n    cancelOrder: {\n      method: 'post',\n      route: '/orders/:orderId/cancel',\n      func: cancelOrder,\n      auth: true,\n    },\n  },\n})"
               ]
             },
             {
@@ -3397,6 +3945,20 @@
           "skill": "pikku-auth",
           "symbols": [
             {
+              "name": "defineFeatureFlags",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./flag"
+              },
+              "summary": "No-op function for declaring feature flags. This exists purely for TypeScript type checking and will be tree-shaken. The CLI extracts metadata via AST parsing and generates a `FeatureFlagName` union, so `flags.calList` is a compile error rather than a silent `false`.",
+              "docs": "No-op function for declaring feature flags.\nThis exists purely for TypeScript type checking and will be tree-shaken.\nThe CLI extracts metadata via AST parsing and generates a `FeatureFlagName`\nunion, so `flags.calList` is a compile error rather than a silent `false`.\n\nThat typing is load-bearing rather than a convenience: flags fail closed, so\na typo'd flag reads `false`, hides its feature permanently, and leaves every\ntest, screenshot and gate green. An untyped key makes a missing product\nindistinguishable from a working one.\n\nRemoval is deliberately not destructive. Deleting a declaration leaves the\nrow in the store, marked undeclared and inert, until `pikku flags prune` —\nthe same additive contract `defineScope` and `defineSystemRole` have, and for\nthe same reason: a mid-deploy revocation is not something a code edit should\nbe able to cause.",
+              "signature": "(_config: CoreFeatureFlags) => void",
+              "examples": [
+                "defineFeatureFlags({\n  orderExport: {\n    description: 'Bulk export of orders to CSV',\n    anyOf: ['reports:read'],\n  },\n})"
+              ]
+            },
+            {
               "name": "defineScope",
               "kind": "function",
               "origin": {
@@ -3423,6 +3985,16 @@
               "examples": [
                 "```typescript\ndefineSystemRole({\n  buyer: {\n    displayName: 'Buyer',\n    description: 'Can browse the catalogue and place orders',\n    scopes: ['catalogue:read', 'orders:create'],\n  },\n  admin: {\n    description: 'Everything',\n    scopes: ['admin'],\n  },\n})\n```"
               ]
+            },
+            {
+              "name": "FeatureFlagName",
+              "kind": "type",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "Every feature flag declared in this application.",
+              "docs": "Every feature flag declared in this application.",
+              "signature": "never"
             }
           ]
         },
@@ -3746,7 +4318,7 @@
                   "doc": "Unique across the project. It is how the graph is started and how its runs are grouped."
                 },
                 {
-                  "line": "nodes: Record<string, 117 names (pikku meta)>",
+                  "line": "nodes: Record<string, 118 names (pikku meta)>",
                   "doc": "The graph's steps, keyed by node id, each naming a function. `pikku meta` lists the names available here."
                 },
                 {
@@ -3844,17 +4416,6 @@
               ]
             },
             {
-              "name": "createScenarioRunner",
-              "kind": "function",
-              "origin": {
-                "via": "core",
-                "subpath": "./workflow"
-              },
-              "summary": "A workflow service with the scenario capability attached — the two lines `pikku scenario run` needs, in one call so no caller has to remember that the capability is installed rather than inherited.",
-              "docs": "A workflow service with the scenario capability attached — the two lines\n`pikku scenario run` needs, in one call so no caller has to remember that the\ncapability is installed rather than inherited.\n\nThe in-memory service is the right engine because a scenario run is a single\nexternal process driving a deployed app over its real transport: there is\nnothing to persist and no second worker to resume it.",
-              "signature": "(options?: WorkflowQueueOptions) => { workflowService: InMemoryWorkflowService; scenarioService: PikkuScenarioService; }"
-            },
-            {
               "name": "pikkuAddonScenarioStep",
               "kind": "function",
               "origin": {
@@ -3874,8 +4435,8 @@
                 "via": "core",
                 "subpath": "./workflow"
               },
-              "summary": "Structural browser handle, present only when the runner provisioned a browser for this step (a `browser` binding on the step config).",
-              "docs": "Structural browser handle, present only when the runner provisioned a\nbrowser for this step (a `browser` binding on the step config).\n\n`@pikku/core` deliberately never imports playwright — it must stay\ndependency-free for edge runtimes. `@pikku/playwright` augments this\ninterface via `declare module`, so `wire.browser.page` is a fully typed\nPlaywright `Page` in a project that installs it.",
+              "summary": "One actor's browser session, handed to a step as `wire.browser`.",
+              "docs": "One actor's browser session, handed to a step as `wire.browser`.\n\nOnly what every driver can honour is declared here. A driver package adds\nthe rest by declaration-merging onto this interface — `@pikku/playwright`\ncontributes `page`, `context` and `locate` — so a step written against the\nstructural surface keeps working whichever driver runs it.",
               "members": [
                 {
                   "line": "actor: string",
@@ -3885,7 +4446,7 @@
                   "line": "goto: (url: string) => Promise<void>"
                 },
                 {
-                  "line": "screenshot: (name?: string) => Promise<Uint8Array>"
+                  "line": "screenshot: (name?: string, options?: ScenarioScreenshotOptions) => Promise<Uint8Array>"
                 }
               ]
             },
@@ -4016,7 +4577,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -4030,6 +4591,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: undefined",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "func: PikkuFunctionScenario<In, Out, Out>",
@@ -4421,7 +4986,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -4435,6 +5000,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: undefined",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "mcp?: boolean",
@@ -4550,7 +5119,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -4564,6 +5133,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: undefined",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "func: PikkuFunction<In, Out, RequiredWires, any> | PikkuFunctionSessionless<In, Out, RequiredWires, any, any>",
@@ -4692,7 +5265,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -4706,6 +5279,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: undefined",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "func: PikkuFunction<ListInput<F, S>, ListOutput<Row>, \"rpc\" | \"session\", WiredServices> | PikkuFunctionSessionless<ListInput<F, S>, ListOutput<Row>, \"rpc\" | \"session\", WiredServices, unknown>",
@@ -4823,7 +5400,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -4837,6 +5414,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: string",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "mcp?: boolean",
@@ -4934,7 +5515,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -4948,6 +5529,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: string",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "mcp?: boolean",
@@ -5096,6 +5681,18 @@
                   "line": "aiEmbedding?: AIEmbeddingService"
                 },
                 {
+                  "line": "analytics?: AnalyticsLog<AnalyticsEventBase>",
+                  "doc": "Request-scoped buffer writing into `analyticsService`. Narrow it to the app's own event union in `SingletonServices` to type `record()`."
+                },
+                {
+                  "line": "analyticsIdentity?: AnalyticsIdentityResolver",
+                  "doc": "Resolves the browser-originated half of an event's identity — vendor ids and consent — from the wire. Unset means a sink sees only what the session carries, which is enough for a product-analytics tool and not enough for an ad platform."
+                },
+                {
+                  "line": "analyticsService?: AnalyticsService",
+                  "doc": "Where product-analytics events go; unset means the logger."
+                },
+                {
                   "line": "audit?: AuditService"
                 },
                 {
@@ -5127,6 +5724,10 @@
                 },
                 {
                   "line": "eventHub?: EventHubService<Record<string, any>>"
+                },
+                {
+                  "line": "featureFlags?: FeatureFlagSource",
+                  "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
                   "line": "jwt?: JWTService"
@@ -5195,7 +5796,8 @@
                   "doc": "True when the session belongs to a synthetic scenario actor — lets audits/analytics address synthetic traffic"
                 },
                 {
-                  "line": "orgId?: string"
+                  "line": "orgId?: string",
+                  "doc": "The tenant the session is acting inside, when the project has more than one."
                 },
                 {
                   "line": "readonly?: boolean",
@@ -5206,7 +5808,8 @@
                   "doc": "Scopes granted to this session, checked against a function's `scopes`. Populated by whoever builds the session — core reads them, never fetches."
                 },
                 {
-                  "line": "userId?: string"
+                  "line": "userId?: string",
+                  "doc": "Who the session belongs to, as your own system identifies them. Pikku only carries it."
                 }
               ]
             },
@@ -5234,6 +5837,18 @@
                 },
                 {
                   "line": "aiEmbedding?: AIEmbeddingService"
+                },
+                {
+                  "line": "analytics?: AnalyticsLog<AnalyticsEventBase>",
+                  "doc": "Request-scoped buffer writing into `analyticsService`. Narrow it to the app's own event union in `SingletonServices` to type `record()`."
+                },
+                {
+                  "line": "analyticsIdentity?: AnalyticsIdentityResolver",
+                  "doc": "Resolves the browser-originated half of an event's identity — vendor ids and consent — from the wire. Unset means a sink sees only what the session carries, which is enough for a product-analytics tool and not enough for an ad platform."
+                },
+                {
+                  "line": "analyticsService?: AnalyticsService",
+                  "doc": "Where product-analytics events go; unset means the logger."
                 },
                 {
                   "line": "audit?: AuditService"
@@ -5267,6 +5882,10 @@
                 },
                 {
                   "line": "eventHub?: EventHubService<Record<string, any>>"
+                },
+                {
+                  "line": "featureFlags?: FeatureFlagSource",
+                  "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
                   "line": "jwt?: JWTService"
@@ -5345,6 +5964,18 @@
                   "line": "aiEmbedding?: AIEmbeddingService"
                 },
                 {
+                  "line": "analytics?: AnalyticsLog<AnalyticsEventBase>",
+                  "doc": "Request-scoped buffer writing into `analyticsService`. Narrow it to the app's own event union in `SingletonServices` to type `record()`."
+                },
+                {
+                  "line": "analyticsIdentity?: AnalyticsIdentityResolver",
+                  "doc": "Resolves the browser-originated half of an event's identity — vendor ids and consent — from the wire. Unset means a sink sees only what the session carries, which is enough for a product-analytics tool and not enough for an ad platform."
+                },
+                {
+                  "line": "analyticsService?: AnalyticsService",
+                  "doc": "Where product-analytics events go; unset means the logger."
+                },
+                {
                   "line": "audit?: AuditService"
                 },
                 {
@@ -5376,6 +6007,10 @@
                 },
                 {
                   "line": "eventHub?: EventHubService<Record<string, any>>"
+                },
+                {
+                  "line": "featureFlags?: FeatureFlagSource",
+                  "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
                   "line": "jwt?: JWTService"
@@ -5549,6 +6184,475 @@
           ]
         },
         {
+          "specifier": "#pikku/addon/analytics",
+          "name": "analytics",
+          "step": "enhance it",
+          "summary": "The events a project can measure, declared by name so the generated ingest knows what to accept. Where they go is an AnalyticsService on singleton services; what a function records into is the analytics service on the invocation.",
+          "skill": null,
+          "symbols": [
+            {
+              "name": "AnalyticsClientContext",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Its presence, not `at`, is what marks a record as relayed from a browser — a beacon is free to omit `at`.",
+              "docs": "Its presence, not `at`, is what marks a record as relayed from a browser — a\nbeacon is free to omit `at`.",
+              "members": [
+                {
+                  "line": "at?: number",
+                  "doc": "When the browser says the event happened, in epoch milliseconds."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsEventBase",
+              "kind": "type",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "The constraint a project's declared event union is checked against.",
+              "docs": "The constraint a project's declared event union is checked against.\n\nOnly `name` is fixed, because the name is the whole of what pikku itself\nreads — everything else on an event belongs to the app and to the sinks it\nwires, and narrowing it here would make the generic useless for anyone whose\nevents carry more than a fixed set of props.",
+              "members": [
+                {
+                  "line": "name: string",
+                  "doc": "The event name, as declared in `defineAnalyticsEvents`."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsEventDefinitions",
+              "kind": "type",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Events keyed by name; each value is the schema for that event's props.",
+              "docs": "Events keyed by name; each value is the schema for that event's props."
+            },
+            {
+              "name": "AnalyticsEventPropsSchema",
+              "kind": "type",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "The schema for one event's props. The generated ingest rebuilds each member of the union as `z.object(schema.shape)` so it can attach the event name, so a schema with no `shape` — a union, a primitive, a schema from a library that does not expose one — is not something an event can be declared with, and saying so here fails at the declaration rather than in generated code.",
+              "docs": "The schema for one event's props. The generated ingest rebuilds each member\nof the union as `z.object(schema.shape)` so it can attach the event name, so\na schema with no `shape` — a union, a primitive, a schema from a library\nthat does not expose one — is not something an event can be declared with,\nand saying so here fails at the declaration rather than in generated code.",
+              "members": [
+                {
+                  "line": "~standard: StandardSchemaV1.Props<unknown, unknown>",
+                  "doc": "The Standard Schema properties."
+                },
+                {
+                  "line": "shape: Record<string, unknown>",
+                  "doc": "The object schema's fields, which the CLI reads to list an event's props."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsIdentity",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Stamped server-side from the session and never read from the request body, which is what makes an unauthenticated ingest safe to expose.",
+              "docs": "Stamped server-side from the session and never read from the request body,\nwhich is what makes an unauthenticated ingest safe to expose.",
+              "members": [
+                {
+                  "line": "anonymousId?: string",
+                  "doc": "A device-scoped id for a visitor with no session, minted by pikku rather than by a vendor. Distinct from `pikkuUserId`, which is derived from a session and is therefore absent for exactly the visitor this identifies. Without it a product-analytics sink has no honest option for anonymous traffic: keying on a shared literal collapses every visitor into one person, and dropping the event loses the whole pre-signup funnel."
+                },
+                {
+                  "line": "consent?: Record<string, boolean>",
+                  "doc": "What the visitor agreed to, keyed by purpose. A sink gated on a purpose absent here does not send. Open-ended rather than a fixed pair, because the purposes are the consent tool's vocabulary and jurisdictions do not agree on them. Undefined means the app wired no consent resolver, not that consent was refused — the gate belongs to the sink, which is where the app decides what absence means."
+                },
+                {
+                  "line": "orgId?: string",
+                  "doc": "The session's organization, when it has one."
+                },
+                {
+                  "line": "pikkuUserId?: string",
+                  "doc": "The pikku user the session resolves to; absent without a session."
+                },
+                {
+                  "line": "userId: string | null",
+                  "doc": "The session's user id, or null for a visitor with no session."
+                },
+                {
+                  "line": "vendorIds?: Record<string, string>",
+                  "doc": "Identifiers a destination keys on that pikku does not mint — GA4's `client_id`, Meta's `fbp` and `fbc`, a vendor's own device id. All of them originate in the browser, and a sink that cannot produce one does not degrade, it sends nothing usable. Resolved server-side from first-party cookies on the request, never read from the event body, on the same reasoning as the rest of this object: a crafted client call must not be able to attribute an event to someone else."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsIdentityResolver",
+              "kind": "type",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Resolves the half of the identity pikku cannot know, from the wire.",
+              "docs": "Resolves the half of the identity pikku cannot know, from the wire.\n\nA function rather than a cookie-name map because consent tools do not store\none boolean per cookie — a single encoded blob is more common — and a map\ncould only express the easy case. {@link cookieAnalyticsIdentity } covers that\neasy case."
+            },
+            {
+              "name": "AnalyticsLog",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "`services.analytics`: buffered for the invocation, flushed when it ends, always best-effort. `record` is a method rather than a property so an app can narrow `Events` in its own `SingletonServices`.",
+              "docs": "`services.analytics`: buffered for the invocation, flushed when it ends,\nalways best-effort. `record` is a method rather than a property so an app can\nnarrow `Events` in its own `SingletonServices`.",
+              "signature": "AnalyticsLog<Events>",
+              "members": [
+                {
+                  "line": "close: () => Promise<void>",
+                  "doc": "Flushes and stops accepting events; called for you when the invocation ends."
+                },
+                {
+                  "line": "flush: () => Promise<void>",
+                  "doc": "Writes what is buffered to the service now, rather than when the invocation ends."
+                },
+                {
+                  "line": "record: (event: Events, client?: AnalyticsClientContext) => Promise<void>",
+                  "doc": "Buffers an event for the invocation; pass `client` when relaying one from a browser."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsRecord",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "What an event becomes once pikku has accepted it, and the only shape an {@link AnalyticsService} is ever handed.",
+              "docs": "What an event becomes once pikku has accepted it, and the only shape an\n{@link AnalyticsService} is ever handed.\n\nDistinct from {@link AnalyticsEventInput}, which is what a caller submits:\nthe identity, the trace and the origin are stamped server-side on the way\nthrough, so a sink never has to trust — or re-derive — any of them.",
+              "members": [
+                {
+                  "line": "at?: number",
+                  "doc": "When a browser says it happened, in epoch milliseconds; only on relayed events."
+                },
+                {
+                  "line": "functionId?: string",
+                  "doc": "The function that recorded the event, when one did."
+                },
+                {
+                  "line": "name: string",
+                  "doc": "The event name."
+                },
+                {
+                  "line": "occurredAt: string",
+                  "doc": "When the server accepted the event, as an ISO timestamp."
+                },
+                {
+                  "line": "props?: Record<string, unknown>",
+                  "doc": "The validated props the event carried."
+                },
+                {
+                  "line": "source: \"server\" | \"client\"",
+                  "doc": "`client` when relayed from a browser, `server` when a function recorded it."
+                },
+                {
+                  "line": "traceId?: string",
+                  "doc": "The trace the emitting invocation belongs to."
+                },
+                {
+                  "line": "userIdentity: AnalyticsIdentity",
+                  "doc": "Who the event is attributed to, stamped from the session and cookies."
+                },
+                {
+                  "line": "wireType?: PikkuWiringTypes",
+                  "doc": "The kind of wire the event came in on."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsService",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Where accepted events go. Pikku validates, identifies and batches them; it does not store them.",
+              "docs": "Where accepted events go. Pikku validates, identifies and batches them; it\ndoes not store them.\n\nOne method, taking a batch, because a batch is what a destination is always\nhanded: the invocation buffers and flushes once, and a lone event is a batch\nof one. A single-event method beside it would be a second path every sink had\nto implement and every caller had to choose between.",
+              "members": [
+                {
+                  "line": "write: (batch: AnalyticsRecord[]) => Promise<void>",
+                  "doc": "Delivers one batch of accepted records; a rejection is logged, never surfaced to the caller."
+                }
+              ]
+            },
+            {
+              "name": "AnalyticsSink",
+              "kind": "interface",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "One destination in a fan-out, with the events it is allowed to receive.",
+              "docs": "One destination in a fan-out, with the events it is allowed to receive.\n\n`accepts` is the app's, not the sink's: which events a destination should get\nis policy — a product-analytics tool wants everything, an ad platform wants\nthree conversions, and a consent gate reads the same way. What each event\nshould look like once it gets there is the sink's, and lives in its mapper.",
+              "members": [
+                {
+                  "line": "accepts?: ((record: AnalyticsRecord) => boolean)",
+                  "doc": "Returns true for the records this destination should get; omit to send everything."
+                },
+                {
+                  "line": "service: AnalyticsService",
+                  "doc": "The destination the filtered records are written to."
+                }
+              ]
+            },
+            {
+              "name": "anonymousAnalyticsIdentity",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Mints a device-scoped id for visitors who have no session yet.",
+              "docs": "Mints a device-scoped id for visitors who have no session yet.\n\n`httpOnly` by default, which is the honest reading of what this is for: no\nbrowser script needs it, and a cookie scripts cannot touch is both harder to\nmisuse and not subject to the seven-day cap browsers place on script-set\nones. An app that wants a vendor SDK to read it must opt out deliberately.",
+              "signature": "(options?: AnonymousAnalyticsIdentityOptions) => AnalyticsIdentityResolver",
+              "examples": [
+                "export const shopAnalyticsIdentity = composeAnalyticsIdentity(\n  cookieAnalyticsIdentity({\n    vendorIds: { gaClientId: '_ga' },\n    consent: { analytics: 'shop_consent_analytics' },\n  }),\n  anonymousAnalyticsIdentity({ requires: ['analytics'] }),\n  mintGaClientId\n)"
+              ]
+            },
+            {
+              "name": "composeAnalyticsIdentity",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Runs resolvers in order, each seeing what the ones before it produced.",
+              "docs": "Runs resolvers in order, each seeing what the ones before it produced.\n\nOrder is meaningful rather than incidental: a resolver that mints a cookie\nmay only do so once consent has been read, so the resolver reading consent\nhas to come first. Put the other way round, the minter sees no consent, mints\nnothing, and the app collects nothing — silently, which is why this threads\nstate through instead of merging independent results.\n\nA later resolver wins a key it sets, so a minter's freshly created id\nreplaces the absent one the cookie reader could not find.",
+              "signature": "(...resolvers: AnalyticsIdentityResolver[]) => AnalyticsIdentityResolver",
+              "examples": [
+                "export const shopAnalyticsIdentity = composeAnalyticsIdentity(\n  cookieAnalyticsIdentity({\n    vendorIds: { gaClientId: '_ga' },\n    consent: { analytics: 'shop_consent_analytics' },\n  }),\n  anonymousAnalyticsIdentity({ requires: ['analytics'] }),\n  mintGaClientId\n)"
+              ]
+            },
+            {
+              "name": "cookieAnalyticsIdentity",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Reads the browser-originated half of the identity off first-party cookies.",
+              "docs": "Reads the browser-originated half of the identity off first-party cookies.\n\nCovers the common case only. A consent tool that packs every purpose into one\nencoded blob needs its own resolver — which is why the resolver is a function\nand this is a helper rather than the mechanism.\n\nResolves nothing off an HTTP wire, which is correct: a cron task and a queue\nworker have no browser behind them, so any vendor id they produced would be\ninvented.",
+              "signature": "(options: CookieAnalyticsIdentityOptions) => AnalyticsIdentityResolver",
+              "members": [
+                {
+                  "line": "consent?: Record<string, string>",
+                  "doc": "Consent purpose to the cookie that grants it. The purpose is true only when the cookie is present and is not a recognised denial (`'0'`, `'false'`, `'denied'`), so a consent tool that writes a refusal rather than deleting the cookie is read as a refusal."
+                },
+                {
+                  "line": "vendorIds?: Record<string, string>",
+                  "doc": "Identity key to read it from, e.g. `{ gaClientId: '_ga' }`."
+                }
+              ],
+              "examples": [
+                "export const shopAnalyticsIdentity = composeAnalyticsIdentity(\n  cookieAnalyticsIdentity({\n    vendorIds: { gaClientId: '_ga' },\n    consent: { analytics: 'shop_consent_analytics' },\n  }),\n  anonymousAnalyticsIdentity({ requires: ['analytics'] }),\n  mintGaClientId\n)"
+              ]
+            },
+            {
+              "name": "defineAnalyticsEvents",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Declare what a module can measure. Call it as often as suits the project; the CLI unions every declaration into the ingest schema.",
+              "docs": "Declare what a module can measure. Call it as often as suits the project; the\nCLI unions every declaration into the ingest schema.\n\nIt must stay an exported const — the schema pipeline reads the value by name.\nIt registers nothing at runtime: where events go is an `AnalyticsService` on\nsingleton services.",
+              "signature": "<const Events extends AnalyticsEventDefinitions>(events: Events) => Events",
+              "examples": [
+                "export const analyticsEvents = defineAnalyticsEvents({\n  page_viewed: z.object({\n    path: z.string().max(512),\n  }),\n  signed_up: z.object({}),\n  checkout_completed: z.object({\n    amount: z.number(),\n    currency: z.string().length(3),\n  }),\n})"
+              ]
+            },
+            {
+              "name": "fanOutAnalytics",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "One `AnalyticsService` over several destinations.",
+              "docs": "One `AnalyticsService` over several destinations.\n\nA composite rather than a change to the interface, so a single-destination\napp never meets it and a sink is the same class whether it runs alone or\nbeside three others.\n\nSettled, not awaited in sequence: `flush()` runs inside the invocation, so a\nvendor that is slow must not add its latency to the request and a vendor that\nis down must not cost the others their events. A destination that throws is\nreported by the caller's existing flush guard, which already treats analytics\nas best-effort.",
+              "signature": "(sinks: ReadonlyArray<AnalyticsSink | AnalyticsService>) => AnalyticsService",
+              "examples": [
+                "export const createSingletonServices = pikkuServices(\n  async (config, existingServices) => {\n    const variables =\n      existingServices?.variables ??\n      new TypedVariablesService(new LocalVariablesService())\n    const secrets =\n      existingServices?.secrets ??\n      new TypedSecretService(new LocalSecretService(variables))\n    const logger = existingServices?.logger ?? new JsonConsoleLogger()\n    const schema = existingServices?.schema ?? new CFWorkerSchemaService(logger)\n    const emailService =\n      existingServices?.emailService ??\n      new GeneratedTemplateEmailService({\n        delegate: new LocalEmailService(),\n      })\n    // The durable audit sink. In a deployed stage fabric injects the platform's\n    // audit service; locally it falls back to a no-op so nothing is persisted.\n    const audit = existingServices?.audit ?? new NoopAuditService()\n    // kysely is injected by pikku dev (node:sqlite) or the CF Worker workflow (libsql).\n    // The template never constructs its own dialect — dialects are fabric/runtime\n    // concerns — so it must always be provided by the runtime.\n    if (!existingServices?.kysely) {\n      throw new Error(\n        'kysely service was not injected by the runtime (pikku dev / fabric)'\n      )\n    }\n    const kysely: Kysely<DB> = existingServices.kysely\n\n    // Per-user credential store (wire.getCredential) — needed by addons imported\n    // with --auth per-user/delegated. A deployed stage injects it: credentials are\n    // sealed to the stage, and only its secrets Worker holds the key. There is no\n    // fallback because there is no key to fall back to — the template used to\n    // build a `KyselyCredentialService` from a `CREDENTIALS_KEY` secret, which was\n    // the stage's own KEK handed to every unit. Outside a stage the app runs fine\n    // and credential-using addon calls fail with a clear error from the addon's\n    // wire services; wire your own `credentialService` here if you need one.\n    const credentialService = existingServices?.credentialService\n\n    // Both destinations, because they answer different questions: the logger is\n    // what makes an event visible while the app is being built, and fabric's\n    // forwarder no-ops entirely outside a deployed stage. Wired here rather than\n    // left to the default, which is the logger alone.\n    const analyticsService =\n      existingServices?.analyticsService ??\n      fanOutAnalytics([\n        new LoggerAnalyticsService(logger),\n        fabricAnalyticsService({\n          variables,\n          queueService: existingServices?.queueService,\n        }),\n      ])\n\n    return {\n      ...(existingServices ?? {}),\n      config,\n      workflowService: existingServices?.workflowService,\n      workflowRunService: existingServices?.workflowRunService,\n      variables,\n      secrets,\n      schema,\n      logger,\n      emailService,\n      audit,\n      kysely,\n      analyticsService,\n      analyticsIdentity: shopAnalyticsIdentity,\n      // Constructed once here rather than read per call: the payment provider's\n      // credentials belong to service construction, and functions cannot reach\n      // `secrets` at all (every function-facing services type is bounded by\n      // SecretlessServices).\n      ...(credentialService ? { credentialService } : {}),\n    }\n  }\n)"
+              ]
+            },
+            {
+              "name": "LoggerAnalyticsService",
+              "kind": "class",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "What an app gets before it has chosen a store. There is deliberately no noop: a validated wire with nowhere for the events to go is indistinguishable from a broken one.",
+              "docs": "What an app gets before it has chosen a store. There is deliberately no noop:\na validated wire with nowhere for the events to go is indistinguishable from\na broken one.\n\nAt `debug` so attaching a real store does not report every event twice.",
+              "signature": "new LoggerAnalyticsService(logger: Logger)",
+              "members": [
+                {
+                  "line": "logger: any"
+                },
+                {
+                  "line": "write: (batch: AnalyticsRecord[]) => Promise<void>",
+                  "doc": "Logs each record in the batch at `debug`."
+                }
+              ]
+            },
+            {
+              "name": "mintCookie",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Reads a first-party cookie, creating and setting it when absent.",
+              "docs": "Reads a first-party cookie, creating and setting it when absent.\n\nThis is how an app tracks a visitor with no vendor SDK on the page: the\nidentifiers GA4 and Meta key on are ordinary first-party cookies in a\ndocumented format, and nothing requires a browser script to be the one that\nwrites them. It is the mechanism behind server-side tagging, and the reason\npikku can offer it as a wired service rather than a second container to run.\n\nMinted once per wire, not once per call. The resolver runs for every event,\nand a second mint within one request would hand the same visitor two\nidentities — which reads downstream as two people rather than as a bug.\n\nWrites nothing on a wire with no HTTP response, and nothing once the response\nhas been sent; a cron task and a queue worker have no browser to store it,\nand a stream's headers are long gone. Both return undefined rather than\npretending.",
+              "signature": "(wire: AnyWire, name: string, options: MintCookieOptions, mint: () => string) => string | undefined",
+              "members": [
+                {
+                  "line": "actor?: ScenarioPersona<string, ScenarioRpcMap>",
+                  "doc": "The persona this step runs as, injected by the runner. Required on a `browser` binding, which cannot be provisioned without one, and on any binding whose step declares `actor: true`. A step that declares neither has no `actor` on its wire at all rather than an optional one — a pure assertion has nobody to be, and `attemptsSignIn` deliberately posts credentials instead of reusing an actor's session."
+                },
+                {
+                  "line": "actors?: ScenarioPersonas"
+                },
+                {
+                  "line": "addonNamespace?: string"
+                },
+                {
+                  "line": "audit?: { durability: AuditDurability; }"
+                },
+                {
+                  "line": "beginChanges?: (() => Promise<void>)",
+                  "doc": "Declare that everything after this line changes something. Present only on functions that are not `readonly` — a read has nothing to declare. Throws `AbandonedError` if whatever asked for this work has already gone away (an interrupted agent run, a disconnected client), so the mutation never runs and the abort is clean. Otherwise it marks the call as mutating, so an interrupt landing after this point is reported rather than silently discarded. Cooperative: a function that never calls it is assumed to have changed something, which is the safe default."
+                },
+                {
+                  "line": "browser?: PikkuBrowserWire",
+                  "doc": "Present only when the runner provisioned a browser for this step"
+                },
+                {
+                  "line": "channel?: PikkuChannel<unknown, any, (...args: any[]) => any>"
+                },
+                {
+                  "line": "clearSession?: (() => Promise<void> | void)"
+                },
+                {
+                  "line": "cli?: PikkuCLI<(...args: any[]) => any>"
+                },
+                {
+                  "line": "functionId?: string"
+                },
+                {
+                  "line": "gateway?: PikkuGateway"
+                },
+                {
+                  "line": "getCredential?: GetCredential<Record<string, unknown>>",
+                  "doc": "Get a single credential by name — lazy-loads from CredentialService on first call, sync thereafter"
+                },
+                {
+                  "line": "getCredentials?: (() => Record<string, unknown> | Promise<Record<string, unknown>>)",
+                  "doc": "Get all resolved credentials — lazy-loads from CredentialService on first call, sync thereafter"
+                },
+                {
+                  "line": "getSession?: (() => CoreUserSession | Promise<CoreUserSession> | undefined)",
+                  "doc": "Fetch the latest session (may read from backing store)"
+                },
+                {
+                  "line": "graph?: PikkuGraphWire"
+                },
+                {
+                  "line": "hasSessionChanged?: (() => boolean)"
+                },
+                {
+                  "line": "http?: PikkuHTTP<any>"
+                },
+                {
+                  "line": "logger?: Logger",
+                  "doc": "A logger scoped to this invocation, when a host attaches one. Core never sets it; services that log fall back to the singleton logger."
+                },
+                {
+                  "line": "mcp?: PikkuMCP<never>"
+                },
+                {
+                  "line": "pikkuUserId?: string"
+                },
+                {
+                  "line": "queue?: PikkuQueue"
+                },
+                {
+                  "line": "rpc: PikkuRPC",
+                  "doc": "Always present — lazily initialised on first access for every function invocation"
+                },
+                {
+                  "line": "scenario?: PikkuScenarioWire<any>"
+                },
+                {
+                  "line": "scenarioStep?: PikkuScenarioStepWire",
+                  "doc": "Present on every scenario step invocation"
+                },
+                {
+                  "line": "scheduledTask?: PikkuScheduledTask"
+                },
+                {
+                  "line": "session?: CoreUserSession"
+                },
+                {
+                  "line": "setCredential?: ((name: string, value: unknown) => void)",
+                  "doc": "Set a credential value (available in middleware)"
+                },
+                {
+                  "line": "setSession?: ((session: CoreUserSession) => Promise<void> | void)"
+                },
+                {
+                  "line": "traceId?: string",
+                  "doc": "Trace ID for distributed tracing — propagated across remote RPC calls via the x-request-id header"
+                },
+                {
+                  "line": "trigger?: PikkuTrigger<unknown>"
+                },
+                {
+                  "line": "wireId?: string"
+                },
+                {
+                  "line": "wireType?: PikkuWiringTypes"
+                },
+                {
+                  "line": "workflow?: PikkuWorkflowWire"
+                },
+                {
+                  "line": "workflowStep?: WorkflowStepWire"
+                }
+              ],
+              "examples": [
+                "const mintGaClientId: AnalyticsIdentityResolver = (wire, resolved) => {\n  const gaClientId = mintCookie(\n    wire,\n    '_ga',\n    {\n      cookie: FIRST_PARTY_YEAR,\n      requires: ['analytics'],\n      consent: resolved?.consent,\n    },\n    () => `GA1.1.${randomDigits(10)}.${Math.floor(Date.now() / 1000)}`\n  )\n  return gaClientId === undefined ? undefined : { vendorIds: { gaClientId } }\n}"
+              ]
+            },
+            {
+              "name": "randomDigits",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./analytics"
+              },
+              "summary": "Cryptographically random digits, the shape both vendor formats use.",
+              "docs": "Cryptographically random digits, the shape both vendor formats use.",
+              "signature": "(length: number) => string",
+              "examples": [
+                "const mintGaClientId: AnalyticsIdentityResolver = (wire, resolved) => {\n  const gaClientId = mintCookie(\n    wire,\n    '_ga',\n    {\n      cookie: FIRST_PARTY_YEAR,\n      requires: ['analytics'],\n      consent: resolved?.consent,\n    },\n    () => `GA1.1.${randomDigits(10)}.${Math.floor(Date.now() / 1000)}`\n  )\n  return gaClientId === undefined ? undefined : { vendorIds: { gaClientId } }\n}"
+              ]
+            }
+          ]
+        },
+        {
           "specifier": "#pikku/addon/error",
           "name": "error",
           "step": "enhance it",
@@ -5666,6 +6770,21 @@
               },
               "signature": "new ExpectationFailedError(message?: string)",
               "status": 417
+            },
+            {
+              "name": "FeatureUnavailableError",
+              "kind": "class",
+              "origin": {
+                "via": "core",
+                "subpath": "./errors"
+              },
+              "signature": "new FeatureUnavailableError(feature: string)",
+              "members": [
+                {
+                  "line": "payload: { error: \"feature_unavailable\"; feature: string; }"
+                }
+              ],
+              "status": 503
             },
             {
               "name": "ForbiddenError",
@@ -6428,6 +7547,9 @@
                   "line": "origins?: string[] | ((services: CoreSingletonServices) => string[] | Promise<string[]>)",
                   "doc": "Extra allowed origins beyond the request's own host, or a resolver for them."
                 }
+              ],
+              "examples": [
+                "addToBasket: {\n  method: 'post',\n  route: '/basket/items',\n  func: addToBasket,\n  middleware: [\n    requireOrigin({\n      origins: ({ variables }) => allowedOrigins(variables),\n    }),\n  ],\n},"
               ]
             }
           ]
@@ -6523,7 +7645,8 @@
                   "line": "getAllStatus: () => Promise<CredentialStatus[]>"
                 },
                 {
-                  "line": "getMissing: () => Promise<CredentialStatus[]>"
+                  "line": "getMissing: () => Promise<CredentialStatus[]>",
+                  "doc": "The secrets a deployment still has to supply. An optional one is absent from this list however it is stored: `optional` already declares that absence is supported, which is why `getSecret` resolves `undefined` for it rather than throwing. Reporting it as missing contradicts that, and buries the required secrets someone actually has to go and configure. `getAllStatus` still reports it, flagged."
                 },
                 {
                   "line": "getSecret: { <K>(key: K): Promise<SecretResult<CredentialsMap[K]>>; <T>(key: string): Promise<SecretValue<T>>; }",
@@ -6739,7 +7862,7 @@
               "docs": "Type-safe helper for defining route contracts that can be composed.",
               "signature": "{ <T extends TypedHTTPRouteMap>(routes: T): TypedHTTPRouteContract<T>; <T extends TypedHTTPRouteMap>(config: TypedHTTPRoutesGroupConfig & { routes: T; }): TypedHTTPRouteContract<T>; }",
               "examples": [
-                "export const shopRoutes = defineHTTPRoutes({\n  auth: false,\n  routes: {\n    // Categories\n    listCategories: {\n      method: 'get',\n      route: '/categories',\n      func: listCategories,\n    },\n    createCategory: {\n      method: 'post',\n      route: '/categories',\n      func: createCategory,\n      auth: true,\n    },\n\n    // Items\n    listItems: { method: 'get', route: '/items', func: listItems },\n    getItem: { method: 'get', route: '/items/:itemId', func: getItem },\n    createItem: {\n      method: 'post',\n      route: '/items',\n      func: createItem,\n      auth: true,\n    },\n    updateItem: {\n      method: 'patch',\n      route: '/items/:itemId',\n      func: updateItem,\n      auth: true,\n    },\n\n    // Account\n    getProfile: {\n      method: 'get',\n      route: '/profile',\n      func: getProfile,\n      auth: true,\n    },\n\n    // Basket (sessionless — works for guests too)\n    getBasket: { method: 'get', route: '/basket', func: getBasket },\n    addToBasket: { method: 'post', route: '/basket/items', func: addToBasket },\n    removeFromBasket: {\n      method: 'delete',\n      route: '/basket/items/:itemId',\n      func: removeFromBasket,\n    },\n\n    // Orders (require auth)\n    createOrder: {\n      method: 'post',\n      route: '/orders',\n      func: createOrder,\n      auth: true,\n    },\n    listOrders: {\n      method: 'get',\n      route: '/orders',\n      func: listOrders,\n      auth: true,\n    },\n    getOrder: {\n      method: 'get',\n      route: '/orders/:orderId',\n      func: getOrder,\n      auth: true,\n    },\n    cancelOrder: {\n      method: 'post',\n      route: '/orders/:orderId/cancel',\n      func: cancelOrder,\n      auth: true,\n    },\n  },\n})"
+                "export const shopRoutes = defineHTTPRoutes({\n  auth: false,\n  routes: {\n    // Categories\n    listCategories: {\n      method: 'get',\n      route: '/categories',\n      func: listCategories,\n    },\n    createCategory: {\n      method: 'post',\n      route: '/categories',\n      func: createCategory,\n      auth: true,\n    },\n\n    // Items\n    listItems: { method: 'get', route: '/items', func: listItems },\n    getItem: { method: 'get', route: '/items/:itemId', func: getItem },\n    createItem: {\n      method: 'post',\n      route: '/items',\n      func: createItem,\n      auth: true,\n    },\n    updateItem: {\n      method: 'patch',\n      route: '/items/:itemId',\n      func: updateItem,\n      auth: true,\n    },\n\n    // Account\n    getProfile: {\n      method: 'get',\n      route: '/profile',\n      func: getProfile,\n      auth: true,\n    },\n\n    // Basket (sessionless — works for guests too)\n    getBasket: { method: 'get', route: '/basket', func: getBasket },\n    addToBasket: {\n      method: 'post',\n      route: '/basket/items',\n      func: addToBasket,\n      middleware: [\n        requireOrigin({\n          origins: ({ variables }) => allowedOrigins(variables),\n        }),\n      ],\n    },\n    removeFromBasket: {\n      method: 'delete',\n      route: '/basket/items/:itemId',\n      func: removeFromBasket,\n    },\n\n    // Orders (require auth)\n    createOrder: {\n      method: 'post',\n      route: '/orders',\n      func: createOrder,\n      auth: true,\n    },\n    listOrders: {\n      method: 'get',\n      route: '/orders',\n      func: listOrders,\n      auth: true,\n    },\n    getOrder: {\n      method: 'get',\n      route: '/orders/:orderId',\n      func: getOrder,\n      auth: true,\n    },\n    cancelOrder: {\n      method: 'post',\n      route: '/orders/:orderId/cancel',\n      func: cancelOrder,\n      auth: true,\n    },\n  },\n})"
               ]
             }
           ]
@@ -6937,6 +8060,20 @@
           "skill": "pikku-auth",
           "symbols": [
             {
+              "name": "defineFeatureFlags",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "./flag"
+              },
+              "summary": "No-op function for declaring feature flags. This exists purely for TypeScript type checking and will be tree-shaken. The CLI extracts metadata via AST parsing and generates a `FeatureFlagName` union, so `flags.calList` is a compile error rather than a silent `false`.",
+              "docs": "No-op function for declaring feature flags.\nThis exists purely for TypeScript type checking and will be tree-shaken.\nThe CLI extracts metadata via AST parsing and generates a `FeatureFlagName`\nunion, so `flags.calList` is a compile error rather than a silent `false`.\n\nThat typing is load-bearing rather than a convenience: flags fail closed, so\na typo'd flag reads `false`, hides its feature permanently, and leaves every\ntest, screenshot and gate green. An untyped key makes a missing product\nindistinguishable from a working one.\n\nRemoval is deliberately not destructive. Deleting a declaration leaves the\nrow in the store, marked undeclared and inert, until `pikku flags prune` —\nthe same additive contract `defineScope` and `defineSystemRole` have, and for\nthe same reason: a mid-deploy revocation is not something a code edit should\nbe able to cause.",
+              "signature": "(_config: CoreFeatureFlags) => void",
+              "examples": [
+                "defineFeatureFlags({\n  orderExport: {\n    description: 'Bulk export of orders to CSV',\n    anyOf: ['reports:read'],\n  },\n})"
+              ]
+            },
+            {
               "name": "defineScope",
               "kind": "function",
               "origin": {
@@ -6963,6 +8100,16 @@
               "examples": [
                 "```typescript\ndefineSystemRole({\n  buyer: {\n    displayName: 'Buyer',\n    description: 'Can browse the catalogue and place orders',\n    scopes: ['catalogue:read', 'orders:create'],\n  },\n  admin: {\n    description: 'Everything',\n    scopes: ['admin'],\n  },\n})\n```"
               ]
+            },
+            {
+              "name": "FeatureFlagName",
+              "kind": "type",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "Every feature flag declared in this application.",
+              "docs": "Every feature flag declared in this application.",
+              "signature": "never"
             }
           ]
         },
@@ -7384,17 +8531,6 @@
               ]
             },
             {
-              "name": "createScenarioRunner",
-              "kind": "function",
-              "origin": {
-                "via": "core",
-                "subpath": "./workflow"
-              },
-              "summary": "A workflow service with the scenario capability attached — the two lines `pikku scenario run` needs, in one call so no caller has to remember that the capability is installed rather than inherited.",
-              "docs": "A workflow service with the scenario capability attached — the two lines\n`pikku scenario run` needs, in one call so no caller has to remember that the\ncapability is installed rather than inherited.\n\nThe in-memory service is the right engine because a scenario run is a single\nexternal process driving a deployed app over its real transport: there is\nnothing to persist and no second worker to resume it.",
-              "signature": "(options?: WorkflowQueueOptions) => { workflowService: InMemoryWorkflowService; scenarioService: PikkuScenarioService; }"
-            },
-            {
               "name": "pikkuAddonScenarioStep",
               "kind": "function",
               "origin": {
@@ -7414,8 +8550,8 @@
                 "via": "core",
                 "subpath": "./workflow"
               },
-              "summary": "Structural browser handle, present only when the runner provisioned a browser for this step (a `browser` binding on the step config).",
-              "docs": "Structural browser handle, present only when the runner provisioned a\nbrowser for this step (a `browser` binding on the step config).\n\n`@pikku/core` deliberately never imports playwright — it must stay\ndependency-free for edge runtimes. `@pikku/playwright` augments this\ninterface via `declare module`, so `wire.browser.page` is a fully typed\nPlaywright `Page` in a project that installs it.",
+              "summary": "One actor's browser session, handed to a step as `wire.browser`.",
+              "docs": "One actor's browser session, handed to a step as `wire.browser`.\n\nOnly what every driver can honour is declared here. A driver package adds\nthe rest by declaration-merging onto this interface — `@pikku/playwright`\ncontributes `page`, `context` and `locate` — so a step written against the\nstructural surface keeps working whichever driver runs it.",
               "members": [
                 {
                   "line": "actor: string",
@@ -7425,7 +8561,7 @@
                   "line": "goto: (url: string) => Promise<void>"
                 },
                 {
-                  "line": "screenshot: (name?: string) => Promise<Uint8Array>"
+                  "line": "screenshot: (name?: string, options?: ScenarioScreenshotOptions) => Promise<Uint8Array>"
                 }
               ]
             },
@@ -7556,7 +8692,7 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
-                  "line": "deploy?: \"auto\" | \"serverless\" | \"server\"",
+                  "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
                 {
@@ -7570,6 +8706,10 @@
                 {
                   "line": "expose?: boolean",
                   "doc": "Makes the function callable from outside as `POST /rpc/<name>`. Without a session requirement, a permission or an addon gate, that means callable by anyone."
+                },
+                {
+                  "line": "featureFlag?: undefined",
+                  "doc": "The feature this function belongs to. Singular: a function implements part of one feature, and needing two is a sign it does two things. Resolved at runtime on every call, unlike `tags:` — a flag is meant to be flipped in a running system, so nothing here filters a build. Checked for AVAILABILITY only, never capability — if the runner enforced the capability half a flag would become a second authorization path with OR-ish semantics against `scopes:`. Authorization is always `scopes:`. Runs after `scopes:` so an unauthorized caller gets a 403 whether or not the feature is up, rather than learning that it exists and is off."
                 },
                 {
                   "line": "func: PikkuFunctionScenario<In, Out, Out>",
