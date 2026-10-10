@@ -1,5 +1,5 @@
 ---
-name: pikku-api-doc
+name: pikku-website-api-doc
 description: "Use when the user wants to generate or update API reference documentation for a Pikku service, interface, or class. Triggered by requests like 'document the JWTService', 'write API docs for SecretService', 'add API reference for X', or 'update the API docs for Y'. This skill reads the TypeScript source and generates a complete API reference page in Pikku's doc format."
 metadata:
   version: 1.0.0
