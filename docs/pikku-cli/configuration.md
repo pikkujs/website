@@ -485,6 +485,19 @@ Configure lint rules. The first three are evaluated by codegen; the last by
 | `serve` | `object` | Serve `dist` from the pikku server's own origin: `{ urlPrefix?, spaFallback? }` (defaults `/` and `true`). At most one frontend may set it |
 | `native` | `object` | Package it as a desktop or mobile app. Written by `pikku app native init` — see [Native Apps](../deploy/native-apps.md) |
 
+#### `native`
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `native.identifier` | `string` | Bundle id and Android package name. Unique across apps, fixed after the first store release |
+| `native.productName` | `string` | The name the OS shows (default: the app name) |
+| `native.platforms` | `("desktop" \| "android" \| "ios")[]` | Where it builds. At least one |
+| `native.plugins` | `string[]` | `store`, `dialog`, `clipboard-manager`, `os`, `notification`, `geolocation`, `biometric`, `haptics`, `barcode-scanner`, `nfc` |
+| `native.url` | `string` | Open a deployed origin instead of bundling `dist`. Cannot be combined with `bundleServer` |
+| `native.bundleServer` | `boolean` | Ship the compiled server as a sidecar. Desktop only; installed by `pikku deploy apply --provider standalone --runtime bun` |
+
+The project is written to `<cwd>/src-tauri`. See [Native Apps](../deploy/native-apps.md).
+
 `serve` names *output*, not a project: `pikku serve` and `pikku deploy` read
 `dist` and never build it. `pikku dev` ignores it — a frontend dev server owns
 that job and proxies API calls back to pikku, which is what keeps HMR working.
