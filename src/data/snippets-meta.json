@@ -34,6 +34,8 @@
   "scheduledFunction": "functions/reports/daily-sales-report.function.ts",
   "dailySalesReport": "functions/reports/daily-sales-report.function.ts",
   "rpcInternalCall": "functions/sweep-low-stock.function.ts",
+  "missingServiceError": "lib/error-examples.ts",
+  "isExpectedError": "lib/error-examples.ts",
   "definePersonas": "personas.virtual-user.ts",
   "defineRoles": "roles.ts",
   "defineScopes": "scopes.ts",

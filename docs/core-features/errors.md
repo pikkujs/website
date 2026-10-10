@@ -80,15 +80,7 @@ A few errors aren't yours to throw, they come from Pikku itself when something i
 
 You can throw `MissingServiceError` and `LocalEnvironmentOnlyError` yourself when a function depends on an optional service:
 
-```typescript
-import { MissingServiceError } from '#pikku/error'
-
-func: async ({ jwt }, data) => {
-  if (!jwt) {
-    throw new MissingServiceError('JWT service is required')
-  }
-  // ...
-}
+```typescript @snippet missingServiceError
 ```
 
 `PikkuMissingMetaError` is a different story: it's a sign the generated files are stale, not something to handle. When a queue job hits it through the remote-jobs entry point, it's turned into a `BadRequestError`, and the Node and Cloudflare queue handlers treat it as "don't retry", since retrying can't conjure metadata that isn't there.
@@ -97,11 +89,7 @@ func: async ({ jwt }, data) => {
 
 Some errors are the system working as intended: a missing role, an expired token, a validation failure. Others are bugs. Pikku draws that line with `isExpectedError`:
 
-```typescript
-import { isExpectedError } from '@pikku/core/errors'
-
-isExpectedError(new NotFoundError())               // true
-isExpectedError(new TypeError('x is undefined'))   // false
+```typescript @snippet isExpectedError
 ```
 
 An error is expected if it's a `PikkuError`, or if it carries `expected: true`. That second case exists because errors don't survive a trip through storage. When a workflow step fails, the error is serialized (message, stack, code) and later rebuilt as a plain `Error`, which would lose its `PikkuError` class. Pikku records the `expected` flag on the way in, so the rebuilt error is still recognisable.
