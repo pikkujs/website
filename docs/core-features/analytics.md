@@ -11,29 +11,16 @@ Analytics in Pikku is for product events: `page_viewed`, `signed_up`, `checkout_
 
 Pikku's job is to validate those events, work out who they belong to, and batch them. It does **not** store them. Where they end up is an `AnalyticsService` you put on your singleton services.
 
-```ts
-interface AnalyticsService {
-  write(batch: AnalyticsRecord[]): Promise<void>
-}
+```typescript @snippet analyticsService
 ```
 
-One method, always a batch. A single event is just a batch of one.
+One method, always a batch. A single event is just a batch of one. A sink is a class that implements it.
 
 ## Declaring events
 
 `defineAnalyticsEvents` declares what your project can measure. Each key is an event name, each value is the schema for that event's props:
 
-```ts
-export const analyticsEvents = defineAnalyticsEvents({
-  page_viewed: z.object({
-    path: z.string().max(512),
-  }),
-  signed_up: z.object({}),
-  checkout_completed: z.object({
-    amount: z.number(),
-    currency: z.string().length(3),
-  }),
-})
+```typescript @snippet analyticsEvents
 ```
 
 A few rules:
@@ -47,12 +34,7 @@ A few rules:
 
 Every function gets `services.analytics`. You don't wire it up. Call `record` with the event name and its props:
 
-```ts
-await analytics.record({
-  name: 'checkout_completed',
-  amount: totalCents / 100,
-  currency: 'GBP',
-})
+```typescript @snippet recordAnalyticsEvent
 ```
 
 Events are buffered for the invocation and flushed to your `AnalyticsService` when the function finishes. It's best-effort: if the flush fails, Pikku logs a warning and your function carries on. You can call `flush()` yourself if you want events written earlier.
@@ -69,13 +51,7 @@ The endpoint is unauthenticated, because anonymous visitors are most of what you
 
 On the React side, `@pikku/react` has `createAnalytics`, a buffered, beacon-based client typed against your event union:
 
-```ts
-const analytics = createAnalytics<AnalyticsEvent>({
-  endpoint: '/analytics',
-  enabled: () => hasAnalyticsConsent(),
-})
-
-analytics.event('page_viewed', { path: location.pathname })
+```typescript @snippet createAnalyticsClient
 ```
 
 It flushes on an interval and when the page is hidden (using `sendBeacon`, so the last events before someone leaves aren't lost). `enabled` is checked on each event and each flush, so accepting or withdrawing consent mid-session takes effect straight away. If you pass the client to `PikkuProvider`, components can reach it with `usePikkuAnalytics()`.
@@ -99,14 +75,7 @@ The first three come from the session. The last three come from a **resolver** y
 
 A session only exists once someone has signed in, and the most interesting part of a funnel is before that. A sink needs *something* to key an anonymous visitor on, or you either collapse every visitor into one person or drop the whole pre-signup funnel. Vendor ids (GA4's `client_id`, Meta's `fbp`/`fbc`) also originate in the browser, so a session can't supply them. Without a resolver, a sink only sees what the session carries, which is fine for a product-analytics tool and not enough for an ad platform.
 
-A resolver is just a function:
-
-```ts
-type AnalyticsIdentityResolver = (
-  wire,
-  resolved?: { vendorIds?; consent?; anonymousId? }
-) => { vendorIds?; consent?; anonymousId? } | undefined
-```
+A resolver is just a function. It receives the wire plus whatever earlier resolvers have already produced (`vendorIds`, `consent`, `anonymousId`), and returns more of the same, or `undefined` if it has nothing to add.
 
 Pikku ships three building blocks, and you combine them.
 
@@ -114,11 +83,7 @@ Pikku ships three building blocks, and you combine them.
 
 Reads the browser-originated half off first-party cookies. `vendorIds` maps an identity key to the cookie it lives in. `consent` maps a purpose to the cookie that grants it:
 
-```ts
-cookieAnalyticsIdentity({
-  vendorIds: { gaClientId: '_ga' },
-  consent: { analytics: 'shop_consent_analytics' },
-})
+```typescript @snippet cookieAnalyticsIdentity
 ```
 
 A purpose is `true` only if its cookie is present and isn't a denial (`'0'`, `'false'`, `'denied'`, `'deny'`, `'no'`). A consent tool that writes a refusal instead of deleting the cookie is read as a refusal. If your consent tool packs every purpose into one encoded blob, write your own resolver. That's why the resolver is a function.
@@ -129,8 +94,7 @@ It resolves nothing off a non-HTTP wire. A cron task or queue worker has no brow
 
 Mints a device-scoped id (a random UUID in a cookie named `pikku_aid`) for visitors who have no session yet:
 
-```ts
-anonymousAnalyticsIdentity({ requires: ['analytics'] })
+```typescript @snippet anonymousAnalyticsIdentity
 ```
 
 Options are `name`, `requires` (consent purposes that must be granted before the cookie is written) and `cookie` (overrides for the cookie attributes). The defaults are a two-year, first-party, `secure`, `sameSite: 'lax'` and `httpOnly` cookie. `httpOnly` is deliberate: no browser script needs this id, and a cookie scripts can't touch is harder to misuse. If you want a vendor SDK to read it, opt out explicitly.
@@ -149,33 +113,12 @@ It mints once per wire, so a second event in the same request can't hand one vis
 
 `randomDigits(length)` gives you cryptographically random digits, the shape both vendor formats use. Put together, a GA client id minter looks like this:
 
-```ts
-const mintGaClientId: AnalyticsIdentityResolver = (wire, resolved) => {
-  const gaClientId = mintCookie(
-    wire,
-    '_ga',
-    {
-      cookie: FIRST_PARTY_YEAR,
-      requires: ['analytics'],
-      consent: resolved?.consent,
-    },
-    () => `GA1.1.${randomDigits(10)}.${Math.floor(Date.now() / 1000)}`
-  )
-  return gaClientId === undefined ? undefined : { vendorIds: { gaClientId } }
-}
+```typescript @snippet mintVendorCookie
 ```
 
 And all of it composed, in the right order (read consent, mint the anonymous id, mint the vendor id):
 
-```ts
-export const shopAnalyticsIdentity = composeAnalyticsIdentity(
-  cookieAnalyticsIdentity({
-    vendorIds: { gaClientId: '_ga' },
-    consent: { analytics: 'shop_consent_analytics' },
-  }),
-  anonymousAnalyticsIdentity({ requires: ['analytics'] }),
-  mintGaClientId
-)
+```typescript @snippet analyticsIdentity
 ```
 
 Consent is not enforced by Pikku itself. It's recorded on the identity, and the gate belongs to the sink, which is where your app decides what "no consent recorded" means.
@@ -186,38 +129,18 @@ If you don't set `analyticsService`, events go to `LoggerAnalyticsService`: it w
 
 ### Wiring a real provider
 
-An `AnalyticsService` is anything with a `write(batch)`. Write one for your provider (or use one from an addon), and put it, plus your identity resolver, on the singleton services:
+An `AnalyticsService` is anything with a `write(batch)`. Write one for your provider (or use one from an addon), and put it, plus your identity resolver, on the singleton services. Return them from your services factory next to `logger` and the rest:
 
-```ts
-export const createSingletonServices = pikkuServices(
-  async (config, existingServices) => {
-    const logger = existingServices?.logger ?? new JsonConsoleLogger()
-
-    return {
-      ...(existingServices ?? {}),
-      config,
-      logger,
-      analyticsService: new MyProviderAnalyticsService(),
-      analyticsIdentity: shopAnalyticsIdentity,
-    }
-  }
-)
+```typescript @snippet analyticsServices
 ```
 
-`MyProviderAnalyticsService` here is your own class implementing `AnalyticsService`. Pikku doesn't ship vendor sinks in core.
+`AdPlatformAnalyticsService` here is your own class implementing `AnalyticsService`. Pikku doesn't ship vendor sinks in core.
 
 ### Several destinations with fanOutAnalytics
 
 `fanOutAnalytics` takes a list of sinks and gives you back one `AnalyticsService`. Each entry is either a plain `AnalyticsService` or an `AnalyticsSink`, which adds an `accepts` filter:
 
-```ts
-const analyticsService = fanOutAnalytics([
-  new LoggerAnalyticsService(logger),
-  {
-    service: new MyAdPlatformService(),
-    accepts: (record) => record.name === 'checkout_completed',
-  },
-])
+```typescript @snippet fanOutAnalytics
 ```
 
 `accepts` is your policy about which events a destination should get. A product-analytics tool might want everything, and an ad platform just three conversions. What an event looks like once it arrives is the sink's own business.
