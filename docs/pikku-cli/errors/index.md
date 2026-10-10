@@ -79,6 +79,9 @@ Errors from `wireAddon` / `wireRemoteAddon` declarations and addon authoring rul
 | PKU344 | Addon Expose Not Static              | [View](./pku344.md) |
 | PKU345 | Extension Manifest Is Not Static     | [View](./pku345.md) |
 | PKU346 | Extension Declares No Screens        | [View](./pku346.md) |
+| PKU347 | Addon Uses Mapping Not Wired         | [View](./pku347.md) |
+| PKU348 | Addon Needs Not Mapped               | [View](./pku348.md) |
+| PKU349 | Addon Content Grant Invalid          | [View](./pku349.md) |
 | PKU920 | Addon Wiring Not Allowed             | [View](./pku920.md) |
 | PKU921 | Addon Contract Handlers Not Allowed  | [View](./pku921.md) |
 
@@ -107,6 +110,14 @@ Errors and warnings from the secret-handling boundary. The sink scan (PKU953, PK
 | PKU952 | Secret Key Not Static      | [View](./pku952.md) |
 | PKU953 | Secret Revealed Into Sink  | [View](./pku953.md) |
 | PKU954 | Personal Data Into Sink    | [View](./pku954.md) |
+
+## Knowledge Errors
+
+Warnings from `pikku knowledge validate`.
+
+| Code   | Title                  | Link                |
+|--------|------------------------|---------------------|
+| PKU960 | Knowledge Note Missing | [View](./pku960.md) |
 
 ## Workflow Errors
 
