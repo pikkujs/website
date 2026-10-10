@@ -8,7 +8,13 @@ comes later).
 
 ## Source of truth
 
-`static/api-surface.json` is the inventory. It has two entry points, `app`
+There are **two inventories**, and both must be covered. The import surface
+alone is not enough: plenty of full-stack functionality is reached through the
+CLI, config and generated files rather than an import.
+
+**1. The import surface.** `static/api-surface.json` is the inventory of what
+you can import. Regenerate it first with `npm run sync-api-surface` (it goes
+stale when core moves). Then: It has two entry points, `app`
 ("build an app") and `addon` ("build an addon"), each with leaves (function,
 setup, addon, error, middleware, secrets, variables, channel, cli, gateway,
 http, mcp, queue, scheduler, trigger, auth, scopes, agent, workflow,
@@ -16,8 +22,26 @@ scenarios). Each leaf lists its `symbols`. Where the JSON and older docs
 disagree, the JSON wins. Check anything it doesn't answer against core main
 (`/Users/yasser/git/pikku/pikku`), not against memory.
 
+**2. Everything the CLI touches.** Build this inventory from
+`packages/cli/src/cli.wiring.ts` and `packages/cli/src/utils/pikku-cli-config.ts`:
+- every command and every **subcommand**, with every option, short flag and default
+- every `pikku.config.json` key, including each `scaffold.*` flag
+- every generated file and where it lands
+- every platform the CLI builds for: web, **iOS and other native apps, desktop
+  apps (Tauri)**, and the runtimes `pikku deploy` targets
+- the Fabric flows: deploy, `fabric changes` (the changes queue), addons, login
+
+Also compare core's wirings (`packages/core/src/wirings/*`) and services
+against the docs, since a concept can exist in core before it reaches the
+surface JSON (feature flags and virtual users did).
+
 ## Done when
 
+0. **Both inventories are written down.** Keep a coverage table with one row
+   per leaf, per CLI command/subcommand, per config key and per platform, each
+   mapped to a page and a status. A symbol only counts as covered when a page
+   explains it, not when it's merely named in an error page, a generated-files
+   list or an import list.
 1. **Every leaf has a home.** For each leaf under both entry points, a docs
    page (or a clearly titled section of one) explains the concept, shows a
    working example, and links to the reference. Build a coverage table in
