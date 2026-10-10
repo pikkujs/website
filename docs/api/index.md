@@ -52,7 +52,7 @@ give up by leaving it out.
 | `agentRunner` | [`AgentRunnerService`](./ai-services.md) | No agents |
 | `agentStorage` | [`AgentStorageService`](./ai-services.md) | No conversation persistence |
 | `agentRunState` | [`AgentRunStateService`](./ai-services.md) | No run state or tool approvals |
-| `agentRunService` | [`AgentRunService`](./ai-services.md) | No agent views in the Console |
+| `agentRunService` | [`AgentRunService`](./ai-services.md) | No agent run queries |
 | `aiEmbedding` | `AIEmbeddingService` | No embeddings — see below |
 | `virtualUserRunStore` | `VirtualUserRunStore` | Virtual-user runs leave no trace — see below |
 | `virtualUserScheduleStore` | `VirtualUserScheduleStore` | Virtual users run only when asked — see below |
@@ -74,7 +74,7 @@ vectors from two models.
 
 ### `workflowRunService` — `WorkflowRunService`
 
-Read-only queries over workflow runs, powering the Console's workflow views:
+Read-only queries over workflow runs, powering workflow run views:
 `listRuns(options?)` (filterable by `workflowName` / `status`, with
 `limit`/`offset`), `getRun(id)`, `getRunSteps(runId)`, `getRunHistory(runId)`,
 `getDistinctWorkflowNames()`, `getWorkflowVersion(name, graphHash)` and

@@ -131,7 +131,6 @@ export function Terminal() {
         </div>
         <div className={styles.tSpacer} />
         <div>All schemas loaded</div>
-        <div>Pikku Console available at <span className={styles.tUrl}>http://localhost:3000/console</span></div>
         <div>pikku: ready on <span className={styles.tUrl}>http://localhost:3000</span> <span className={styles.cursor} /></div>
       </div>
     </div>

@@ -9,7 +9,7 @@ import snippets from '../data/snippets.json';
 import { wireTypes, wireCategories, type WireCategory } from '../data/wireTypes';
 import {
   GitBranch, Wrench, Shield, Copy, Check, Scissors,
-  Package, Puzzle, Monitor, Key, ArrowRight, Gauge,
+  Package, Puzzle, Key, ArrowRight, Gauge,
 } from 'lucide-react';
 import styles from './features.module.css';
 
@@ -46,7 +46,7 @@ const frameworkCards: FeatureCard[] = [
   {
     title: 'Secrets & Variables',
     url: '/core/secrets',
-    description: 'Type-safe config with Zod schemas — validated at startup, managed from code or Console.',
+    description: 'Type-safe config with Zod schemas — validated at startup, managed from code.',
     icon: Key,
   },
   {
@@ -60,12 +60,6 @@ const frameworkCards: FeatureCard[] = [
     url: '/core/built-in-services',
     description: 'JWT, queues, workflows, AI storage, secrets — every interface and provider.',
     icon: Package,
-  },
-  {
-    title: 'Console',
-    url: '/core/console',
-    description: 'Visual control plane — explore functions, run workflows, test agents, and manage config.',
-    icon: Monitor,
   },
   {
     title: 'Scorers & Judges',

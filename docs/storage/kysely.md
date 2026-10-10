@@ -83,7 +83,7 @@ Provides the same methods as [`PgKyselyAgentStorageService`](./postgresql#pgkyse
 
 ### KyselyAgentRunService
 
-Read-only agent run queries for the [Console](/docs/console).
+Read-only agent run queries.
 
 ```typescript
 import { KyselyAgentRunService } from '@pikku/kysely'
@@ -109,7 +109,7 @@ await workflowService.init()
 
 ### KyselyWorkflowRunService
 
-Read-only workflow run queries for the Console.
+Read-only workflow run queries.
 
 ```typescript
 import { KyselyWorkflowRunService } from '@pikku/kysely'

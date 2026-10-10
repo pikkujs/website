@@ -2,7 +2,7 @@ import React from 'react';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 import CodeBlock from '@theme/CodeBlock';
-import { Key, Variable, ShieldCheck, RefreshCw, ArrowRight, BookOpen, Monitor } from 'lucide-react';
+import { Key, Variable, ShieldCheck, RefreshCw, ArrowRight, BookOpen } from 'lucide-react';
 import { PaperPage, CodeCard } from '../../components/PaperLayout';
 import styles from './secrets.module.css';
 import snippets from '../../data/snippets.json';
@@ -20,7 +20,7 @@ function Hero() {
           <span className={styles.badge}>Core Concept</span>
           <h1 className={styles.h1}>Type-safe config.<br /><em>Zero guesswork.</em></h1>
           <p className={styles.lead}>
-            Declare secrets and variables with Zod schemas. Every value is validated, typed, and manageable from the Console or environment.
+            Declare secrets and variables with Zod schemas. Every value is validated, typed, and manageable from code or environment.
           </p>
           <div className={styles.heroActions}>
             <Link to="/docs/core-features/secrets" className={styles.btnPrimary}>Secrets Docs</Link>
@@ -148,15 +148,6 @@ function OAuth2Section() {
                 </div>
               </div>
             </div>
-            <div className={styles.card}>
-              <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                <Monitor size={16} style={{ color: '#c2410c', flexShrink: 0, marginTop: 2 }} />
-                <div>
-                  <div className={styles.cardTitle}>Console integration</div>
-                  <p className={styles.cardBody}>Manage secrets, variables, and OAuth2 credentials per environment from the Console UI — no .env juggling.</p>
-                </div>
-              </div>
-            </div>
           </div>
           <CodeCard sourceUrl={snippetSourceUrl('shopSecretUsage')} filename="oauth2.ts" badge="defineCredential">
             <CodeBlock language="typescript">{oauth2Code}</CodeBlock>
@@ -173,7 +164,7 @@ function CTASection() {
       <div className={styles.wrap}>
         <h2 className={styles.h2}>Config done right.</h2>
         <p className={styles.lead} style={{ marginBottom: 32 }}>
-          Type-safe secrets and variables with Zod validation. Manage everything from code or the Console.
+          Type-safe secrets and variables with Zod validation. Manage everything from code.
         </p>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
           <Link to="/docs/core-features/secrets" className={styles.btnPrimary}>Secrets Docs <ArrowRight size={15} /></Link>
@@ -188,7 +179,7 @@ export default function SecretsPage() {
   return (
     <Layout
       title="Secrets & Variables — Typed Config for Pikku"
-      description="Declare secrets and variables with Zod schemas. Every value is validated, typed, and manageable from the Console or environment."
+      description="Declare secrets and variables with Zod schemas. Every value is validated, typed, and manageable from code or environment."
     >
       <PaperPage>
         <Hero />

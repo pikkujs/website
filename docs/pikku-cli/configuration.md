@@ -29,7 +29,7 @@ The `pikku.config.json` file configures how the Pikku CLI scans your codebase an
 | `extends` | `string` | ❌ | Path to another `pikku.config.json` to inherit from |
 | `ignoreFiles` | `string[]` | ❌ | Glob patterns to skip (default: `["**/*.test.ts", "**/*.spec.ts", "**/node_modules/**", "**/dist/**"]`) |
 | `globalHTTPPrefix` | `string` | ❌ | Prefix prepended to all HTTP routes (e.g., `/api/v1`). Trailing slashes are stripped |
-| `metaLocale` | `string` | ❌ | BCP-47 language tag for the meta the Console renders back to your team — function/step descriptions, feature and scenario names (default: `"en"`). Identifiers stay English; the language the app speaks to users is a separate setting |
+| `metaLocale` | `string` | ❌ | BCP-47 language tag for the meta that gets rendered back to your team — function/step descriptions, feature and scenario names (default: `"en"`). Identifiers stay English; the language the app speaks to users is a separate setting |
 | `$schema` | `string` | ❌ | JSON schema URL for editor autocomplete |
 
 In addon mode (`"addon": true`) the generated tree roots at `outDir/addon`, so every leaf an addon authors is reached as `#pikku/addon/<leaf>`.
@@ -86,7 +86,6 @@ The `scaffold` section controls where `pikku new` puts generated files and which
     "permissionDir": "src/permissions",
     "addonDir": "packages/addons",
     "rpc": true,
-    "console": true,
     "agent": true,
     "workflow": true
   }
@@ -95,7 +94,7 @@ The `scaffold` section controls where `pikku new` puts generated files and which
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `pikkuDir` | `string` | Directory for auto-generated scaffold files — RPC endpoints, agent endpoints, console functions, workflow routes, the Better Auth wiring (default: `<srcDirectories[0]>/scaffold`, resolved against `rootDir`) |
+| `pikkuDir` | `string` | Directory for auto-generated scaffold files — RPC endpoints, agent endpoints, workflow routes, the Better Auth wiring (default: `<srcDirectories[0]>/scaffold`, resolved against `rootDir`) |
 | `functionDir` | `string` | Where `pikku new function` puts files (default: `<srcDirectories[0]>/functions`) |
 | `wiringDir` | `string` | Where `pikku new wiring` puts files (default: `<srcDirectories[0]>/wirings`) |
 | `middlewareDir` | `string` | Where `pikku new middleware` puts files (default: `<srcDirectories[0]>/middleware`) |
@@ -119,7 +118,6 @@ Only `path` is accepted as an object key. A bare string and the old `auth` key a
 | `rpc` | Generate the public RPC endpoint (`rpc-public.gen.ts`) |
 | `analytics` | Generate the typed `POST /analytics` ingest (`analytics.gen.ts`) |
 | `featureFlags` | Generate the `GET /feature-flags` read wire (`feature-flags.gen.ts`) |
-| `console` | Generate console functions (`console.gen.ts`) |
 | `scenarios` | Generate scenario instrumentation functions (`scenarios.gen.ts`) |
 | `virtualUser` | Generate the virtual-user run/read RPCs (`virtual-user.gen.ts`). Requires at least one declared persona |
 | `agent` | Generate agent endpoints (`agent.gen.ts`) |
@@ -236,7 +234,7 @@ Directory containing email templates, locales, partials, and `theme.json`. Used 
 |--------|------|-------------|
 | `authFile` | `string` | Path to write the generated Better Auth wiring (`auth.gen.ts`, plus `auth-secrets.gen.ts` and `auth-middleware.gen.ts` beside it). The CLI inspects these explicitly, so they may sit outside `srcDirectories` (default: `<pikkuDir>/auth/auth.gen.ts`) |
 | `authTypesFile` | `string` | Path for the typed `pikkuBetterAuth` re-export (default: `{outDir}/auth/auth.types.ts`) |
-| `authMetaJsonFile` | `string` | Path for the generated auth metadata — enabled social providers/plugins, read by the Console SSO page (default: `{outDir}/auth/pikku-auth-meta.gen.json`) |
+| `authMetaJsonFile` | `string` | Path for the generated auth metadata — enabled social providers/plugins (default: `{outDir}/auth/pikku-auth-meta.gen.json`) |
 
 ## Workflows
 
@@ -334,7 +332,7 @@ Or with metadata for the addon registry:
 }
 ```
 
-The addon object also accepts `serverlessIncompatible` (service names that must run on a server) and `openapi` (`version` + `hash`, stamped by `pikku new addon --openapi` to track the spec the addon was generated from). Two related top-level keys: `addonName` overrides the addon's package name in generated metadata (defaults to the `name` in `package.json`), and `addonMetaJsonFile` overrides where the addon metadata JSON is written (default: `{outDir}/console/pikku-addon-meta.gen.json`).
+The addon object also accepts `serverlessIncompatible` (service names that must run on a server) and `openapi` (`version` + `hash`, stamped by `pikku new addon --openapi` to track the spec the addon was generated from). Two related top-level keys: `addonName` overrides the addon's package name in generated metadata (defaults to the `name` in `package.json`), and `addonMetaJsonFile` overrides where the addon metadata JSON is written.
 
 ## OpenAPI Generation
 

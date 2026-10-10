@@ -5,7 +5,7 @@ description: Mantine, layout panels, workflow graphs, agent chat and voice
 
 # UI Packages
 
-Beyond the React client hooks, Pikku publishes the UI pieces its own console and
+Beyond the React client hooks, Pikku publishes the UI pieces its own
 templates are built from. They are optional — an app can use `@pikku/react`
 alone — but they encode conventions (i18n gates, viewport layout, graph layout)
 that are otherwise rebuilt by hand.
@@ -30,7 +30,7 @@ npm install @pikku/mantine
 ## `@pikku/react-layout-panel`
 
 Viewport-bound React layout primitives — a shell, scrollable panels, a stage, a
-phone tab bar and sheet, and a nav dock. It is what keeps a desktop-style console
+phone tab bar and sheet, and a nav dock. It is what keeps a desktop-style layout
 and a phone-sized app sharing one component tree.
 
 ```typescript
@@ -41,8 +41,7 @@ import {
 
 ## `@pikku/workflow-graph`
 
-Renders a Pikku workflow as an interactive graph — the same view as the console's
-workflow page.
+Renders a Pikku workflow as an interactive graph.
 
 ```typescript
 import { WorkflowGraphView, WorkflowGraphFlow, createWorkflowFlow, useElkLayout } from '@pikku/workflow-graph'

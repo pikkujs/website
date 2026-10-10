@@ -40,7 +40,7 @@ function Hero() {
         <H1>From an empty folder to a <em>running platform.</em></H1>
         <Lead>
           Two commands stand between you and a complete backend — database, auth, content,
-          email, workflows and the console, running locally and ready to deploy.
+          email and workflows, running locally and ready to deploy.
         </Lead>
       </Wrap>
     </header>
@@ -79,15 +79,13 @@ function StepRun() {
         <StepHead n={2} title="Start the whole platform" />
         <p className={styles.stepBody}>
           One command boots everything. Not just an HTTP server — the database is introspected
-          and typed, auth and content are live, email previews work, and the console is watching
-          all of it.
+          and typed, auth and content are live, and email previews work.
         </p>
         <div className={styles.runGrid}>
           <Terminal />
           <div className={styles.runChecks}>
             <CheckItem>Database up, schema introspected, end-to-end types generated</CheckItem>
             <CheckItem>Auth, content, secrets and email previews — already working</CheckItem>
-            <CheckItem>The console at <code>localhost:3000/console</code> shows every function, wire and workflow</CheckItem>
             <CheckItem>Exactly what runs in production — no separate local setup to maintain</CheckItem>
           </div>
         </div>

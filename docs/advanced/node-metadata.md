@@ -1,12 +1,12 @@
 ---
 title: Node Metadata
-description: Categorize functions as visual nodes for graph workflows and the Console
+description: Categorize functions as visual nodes for graph workflows
 ai: true
 ---
 
 # Node Metadata
 
-Node metadata lets you annotate your functions with visual information — display names, categories, and node types — so they can be rendered as graph nodes in the [Console](/docs/console) and used in [graph workflows](/docs/wiring/workflows/graph-workflows).
+Node metadata lets you annotate your functions with visual information — display names, categories, and node types — so they can be rendered as graph nodes and used in [graph workflows](/docs/wiring/workflows/graph-workflows).
 
 ## Overview
 
@@ -54,7 +54,7 @@ The `node` property on a function definition accepts a `CoreNodeConfig`:
 
 ## Node Categories
 
-Categories group related nodes in the Console UI. Allowed categories come from the addon metadata in `pikku.config.json`:
+Categories group related nodes. Allowed categories come from the addon metadata in `pikku.config.json`:
 
 ```json
 {
@@ -92,10 +92,10 @@ The CLI generates node metadata files automatically:
 npx pikku
 ```
 
-This produces `.pikku/console/pikku-addon-meta.gen.json`, which the Console reads to render the graph UI. The file is written when `scaffold.console` is enabled or the package is an addon.
+This produces `pikku-addon-meta.gen.json` for addon packages, which tooling can read to render nodes.
 
 ## Use Cases
 
-- **Graph workflow builder** — Nodes appear as draggable elements in the Console's graph editor, categorized by type
+- **Graph workflow builder** — Nodes can be rendered as draggable elements in a graph editor, categorized by type
 - **Function discovery** — The category and type annotations make it easier to browse large function registries
-- **Addons** — Published Pikku addons can include node metadata so their functions appear correctly in the consumer's Console
+- **Addons** — Published Pikku addons can include node metadata so their functions are categorized correctly for consumers

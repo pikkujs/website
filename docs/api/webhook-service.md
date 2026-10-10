@@ -49,8 +49,8 @@ default queue-only service keeps no history: only the write throws
 the two reads honestly answer `[]` / `null`. A store-backed implementation
 overrides all three.
 
-Callers must not assume a history exists. The Console's webhook pages, for
-instance, render an empty list when no `webhookService` is wired at all or when
+Callers must not assume a history exists. A webhook history view, for
+instance, should render an empty list when no `webhookService` is wired at all or when
 the wired one keeps no history.
 
 #### `recordAttempt(deliveryId: string, result: WebhookAttemptResult): Promise<void>`

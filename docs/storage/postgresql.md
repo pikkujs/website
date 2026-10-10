@@ -109,7 +109,7 @@ const singletonServices = await createSingletonServices(config, {
 
 ### PgKyselyAgentRunService
 
-Read-only service for querying agent runs (used by the [Console](/docs/console)).
+Read-only service for querying agent runs.
 
 ```typescript
 import { PgKyselyAgentRunService } from '@pikku/kysely-postgres'
@@ -152,7 +152,7 @@ await workflowService.init() // Creates tables
 
 ### PgKyselyWorkflowRunService
 
-Read-only service for querying workflow runs (used by the [Console](/docs/console)).
+Read-only service for querying workflow runs.
 
 ```typescript
 import { PgKyselyWorkflowRunService } from '@pikku/kysely-postgres'

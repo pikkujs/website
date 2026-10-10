@@ -4,7 +4,7 @@ title: MetaService
 
 The MetaService is the runtime's read access to everything `pikku` generates into the `.pikku` directory — the wiring metadata, the JSON schemas, the declared scopes and roles, the email templates. It is registered as the `metaService` singleton service.
 
-Nothing in a normal request path needs it. It exists for the things that reason *about* your application rather than serving it: the [Console](/docs/console), the graph addon, agent preparation (which reads function descriptions to build a tool catalogue), scenario and virtual-user runs (which derive a persona's reachable surface from the generated meta). Leave it out and those features have nothing to read; they degrade rather than crash, but they degrade to empty.
+Nothing in a normal request path needs it. It exists for the things that reason *about* your application rather than serving it: the graph addon, agent preparation (which reads function descriptions to build a tool catalogue), scenario and virtual-user runs (which derive a persona's reachable surface from the generated meta). Leave it out and those features have nothing to read; they degrade rather than crash, but they degrade to empty.
 
 Every `relativePath` argument is relative to the `.pikku` root directory, except where noted.
 
@@ -89,8 +89,7 @@ when the file has not been generated.
 The roles declared with `defineSystemRole`, keyed by name.
 
 Worth singling out for *why* it is here: a persona declares roles; a function
-checks scopes. Anything showing what a persona can reach — the Console's persona
-page, a run's catalogue — needs this to get from one to the other, and needs it
+checks scopes. Anything showing what a persona can reach — a persona page, a run's catalogue — needs this to get from one to the other, and needs it
 to be the **same** expansion the seed granted from rather than a second one.
 
 ## Email
@@ -176,4 +175,4 @@ const singletonServices = await createSingletonServices(config, {
 ```
 
 `pikku dev` and `pikku serve` register a `LocalMetaService` pointed at the same
-directory, so the Console works in development with no wiring of your own.
+directory, so it works in development with no wiring of your own.

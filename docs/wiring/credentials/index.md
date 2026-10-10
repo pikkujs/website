@@ -33,7 +33,7 @@ defineCredential({
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
 | `name` | `string` | ✅ | Unique identifier for the credential |
-| `displayName` | `string` | ✅ | Human-readable name (shown in Console and auth flows) |
+| `displayName` | `string` | ✅ | Human-readable name (shown in auth flows) |
 | `description` | `string` | ❌ | Explains what this credential is for |
 | `type` | `'singleton' \| 'wire'` | ✅ | Scope — see below |
 | `schema` | Zod schema | ✅ | Shape of the credential data |
@@ -144,7 +144,7 @@ After running `pikku`, the CLI generates credential metadata in `.pikku/credenti
 - `pikku-credentials.gen.ts` — typed credential wrappers
 - `pikku-credentials-meta.gen.json` — credential definitions metadata
 
-These are consumed by the Console, deploy pipeline, and AI agent runtime.
+These are consumed by the deploy pipeline and AI agent runtime.
 
 ## File Convention
 

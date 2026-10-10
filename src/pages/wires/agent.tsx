@@ -167,7 +167,6 @@ const page: PageData = {
         items: [
           { title: 'Sampled in production', body: 'Name a scorer on the agent and sampleRate decides how much live traffic it grades. Scores land on the run, beside its trace and its cost.' },
           { title: 'Asserted in scenarios', body: 'scenario.expectScore fails a run the rubric graded too low — the same rubric, against a known input.' },
-          { title: 'Read in the Console', body: 'Every scorer has a page: what it grades, how runs scored, and which runs it graded worst.' },
         ],
       },
     },

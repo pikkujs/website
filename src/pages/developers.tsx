@@ -641,31 +641,8 @@ function ProductionSection() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   Console + testimonials + CTA
+   Testimonials + CTA
    ════════════════════════════════════════════════════════════════ */
-function ConsoleSection() {
-  return (
-    <Section>
-      <Wrap wide>
-        <Eyebrow>The console</Eyebrow>
-        <H2>Every function, every wire, <em>one screen.</em></H2>
-        <Lead>
-          Browse functions, run agents, manage secrets, and trigger workflows —
-          without writing tooling code.
-        </Lead>
-        <div className={styles.consoleShot}>
-          <img
-            src="/img/console-screenshot.webp"
-            loading="lazy"
-            alt="Pikku Console — browse and inspect all functions, wirings, and services"
-          />
-        </div>
-        <Link to="/docs/console" className={styles.docsLink}>Learn about the Console →</Link>
-      </Wrap>
-    </Section>
-  );
-}
-
 function TestimonialsSection() {
   return (
     <Section variant="alt">
@@ -734,7 +711,6 @@ export default function Developers() {
         <RuntimesSection />
         <ApiSurfaceSection />
         <ProductionSection />
-        <ConsoleSection />
         <TestimonialsSection />
         <CTASection />
       </PaperPage>

@@ -3,7 +3,7 @@ title: AI Services
 ai: true
 ---
 
-Four singleton services power [AI Agents](/docs/wiring/ai-agents): a runner that talks to the model, two persistence services for conversation and run state, and a read-only query service used by the [Console](/docs/console).
+Four singleton services power [AI Agents](/docs/wiring/ai-agents): a runner that talks to the model, two persistence services for conversation and run state, and a read-only query service for inspecting runs and threads.
 
 | Service key | Interface | Responsibility |
 |-------------|-----------|----------------|
@@ -101,7 +101,7 @@ A run accumulates one row per scorer, and a scorer may grade the same run more t
 
 ## AgentRunService
 
-Read-only queries over agent runs and threads — powers the Console's agent views.
+Read-only queries over agent runs and threads — for building agent run and thread views.
 
 | Method | Description |
 |--------|-------------|

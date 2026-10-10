@@ -40,7 +40,7 @@ defineCredential({
 | Property | Type | Description |
 |----------|------|-------------|
 | `name` | `string` | Unique identifier for this credential |
-| `displayName` | `string` | Human-readable name (shown in Console) |
+| `displayName` | `string` | Human-readable name (shown in UIs that list credentials) |
 | `description` | `string` | What this credential is used for |
 | `type` | `'singleton' \| 'wire'` | `'singleton'` for one platform-level credential, `'wire'` for per-user credentials |
 | `schema` | Zod schema | Shape of the stored token/credential value |
@@ -71,7 +71,7 @@ defineSecret({
 })
 ```
 
-Set this secret with your OAuth app's client ID and secret (via the Console or your secret service).
+Set this secret with your OAuth app's client ID and secret (via your secret service).
 
 ## Who Runs the Flow
 
@@ -125,17 +125,6 @@ export const listRepos = pikkuFunc<void, { names: string[] }>({
 Addons do the same thing inside `pikkuAddonWireServices`, resolving the token once and handing it to the API service — see [Creating Addons](/docs/addon/creating).
 
 `@pikku/core/oauth2` carries the two types involved, `OAuth2AppCredential` and `OAuth2Token`. There is no client class — the refresh lives in the credential service, not in something you construct.
-
-## Console Integration
-
-The [Pikku Console](/docs/console) provides a UI for managing OAuth2 credentials:
-
-1. **Connect** — Initiates the OAuth2 flow, opening the provider's authorization page
-2. **Status** — Shows whether the credential is connected
-3. **Reconnect** — Re-runs the authorization flow for a connected credential
-4. **Disconnect** — Unlinks the account and clears the stored tokens
-
-This makes it easy to set up third-party integrations per environment without writing custom OAuth flows.
 
 ## Token Storage
 

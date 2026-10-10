@@ -67,7 +67,7 @@ const singletonServices = await createSingletonServices(config, {
 
 ### MongoDBAgentRunService
 
-Read-only service for querying agent runs (used by the [Console](/docs/console)).
+Read-only service for querying agent runs.
 
 ```typescript
 import { MongoDBAgentRunService } from '@pikku/mongodb'
@@ -96,7 +96,7 @@ await workflowService.init()
 
 ### MongoDBWorkflowRunService
 
-Read-only workflow run queries (used by the Console).
+Read-only workflow run queries.
 
 ```typescript
 import { MongoDBWorkflowRunService } from '@pikku/mongodb'

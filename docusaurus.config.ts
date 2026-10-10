@@ -262,7 +262,6 @@ const config: Config = {
             // Platform
             { label: 'Tree-Shaking', to: '/core/treeshaking' },
             { label: 'Built-in Services', to: '/core/built-in-services' },
-            { label: 'Console', to: '/core/console' },
             { label: 'Addons', to: '/core/addons' },
             { label: 'Addon Catalogue', to: '/addons' },
             { label: 'OpenAPI Catalogue', to: '/openapis' },
@@ -276,8 +275,7 @@ const config: Config = {
           label: 'Docs',
         },
         // The whole import surface as one navigable page, which is where the
-        // 28 generated api-reference pages went. Named the way the console
-        // names it.
+        // 28 generated api-reference pages went.
         { to: '/api', label: 'SDK', position: 'right' },
         // {
         //   type: 'docSidebar',
@@ -330,7 +328,6 @@ const config: Config = {
             { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },
             { label: 'Runtimes', to: '/docs/runtimes/fastify-plugin' },
             { label: 'CLI Reference', to: '/docs/pikku-cli' },
-            { label: 'The Console', to: '/docs/console' },
           ],
         },
         {

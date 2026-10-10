@@ -12,7 +12,7 @@ Graph workflows define multi-step processes declaratively as a graph of nodes. I
 
 **Use graph workflows when:**
 - You want a visual/declarative workflow definition
-- The workflow will be viewed or edited in the [Pikku Console](/docs/console)
+- You want the structure to be inspectable as data
 - You prefer configuration over code
 - The flow is primarily RPC calls with data passing between them
 
@@ -261,10 +261,6 @@ registered automatically by `npx pikku` — the CLI generates a `graphStarter`
 function and the route to start it. Start a run the same way as any workflow,
 via `rpc.startWorkflow(name, input)` (on the wire object), which resolves to
 `{ runId }`.
-
-## Visualizing in the Console
-
-The [Pikku Console](/docs/console) renders graph workflows as interactive visual graphs, showing nodes, connections, and execution progress in real time. See [Console Features](/docs/console/features#workflows) for details.
 
 ## Next Steps
 

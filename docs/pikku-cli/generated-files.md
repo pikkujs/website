@@ -45,7 +45,7 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 │   └── index.ts                       # #pikku/setup
 │
 ├── services/
-│   └── pikku-meta-service.gen.ts      # LocalMetaService subclass for the Console
+│   └── pikku-meta-service.gen.ts      # LocalMetaService subclass
 │
 ├── function/
 │   ├── pikku-function-types.gen.ts    # pikkuFunc, pikkuSessionlessFunc, etc.
@@ -241,16 +241,13 @@ Instead of fragile relative paths like `../../.pikku/function/pikku-function-typ
 │   ├── pikku-package.gen.ts           # Addon package registration
 │   ├── pikku-addon-types.gen.ts       # Addon config/service types
 │   └── index.ts                       # #pikku/addon
-│
-└── console/
-    └── pikku-addon-meta.gen.json      # Addon metadata for the Console
 ```
 
-Any wiring's `.gen.json` meta can also have a `-verbose.gen.json` sibling (`pikku-http-wirings-meta-verbose.gen.json`, `myWorkflow-verbose.gen.json`); the minimal copy ships to every runtime, while the verbose one is read off disk by the Console and other documentation.
+Any wiring's `.gen.json` meta can also have a `-verbose.gen.json` sibling (`pikku-http-wirings-meta-verbose.gen.json`, `myWorkflow-verbose.gen.json`); the minimal copy ships to every runtime, while the verbose one is read off disk by tooling and documentation.
 
 Not every directory is generated for every project — only the ones relevant to your wirings. If you don't use workflows, there's no `workflow/` directory. In addon mode (`"addon": true`) the whole tree is written one level deeper, at `outDir/addon/`, so every leaf an addon authors resolves as `#pikku/addon/<leaf>`.
 
-A few generated files live **outside** `outDir`, in your source tree, because the inspector needs to scan them like regular code: the Better Auth wiring (`auth.gen.ts`, plus `auth-secrets.gen.ts` and `auth-middleware.gen.ts` beside it) at the `authFile` path, the feature scaffold files (`rpc-public.gen.ts`, `analytics.gen.ts`, `feature-flags.gen.ts`, `console.gen.ts`, `virtual-user.gen.ts`, `agent.gen.ts`, `workflow-routes.gen.ts`, `events.gen.ts`, `rpc-remote.gen.ts`, `remote-jobs.gen.ts`, `webhook.gen.ts`, `graph.wirings.gen.ts`) under `scaffold.pikkuDir`, and `db/annotations.gen.json` beside the authored `db/annotations.ts`.
+A few generated files live **outside** `outDir`, in your source tree, because the inspector needs to scan them like regular code: the Better Auth wiring (`auth.gen.ts`, plus `auth-secrets.gen.ts` and `auth-middleware.gen.ts` beside it) at the `authFile` path, the feature scaffold files (`rpc-public.gen.ts`, `analytics.gen.ts`, `feature-flags.gen.ts`, `virtual-user.gen.ts`, `agent.gen.ts`, `workflow-routes.gen.ts`, `events.gen.ts`, `rpc-remote.gen.ts`, `remote-jobs.gen.ts`, `webhook.gen.ts`, `graph.wirings.gen.ts`) under `scaffold.pikkuDir`, and `db/annotations.gen.json` beside the authored `db/annotations.ts`.
 
 ## Key Files
 
@@ -304,7 +301,6 @@ This is why `pikkuFunc` "just works" with autocomplete for your services and ses
 
 Files ending in `.gen.json` contain static metadata used by:
 
-- **The Console** — displays functions, routes, agents, workflows visually
 - **The deploy pipeline** — analyzes what needs to be deployed
 - **OpenAPI generation** — builds API specs from HTTP metadata
 - **MCP servers** — exposes tool/resource/prompt catalogs

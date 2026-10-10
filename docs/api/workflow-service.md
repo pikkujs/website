@@ -44,7 +44,7 @@ Returns the executed steps of a run with their state, results, and errors.
 
 ### `getRunTimeline(id: string): Promise<RunTimeline | null>` / `reconstructRunStateAt(id, at?)`
 
-Returns the full event timeline of a run, or reconstructs what the run state looked like at a given point in time — this powers the time-travel view in the [Console](/docs/console).
+Returns the full event timeline of a run, or reconstructs what the run state looked like at a given point in time — handy for time-travel debugging.
 
 ### `resumeWorkflow(runId: string): Promise<void>`
 

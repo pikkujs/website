@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from '@docusaurus/Link';
 import { wireTypes, wireCategories, type WireCategory } from '../data/wireTypes';
-import { Code2, Wrench, Shield, GitBranch, Scissors, Package, Monitor, Key, Puzzle, Gauge, Cloud, Server, Globe, Box, Scale } from 'lucide-react';
+import { Code2, Wrench, Shield, GitBranch, Scissors, Package, Key, Puzzle, Gauge, Cloud, Server, Globe, Box, Scale } from 'lucide-react';
 
 const coreEntries = [
   { id: 'function', label: 'Functions', description: 'One signature, every protocol', url: '/core/function', icon: Code2 },
@@ -21,7 +21,6 @@ const deploymentEntries = [
 const platformEntries = [
   { id: 'treeshaking', label: 'Tree-Shaking', description: 'Filter & deploy only what you need', url: '/core/treeshaking', icon: Scissors },
   { id: 'built-in-services', label: 'Built-in Services', description: 'Every interface & provider', url: '/core/built-in-services', icon: Package },
-  { id: 'console', label: 'Console', description: 'Visual control plane for your app', url: '/core/console', icon: Monitor },
   { id: 'addons', label: 'Addons', description: 'Extend with npm packages', url: '/core/addons', icon: Puzzle },
   { id: 'scorers', label: 'Scorers & Judges', description: 'Grade agent runs in tests and in production', url: '/wires/agent#scoring', icon: Scale },
   { id: 'benchmarks', label: 'Benchmarks', description: 'Real-world performance numbers', url: '/benchmarks', icon: Gauge },
