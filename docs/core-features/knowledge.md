@@ -93,26 +93,26 @@ empty directories, and never a section without its own `index.md`.
 ```bash
 pikku knowledge validate   # check the base against the app-project profile, resources included
 pikku knowledge index      # refresh every index.md to list what is actually in it
-pikku knowledge next       # say the one thing to do next: repair, plan, ask, build, or nothing
+pikku knowledge gaps       # list what the code has that no note describes
 ```
 
 `pikku knowledge index --check` reports stale indexes without writing, for use as
 a CI gate.
 
-Plans live beside the notes, one per milestone:
+Plans live beside the notes, one per changeset:
 
 ```bash
 pikku knowledge plan schema            # print the plan schema
-pikku knowledge plan show <milestone>  # print a milestone's plan
-pikku knowledge plan progress <milestone>  # what the milestone still owes its plan
-pikku knowledge plan set <milestone> <file>  # validate and write a plan
-pikku knowledge plan defer <milestone>       # record why a plan item is deferred
+pikku knowledge plan show <changeset>  # print a changeset's plan
+pikku knowledge plan progress <changeset>  # what the changeset still owes its plan
+pikku knowledge plan set <changeset> <file>  # validate and write a plan
+pikku knowledge plan defer <changeset> <item> --reason "..."  # move an item to the next pass, with the reason
 ```
 
 `plan show --for-build` renders the plan as the ordered list of work a build
 follows, rather than as stored. Validation compares the plan against the
-milestone note; `plan set` refuses to write a plan that does not conform and
-says what is wrong instead.
+changeset; `plan set` refuses to write a plan that does not conform and
+says what is wrong instead. The full option reference is on the [CLI page](../pikku-cli/index.mdx#pikku-knowledge).
 
 ## Next Steps
 
