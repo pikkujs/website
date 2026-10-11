@@ -6,6 +6,7 @@
   "compatibility_date": "2025-09-01",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
+    "binding": "ASSETS", // lets SSR loaders read /__data/*.json from the static assets
     // prerendered docs/blog are served as /route (no 307 to /route/); unmatched paths reach the Worker
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "none"

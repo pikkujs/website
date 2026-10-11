@@ -7,3 +7,4 @@ dist
 # generated
 src/routeTree.gen.ts
 content
+public/__data

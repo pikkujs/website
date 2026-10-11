@@ -1,6 +1,8 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { blog, blogSource } from '@/lib/source'
+import { blog } from '@/lib/source'
+import { blogPayload } from '@/lib/payload'
+import { fetchPayload } from '@/lib/payload-client'
 import { Suspense, use } from 'react'
 import { useMDXComponents } from '@/components/mdx'
 import { Prose } from '@/components/own-mdx'
@@ -8,14 +10,15 @@ import { Prose } from '@/components/own-mdx'
 const serverLoader = createServerFn({ method: 'GET' })
   .validator((slugs: string[]) => slugs)
   .handler(async ({ data: slugs }) => {
-    const page = blogSource.getPage(slugs)
-    if (!page) throw notFound()
-    return { path: page.path, url: page.url, title: page.data.title ?? '', date: slugs.slice(0, 3).join('-') }
+    const p = blogPayload(slugs)
+    if (!p) throw notFound()
+    return p
   })
 
 export const Route = createFileRoute('/blog/$')({
   loader: async ({ params }) => {
-    const data = await serverLoader({ data: params._splat?.split('/').filter(Boolean) ?? [] })
+    const slugs = params._splat?.split('/').filter(Boolean) ?? []
+    const data = import.meta.env.SSR ? await serverLoader({ data: slugs }) : await fetchPayload<NonNullable<ReturnType<typeof blogPayload>>>(`/payload/blog/${slugs.join('/')}.json`)
     await blog.getPage(data.path)?.preload()
     return data
   },

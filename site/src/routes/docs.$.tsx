@@ -1,6 +1,8 @@
 import { createFileRoute, notFound, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { docs, source } from '@/lib/source'
+import { docs } from '@/lib/source'
+import { docPayload, docsTree } from '@/lib/payload'
+import { fetchPayload } from '@/lib/payload-client'
 import { useFumadocsLoader } from 'fumadocs-core/source/client'
 import { findNeighbour } from 'fumadocs-core/page-tree'
 import { getBreadcrumbItems } from 'fumadocs-core/breadcrumb'
@@ -14,7 +16,10 @@ export const Route = createFileRoute('/docs/$')({
   head: ({ loaderData }) => loaderData ? { meta: [{ title: `${loaderData.title} | Pikku` }, { name: 'source-file', content: 'content/docs/' + loaderData.path }] } : {},
   loader: async ({ params }) => {
     const slugs = params._splat?.split('/').filter(Boolean) ?? []
-    const [data, pageTree] = await Promise.all([serverLoader({ data: slugs }), treeLoader()])
+    // SSR/prerender call the functions directly; browser navigation reads prerendered static JSON (no Worker call)
+    const [data, pageTree] = import.meta.env.SSR
+      ? await Promise.all([serverLoader({ data: slugs }), treeLoader()])
+      : await Promise.all([fetchPayload<ReturnType<typeof docPayload> & {}>(`/payload/docs/${slugs.length ? slugs.join('/') : 'index'}.json`), fetchPayload<Awaited<ReturnType<typeof docsTree>>>('/payload/docs-tree.json')])
     await docs.getPage(data.path)?.preload()
     return { ...data, pageTree }
   },
@@ -22,12 +27,12 @@ export const Route = createFileRoute('/docs/$')({
 const serverLoader = createServerFn({ method: 'GET' })
   .validator((slugs: string[]) => slugs)
   .handler(async ({ data: slugs }) => {
-    const page = source.getPage(slugs)
-    if (!page) throw notFound()
-    return { path: page.path, url: page.url, title: page.data.title ?? '' }
+    const p = docPayload(slugs)
+    if (!p) throw notFound()
+    return p
   })
 const treeLoader = createServerFn({ method: 'GET' })
-  .handler(async () => source.serializePageTree(source.getPageTree()))
+  .handler(async () => docsTree())
 function Content({ path, tree, url }: { path: string; tree: any; url: string }) {
   const page = docs.getPage(path)
   if (!page) throw new Error(`unknown page: ${path}`)

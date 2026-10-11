@@ -42,9 +42,11 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "npm run gen:data && vite build",
     "migrate": "node scripts/migrate-docusaurus.mjs && node scripts/gen-meta.mjs",
     "validate-links": "node scripts/validate-links.mjs",
-    "check-links": "node packages/vite-link-check/src/cli.js dist/client"
+    "check-links": "node packages/vite-link-check/src/cli.js dist/client",
+    "gen:data": "node scripts/gen-data.mjs",
+    "predev": "npm run gen:data"
   }
 }

@@ -25,7 +25,28 @@ async function registryGet<T>(path: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-const fixture = async () => (await import('../data/openapis.fixture.json')).default as { apis: ApiRow[]; total?: number }
+/**
+ * Static JSON from public/__data, read per request. On Workers that is the ASSETS binding (the
+ * files live in the static assets, not in the Worker bundle); under Node (vite dev, the prerender)
+ * it is the file on disk.
+ */
+async function asset<T>(rel: string): Promise<T | null> {
+  try {
+    const spec = 'cloudflare:workers'
+    const { env } = await import(/* @vite-ignore */ spec)
+    if (env?.ASSETS) {
+      const r = await env.ASSETS.fetch(new Request('https://assets.invalid/__data/' + rel))
+      return r.ok ? ((await r.json()) as T) : null
+    }
+  } catch { /* not on Workers */ }
+  const fs = await import(/* @vite-ignore */ 'node:fs/promises')
+  const path = await import(/* @vite-ignore */ 'node:path')
+  for (const base of ['public', 'dist/client']) {
+    try { return JSON.parse(await fs.readFile(path.join(process.cwd(), base, '__data', rel), 'utf8')) as T } catch { /* next */ }
+  }
+  return null
+}
+const fixture = async () => (await asset<{ apis: ApiRow[] }>('openapis.json')) ?? { apis: [] }
 
 export const listOpenApis = createServerFn({ method: 'GET' }).handler(async () => {
   try {
@@ -58,22 +79,21 @@ export const getOpenApi = createServerFn({ method: 'GET' })
 
 const slim = (rows: ApiRow[]) => rows.map(({ name, title, operations, provider, categories }) => ({ name, title, operations, provider, categories }))
 
-/* ── addons (vendored) ─────────────────────────────────────── */
+/* ── addons (vendored, served from static assets) ─────────── */
 const LABELS: Record<string, string> = { ai: 'AI', crm: 'CRM', devops: 'DevOps', ecommerce: 'E-commerce' }
 export const labelOf = (c: string) => LABELS[c] ?? c.charAt(0).toUpperCase() + c.slice(1)
-const addons = async () => (await import('../data/addons.json')).default.addons as any[]
 
 export const listAddons = createServerFn({ method: 'GET' }).handler(async () =>
-  (await addons()).map((a) => ({
-    slug: a.slug as string, name: a.name as string, title: a.title as string, category: a.category as string,
-    categoryLabel: labelOf(a.category), description: (a.description ?? null) as string | null, functionCount: (a.functions?.length ?? 0) as number,
-  })),
+  ((await asset<any[]>('addons.json')) ?? []).map((a) => ({ ...a, categoryLabel: labelOf(a.category) }) as {
+    slug: string; name: string; title: string; category: string; categoryLabel: string; description: string | null; functionCount: number
+  }),
 )
 
 export const getAddon = createServerFn({ method: 'GET' })
   .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
-    const a = (await addons()).find((x) => x.slug === slug)
+    if (!/^[\w-]+$/.test(slug)) return null
+    const a = await asset<any>(`addons/${slug}.json`)
     if (!a) return null
     return { ...a, categoryLabel: labelOf(a.category), functions: (a.functions ?? []) as Fn[], secrets: (a.secrets ?? []) as Secret[] } as AddonDetail
   })
