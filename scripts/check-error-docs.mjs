@@ -5,7 +5,7 @@
  *
  * The canonical list of codes is the `ErrorCode` enum shipped by
  * `@pikku/inspector` — the same registry the CLI throws from. Every value must
- * have a matching `content/docs/pikku-cli/errors/pku<n>.md` page, otherwise the
+ * have a matching `content/docs/pikku-cli/errors/pku<n>.mdx` page, otherwise the
  * `[PKU###] → https://pikku.dev/docs/pikku-cli/errors/pku###` link 404s.
  *
  * We import the enum from `@pikku/inspector`'s dependency-free `error-codes`
@@ -58,7 +58,7 @@ const enumCodes = new Set(
 
 const pageCodes = new Set(
   readdirSync(ERRORS_DIR)
-    .map((f) => /^(pku\d+)\.md$/i.exec(f)?.[1])
+    .map((f) => /^(pku\d+)\.mdx?$/i.exec(f)?.[1])
     .filter(Boolean)
     .map((name) => name.toUpperCase())
 )
@@ -75,7 +75,7 @@ if (orphans.length > 0) {
 if (missing.length > 0) {
   console.error(
     `\n❌ ${missing.length} Pikku error code(s) have no docs page under docs/pikku-cli/errors/:\n` +
-      missing.map((c) => `   - ${c}  (create pku${c.slice(3)}.md)`).join('\n') +
+      missing.map((c) => `   - ${c}  (create pku${c.slice(3)}.mdx)`).join('\n') +
       `\n\nEvery ErrorCode in @pikku/inspector must have a reference page so the ` +
       `[PKU###] links the CLI prints do not 404.\n`
   )

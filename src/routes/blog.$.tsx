@@ -5,7 +5,7 @@ import { blogPayload } from '@/lib/payload'
 import { fetchPayload } from '@/lib/payload-client'
 import { Suspense, use } from 'react'
 import { useMDXComponents } from '@/components/mdx'
-import { Prose } from '@/components/own-mdx'
+import { Prose } from '@/components/mdx'
 
 const serverLoader = createServerFn({ method: 'GET' })
   .validator((slugs: string[]) => slugs)

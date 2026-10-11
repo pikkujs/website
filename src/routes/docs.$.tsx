@@ -8,7 +8,8 @@ import { findNeighbour } from 'fumadocs-core/page-tree'
 import { getBreadcrumbItems } from 'fumadocs-core/breadcrumb'
 import { Suspense, use } from 'react'
 import { useMDXComponents } from '@/components/mdx'
-import { Prose } from '@/components/own-mdx'
+import { Prose } from '@/components/mdx'
+import { AIDisclaimer } from '@/components/AIDisclaimer'
 import { TreeNav } from '@/components/TreeNav'
 
 type DocData = { path: string; url: string; title: string }
@@ -37,7 +38,9 @@ const treeLoader = createServerFn({ method: 'GET' })
 function Content({ path, tree, url }: { path: string; tree: any; url: string }) {
   const page = docs.getPage(path)
   if (!page) throw new Error(`unknown page: ${path}`)
-  const { toc } = use(page.load())
+  const loaded = use(page.load())
+  const { toc } = loaded
+  const fm = ((loaded as any).frontmatter ?? {}) as Record<string, unknown>
   const MDX = page.body
   const { previous, next } = findNeighbour(tree, url)
   const crumbs = getBreadcrumbItems(url, tree, { includePage: true })
@@ -45,7 +48,7 @@ function Content({ path, tree, url }: { path: string; tree: any; url: string }) 
     <>
       <main className="min-w-0 flex-1 py-8">
         <nav className="mb-4 flex gap-1 text-sm text-muted-foreground">{crumbs.map((c: any, i: number) => <span key={i}>{i ? '/ ' : ''}{c.url ? <Link to={c.url}>{c.name}</Link> : c.name}</span>)}</nav>
-        <Prose><h1>{page.title ?? ''}</h1><MDX components={useMDXComponents()} /></Prose>
+        <Prose>{fm.ai ? <AIDisclaimer /> : null}{fm.hide_title ? null : <h1>{page.title ?? ''}</h1>}<MDX components={useMDXComponents()} /></Prose>
         <div className="mt-12 flex justify-between border-t border-border pt-6 text-sm">
           {previous ? <Link to={previous.url}>&larr; {previous.name}</Link> : <span />}{next ? <Link to={next.url}>{next.name} &rarr;</Link> : <span />}
         </div>

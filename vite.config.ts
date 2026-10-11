@@ -10,13 +10,7 @@ import linkCrawl from './packages/vite-link-check/src/index.js'
 import feeds from './plugins/feeds.mjs'
 import { isIgnored, isKnown } from './link-gate.config.mjs'
 
-const sh = (n: string) => path.resolve(import.meta.dirname, 'src/components/shims', n + '.tsx')
 const alias: Record<string, string> = { '@': path.resolve(import.meta.dirname, 'src') }
-for (const n of ['Stackblitz', 'WiringIcons', 'Card', 'CloudCostAtlas', 'CloudCostComparison']) alias['@site/src/components/' + n] = sh(n)
-alias['@site/src/components/BundleArchitecturesSection'] = path.resolve(import.meta.dirname, 'src/stubs/Bundle.tsx')
-alias['@docusaurus/Link'] = sh('Link')
-alias['@theme/Tabs'] = sh('Tabs')
-alias['@theme/TabItem'] = sh('TabItem')
 
 /** Every docs/blog page's payload URL, so the prerender writes /payload/**.json next to the HTML. */
 const contentPages = () => {
@@ -34,13 +28,14 @@ const contentPages = () => {
   return out
 }
 
-/** mermaid is only imported inside a client effect; keep its ~6 MB of chunks out of the SSR/Worker bundle. */
-const mermaidClientOnly = (): Plugin => ({
-  name: 'mermaid-client-only',
+/** These are only imported inside client effects; keep their chunks (mermaid alone is ~6 MB) out of the SSR/Worker bundle. */
+const CLIENT_ONLY = ['mermaid', 'react-apexcharts', 'apexcharts', 'asciinema-player', '@stackblitz/sdk']
+const clientOnly = (): Plugin => ({
+  name: 'client-only-libs',
   enforce: 'pre',
   applyToEnvironment: (env) => env.config.consumer === 'server',
-  resolveId(id) { if (id === 'mermaid') return '\0mermaid-empty' },
-  load(id) { if (id === '\0mermaid-empty') return 'export default {}' },
+  resolveId(id) { if (CLIENT_ONLY.includes(id) || id === 'asciinema-player/dist/bundle/asciinema-player.css') return '\0client-only-empty' },
+  load(id) { if (id === '\0client-only-empty') return 'export default {}' },
 })
 
 export default defineConfig({
@@ -49,7 +44,7 @@ export default defineConfig({
   },
   resolve: { alias },
   plugins: [
-    mermaidClientOnly(),
+    clientOnly(),
     fumadocsMdx((await import('./source.config.ts')) as any),
     tailwindcss(),
     tanstackStart({ pages: [{ path: '/search-index.json' }, ...contentPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,

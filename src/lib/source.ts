@@ -3,7 +3,7 @@ import { frontmatterSchema } from 'fumadocs-mdx/config'
 import { z } from 'zod'
 import { loader } from 'fumadocs-core/source'
 
-const schema = frontmatterSchema.extend({ title: z.string().optional(), icon: z.string().optional(), date: z.coerce.string().optional() })
+const schema = frontmatterSchema.extend({ title: z.string().optional(), icon: z.string().optional(), date: z.coerce.string().optional() }).loose()
 export const docs = defineDocs({ dir: 'content/docs', docs: { async: true, schema } })
 export const blog = defineDocs({ dir: 'content/blog', docs: { async: true, schema } })
 

@@ -1,0 +1,22 @@
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); }
+body {
+  background: var(--paper-bg) var(--grain); background-attachment: fixed;
+  color: var(--paper-text-body); font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+h1, h2, h3 { font-family: var(--font-display); font-variation-settings: 'SOFT' 100, 'opsz' 120; font-weight: 600; text-wrap: balance; color: var(--paper-text); }
+:focus-visible { outline: 3px dashed var(--paper-accent); outline-offset: 3px; border-radius: 4px; }
+::selection { background: var(--paper-accent); color: #fbf6ec; }
+.skip-link { position: absolute; left: 12px; top: -80px; z-index: 100; background: var(--paper-text); color: var(--paper-bg); padding: 10px 16px; border-radius: 8px; transition: top .15s; }
+.skip-link:focus { top: 12px; }
+img { max-width: 100%; height: auto; }
+.sr-only-x { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Wiring icons: white-ish on dark grounds, ink on paper. Never hardcode text-white. */
+.wiring-icon { color: var(--paper-text-muted); }
+.on-ink .wiring-icon, [data-code-ink] .wiring-icon { color: rgba(255, 255, 255, 0.6); }
+
+/* Entry animation: one orchestrated page load */
+@keyframes pk-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.rise { animation: pk-rise .7s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 90ms); }
+@media (prefers-reduced-motion: reduce) { .rise { animation: none; } html { scroll-behavior: auto; } }

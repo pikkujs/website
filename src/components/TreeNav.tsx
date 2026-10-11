@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { WiringIcon } from '@/components/shims/WiringIcons'
+import { WiringIcon } from '@/components/WiringIcons'
 // frontmatter/meta.json `icon: "http,websocket"` -> wiring icons (replaces customProps.wirings)
 const Icons = ({ icon }: { icon?: any }) => typeof icon === 'string' ? <span className="mr-1 inline-flex gap-0.5 align-middle">{icon.split(',').map((w) => <WiringIcon key={w} wiringId={w} size={13} />)}</span> : null
 export function TreeNav({ nodes, path }: { nodes: any[]; path: string }) {
