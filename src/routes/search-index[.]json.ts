@@ -1,4 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { searchServer } from '@/lib/search'
-// static export of the search index: prerendered at build, no server needed at runtime
-export const Route = createFileRoute('/search-index.json')({ server: { handlers: { GET: async () => searchServer.staticGET() } } })
+import { buildSearchIndex } from '@/lib/search'
+// prerendered at build into dist/client/search-index.json; the browser loads it on first open of the palette
+export const Route = createFileRoute('/search-index.json')({
+  server: { handlers: { GET: async () => new Response(JSON.stringify(await buildSearchIndex()), { headers: { 'content-type': 'application/json' } }) } },
+})

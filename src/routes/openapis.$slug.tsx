@@ -1,28 +1,15 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router'
+import { createFileRoute, notFound } from '@tanstack/react-router'
 import { getOpenApi } from '@/lib/catalogue'
+import Detail, { type Spec } from '@/components/OpenApiCatalogue/Detail'
+import { pageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/openapis/$slug')({
   loader: async ({ params }) => { const r = await getOpenApi({ data: params.slug }); if (!r) throw notFound(); return r },
   headers: () => ({ 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' }),
-  head: ({ loaderData }) => loaderData ? { meta: [{ title: `${loaderData.api.title ?? loaderData.api.name} OpenAPI | Pikku` }] } : {},
-  component: Detail,
+  head: ({ loaderData, params }) => pageHead({ title: `${loaderData?.api.title ?? loaderData?.api.name ?? params.slug} OpenAPI`, description: `Generate a typed Pikku addon from the ${loaderData?.api.title ?? params.slug} OpenAPI specification.`, path: `/openapis/${params.slug}` }),
+  component: () => {
+    const { api } = Route.useLoaderData()
+    const spec: Spec = { slug: api.name, name: api.name, title: api.title, version: api.version, specUrl: api.specUrl, operations: api.operations, authType: api.authType, pricingModel: api.pricingModel, freeTier: api.freeTier, docsUrl: api.docsUrl } as Spec
+    return <Detail spec={spec} />
+  },
 })
-function Detail() {
-  const { api, stale } = Route.useLoaderData()
-  return (
-    <main className="mx-auto max-w-4xl px-4 py-10">
-      <Link to="/openapis" className="text-sm">← OpenAPI catalogue</Link>
-      <div className="mt-4 text-xs uppercase text-muted-foreground">{api.name}{api.version && ` · v${api.version}`}</div>
-      <h1 className="text-4xl font-bold">{api.title ?? api.name}</h1>
-      <dl className="mt-4 grid grid-cols-2 gap-2 text-sm">
-        {api.provider && <><dt>Provider</dt><dd>{api.provider}</dd></>}
-        {api.operations != null && <><dt>Operations</dt><dd>{api.operations}</dd></>}
-        {api.openapiVer && <><dt>Spec version</dt><dd>{api.openapiVer}</dd></>}
-        {api.authType && <><dt>Auth</dt><dd>{api.authType}</dd></>}
-        {api.specUrl && <><dt>Spec</dt><dd><a href={api.specUrl}>{api.specUrl}</a></dd></>}
-      </dl>
-      <pre className="mt-6 overflow-auto rounded border border-border p-3 text-sm">{`npx pikku new addon --openapi ${api.specUrl ?? api.name}`}</pre>
-      {stale && <p className="mt-4 text-xs text-muted-foreground">Served from a snapshot; the registry did not answer.</p>}
-    </main>
-  )
-}

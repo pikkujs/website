@@ -48,6 +48,28 @@ async function asset<T>(rel: string): Promise<T | null> {
 }
 const fixture = async () => (await asset<{ apis: ApiRow[] }>('openapis.json')) ?? { apis: [] }
 
+export const specSlug = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '')
+
+/** Full rows + provider counts, for the browse view (fetched by the client from /registry-data/openapis.json). */
+export async function openApiCatalogue() {
+  let rows: ApiRow[]; let stale = false
+  try {
+    rows = []
+    for (let offset = 0; ; offset += 1000) {
+      const page = await registryGet<{ apis?: ApiRow[]; total?: number }>(`/registry/openapis?limit=1000&offset=${offset}`)
+      const apis = page.apis ?? []
+      rows.push(...apis)
+      if (apis.length < 1000 || rows.length >= (page.total ?? Infinity)) break
+    }
+  } catch (err) {
+    console.warn('[registry] falling back to fixture:', (err as Error).message)
+    rows = (await fixture()).apis; stale = true
+  }
+  const counts = new Map<string, number>()
+  for (const r of rows) if (r.provider) counts.set(r.provider, (counts.get(r.provider) ?? 0) + 1)
+  return { apis: rows, providers: [...counts.entries()].map(([provider, apiCount]) => ({ provider, apiCount })).sort((a, b) => a.provider.localeCompare(b.provider)), stale }
+}
+
 export const listOpenApis = createServerFn({ method: 'GET' }).handler(async () => {
   try {
     const rows: ApiRow[] = []
@@ -66,7 +88,9 @@ export const listOpenApis = createServerFn({ method: 'GET' }).handler(async () =
 
 export const getOpenApi = createServerFn({ method: 'GET' })
   .inputValidator((name: string) => name)
-  .handler(async ({ data: name }) => {
+  .handler(async ({ data: slug }) => {
+    const fx = (await fixture()).apis
+    const name = fx.find((a) => a.name === slug || specSlug(a.name) === slug)?.name ?? slug
     try {
       const row = await registryGet<ApiRow>(`/registry/openapis/${encodeURIComponent(name)}`)
       return { api: row, stale: false }

@@ -135,6 +135,7 @@
 }
 
 [data-code-ink] {
+  --code-block-bg: var(--paper-code-bg); --code-block-bar: var(--paper-code-bg-bar); --code-block-border: var(--paper-code-border); --code-block-text: var(--paper-code-text);
   --code-bg: var(--paper-code-bg); --code-plain: var(--paper-code-text); --code-kw: #e8834a; --code-str: var(--paper-code-teal);
   --code-num: var(--paper-code-hl); --code-cmt: var(--paper-code-dim); --code-fn: var(--paper-code-green); --code-type: #d7b3e8;
   --code-prop: #9fc3cf; --code-op: #b3ab99; --code-punct: var(--paper-on-dark-faint);
