@@ -69,11 +69,11 @@
 .site-footer-in { max-width: 1200px; margin: 0 auto; padding: 48px 24px 28px; display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; }
 .foot-brand img { height: 52px; width: auto; }
 .foot-brand p { margin: 12px 0 0; max-width: 28ch; font-size: .92rem; color: var(--paper-text-muted); }
-.foot-title { font: 700 .7rem var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--paper-accent); margin: 0 0 12px; }
+.foot-title { font: 700 .7rem var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--paper-accent-dark); margin: 0 0 12px; }
 .foot-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .foot-col a { color: var(--paper-text-body); font-size: .93rem; }
 .foot-col a:hover { color: var(--paper-accent); text-decoration: underline; text-underline-offset: 3px; }
-.foot-copy { max-width: 1200px; margin: 0 auto; padding: 18px 24px 30px; border-top: 1px dashed var(--paper-border-strong); font-size: .82rem; color: var(--paper-text-faint); }
+.foot-copy { max-width: 1200px; margin: 0 auto; padding: 18px 24px 30px; border-top: 1px dashed var(--paper-border-strong); font-size: .82rem; color: var(--paper-text-muted); }
 @media (max-width: 760px) { .site-footer-in { grid-template-columns: 1fr 1fr; } .foot-brand { grid-column: 1 / -1; } }
 
 /* buttons (also used by PaperLayout pages through their own module classes) */

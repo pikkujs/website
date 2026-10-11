@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router'
 export function NotFound() {
   return (
     <section className="nf">
+      <title>Page not found | Pikku</title>
       <p className="nf-hand">lost in the wiring?</p>
       <h1 className="nf-code">404</h1>
       <p className="nf-copy">That page isn't wired to anything. It may have moved when the site did.</p>

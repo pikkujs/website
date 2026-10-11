@@ -3,7 +3,7 @@ import type { ImgHTMLAttributes } from 'react'
 export default function ThemedImage({ sources, className, ...p }: { sources: { light: string; dark: string } } & ImgHTMLAttributes<HTMLImageElement>) {
   return (
     <>
-      <img {...p} src={sources.light} className={`${className ?? ''} themed-img-light`} />
+      <img {...p} alt={p.alt ?? ''} src={sources.light} className={`${className ?? ''} themed-img-light`} />
       <img {...p} src={sources.dark} className={`${className ?? ''} themed-img-dark`} alt={p.alt ?? ''} aria-hidden />
     </>
   )

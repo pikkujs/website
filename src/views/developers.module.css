@@ -182,7 +182,7 @@
 .runtimeChip:hover { border-color: var(--paper-accent); color: var(--paper-text); }
 
 .runtimeNote { margin-top: 28px; font-size: 14px; color: var(--paper-text-faint); }
-.runtimeNote a { color: var(--paper-accent); }
+.runtimeNote a { color: var(--paper-accent-dark); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ── API surface ───────────────────────────────────────── */
 .surfaceGrid {
@@ -252,7 +252,7 @@
   color: var(--paper-text-body);
 }
 
-.surfaceNote a { color: var(--paper-accent); }
+.surfaceNote a { color: var(--paper-accent-dark); text-decoration: underline; text-underline-offset: 3px; }
 
 .surfaceLead code {
   font-family: 'Geist Mono', monospace;
