@@ -1,0 +1,301 @@
+{
+  "hero": {
+    "title": "Pikku",
+    "subtitle": "One Function, Every Protocol",
+    "description": "Write TypeScript functions once, trigger them via HTTP, WebSocket, cron jobs, queues, and more. Pikku is the swiss knife for building scalable applications with full type safety.",
+    "features": [
+      "Same function can handle RPC, HTTP, SSE, WebSocket, CronJobs, Queues, and MCP",
+      "Auto-generated mini TypeScript SDKs with complete type safety",
+      "Deploy anywhere - Express, Lambda, Cloudflare, Next.js, Azure and more"
+    ],
+    "primaryCta": "Build Your First API",
+    "secondaryCta": "View on GitHub"
+  },
+  "typeSafety": {
+    "title": "Full Type Safety from Server to Client",
+    "description": "Write once, get TypeScript autocomplete everywhere",
+    "comingSoon": "🎬 Coming Soon: Interactive demo showing:",
+    "serverSide": {
+      "title": "📝 Server Side",
+      "features": [
+        "Write pikkuFunc with types",
+        "Export function",
+        "Run CLI command"
+      ]
+    },
+    "clientSide": {
+      "title": "✨ Client Side",
+      "features": [
+        "Full TypeScript autocomplete",
+        "Automatic type checking",
+        "Runtime validation"
+      ]
+    },
+    "benefits": [
+      {
+        "icon": "⚡",
+        "title": "Instant Feedback",
+        "description": "See type errors as you type"
+      },
+      {
+        "icon": "🔄",
+        "title": "Always in Sync",
+        "description": "Client types update automatically"
+      },
+      {
+        "icon": "🛡️",
+        "title": "Runtime Safe",
+        "description": "Validation matches your types"
+      }
+    ],
+    "demoNote": "Demo GIF will show live TypeScript intellisense flowing from server function definitions to client usage"
+  },
+  "platformTools": {
+    "title": "All the tools needed for scaleable backend platforms",
+    "description": "Build your backend with all the different tools you need, without having to learn a new framework for each decision",
+    "transports": [
+      {
+        "id": "http",
+        "name": "HTTP APIs",
+        "description": "REST endpoints with automatic OpenAPI documentation",
+        "supportedRuntimes": ["AWS Lambda", "Cloudflare Workers", "Express", "Fastify", "Next.js", "uWS", "WS", "Azure Functions", "Google Cloud Functions"]
+      },
+      {
+        "id": "websocket", 
+        "name": "WebSocket",
+        "description": "Real-time bidirectional communication",
+        "supportedRuntimes": ["AWS Lambda", "Cloudflare Workers", "Express", "Fastify", "uWS", "WS"]
+      },
+      {
+        "id": "sse",
+        "name": "Server-Sent Events", 
+        "description": "Streaming data to clients",
+        "supportedRuntimes": ["Express", "Fastify", "Next.js", "uWS"]
+      },
+      {
+        "id": "cron",
+        "name": "Scheduled Tasks",
+        "description": "Cron jobs and background processing",
+        "supportedRuntimes": ["AWS Lambda", "Cloudflare Workers", "Azure Functions", "Google Cloud Functions"]
+      },
+      {
+        "id": "queues",
+        "name": "Background Queues",
+        "description": "Reliable message processing",
+        "supportedRuntimes": ["AWS Lambda", "Express", "Fastify", "Azure Functions", "Google Cloud Functions"]
+      },
+      {
+        "id": "rpc",
+        "name": "RPC Services",
+        "description": "Type-safe service-to-service communication",
+        "supportedRuntimes": ["Express", "Fastify", "AWS Lambda"]
+      },
+      {
+        "id": "mcp",
+        "name": "MCP Server",
+        "description": "Expose functions as Model Control Protocol tools for AI models",
+        "supportedRuntimes": ["MCP Server"]
+      }
+    ]
+  },
+  "transports": {
+    "http": {
+      "title": "HTTP APIs",
+      "description": "Build REST APIs and handle HTTP requests with full type safety and automatic OpenAPI generation.",
+      "supportedRuntimes": ["AWS", "Cloudflare", "Express", "Fastify", "nextJS"],
+      "specialFeatures": [
+        "Automatic OpenAPI documentation",
+        "Auth & Permissions",
+        "Middleware",
+        "Progressively enhancement to stream"
+      ],
+      "functions": "// Functions defined at the top of the page\n// getBoard, createCard, subscribeToBoardUpdates, sendOverdueNotifications, generateBoardReport",
+      "wiring": "// GET board (authenticated)\nwireHTTP({\n  method: 'get',\n  route: '/board/:boardId',\n  func: getBoard,\n  auth: true,\n  docs: {\n    description: 'Get board with lists and cards',\n    tags: ['boards', 'kanban'],\n  },\n})\n\n// POST to create card (authenticated with permissions)\nwireHTTP({\n  method: 'post',\n  route: '/card',\n  func: createCard,\n  auth: true,\n  docs: {\n    description: 'Create a new card in a list',\n    tags: ['cards', 'kanban'],\n  },\n})",
+      "client": "import { PikkuFetch } from './pikku-fetch.gen.js'\n\nconst pikkuFetch = new PikkuFetch({\n  serverUrl: process.env.API_BASE_URL\n})\n\n// Set authentication for protected endpoints\npikkuFetch.setAPIKey(userApiKey)\n\n// Type-safe GET board data\nconst board = await pikkuFetch.get('/board/board-123')\nconsole.log(`Board: ${board.title}`)\nconsole.log(`Lists: ${board.lists.length}`)\n\n// Type-safe POST to create card\nconst result = await pikkuFetch.post('/card', {\n  listId: 'list-456',\n  title: 'Fix login bug',\n  description: 'Users cannot login with special characters'\n})\nconsole.log(`Card created: ${result.cardId}`)",
+      "docsLink": "/docs/wiring/http",
+      "readMoreText": "Learn more about HTTP APIs"
+    },
+    "websocket": {
+      "title": "WebSocket & Real-time",
+      "description": "Build real-time applications with typed WebSocket connections and pub/sub messaging.",
+      "supportedRuntimes": ["AWS", "Cloudflare", "uWS", "ws"],
+      "specialFeatures": [
+        "Run locally or in a serverless environments",
+        "Route to functions based on message action",
+        "Built-in pub/sub system"
+      ],
+      "functions": "// Functions defined at the top of the page\n// subscribeToBoardUpdates - see Pikku Function Definitions section\n\n// Connection handlers\nexport const onConnect = pikkuChannelConnectionFunc(\n  async ({ logger, channel }) => {\n    const { boardId } = channel.openingData\n    logger.info(`Connected to board updates channel for board: ${boardId}`)\n    channel.send({ type: 'welcome', message: `Connected to board ${boardId} collaboration` })\n  }\n)\n\nexport const onDisconnect = pikkuChannelDisconnectionFunc(\n  async ({ logger, channel }) => {\n    const { boardId } = channel.openingData\n    logger.info(`Disconnected from board updates channel for board: ${boardId}`)\n  }\n)",
+      "wiring": "wireChannel({\n  // The channel name, used to identify the channel with types in the client\n  // and needs to be unique across all channels\n  name: 'board-updates',\n  \n  // The route to use for the channel. Supports parameterized routes\n  // for board-specific channels\n  route: '/board/:boardId',\n  \n  // Called when a client connects to the channel\n  onConnect,\n  \n  // Called when a client disconnects from the channel\n  onDisconnect,\n  \n  // This is a global permission that applies to all message routes,\n  // unless overridden by the specific route\n  auth: true,\n  \n  // Message routing configuration for different actions\n  onMessageWiring: {\n    action: {\n      // Subscribe to board updates - permissions are handled in the function definition\n      subscribe: subscribeToBoardUpdates,\n    },\n  },\n  \n  // Tags for documentation and organization\n  tags: ['boards', 'cards', 'realtime'],\n})",
+      "client": "import { PikkuWebSocket } from './pikku-websocket.gen.js'\n\nconst websocket = new PikkuWebSocket<'board-updates'>(serverUrl, apiKey)\n\nwebsocket.ws.onopen = async () => {\n  console.log('Connected to board collaboration')\n  \n  // Subscribe to board update messages\n  websocket.subscribe((boardUpdate) => {\n    console.log(`Board event: ${boardUpdate.type}`) \n    if (boardUpdate.type === 'cardCreated') {\n      console.log(`New card added: ${boardUpdate.cardId}`)\n    }\n  })\n  \n  // Subscribe to specific board\n  websocket.sendMessage('subscribe', {\n    boardId: 'board-123'\n  })\n}",
+      "docsLink": "/docs/wiring/channels",
+      "readMoreText": "Learn more about WebSocket & Channels"
+    },
+    "sse": {
+      "title": "Server-Sent Events",
+      "description": "Stream real-time data to clients with automatic reconnection and progressive enhancement.",
+      "supportedRuntimes": ["Express", "Fastify"],
+      "specialFeatures": [
+        "Simple streaming API",
+        "Provide realtime updates",
+        "Typed streaming data",
+        "Typed SSE Client"
+      ],
+      "functions": "/** Stream live board changes to connected clients */\nexport const streamBoardChanges = pikkuSessionlessFunc<\n  { boardId: string },\n  { type: 'cardCreated' | 'cardMoved' | 'cardUpdated'; boardId: string; cardId?: string; timestamp: number } | void\n>(async ({ boardService, eventHub, channel }, { boardId }) => {\n  if (!channel) {\n    throw new Error('This function requires a streaming connection.')\n  }\n  \n  // Send initial board status\n  const board = await boardService.getBoard(boardId)\n  channel.send({ \n    type: 'boardStatus', \n    boardId, \n    cardCount: board.lists.reduce((sum, list) => sum + list.cards.length, 0),\n    timestamp: Date.now() \n  })\n  \n  // Subscribe to board events and stream them\n  const eventHandler = (event: any) => {\n    channel.send({\n      type: event.type,\n      boardId: event.boardId,\n      cardId: event.cardId,\n      timestamp: Date.now()\n    })\n  }\n  \n  await eventHub?.subscribe(`board:${boardId}`, eventHandler)\n  \n  // Clean up after 5 minutes\n  setTimeout(() => {\n    eventHub?.unsubscribe(`board:${boardId}`, eventHandler)\n    channel.close()\n  }, 300000)\n})",
+      "wiring": "wireHTTP({\n  auth: true,\n  method: 'get',\n  route: '/board/:boardId/stream',\n  func: streamBoardChanges,\n  sse: true,\n  docs: {\n    description: 'Stream real-time board changes and updates',\n    tags: ['boards', 'streaming', 'realtime'],\n  },\n})",
+      "client": "import { PikkuFetch } from './pikku-fetch.gen.js'\n\nconst pikkuFetch = new PikkuFetch({\n  serverUrl: process.env.API_BASE_URL\n})\n\n// Set authentication for protected endpoints\npikkuFetch.setAPIKey(userApiKey)\n\n// Type-safe streaming for board changes\nconst stream = await pikkuFetch.getSSE('/board/board-123/stream')\n\n// Listen for board updates\nstream.onMessage((update) => {\n  console.log(`Board event: ${update.type} at ${new Date(update.timestamp).toLocaleTimeString()}`)\n  if (update.type === 'cardCreated') {\n    console.log(`New card created: ${update.cardId}`)\n    // Update UI to show new card\n  }\n})\n\n// Handle stream end\nstream.onClose(() => {\n  console.log('Board stream ended')\n})",
+      "docsLink": "/docs/wiring/http/server-sent-events",
+      "readMoreText": "Learn more about Server-Sent Events"
+    },
+    "cron": {
+      "title": "Scheduled Tasks",
+      "description": "Run cron jobs and scheduled tasks that work across all deployment environments.",
+      "supportedRuntimes": ["AWS", "Cloudflare", "Custom"],
+      "specialFeatures": [
+        "Cron expression support",
+        "Timezone handling",
+        "Error retry logic",
+        "Serverless friendly"
+      ],
+      "functions": "// Functions defined at the top of the page\n// sendOverdueNotifications - see Pikku Function Definitions section",
+      "wiring": "wireScheduler({\n  name: 'sendOverdueNotifications',\n  schedule: '0 9 * * *', // Every day at 9 AM\n  func: sendOverdueNotifications,\n  tags: ['notifications', 'kanban', 'overdue'],\n})",
+      "docsLink": "/docs/wiring/scheduled-tasks",
+      "readMoreText": "Learn more about Scheduled Tasks"
+    },
+    "queues": {
+      "title": "Background Queues",
+      "description": "Process background jobs with reliable message delivery and retry logic.",
+      "supportedRuntimes": ["BullMQ", "AWS", "PGBoss"],
+      "specialFeatures": [
+        "Switch out different queue providers, unlocking scaling opportunities",
+        "Supports different queue providers, without locking you in with code."
+      ],
+      "functions": "// Functions defined at the top of the page  \n// generateBoardReport - see Pikku Function Definitions section",
+      "wiring": "wireQueueWorker({\n  queueName: 'board-reports-queue',\n  func: generateBoardReport,\n  retryOptions: {\n    attempts: 3,\n    backoff: {\n      type: 'exponential',\n      delay: 2000,\n    },\n  },\n})",
+      "docsLink": "/docs/wiring/queue",
+      "readMoreText": "Learn more about Background Queues"
+    },
+    "rpc": {
+      "title": "RPC & Services",
+      "description": "Build type-safe RPC services with automatic client generation and service discovery.",
+      "supportedRuntimes": ["Express", "Fastify", "AWS", "Custom"],
+      "specialFeatures": [
+        "Automatic client generation",
+        "Service discovery", 
+        "Type-safe service calls",
+        "Request/response validation"
+      ],
+      "functions": "// RPC function that demonstrates recursive calls and depth tracking\nexport const rpcTest = pikkuSessionlessFunc<{ in: number }>(\n  async ({ logger, rpc }, data) => {\n    logger.debug(`RPC Test with RPC: ${rpc?.depth}`)\n    if (rpc?.depth && rpc?.depth < 10) {\n      data.in += 1\n      rpc.invoke('rpcTest', data)\n      await rpc.invoke(`rpcTest`, data)\n    }\n    return data\n  }\n)",
+      "wiring": "// RPC functions are automatically discovered by Pikku!\n// No explicit wiring configuration needed.\n//\n// How it works:\n// 1. Export any pikkuFunc or pikkuSessionlessFunc\n// 2. Pikku scans your source files during build\n// 3. Functions become available via rpc.invoke('functionName', data)\n// 4. Type-safe RPC clients are auto-generated\n//\n// That's it! No addRPCRoute() or registration required.",
+      "client": "import { PikkuRPCClient } from './pikku-rpc.gen.js'\n\nconst rpcClient = new PikkuRPCClient({\n  serverUrl: 'http://localhost:3000/rpc'\n})\n\n// Type-safe RPC call\nconst result = await rpcClient.invoke('rpcTest', {\n  in: 1\n})\n\nconsole.log(`Final result: ${result.in}`)\nconsole.log(`RPC recursion completed successfully`)",
+      "docsLink": "/docs/core/rpcs",
+      "readMoreText": "Learn more about RPC Services"
+    },
+    "mcp": {
+      "title": "MCP Server",
+      "description": "Expose your Pikku functions as Model Control Protocol tools, enabling AI models to interact with your backend services directly.",
+      "supportedRuntimes": ["MCP Server"],
+      "specialFeatures": [
+        "AI model integration",
+        "Tool and resource exposure",
+        "Type-safe AI interactions",
+        "Multiple transport support"
+      ],
+      "functions": "// MCP Tool: AI can call this to create cards\nexport const createCardTool = pikkuMCPToolFunc<CreateCard>(\n  async ({ rpc, logger }, data) => {\n    const card = await rpc.invoke('createCard', data)\n    \n    return [{\n      type: 'text',\n      text: `Successfully created card \"${data.title}\" with ID: ${card.cardId}`,\n    }]\n  }\n)\n\n// MCP Resource: AI can read board information\nexport const getBoardResource = pikkuMCPResourceFunc<{ boardId: string }>(\n  async ({ boardService }, { boardId }) => {\n    const board = await boardService.getBoard(boardId)\n    \n    return [{\n      uri: `board/${boardId}`,\n      text: JSON.stringify({\n        title: board.title,\n        listCount: board.lists.length,\n        totalCards: board.lists.reduce((sum, list) => sum + list.cards.length, 0)\n      }),\n    }]\n  }\n)\n\n// MCP Prompt: Kanban assistant template\nexport const kanbanAssistantPrompt = pikkuMCPPromptFunc<unknown>(async () => {\n  return [{\n    role: 'user',\n    content: {\n      type: 'text',\n      text: `You are a Kanban board assistant helping teams organize their work. Your goal is to:\n\n1. Help create and organize cards across different lists (To Do, In Progress, Done)\n2. Suggest improvements to workflow and card organization\n3. Track progress and identify bottlenecks\n4. Generate status reports and insights\n\nFocus on productivity and clear task management.`,\n    },\n  }]\n})",
+      "wiring": "wireMCPTool({\n  name: 'createCard',\n  description: 'Create new cards in Kanban board lists',\n  func: createCardTool,\n  tags: ['kanban', 'cards', 'productivity'],\n})\n\nwireMCPResource({\n  uri: 'board/{boardId}',\n  title: 'Board Information',\n  description: 'Get board overview with list and card counts',\n  func: getBoardResource,\n  tags: ['kanban', 'boards', 'overview'],\n})\n\nwireMCPrompt({\n  name: 'kanbanAssistant',\n  description: 'Generate Kanban assistant prompts for productivity help',\n  func: kanbanAssistantPrompt,\n  tags: ['kanban', 'assistant', 'productivity'],\n})",
+      "docsLink": "/docs/wiring/mcp",
+      "readMoreText": "Learn more about MCP Server"
+    }
+  },
+  "coreFeatures": {
+    "title": "Built for Developers",
+    "description": "Pikku provides everything you need to build robust, type-safe applications with minimal setup.",
+    "features": [
+      {
+        "icon": "🎯",
+        "title": "Fully Typed",
+        "description": "Complete type safety from server to client with automatic type generation"
+      },
+      {
+        "icon": "🔐",
+        "title": "Auth & Permissions",
+        "description": "Built-in authentication, sessions, and granular permission system"
+      },
+      {
+        "icon": "⚡",
+        "title": "Middleware",
+        "description": "Hook into your functions with middleware for logging, custom validation, and more"
+      },
+      {
+        "icon": "⚙️",
+        "title": "Service Injection",
+        "description": "Simple dependency injection without decorators or magic"
+      }
+    ]
+  },
+  "architectureFlexibility": {
+    "title": "Monoliths, Services, Functions, you can have it all",
+    "description": "Build your application architecture your way with Pikku's flexible approach to deployment and bundling.",
+    "features": [
+      {
+        "icon": "📦",
+        "title": "Minimal Bundle Generation",
+        "description": "Tree-shake all the services your code doesn't need for optimal bundle sizes"
+      },
+      {
+        "icon": "🎯", 
+        "title": "Service Filtering",
+        "description": "Pick and choose which services you want to deploy by filtering via tag, files or transport type"
+      },
+      {
+        "icon": "⚡",
+        "title": "Functionless Optimised",
+        "description": "Select a single function to deploy via Lambda/Cloudflare and let Pikku pluck out the core dependencies"
+      }
+    ]
+  },
+  "runAnywhere": {
+    "title": "Deploy Anywhere, Scale Everywhere",
+    "description": "From serverless functions to traditional servers, from SQS Lambda queues to serverless WebSockets - your Pikku code runs everywhere without modification.",
+    "deploymentTypes": [
+      {
+        "icon": "☁️",
+        "title": "Serverless First",
+        "description": "AWS Lambda, Cloudflare Workers, Vercel Functions - deploy with zero configuration",
+        "features": [
+          "SQS Lambda Queues",
+          "Serverless WebSockets",
+          "Scheduled Functions"
+        ]
+      },
+      {
+        "icon": "🖥️",
+        "title": "Traditional Servers",
+        "description": "Express, Fastify, Next.js - integrate with existing applications seamlessly",
+        "features": [
+          "Middleware Integration",
+          "Docker Deployment",
+          "Kubernetes Ready"
+        ]
+      },
+      {
+        "icon": "🔧",
+        "title": "Custom Runtimes",
+        "description": "Build your own runtime adapter for any environment or platform",
+        "features": [
+          "Custom HTTP Handlers",
+          "WebSocket Adapters",
+          "Scheduler Handlers"
+        ]
+      }
+    ],
+    "finalMessage": {
+      "icon": "🚀",
+      "title": "It's all an adapter away",
+      "description": "Pikku glues together the pieces you need, so you can build an adaptor to run in any environment."
+    }
+  },
+  "common": {
+    "runsOn": "Runs on:",
+    "specialFeatures": "Features:"
+  }
+}

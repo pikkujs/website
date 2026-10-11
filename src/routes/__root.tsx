@@ -1,13 +1,71 @@
 /// <reference types="vite/client" />
-import { createRootRoute, HeadContent, Outlet, Scripts, Link } from '@tanstack/react-router'
-import { TanstackProvider } from 'fumadocs-core/framework/tanstack'   // headless provider (no fumadocs-ui)
+import { createRootRoute, HeadContent, Outlet, Scripts, useRouter } from '@tanstack/react-router'
+import { useEffect } from 'react'
+import { TanstackProvider } from 'fumadocs-core/framework/tanstack' // headless provider (no fumadocs-ui)
 import '../styles.css'
-import { SearchBox } from '@/components/SearchBox'
-export const Route = createRootRoute({
-  head: () => ({ meta: [{ charSet: 'utf-8' }, { name: 'viewport', content: 'width=device-width, initial-scale=1' }, { title: 'Pikku' }] }),
-  component: () => (
-    <html suppressHydrationWarning><head><HeadContent /></head>
-      <body><header className="sticky top-0 z-40 flex h-14 items-center gap-6 border-b border-border bg-background px-4"><Link to="/" className="text-lg font-bold">pikku</Link><Link to="/docs/$" params={{ _splat: '' }} className="text-sm">Docs</Link><Link to="/blog" className="text-sm">Blog</Link><Link to="/addons" className="text-sm">Addons</Link><Link to="/openapis" className="text-sm">OpenAPIs</Link><span className="ml-auto"><SearchBox mode={(import.meta.env.VITE_SEARCH as any) ?? 'static'} /></span></header>
-        <TanstackProvider><Outlet /></TanstackProvider><Scripts /></body></html>
-  ),
+import { Navbar } from '@/components/site/Navbar'
+import { Footer } from '@/components/site/Footer'
+import { NotFound } from '@/components/site/NotFound'
+import { GA_ID, pageHead, SITE } from '@/lib/seo'
+
+// Runs before first paint: light by default, remembered choice wins. No flash.
+const THEME_INIT = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light'}catch(e){document.documentElement.dataset.theme='light'}`
+// Production only, after load, so analytics never competes with first render.
+const GA_BOOT = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','${GA_ID}');window.addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${GA_ID}';document.head.appendChild(s)},800)})`
+
+const JSON_LD = JSON.stringify({
+  '@context': 'https://schema.org', '@type': 'SoftwareSourceCode', name: 'Pikku',
+  description: 'Open-source TypeScript backend platform. One command runs database, auth, content, email, secrets, workflows and AI agents locally, identical to production. Deploy anywhere.',
+  url: SITE, codeRepository: 'https://github.com/pikkujs/pikku', programmingLanguage: 'TypeScript', license: 'https://opensource.org/licenses/MIT',
+  author: { '@type': 'Organization', name: 'Pikku', url: SITE },
 })
+
+export const Route = createRootRoute({
+  head: () => {
+    const base = pageHead({ path: '/' })
+    return {
+      meta: [{ charSet: 'utf-8' }, { name: 'viewport', content: 'width=device-width, initial-scale=1' }, { name: 'theme-color', content: '#f4ecdd' }, ...base.meta.filter((m: any) => !m.title)],
+      links: [
+        { rel: 'icon', href: '/img/favicon.ico', sizes: 'any' },
+        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/img/favicon-32x32.png' },
+        { rel: 'apple-touch-icon', href: '/img/apple-touch-icon.png' },
+        { rel: 'alternate', type: 'application/rss+xml', title: 'Pikku Blog', href: '/blog/rss.xml' },
+        { rel: 'alternate', type: 'application/atom+xml', title: 'Pikku Blog', href: '/blog/atom.xml' },
+      ],
+      scripts: [
+        { children: THEME_INIT },
+        { type: 'application/ld+json', children: JSON_LD },
+        ...(import.meta.env.PROD ? [{ children: `if(location.hostname==='pikku.dev'||location.hostname==='www.pikku.dev'){${GA_BOOT}}` }] : []),
+      ],
+    }
+  },
+  notFoundComponent: NotFound,
+  component: Root,
+})
+
+function Analytics() {
+  const router = useRouter()
+  useEffect(() => router.subscribe('onResolved', ({ toLocation, fromLocation }) => {
+    const w = window as any
+    if (typeof w.gtag === 'function' && toLocation.pathname !== fromLocation?.pathname) w.gtag('config', GA_ID, { page_path: toLocation.pathname })
+  }), [router])
+  return null
+}
+
+function Root() {
+  return (
+    <html lang="en" data-theme="light" suppressHydrationWarning>
+      <head><HeadContent /></head>
+      <body>
+        <a href="#main" className="skip-link">Skip to content</a>
+        <TanstackProvider>
+          <Navbar />
+          <main id="main" tabIndex={-1}><Outlet /></main>
+          <Footer />
+          <Analytics />
+        </TanstackProvider>
+        <Scripts />
+      </body>
+    </html>
+  )
+}

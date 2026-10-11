@@ -1,0 +1,65 @@
+/* /core/built-in-services — page-specific. Shared base composed from PaperLayout. */
+
+.section     { composes: section     from '../../components/PaperLayout/paper.module.css'; }
+.sectionAlt  { composes: sectionAlt  from '../../components/PaperLayout/paper.module.css'; }
+.sectionDark { composes: sectionDark from '../../components/PaperLayout/paper.module.css'; }
+.eyebrow     { composes: eyebrow     from '../../components/PaperLayout/paper.module.css'; }
+.h1          { composes: h1          from '../../components/PaperLayout/paper.module.css'; }
+.h2          { composes: h2          from '../../components/PaperLayout/paper.module.css'; }
+.lead        { composes: lead        from '../../components/PaperLayout/paper.module.css'; }
+.wrap        { composes: wrapWide    from '../../components/PaperLayout/paper.module.css'; }
+.badge       { composes: badge       from '../../components/PaperLayout/paper.module.css'; }
+.btnPrimary  { composes: btnPrimary  from '../../components/PaperLayout/paper.module.css'; }
+.btnGhost    { composes: btnGhost    from '../../components/PaperLayout/paper.module.css'; }
+.card        { composes: card        from '../../components/PaperLayout/paper.module.css'; }
+.cardTitle   { composes: cardTitle   from '../../components/PaperLayout/paper.module.css'; }
+.cardBody    { composes: cardBody    from '../../components/PaperLayout/paper.module.css'; }
+.sectionHead { composes: sectionHead from '../../components/PaperLayout/paper.module.css'; }
+
+.hero { padding: 64px 0 56px; border-bottom: 1px solid #e3ddd0; }
+.heroInner { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+.groupLabel {
+  font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: #9a9387;
+  margin-bottom: 16px;
+}
+
+.serviceGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 860px) { .serviceGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .serviceGrid { grid-template-columns: 1fr; } }
+
+.serviceCard {
+  background: #fffefb; border: 1px solid #e3ddd0; border-radius: 12px;
+  padding: 20px; transition: border-color 0.2s;
+}
+.serviceCard:hover { border-color: #d4ccba; }
+
+.serviceIcon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 10px;
+  background: #f4e6dd; border: 1px solid #e8cfc3;
+  margin-bottom: 12px; color: #c2410c;
+}
+
+.providerBadge {
+  display: inline-block; font-family: 'Geist Mono', monospace;
+  font-size: 10px; font-weight: 600; color: #6b6559;
+  background: #efece4; border: 1px solid #e3ddd0;
+  border-radius: 4px; padding: 2px 6px; margin: 2px 2px 0 0;
+}
+
+.cmdBlock {
+  background: #fffefb; border: 1px solid #e3ddd0; color: #1a1814;
+  padding: 14px 18px; border-radius: 10px; font-family: 'Geist Mono', monospace;
+  font-size: 14px; max-width: 300px; position: relative; cursor: pointer;
+  transition: all 0.2s; margin-bottom: 28px;
+}
+.cmdBlock:hover { border-color: #d4ccba; }
+.cmdPrompt { color: #9a9387; user-select: none; }
+.copyBtn {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  opacity: 0; background: #f4e6dd; border: 1px solid #e8cfc3; border-radius: 5px;
+  padding: 5px; cursor: pointer; transition: opacity 0.2s; color: #c2410c;
+}
+.cmdBlock:hover .copyBtn { opacity: 1; }

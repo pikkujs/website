@@ -1,0 +1,122 @@
+/* The spec detail page. Structure — hero, three steps, blocks — is shared with
+   the addon detail page and imported from its module; what lives here is only
+   what an OpenAPI page has and an addon page does not: the vendor links, the
+   classification table, and the method-tagged operation list. */
+
+.heroLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-top: 18px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+}
+.heroLinks a {
+  color: var(--paper-accent-dark);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.heroLinks a:hover {
+  text-decoration: none;
+  border-bottom-color: var(--paper-accent-dark);
+}
+
+/* ── what the enricher decided ────────────────────────── */
+/* Cards rather than a ruled grid: the number of facts varies per spec, and a
+   wrapping grid with drawn cell edges leaves half-empty rows ruled off as if
+   something were missing from them. */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+  margin: 22px 0 0;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 15px 17px 17px;
+  border: 1px solid var(--paper-border);
+  border-radius: 3px;
+  background: var(--paper-bg);
+  min-width: 0;
+}
+
+.fact dt {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--paper-text-faint);
+}
+.fact dd {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--paper-text);
+  overflow-wrap: anywhere;
+}
+.factMono {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px !important;
+  color: var(--paper-text-body) !important;
+}
+
+/* ── the generated functions ──────────────────────────── */
+.ops {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+}
+
+.op {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--paper-border);
+}
+
+.opName {
+  font-family: 'Geist Mono', monospace;
+  font-size: 14px;
+  color: var(--paper-text);
+  background: none;
+  border: 0;
+  padding: 0;
+  overflow-wrap: anywhere;
+}
+
+.route {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  margin-top: 6px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  min-width: 0;
+}
+
+.method {
+  flex: none;
+  padding: 1px 6px;
+  border: 1px solid var(--paper-border-strong);
+  border-radius: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--paper-text-muted);
+}
+/* Read-only verbs sit back; the ones that change something carry the accent. */
+.post, .put, .patch { color: var(--paper-accent-dark); border-color: var(--paper-accent-dark); }
+.delete { color: #9a2b1f; border-color: #9a2b1f; }
+
+.path {
+  color: var(--paper-text-faint);
+  overflow-wrap: anywhere;
+}
+
+.capped {
+  margin: 22px 0 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--paper-text-muted);
+}

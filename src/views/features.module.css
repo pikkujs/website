@@ -1,0 +1,220 @@
+/* ─────────────────────────────────────────────────────────────
+   /features — index of everything the framework wires.
+   Composes the paper theme rather than carrying its own; the dark
+   Tailwind world this page used to live in existed nowhere else.
+   ───────────────────────────────────────────────────────────── */
+
+.section     { composes: section     from '../components/PaperLayout/paper.module.css'; }
+.sectionAlt  { composes: sectionAlt  from '../components/PaperLayout/paper.module.css'; }
+.sectionHead { composes: sectionHead from '../components/PaperLayout/paper.module.css'; }
+.wrap        { composes: wrap        from '../components/PaperLayout/paper.module.css'; }
+.badge       { composes: badge       from '../components/PaperLayout/paper.module.css'; }
+.h1          { composes: h1          from '../components/PaperLayout/paper.module.css'; }
+.h2          { composes: h2          from '../components/PaperLayout/paper.module.css'; }
+.lead        { composes: lead        from '../components/PaperLayout/paper.module.css'; }
+.btnPrimary  { composes: btnPrimary  from '../components/PaperLayout/paper.module.css'; }
+.btnGhost    { composes: btnGhost    from '../components/PaperLayout/paper.module.css'; }
+
+/* The closing dark beat, shared with every FeaturePage route */
+.ctaSection { composes: ctaSection from '../components/FeaturePage/feature-page.module.css'; }
+.cmdBlock   { composes: cmdBlock   from '../components/FeaturePage/feature-page.module.css'; }
+.cmdPrompt  { composes: cmdPrompt  from '../components/FeaturePage/feature-page.module.css'; }
+.copyBtn    { composes: copyBtn    from '../components/FeaturePage/feature-page.module.css'; }
+
+/* ── Hero ────────────────────────────────────────────────── */
+
+.hero {
+  padding: 72px 0 56px;
+  border-bottom: 1px solid var(--paper-border);
+}
+
+/* Three sentences, three lines — uncapped it ran the full 1140px and broke
+   after "Ship". */
+.hero .h1 {
+  max-width: 16ch;
+  text-wrap: balance;
+}
+
+/* ── Card grids ──────────────────────────────────────────── */
+
+.wireGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1000px) { .wireGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 820px)  { .wireGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px)  { .wireGrid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ── The two-concepts band ───────────────────────────────
+   The function on the left, the same function wired three ways on the right.
+   Top-aligned and left to their natural heights: the wiring column is longer
+   than the function by design, and stretching the function to match it only
+   buys a tall panel of empty black. */
+
+.conceptBand {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .conceptBand { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+}
+
+/* ── Group heading inside the wires section ─────────────── */
+
+.groupHead {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--paper-text-muted);
+  margin: 0 0 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--paper-border);
+}
+
+.group + .group { margin-top: 48px; }
+
+/* ── Link cards ──────────────────────────────────────────── */
+
+.linkCard {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 12px;
+  padding: 22px;
+  text-decoration: none !important;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.linkCard:hover {
+  border-color: var(--paper-border-strong);
+  transform: translateY(-2px);
+}
+
+.linkCardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--paper-accent-bg);
+  border: 1px solid var(--paper-accent-border);
+  color: var(--paper-accent);
+  margin-bottom: 16px;
+}
+
+/* custom.css forces .wiring-icon to --paper-text-muted on paper pages; inside
+   the accent chip it should read as the chip's own colour. */
+.linkCard .linkCardIcon :global(.wiring-icon) { color: var(--paper-accent); }
+
+.linkCardTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.linkCardTitle {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--paper-text);
+}
+
+.linkCardBody {
+  font-size: 14px;
+  color: var(--paper-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.linkCardTag {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--paper-accent);
+  background: var(--paper-accent-bg);
+  border: 1px solid var(--paper-accent-border);
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+.linkCardSnippet {
+  margin-top: 14px;
+  background: var(--paper-code-bg);
+  border-radius: 8px;
+  padding: 9px 11px;
+  overflow: hidden;
+}
+
+.linkCardSnippet code {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #b8b1a3;
+  white-space: nowrap;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The affordance sits at the bottom of the card whatever its height */
+.linkCardMore {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper-text-muted);
+  transition: color 0.2s;
+}
+
+.linkCard:hover .linkCardMore { color: var(--paper-accent); }
+
+.linkCardMore svg { transition: transform 0.2s; }
+.linkCard:hover .linkCardMore svg { transform: translateX(3px); }
+
+/* ── CTA ─────────────────────────────────────────────────── */
+
+.ctaActions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ctaSection .h2 { color: var(--paper-code-text); }
+.ctaSection .h2 em { color: var(--paper-accent-on-dark); }
+.ctaSection .lead { color: #b8b1a3; margin-bottom: 28px; }
+
+.ctaSection .btnPrimary {
+  background: var(--paper-bg);
+  color: var(--paper-code-bg) !important;
+}
+
+.ctaSection .btnPrimary:hover {
+  background: var(--paper-accent-on-dark);
+  color: var(--paper-code-bg) !important;
+}
+
+.ctaSection .btnGhost {
+  background: transparent;
+  border-color: #3a362e;
+  color: #cfc8ba !important;
+}
+
+.ctaSection .btnGhost:hover {
+  border-color: #b8b1a3;
+  color: var(--paper-code-text) !important;
+}

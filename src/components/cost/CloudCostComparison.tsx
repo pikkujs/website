@@ -305,9 +305,9 @@ export default function CloudCostComparison() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'var(--ifm-background-surface-color)',
+        backgroundColor: 'var(--paper-bg-alt)',
         borderRadius: '8px',
-        border: '1px solid var(--ifm-color-emphasis-300)'
+        border: '1px solid var(--paper-border-strong)'
       }}>
         <p>Loading chart...</p>
       </div>
@@ -318,15 +318,15 @@ export default function CloudCostComparison() {
     <div style={{ margin: '2rem 0', width: '100%' }}>
       <div style={{
         padding: '2rem',
-        backgroundColor: 'var(--ifm-background-surface-color)',
+        backgroundColor: 'var(--paper-bg-alt)',
         borderRadius: '8px',
-        border: '1px solid var(--ifm-color-emphasis-300)',
-        boxShadow: 'var(--ifm-global-shadow-lw)'
+        border: '1px solid var(--paper-border-strong)',
+        boxShadow: 'var(--paper-shadow-lw)'
       }}>
         <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem', textAlign: 'center' }}>
           Same Workload, Different Clouds
         </h3>
-        <p style={{ fontSize: '0.875rem', color: 'var(--ifm-color-emphasis-700)', textAlign: 'center', marginBottom: '0.5rem' }}>
+        <p style={{ fontSize: '0.875rem', color: 'var(--paper-text-body)', textAlign: 'center', marginBottom: '0.5rem' }}>
           512MB memory, 200ms duration, 50KB response
         </p>
 
@@ -365,13 +365,13 @@ export default function CloudCostComparison() {
         <div style={{ marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
             <label style={{ fontSize: '0.875rem', fontWeight: 500 }}>
-              Current Load: <span style={{ color: 'var(--ifm-color-primary)' }}>{formatRequests(currentLoad)} requests/month</span>
+              Current Load: <span style={{ color: 'var(--paper-accent)' }}>{formatRequests(currentLoad)} requests/month</span>
             </label>
             <button
               onClick={() => setIsPlaying(!isPlaying)}
               style={{
                 padding: '0.5rem 1rem',
-                backgroundColor: 'var(--ifm-color-primary)',
+                backgroundColor: 'var(--paper-accent)',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '6px',
@@ -420,14 +420,14 @@ export default function CloudCostComparison() {
                     textAlign: 'center',
                     display: 'flex',
                     flexDirection: 'column',
-                    backgroundColor: isCheapest ? 'var(--ifm-color-success-contrast-background)' : 'var(--ifm-color-emphasis-100)',
-                    border: isCheapest ? '2px solid var(--ifm-color-success)' : '1px solid var(--ifm-color-emphasis-300)'
+                    backgroundColor: isCheapest ? 'var(--paper-ok-bg)' : 'var(--paper-bg-dark)',
+                    border: isCheapest ? '2px solid var(--paper-ok)' : '1px solid var(--paper-border-strong)'
                   }}
                 >
                   <div style={{ fontSize: '0.75rem', fontWeight: 500, marginBottom: '0.25rem' }}>{provider.name}</div>
                   <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{formatCost(breakdown.total)}</div>
                   {/* Cost breakdown */}
-                  <div style={{ fontSize: '0.75rem', color: 'var(--ifm-color-emphasis-700)', marginTop: '0.5rem', flexGrow: 1 }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--paper-text-body)', marginTop: '0.5rem', flexGrow: 1 }}>
                     {includeCPU && <div>CPU: {formatCost(breakdown.cpu)}</div>}
                     {includeMemory && <div>Mem: {formatCost(breakdown.memory)}</div>}
                     {includeEgress && <div>Egress: {formatCost(breakdown.egress)}</div>}
@@ -435,7 +435,7 @@ export default function CloudCostComparison() {
                   {/* Cheapest indicator at bottom */}
                   <div style={{ marginTop: '0.5rem', height: '1.25rem' }}>
                     {isCheapest && (
-                      <div style={{ fontSize: '0.75rem', color: 'var(--ifm-color-success-darkest)', fontWeight: 'bold' }}>✓ Cheapest</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--paper-ok-dark)', fontWeight: 'bold' }}>✓ Cheapest</div>
                     )}
                   </div>
                 </div>

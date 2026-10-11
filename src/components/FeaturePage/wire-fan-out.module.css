@@ -1,0 +1,76 @@
+/* ─────────────────────────────────────────────────────────────
+   WireFanOut — the wire-page hero diagram
+   Sits on --paper-code-bg, so every value here is measured against it.
+   ───────────────────────────────────────────────────────────── */
+
+.diagram {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* #8a8377 is 5.0:1 on #16140f; the muted paper greys are around 3:1 there. */
+.row .wire { stroke: #3f3a33; stroke-width: 1; }
+.row .dot { fill: #4a453d; }
+.row .label { fill: #8a8377; font-weight: 400; }
+
+.rowOn .wire { stroke: var(--paper-accent-on-dark); stroke-width: 1.75; }
+.rowOn .dot { fill: var(--paper-accent-on-dark); }
+.rowOn .label { fill: var(--paper-accent-on-dark); font-weight: 600; }
+
+.label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+}
+
+.node rect {
+  fill: var(--paper-code-bg-bar);
+  stroke: #3a362e;
+  stroke-width: 1;
+}
+
+.nodeText {
+  font-family: 'Geist Mono', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  fill: var(--paper-code-text);
+}
+
+.caption {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  fill: #8a8377;
+}
+
+/* One authored moment: the wires draw out of the node on load, top to bottom.
+   Nothing animates after that. */
+@media (prefers-reduced-motion: no-preference) {
+  .row,
+  .rowOn {
+    animation: fanIn 620ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(60ms + var(--i) * 45ms);
+  }
+
+  .row .wire,
+  .rowOn .wire {
+    /* Paths carry pathLength="1", so one dash length covers every curve
+       regardless of how far it travels. */
+    stroke-dasharray: 1;
+    animation: draw 620ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(60ms + var(--i) * 45ms);
+  }
+}
+
+@keyframes fanIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}

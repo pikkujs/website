@@ -69,6 +69,10 @@
   --wire-addons: #6366f1; --wire-secrets: #f59e0b; --wire-benchmarks: #06b6d4;
 
   --nav-h: 64px;
+  --paper-ok: #2f855a; --paper-ok-dark: #1e5c3c; --paper-ok-bg: #e0eddc; --paper-shadow-lw: 0 1px 3px rgba(43, 34, 25, .2);
+  /* inline Prism tokens (CodeBlock below): resolved per surface, paper by default, ink in dark mode / [data-code-ink] */
+  --code-bg: var(--code-block-bg); --code-plain: #2b2219; --code-kw: #9a3412; --code-str: #55703c; --code-num: #8a5a00;
+  --code-cmt: #6f6252; --code-fn: #3d6373; --code-type: #a8485f; --code-prop: #4b4033; --code-op: #5f5143; --code-punct: #6f6252;
   color-scheme: light;
 }
 
@@ -110,6 +114,10 @@
   --paper-shadow-md: rgba(0, 0, 0, 0.45);
   --paper-shadow-lg: rgba(0, 0, 0, 0.6);
   color-scheme: dark;
+  --paper-ok: #5fbf8a; --paper-ok-dark: #9fe0bb; --paper-ok-bg: #16281e; --paper-shadow-lw: 0 1px 3px rgba(0, 0, 0, .5);
+  --code-bg: var(--paper-code-bg); --code-plain: var(--paper-code-text); --code-kw: #e8834a; --code-str: var(--paper-code-teal);
+  --code-num: var(--paper-code-hl); --code-cmt: var(--paper-code-dim); --code-fn: var(--paper-code-green); --code-type: #d7b3e8;
+  --code-prop: #9fc3cf; --code-op: #b3ab99; --code-punct: var(--paper-on-dark-faint);
 }
 
 @theme inline {
@@ -124,4 +132,10 @@
   --color-night: #15110d; --color-cream: #ece3d0;
   --font-sans: var(--font-body); --font-serif: var(--font-display);
   --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+[data-code-ink] {
+  --code-bg: var(--paper-code-bg); --code-plain: var(--paper-code-text); --code-kw: #e8834a; --code-str: var(--paper-code-teal);
+  --code-num: var(--paper-code-hl); --code-cmt: var(--paper-code-dim); --code-fn: var(--paper-code-green); --code-type: #d7b3e8;
+  --code-prop: #9fc3cf; --code-op: #b3ab99; --code-punct: var(--paper-on-dark-faint);
 }

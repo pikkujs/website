@@ -138,7 +138,7 @@ export default function MetricChart({
       show: false,
     },
     grid: {
-      borderColor: 'var(--ifm-color-emphasis-300)',
+      borderColor: 'var(--paper-border-strong)',
       xaxis: {
         lines: {
           show: true,

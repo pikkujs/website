@@ -1,0 +1,280 @@
+/* ══════════════════════════════════════════════════════════════
+   StackMatrix — "what Pikku is" and "local equals production",
+   in one diagram. Lives on a paper-themed section.
+   ══════════════════════════════════════════════════════════════ */
+
+.matrix {
+  margin-top: 44px;
+  border: 1px solid var(--paper-border);
+  border-radius: 18px;
+  background: var(--paper-bg-alt);
+  overflow: hidden;
+}
+
+/* ── band scaffolding ──────────────────────────────────────── */
+.band { padding: 30px 32px; }
+@media (max-width: 640px) { .band { padding: 24px 20px; } }
+
+.seam {
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--paper-border-strong) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.bandLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.bandNum {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--paper-accent);
+  flex-shrink: 0;
+}
+
+.bandHint {
+  font-size: 14px;
+  color: var(--paper-text-faint);
+  font-style: italic;
+  font-family: 'Newsreader', Georgia, serif;
+}
+
+/* ── band 1 — wiring chips ─────────────────────────────────── */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.chip {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+  padding: 7px 13px;
+  border-radius: 8px;
+  border: 1px solid var(--paper-border-strong);
+  background: var(--paper-bg);
+  color: var(--paper-text-body);
+}
+
+/* ── band 2 — adapted libraries ────────────────────────────── */
+.adaptSplit { display: flex; flex-direction: column; gap: 22px; }
+
+.adaptGroup {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.adaptGroupLabel {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--paper-text-faint);
+  padding-top: 11px;
+}
+
+@media (max-width: 560px) {
+  .adaptGroup { grid-template-columns: 1fr; gap: 6px; }
+  .adaptGroupLabel { padding-top: 0; }
+}
+
+.adaptList { list-style: none; padding: 0; margin: 0; }
+
+.adaptList li {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 18px;
+  align-items: baseline;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--paper-border);
+}
+.adaptList li:last-child { border-bottom: none; }
+
+@media (max-width: 560px) {
+  .adaptList li { grid-template-columns: 1fr; gap: 3px; }
+}
+
+.adaptWiring {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+  color: var(--paper-text);
+}
+
+.adaptBacking {
+  font-size: 14.5px;
+  color: var(--paper-text-muted);
+  line-height: 1.5;
+}
+
+.adaptOwn .adaptBacking { color: var(--paper-text-body); }
+
+.star {
+  color: var(--paper-accent);
+  margin-left: 5px;
+  font-size: 11px;
+  vertical-align: 1px;
+}
+
+.starNote {
+  display: flex;
+  gap: 9px;
+  margin: 18px 0 0;
+  padding-top: 15px;
+  border-top: 1px solid var(--paper-border-strong);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--paper-text-muted);
+}
+.starNote b { color: var(--paper-text); font-weight: 600; }
+.starNote .star { margin-left: 0; }
+
+/* ── band 3 — targets and their services ───────────────────── */
+.targetSplit {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) 1fr;
+  gap: 26px;
+  align-items: start;
+}
+@media (max-width: 780px) {
+  .targetSplit { grid-template-columns: 1fr; gap: 20px; }
+}
+
+.tabs { display: flex; flex-direction: column; gap: 7px; }
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 1px solid var(--paper-border);
+  background: var(--paper-bg);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.tab:hover { border-color: var(--paper-border-strong); }
+
+.tab:focus-visible {
+  outline: 2px solid var(--paper-accent);
+  outline-offset: 2px;
+}
+
+.tabOn {
+  background: var(--paper-accent-bg);
+  border-color: var(--paper-accent-border);
+}
+
+.tabCmd {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+  color: var(--paper-text);
+  overflow-wrap: anywhere;
+}
+.tabOn .tabCmd { color: var(--paper-accent); }
+
+.tabWho {
+  font-size: 12.5px;
+  color: var(--paper-text-faint);
+}
+
+/* ── the swapping panel ────────────────────────────────────── */
+.panel {
+  border: 1px solid var(--paper-border-strong);
+  border-radius: 12px;
+  background: var(--paper-bg);
+  padding: 20px 22px;
+  animation: panelIn 0.24s ease both;
+}
+
+@keyframes panelIn {
+  from { opacity: 0.4; transform: translateY(3px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel { animation: none; }
+}
+
+.panelNote {
+  margin: 0 0 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--paper-border);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--paper-text-muted);
+  max-width: 62ch;
+}
+
+.svcList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2px 30px;
+}
+
+.svcList li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13.5px;
+}
+
+.svcRole {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11.5px;
+  color: var(--paper-text-faint);
+  white-space: nowrap;
+}
+
+/* leader dots, so the eye tracks role → implementation */
+.svcDots {
+  flex: 1;
+  height: 0;
+  min-width: 12px;
+  border-bottom: 1px dotted var(--paper-border-strong);
+  transform: translateY(-3px);
+}
+
+.svcImpl {
+  color: var(--paper-text-body);
+  white-space: nowrap;
+  font-size: 13.5px;
+}
+
+/* ── "request your own" — a link, not a tab.
+      A role="tablist" may only contain tabs, and this one opens no
+      panel, so it sits beside them rather than inside the pattern. ── */
+.tabAsk {
+  display: inline-flex; align-items: center;
+  min-height: 44px; padding: 0 4px;
+  font-family: 'Geist Mono', monospace; font-size: 12px;
+  color: var(--paper-text-faint) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid transparent;
+}
+.tabAsk:hover { color: var(--paper-accent) !important; border-color: var(--paper-accent); }
+
+/* The service list is what the adapter hands in, not what you end up
+   with — createSingletonServices returns the final set. */
+.panelFoot {
+  margin: 16px 0 0; max-width: 64ch;
+  font-family: 'Geist Mono', monospace; font-size: 11.5px;
+  line-height: 1.75; color: var(--paper-text-faint);
+}
+.panelFoot code {
+  font-family: inherit; font-size: inherit; border: none;
+  background: var(--paper-bg-dark); padding: 1px 5px;
+  border-radius: 4px; color: var(--paper-text-body);
+}

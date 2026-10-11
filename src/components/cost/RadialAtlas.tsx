@@ -83,8 +83,8 @@ export default function RadialAtlas({
         cx={centerX}
         cy={centerY}
         r={centerRadius + 10}
-        fill="var(--ifm-background-surface-color)"
-        stroke="var(--ifm-color-emphasis-300)"
+        fill="var(--paper-bg-alt)"
+        stroke="var(--paper-border-strong)"
         strokeWidth="2"
         className="transition-all duration-300"
       />
@@ -103,7 +103,7 @@ export default function RadialAtlas({
             y1={centerY}
             x2={pos.x}
             y2={pos.y}
-            stroke={isActive ? 'url(#activeGradient)' : 'var(--ifm-color-emphasis-400)'}
+            stroke={isActive ? 'url(#activeGradient)' : 'var(--paper-border-strong)'}
             strokeWidth={isActive ? 3 : 1}
             strokeDasharray={isActive ? '0' : '5,5'}
             className="transition-all duration-300"
@@ -166,8 +166,8 @@ export default function RadialAtlas({
               cx={pos.x}
               cy={pos.y}
               r={nodeRadius}
-              fill="var(--ifm-background-surface-color)"
-              stroke={isSelected ? provider.color : 'var(--ifm-color-emphasis-400)'}
+              fill="var(--paper-bg-alt)"
+              stroke={isSelected ? provider.color : 'var(--paper-border-strong)'}
               strokeWidth={isSelected ? 4 : 2}
               className="transition-all duration-300"
               filter={isActive ? 'url(#glow)' : undefined}
@@ -188,7 +188,7 @@ export default function RadialAtlas({
               y={pos.y + 25}
               textAnchor="middle"
               className="text-sm font-semibold select-none"
-              fill="var(--ifm-font-color-base)"
+              fill="var(--paper-text-body)"
             >
               {provider.name}
             </text>
@@ -216,7 +216,7 @@ export default function RadialAtlas({
         y={height - 20}
         textAnchor="middle"
         className="text-xs"
-        fill="var(--ifm-color-emphasis-600)"
+        fill="var(--paper-text-muted)"
       >
         {selectedProvider
           ? 'Click another provider to compare'

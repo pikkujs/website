@@ -1,0 +1,204 @@
+/* Getting Started — paper theme */
+
+.hero { padding: 90px 0 64px; }
+
+.stepHead {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.stepBody {
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: var(--paper-text-muted);
+  max-width: 640px;
+  margin: 0 0 34px;
+}
+
+/* ── One-off command terminal ──────────────────────────── */
+.cmd {
+  background: var(--paper-code-bg);
+  border: 1px solid var(--paper-code-border);
+  border-radius: 14px;
+  padding: 22px 26px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 14px;
+  line-height: 2;
+  color: #d8d4cb;
+  max-width: 640px;
+  box-shadow: 0 20px 50px -24px var(--paper-shadow-xl);
+}
+
+.prompt { color: var(--paper-accent); margin-right: 10px; }
+.dim { color: rgba(216, 212, 203, 0.45); }
+
+/* ── Step 2: terminal + checks ─────────────────────────── */
+.runGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 44px;
+  align-items: center;
+}
+
+.runChecks { display: flex; flex-direction: column; gap: 16px; }
+
+.runChecks code {
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-size: 13px;
+}
+
+@media (max-width: 900px) {
+  .runGrid { grid-template-columns: 1fr; gap: 32px; }
+}
+
+/* ── Step 3: code cards + wire chips ───────────────────── */
+.codeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+@media (max-width: 900px) { .codeGrid { grid-template-columns: 1fr; } }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--paper-border);
+  border-radius: 999px;
+  background: var(--paper-bg-alt);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--paper-text-muted);
+  text-decoration: none !important;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.chip:hover { border-color: var(--paper-accent); color: var(--paper-accent); }
+
+/* ── Step 4: ship cards ────────────────────────────────── */
+.shipGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+@media (max-width: 900px) { .shipGrid { grid-template-columns: 1fr; } }
+
+.shipCard {
+  border: 1px solid var(--paper-border);
+  border-radius: 16px;
+  background: var(--paper-bg);
+  padding: 28px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shipCard h3 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--paper-text);
+}
+
+.shipCard p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--paper-text-muted);
+  margin: 0;
+  flex: 1;
+}
+
+.shipCard code {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12.5px;
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 7px;
+  padding: 9px 12px;
+  color: var(--paper-text-body);
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.shipNote {
+  margin-top: 26px;
+  font-size: 14px;
+  color: var(--paper-text-faint);
+}
+
+.shipNote code {
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-size: 13px;
+}
+
+/* ── What's next ───────────────────────────────────────── */
+.nextGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 42px;
+}
+
+@media (max-width: 900px) { .nextGrid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .nextGrid { grid-template-columns: 1fr; } }
+
+.nextCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--paper-border);
+  border-radius: 14px;
+  background: var(--paper-bg);
+  text-decoration: none !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.nextCard:hover {
+  border-color: var(--paper-accent);
+  box-shadow: 0 12px 30px -18px var(--paper-shadow-xl);
+}
+
+.nextIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nextTitle {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--paper-text);
+  margin-bottom: 2px;
+}
+
+.nextDesc {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--paper-text-faint);
+}
+
+.nextActions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 42px; }

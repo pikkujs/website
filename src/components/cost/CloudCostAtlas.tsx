@@ -92,9 +92,9 @@ export default function CloudCostAtlas() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'var(--ifm-background-surface-color)',
+        backgroundColor: 'var(--paper-bg-alt)',
         borderRadius: '8px',
-        border: '1px solid var(--ifm-color-emphasis-300)'
+        border: '1px solid var(--paper-border-strong)'
       }}>
         <p>Loading Cloud Cost Atlas...</p>
       </div>
@@ -105,16 +105,16 @@ export default function CloudCostAtlas() {
     <div style={{ margin: '2rem 0', width: '100%' }}>
       <div style={{
         padding: '2rem',
-        backgroundColor: 'var(--ifm-background-surface-color)',
+        backgroundColor: 'var(--paper-bg-alt)',
         borderRadius: '8px',
-        border: '1px solid var(--ifm-color-emphasis-300)',
-        boxShadow: 'var(--ifm-global-shadow-lw)'
+        border: '1px solid var(--paper-border-strong)',
+        boxShadow: 'var(--paper-shadow-lw)'
       }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
             Cloud Provider Pricing Comparison
           </h3>
-          <p style={{ fontSize: '0.875rem', color: 'var(--ifm-color-emphasis-700)' }}>
+          <p style={{ fontSize: '0.875rem', color: 'var(--paper-text-body)' }}>
             Serverless and infrastructure pricing across major providers
           </p>
         </div>
@@ -123,7 +123,7 @@ export default function CloudCostAtlas() {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: '2px solid var(--ifm-color-emphasis-300)' }}>
+              <tr style={{ borderBottom: '2px solid var(--paper-border-strong)' }}>
                 <th style={{
                   textAlign: 'left',
                   padding: '0.75rem',
@@ -151,13 +151,13 @@ export default function CloudCostAtlas() {
                   <tr
                     key={metricId}
                     style={{
-                      borderBottom: '1px solid var(--ifm-color-emphasis-200)',
-                      backgroundColor: index % 2 === 0 ? 'var(--ifm-color-emphasis-100)' : 'transparent'
+                      borderBottom: '1px solid var(--paper-border)',
+                      backgroundColor: index % 2 === 0 ? 'var(--paper-bg-dark)' : 'transparent'
                     }}
                   >
                     <td style={{ padding: '0.75rem' }}>
                       <div style={{ fontWeight: 500, fontSize: '0.875rem' }}>{metric.label}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--ifm-color-emphasis-600)' }}>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--paper-text-muted)' }}>
                         {metric.unit}
                       </div>
                     </td>
@@ -170,11 +170,11 @@ export default function CloudCostAtlas() {
                           style={{
                             textAlign: 'center',
                             padding: '0.75rem',
-                            fontFamily: 'var(--ifm-font-family-monospace)',
+                            fontFamily: 'var(--font-mono)',
                             fontSize: '0.875rem',
                             fontWeight: isBest ? 'bold' : 'normal',
-                            backgroundColor: isBest ? 'var(--ifm-color-success-contrast-background)' : 'transparent',
-                            color: isBest ? 'var(--ifm-color-success-darkest)' : 'inherit'
+                            backgroundColor: isBest ? 'var(--paper-ok-bg)' : 'transparent',
+                            color: isBest ? 'var(--paper-ok-dark)' : 'inherit'
                           }}
                         >
                           {formatValue(value, metricId)}
@@ -193,7 +193,7 @@ export default function CloudCostAtlas() {
         <div style={{
           marginTop: '1.5rem',
           fontSize: '0.75rem',
-          color: 'var(--ifm-color-emphasis-700)',
+          color: 'var(--paper-text-body)',
           lineHeight: '1.5'
         }}>
           <p style={{ marginBottom: '0.5rem' }}>
