@@ -1,0 +1,70 @@
+{
+  "name": "pikku-site",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "dependencies": {
+    "@pikku/core": "0.12.139",
+    "@pikku/fetch": "0.12.12",
+    "@pikku/kysely": "^0.13.35",
+    "@pikku/kysely-node-sqlite": "^0.12.9",
+    "@pikku/schema-cfworker": "^0.12.8",
+    "@pikku/tanstack-start": "^0.12.7",
+    "@radix-ui/react-dialog": "^1.2.0",
+    "@radix-ui/react-scroll-area": "^1.3.0",
+    "@radix-ui/react-slot": "^1.4.0",
+    "@tanstack/react-router": "^1.170.42",
+    "@tanstack/react-start": "^1.168.61",
+    "@tanstack/start-static-server-functions": "^1.167.40",
+    "@types/mdx": "^2.0.14",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "fast-glob": "^3.3.3",
+    "feed": "^6.0.0",
+    "fumadocs-core": "^16.17.1",
+    "fumadocs-mdx": "^15.4.7",
+    "github-slugger": "^2.0.0",
+    "gray-matter": "^4.0.3",
+    "kysely": "^0.29.6",
+    "lucide-react": "^1.55.0",
+    "mermaid": "^12.1.0",
+    "next-validate-link": "^1.6.7",
+    "node-html-parser": "^9.0.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remark-directive": "^4.0.0",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@pikku/cli": "^0.12.184",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "better-auth": "^1.7.7",
+    "concurrently": "^10.0.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n pikku,web \"pikku dev --port 4020\" \"PIKKU_API_URL=http://localhost:4020 vite dev\"",
+    "dev:web": "vite dev",
+    "codegen": "pikku all && pikku rpc && pikku fetch && pikku tanstack-start",
+    "db:seed": "node backend/db/seed.ts",
+    "build": "npm run codegen && vite build",
+    "migrate": "node scripts/migrate-docusaurus.mjs && node scripts/gen-meta.mjs",
+    "validate-links": "node scripts/validate-links.mjs",
+    "check-links": "node packages/vite-link-check/src/cli.js dist/client",
+    "predev": "npm run codegen"
+  },
+  "imports": {
+    "#pikku/*.js": "./backend/.pikku/*.ts",
+    "#pikku/*": [
+      "./backend/.pikku/*/index.ts",
+      "./backend/.pikku/*"
+    ]
+  }
+}

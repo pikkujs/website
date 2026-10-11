@@ -1,0 +1,2 @@
+{ "name": "@pikku/vite-link-check", "version": "0.0.2", "type": "module", "main": "src/index.js", "bin": { "vite-link-check": "src/cli.js" },
+  "dependencies": { "node-html-parser": "^7.0.1" } }

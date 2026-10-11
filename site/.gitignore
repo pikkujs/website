@@ -1,0 +1,13 @@
+node_modules
+dist
+.source
+.tanstack
+.wrangler
+.pikku-runtime
+# generated
+src/routeTree.gen.ts
+backend/.pikku
+src/pikku
+backend/src/scaffold
+content
+db/seed
