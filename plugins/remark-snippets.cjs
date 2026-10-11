@@ -16,7 +16,7 @@
 const fs   = require('fs')
 const path = require('path')
 
-const SNIPPETS_PATH = path.join(__dirname, '../src/data/snippets.json')
+const SNIPPETS_PATH = path.join(__dirname, '../../src/data/snippets.json')
 
 let _cache = null
 

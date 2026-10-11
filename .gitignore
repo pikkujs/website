@@ -1,12 +1,16 @@
 # Dependencies
 /node_modules
 
-# Production
-/build
+# Build output
+/dist
+/.source
+/.tanstack
+/.wrangler
+/.output
 
-# Generated files
-.docusaurus
-.cache-loader
+# Generated at build/dev time (see npm run gen:data) and by the router plugin
+/src/routeTree.gen.ts
+/public/__data
 
 # Synced from pikku repo
 /docs/skills
@@ -26,22 +30,9 @@
 .env.production.local
 
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-.pnp.*
 
 # Screenshot sweep (scripts/screenshots.mjs) — big, regenerable, not versioned
 /screenshots
 
 # Impeccable critique snapshots
 /.impeccable
-
-# Per-spec detail files for the OpenAPI catalogue: 20MB of generated input to
-# plugins/openapi-catalogue.js, rebuilt by `npm run sync-registry`.
-# src/data/openapi-spec-meta.json is the cache that keeps that rebuild to
-# minutes rather than an hour, and IS tracked.
-/src/data/openapi-specs/
