@@ -32,7 +32,7 @@
 }
 
 .prompt { color: var(--paper-accent); margin-right: 10px; }
-.dim { color: rgba(216, 212, 203, 0.45); }
+.dim { color: rgba(216, 212, 203, 0.68); }
 
 /* ── Step 2: terminal + checks ─────────────────────────── */
 .runGrid {

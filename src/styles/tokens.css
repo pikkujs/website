@@ -13,11 +13,12 @@
   --paper-text: #2b2219;
   --paper-text-body: #3d3125;
   --paper-text-muted: #5f5143;
-  --paper-text-faint: #6f6555;
+  --paper-text-faint: #62584a;
   --paper-border: #dccfb4;
   --paper-border-strong: #b3a690;
 
-  --paper-accent: #c2410c;
+  --hue-ochre: #84590d; --hue-slate: #3d6373; --hue-rose: #9d4359; --hue-plum: #6b4e8a; --hue-moss: #506938; --hue-teal: #1b6c60; --hue-clay: #9a3412; --hue-indigo: #4a5aa8;
+  --paper-accent: #b0380a;
   --paper-accent-dark: #9a3412;
   --paper-accent-darker: #9a3412;
   --paper-accent-darkest: #7a2907;
@@ -88,6 +89,7 @@
   --paper-border: #322b22;
   --paper-border-strong: #4d4333;
 
+  --hue-ochre: #b97d12; --hue-slate: #578da3; --hue-rose: #c06d81; --hue-plum: #967bb4; --hue-moss: #6d904d; --hue-teal: #269686; --hue-clay: #e65727; --hue-indigo: #7582c2;
   --paper-accent: #ec8a4f;
   --paper-accent-dark: #f0a070;
   --paper-accent-darker: #f0a070;

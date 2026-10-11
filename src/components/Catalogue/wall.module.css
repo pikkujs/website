@@ -41,7 +41,7 @@
   color: var(--paper-text-faint);
   font-variant-numeric: tabular-nums;
 }
-.chip[aria-pressed='true'] .chipCount { color: rgba(247, 245, 240, 0.65); }
+.chip[aria-pressed='true'] .chipCount { color: var(--paper-bg); }
 
 .search {
   width: 100%;

@@ -44,8 +44,10 @@
 /* Admonitions */
 .pk-adm { --c: var(--paper-text-faint); margin: 1.5em 0; padding: .9rem 1.1rem; border: 1px solid color-mix(in srgb, var(--c) 40%, var(--paper-border)); border-left: 4px solid var(--c); border-radius: 12px; background: color-mix(in srgb, var(--c) 9%, var(--paper-bg)); font-size: .95em; }
 .pk-adm--info { --c: #3b82f6; } .pk-adm--tip { --c: #2f855a; } .pk-adm--warning { --c: #d97706; } .pk-adm--danger { --c: #dc2626; } .pk-adm--note { --c: #8a7e6a; }
+.pk-adm--info { --ct: #1d4ed8; } .pk-adm--tip { --ct: #1f6f48; } .pk-adm--warning { --ct: #8a5a00; } .pk-adm--danger { --ct: #b91c1c; } .pk-adm--note { --ct: #6b5f4d; }
+[data-theme=dark] .pk-adm--note { --ct: #a39682; } [data-theme=dark] .pk-adm--info { --ct: #7cb0fb; } [data-theme=dark] .pk-adm--tip { --ct: #5fbf8a; } [data-theme=dark] .pk-adm--warning { --ct: #f2b24a; } [data-theme=dark] .pk-adm--danger { --ct: #f98f8f; }
 [data-theme=dark] .pk-adm--info { --c: #60a5fa; } [data-theme=dark] .pk-adm--tip { --c: #5fbf8a; } [data-theme=dark] .pk-adm--warning { --c: #f2b24a; } [data-theme=dark] .pk-adm--danger { --c: #f87171; }
-.pk-adm-title { display: flex; align-items: center; gap: .5rem; font: 700 .72rem var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--c); margin-bottom: .35rem; }
+.pk-adm-title { display: flex; align-items: center; gap: .5rem; font: 700 .72rem var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--ct, var(--c)); margin-bottom: .35rem; }
 .pk-adm-body > :last-child { margin-bottom: 0 !important; }
 
 /* Tabs */

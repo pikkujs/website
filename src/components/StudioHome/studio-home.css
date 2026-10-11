@@ -74,6 +74,7 @@
   background: var(--wash); border-radius: 50% 46% 52% 48% / 48% 52% 46% 50%;
 }
 .sh .block-piece {
+  color: #2b2219;
   font-weight: 600; font-size: 1.05rem; padding: .5rem 1rem;
   border: 2px solid var(--color-ink); border-radius: 12px 9px 12px 10px;
   box-shadow: 2px 3px 0 rgba(43,34,25,.25);
@@ -83,6 +84,7 @@
   background: var(--color-paper); border: 2px solid var(--color-ink);
   font-family: var(--font-display); font-size: 1.5rem; font-weight: 700;
 }
+.sh .band :is(h1, h2, h3, h4) { color: inherit; }
 .sh .band { background-color: #15110d; background-image: var(--grain-dark); color: #fbf6ec; }
 .sh .band a:focus-visible, .sh .band button:focus-visible { outline-color: #e0a06a; }
 .sh .band .btn-ink { background: #fbf6ec; color: #2b2219 !important; box-shadow: 3px 4px 0 #f0a56f; }
