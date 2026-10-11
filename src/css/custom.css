@@ -4,6 +4,7 @@
 @import './blog.css';
 @import './docs.css';
 @import './docs-shell.css';
+@import './studio-theme.css';
 @import "tailwindcss/theme";
 
 /* Use Docusaurus theme toggle for dark: utilities instead of prefers-color-scheme */
@@ -737,12 +738,12 @@ a.no-underline:hover * {
 :has([data-paper-page]) .navbar__title {
   color: var(--paper-text);
   font-weight: 700;
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--studio-body, 'Geist', -apple-system, sans-serif);
 }
 
 :has([data-paper-page]) .navbar__link {
   color: var(--paper-text-body);
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--studio-body, 'Geist', -apple-system, sans-serif);
   font-weight: 500;
 }
 
@@ -860,13 +861,13 @@ a.no-underline:hover * {
 
 :has([data-paper-page]) .footer__title {
   color: var(--paper-text);
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--studio-body, 'Geist', -apple-system, sans-serif);
   font-weight: 700;
 }
 
 :has([data-paper-page]) .footer__link-item {
   color: var(--paper-text-muted);
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--studio-body, 'Geist', -apple-system, sans-serif);
   font-size: 0.875rem;
   transition: color 0.15s;
 }
@@ -878,7 +879,7 @@ a.no-underline:hover * {
 
 :has([data-paper-page]) .footer__copyright {
   color: var(--paper-text-faint);
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--studio-body, 'Geist', -apple-system, sans-serif);
   font-size: 0.8rem;
 }
 

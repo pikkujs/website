@@ -7,7 +7,7 @@
 .page {
   background: var(--paper-bg);
   color: var(--paper-text);
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--studio-body, 'Geist', -apple-system, sans-serif);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -46,7 +46,7 @@
 }
 
 .h1 {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--studio-display, 'Newsreader', Georgia, serif);
   font-weight: 500;
   font-size: clamp(40px, 5.5vw, 72px);
   line-height: 1.02;
@@ -58,7 +58,7 @@
 .h1 em { font-style: italic; color: var(--paper-accent); }
 
 .h2 {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--studio-display, 'Newsreader', Georgia, serif);
   font-weight: 500;
   font-size: clamp(28px, 4vw, 48px);
   line-height: 1.06;
@@ -101,7 +101,7 @@
 
 /* ── Buttons ───────────────────────────────────────────── */
 .btnPrimary {
-  font-family: 'Geist', sans-serif;
+  font-family: var(--studio-body, 'Geist', sans-serif);
   font-weight: 500;
   font-size: 15px;
   padding: 12px 22px;
@@ -120,7 +120,7 @@
 .btnPrimary:hover { background: var(--paper-accent); }
 
 .btnGhost {
-  font-family: 'Geist', sans-serif;
+  font-family: var(--studio-body, 'Geist', sans-serif);
   font-weight: 500;
   font-size: 15px;
   padding: 12px 22px;

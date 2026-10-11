@@ -60,7 +60,7 @@ html.blog-wrapper article:hover {
 /* ── Post title ──────────────────────────────────────────── */
 html.blog-wrapper article header h1,
 html.blog-wrapper article header h2 {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--studio-display, 'Newsreader', Georgia, serif);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: -0.8px;
@@ -120,7 +120,7 @@ html.blog-wrapper .avatar__photo {
 [data-paper-page] .markdown h2,
 [data-paper-page] .markdown h3,
 [data-paper-page] .markdown h4 {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--studio-display, 'Newsreader', Georgia, serif);
   font-weight: 500;
   color: var(--paper-text);
   letter-spacing: -0.5px;
@@ -325,7 +325,7 @@ html.blog-wrapper .pagination-nav__item a:hover {
 }
 
 html.blog-wrapper .pagination-nav__label {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--studio-display, 'Newsreader', Georgia, serif);
   font-size: 17px;
   color: var(--paper-text);
 }
@@ -398,7 +398,7 @@ html.blog-wrapper .hero {
 
 html.blog-wrapper .hero__title {
   color: var(--paper-text);
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--studio-display, 'Newsreader', Georgia, serif);
   font-weight: 500;
   letter-spacing: -1px;
 }

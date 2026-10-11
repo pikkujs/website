@@ -40,8 +40,8 @@ html.docs-wrapper {
   --doc-measure: 72ch;     /* running text; tables and code opt out */
   --doc-pane-pad: 40px;
 
-  --doc-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
-  --doc-sans:  'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  --doc-serif: var(--studio-display, 'Newsreader', Georgia, 'Times New Roman', serif);
+  --doc-sans:  var(--studio-body, 'Geist', -apple-system, BlinkMacSystemFont, sans-serif);
   --doc-mono:  'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 

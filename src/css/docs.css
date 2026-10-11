@@ -21,7 +21,7 @@ html.docs-wrapper body,
 html.docs-wrapper .main-wrapper {
   background-color: var(--paper-bg) !important;
   color: var(--paper-text-body);
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--studio-body, 'Geist', -apple-system, sans-serif);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -123,7 +123,7 @@ html.docs-wrapper .pagination-nav__item a:hover {
 }
 
 html.docs-wrapper .pagination-nav__label {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--studio-display, 'Newsreader', Georgia, serif);
   font-size: 17px;
   color: var(--paper-text);
 }
@@ -195,7 +195,7 @@ html.docs-wrapper .alert--danger .admonitionHeading_node_modules-\@docusaurus-th
 
 /* Admonition title icons inherit nicely; adjust collapse button */
 html.docs-wrapper .alert .admonitionHeading_node_modules-\@docusaurus-theme-classic-lib-theme-Admonition-styles-module {
-  font-family: 'Geist', sans-serif;
+  font-family: var(--studio-body, 'Geist', sans-serif);
   font-weight: 700;
   font-size: 13px;
   text-transform: uppercase;
@@ -231,7 +231,7 @@ html.docs-wrapper .row article.col a.card .card__body {
 }
 
 html.docs-wrapper .row article.col a.card h2 {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--studio-display, 'Newsreader', Georgia, serif);
   font-weight: 500;
   font-size: 19px;
   color: var(--paper-text);

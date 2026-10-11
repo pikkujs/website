@@ -1,0 +1,114 @@
+/* The Studio-style homepage. Every rule is scoped under .sh so nothing leaks
+   into the docs. Visual language ported from the Studio marketing site. */
+.sh { color: var(--color-ink); font-family: var(--studio-body); }
+.sh .display {
+  font-family: var(--studio-display);
+  font-variation-settings: 'SOFT' 100, 'opsz' 120;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+.sh .hand { font-family: var(--studio-hand); margin: 0; }
+.sh p { margin: 0; }
+.sh svg text { font-family: var(--studio-hand); }
+.sh .scribble {
+  background-image: var(--scribble);
+  background-repeat: no-repeat;
+  background-size: 100% 0.38em;
+  background-position: 0 100%;
+  padding-bottom: 0.08em;
+}
+.sh .btn-ink, .sh .btn-line {
+  min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+  font-weight: 600; cursor: pointer; text-decoration: none;
+  font-family: var(--studio-body); font-size: 1rem;
+}
+.sh .btn-ink {
+  background: #2b2219; color: #fbf6ec !important;
+  border: 0;
+  border-radius: 14px 18px 13px 17px / 17px 13px 18px 14px;
+  padding: .95rem 1.4rem;
+  box-shadow: 3px 4px 0 #c2410c;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.sh .btn-ink:hover { transform: translate(-1px,-1px); box-shadow: 5px 6px 0 #c2410c; }
+.sh .btn-ink:active { transform: translate(2px,3px); box-shadow: 1px 1px 0 #c2410c; }
+.sh .btn-line {
+  color: var(--color-ink) !important; background: transparent;
+  border: 2px solid var(--color-ink);
+  border-radius: 16px 12px 17px 13px / 13px 17px 12px 16px;
+  padding: .95rem 1.2rem;
+  transition: background .15s ease;
+}
+.sh .btn-line:hover { background: var(--color-paper2); }
+.sh .torn {
+  background: #fbf6ec;
+  box-shadow: 0 1px 0 rgba(43,34,25,.08), 2px 3px 0 rgba(43,34,25,.06);
+  clip-path: polygon(0 2%,6% 0,14% 1.5%,25% 0,38% 1.2%,52% 0,66% 1.6%,78% .2%,90% 1.4%,100% 0,99.4% 50%,100% 100%,88% 98.6%,74% 100%,60% 98.8%,46% 100%,32% 98.5%,18% 100%,6% 98.7%,0 100%,.6% 50%);
+}
+.sh .cmd {
+  display: inline-flex; align-items: center; gap: .7rem;
+  background: #fbf6ec; border: 2px solid var(--color-ink);
+  border-radius: 16px 12px 17px 13px / 13px 17px 12px 16px;
+  padding: .8rem 1.1rem; font-family: 'Geist Mono', monospace; font-size: .95rem;
+  color: var(--color-ink); cursor: pointer; min-height: 44px;
+}
+.sh .cmd:hover { background: var(--color-paper2); }
+.sh .chip {
+  display: inline-block; font-weight: 600; font-size: 1.05rem;
+  padding: .35rem .9rem; border: 2px solid var(--color-ink);
+  border-radius: 12px 9px 12px 10px; background: #fbf6ec;
+}
+.sh .num {
+  display: grid; place-items: center; width: 68px; height: 68px; flex-shrink: 0;
+  background: var(--color-paper); border: 2px solid var(--color-ink);
+  font-family: var(--studio-display); font-size: 1.5rem; font-weight: 700;
+}
+.sh .band { background-color: #15110d; background-image: var(--grain-dark); color: #fbf6ec; }
+.sh .band a:focus-visible, .sh .band button:focus-visible { outline-color: #e0a06a; }
+.sh .band .btn-ink { background: #fbf6ec; color: #2b2219 !important; box-shadow: 3px 4px 0 #f0a56f; }
+.sh .band .btn-line { color: #fbf6ec !important; border-color: #fbf6ec; }
+.sh .band .btn-line:hover { background: rgba(251,246,236,.12); }
+@media (prefers-reduced-motion: no-preference) {
+  .sh .bob {
+    animation: bob 5s ease-in-out infinite;
+    transform-origin: 50% 80%;
+  }
+  .sh .march {
+    stroke-dasharray: 2 11;
+    animation: march 1.6s linear infinite;
+  }
+  .sh .draw {
+    stroke-dasharray: 2 10;
+    animation: march 2.4s linear infinite;
+  }
+  .sh .drift {
+    animation: drift 6s ease-in-out infinite;
+  }
+  .sh .drift2 {
+    animation: drift 7.5s ease-in-out infinite reverse;
+  }
+  @keyframes bob {
+    0%,
+    100% {
+      transform: rotate(0deg) translateY(0);
+    }
+    50% {
+      transform: rotate(-2deg) translateY(-4px);
+    }
+  }
+  @keyframes march {
+    to {
+      stroke-dashoffset: -26;
+    }
+  }
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(10px, 6px);
+    }
+  }
+}
