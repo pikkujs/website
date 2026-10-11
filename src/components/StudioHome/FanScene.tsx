@@ -66,20 +66,20 @@ export function FanScene() {
             Queues
           </text>
 
-          <circle cx="676" cy="292" r="34" fill="#c9dbe2" filter="url(#wash)" />
-          <use href="#pk" x="648" y="264" width="56" height="56" style={{ color: '#3d6373' }} />
+          <circle cx="676" cy="292" r="34" fill="#ddd0ea" filter="url(#wash)" />
+          <use href="#pk" x="648" y="264" width="56" height="56" style={{ color: '#6b4e8a' }} />
           <text x="650" y="352">
             Cron
           </text>
 
-          <circle cx="656" cy="480" r="34" fill="#efd9a9" filter="url(#wash)" />
-          <use href="#pk" x="628" y="452" width="56" height="56" style={{ color: '#b97d12' }} />
+          <circle cx="656" cy="480" r="34" fill="#bfe0d9" filter="url(#wash)" />
+          <use href="#pk" x="628" y="452" width="56" height="56" style={{ color: '#1f7a6d' }} />
           <text x="630" y="544">
             MCP
           </text>
 
-          <circle cx="380" cy="62" r="34" fill="#d7e3c8" filter="url(#wash)" />
-          <use href="#pk" x="352" y="34" width="56" height="56" style={{ color: '#55703c' }} />
+          <circle cx="380" cy="62" r="34" fill="#d3d8ef" filter="url(#wash)" />
+          <use href="#pk" x="352" y="34" width="56" height="56" style={{ color: '#4a5aa8' }} />
           <text x="420" y="70">
             AI agents
           </text>
@@ -134,15 +134,15 @@ export function FanScene() {
           <text x="186" y="346">
             Queues
           </text>
-          <use href="#pk" x="132" y="368" width="44" height="44" style={{ color: '#3d6373' }} />
+          <use href="#pk" x="132" y="368" width="44" height="44" style={{ color: '#6b4e8a' }} />
           <text x="186" y="400">
             Cron
           </text>
-          <use href="#pk" x="132" y="422" width="44" height="44" style={{ color: '#b97d12' }} />
+          <use href="#pk" x="132" y="422" width="44" height="44" style={{ color: '#1f7a6d' }} />
           <text x="186" y="454">
             MCP
           </text>
-          <use href="#pk" x="132" y="476" width="44" height="44" style={{ color: '#55703c' }} />
+          <use href="#pk" x="132" y="476" width="44" height="44" style={{ color: '#4a5aa8' }} />
           <text x="186" y="508">
             AI agents
           </text>

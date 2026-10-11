@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react"
+
 export function Symbols() {
   return (
     <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
@@ -57,10 +59,10 @@ export function Symbols() {
   )
 }
 
-export function Pk({ className }: { className?: string }) {
+export function Pk({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
-    <svg className={className} viewBox="30 40 240 240" aria-hidden="true">
-      <use href="#pk" />
+    <svg className={className} style={style} viewBox="0 0 240 240" aria-hidden="true">
+      <use href="#pk" width="240" height="240" />
     </svg>
   )
 }

@@ -1,14 +1,14 @@
 /* The Studio-style homepage. Every rule is scoped under .sh so nothing leaks
    into the docs. Visual language ported from the Studio marketing site. */
 .sh { color: var(--color-ink); font-family: var(--studio-body); }
+/* zero-specificity reset so Tailwind margin utilities always win */
+:where(.sh) :where(h1, h2, h3, p, ol, ul, figure) { margin: 0; }
 .sh .display {
   font-family: var(--studio-display);
   font-variation-settings: 'SOFT' 100, 'opsz' 120;
   letter-spacing: -0.005em;
-  margin: 0;
 }
-.sh .hand { font-family: var(--studio-hand); margin: 0; }
-.sh p { margin: 0; }
+.sh .hand { font-family: var(--studio-hand); }
 .sh svg text { font-family: var(--studio-hand); }
 .sh .scribble {
   background-image: var(--scribble);
@@ -58,6 +58,25 @@
   display: inline-block; font-weight: 600; font-size: 1.05rem;
   padding: .35rem .9rem; border: 2px solid var(--color-ink);
   border-radius: 12px 9px 12px 10px; background: #fbf6ec;
+}
+.sh .tech {
+  background: #fbf6ec; border: 2px solid var(--color-ink);
+  border-radius: 16px 12px 17px 13px / 13px 17px 12px 16px;
+  padding: 1.1rem 1.2rem 1.2rem;
+}
+.sh .tech-more { display: grid; gap: .6rem; }
+@media (min-width: 640px) { .sh .tech-more { grid-column: 1 / -1; } }
+@media (min-width: 1024px) {
+  .sh .tech-more { grid-template-columns: 14rem 1fr 1fr; align-items: center; gap: 2rem; }
+}
+.sh .tech-dot {
+  display: grid; place-items: center; width: 48px; height: 48px; flex-shrink: 0;
+  background: var(--wash); border-radius: 50% 46% 52% 48% / 48% 52% 46% 50%;
+}
+.sh .block-piece {
+  font-weight: 600; font-size: 1.05rem; padding: .5rem 1rem;
+  border: 2px solid var(--color-ink); border-radius: 12px 9px 12px 10px;
+  box-shadow: 2px 3px 0 rgba(43,34,25,.25);
 }
 .sh .num {
   display: grid; place-items: center; width: 68px; height: 68px; flex-shrink: 0;
