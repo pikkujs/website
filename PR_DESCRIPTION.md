@@ -38,8 +38,8 @@ paper theme is carried over (with a working light/dark toggle), and search is a 
 | Build wall time | n/a here | about 16 s warm cache, 1 to 2 min cold |
 | Pages | 293 routes | 328 prerendered HTML files + 2 SSR routes (addons, openapis) |
 | Search index | about 10 MB | 136 KB (titles, descriptions, headings) |
-| Worker | n/a | 2613 KiB total, 563 KiB gzip |
-| Link gate | n/a | 328 pages, 30,186 links, 0 broken |
+| Worker | n/a | 2600 KiB total, 560 KiB gzip |
+| Link gate | n/a | 328 pages, 30,193 links, 0 broken |
 
 ## URL compatibility
 
@@ -52,9 +52,10 @@ redirect to `/api` or `/api#app/<name>`. Result: every old public URL returns 20
 
 - The hosted registry API (`api.pikkustudio.app`) was down during development, so the vendored fixture backs the catalogue.
 - The real Cloudflare deploy and the DNS cutover were not run; workflows are written but never executed.
-- Build peak memory is 3.1–3.6 GB depending on the run (cold runs are higher), about the same as Docusaurus. The win is the dev server (about 1.1 GB after a handful of requests) and build control, not build memory. The cause is likely that the prerender crawls everything in one process; reducing it needs splitting the prerender.
-- Marketing views still contain some hand-written code strings (core/versioning GitHub Actions YAML, wiring examples on the wires pages, Azure deploy strings). They predate this work but violate "no code in the website" and should become template snippets.
-- axe (WCAG A/AA) still reports colour-contrast on decorative handwriting and some code tokens on `/developers` and `/`; alt text, landmarks, skip link, focus styles and the 404 title are fixed.
+- Build memory is still about 3.0 GB because the prerender crawls everything in one process.
+- Accessibility: axe-core (WCAG A/AA) is clean on /, /developers, /getting-started, /api, a docs page, blog index, a post, /addons and /openapis in light and dark (colour-contrast before: 60 nodes light, 49 dark; after: 0). Palette changes: accent text `#b0380a`, faint text `#62584a`, per-theme hue tokens for the stack cards, darker admonition titles.
+- No hand-written TypeScript remains in the views. `/developers` now uses template snippets (`getItem`, `funcMultiWire`, `aiAgent`, `wa-wf-quick-example`, `rt-wire-addon-multiple`, `rt-addon-typed-invoke`, `wb-gateway-multiple`, `wb-gateway-handler`); the nine-transport picker shows prose and a docs link per transport instead of code, and the small signature illustrations on core/function, services and security are prose. Snippets that would bring back removed cards: a `pikkuAddonServices` factory, a `versions.pikku.json` example, a `.github/workflows/ci.yml` example, the generated `pikku-services.gen.ts`, and one function wired to every transport.
+- Non-TS command text, candidates for captured transcripts: deploy pages `azure.tsx` (deploy and local-dev commands, step bash), `serverless.tsx` (serverless.yml, deploy info output, step bash), `cloudflare.tsx` (deploy info, plan and apply output, step bash), `standalone.tsx` (hero, run and desktop commands); the ASCII cron field diagram in `wires/cron.tsx`; the Terminal on getting-started and in `PaperLayout`. The catalogue Detail pages build short usage strings from registry data (not authored).
 - Docs "last updated" dates are not shown.
 
 ## Cutover checklist

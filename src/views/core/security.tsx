@@ -34,17 +34,7 @@ function Hero() {
         </div>
 
         <div className={styles.heroCode}>
-          <span className={styles.hcComment}>{'// Same API everywhere'}</span><br />
-          <span className={styles.hcKw}>async</span>{' ('}<br />
-          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcVar1}>db</span>{' }'}</span>
-          <span style={{ marginLeft: 8, color: '#8a8475' }}>{'// services'}</span><br />
-          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcVar2}>bookId</span>{' }'}</span>
-          <span style={{ marginLeft: 8, color: '#8a8475' }}>{'// data'}</span><br />
-          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcVar3}>session</span>{', '}<span className={styles.hcVar3}>setSession</span>{' }'}</span>
-          <span style={{ marginLeft: 8, color: '#8a8475' }}>{'// wire'}</span><br />
-          {') => { ... }'}<br /><br />
-          <span className={styles.hcComment}>{'// HTTP cookie, WebSocket token,'}</span><br />
-          <span className={styles.hcComment}>{"// CLI auth, MCP — doesn't matter"}</span>
+          <span className={styles.hcComment}>Session access is the same everywhere</span><span style={{ display: 'block', marginTop: 6 }}><span className={styles.hcComment}>same API</span> HTTP cookie, WebSocket token, CLI auth, MCP: it does not matter</span>
         </div>
       </div>
     </div>

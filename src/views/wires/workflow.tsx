@@ -107,7 +107,7 @@ const page: PageData = {
       columns: 2,
       cards: [
         { icon: 'zap', title: 'workflow.do(name, rpcName, data, options?)', body: 'Execute a Pikku function as a queue job. Supports retries and retry delay.', mono: true },
-        { icon: 'layers', title: 'workflow.do(name, async () => value)', body: 'Inline step — runs immediately, result cached for replay. Great for transformations.', mono: true },
+        { icon: 'layers', title: 'workflow.do(name, inlineStep)', body: 'Inline step — runs immediately, result cached for replay. Great for transformations.', mono: true },
         { icon: 'clock', title: 'workflow.sleep(name, duration)', body: 'Durable sleep. Survives restarts — the workflow resumes after the duration.', mono: true },
         { icon: 'pause', title: 'workflow.suspend(reason)', body: 'Pause the workflow until explicitly resumed. For human-in-the-loop approval flows.', mono: true },
       ],

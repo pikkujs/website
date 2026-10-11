@@ -38,15 +38,7 @@ function Hero() {
         </div>
 
         <div className={styles.heroCoded}>
-          <span className={styles.hcComment}>{'// Every Pikku function'}</span><br />
-          <span className={styles.hcKeyword}>async</span>{' ('}  <br />
-          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcService}>db</span>{', '}<span className={styles.hcService}>logger</span>{', '}<span className={styles.hcService}>jwt</span>{' }'}</span>
-          <span className={styles.hcLabel}>{'// services'}</span><br />
-          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcData}>bookId</span>{', '}<span className={styles.hcData}>title</span>{' }'}</span>
-          <span className={styles.hcLabel}>{'// data'}</span><br />
-          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcWire}>session</span>{' }'}</span>
-          <span className={styles.hcLabel}>{'// wire'}</span><br />
-          {') => { ... }'}
+          <span className={styles.hcComment}>Every Pikku function receives three things</span><span style={{ display: 'block', marginTop: 6 }}><span className={styles.hcLabel}>services</span> db, logger, jwt</span><span style={{ display: 'block', marginTop: 6 }}><span className={styles.hcLabel}>data</span> the validated input</span><span style={{ display: 'block', marginTop: 6 }}><span className={styles.hcLabel}>wire</span> session and transport details</span>
         </div>
       </div>
     </div>

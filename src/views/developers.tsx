@@ -1,4 +1,5 @@
 import snippets from '@/data/snippets.json';
+import { collapseFunc } from '@/components/FeaturePage';
 import React from 'react';
 import Layout from '@/components/site/Layout';
 import Link from '@/components/site/Link';
@@ -9,6 +10,7 @@ import {
   PaperPage, Section, Wrap, Eyebrow, H1, H2, Lead,
   BtnPrimary, BtnGhost, CodeCard, CheckItem, Card, CardTitle, CardBody,
 } from '@/components/PaperLayout';
+import { ArrowRight } from 'lucide-react';
 import { WiringIcon } from '@/components/WiringIcons';
 import { runtimes } from '@/data/homepage';
 import { testimonials } from '@/data/testimonials';
@@ -72,64 +74,12 @@ function Hero() {
 /* ════════════════════════════════════════════════════════════════
    Before / after
    ════════════════════════════════════════════════════════════════ */
-const BEFORE_CODE = `// Same logic, copied per protocol
-app.get('/cards/:id', auth, validate, async (req, res) => {
-  const card = await db.getCard(req.params.id)
-  res.json(card)
-})
-ws.on('getCard', auth, validate, async (msg, socket) => {
-  const card = await db.getCard(msg.cardId) // <- again
-  socket.send(JSON.stringify(card))
-})
-// + queue, cron, CLI, RPC, SSE... each drifts.
-
-// --- Workflow? Add Inngest / Temporal ----
-inngest.createFunction({ id: 'onboarding' }, ...,
-  async ({ step }) => {
-    await step.run('create-profile', () => createProfile(id))
-    await step.sleep('wait', '5m')
-    await step.run('send-welcome', () => sendWelcome(id))
-  })
-// New SDK, new schema, new deploy pipeline.
-
-// --- AI agent? Add Vercel AI / LangChain -
-const tools = { getCard: tool({
-  parameters: z.object({ cardId: z.string() }),
-  execute: async ({ cardId }) => db.getCard(cardId),
-})} // Auth? Permissions? You're on your own.
-// Three frameworks. Three auth layers. One backend.`;
-
-const AFTER_CODE = `// With Pikku — write it once
-const getCard = pikkuFunc({
-  func: async ({ db, audit }, { cardId }) => {
-    const card = await db.getCard(cardId)
-    await audit.log('getCard', { cardId })
-    return card
-  },
-  permissions: { user: isAuthenticated }
-})
-
-// Wire it to anything — same auth, same logic
-wireHTTP({ method: 'get', route: '/cards/:cardId', func: getCard })
-wireChannel({ name: 'cards', onMessage: { getCard } })
-wireQueueWorker({ queue: 'fetch-card', func: getCard })
-wireCLI({ program: 'cards', commands: { get: getCard } })
-
-// Workflows just reference your functions
-const onboarding = pikkuWorkflowFunc(
-  async ({}, { userId }, { workflow }) => {
-    await workflow.do('Create profile', 'createProfile', { userId })
-    await workflow.sleep('Wait 5 min', '5m')
-    await workflow.do('Send welcome', 'sendWelcome', { userId })
-  }
-)
-
-// AI agents too — same functions, same auth
-const support = pikkuAgent({
-  tools: [getCard, getOrders, createTicket],
-  model: 'claude-sonnet-4-5'
-})
-// Auth, permissions, and validation carry over. Done.`;
+const WITHOUT_POINTS = [
+  'The same handler written again for HTTP, WebSocket, queue, cron and CLI, each one drifting from the others.',
+  'A separate workflow engine, with its own SDK, its own schema and its own deploy pipeline.',
+  'A separate AI framework for agents, with auth and permissions left for you to rebuild.',
+  'Three auth layers, three validation layers, one backend.',
+];
 
 function BeforeAfterSection() {
   return (
@@ -144,20 +94,24 @@ function BeforeAfterSection() {
               Without Pikku
               <span className={styles.compareTag}>repeated + fragile</span>
             </div>
-            <div className={styles.compareBefore}>
-              <CodeCard filename="everything.ts">
-                <CodeBlock language="typescript">{BEFORE_CODE}</CodeBlock>
-              </CodeCard>
-            </div>
+            <ul className={styles.compareBefore} style={{ listStyle: 'none', margin: 0, padding: '22px 24px', border: '1px solid var(--paper-border)', borderRadius: 14, background: 'var(--paper-bg-alt)', display: 'grid', gap: 14 }}>
+              {WITHOUT_POINTS.map((t) => (
+                <li key={t} style={{ color: 'var(--paper-text-muted)', lineHeight: 1.6 }}>{t}</li>
+              ))}
+            </ul>
           </div>
           <div>
             <div className={styles.compareLabel}>
               <span className={`${styles.compareDot} ${styles.dotGood}`} />
               With Pikku
-              <span className={styles.compareTag}>1 function + wirings</span>
+              <span className={styles.compareTag}>1 function, then wire it</span>
             </div>
-            <CodeCard filename="cards.ts">
-              <CodeBlock language="typescript">{AFTER_CODE}</CodeBlock>
+            <CodeCard filename="items.functions.ts" badge="the function">
+              <CodeBlock language="typescript">{collapseFunc(snippets.getItem)}</CodeBlock>
+            </CodeCard>
+            <div style={{ height: 16 }} />
+            <CodeCard filename="items.wiring.ts" badge="the wiring">
+              <CodeBlock language="typescript">{snippets.funcMultiWire}</CodeBlock>
             </CodeCard>
           </div>
         </div>
@@ -169,27 +123,16 @@ function BeforeAfterSection() {
 /* ════════════════════════════════════════════════════════════════
    Same function, any transport — interactive picker
    ════════════════════════════════════════════════════════════════ */
-const FUNCTION_CODE = `const getCard = pikkuFunc({
-  title: 'Get Card',
-  description: 'Retrieve a card by ID',
-  func: async ({ db, audit }, { cardId }) => {
-    const card = await db.getCard(cardId)
-    await audit.log('getCard', { cardId })
-    return card
-  },
-  permissions: { user: isAuthenticated }
-})`;
-
 const WIRING_EXAMPLES = [
-  { title: 'HTTP API', icon: 'http', code: `wireHTTP({\n  method: 'get',\n  route: '/cards/:cardId',\n  func: getCard\n})` },
-  { title: 'WebSocket', icon: 'websocket', code: `wireChannel({\n  name: 'cards',\n  onConnect: onCardConnect,\n  onDisconnect: onCardDisconnect,\n  onMessageWiring: {\n    action: { getCard }\n  }\n})` },
-  { title: 'Server-Sent Events', icon: 'sse', code: `wireHTTP({\n  method: 'get',\n  route: '/cards/:cardId',\n  func: getCard,\n  sse: true\n})` },
-  { title: 'Queue Worker', icon: 'queue', code: `// Basic queue\nwireQueueWorker({\n  queue: 'fetch-card',\n  func: getCard\n})\n\n// With options\nwireQueueWorker({\n  queue: 'fetch-card',\n  func: getCard,\n  concurrency: 5,\n  rateLimiter: {\n    max: 10,\n    duration: 1000\n  }\n})` },
-  { title: 'Scheduled Task', icon: 'cron', code: `wireScheduler({\n  cron: '0 * * * *',\n  func: getCard\n})` },
-  { title: 'RPC Call', icon: 'rpc', code: `// From another function:\nconst card = await rpc.invoke(\n  'getCard',\n  { cardId: '123' }\n)` },
-  { title: 'MCP (AI Tools)', icon: 'mcp', code: `wireMCPResource({\n  uri: 'card/{cardId}',\n  func: getCard,\n  tags: ['cards', 'data']\n})` },
-  { title: 'CLI', icon: 'cli', code: `wireCLI({\n  program: 'cards',\n  commands: {\n    get: pikkuCLICommand({\n      parameters: '<cardId>',\n      func: getCard\n    })\n  }\n})` },
-  { title: 'Trigger', icon: 'trigger', code: `wireTrigger({\n  name: 'cardChanged',\n  func: getCard,\n})\n\n// Register the trigger source\nwireTriggerSource({\n  name: 'cardChanged',\n  func: webhookTrigger,\n  input: { secret: process.env.WEBHOOK_SECRET }\n})` },
+  { title: 'HTTP API', icon: 'http', body: 'A REST route that points at the function. Method, path, auth and middleware live on the wiring.', to: '/docs/wiring/http' },
+  { title: 'WebSocket', icon: 'websocket', body: 'A channel with connect and disconnect handlers and message routing. The function is called per message.', to: '/docs/wiring/channels' },
+  { title: 'Server-Sent Events', icon: 'sse', body: 'The same HTTP route with sse switched on, so results stream to the browser as they are produced.', to: '/docs/wiring/http/server-sent-events' },
+  { title: 'Queue Worker', icon: 'queue', body: 'A named queue worker with concurrency and rate limits, backed by BullMQ, pg-boss or SQS.', to: '/docs/wiring/queue' },
+  { title: 'Scheduled Task', icon: 'cron', body: 'A cron schedule that runs the function, with middleware and manual triggering.', to: '/docs/wiring/scheduled-tasks' },
+  { title: 'RPC Call', icon: 'rpc', body: 'Nothing to wire: expose the function and call it by name, fully typed, from any other function or client.', to: '/docs/wiring/rpcs' },
+  { title: 'MCP (AI Tools)', icon: 'mcp', body: 'Offer the function to AI clients as a tool, a resource or a prompt, with the same auth as everything else.', to: '/docs/wiring/mcp' },
+  { title: 'CLI', icon: 'cli', body: 'A command in your own command line program, with typed parameters and a renderer for the output.', to: '/docs/wiring/cli' },
+  { title: 'Trigger', icon: 'trigger', body: 'Run the function when something happens elsewhere: a webhook, a database change, a message.', to: '/docs/wiring/triggers' },
 ];
 
 function SameFunctionSection() {
@@ -202,8 +145,8 @@ function SameFunctionSection() {
         <div className={styles.ahaGrid}>
           <div>
             <div className={styles.ahaColLabel}>Write once</div>
-            <CodeCard filename="getCard.ts">
-              <CodeBlock language="typescript">{FUNCTION_CODE}</CodeBlock>
+            <CodeCard filename="items.functions.ts" badge="the function">
+              <CodeBlock language="typescript">{collapseFunc(snippets.getItem)}</CodeBlock>
             </CodeCard>
             <div className={styles.ahaChecks}>
               <CheckItem>Same auth &amp; permissions across all protocols</CheckItem>
@@ -231,14 +174,15 @@ function SameFunctionSection() {
             />
           </div>
           <div>
-            <div className={styles.ahaColLabel}>Wiring code</div>
-            <CodeCard
-              filename="wiring.ts"
-              icon={<WiringIcon wiringId={WIRING_EXAMPLES[active].icon} size={15} />}
-              badge={WIRING_EXAMPLES[active].title}
-            >
-              <CodeBlock language="typescript">{WIRING_EXAMPLES[active].code}</CodeBlock>
-            </CodeCard>
+            <div className={styles.ahaColLabel}>How it is wired</div>
+            <div className={styles.compareBefore} style={{ filter: 'none', padding: '22px 24px', border: '1px solid var(--paper-border)', borderRadius: 14, background: 'var(--paper-bg-alt)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontWeight: 600, fontFamily: 'var(--font-display)', fontSize: 20 }}>
+                <WiringIcon wiringId={WIRING_EXAMPLES[active].icon} size={20} />
+                {WIRING_EXAMPLES[active].title}
+              </div>
+              <p style={{ color: 'var(--paper-text-muted)', lineHeight: 1.65, margin: '12px 0 14px' }}>{WIRING_EXAMPLES[active].body}</p>
+              <Link to={WIRING_EXAMPLES[active].to} style={{ color: 'var(--paper-accent-dark)', textDecoration: 'underline', textUnderlineOffset: 3, display: 'inline-flex', alignItems: 'center', gap: 6 }}>Read the {WIRING_EXAMPLES[active].title} docs <ArrowRight size={14} /></Link>
+            </div>
           </div>
         </div>
       </Wrap>

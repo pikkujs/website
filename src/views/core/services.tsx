@@ -30,14 +30,7 @@ function Hero() {
         </div>
 
         <div className={styles.heroCode}>
-          <span className={styles.hcComment}>{'// Every function destructures'}</span><br />
-          <span className={styles.hcComment}>{'// only what it needs'}</span><br />
-          <span className={styles.hcKw}>async</span>{' ('}<br />
-          <span style={{ marginLeft: 24 }}>{'{ '}<span className={styles.hcVar}>db</span>{', '}<span className={styles.hcVar}>logger</span>{', '}<span className={styles.hcVar}>jwt</span>{' }'}</span><br />
-          <span style={{ marginLeft: 24 }}>...</span><br />
-          {') => { ... }'}<br /><br />
-          <span className={styles.hcComment}>{'// Pikku tracks which services'}</span><br />
-          <span className={styles.hcComment}>{'// each function uses → tree-shaking'}</span>
+          <span className={styles.hcComment}>Pikku tracks which services each function uses, which is what makes tree-shaking possible</span><span style={{ display: 'block', marginTop: 6 }}><span className={styles.hcComment}>services</span> destructured by name: only what the function uses is tracked</span>
         </div>
       </div>
     </div>

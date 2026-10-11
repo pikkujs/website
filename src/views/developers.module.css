@@ -335,3 +335,5 @@
 .ctaCmd:hover { border-color: var(--paper-text-muted); color: var(--paper-text); }
 
 .ctaActions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+.ahaGrid > *, .compareGrid > * { min-width: 0; }
