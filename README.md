@@ -1,68 +1,81 @@
-# Website
+# pikku.dev
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+The Pikku website: marketing pages, docs, blog, the SDK explorer and the addon / OpenAPI catalogue.
 
-### Installation
+Built with TanStack Start (Vite 8, React 19, Tailwind 4), Fumadocs in headless mode for content, and deployed as a
+Cloudflare Worker serving static assets. Docs and blog are prerendered at build time; only the catalogue
+(`/addons`, `/openapis`) is rendered by the Worker on request.
 
-```
-$ yarn
-```
+## Commands
 
-### Local Development
-
-```
-$ yarn start
-```
-
-This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
-
-### Build
-
-```
-$ yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
-
-### Deployment
-
-This is done automatically by CI.
-
-### Submodules
-
-Two submodules feed generated content into the site, and both track `main` rather
-than a pinned commit:
-
-| Submodule | Repo | Feeds |
-| --- | --- | --- |
-| `.pikku-core` | `pikkujs/pikku` | The framework source the docs are checked against |
-| `.template-online-shop` | `pikkujs/template-online-shop` | Every code snippet on the site, via `@snippet` markers |
-
-```
-$ yarn sync-submodules     # move both to the tip of main
-$ yarn install-hooks       # run the above after every `git pull` (once per clone)
+```sh
+npm ci --legacy-peer-deps   # install (needs the legacy flag for peer ranges)
+npm run dev                 # dev server on http://localhost:3005
+npm run build               # prerender everything into dist/ (Cloudflare build), runs the link gate
+npm run preview             # serve the built site in a local Worker (wrangler dev --local)
+npm run typecheck           # tsc --noEmit
+npm run check-links         # re-run the link gate on dist/client
+node scripts/audit-render.mjs   # structural audit of the rendered HTML (h1s, titles, empty pages)
+npm run sync-snippets       # regenerate src/data/snippets.json from the template submodule
+npm run sync-registry       # refresh the vendored addon / OpenAPI catalogue (needs network)
+node scripts/gen-redirects.mjs  # regenerate legacy /docs/api-reference/* redirect pages and public/_redirects
 ```
 
-`git pull` on its own only ever restores the commit this repo records, so
-`sync-submodules` is what "always on latest" needs. `install-hooks` writes a
-`post-merge` hook that calls it; hooks are not tracked by git, so each clone runs
-it once.
+Use Node 22 or newer. `vite dev` is fine for most work; the `/api` SDK explorer is browser-only and is best checked
+against `npm run build && npm run preview`.
 
-### Generated data
+## Structure
 
-Neither of these is written by hand — edit the source and re-run:
+| Path | What lives there |
+| --- | --- |
+| `content/docs`, `content/blog` | All prose, as `.mdx`. Sidebar order comes from `meta.json` files. |
+| `src/routes` | File routes. Marketing pages are thin wrappers around `src/views`; `docs.$` and `blog.*` render content from prerendered JSON payloads. |
+| `src/views` | Marketing page bodies (home, developers, features, wires, core, deploy, openapis, addons). |
+| `src/components` | Paper-theme kit (`PaperLayout`), MDX components, `site/` (navbar, footer, search, theme toggle, 404). |
+| `src/lib` | Content source, payload builders, SEO helpers, search index, catalogue loaders. |
+| `src/styles` | Tokens (`--paper-*`), base, prose, shell, docs, animation CSS. |
+| `src/data` | Generated and vendored data: `snippets.json`, `surface.json`, catalogue JSON. |
+| `packages/vite-link-check` | The prerender link gate. Policy lives in `link-gate.config.mjs`. |
+| `plugins` | Build plugins (feeds / sitemap, Shiki themes, remark snippets). |
+| `public` | Static assets, `robots.txt`, `_redirects`, legacy redirect pages. |
 
-```
-$ yarn sync-snippets       # .template-online-shop -> src/data/snippets.json
-$ yarn sync-api-surface    # @pikku/cli surface.json -> docs/api-reference/
-```
+## Content rules
 
-`sync-snippets` reads `@snippet start|end <name>` markers out of the template's
-`packages/functions/src`. Regions may nest, so the same lines can be published
-under both a concrete name and a role-descriptive one; an unclosed or unmatched
-marker is warned about rather than silently dropped.
+- **No code in the website.** Every TypeScript example is a snippet from the template project, referenced from MDX as
+  ` ```typescript @snippet <id> `. Never hand-write a TS example in a doc, and never edit
+  `src/data/snippets.json` by hand.
+- Snippets come from the `.template-online-shop` submodule. To change an example: edit it there, push, run
+  `npm run sync-snippets`, and commit the submodule bump together with the regenerated JSON.
+- AI-generated pages carry `ai: true` in their frontmatter, which shows the disclaimer banner.
+- There is no Console. Do not add Console links or docs.
+- Deleted pages that must not be linked again: `/pricing`, `/use-cases/*`, `/instant-reload`, `/manual-setup`.
 
-`sync-api-surface` regenerates all 27 pages under `docs/api-reference/` from the
-API surface that ships inside a *built* `@pikku/cli`. A fresh `.pikku-core`
-checkout has no `surface.json` until the CLI is built there, so the script falls
-back to `src/data/surface.json`, which is vendored for exactly that reason.
+## The link gate
+
+`npm run build` crawls every prerendered page and fails on any internal link or `#anchor` that does not resolve.
+`link-gate.config.mjs` is the single place that lists exceptions: Worker-rendered routes (`ssrRoutes`), pages not yet
+ported (`pendingPages`, empty) and ignored patterns.
+
+## Catalogue
+
+`/addons` and `/openapis` are server-rendered by the Worker from `public/__data` (generated by `gen:data`, read
+through the `ASSETS` binding). The browse table on `/openapis` loads `/registry-data/openapis.json`, which asks the
+hosted registry (`https://api.pikkustudio.app`, override with the `REGISTRY_URL` var) and falls back to the vendored
+fixture when it is unreachable.
+
+## Deploy
+
+`wrangler.jsonc` describes a Worker named `pikku-site` with static assets from `dist/client`. CI
+(`.github/workflows/main.yml`) builds on every push to `main` and deploys with `cloudflare/wrangler-action`; other
+branches build and upload a non-production Worker version (`branch.yml`). It needs two repository secrets:
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+
+### DNS cutover (pikku.dev)
+
+The site previously deployed to GitHub Pages (`public/CNAME` held `www.pikku.dev`). To cut over:
+
+1. Deploy once and confirm the Worker on its `*.workers.dev` URL.
+2. Add `pikku.dev` and `www.pikku.dev` as custom domains on the `pikku-site` Worker (Workers & Pages, Settings, Domains).
+   Cloudflare replaces the existing GitHub Pages DNS records; remove any leftover `A`/`CNAME` records pointing at GitHub.
+3. Disable GitHub Pages in the repository settings and delete the `CNAME` file if it is still present.
+4. Check `/`, `/docs`, `/blog`, `/addons`, `/fabric` (redirects to pikkufabric.com), an old blog URL and a 404.

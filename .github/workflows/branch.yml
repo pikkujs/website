@@ -1,9 +1,11 @@
 name: Branch
-run-name: Publish to github pages
+run-name: Build branch and upload a preview Worker version
 on:
   push:
     branches-ignore:
       - main
+  pull_request:
+
 jobs:
   build:
     name: Build
@@ -14,16 +16,46 @@ jobs:
         with:
           submodules: true
 
-      - run: corepack enable
-        shell: bash
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-      - run: yarn install
-      - run: yarn sync-snippets
-      # The OpenAPI catalogue's per-spec detail files are generated, not tracked
-      # (20MB). Without this step the plugin finds nothing and every
-      # /openapis/<spec> route disappears from the build.
-      - run: yarn sync-registry
-      - run: yarn build
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Sync snippets
+        run: |
+          if grep -q '"sync-snippets"' package.json; then npm run sync-snippets; fi
+
+      - name: Sync registry (best effort)
+        run: |
+          if grep -q '"sync-registry"' package.json; then npm run sync-registry || echo "registry sync failed, using vendored data"; fi
+
+      - run: npm run typecheck
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-dist
+          path: dist/
+          retention-days: 3
+
+  preview:
+    name: Upload preview version
+    runs-on: ubuntu-latest
+    needs: build
+    # Needs repository secrets; skipped for forks where they are unavailable.
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-dist
+          path: dist/
+      # Uploads a version without promoting it to the live deployment.
+      - name: Upload version
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: versions upload --config dist/server/wrangler.json

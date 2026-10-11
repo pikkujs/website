@@ -55,7 +55,7 @@
     "wrangler": "^4.149.0"
   },
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite dev --port 3005",
     "predev": "npm run gen:data",
     "build": "npm run check-error-docs && npm run gen:data && vite build -c vite.config.cf.ts",
     "build:node": "npm run check-error-docs && npm run gen:data && vite build",
