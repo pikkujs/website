@@ -61,3 +61,4 @@ a.tag:hover { color: var(--paper-accent); border-color: var(--paper-accent); }
 .post-body { margin-top: 28px; }
 .blog-foot { margin-top: 32px; padding-top: 16px; border-top: 1px dashed var(--paper-border-strong); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .9rem; }
 .blog-foot a { color: var(--paper-accent); }
+.prose-pikku > .doc-title:has(~ .doc-own-title) { display: none; }

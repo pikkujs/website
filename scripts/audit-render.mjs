@@ -33,6 +33,7 @@ for (const f of files) {
   if (/^\/(docs|blog)\/./.test(rel) && main && text(main[0]).trim().length < 80) failures.push([rel, 'empty main content'])
   for (const [name, test] of CHECKS) if (test(h, t)) failures.push([rel, name])
   const m = /<h1[\s>]/.test(h)
+  if (/^\/docs\/./.test(rel) && (h.match(/<h1[\s>]/g) ?? []).length - (/class="doc-own-title"/.test(h) ? 1 : 0) > 1) failures.push([rel, 'more than one <h1>'])
   byKind[/^\/docs/.test(rel) ? 'docs' : /^\/blog/.test(rel) ? 'blog' : 'other'] = (byKind[/^\/docs/.test(rel) ? 'docs' : /^\/blog/.test(rel) ? 'blog' : 'other'] ?? 0) + 1
   if (!m && !/^\/(payload|_)/.test(rel) && rel !== '/404' && !/redirect/i.test(h)) failures.push([rel, 'no <h1>'])
 }

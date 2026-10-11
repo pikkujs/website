@@ -18,7 +18,7 @@ import { ChevronRight, Menu, Pencil, X } from 'lucide-react'
 
 const REPO = 'https://github.com/pikkujs/website/blob/main/content/docs/'
 
-type DocData = { path: string; url: string; title: string; description?: string }
+type DocData = { path: string; url: string; title: string; description?: string; ai?: boolean; hideTitle?: boolean }
 export const Route = createFileRoute('/docs/$')({
   component: Page,
   head: ({ loaderData }) => { const d = loaderData as DocData | undefined; return d ? pageHead({ title: d.title, description: d.description || undefined, path: d.url, extra: [{ name: 'source-file', content: 'content/docs/' + d.path }] }) : {} },
@@ -41,12 +41,11 @@ const serverLoader = createServerFn({ method: 'GET' })
   })
 const treeLoader = createServerFn({ method: 'GET' })
   .handler(async () => docsTree())
-function Content({ path, tree, url }: { path: string; tree: any; url: string }) {
+function Content({ path, tree, url, ai, hideTitle }: { path: string; tree: any; url: string; ai?: boolean; hideTitle?: boolean }) {
   const page = docs.getPage(path)
   if (!page) throw new Error(`unknown page: ${path}`)
   const loaded = use(page.load())
   const { toc } = loaded
-  const fm = ((loaded as any).frontmatter ?? {}) as Record<string, unknown>
   const MDX = page.body
   const { previous, next } = findNeighbour(tree, url)
   const crumbs = getBreadcrumbItems(url, tree, { includePage: true })
@@ -56,7 +55,7 @@ function Content({ path, tree, url }: { path: string; tree: any; url: string }) 
         <nav className="crumbs" aria-label="Breadcrumb">
           {crumbs.map((c: any, i: number) => <span key={i} className="crumb">{i > 0 && <ChevronRight size={12} aria-hidden />}{c.url && i < crumbs.length - 1 ? <Link to={c.url}>{c.name}</Link> : <span aria-current={i === crumbs.length - 1 ? 'page' : undefined}>{c.name}</span>}</span>)}
         </nav>
-        <Prose>{fm.ai ? <AIDisclaimer /> : null}{fm.hide_title ? null : <h1>{page.title ?? ''}</h1>}<MDX components={useMDXComponents()} /></Prose>
+        <Prose>{ai ? <AIDisclaimer /> : null}{hideTitle ? null : <h1 className="doc-title">{page.title ?? ''}</h1>}<MDX components={useMDXComponents()} /></Prose>
         <div className="doc-edit"><a href={REPO + path} target="_blank" rel="noreferrer"><Pencil size={14} aria-hidden /> Edit this page on GitHub</a></div>
         <nav className="pager" aria-label="Previous and next page">
           {previous ? <Link to={previous.url as any} className="pager-link"><small>Previous</small><span>&larr; {previous.name}</span></Link> : <span />}
@@ -85,7 +84,7 @@ function Page() {
           </Dialog.Portal>
         </Dialog.Root>
       </div>
-      <Suspense><Content path={data.path} tree={data.pageTree} url={data.url} /></Suspense>
+      <Suspense><Content path={data.path} tree={data.pageTree} url={data.url} ai={data.ai} hideTitle={data.hideTitle} /></Suspense>
     </div>
   )
 }

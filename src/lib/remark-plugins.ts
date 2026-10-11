@@ -57,3 +57,17 @@ export function remarkPkgTabs() {
     })
   }
 }
+
+/** The docs layout renders the page title as the <h1> (from frontmatter, or fumadocs' auto-title from the first
+ *  `# heading`). Drop that leading heading from the body so the title is not shown twice. Runs after the defaults. */
+export function remarkStripTitleHeading() {
+  return (tree: any, file: any) => {
+    const i = (tree.children as any[]).findIndex((n) => n.type === 'heading' && n.depth === 1)
+    if (i < 0) return
+    const text = (n: any): string => (n.value ?? '') + ((n.children ?? []).map(text).join(''))
+    const h = text(tree.children[i]).trim().toLowerCase()
+    const t = String(file.data?.frontmatter?.title ?? '').trim().toLowerCase()
+    if (!t || h === t) tree.children.splice(i, 1)
+    else tree.children[i].data = { ...(tree.children[i].data ?? {}), hProperties: { className: ['doc-own-title'] } } // differs from the title: it wins, the layout h1 is hidden by CSS
+  }
+}

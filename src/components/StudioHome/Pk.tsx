@@ -49,7 +49,7 @@ export function Symbols() {
           <path
             d="M1 1 L1 22 L7 17 L11 26 L15 24 L11 15 L19 15 Z"
             fill="currentColor"
-            stroke="#2b2219"
+            stroke="var(--paper-text)"
             strokeWidth="1.6"
             strokeLinejoin="round"
           />

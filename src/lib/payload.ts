@@ -9,7 +9,7 @@ import { source, blogSource } from './source'
  */
 export const docPayload = (slugs: string[]) => {
   const page = source.getPage(slugs)
-  return page ? { path: page.path, url: page.url, title: page.data.title ?? '', description: page.data.description ?? '' } : null
+  return page ? { path: page.path, url: page.url, title: page.data.title ?? '', description: page.data.description ?? '', ai: !!(page.data as any).ai, hideTitle: !!(page.data as any).hide_title } : null
 }
 export const docsTree = async () => source.serializePageTree(source.getPageTree())
 

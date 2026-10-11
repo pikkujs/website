@@ -23,7 +23,7 @@ export function FanScene() {
         />
         <g
           fill="none"
-          stroke="#2b2219"
+          stroke="var(--paper-text)"
           strokeWidth="2.2"
           strokeLinecap="round"
           filter="url(#rough)"
@@ -41,7 +41,7 @@ export function FanScene() {
           your function
         </text>
 
-        <g fontSize="26" fill="#2b2219">
+        <g fontSize="26" fill="var(--paper-text)">
           <circle cx="104" cy="104" r="34" fill="#c9dbe2" filter="url(#wash)" />
           <use href="#pk" x="76" y="76" width="56" height="56" style={{ color: '#3d6373' }} />
           <text x="56" y="168">
@@ -103,7 +103,7 @@ export function FanScene() {
         </text>
         <g
           fill="none"
-          stroke="#2b2219"
+          stroke="var(--paper-text)"
           strokeWidth="2.2"
           strokeLinecap="round"
           filter="url(#rough)"
@@ -117,7 +117,7 @@ export function FanScene() {
           <path d="M70 446 C 90 440, 110 446, 128 444" />
           <path d="M70 500 C 90 494, 110 500, 128 498" />
         </g>
-        <g fontSize="27" fill="#2b2219">
+        <g fontSize="27" fill="var(--paper-text)">
           <use href="#pk" x="132" y="152" width="44" height="44" style={{ color: '#3d6373' }} />
           <text x="186" y="184">
             HTTP
