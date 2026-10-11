@@ -2,51 +2,11 @@ import React from 'react';
 import Link from '@/components/site/Link';
 import Layout from '@/components/site/Layout';
 import CodeBlock from '@/components/site/CodeBlock';
-import { ArrowRight, Hash, FileJson, ShieldCheck, Lock, Search, Copy, Check, GitCommit } from 'lucide-react';
+import { ArrowRight, Hash, FileJson, ShieldCheck, Lock, Search, Copy, Check } from 'lucide-react';
 import { PaperPage, CodeCard } from '@/components/PaperLayout';
 import styles from './versioning.module.css';
 import snippets from '@/data/snippets.json';
 import { snippetSourceUrl } from '@/lib/snippets';
-
-const versionsJsonCode = `{
-  "manifestVersion": 1,
-  "contracts": {
-    "getItem": {
-      "latest": 1,
-      "versions": {
-        "1": "a1b2c3d4e5f6g7h8"
-      }
-    },
-    "listItems": {
-      "latest": 2,
-      "versions": {
-        "1": "i9j0k1l2m3n4o5p6",
-        "2": "q7r8s9t0u1v2w3x4"
-      }
-    }
-  }
-}`;
-
-const ciTerminalOutput = `$ npx pikku versions check
-
-✗ getItem — contract changed without version bump
-  Input schema hash:  a1b2c3d4 → f9e8d7c6
-  Output schema hash: i9j0k1l2 → z5y4x3w2
-
-  Run: npx pikku versions update
-  after bumping to version 2`;
-
-const githubActionsYaml = `# .github/workflows/ci.yml
-name: CI
-on: [push, pull_request]
-
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npx pikku versions check`;
 
 const versionedFuncCode = snippets.shopVersionedItem;
 
@@ -118,10 +78,10 @@ function HowItWorksSection() {
           ))}
         </div>
 
-        <div style={{ maxWidth: 600 }}>
-          <CodeCard filename="versions.pikku.json" badge="manifest" icon={<FileJson size={13} style={{ color: '#c2410c' }} />}>
-            <CodeBlock language="json">{versionsJsonCode}</CodeBlock>
-          </CodeCard>
+        <div className={styles.card} style={{ maxWidth: 600 }}>
+          <div className={styles.cardTitle} style={{ fontSize: 17 }}>The manifest</div>
+          <p className={styles.cardBody}>Hashes live in a versions.pikku.json file committed next to your code, one entry per function and version.</p>
+          <p className={styles.cardBody}><Link to="/docs/core-features/versioning">See the manifest format <ArrowRight size={14} style={{ verticalAlign: '-2px' }} /></Link></p>
         </div>
       </div>
     </section>
@@ -140,23 +100,10 @@ function CIGateSection() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, alignItems: 'start' }}>
-          <div className={styles.ciTerminal}>
-            <div className={styles.ciTermBar}>
-              <span className={styles.ciTermDot} style={{ background: '#e06c5b' }} />
-              <span className={styles.ciTermDot} style={{ background: '#e0b34b' }} />
-              <span className={styles.ciTermDot} style={{ background: '#79b06a' }} />
-              <span className={styles.ciTermTitle}>CI Pipeline</span>
-              <span className={styles.ciTermFailed}>failed</span>
-            </div>
-            <div className={styles.ciTermBody}>
-              <pre style={{ margin: 0, color: '#d8d2c4', whiteSpace: 'pre-wrap', fontFamily: 'Geist Mono, monospace', fontSize: 12, lineHeight: 1.8 }}>{ciTerminalOutput}</pre>
-            </div>
-          </div>
-
-          <CodeCard filename=".github/workflows/ci.yml" badge="GitHub Actions" icon={<GitCommit size={13} style={{ color: '#c2410c' }} />}>
-            <CodeBlock language="yaml">{githubActionsYaml}</CodeBlock>
-          </CodeCard>
+        <div className={styles.card} style={{ maxWidth: 600 }}>
+          <div className={styles.cardTitle} style={{ fontSize: 17 }}>See it fail, then fix it</div>
+          <p className={styles.cardBody}>A breaking change fails the check with the exact schema hashes that moved and the command that fixes it. The docs include the CI pipeline step and the full output.</p>
+          <p className={styles.cardBody}><Link to="/docs/core-features/versioning">CI setup and sample output <ArrowRight size={14} style={{ verticalAlign: '-2px' }} /></Link></p>
         </div>
       </div>
     </section>

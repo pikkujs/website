@@ -177,15 +177,6 @@ function ServicesSection() {
    ════════════════════════════════════════════════════════ */
 const versionedFuncCode = snippets.shopVersionedItem;
 
-const ciCheckCode = `$ npx pikku versions check
-
-✗ getItem — contract changed without version bump
-  Input schema hash:  a1b2c3d4 → f9e8d7c6
-  Output schema hash: i9j0k1l2 → z5y4x3w2
-
-  Run: npx pikku versions update
-  after bumping to version 2`;
-
 function VersioningSection() {
   const steps = [
     { icon: <GitBranch className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Contracts are tracked automatically', desc: <>Every function's name + input schema + output schema = a contract hash. The CLI stores these in a <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>versions.pikku.json</code> manifest.</> },
@@ -219,18 +210,7 @@ function VersioningSection() {
                 </div>
               </div>
             ))}
-            <div className={styles.ciTerminal}>
-              <div className={styles.ciTermBar}>
-                <span className={styles.ciTermDot} style={{ background: '#e06c5b' }} />
-                <span className={styles.ciTermDot} style={{ background: '#e0b34b' }} />
-                <span className={styles.ciTermDot} style={{ background: '#79b06a' }} />
-                <span className={styles.ciTermTitle}>CI Pipeline</span>
-                <span className={styles.ciTermFailed}>failed</span>
-              </div>
-              <div className={styles.ciTermBody}>
-                <pre style={{ margin: 0, whiteSpace: 'pre-wrap', color: '#d8d2c4' }}>{ciCheckCode}</pre>
-              </div>
-            </div>
+            <p className={styles.cardBody}><Link to="/docs/core-features/versioning">CI setup and sample output in the docs</Link></p>
           </div>
 
           <div>

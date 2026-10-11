@@ -1,3 +1,4 @@
+import snippets from '@/data/snippets.json';
 import React from 'react';
 import Layout from '@/components/site/Layout';
 import Link from '@/components/site/Link';
@@ -266,24 +267,8 @@ const FEATURES: Feature[] = [
     title: <>Your functions are <em>already agent tools.</em></>,
     lede: 'No adapters. No schema writing. No separate auth layer. Pass your existing Pikku functions directly — the agent gets your full backend.',
     code: [{
-      filename: 'src/agents/support.agent.ts',
-      source: `// These already exist in your backend — no changes needed
-import { getCustomer, getOrders, createTicket } from './functions'
-
-export const supportAgent = pikkuAgent({
-  name: 'support',
-  instructions: \`You are a helpful support agent.
-Look up the customer's account and recent orders.\`,
-  tools: [getCustomer, getOrders, createTicket],
-  model: 'claude-sonnet-4-5'
-})
-
-// Wire it just like any HTTP endpoint
-wireHTTP({
-  method: 'post',
-  route: '/api/chat',
-  func: supportAgent
-})`,
+      filename: 'src/agents/shop.agent.ts',
+      source: snippets['aiAgent'],
     }],
     points: [
       { title: 'Zero glue code', body: 'Pass any Pikku function as a tool — the agent inherits its type signature, description, and input schema automatically.' },
@@ -299,33 +284,8 @@ wireHTTP({
     title: <>Multi-step processes that <em>survive anything.</em></>,
     lede: 'Write sequential logic like normal code. Pikku handles persistence, retries, and resumption — even across server restarts.',
     code: [{
-      filename: 'src/workflows/onboarding.workflow.ts',
-      source: `export const onboardingWorkflow = pikkuWorkflowFunc(
-  async ({ workflow }, { email, userId }) => {
-    // Each step is persisted — safe to retry
-    const user = await workflow.do(
-      'Create user profile',
-      'createUserProfile',
-      { email, userId }
-    )
-
-    await workflow.do(
-      'Add to CRM',
-      async () => crm.createUser(user)
-    )
-
-    // Suspend for 5 minutes — no server held
-    await workflow.sleep('Wait before welcome email', '5min')
-
-    await workflow.do(
-      'Send welcome email',
-      'sendEmail',
-      { to: email, template: 'welcome' }
-    )
-
-    return { success: true }
-  }
-)`,
+      filename: 'src/workflows/order-follow-up.workflow.ts',
+      source: snippets['wa-wf-quick-example'],
     }],
     points: [
       { title: 'Deterministic replay', body: 'Completed steps are cached and never re-executed. A workflow that fails on step 4 resumes from step 4 — not from the beginning.' },
@@ -342,35 +302,11 @@ wireHTTP({
     code: [
       {
         filename: 'src/wiring.ts',
-        source: `// One line per addon
-wireAddon({
-  name: 'stripe',
-  package: '@pikku/addon-stripe'
-})
-wireAddon({
-  name: 'email',
-  package: '@pikku/addon-sendgrid',
-  secretOverrides: {
-    SENDGRID_API_KEY: 'MY_EMAIL_KEY'
-  }
-})`,
+        source: snippets['rt-wire-addon-multiple'],
       },
       {
-        filename: 'src/functions/checkout.func.ts',
-        source: `// Call addon functions via namespaced RPC
-const checkout = pikkuFunc({
-  func: async ({}, { plan }, { rpc }) => {
-    const session = await rpc.invoke(
-      'stripe:checkoutCreate',
-      { plan, currency: 'usd' }
-    )
-    await rpc.invoke(
-      'email:mailSend',
-      { to: session.email, template: 'receipt' }
-    )
-    return { url: session.url }
-  }
-})`,
+        filename: 'src/functions/stripe-customer.func.ts',
+        source: snippets['rt-addon-typed-invoke'],
       },
     ],
     points: [
@@ -390,36 +326,11 @@ const checkout = pikkuFunc({
     code: [
       {
         filename: 'src/gateway.wiring.ts',
-        source: `// Webhook — platform POSTs to you
-wireGateway({
-  name: 'whatsapp',
-  type: 'webhook',
-  route: '/webhooks/whatsapp',
-  adapter: whatsAppAdapter,
-  func: handleMessage,
-})
-
-// WebSocket — real-time web chat
-wireGateway({
-  name: 'webchat',
-  type: 'websocket',
-  route: '/chat',
-  adapter: webChatAdapter,
-  func: handleMessage,
-})`,
+        source: snippets['wb-gateway-multiple'],
       },
       {
         filename: 'src/gateway.functions.ts',
-        source: `// One handler for all platforms
-const handleMessage = pikkuFunc({
-  func: async ({ database, logger }, { senderId, text }) => {
-    logger.info(\`\${senderId}: \${text}\`)
-    await database.saveMessage(senderId, text)
-
-    // Return value is auto-sent via the adapter
-    return { text: \`Got it! You said: \${text}\` }
-  }
-})`,
+        source: snippets['wb-gateway-handler'],
       },
     ],
     points: [

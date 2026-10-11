@@ -1,32 +1,6 @@
 import { FeaturePage } from '@/components/FeaturePage';
 import type { PageData } from '@/components/FeaturePage/types';
 
-const generatedFunctionCode = `import { app } from '@azure/functions'
-import { pikkuHTTPFunctionHandler } from './pikku-azure-http.js'
-import { pikkuQueueHandler } from './pikku-azure-queue.js'
-import { pikkuTimerHandler } from './pikku-azure-timer.js'
-
-// HTTP triggers
-app.http('getUser', {
-  methods: ['GET'],
-  route: 'users/{id}',
-  authLevel: 'anonymous',
-  handler: pikkuHTTPFunctionHandler
-})
-
-// Storage Queue triggers
-app.storageQueue('processOrder', {
-  queueName: 'orders',
-  connection: 'AzureWebJobsStorage',
-  handler: pikkuQueueHandler
-})
-
-// Timer triggers
-app.timer('dailyCleanup', {
-  schedule: '0 0 3 * * *',
-  handler: pikkuTimerHandler
-})`;
-
 const deployCode = `# Generate Azure Functions code
 pikku deploy apply --provider azure
 
@@ -118,8 +92,10 @@ $ func azure functionapp publish my-app`,
         ],
       },
       right: {
-        type: 'code',
-        code: { filename: 'src/functions/index.ts', badge: 'generated', icon: 'zap', code: generatedFunctionCode, language: 'typescript' },
+        type: 'note',
+        icon: 'zap',
+        title: 'Read the generated code',
+        body: 'The generated Azure Functions v4 entry points are plain code in your repository, so you can read and modify them. See the Azure runtime docs for a walkthrough.',
       },
     },
     {

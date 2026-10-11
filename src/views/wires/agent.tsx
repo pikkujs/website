@@ -8,32 +8,9 @@ const invokeCode = snippets.aiAgentInvoke;
 
 const streamCode = snippets.aiAgentStream;
 
-const scorerCode = `export const namesAProduct = pikkuAgentScorer({
-  name: 'namesAProduct',
-  description: 'Names an item instead of hedging',
-  sampleRate: 0.25,
-  score: ({ toolCalls }) => {
-    const named = toolCalls.some(
-      (c) => c.name === 'listItems',
-    )
-    return {
-      score: named ? 1 : 0,
-      reason: \`\${toolCalls.length} tool call(s).\`,
-    }
-  },
-})`;
+const scorerCode = snippets.agentScorer;
 
-const judgeCode = `export const answersTheShopper = pikkuAgentJudge({
-  name: 'answersTheShopper',
-  description: 'Does the answer help a shopper buy',
-  model: 'openai/o4-mini',
-  goal: [
-    'Grade how well the answer addresses the ask.',
-    'Score 1 when it names the item or its price.',
-    'Score 0 when it describes the catalogue.',
-  ].join(' '),
-  sampleRate: 0,
-})`;
+const judgeCode = snippets.agentJudge;
 
 const page: PageData = {
   meta: {

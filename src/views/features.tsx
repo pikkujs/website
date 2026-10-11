@@ -75,22 +75,8 @@ const frameworkCards: FeatureCard[] = [
   },
 ];
 
-/* The wiring half of the concepts band. getItem is the real template function
-   shown on the left — and two of the three protocols here need no wiring at
-   all, which is the point worth making rather than hiding behind a wrapper. */
-const WIRING_CODE = `// HTTP — a REST route
-wireHTTP({
-  method: 'get',
-  route: '/items/:itemId',
-  func: getItem,
-});
-
-// RPC — nothing to wire. expose: true on
-// the function is what does it.
-await rpc.invoke('getItem', { itemId });
-
-// MCP — nothing to wire either. mcp: true
-// offers it to agents as a tool.`;
+/* The wiring half of the concepts band: the same getItem, wired to a transport by one call (template snippet). */
+const WIRING_CODE = snippets.funcMultiWire;
 
 /* ─────────────────────────────────────────────
    Cards

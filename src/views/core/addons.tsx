@@ -5,35 +5,11 @@ import CodeBlock from '@/components/site/CodeBlock';
 import { Puzzle, Package, Tag, Key, Upload, BookOpen, ArrowRight, Check } from 'lucide-react';
 import { PaperPage, CodeCard } from '@/components/PaperLayout';
 import styles from './addons.module.css';
+import snippets from '@/data/snippets.json';
+import { snippetSourceUrl } from '@/lib/snippets';
 
-const consumingCode = `// Call addon functions via namespaced RPCs
-const result = await rpc('postgres:insert', {
-  table: 'users',
-  data: { name: 'Alice', email: 'alice@example.com' }
-})
-
-// Addons declare secrets via wireSecret —
-// you provide the values through your own secret store
-await secrets.getSecretJSON('POSTGRES_URL')`;
-
-const creatingSecretCode = `// src/redis.secret.ts
-wireSecret({
-  name: 'password',
-  displayName: 'Redis Password',
-  description: 'Redis authentication password',
-  secretId: 'REDIS_PASSWORD',
-  schema: z.string().optional(),
-})`;
-
-const creatingServicesCode = `// src/services.ts
-export const createSingletonServices =
-  pikkuAddonServices(async (config, { variables, secrets }) => {
-    const params = await variables.getJSON('REDIS_PARAMS')
-    const password = await secrets.getSecret('REDIS_PASSWORD')
-    return {
-      redis: new Redis({ host: params.host, password })
-    }
-  })`;
+const consumingCode = snippets['rt-addon-typed-invoke'];
+const creatingSecretCode = snippets['ea-define-crm-secret'];
 
 function Hero() {
   return (
@@ -98,7 +74,7 @@ function ConsumingSection() {
               </div>
             ))}
           </div>
-          <CodeCard filename="app.ts" badge="consuming">
+          <CodeCard sourceUrl={snippetSourceUrl('rt-addon-typed-invoke')} filename="createStripeCustomer.func.ts" badge="consuming">
             <CodeBlock language="typescript">{consumingCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -125,12 +101,14 @@ function CreatingSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard filename="redis.secret.ts" badge="wireSecret">
+            <CodeCard sourceUrl={snippetSourceUrl('ea-define-crm-secret')} filename="crm.secret.ts" badge="defineSecret">
               <CodeBlock language="typescript">{creatingSecretCode}</CodeBlock>
             </CodeCard>
-            <CodeCard filename="services.ts" badge="pikkuAddonServices">
-              <CodeBlock language="typescript">{creatingServicesCode}</CodeBlock>
-            </CodeCard>
+            <div className={styles.card}>
+              <div className={styles.cardTitle}>The service factory</div>
+              <p className={styles.cardBody}>pikkuAddonServices receives the host app's variables and secrets and returns the services your functions need.</p>
+              <p className={styles.cardBody}><Link to="/docs/addon/creating">Creating an addon <ArrowRight size={14} style={{ verticalAlign: '-2px' }} /></Link></p>
+            </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {steps.map((s, i) => (

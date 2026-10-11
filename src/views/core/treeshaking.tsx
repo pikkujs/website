@@ -6,31 +6,6 @@ import { Scissors, Filter, FileCode, Zap, Server, Layers, FunctionSquare, Copy, 
 import { PaperPage, CodeCard } from '@/components/PaperLayout';
 import styles from './treeshaking.module.css';
 
-const requiredServicesCode = `// .pikku/pikku-services.gen.ts  (auto-generated)
-export const requiredSingletonServices = {
-  'database': true,     // used by getUser, deleteUser
-  'audit': true,        // used by deleteUser
-  'cache': false,       // not used by any wired function
-  'jwt': true,          // used by auth middleware
-} as const`;
-
-const dynamicImportCode = `import { requiredSingletonServices } from '.pikku/pikku-services.gen.js'
-
-export const createSingletonServices = pikkuServices(
-  async (config) => {
-    const logger = new ConsoleLogger()
-
-    // Only create JWT if wired functions actually need it
-    let jwt: JWTService | undefined
-    if (requiredSingletonServices.jwt) {
-      const { JoseJWTService } = await import('@pikku/jose')
-      jwt = new JoseJWTService(keys, logger)
-    }
-
-    return { config, logger, jwt }
-  }
-)`;
-
 function Hero() {
   return (
     <div className={styles.hero}>
@@ -182,13 +157,10 @@ function ServiceLoadingSection() {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 32 }}>
-          <CodeCard filename=".pikku/pikku-services.gen.ts" badge="auto-generated" icon={<Zap size={13} style={{ color: '#c2410c' }} />}>
-            <CodeBlock language="typescript">{requiredServicesCode}</CodeBlock>
-          </CodeCard>
-          <CodeCard filename="services.ts" badge="your code" icon={<Package size={13} style={{ color: '#c2410c' }} />}>
-            <CodeBlock language="typescript">{dynamicImportCode}</CodeBlock>
-          </CodeCard>
+        <div className={styles.card} style={{ marginBottom: 32 }}>
+          <div className={styles.cardTitle}>Dynamic imports in service setup</div>
+          <p className={styles.cardBody}>The generated map tells you which services a deployment needs; guarding heavy imports with import() keeps the rest out of the bundle.</p>
+          <p className={styles.cardBody}><Link to="/docs/core-features/services">Services in the docs</Link></p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
