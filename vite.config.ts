@@ -49,8 +49,8 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart({ pages: [{ path: '/search-index.json' }, ...contentPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
       failOnError: false, // vite-link-check is the gate: it names the source file, crawlLinks does not
-      // only render what this app owns; links to not-yet-ported site pages are judged by vite-link-check (isKnown)
-      filter: ({ path }) => /^\/($|docs|blog)(\/|$|\?|#)/.test(path) || path === '/search-index.json' || path.startsWith('/payload/') } }),
+      // the catalogue (/addons, /openapis) is rendered by the Worker on request, everything else is prerendered
+      filter: ({ path }) => !/^\/(addons|openapis)(\/|$)/.test(path) } }),
     viteReact(),
     // order matters: both must run AFTER the prerender post-build
     feeds({ site: 'https://pikku.dev', title: 'Pikku Blog' }),

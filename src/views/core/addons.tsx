@@ -72,7 +72,7 @@ function ConsumingSection() {
   const features = [
     { icon: <Tag size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'Namespaced functions', desc: 'Every addon function is prefixed with the addon name — postgres:insert, stripe:charge — so there are never collisions.' },
     { icon: <Check size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'Full type safety', desc: 'Addon inputs and outputs are typed. Your IDE autocompletes addon function names, parameters, and return values.' },
-    { icon: <Key size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'Secret overrides', desc: "Addons declare the secrets they need. You provide the values in your environment or Console — the addon reads them transparently." },
+    { icon: <Key size={16} style={{ color: '#c2410c', flexShrink: 0 }} />, title: 'Secret overrides', desc: "Addons declare the secrets they need. You provide the values in your environment — the addon reads them transparently." },
   ];
 
   return (

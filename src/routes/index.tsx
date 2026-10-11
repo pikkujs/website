@@ -1,2 +1,8 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-export const Route = createFileRoute('/')({ component: () => <main className="p-10"><h1 className="text-3xl">Pikku docs (Fumadocs headless v2)</h1><ul className="mt-4 space-y-1"><li><Link to="/docs/$" params={{ _splat: '' }}>Docs</Link></li><li><Link to="/blog">Blog</Link></li><li><Link to="/addons">Addons</Link></li></ul></main> })
+import { createFileRoute } from '@tanstack/react-router'
+import Page from '@/views/index'
+import { pageHead } from '@/lib/seo'
+
+export const Route = createFileRoute('/')({
+  head: () => pageHead({ title: 'Pikku: build every app, own every piece', description: 'Pikku is an open-source TypeScript framework. Write your functions once and ship them as a web, mobile, desktop, CLI and MCP app, on the database, auth, queue and AI you choose.', path: '/' }),
+  component: Page,
+})

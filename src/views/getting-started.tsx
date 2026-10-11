@@ -222,7 +222,7 @@ export default function GettingStartedPage() {
   return (
     <Layout
       title="Getting Started"
-      description="From an empty folder to a running platform — create a project, run npx pikku dev, and get a complete backend with database, auth, email, workflows and the console."
+      description="From an empty folder to a running platform — create a project, run npx pikku dev, and get a complete backend with database, auth, email and workflows."
     >
       <PaperPage>
         <Hero />
