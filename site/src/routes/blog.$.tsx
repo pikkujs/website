@@ -1,12 +1,11 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { staticFunctionMiddleware } from '@tanstack/start-static-server-functions'
 import { blog, blogSource } from '@/lib/source'
 import { Suspense, use } from 'react'
 import { useMDXComponents } from '@/components/mdx'
 import { Prose } from '@/components/own-mdx'
 
-const serverLoader = createServerFn({ method: 'GET' }).middleware([staticFunctionMiddleware])
+const serverLoader = createServerFn({ method: 'GET' })
   .validator((slugs: string[]) => slugs)
   .handler(async ({ data: slugs }) => {
     const page = blogSource.getPage(slugs)

@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
-import { makeApi } from '@/pikku/pikku-start.gen'
+import { listAddons } from '@/lib/catalogue'
 
-type Entry = Awaited<ReturnType<ReturnType<typeof makeApi>['invoke']>> extends never ? never : { slug: string; name: string; title: string; category: string; categoryLabel: string; description: string | null; functionCount: number }
+type Entry = Awaited<ReturnType<typeof listAddons>>[number]
 export const Route = createFileRoute('/addons/')({
-  // SSR: the loader calls the Pikku RPC. The catalogue changes rarely, so let the CDN keep it.
-  loader: async () => (await makeApi().invoke('listAddons', {})).addons as Entry[],
+  // SSR: loader runs on the server (vendored addon JSON; registry has no addon endpoint)
+  loader: () => listAddons(),
   headers: () => ({ 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' }),
   head: () => ({ meta: [{ title: 'Addon Catalogue | Pikku' }] }),
   component: Browse,

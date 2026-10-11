@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { staticFunctionMiddleware } from '@tanstack/start-static-server-functions'
 import { blogSource } from '@/lib/source'
 
-const list = createServerFn({ method: 'GET' }).middleware([staticFunctionMiddleware]).handler(async () =>
+const list = createServerFn({ method: 'GET' }).handler(async () =>
   blogSource.getPages().map((p) => ({ url: p.url, title: p.data.title ?? '', description: p.data.description ?? '', date: p.slugs.slice(0, 3).join('-') })).sort((a, b) => b.date.localeCompare(a.date)))
 export const Route = createFileRoute('/blog/')({
   loader: () => list(),

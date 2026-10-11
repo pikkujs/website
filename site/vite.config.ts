@@ -18,8 +18,6 @@ alias['@theme/TabItem'] = sh('TabItem')
 export default defineConfig({
   server: {
     port: 3007, strictPort: true,
-    // the browser only ever sees one origin; /api/* reaches the Pikku dev server unprefixed (/rpc/...)
-    proxy: { '/api': { target: process.env.PIKKU_API_URL ?? 'http://localhost:4020', rewrite: (p) => p.replace(/^\/api/, '') } },
   },
   resolve: { alias },
   plugins: [

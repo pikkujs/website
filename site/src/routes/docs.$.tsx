@@ -1,6 +1,5 @@
 import { createFileRoute, notFound, Link } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { staticFunctionMiddleware } from '@tanstack/start-static-server-functions'
 import { docs, source } from '@/lib/source'
 import { useFumadocsLoader } from 'fumadocs-core/source/client'
 import { findNeighbour } from 'fumadocs-core/page-tree'
@@ -20,14 +19,14 @@ export const Route = createFileRoute('/docs/$')({
     return { ...data, pageTree }
   },
 })
-const serverLoader = createServerFn({ method: 'GET' }).middleware([staticFunctionMiddleware])
+const serverLoader = createServerFn({ method: 'GET' })
   .validator((slugs: string[]) => slugs)
   .handler(async ({ data: slugs }) => {
     const page = source.getPage(slugs)
     if (!page) throw notFound()
     return { path: page.path, url: page.url, title: page.data.title ?? '' }
   })
-const treeLoader = createServerFn({ method: 'GET' }).middleware([staticFunctionMiddleware])
+const treeLoader = createServerFn({ method: 'GET' })
   .handler(async () => source.serializePageTree(source.getPageTree()))
 function Content({ path, tree, url }: { path: string; tree: any; url: string }) {
   const page = docs.getPage(path)

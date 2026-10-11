@@ -1,12 +1,10 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 
-import { makeApi } from '@/pikku/pikku-start.gen'
+import { getAddon } from '@/lib/catalogue'
 
 export const Route = createFileRoute('/addons/$slug')({
-  loader: async ({ params }) => {
-    try { return await makeApi().invoke('getAddon', { slug: params.slug }) } catch { throw notFound() }
-  },
+  loader: async ({ params }) => { const a = await getAddon({ data: params.slug }); if (!a) throw notFound(); return a },
   headers: () => ({ 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' }),
   head: ({ loaderData }) => loaderData ? { meta: [{ title: `${loaderData.title} addon | Pikku` }, { name: 'description', content: (loaderData.description ?? `The ${loaderData.title} addon for Pikku`) }] } : {},
   component: Detail,

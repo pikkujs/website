@@ -1,0 +1,14 @@
+{
+  // Consumed by @cloudflare/vite-plugin (vite.config.cf.ts). `main` is TanStack Start's own server
+  // entry; the plugin wires dist/client as static assets and the SSR bundle as the Worker.
+  "name": "pikku-site",
+  "main": "@tanstack/react-start/server-entry",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    // prerendered docs/blog are served as /route (no 307 to /route/); unmatched paths reach the Worker
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "none"
+  },
+  // REGISTRY_URL (optional) overrides https://api.pikkustudio.app; set per environment in vars if needed
+}
