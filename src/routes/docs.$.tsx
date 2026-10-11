@@ -6,16 +6,22 @@ import { fetchPayload } from '@/lib/payload-client'
 import { useFumadocsLoader } from 'fumadocs-core/source/client'
 import { findNeighbour } from 'fumadocs-core/page-tree'
 import { getBreadcrumbItems } from 'fumadocs-core/breadcrumb'
-import { Suspense, use } from 'react'
+import { Suspense, use, useState } from 'react'
 import { useMDXComponents } from '@/components/mdx'
 import { Prose } from '@/components/mdx'
 import { AIDisclaimer } from '@/components/AIDisclaimer'
 import { TreeNav } from '@/components/TreeNav'
+import { Toc } from '@/components/Toc'
+import { pageHead } from '@/lib/seo'
+import * as Dialog from '@radix-ui/react-dialog'
+import { ChevronRight, Menu, Pencil, X } from 'lucide-react'
 
-type DocData = { path: string; url: string; title: string }
+const REPO = 'https://github.com/pikkujs/website/blob/main/content/docs/'
+
+type DocData = { path: string; url: string; title: string; description?: string }
 export const Route = createFileRoute('/docs/$')({
   component: Page,
-  head: ({ loaderData }) => { const d = loaderData as DocData | undefined; return d ? { meta: [{ title: `${d.title} | Pikku` }, { name: 'source-file', content: 'content/docs/' + d.path }] } : {} },
+  head: ({ loaderData }) => { const d = loaderData as DocData | undefined; return d ? pageHead({ title: d.title, description: d.description || undefined, path: d.url, extra: [{ name: 'source-file', content: 'content/docs/' + d.path }] }) : {} },
   loader: async ({ params }): Promise<DocData & { pageTree: any }> => {
     const slugs = params._splat?.split('/').filter(Boolean) ?? []
     // SSR/prerender call the functions directly; browser navigation reads prerendered static JSON (no Worker call)
@@ -46,23 +52,39 @@ function Content({ path, tree, url }: { path: string; tree: any; url: string }) 
   const crumbs = getBreadcrumbItems(url, tree, { includePage: true })
   return (
     <>
-      <main className="min-w-0 flex-1 py-8">
-        <nav className="mb-4 flex gap-1 text-sm text-muted-foreground">{crumbs.map((c: any, i: number) => <span key={i}>{i ? '/ ' : ''}{c.url ? <Link to={c.url}>{c.name}</Link> : c.name}</span>)}</nav>
+      <article className="doc-main">
+        <nav className="crumbs" aria-label="Breadcrumb">
+          {crumbs.map((c: any, i: number) => <span key={i} className="crumb">{i > 0 && <ChevronRight size={12} aria-hidden />}{c.url && i < crumbs.length - 1 ? <Link to={c.url}>{c.name}</Link> : <span aria-current={i === crumbs.length - 1 ? 'page' : undefined}>{c.name}</span>}</span>)}
+        </nav>
         <Prose>{fm.ai ? <AIDisclaimer /> : null}{fm.hide_title ? null : <h1>{page.title ?? ''}</h1>}<MDX components={useMDXComponents()} /></Prose>
-        <div className="mt-12 flex justify-between border-t border-border pt-6 text-sm">
-          {previous ? <Link to={previous.url}>&larr; {previous.name}</Link> : <span />}{next ? <Link to={next.url}>{next.name} &rarr;</Link> : <span />}
-        </div>
-      </main>
-      <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 overflow-auto py-8 xl:block"><div className="mb-2 text-xs font-semibold uppercase">On this page</div>
-        <ul className="space-y-1 text-sm">{toc.map((t: any) => <li key={t.url} style={{ paddingLeft: (t.depth - 2) * 12 }}><a href={t.url}>{t.title}</a></li>)}</ul></aside>
+        <div className="doc-edit"><a href={REPO + path} target="_blank" rel="noreferrer"><Pencil size={14} aria-hidden /> Edit this page on GitHub</a></div>
+        <nav className="pager" aria-label="Previous and next page">
+          {previous ? <Link to={previous.url as any} className="pager-link"><small>Previous</small><span>&larr; {previous.name}</span></Link> : <span />}
+          {next ? <Link to={next.url as any} className="pager-link pager-next"><small>Next</small><span>{next.name} &rarr;</span></Link> : <span />}
+        </nav>
+      </article>
+      <aside className="doc-toc"><Toc items={toc as any} /></aside>
     </>
   )
 }
 function Page() {
   const data = useFumadocsLoader(Route.useLoaderData()) as DocData & { pageTree: any }
+  const [menu, setMenu] = useState(false)
   return (
-    <div className="mx-auto flex max-w-[90rem] gap-8 px-4">
-      <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 overflow-auto py-6 lg:block"><TreeNav nodes={data.pageTree.children} path={data.url} /></aside>
+    <div className="doc-shell">
+      <aside className="doc-side" aria-label="Documentation"><TreeNav nodes={data.pageTree.children} path={data.url} /></aside>
+      <div className="doc-bar">
+        <Dialog.Root open={menu} onOpenChange={setMenu}>
+          <Dialog.Trigger className="doc-bar-btn"><Menu size={16} aria-hidden /> Docs menu</Dialog.Trigger>
+          <Dialog.Portal>
+            <Dialog.Overlay className="sheet-overlay" />
+            <Dialog.Content className="sheet sheet-left" aria-describedby={undefined}>
+              <div className="sheet-head"><Dialog.Title className="brand-name">Documentation</Dialog.Title><Dialog.Close className="nav-icon-btn" aria-label="Close menu"><X size={22} /></Dialog.Close></div>
+              <div className="sheet-body"><TreeNav nodes={data.pageTree.children} path={data.url} onNavigate={() => setMenu(false)} /></div>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
+      </div>
       <Suspense><Content path={data.path} tree={data.pageTree} url={data.url} /></Suspense>
     </div>
   )

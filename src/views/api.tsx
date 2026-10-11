@@ -21,6 +21,7 @@ export default function ApiSurfacePage() {
           it — the same relationship the homepage's ink band has to the page
           around it. `display: contents` so the grid below is unaffected. */}
       <div data-paper-page="" style={{ display: 'contents' }}>
+        <h1 className="sr-only">Pikku SDK</h1>
         <BrowserOnly>{() => <SurfaceExplorer />}</BrowserOnly>
       </div>
     </Layout>
