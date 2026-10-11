@@ -1,0 +1,83 @@
+---
+title: Node Metadata
+description: Categorize functions as visual nodes for graph workflows
+ai: true
+---
+
+# Node Metadata
+
+Node metadata lets you annotate your functions with visual information — display names, categories, and node types — so they can be rendered as graph nodes and used in [graph workflows](/docs/wiring/workflows/graph-workflows).
+
+## Overview
+
+A node is a function with extra metadata that describes how it should appear in a visual graph:
+
+```typescript @snippet co-node-metadata
+```
+
+## CoreNodeConfig
+
+The `node` property on a function definition accepts a `CoreNodeConfig`:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `displayName` | `string` | Human-readable name shown in the graph UI |
+| `category` | `string` | Grouping category (e.g., `'email'`, `'database'`, `'payment'`) |
+| `type` | `NodeType` | Visual behavior: `'trigger'`, `'action'`, or `'end'` |
+| `errorOutput` | `boolean` | Whether the node has an error output port (default: `false`) |
+
+## NodeType
+
+| Type | Description | Use For |
+|------|-------------|---------|
+| `'trigger'` | Entry point that starts a workflow | Event sources, webhook receivers, form submissions |
+| `'action'` | Processes data and passes it along | Business logic, API calls, transformations |
+| `'end'` | Terminal node that completes a branch | Final responses, notifications, cleanup |
+
+## Node Categories
+
+Categories group related nodes. Allowed categories come from the addon metadata in `pikku.config.json`:
+
+```json
+{
+  "addon": {
+    "displayName": "Notifications",
+    "categories": ["notifications", "database", "payment", "auth", "utility"]
+  }
+}
+```
+
+The Pikku CLI validates that every node category in your code is in that list — an unrecognized one is a critical diagnostic ([PKU124](/docs/pikku-cli/errors/pku124)). Leave `categories` off and no category check runs.
+
+## NodeMeta
+
+When the CLI processes your code, it generates `NodeMeta` objects that combine the `CoreNodeConfig` with function metadata:
+
+| Property | Type | Source |
+|----------|------|--------|
+| `name` | `string` | Function name |
+| `displayName` | `string` | From `node.displayName` |
+| `category` | `string` | From `node.category` |
+| `type` | `NodeType` | From `node.type` |
+| `rpc` | `string` | RPC name for invoking the function |
+| `description` | `string` | From function `description` |
+| `errorOutput` | `boolean` | From `node.errorOutput` |
+| `inputSchemaName` | `string \| null` | Schema name for the input type |
+| `outputSchemaName` | `string \| null` | Schema name for the output type |
+| `tags` | `string[]` | From function `tags` |
+
+## Generating Node Metadata
+
+The CLI generates node metadata files automatically:
+
+```bash
+npx pikku
+```
+
+This produces `pikku-addon-meta.gen.json` for addon packages, which tooling can read to render nodes.
+
+## Use Cases
+
+- **Graph workflow builder** — Nodes can be rendered as draggable elements in a graph editor, categorized by type
+- **Function discovery** — The category and type annotations make it easier to browse large function registries
+- **Addons** — Published Pikku addons can include node metadata so their functions are categorized correctly for consumers

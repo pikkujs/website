@@ -1,0 +1,19 @@
+---
+sidebar_position: 30
+title: Websocket Client
+description: Pikku Websocket Client
+---
+
+### Creating the client
+
+The pikku CLI can generate a `pikku-websocket.ts` file which would allow you to interact with your channels.
+
+It has no client side dependencies, and is driven by a typescript type decalartion file so shouldn't take up any unnecessary space. 
+
+In order to do so you can run `npx pikku websocket` and will need to have a `websocketFile` within the `pikku.config.json` file  set.
+
+![Pikku Websocket Client](/img/pikku-websocket.gif)
+
+## Example Websocket Client
+
+Source: [`websocket.ts`](https://github.com/pikkujs/yarn-workspace-starter/blob/main/apps/cli/bin/websocket.ts)

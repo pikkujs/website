@@ -1,0 +1,8 @@
+{
+  "title": "Gateway",
+  "icon": "gateway",
+  "pages": [
+    "slack",
+    "..."
+  ]
+}

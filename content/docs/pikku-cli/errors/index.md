@@ -1,0 +1,217 @@
+---
+title: "Pikku CLI Error Codes"
+---
+# Pikku CLI Error Codes
+
+This directory contains documentation for all Pikku CLI error codes. Each error has a unique code and detailed troubleshooting guide.
+
+## Error Categories
+
+Error codes use random 3-digit numbers to avoid implying a sequential order. Each code links to detailed documentation and troubleshooting steps.
+
+## Validation Errors
+
+Errors related to missing required properties or invalid types in your Pikku configuration.
+
+| Code   | Description                  | Link                 |
+| ------ | ---------------------------- | -------------------- |
+| PKU111 | Missing Name Property        | [View](/docs/pikku-cli/errors/pku111)  |
+| PKU118 | Non-Literal Wire Name        | [View](/docs/pikku-cli/errors/pku118) |
+| PKU123 | Missing Description Property | [View](/docs/pikku-cli/errors/pku123)  |
+| PKU124 | Invalid Value                | [View](/docs/pikku-cli/errors/pku124) |
+| PKU220 | Missing URI Property         | [View](/docs/pikku-cli/errors/pku220)  |
+| PKU236 | Missing Function Property    | [View](/docs/pikku-cli/errors/pku236)  |
+| PKU247 | Invalid Tags Type            | [View](/docs/pikku-cli/errors/pku247)  |
+| PKU370 | Missing Title Property       | [View](/docs/pikku-cli/errors/pku370)  |
+| PKU384 | Missing Queue Name           | [View](/docs/pikku-cli/errors/pku384)  |
+| PKU400 | Missing Channel Name         | [View](/docs/pikku-cli/errors/pku400)  |
+| PKU672 | CLI Client-Side Renderer Has Services | [View](/docs/pikku-cli/errors/pku672) |
+
+## Configuration Errors
+
+Errors related to Pikku configuration and schema generation.
+
+| Code   | Description             | Link                 |
+| ------ | ----------------------- | -------------------- |
+| PKU456 | Schema Generation Error | [View](/docs/pikku-cli/errors/pku456)  |
+| PKU463 | Schema Reference Unresolved | [View](/docs/pikku-cli/errors/pku463) |
+| PKU489 | Inline Schema           | [View](/docs/pikku-cli/errors/pku489) |
+| PKU490 | Schema and Wiring Colocated | [View](/docs/pikku-cli/errors/pku490) |
+| PKU491 | Schema Transform Not Supported | [View](/docs/pikku-cli/errors/pku491) |
+
+## HTTP Route & Auth Errors
+
+Errors related to HTTP route definitions and auth wiring.
+
+| Code   | Description                          | Link        |
+| ------ | ------------------------------------ | ----------- |
+| PKU571 | Route Param Mismatch                 | [View](/docs/pikku-cli/errors/pku571) |
+| PKU572 | Route Query Mismatch                 | [View](/docs/pikku-cli/errors/pku572) |
+| PKU573 | Auth Disabled Requires Sessionless   | [View](/docs/pikku-cli/errors/pku573) |
+| PKU574 | Exposed Function Has No Gate         | [View](/docs/pikku-cli/errors/pku574) |
+| PKU575 | Tag Resolves to No Middleware        | [View](/docs/pikku-cli/errors/pku575) |
+| PKU576 | Permissions in Body Not Allowed      | [View](/docs/pikku-cli/errors/pku576) |
+| PKU581 | Duplicate Auth Definition            | [View](/docs/pikku-cli/errors/pku581) |
+| PKU582 | Auth Not Exported                    | [View](/docs/pikku-cli/errors/pku582) |
+| PKU585 | Duplicate Personas Definition        | [View](/docs/pikku-cli/errors/pku585) |
+
+## AI Agent Errors
+
+Errors from `pikkuAgent` model and tool declarations.
+
+| Code   | Description                  | Link        |
+| ------ | ---------------------------- | ----------- |
+| PKU145 | Missing Model                | [View](/docs/pikku-cli/errors/pku145) |
+| PKU146 | Invalid Model                | [View](/docs/pikku-cli/errors/pku146) |
+| PKU152 | Agent Tool Unknown Namespace | [View](/docs/pikku-cli/errors/pku152) |
+| PKU153 | Agent Tool Not Found         | [View](/docs/pikku-cli/errors/pku153) |
+| PKU154 | Agent Tool Missing Description | [View](/docs/pikku-cli/errors/pku154) |
+| PKU155 | Agent Scorer Not Found       | [View](/docs/pikku-cli/errors/pku155) |
+| PKU156 | Agent Provider Options Unreadable | [View](/docs/pikku-cli/errors/pku156) |
+
+## Addon Errors
+
+Errors from `wireAddon` / `wireRemoteAddon` declarations and addon authoring rules.
+
+| Code   | Description                          | Link        |
+| ------ | ------------------------------------ | ----------- |
+| PKU338 | Remote Addon Not a Dev Dependency    | [View](/docs/pikku-cli/errors/pku338) |
+| PKU339 | Remote Addon Auth Unresolved         | [View](/docs/pikku-cli/errors/pku339) |
+| PKU340 | Addon Not Installed                  | [View](/docs/pikku-cli/errors/pku340) |
+| PKU341 | Addon MCP Function Not Found         | [View](/docs/pikku-cli/errors/pku341) |
+| PKU343 | Addon Exposed Function Not Found     | [View](/docs/pikku-cli/errors/pku343) |
+| PKU344 | Addon Expose Not Static              | [View](/docs/pikku-cli/errors/pku344) |
+| PKU345 | Extension Manifest Is Not Static     | [View](/docs/pikku-cli/errors/pku345) |
+| PKU346 | Extension Declares No Screens        | [View](/docs/pikku-cli/errors/pku346) |
+| PKU347 | Addon Uses Mapping Not Wired         | [View](/docs/pikku-cli/errors/pku347) |
+| PKU348 | Addon Needs Not Mapped               | [View](/docs/pikku-cli/errors/pku348) |
+| PKU349 | Addon Content Grant Invalid          | [View](/docs/pikku-cli/errors/pku349) |
+| PKU920 | Addon Wiring Not Allowed             | [View](/docs/pikku-cli/errors/pku920) |
+| PKU921 | Addon Contract Handlers Not Allowed  | [View](/docs/pikku-cli/errors/pku921) |
+
+## Scenario Errors
+
+Errors from `pikkuScenario` flows and their steps.
+
+| Code   | Description                          | Link        |
+| ------ | ------------------------------------ | ----------- |
+| PKU673 | Scenario Has Services                | [View](/docs/pikku-cli/errors/pku673) |
+| PKU675 | expectEventually Is Scenario-Only    | [View](/docs/pikku-cli/errors/pku675) |
+| PKU677 | Scenario Browser Step Needs Actor    | [View](/docs/pikku-cli/errors/pku677) |
+| PKU678 | Scenario Step Target Not Static      | [View](/docs/pikku-cli/errors/pku678) |
+| PKU679 | Scenario Not Extractable             | [View](/docs/pikku-cli/errors/pku679) |
+| PKU680 | Scenario Has No Assertion            | [View](/docs/pikku-cli/errors/pku680) |
+| PKU681 | Scenario Step Prose Names Its Actor  | [View](/docs/pikku-cli/errors/pku681) |
+| PKU682 | Scenario Has No Feature              | [View](/docs/pikku-cli/errors/pku682) |
+
+## Secret Boundary Errors
+
+Errors and warnings from the secret-handling boundary. The sink scan (PKU953, PKU954) runs only under `pikku all --security`.
+
+| Code   | Description                | Link        |
+| ------ | -------------------------- | ----------- |
+| PKU950 | Secret Service Aliased     | [View](/docs/pikku-cli/errors/pku950) |
+| PKU951 | Secret Not Declared        | [View](/docs/pikku-cli/errors/pku951) |
+| PKU952 | Secret Key Not Static      | [View](/docs/pikku-cli/errors/pku952) |
+| PKU953 | Secret Revealed Into Sink  | [View](/docs/pikku-cli/errors/pku953) |
+| PKU954 | Personal Data Into Sink    | [View](/docs/pikku-cli/errors/pku954) |
+
+## Knowledge Errors
+
+Warnings from `pikku knowledge validate`.
+
+| Code   | Title                  | Link                |
+|--------|------------------------|---------------------|
+| PKU960 | Knowledge Note Missing | [View](/docs/pikku-cli/errors/pku960) |
+
+## Workflow Errors
+
+Errors related to DSL workflow definitions and orchestration.
+
+| Code   | Description                       | Link                 |
+| ------ | --------------------------------- | -------------------- |
+| PKU600 | Workflow Orchestrator Not Configured | [View](/docs/pikku-cli/errors/pku600) |
+| PKU641 | Invalid DSL Workflow              | [View](/docs/pikku-cli/errors/pku641)  |
+| PKU642 | Workflow Graph Addon Not Wired    | [View](/docs/pikku-cli/errors/pku642)  |
+| PKU643 | Complex Workflow Not Allowed      | [View](/docs/pikku-cli/errors/pku643)  |
+
+## Function Errors
+
+Errors related to Pikku function definitions and metadata.
+
+| Code   | Description                 | Link                 |
+| ------ | --------------------------- | -------------------- |
+| PKU559 | Function Metadata Not Found | [View](/docs/pikku-cli/errors/pku559)  |
+
+## Database Schema Errors
+
+Warnings from `pikku db migrate` / `pikku db reset` when generating Kysely types. Fix these by editing `db/annotations.ts` and re-running migrate — never hand-edit the generated `db/schema.d.ts`.
+
+| Code   | Description                    | Link                 |
+| ------ | ------------------------------ | -------------------- |
+| PKU480 | Column Name / Type Contradiction | [View](/docs/pikku-cli/errors/pku480) |
+| PKU481 | JSON/JSONB Column Untyped      | [View](/docs/pikku-cli/errors/pku481)  |
+| PKU482 | Format on Non-String Column    | [View](/docs/pikku-cli/errors/pku482)  |
+| PKU483 | Secret Column Stored in the Clear | [View](/docs/pikku-cli/errors/pku483) |
+| PKU484 | Form on Non-String Column      | [View](/docs/pikku-cli/errors/pku484)  |
+| PKU485 | Default Schema Name Collision  | [View](/docs/pikku-cli/errors/pku485)  |
+
+## Versioning & Contract Errors
+
+Errors from `pikku versions` contract checking.
+
+| Code   | Description                        | Link        |
+| ------ | ---------------------------------- | ----------- |
+| PKU850 | Duplicate Function Version         | [View](/docs/pikku-cli/errors/pku850) |
+| PKU851 | Duplicate Function Name            | [View](/docs/pikku-cli/errors/pku851) |
+| PKU860 | Manifest Missing                   | [View](/docs/pikku-cli/errors/pku860) |
+| PKU861 | Function Version Modified          | [View](/docs/pikku-cli/errors/pku861) |
+| PKU862 | Contract Changed, Requires Bump    | [View](/docs/pikku-cli/errors/pku862) |
+| PKU863 | Version Regression or Conflict     | [View](/docs/pikku-cli/errors/pku863) |
+| PKU864 | Version Gap Not Allowed            | [View](/docs/pikku-cli/errors/pku864) |
+| PKU865 | Manifest Integrity Error           | [View](/docs/pikku-cli/errors/pku865) |
+
+## Other Diagnostics
+
+| Code   | Description                                   | Link        |
+| ------ | --------------------------------------------- | ----------- |
+| PKU342 | CLI Metadata Not Found                        | [View](/docs/pikku-cli/errors/pku342) |
+| PKU410 | Services Not Destructured (lint)              | [View](/docs/pikku-cli/errors/pku410) |
+| PKU411 | Wires Not Destructured (lint)                 | [View](/docs/pikku-cli/errors/pku411) |
+| PKU498 | Dynamic Import in Function Body (lint)         | [View](/docs/pikku-cli/errors/pku498) |
+| PKU717 | Duplicate @pikku/core Version                 | [View](/docs/pikku-cli/errors/pku717) |
+| PKU718 | CLI / Core Version Skew                       | [View](/docs/pikku-cli/errors/pku718) |
+| PKU719 | Split Type Identity                           | [View](/docs/pikku-cli/errors/pku719) |
+| PKU724 | SingletonServices Type Unresolved             | [View](/docs/pikku-cli/errors/pku724) |
+| PKU910 | PII in Output (data classification)           | [View](/docs/pikku-cli/errors/pku910) |
+| PKU940 | RPC Invocation Type Cast                      | [View](/docs/pikku-cli/errors/pku940) |
+
+## How to Use This Documentation
+
+When you encounter an error:
+
+1. **Find the error code** - Look for `[PKU###]` in the error message
+2. **Open the corresponding guide** - Click the link in the table above
+3. **Follow the fix instructions** - Each guide includes:
+   - What went wrong
+   - How to fix it
+   - Common mistakes
+   - Related errors
+
+## Example Error Message
+
+```
+[PKU236] No valid 'func' property for route '/api/users'.
+  → https://pikku.dev/docs/pikku-cli/errors/pku236
+```
+
+This tells you:
+
+- The error code is **PKU236**
+- The issue is a missing or invalid `func` property
+- The route affected is `/api/users`
+- Documentation is available at the provided URL
+
+## Contributing
+
+If you encounter an error that isn't documented or have suggestions for improving these guides, please open an issue on GitHub describing the problem and include the full error message and context.

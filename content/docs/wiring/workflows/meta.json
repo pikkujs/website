@@ -1,0 +1,9 @@
+{
+  "title": "Workflows",
+  "icon": "workflow",
+  "pages": [
+    "deployment",
+    "graph-workflows",
+    "..."
+  ]
+}

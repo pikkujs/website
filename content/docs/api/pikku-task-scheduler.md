@@ -1,0 +1,65 @@
+---
+title: InMemorySchedulerService
+description: Run recurring scheduled tasks and one-off delayed RPCs at runtime
+---
+
+`InMemorySchedulerService` from `@pikku/schedule` is the in-process
+implementation of [`SchedulerService`](/docs/api/scheduler-service). It runs your
+wired scheduled tasks in-process and can schedule one-off delayed RPC calls.
+Call `start()` to begin running recurring tasks and `stop()` to halt them —
+useful for graceful shutdown. It takes no constructor arguments.
+
+:::caution[`PikkuTaskScheduler` is a deprecated alias]
+`@pikku/schedule` still exports the class under its old name, but new code
+should import `InMemorySchedulerService`.
+:::
+
+:::note
+For distributed/persistent scheduling backed by a queue (pg-boss, BullMQ), use
+the scheduler service from `@pikku/queue-pg-boss` or `@pikku/queue-bullmq`
+instead. They implement the same `SchedulerService` interface.
+:::
+
+## Methods
+
+### `start()`
+
+Starts all registered recurring scheduled tasks (those wired with
+`wireScheduler`).
+
+### `stop()`
+
+Stops all running recurring scheduled tasks.
+
+### `close()`
+
+Shutdown hook: stops the recurring tasks and cancels every pending delayed
+timer. `init()` is a no-op for the in-memory implementation.
+
+### `scheduleRPC(delay, rpcName, data?, session?)`
+
+Schedules a one-off RPC call after a delay. `delay` is either milliseconds or a
+duration string like `'5h'` or `'30m'`. Returns the task ID.
+
+### `unschedule(taskId)`
+
+Cancels a scheduled one-off task by ID. Returns `true` if a task was removed.
+
+### `getTask(taskId)` / `getAllTasks()`
+
+Inspect scheduled one-off tasks. `getTask` returns the full `ScheduledTaskInfo`
+(or `null`); `getAllTasks` returns an array of `ScheduledTaskSummary`
+(`{ taskId, rpcName, scheduledFor }`).
+
+## Usage Example
+
+A typical Express setup:
+
+1. Create the config and singleton services, then import the generated `pikku-bootstrap.gen.js`.
+2. Create and start a `PikkuExpressServer`.
+3. Create an `InMemorySchedulerService` and call `start()`.
+4. On `SIGTERM`, call `scheduler.close()`, then `server.stop()`, then exit.
+
+## Source
+
+Source: [`in-memory-scheduler-service.ts`](https://github.com/pikkujs/pikku/blob/main/packages/schedule/src/in-memory-scheduler-service.ts)

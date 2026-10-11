@@ -1,0 +1,97 @@
+---
+sidebar_position: 2
+title: Remote CLI
+description: Invoke remote functions via WebSocket channel
+---
+
+# Remote CLI
+
+Remote CLI connects to a WebSocket server and executes functions remotely. Pikku automatically generates both the channel wiring and the client.
+
+## Configuration
+
+Add a channel entrypoint to `pikku.config.json`:
+
+```json
+{
+  "cli": {
+    "entrypoints": {
+      "my-cli": [
+        {
+          "type": "channel",
+          "name": "cli",
+          "route": "/cli",
+          "wirePath": "src/wirings/cli-channel.gen.ts",
+          "path": ".pikku/cli-remote.gen.ts"
+        }
+      ]
+    }
+  }
+}
+```
+
+Run `npx pikku` to generate:
+- `src/wirings/cli-channel.gen.ts` - Server-side channel handler (must live in a source directory so the inspector can discover the `wireChannel()` call)
+- `.pikku/cli-remote.gen.ts` - Client executable
+
+## Server Setup
+
+The channel wiring is generated into a source directory, so the generated bootstrap imports it — starting a Pikku server is enough to serve it. The bundled dev server serves HTTP and WebSocket channels when `@pikku/ws` and `ws` are installed:
+
+```bash
+npx pikku dev            # port 3000
+# or: npx pikku serve    # no watch, no codegen
+```
+
+The channel is then available at `ws://localhost:3000/cli`.
+
+If you run your own server, attach the WebSocket handler from `@pikku/ws`:
+
+To run your own server, create your Express server (`PikkuExpressServer` from `@pikku/express`) with your config and singleton services, `init()` and `start()` it, then create a `WebSocketServer` from `ws` with `noServer: true` and `maxPayload: DEFAULT_WS_MAX_PAYLOAD`. Pass the HTTP server, the `wss` and your logger to `pikkuWebsocketHandler` from `@pikku/ws`. Import `#pikku/pikku-bootstrap.gen.js` once so the generated wirings are registered.
+
+## Client Usage
+
+The generated client connects to `ws://localhost:4002/<route>` by default. Set `PIKKU_WS_URL` when your server is elsewhere — for example the dev server's port 3000:
+
+```bash
+export PIKKU_WS_URL=ws://localhost:3000/cli
+```
+
+Run commands:
+
+```bash
+npx tsx .pikku/cli-remote.gen.ts greet Alice
+npx tsx .pikku/cli-remote.gen.ts user create alice@example.com
+```
+
+Or add to `package.json`:
+
+```json
+{
+  "scripts": {
+    "cli:remote": "tsx .pikku/cli-remote.gen.ts"
+  }
+}
+```
+
+Then run:
+
+```bash
+yarn cli:remote greet Alice
+yarn cli:remote user create alice@example.com
+```
+
+## SSE Support
+
+SSE (Server-Sent Events) support is coming soon.
+
+## Authentication
+
+The generated client sends credentials with the WebSocket connection: `PIKKU_API_KEY` as an `x-api-key` header if set, otherwise the token saved by `pikku login` as a bearer token. The channel requires a session unless the program sets `auth: false` on `wireCLI` — `auth` guards only this remote channel, not local runs.
+
+## Important Note
+
+Renderers for remote CLI run on the client, so the only service they can reach is `logger`. Reaching for any other service fails generation, because there is no service container on the client to resolve it from.
+
+```typescript @snippet wb-cli-remote-renderers
+```

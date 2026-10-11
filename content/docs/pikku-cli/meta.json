@@ -1,0 +1,8 @@
+{
+  "pages": [
+    "configuration",
+    "tree-shaking",
+    "generated-files",
+    "..."
+  ]
+}

@@ -1,0 +1,119 @@
+---
+title: "Workflow Configuration"
+---
+# Workflow Configuration
+
+This guide covers workflow configuration options for state storage and queue settings.
+
+## pikku.config.json
+
+Workflows require no `pikku.config.json` configuration to work. All workflows
+share a single orchestrator queue and a single step-worker queue. You only need
+a `workflows` block if you want to override the default queue names:
+
+```json
+{
+  "workflows": {
+    "orchestratorQueue": "pikku-workflow-orchestrator",
+    "workerQueue": "pikku-workflow-step-worker"
+  }
+}
+```
+
+### Options
+
+- **`orchestratorQueue`**: (string, optional) Custom queue name for workflow orchestration. Default: `pikku-workflow-orchestrator`
+- **`workerQueue`**: (string, optional) Custom queue name for step execution. Default: `pikku-workflow-step-worker`
+
+:::info[Single Queue Mode]
+All workflows currently share one orchestrator queue job and one step-worker
+queue job. In the future, individual queue jobs may be created per workflow for
+more granular control, retries, and scaling.
+:::
+
+## State Storage
+
+Workflows require a `workflowService` service in your singleton services. Choose between PostgreSQL or Redis.
+
+Every persistent workflow service takes a required `leaseService`, which it
+locks runs and steps on. Register the same instance as `leaseService` — see
+[One Orchestrator Per Run](/docs/wiring/workflows/deployment#one-orchestrator-per-run).
+
+### Option 1: PostgreSQL + pg-boss
+
+Use PostgreSQL for both state storage and queue. The `PgBossServiceFactory`
+provides the queue service; `PgKyselyWorkflowService` provides workflow state.
+
+Install `@pikku/kysely-postgres` and `@pikku/queue-pg-boss`. Create the `PikkuKysely`, lease service and `PgKyselyWorkflowService` as follows, then create a `PgBossServiceFactory` for the queue:
+
+1. `new PikkuKysely<KyselyPikkuDB>(logger, process.env.DATABASE_URL!)`, then `await pikkuKysely.init()`.
+2. `new PgKyselyLeaseService(pikkuKysely.kysely)`, then `await leaseService.init()`.
+3. `new PgKyselyWorkflowService(pikkuKysely.kysely, { leaseService })`, then `await workflowService.init()`.
+4. `new PgBossServiceFactory(process.env.DATABASE_URL!)`, then `await pgBossFactory.init()`.
+
+Return `queueService: pgBossFactory.getQueueService()`, `leaseService` and `workflowService` from `createSingletonServices`.
+
+The PostgreSQL state service creates its run/step tables on `init()`.
+
+**For inline mode (testing)**, simply omit `queueService` from the returned
+services — no queue service means workflows run inline.
+
+### Option 2: Redis + BullMQ
+
+Use Redis for both state storage and queue. The `BullServiceFactory` provides
+the queue service; `RedisWorkflowService(connection, { leaseService, keyPrefix = 'workflows' })`
+provides workflow state, and `RedisLeaseService` locks its runs.
+
+Install `@pikku/redis` and `@pikku/queue-bullmq`. Construct `new RedisLeaseService(process.env.REDIS_URL)` and `new RedisWorkflowService(process.env.REDIS_URL, { leaseService })`, create a `BullServiceFactory` and `await bullFactory.init()`, then return `queueService: bullFactory.getQueueService()`, `leaseService` and `workflowService` from `createSingletonServices`. The connection argument is a Redis instance, `RedisOptions`, a URL, or `undefined`.
+
+The Redis state service stores data in Redis hashes with the given key prefix.
+
+**For inline mode (testing)**, simply omit `queueService` from the returned
+services — no queue service means workflows run inline.
+
+## Execution Mode
+
+The execution mode (inline vs remote) is determined automatically:
+- **Remote mode**: Used when a `queueService` is configured in singleton services
+- **Inline mode**: Used when no `queueService` is available
+
+You don't need to specify the execution mode in the wiring configuration.
+
+## Workflow Service API
+
+The `workflowService` provides methods to query and interact with workflow runs:
+
+### getRun(runId)
+
+Get workflow run details by ID:
+
+```typescript @snippet wa-wf-get-run
+```
+
+### getRunHistory(runId)
+
+Get all step attempts for a workflow run in chronological order:
+
+```typescript @snippet wa-wf-get-run-history
+```
+
+### Polling for Completion
+
+Example of polling for workflow completion:
+
+```typescript @snippet wa-wf-poll
+```
+
+## Running Workflow Workers
+
+Workflows require queue workers to execute orchestrator and step jobs. See the [`workflows-pg-boss`](https://github.com/pikkujs/pikku/tree/main/templates/workflows-pg-boss) and [`workflows-bullmq`](https://github.com/pikkujs/pikku/tree/main/templates/workflows-bullmq) templates for complete worker setups.
+
+Pikku automatically generates workers for:
+- **`pikku-workflow-orchestrator`**: Executes workflow functions
+- **`pikku-workflow-step-worker`**: Executes RPC steps
+
+## Next Steps
+
+- **[Main Guide](/docs/wiring/workflows)**: Back to workflow overview
+- **[Step Types](/docs/wiring/workflows/steps)**: Learn about RPC, inline, and sleep steps
+- **[Queue Documentation](/docs/wiring/queue)**: Configure queue workers
