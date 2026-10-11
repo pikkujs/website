@@ -32,7 +32,7 @@ Wrap your base secret service in the generated typed one: `new TypedSecretServic
 
 ## OAuth2 and Credentials
 
-For OAuth2 integrations and per-user credentials, see [Credentials](/docs/wiring/credentials/). Credentials build on top of secrets — the OAuth2 app credentials (client ID, client secret) are stored as secrets, while the credential system handles the authorization flow and token management.
+For OAuth2 integrations and per-user credentials, see [Credentials](/docs/wiring/credentials). Credentials build on top of secrets — the OAuth2 app credentials (client ID, client secret) are stored as secrets, while the credential system handles the authorization flow and token management.
 
 ## Using an OAuth2 Token
 
@@ -60,4 +60,4 @@ The CLI generates typed wrappers in `.pikku/secrets/`:
 ## Next Steps
 
 - [Variables](/docs/core-features/variables) — Non-sensitive configuration management
-- [Credentials](/docs/wiring/credentials/) — Per-user credentials and OAuth2 flows
+- [Credentials](/docs/wiring/credentials) — Per-user credentials and OAuth2 flows

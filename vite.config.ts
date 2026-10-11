@@ -8,6 +8,7 @@ import fs from 'node:fs'
 import type { Plugin } from 'vite'
 import linkCrawl from './packages/vite-link-check/src/index.js'
 import feeds from './plugins/feeds.mjs'
+import { isIgnored, isKnown } from './link-gate.config.mjs'
 
 const sh = (n: string) => path.resolve(import.meta.dirname, 'src/components/shims', n + '.tsx')
 const alias: Record<string, string> = { '@': path.resolve(import.meta.dirname, 'src') }
@@ -44,12 +45,12 @@ const mermaidClientOnly = (): Plugin => ({
 
 export default defineConfig({
   server: {
-    port: 3007, strictPort: true,
+    port: 3005, strictPort: true,
   },
   resolve: { alias },
   plugins: [
     mermaidClientOnly(),
-    fumadocsMdx(await import('./source.config.ts')),
+    fumadocsMdx((await import('./source.config.ts')) as any),
     tailwindcss(),
     tanstackStart({ pages: [{ path: '/search-index.json' }, ...contentPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
       failOnError: false, // vite-link-check is the gate: it names the source file, crawlLinks does not
@@ -58,7 +59,6 @@ export default defineConfig({
     viteReact(),
     // order matters: both must run AFTER the prerender post-build
     feeds({ site: 'https://pikku.dev', title: 'Pikku Blog' }),
-    linkCrawl({ isIgnored: [/^\/img\//, /^\/assets\//, /^\/addons\/[\w-]+\.svg$/], failOnError: false, // 5 pre-existing dead blog links are reported as warnings; `npm run check-links` is the strict gate
-      isKnown: (u) => /^\/(openapis|addons|api|getting-started|developers|fabric|features|benchmarks)(\/|$)/.test(u) }),
+    linkCrawl({ isIgnored, isKnown }),
   ],
 })

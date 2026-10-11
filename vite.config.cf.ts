@@ -12,7 +12,7 @@ import base from './vite.config.ts'
  */
 const emptyPrerenderedContent = (): Plugin => ({
   name: 'empty-prerendered-content', enforce: 'post', apply: 'build',
-  buildApp: { order: 'post', handler(builder) {
+  buildApp: { order: 'post', async handler(builder) {
     const dir = path.join(builder.environments.ssr.config.build.outDir, 'assets')
     let n = 0, bytes = 0
     for (const f of fs.readdirSync(dir)) {

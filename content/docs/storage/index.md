@@ -7,7 +7,7 @@ ai: true
 
 # Storage Backends
 
-Pikku provides official storage backend packages that implement the service interfaces required by features like [AI Agents](/docs/wiring/ai-agents/), [Workflows](/docs/wiring/workflows/), and [Channels](/docs/wiring/channels/). Choose the backend that fits your infrastructure.
+Pikku provides official storage backend packages that implement the service interfaces required by features like [AI Agents](/docs/wiring/ai-agents), [Workflows](/docs/wiring/workflows), and [Channels](/docs/wiring/channels). Choose the backend that fits your infrastructure.
 
 ## Available Backends
 

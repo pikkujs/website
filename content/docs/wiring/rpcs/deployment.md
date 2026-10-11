@@ -80,7 +80,7 @@ The service you plug in implements four methods: `init()`, `start(config)` and `
 | MongoDB | `@pikku/mongodb` | `MongoDBDeploymentService` | MongoDB-backed discovery |
 | Kysely (generic) | `@pikku/kysely` | `KyselyDeploymentService` | Type-safe SQL with any Kysely dialect |
 
-See [Storage Backends](/docs/storage/) for setup details.
+See [Storage Backends](/docs/storage) for setup details.
 
 ## RPC Methods
 

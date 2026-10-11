@@ -1,5 +1,5 @@
 // Source-level layer: next-validate-link over every doc + blog file (no Next needed).
-// MODE=migrated (default, content/) | original (../{docs,blog} untouched Docusaurus sources)
+// Validates content/{docs,blog} (links, anchors, relative paths) without needing a built site.
 import path from 'node:path'
 import fs from 'node:fs'
 import fg from 'fast-glob'
@@ -7,8 +7,7 @@ import GithubSlugger from 'github-slugger'
 import { validateFiles, readFileFromPath } from 'next-validate-link'
 
 const here = path.resolve(import.meta.dirname, '..')
-const MODE = process.env.MODE ?? 'migrated'
-const base = MODE === 'original' ? path.resolve(here, '..') : path.join(here, 'content')
+const base = path.join(here, 'content')
 const docsRoot = path.join(base, 'docs'), blogRoot = path.join(base, 'blog')
 const strip = (f) => f.replace(/\.mdx?$/, '')
 const docUrl = (f) => { const n = strip(f); const p = path.posix.basename(n) === 'index' ? path.posix.dirname(n) : n; return '/docs' + (p === '.' ? '' : '/' + p) }
@@ -31,7 +30,7 @@ urls.set('/blog', {})
 // routes that exist on the site but are not content files
 const extra = (process.env.EXTRA_ROUTES ?? '/,/getting-started,/api,/addons,/developers,/openapis,/fabric,/features,/benchmarks').split(',')
 for (const r of extra) urls.set(r, { hashes: undefined })
-const addons = JSON.parse(fs.readFileSync(path.resolve(here, '../src/data/addons.json'), 'utf8')).addons
+const addons = JSON.parse(fs.readFileSync(path.resolve(here, 'src/data/addons.json'), 'utf8')).addons
 for (const a of addons) urls.set('/addons/' + a.slug, {})
 
 const files = [], unparsable = []
@@ -58,6 +57,6 @@ for (const r of res) for (const e of r.errors) {
     'not-found (real dead link?)'
   ;(groups[cause] ??= []).push(`${path.relative(base, r.file)}:${e.line}:${e.column}  ${u}`)
 }
-console.log(`mode=${MODE} files=${files.length} urls=${urls.size} errors=${total} in ${res.filter((r) => r.errors.length).length} files`)
+console.log(`files=${files.length} urls=${urls.size} errors=${total} in ${res.filter((r) => r.errors.length).length} files`)
 if (unparsable.length) console.log(`unparsable by the tool's MDX parser: ${unparsable.length} (${unparsable.slice(0, 3).join(', ')}...)`)
 for (const [k, v] of Object.entries(groups).sort((a, b) => b[1].length - a[1].length)) { console.log(`\n${String(v.length).padStart(5)}  ${k}`); for (const x of v.slice(0, Number(process.env.SHOW ?? 3))) console.log('         ' + x) }

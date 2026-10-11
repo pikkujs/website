@@ -9,7 +9,7 @@ Pikku AI Agents let you define conversational AI assistants that use your Pikku 
 
 ## What are AI Agents?
 
-An AI agent is a conversational interface backed by a large language model (LLM). When a user sends a message, the agent reasons about it, optionally calls Pikku functions as tools, and streams a response back through a [channel](/docs/wiring/channels/).
+An AI agent is a conversational interface backed by a large language model (LLM). When a user sends a message, the agent reasons about it, optionally calls Pikku functions as tools, and streams a response back through a [channel](/docs/wiring/channels).
 
 **Key features:**
 
@@ -220,7 +220,7 @@ AI middleware hooks let you intercept and transform at three points in the agent
 
 ## Credential Integration
 
-When an agent calls a tool that belongs to an addon requiring a [credential](/docs/wiring/credentials/), Pikku automatically checks whether the current user has that credential connected. If not, the agent run suspends with a `ToolCredentialRequired` error and the stream emits a `credential-request` event:
+When an agent calls a tool that belongs to an addon requiring a [credential](/docs/wiring/credentials), Pikku automatically checks whether the current user has that credential connected. If not, the agent run suspends with a `ToolCredentialRequired` error and the stream emits a `credential-request` event:
 
 ```json
 {
@@ -364,9 +364,9 @@ Declare an `output` schema on the agent when downstream nodes need typed access 
 
 ## Next Steps
 
-- **[Channels](/docs/wiring/channels/)**: Learn about the streaming transport used by agents
+- **[Channels](/docs/wiring/channels)**: Learn about the streaming transport used by agents
 - **[Graph Workflows](/docs/wiring/workflows/graph-workflows)**: Run agents as workflow-graph nodes
-- **[Credentials](/docs/wiring/credentials/)**: Per-user credentials and OAuth2 for agent tools
+- **[Credentials](/docs/wiring/credentials)**: Per-user credentials and OAuth2 for agent tools
 - **[Functions](/docs/core-features/functions)**: Understand how Pikku functions work as agent tools
 - **[Middleware](/docs/core-features/middleware)**: Apply middleware to agent tool calls
 - **[`#pikku/agent` in the SDK explorer](/api#app/agent)**: Every export on the agent door

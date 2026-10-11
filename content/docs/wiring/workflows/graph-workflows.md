@@ -68,7 +68,7 @@ An agent node takes the standard agent input — `message`, `threadId`, and `res
 ```typescript @snippet wa-graph-agent-node
 ```
 
-The generated `pikkuWorkflowGraph` wrapper type-checks all three kinds of names, and `ref()` on an agent node resolves the keys of the agent's `output` schema. Give the agent an `output` schema if downstream nodes need typed access to its result — see [AI Agents](/docs/wiring/ai-agents/).
+The generated `pikkuWorkflowGraph` wrapper type-checks all three kinds of names, and `ref()` on an agent node resolves the keys of the agent's `output` schema. Give the agent an `output` schema if downstream nodes need typed access to its result — see [AI Agents](/docs/wiring/ai-agents).
 
 ## Flow Control
 

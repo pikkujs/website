@@ -164,7 +164,7 @@ A credential is declared in a `*.credential.ts` file (for example `google-sheets
 | `oauth2.tokenUrl` | `'https://oauth2.googleapis.com/token'` |
 | `oauth2.scopes` | `['https://www.googleapis.com/auth/spreadsheets']` |
 
-See [Credentials](/docs/wiring/credentials/) for the full reference.
+See [Credentials](/docs/wiring/credentials) for the full reference.
 
 ### Create Config
 

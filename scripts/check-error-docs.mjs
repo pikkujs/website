@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Fails the build if any Pikku CLI error code (PKU###) is missing its
- * reference page under docs/pikku-cli/errors/.
+ * reference page under content/docs/pikku-cli/errors/.
  *
  * The canonical list of codes is the `ErrorCode` enum shipped by
  * `@pikku/inspector` — the same registry the CLI throws from. Every value must
- * have a matching `docs/pikku-cli/errors/pku<n>.md` page, otherwise the
+ * have a matching `content/docs/pikku-cli/errors/pku<n>.md` page, otherwise the
  * `[PKU###] → https://pikku.dev/docs/pikku-cli/errors/pku###` link 404s.
  *
  * We import the enum from `@pikku/inspector`'s dependency-free `error-codes`
@@ -18,7 +18,7 @@
  * as literals in @pikku/core rather than the inspector enum, and those pages
  * are legitimate.
  *
- * Run via:  yarn check-error-docs   (also chained into `yarn build`)
+ * Run via:  npm run check-error-docs   (also chained into `npm run build`)
  */
 
 import { readdirSync } from 'node:fs'
@@ -26,7 +26,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const ERRORS_DIR = join(__dirname, '..', 'docs', 'pikku-cli', 'errors')
+const ERRORS_DIR = join(__dirname, '..', 'content', 'docs', 'pikku-cli', 'errors')
 
 async function loadErrorCodes() {
   // Resolve @pikku/inspector's main entry (dist/index.js) then import the

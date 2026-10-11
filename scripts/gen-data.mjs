@@ -14,6 +14,6 @@ const addons = JSON.parse(fs.readFileSync(path.join(root, 'src/data/addons.json'
 write('addons.json', addons.map((a) => ({ slug: a.slug, name: a.name, title: a.title, category: a.category, description: a.description ?? null, functionCount: a.functions?.length ?? 0 })))
 for (const a of addons) write(`addons/${a.slug}.json`, a)
 
-const fixture = JSON.parse(fs.readFileSync(path.join(root, 'src/data/openapis.fixture.json'), 'utf8'))
+const fixture = JSON.parse(fs.readFileSync(path.join(root, 'public/registry/openapis.json'), 'utf8'))
 write('openapis.json', { apis: fixture.apis })
 console.log(`gen-data: ${addons.length} addons, ${fixture.apis.length} openapis`)

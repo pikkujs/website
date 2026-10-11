@@ -11,17 +11,18 @@ import { useMDXComponents } from '@/components/mdx'
 import { Prose } from '@/components/own-mdx'
 import { TreeNav } from '@/components/TreeNav'
 
+type DocData = { path: string; url: string; title: string }
 export const Route = createFileRoute('/docs/$')({
   component: Page,
-  head: ({ loaderData }) => loaderData ? { meta: [{ title: `${loaderData.title} | Pikku` }, { name: 'source-file', content: 'content/docs/' + loaderData.path }] } : {},
-  loader: async ({ params }) => {
+  head: ({ loaderData }) => { const d = loaderData as DocData | undefined; return d ? { meta: [{ title: `${d.title} | Pikku` }, { name: 'source-file', content: 'content/docs/' + d.path }] } : {} },
+  loader: async ({ params }): Promise<DocData & { pageTree: any }> => {
     const slugs = params._splat?.split('/').filter(Boolean) ?? []
     // SSR/prerender call the functions directly; browser navigation reads prerendered static JSON (no Worker call)
-    const [data, pageTree] = import.meta.env.SSR
+    const [data, pageTree] = (import.meta.env.SSR
       ? await Promise.all([serverLoader({ data: slugs }), treeLoader()])
-      : await Promise.all([fetchPayload<ReturnType<typeof docPayload> & {}>(`/payload/docs/${slugs.length ? slugs.join('/') : 'index'}.json`), fetchPayload<Awaited<ReturnType<typeof docsTree>>>('/payload/docs-tree.json')])
+      : await Promise.all([fetchPayload<DocData>(`/payload/docs/${slugs.length ? slugs.join('/') : 'index'}.json`), fetchPayload<Awaited<ReturnType<typeof docsTree>>>('/payload/docs-tree.json')])) as [DocData, Awaited<ReturnType<typeof docsTree>>]
     await docs.getPage(data.path)?.preload()
-    return { ...data, pageTree }
+    return { ...data, pageTree } as DocData & { pageTree: any }
   },
 })
 const serverLoader = createServerFn({ method: 'GET' })
@@ -55,7 +56,7 @@ function Content({ path, tree, url }: { path: string; tree: any; url: string }) 
   )
 }
 function Page() {
-  const data = useFumadocsLoader(Route.useLoaderData())
+  const data = useFumadocsLoader(Route.useLoaderData()) as DocData & { pageTree: any }
   return (
     <div className="mx-auto flex max-w-[90rem] gap-8 px-4">
       <aside className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 overflow-auto py-6 lg:block"><TreeNav nodes={data.pageTree.children} path={data.url} /></aside>
