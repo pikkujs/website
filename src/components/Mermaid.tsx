@@ -9,7 +9,7 @@ export function Mermaid({ chart }: { chart: string }) {
     const draw = () => import('mermaid').then(async ({ default: mermaid }) => {
       const dark = document.documentElement.dataset.theme === 'dark'
       mermaid.initialize({
-        startOnLoad: false, theme: 'base', fontFamily: 'Work Sans Variable, sans-serif',
+        startOnLoad: false, theme: 'base', fontFamily: 'var(--font-body)',
         themeVariables: dark
           ? { background: '#15110d', primaryColor: '#2e1d12', primaryTextColor: '#f1e8d6', primaryBorderColor: '#ec8a4f', lineColor: '#b3a690', secondaryColor: '#1d1812', tertiaryColor: '#15110d', textColor: '#d9cfba' }
           : { background: '#f4ecdd', primaryColor: '#f1d9c4', primaryTextColor: '#2b2219', primaryBorderColor: '#c2410c', lineColor: '#5f5143', secondaryColor: '#ebdfc8', tertiaryColor: '#fbf6ec', textColor: '#3d3125' },

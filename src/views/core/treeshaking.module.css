@@ -26,7 +26,7 @@
 .heroActions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
 .heroCode {
   background: #16140f; border: 2px solid #2a2720; border-radius: 16px;
-  padding: 32px; font-family: 'Geist Mono', monospace;
+  padding: 32px; font-family: var(--font-mono);
   font-size: 14px; line-height: 1.9; color: #d8d2c4;
 }
 .hcComment { color: #8a8475; }
@@ -35,7 +35,7 @@
 
 .cmdBlock {
   background: #fffefb; border: 1px solid #e3ddd0; color: #1a1814;
-  padding: 14px 18px; border-radius: 10px; font-family: 'Geist Mono', monospace;
+  padding: 14px 18px; border-radius: 10px; font-family: var(--font-mono);
   font-size: 14px; max-width: 300px; position: relative; cursor: pointer;
   transition: all 0.2s; margin-bottom: 28px;
 }

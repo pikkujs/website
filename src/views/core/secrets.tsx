@@ -143,7 +143,7 @@ function OAuth2Section() {
                 <div>
                   <div className={styles.cardTitle}>Two secrets, clear roles</div>
                   <p className={styles.cardBody}>
-                    <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.85em', color: '#c2410c' }}>secretId</code> holds your app's <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.85em', color: '#c2410c' }}>clientId</code> and <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.85em', color: '#c2410c' }}>clientSecret</code>. <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: '0.85em', color: '#c2410c' }}>tokenSecretId</code> stores access and refresh tokens — updated automatically whenever a token is refreshed.
+                    <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85em', color: '#c2410c' }}>secretId</code> holds your app's <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85em', color: '#c2410c' }}>clientId</code> and <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85em', color: '#c2410c' }}>clientSecret</code>. <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85em', color: '#c2410c' }}>tokenSecretId</code> stores access and refresh tokens — updated automatically whenever a token is refreshed.
                   </p>
                 </div>
               </div>

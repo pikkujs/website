@@ -1,0 +1,19 @@
+/* @pikku/theme-brand
+   Values taken from the pikkustudio.app working tree (apps/website/src/styles.css and src/styles/palettes.generated.css, paper palette),
+   Studio commit 667830c, copied on 2026-10-12. This package is now the source of truth for both sites. */
+/* Metric-matched fallbacks so text does not jump while the web fonts load. Load the families themselves with the link in index.ts (GOOGLE_FONTS_HREF). */
+@font-face {
+  font-family: 'Fraunces Fallback';
+  src: local('Georgia');
+  size-adjust: 104%;
+  ascent-override: 92%;
+  descent-override: 24%;
+}
+
+@font-face {
+  font-family: 'Work Sans Fallback';
+  src: local('Arial');
+  size-adjust: 106%;
+  ascent-override: 93%;
+  descent-override: 24%;
+}

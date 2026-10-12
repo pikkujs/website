@@ -20,7 +20,7 @@
 .rowOn .label { fill: var(--paper-accent-on-dark); font-weight: 600; }
 
 .label {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12.5px;
 }
 
@@ -31,14 +31,14 @@
 }
 
 .nodeText {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 15px;
   font-weight: 600;
   fill: var(--paper-code-text);
 }
 
 .caption {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1px;

@@ -1,3 +1,5 @@
+import { Blob } from '@pikku/theme-brand'
+
 export function FanScene() {
   return (
     <>
@@ -8,8 +10,8 @@ export function FanScene() {
         aria-labelledby="fanT"
       >
         <title id="fanT">
-          One orange chameleon in the middle, labelled "your function". Hand-drawn lines fan out to
-          seven smaller chameleons, each a different colour: HTTP, RPC, WebSockets, queues, cron,
+          One orange blob in the middle, labelled "your function". Hand-drawn lines fan out to
+          seven smaller blobs, each a different colour: HTTP, RPC, WebSockets, queues, cron,
           MCP and AI agents.
         </title>
         <ellipse
@@ -23,7 +25,7 @@ export function FanScene() {
         />
         <g
           fill="none"
-          stroke="var(--paper-text)"
+          stroke="var(--color-ink)"
           strokeWidth="2.2"
           strokeLinecap="round"
           filter="url(#rough)"
@@ -36,50 +38,50 @@ export function FanScene() {
           <path d="M430 340 C 500 400, 560 440, 620 470" />
           <path d="M380 220 C 376 170, 384 130, 380 96" />
         </g>
-        <use href="#pk" x="300" y="222" width="160" height="160" style={{ color: '#c2410c' }} />
-        <text x="322" y="410" fontSize="28" fill="#c2410c">
+        <Blob pose="blob" x={300} y={222} width={160} height={160} color="#c2410c" />
+        <text x="322" y="410" fontSize="28" fill="var(--color-clay)">
           your function
         </text>
 
-        <g fontSize="26" fill="var(--paper-text)">
+        <g fontSize="26" fill="var(--color-ink)">
           <circle cx="104" cy="104" r="34" fill="#c9dbe2" filter="url(#wash)" />
-          <use href="#pk" x="76" y="76" width="56" height="56" style={{ color: '#3d6373' }} />
+          <Blob pose="bean" x={76} y={76} width={56} height={56} color="#3d6373" />
           <text x="56" y="168">
             HTTP
           </text>
 
           <circle cx="84" cy="292" r="34" fill="#efd9a9" filter="url(#wash)" />
-          <use href="#pk" x="56" y="264" width="56" height="56" style={{ color: '#b97d12' }} />
+          <Blob pose="seed" x={56} y={264} width={56} height={56} color="#b97d12" />
           <text x="56" y="352">
             RPC
           </text>
 
           <circle cx="104" cy="480" r="34" fill="#d7e3c8" filter="url(#wash)" />
-          <use href="#pk" x="76" y="452" width="56" height="56" style={{ color: '#55703c' }} />
+          <Blob pose="bean" x={76} y={452} width={56} height={56} color="#55703c" />
           <text x="40" y="544">
             WebSockets
           </text>
 
           <circle cx="656" cy="104" r="34" fill="#ecc7cf" filter="url(#wash)" />
-          <use href="#pk" x="628" y="76" width="56" height="56" style={{ color: '#a8485f' }} />
+          <Blob pose="seed" x={628} y={76} width={56} height={56} color="#a8485f" />
           <text x="620" y="168">
             Queues
           </text>
 
           <circle cx="676" cy="292" r="34" fill="#ddd0ea" filter="url(#wash)" />
-          <use href="#pk" x="648" y="264" width="56" height="56" style={{ color: '#6b4e8a' }} />
+          <Blob pose="bean" x={648} y={264} width={56} height={56} color="#6b4e8a" />
           <text x="650" y="352">
             Cron
           </text>
 
           <circle cx="656" cy="480" r="34" fill="#bfe0d9" filter="url(#wash)" />
-          <use href="#pk" x="628" y="452" width="56" height="56" style={{ color: '#1f7a6d' }} />
+          <Blob pose="seed" x={628} y={452} width={56} height={56} color="#1f7a6d" />
           <text x="630" y="544">
             MCP
           </text>
 
           <circle cx="380" cy="62" r="34" fill="#d3d8ef" filter="url(#wash)" />
-          <use href="#pk" x="352" y="34" width="56" height="56" style={{ color: '#4a5aa8' }} />
+          <Blob pose="bean" x={352} y={34} width={56} height={56} color="#4a5aa8" />
           <text x="420" y="70">
             AI agents
           </text>
@@ -92,18 +94,18 @@ export function FanScene() {
         aria-labelledby="fanTm"
       >
         <title id="fanTm">
-          One orange chameleon at the top labelled "your function", with a hand-drawn stem running
-          down to seven smaller coloured chameleons: HTTP, RPC, WebSockets, queues, cron, MCP and AI
+          One orange blob at the top labelled "your function", with a hand-drawn stem running
+          down to seven smaller coloured blobs: HTTP, RPC, WebSockets, queues, cron, MCP and AI
           agents.
         </title>
         <ellipse cx="80" cy="74" rx="76" ry="62" fill="#e8b48f" opacity=".45" filter="url(#wash)" />
-        <use href="#pk" x="20" y="14" width="120" height="120" style={{ color: '#c2410c' }} />
-        <text x="150" y="80" fontSize="28" fill="#c2410c">
+        <Blob pose="blob" x={20} y={14} width={120} height={120} color="#c2410c" />
+        <text x="150" y="80" fontSize="28" fill="var(--color-clay)">
           your function
         </text>
         <g
           fill="none"
-          stroke="var(--paper-text)"
+          stroke="var(--color-ink)"
           strokeWidth="2.2"
           strokeLinecap="round"
           filter="url(#rough)"
@@ -117,32 +119,32 @@ export function FanScene() {
           <path d="M70 446 C 90 440, 110 446, 128 444" />
           <path d="M70 500 C 90 494, 110 500, 128 498" />
         </g>
-        <g fontSize="27" fill="var(--paper-text)">
-          <use href="#pk" x="132" y="152" width="44" height="44" style={{ color: '#3d6373' }} />
+        <g fontSize="27" fill="var(--color-ink)">
+          <Blob pose="seed" x={132} y={152} width={44} height={44} color="#3d6373" />
           <text x="186" y="184">
             HTTP
           </text>
-          <use href="#pk" x="132" y="206" width="44" height="44" style={{ color: '#b97d12' }} />
+          <Blob pose="bean" x={132} y={206} width={44} height={44} color="#b97d12" />
           <text x="186" y="238">
             RPC
           </text>
-          <use href="#pk" x="132" y="260" width="44" height="44" style={{ color: '#55703c' }} />
+          <Blob pose="seed" x={132} y={260} width={44} height={44} color="#55703c" />
           <text x="186" y="292">
             WebSockets
           </text>
-          <use href="#pk" x="132" y="314" width="44" height="44" style={{ color: '#a8485f' }} />
+          <Blob pose="bean" x={132} y={314} width={44} height={44} color="#a8485f" />
           <text x="186" y="346">
             Queues
           </text>
-          <use href="#pk" x="132" y="368" width="44" height="44" style={{ color: '#6b4e8a' }} />
+          <Blob pose="seed" x={132} y={368} width={44} height={44} color="#6b4e8a" />
           <text x="186" y="400">
             Cron
           </text>
-          <use href="#pk" x="132" y="422" width="44" height="44" style={{ color: '#1f7a6d' }} />
+          <Blob pose="bean" x={132} y={422} width={44} height={44} color="#1f7a6d" />
           <text x="186" y="454">
             MCP
           </text>
-          <use href="#pk" x="132" y="476" width="44" height="44" style={{ color: '#4a5aa8' }} />
+          <Blob pose="seed" x={132} y={476} width={44} height={44} color="#4a5aa8" />
           <text x="186" y="508">
             AI agents
           </text>

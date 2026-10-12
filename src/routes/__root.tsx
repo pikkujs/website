@@ -3,6 +3,7 @@ import { createRootRoute, HeadContent, Outlet, Scripts, useRouter } from '@tanst
 import { useEffect } from 'react'
 import { TanstackProvider } from 'fumadocs-core/framework/tanstack' // headless provider (no fumadocs-ui)
 import '../styles.css'
+import { SvgDefs, GOOGLE_FONTS_HREF } from '@pikku/theme-brand'
 import { Navbar } from '@/components/site/Navbar'
 import { Footer } from '@/components/site/Footer'
 import { NotFound } from '@/components/site/NotFound'
@@ -26,6 +27,10 @@ export const Route = createRootRoute({
     return {
       meta: [{ charSet: 'utf-8' }, { name: 'viewport', content: 'width=device-width, initial-scale=1' }, { name: 'theme-color', content: '#f4ecdd' }, ...base.meta.filter((m: any) => !m.title)],
       links: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+        { rel: 'stylesheet', href: GOOGLE_FONTS_HREF },
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'icon', href: '/img/favicon.ico', sizes: 'any' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/img/favicon-32x32.png' },
         { rel: 'apple-touch-icon', href: '/img/apple-touch-icon.png' },
@@ -57,6 +62,7 @@ function Root() {
     <html lang="en" data-theme="light" suppressHydrationWarning>
       <head><HeadContent /></head>
       <body>
+        <SvgDefs />
         <a href="#main" className="skip-link">Skip to content</a>
         <TanstackProvider>
           <Navbar />

@@ -1,9 +1,10 @@
+import { Blob } from '@pikku/theme-brand'
 export function DeployScene() {
   return (
     <>
       <svg viewBox="0 0 520 300" className="mt-6 w-full h-auto" role="img" aria-labelledby="depT">
         <title id="depT">
-          The chameleon carries a tied parcel along a dotted path from a laptop to three homes: a
+          The blob carries a tied parcel along a dotted path from a laptop to three homes: a
           serverless cloud, Cloudflare, and your own server.
         </title>
 
@@ -32,15 +33,7 @@ export function DeployScene() {
         />
 
         <g transform="translate(140 0) scale(.85)">
-          <use
-            href="#pk"
-            x="0"
-            y="0"
-            width="92"
-            height="92"
-            style={{ color: '#c2410c' }}
-            transform="translate(92 0) scale(-1 1)"
-          />
+          <Blob pose="blob" x={0} y={0} width={92} height={92} color="#c2410c" transform="translate(92 0) scale(-1 1)" />
           <g transform="rotate(-8 80 74)" filter="url(#rough)">
             <rect
               x="66"

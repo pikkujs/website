@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link as RLink, useRouterState } from '@tanstack/react-router'
 import * as Dialog from '@radix-ui/react-dialog'
 import { Menu, Search, X } from 'lucide-react'
+import { BlobMark } from '@pikku/theme-brand'
 import { ThemeToggle } from './ThemeToggle'
 import { MegaMenu } from './MegaMenu'
 import { SearchDialog } from './SearchDialog'
@@ -28,8 +29,8 @@ export function Navbar() {
     <header className="site-nav">
       <nav className="site-nav-in" aria-label="Main">
         <RLink to="/" className="brand" aria-label="Pikku home">
-          <img src="/img/pikku-paper.svg" alt="" width={44} height={44} className="brand-logo" />
-          <span className="brand-name">Pikku</span>
+          <BlobMark size={40} color="var(--color-clay)" className="brand-logo" />
+          <span className="brand-name">pikku</span>
         </RLink>
         <div className="nav-links">
           <MegaMenu />

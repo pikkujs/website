@@ -10,8 +10,8 @@
 .prose-pikku ul { list-style: disc; padding-left: 1.5rem; }
 .prose-pikku ol { list-style: decimal; padding-left: 1.6rem; }
 .prose-pikku li { margin: .3em 0; }
-.prose-pikku li::marker { color: var(--paper-accent); }
-.prose-pikku a:not(.pk-card-link) { color: var(--paper-accent); text-decoration: underline; text-decoration-color: var(--paper-accent-border); text-underline-offset: 3px; transition: text-decoration-color .15s; }
+.prose-pikku li::marker { color: var(--paper-accent-dark); }
+.prose-pikku a:not(.pk-card-link) { color: var(--paper-accent-dark); text-decoration: underline; text-decoration-color: var(--paper-accent-border); text-underline-offset: 3px; transition: text-decoration-color .15s; }
 .prose-pikku a:hover { text-decoration-color: currentColor; }
 .prose-pikku strong { color: var(--paper-text); font-weight: 600; }
 .prose-pikku hr { border: 0; border-top: 2px dashed var(--paper-border-strong); margin: 2.4rem 0; opacity: .6; }
@@ -37,7 +37,7 @@
 .pk-code pre code { display: block; width: max-content; min-width: 100%; font-family: inherit; }
 .pk-code-copy { position: absolute; top: .4rem; right: .45rem; z-index: 2; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; border: 1px solid transparent; color: var(--paper-text-muted); background: color-mix(in srgb, var(--code-block-bg) 85%, transparent); opacity: 0; transition: opacity .15s, color .15s; cursor: pointer; }
 .pk-code:hover .pk-code-copy, .pk-code-copy:focus-visible { opacity: 1; }
-.pk-code-copy:hover { color: var(--paper-accent); border-color: var(--code-block-border); }
+.pk-code-copy:hover { color: var(--paper-accent-dark); border-color: var(--code-block-border); }
 @media (hover: none) { .pk-code-copy { opacity: 1; } }
 .pk-code-title + .pk-code-copy { top: .28rem; }
 
@@ -55,7 +55,7 @@
 .pk-tablist { display: flex; gap: .25rem; overflow-x: auto; border-bottom: 1px solid var(--paper-border); }
 .pk-tab { padding: .5rem .95rem; font: 500 .88rem var(--font-body); color: var(--paper-text-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; white-space: nowrap; border-radius: 8px 8px 0 0; }
 .pk-tab:hover { color: var(--paper-text); background: var(--paper-bg-dark); }
-.pk-tab.is-active { color: var(--paper-accent); border-bottom-color: var(--paper-accent); font-weight: 600; }
+.pk-tab.is-active { color: var(--paper-accent-dark); border-bottom-color: var(--paper-accent); font-weight: 600; }
 .pk-tabpanel { padding-top: .9rem; }
 .pk-tabpanel .pk-code { margin: 0; }
 
@@ -64,7 +64,7 @@
 .pk-card--minimal { border-color: transparent; }
 .pk-card-title, .prose-pikku .pk-card h3 { font: 600 1.2rem/1.25 var(--font-display); margin: 0 0 .6rem; color: var(--paper-text); }
 .pk-card-desc { font-size: .92rem; color: var(--paper-text-muted); margin-bottom: .8rem; }
-.pk-card-link { color: var(--paper-accent); font-weight: 600; font-size: .9rem; }
+.pk-card-link { color: var(--paper-accent-dark); font-weight: 600; font-size: .9rem; }
 .pk-card > :last-child { margin-bottom: 0; }
 
 .pk-hero { display: flex; align-items: center; gap: 1.6rem; margin: 0 0 1.6rem; }

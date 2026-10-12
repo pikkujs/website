@@ -101,8 +101,8 @@ function PermissionsSection() {
           <div className={styles.eyebrow}>Permissions</div>
           <h2 className={styles.h2}>Boolean checks. <em>Composable logic.</em></h2>
           <p className={styles.lead}>
-            Permissions run before your function. Return <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>true</code> to allow,{' '}
-            <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>false</code> to reject. Group them with OR/AND logic.
+            Permissions run before your function. Return <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>true</code> to allow,{' '}
+            <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>false</code> to reject. Group them with OR/AND logic.
           </p>
         </div>
 
@@ -187,7 +187,7 @@ function MiddlewareSection() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
           {scopes.map((s, i) => (
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-              <span style={{ flexShrink: 0, width: 22, height: 22, borderRadius: '50%', background: '#f4e6dd', border: '1px solid #e8cfc3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c', fontSize: 10, fontWeight: 700, fontFamily: 'Geist Mono, monospace' }}>{i + 1}</span>
+              <span style={{ flexShrink: 0, width: 22, height: 22, borderRadius: '50%', background: '#f4e6dd', border: '1px solid #e8cfc3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c', fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{i + 1}</span>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1814', marginBottom: 2 }}>{s.label}</div>
                 <div style={{ fontSize: 12, color: '#9a9387' }}>{s.desc}</div>

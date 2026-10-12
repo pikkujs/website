@@ -7,7 +7,7 @@
 .page {
   background: var(--paper-bg);
   color: var(--paper-text);
-  font-family: var(--font-body, 'Geist', -apple-system, sans-serif);
+  font-family: var(--font-body);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -34,7 +34,7 @@
 
 /* ── Typography ────────────────────────────────────────── */
 .eyebrow {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -46,7 +46,7 @@
 }
 
 .h1 {
-  font-family: var(--font-display, 'Newsreader', Georgia, serif);
+  font-family: var(--font-display);
   font-weight: 500;
   font-size: clamp(40px, 5.5vw, 72px);
   line-height: 1.02;
@@ -55,10 +55,10 @@
   margin-bottom: 20px;
 }
 
-.h1 em { font-style: italic; color: var(--paper-accent); }
+.h1 em { font-style: italic; color: var(--paper-accent-dark); }
 
 .h2 {
-  font-family: var(--font-display, 'Newsreader', Georgia, serif);
+  font-family: var(--font-display);
   font-weight: 500;
   font-size: clamp(28px, 4vw, 48px);
   line-height: 1.06;
@@ -68,7 +68,7 @@
   max-width: 30ch;
 }
 
-.h2 em { font-style: italic; color: var(--paper-accent); }
+.h2 em { font-style: italic; color: var(--paper-accent-dark); }
 
 .lead {
   font-size: clamp(16px, 1.7vw, 19px);
@@ -79,19 +79,19 @@
 }
 
 /* ── Colour utilities ──────────────────────────────────── */
-.accent { color: var(--paper-accent); }
+.accent { color: var(--paper-accent-dark); }
 .muted  { color: var(--paper-text-muted); }
 .faint  { color: var(--paper-text-faint); }
 
 /* ── Badge (Core Concept tag, etc.) ───────────────────── */
 .badge {
   display: inline-block;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
   border: 1px solid var(--paper-accent-border);
   background: var(--paper-accent-bg);
   padding: 5px 12px;
@@ -101,7 +101,7 @@
 
 /* ── Buttons ───────────────────────────────────────────── */
 .btnPrimary {
-  font-family: var(--font-body, 'Geist', sans-serif);
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 15px;
   padding: 12px 22px;
@@ -120,7 +120,7 @@
 .btnPrimary:hover { background: var(--paper-accent); }
 
 .btnGhost {
-  font-family: var(--font-body, 'Geist', sans-serif);
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: 15px;
   padding: 12px 22px;
@@ -182,14 +182,14 @@
 }
 
 .codeCardFilename {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
   color: var(--paper-code-text);
 }
 
 .codeCardBadge {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--paper-code-label);
 }
@@ -205,7 +205,7 @@
 
 .codeCardSourceLink:hover {
   opacity: 1;
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
 }
 
 /* ── Terminal widget ───────────────────────────────────── */
@@ -230,14 +230,14 @@
 
 .termTitle {
   margin-left: 10px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--paper-code-label);
 }
 
 .termBody {
   padding: 22px 20px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13.5px;
   line-height: 1.95;
   color: var(--paper-code-text);
@@ -282,7 +282,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
   font-size: 10px;
   font-weight: 700;
   margin-top: 1px;
@@ -298,8 +298,8 @@
   border-radius: 50%;
   background: var(--paper-accent-bg);
   border: 1px solid var(--paper-accent-border);
-  color: var(--paper-accent);
-  font-family: 'Geist Mono', monospace;
+  color: var(--paper-accent-dark);
+  font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
   flex-shrink: 0;

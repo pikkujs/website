@@ -23,7 +23,7 @@
   border: 1px solid var(--paper-code-border);
   border-radius: 14px;
   padding: 22px 26px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 14px;
   line-height: 2;
   color: #d8d4cb;
@@ -31,7 +31,7 @@
   box-shadow: 0 20px 50px -24px var(--paper-shadow-xl);
 }
 
-.prompt { color: var(--paper-accent); margin-right: 10px; }
+.prompt { color: var(--paper-accent-dark); margin-right: 10px; }
 .dim { color: rgba(216, 212, 203, 0.68); }
 
 /* ── Step 2: terminal + checks ─────────────────────────── */
@@ -83,7 +83,7 @@
   transition: border-color 0.2s, color 0.2s;
 }
 
-.chip:hover { border-color: var(--paper-accent); color: var(--paper-accent); }
+.chip:hover { border-color: var(--paper-accent); color: var(--paper-accent-dark); }
 
 /* ── Step 4: ship cards ────────────────────────────────── */
 .shipGrid {
@@ -105,7 +105,7 @@
 }
 
 .shipCard h3 {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--font-display);
   font-size: 22px;
   font-weight: 600;
   margin: 0;
@@ -121,7 +121,7 @@
 }
 
 .shipCard code {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12.5px;
   background: var(--paper-bg-alt);
   border: 1px solid var(--paper-border);

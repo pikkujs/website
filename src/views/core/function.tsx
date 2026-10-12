@@ -28,7 +28,7 @@ function Hero() {
             Your logic.<br /><em>Nothing else.</em>
           </h1>
           <p className={styles.lead}>
-            A Pikku function receives <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>(services, data, wire)</code> and
+            A Pikku function receives <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>(services, data, wire)</code> and
             works across every protocol — HTTP, WebSocket, queue, CLI, MCP, and more.
           </p>
           <div className={styles.heroActions}>
@@ -98,7 +98,7 @@ function ThreeParamsSection() {
                 <span className={`${styles.paramName} ${p.nameCls}`}>{p.name}</span>
               </div>
               <p style={{ fontSize: 14, color: '#6b6559', lineHeight: 1.6, margin: '0 0 10px' }}>{p.desc}</p>
-              <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#9a9387' }}>{p.example}</code>
+              <code style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#9a9387' }}>{p.example}</code>
             </div>
           ))}
         </div>
@@ -171,9 +171,9 @@ const versionedFuncCode = snippets.shopVersionedItem;
 
 function VersioningSection() {
   const steps = [
-    { icon: <GitBranch className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Contracts are tracked automatically', desc: <>Every function's name + input schema + output schema = a contract hash. The CLI stores these in a <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>versions.pikku.json</code> manifest.</> },
-    { icon: <AlertTriangle className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Breaking changes fail the build', desc: <>If you change a published schema without bumping the version, <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>pikku versions check</code> fails. Add it to CI and breaking changes never ship by accident.</> },
-    { icon: <CheckCircle2 className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Version bumps are explicit', desc: <>Set <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>version: 2</code> on the function, run <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 12, color: '#c2410c' }}>pikku versions update</code>, commit. Old and new versions coexist.</> },
+    { icon: <GitBranch className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Contracts are tracked automatically', desc: <>Every function's name + input schema + output schema = a contract hash. The CLI stores these in a <code style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#c2410c' }}>versions.pikku.json</code> manifest.</> },
+    { icon: <AlertTriangle className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Breaking changes fail the build', desc: <>If you change a published schema without bumping the version, <code style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#c2410c' }}>pikku versions check</code> fails. Add it to CI and breaking changes never ship by accident.</> },
+    { icon: <CheckCircle2 className="w-5 h-5" style={{ color: '#c2410c', marginTop: 2, flexShrink: 0 }} />, title: 'Version bumps are explicit', desc: <>Set <code style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#c2410c' }}>version: 2</code> on the function, run <code style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#c2410c' }}>pikku versions update</code>, commit. Old and new versions coexist.</> },
   ];
 
   return (

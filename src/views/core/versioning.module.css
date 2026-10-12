@@ -26,7 +26,7 @@
 .heroActions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 32px; }
 .heroCode {
   background: #16140f; border: 2px solid #2a2720; border-radius: 16px;
-  padding: 32px; font-family: 'Geist Mono', monospace;
+  padding: 32px; font-family: var(--font-mono);
   font-size: 14px; line-height: 1.9; color: #d8d2c4;
 }
 .hcComment { color: #8a8475; }
@@ -39,13 +39,13 @@
 .ciTerminal { border-radius: 12px; overflow: hidden; border: 1px solid #2a2720; }
 .ciTermBar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #1f1c16; border-bottom: 1px solid #2a2720; }
 .ciTermDot { width: 9px; height: 9px; border-radius: 50%; }
-.ciTermTitle { font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600; color: #d8d2c4; margin-left: 4px; }
-.ciTermFailed { margin-left: auto; font-family: 'Geist Mono', monospace; font-size: 11px; padding: 3px 9px; border-radius: 5px; background: rgba(194,65,12,0.15); color: #c2410c; border: 1px solid rgba(194,65,12,0.3); }
-.ciTermBody { padding: 20px; background: #16140f; font-family: 'Geist Mono', monospace; font-size: 12px; line-height: 1.8; color: #d8d2c4; }
+.ciTermTitle { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: #d8d2c4; margin-left: 4px; }
+.ciTermFailed { margin-left: auto; font-family: var(--font-mono); font-size: 11px; padding: 3px 9px; border-radius: 5px; background: rgba(194,65,12,0.15); color: #c2410c; border: 1px solid rgba(194,65,12,0.3); }
+.ciTermBody { padding: 20px; background: #16140f; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; color: #d8d2c4; }
 
 .cmdBlock {
   background: #fffefb; border: 1px solid #e3ddd0; color: #1a1814;
-  padding: 14px 18px; border-radius: 10px; font-family: 'Geist Mono', monospace;
+  padding: 14px 18px; border-radius: 10px; font-family: var(--font-mono);
   font-size: 14px; max-width: 300px; position: relative; cursor: pointer;
   transition: all 0.2s; margin-bottom: 28px;
 }

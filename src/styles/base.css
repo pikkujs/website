@@ -1,12 +1,10 @@
 html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); }
 body {
-  background: var(--paper-bg) var(--grain); background-attachment: fixed;
+  background: var(--paper-bg) var(--grain);
   color: var(--paper-text-body); font-family: var(--font-body);
   -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }
-h1, h2, h3 { font-family: var(--font-display); font-variation-settings: 'SOFT' 100, 'opsz' 120; font-weight: 600; text-wrap: balance; color: var(--paper-text); }
-:focus-visible { outline: 3px dashed var(--paper-accent); outline-offset: 3px; border-radius: 4px; }
-::selection { background: var(--paper-accent); color: #fbf6ec; }
+h1, h2, h3 { font-family: var(--font-display); font-variation-settings: 'SOFT' 100, 'opsz' 120; font-weight: 600; text-wrap: balance; }
 .skip-link { position: absolute; left: 12px; top: -80px; z-index: 100; background: var(--paper-text); color: var(--paper-bg); padding: 10px 16px; border-radius: 8px; transition: top .15s; }
 .skip-link:focus { top: 12px; }
 img { max-width: 100%; height: auto; }

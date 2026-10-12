@@ -1,60 +1,65 @@
-/* Design tokens. Light is the default, [data-theme=dark] overrides.
-   Palette: paper #f4ecdd, clay #c2410c, ink #2b2219. */
+/* Design tokens. The brand tokens (--color-*, --font-*) come from the shared package @pikku/theme-brand
+   (packages/brand), never edited here. This file only aliases them to the --paper-* names this site's
+   components use, and adds pikku-only tokens (wire colours, syntax colours). Light is the default,
+   [data-theme=dark] swaps the --color-* values (brand.css), so every alias follows. */
 :root {
-  --font-display: 'Fraunces Variable', Georgia, serif;
-  --font-body: 'Work Sans Variable', system-ui, sans-serif;
-  --font-hand: 'Caveat Variable', cursive;
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .18 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --scribble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M2 9 C 40 3, 80 12, 120 6 S 180 4, 198 8' fill='none' stroke='%23c2410c' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --font-display: 'Fraunces', 'Fraunces Fallback', Georgia, serif;
+  --font-body: 'Work Sans', 'Work Sans Fallback', system-ui, sans-serif;
+  --font-hand: 'Caveat', cursive;
+  /* Studio has no monospace face; code uses the platform's own */
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
-  --paper-bg: #f4ecdd;
-  --paper-bg-alt: #fbf6ec;
-  --paper-bg-dark: #ebdfc8;
-  --paper-text: #2b2219;
-  --paper-text-body: #3d3125;
-  --paper-text-muted: #5f5143;
-  --paper-text-faint: #62584a;
-  --paper-border: #dccfb4;
-  --paper-border-strong: #b3a690;
+  --paper-bg: var(--color-paper);
+  --paper-bg-alt: var(--color-card);
+  --paper-bg-dark: var(--color-paper2);
+  --paper-text: var(--color-ink);
+  --paper-text-body: var(--color-ink);
+  --paper-text-muted: var(--color-soft);
+  --paper-text-faint: var(--color-faint);
+  --paper-border: color-mix(in srgb, var(--color-ink) 16%, var(--color-paper));
+  --paper-border-strong: color-mix(in srgb, var(--color-ink) 32%, var(--color-paper));
 
-  --hue-ochre: #84590d; --hue-slate: #3d6373; --hue-rose: #9d4359; --hue-plum: #6b4e8a; --hue-moss: #506938; --hue-teal: #1b6c60; --hue-clay: #9a3412; --hue-indigo: #4a5aa8;
-  --paper-accent: #b0380a;
-  --paper-accent-dark: #9a3412;
-  --paper-accent-darker: #9a3412;
-  --paper-accent-darkest: #7a2907;
-  --paper-accent-light: #d45520;
-  --paper-accent-lighter: #e0a06a;
-  --paper-accent-lightest: #f1d9c4;
-  --paper-accent-bg: #f1d9c4;
-  --paper-accent-border: #e3bfa3;
-  --paper-accent-on-dark: #e0a06a;
-  --paper-accent-ring: rgba(194, 65, 12, 0.22);
-  --paper-accent-ring-sm: rgba(194, 65, 12, 0.12);
+  --hue-ochre: var(--color-ochre); --hue-slate: var(--color-slate); --hue-rose: var(--color-rose); --hue-plum: #6b4e8a;
+  --hue-moss: var(--color-moss); --hue-teal: #1f7a6d; --hue-clay: var(--color-clay); --hue-indigo: #4a5aa8;
 
-  /* ink slab (code cards, terminals, dark sections) */
-  --paper-code-bg: #15110d;
+  /* clay (#c2410c) for fills, strokes and large text; claydeep (#9a3412) for small accent text */
+  --paper-accent: var(--color-clay);
+  --paper-accent-dark: var(--color-claydeep);
+  --paper-accent-darker: var(--color-claydeep);
+  --paper-accent-darkest: var(--color-claydeep);
+  --paper-accent-light: var(--color-clay);
+  --paper-accent-lighter: var(--color-ember);
+  --paper-accent-lightest: var(--color-cloudwash);
+  --paper-accent-bg: var(--color-cloudwash);
+  --paper-accent-border: color-mix(in srgb, var(--color-clay) 30%, var(--color-paper));
+  --paper-accent-on-dark: var(--color-ember);
+  --paper-accent-ring: color-mix(in srgb, var(--color-clay) 22%, transparent);
+  --paper-accent-ring-sm: color-mix(in srgb, var(--color-clay) 12%, transparent);
+
+  /* ink slab (code cards, terminals, dark sections): Studio's .band colours */
+  --paper-code-bg: var(--color-night);
   --paper-code-bg-bar: #1d1812;
-  --paper-code-border: #2e2820;
-  --paper-code-text: #ece3d0;
-  --paper-on-dark-text: #ece3d0;
-  --paper-on-dark-body: #b3a690;
-  --paper-on-dark-faint: #968a76;
-  --paper-code-hl: #e0a06a;
+  --paper-code-border: color-mix(in srgb, var(--color-cream) 16%, var(--color-night));
+  --paper-code-text: var(--color-cream);
+  --paper-on-dark-text: var(--color-cream);
+  --paper-on-dark-body: var(--color-mute);
+  --paper-on-dark-faint: var(--color-mute);
+  --paper-code-hl: var(--color-ember);
   --paper-code-teal: #8fb5c4;
   --paper-code-green: #9bb87a;
-  --paper-code-dim: #8a7e6a;
-  --paper-code-label: #968a76;
+  --paper-code-dim: var(--color-mute);
+  --paper-code-label: var(--color-mute);
 
   /* markdown code blocks follow the page theme */
-  --code-block-bg: #ebdfc8;
-  --code-block-bar: #e2d4b8;
-  --code-block-border: #d6c7a8;
-  --code-block-text: #2b2219;
-  --code-block-hl: rgba(194, 65, 12, 0.10);
+  --code-block-bg: var(--color-paper2);
+  --code-block-bar: color-mix(in srgb, var(--color-ink) 6%, var(--color-paper2));
+  --code-block-border: color-mix(in srgb, var(--color-ink) 14%, var(--color-paper2));
+  --code-block-text: var(--color-ink);
+  --code-block-hl: color-mix(in srgb, var(--color-clay) 10%, transparent);
 
-  --paper-shadow-sm: rgba(43, 34, 25, 0.10);
-  --paper-shadow-md: rgba(43, 34, 25, 0.18);
-  --paper-shadow-lg: rgba(43, 34, 25, 0.26);
+  --paper-shadow-sm: color-mix(in srgb, var(--color-ink) 10%, transparent);
+  --paper-shadow-md: color-mix(in srgb, var(--color-ink) 18%, transparent);
+  --paper-shadow-lg: color-mix(in srgb, var(--color-ink) 26%, transparent);
 
   /* Tailwind-facing aliases used by the shared components */
   --background: var(--paper-bg); --foreground: var(--paper-text);
@@ -70,56 +75,27 @@
   --wire-addons: #6366f1; --wire-secrets: #f59e0b; --wire-benchmarks: #06b6d4;
 
   --nav-h: 64px;
-  --paper-ok: #2f855a; --paper-ok-dark: #1e5c3c; --paper-ok-bg: #e0eddc; --paper-shadow-lw: 0 1px 3px rgba(43, 34, 25, .2);
-  /* inline Prism tokens (CodeBlock below): resolved per surface, paper by default, ink in dark mode / [data-code-ink] */
-  --code-bg: var(--code-block-bg); --code-plain: #2b2219; --code-kw: #9a3412; --code-str: #55703c; --code-num: #8a5a00;
-  --code-cmt: #6f6252; --code-fn: #3d6373; --code-type: #a8485f; --code-prop: #4b4033; --code-op: #5f5143; --code-punct: #6f6252;
+  --paper-ok: var(--color-moss); --paper-ok-dark: var(--color-moss); --paper-ok-bg: color-mix(in srgb, var(--color-moss) 14%, var(--color-card)); --paper-shadow-lw: 0 1px 3px color-mix(in srgb, var(--color-ink) 20%, transparent);
+  /* inline Prism tokens (CodeBlock): paper by default, ink in dark mode / [data-code-ink] */
+  --code-bg: var(--code-block-bg); --code-plain: var(--color-ink); --code-kw: var(--color-claydeep); --code-str: var(--color-moss); --code-num: var(--color-ochre);
+  --code-cmt: var(--color-faint); --code-fn: var(--color-slate); --code-type: var(--color-rose); --code-prop: var(--color-ink); --code-op: var(--color-soft); --code-punct: var(--color-faint);
   color-scheme: light;
 }
 
 [data-theme=dark] {
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .89 0 0 0 0 .82 0 0 0 .045 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --paper-bg: #15110d;
-  --paper-bg-alt: #1d1812;
-  --paper-bg-dark: #0f0c09;
-  --paper-text: #f1e8d6;
-  --paper-text-body: #d9cfba;
-  --paper-text-muted: #b3a690;
-  --paper-text-faint: #968a76;
-  --paper-border: #322b22;
-  --paper-border-strong: #4d4333;
-
-  --hue-ochre: #b97d12; --hue-slate: #578da3; --hue-rose: #c06d81; --hue-plum: #967bb4; --hue-moss: #6d904d; --hue-teal: #269686; --hue-clay: #e65727; --hue-indigo: #7582c2;
-  --paper-accent: #ec8a4f;
-  --paper-accent-dark: #f0a070;
-  --paper-accent-darker: #f0a070;
-  --paper-accent-darkest: #f4b78f;
-  --paper-accent-light: #ec8a4f;
-  --paper-accent-lighter: #e0a06a;
-  --paper-accent-lightest: #3a2517;
-  --paper-accent-bg: #2e1d12;
-  --paper-accent-border: #5a3a24;
-  --paper-accent-ring: rgba(236, 138, 79, 0.28);
-  --paper-accent-ring-sm: rgba(236, 138, 79, 0.14);
-
-  --paper-code-bg: #0c0a07;
-  --paper-code-bg-bar: #17130e;
-  --paper-code-border: #2e2820;
-
-  --code-block-bg: #0f0c09;
-  --code-block-bar: #1a1510;
-  --code-block-border: #2e2820;
-  --code-block-text: #ece3d0;
-  --code-block-hl: rgba(236, 138, 79, 0.14);
-
-  --paper-shadow-sm: rgba(0, 0, 0, 0.30);
-  --paper-shadow-md: rgba(0, 0, 0, 0.45);
-  --paper-shadow-lg: rgba(0, 0, 0, 0.6);
+  --paper-code-bg: var(--color-card);
+  --paper-code-bg-bar: var(--color-paper2);
+  --paper-code-border: color-mix(in srgb, var(--color-cream) 16%, var(--color-card));
+  --code-block-bg: var(--color-card);
+  --code-block-bar: var(--color-paper2);
+  --code-block-border: color-mix(in srgb, var(--color-cream) 16%, var(--color-card));
+  --code-block-text: var(--color-ink);
+  --paper-text-faint: var(--color-soft); /* Studio's faint (#6f6555) is below 4.5:1 on dark paper */
+  --paper-ok: var(--color-moss);
+  --code-bg: var(--paper-code-bg); --code-plain: var(--paper-code-text); --code-kw: var(--color-ember); --code-str: var(--paper-code-teal);
+  --code-num: var(--paper-code-hl); --code-cmt: var(--paper-code-dim); --code-fn: var(--paper-code-green); --code-type: var(--color-rose);
+  --code-prop: var(--paper-code-teal); --code-op: var(--color-mute); --code-punct: var(--color-mute);
   color-scheme: dark;
-  --paper-ok: #5fbf8a; --paper-ok-dark: #9fe0bb; --paper-ok-bg: #16281e; --paper-shadow-lw: 0 1px 3px rgba(0, 0, 0, .5);
-  --code-bg: var(--paper-code-bg); --code-plain: var(--paper-code-text); --code-kw: #e8834a; --code-str: var(--paper-code-teal);
-  --code-num: var(--paper-code-hl); --code-cmt: var(--paper-code-dim); --code-fn: var(--paper-code-green); --code-type: #d7b3e8;
-  --code-prop: #9fc3cf; --code-op: #b3ab99; --code-punct: var(--paper-on-dark-faint);
 }
 
 @theme inline {
@@ -127,18 +103,13 @@
   --color-muted: var(--paper-bg-dark); --color-muted-foreground: var(--paper-text-muted);
   --color-border: var(--paper-border); --color-primary: var(--paper-accent);
   --color-primary-foreground: var(--paper-bg); --color-ring: var(--paper-accent); --color-accent: var(--paper-accent);
-  --color-paper: var(--paper-bg); --color-paper2: var(--paper-bg-dark); --color-card: var(--paper-bg-alt);
-  --color-ink: var(--paper-text); --color-soft: var(--paper-text-muted); --color-clay: var(--paper-accent);
-  --color-claydeep: var(--paper-accent-dark);
-  --color-moss: #55703c; --color-ochre: #b97d12; --color-slate: #3d6373; --color-rose: #a8485f;
-  --color-night: #15110d; --color-cream: #ece3d0;
   --font-sans: var(--font-body); --font-serif: var(--font-display);
-  --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 }
 
 [data-code-ink] {
   --code-block-bg: var(--paper-code-bg); --code-block-bar: var(--paper-code-bg-bar); --code-block-border: var(--paper-code-border); --code-block-text: var(--paper-code-text);
-  --code-bg: var(--paper-code-bg); --code-plain: var(--paper-code-text); --code-kw: #e8834a; --code-str: var(--paper-code-teal);
+  --code-bg: var(--paper-code-bg); --code-plain: var(--paper-code-text); --code-kw: var(--color-ember); --code-str: var(--paper-code-teal);
   --code-num: var(--paper-code-hl); --code-cmt: var(--paper-code-dim); --code-fn: var(--paper-code-green); --code-type: #d7b3e8;
-  --code-prop: #9fc3cf; --code-op: #b3ab99; --code-punct: var(--paper-on-dark-faint);
+  --code-prop: #9fc3cf; --code-op: var(--color-mute); --code-punct: var(--color-mute);
 }

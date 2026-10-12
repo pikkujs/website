@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Link from '@/components/site/Link'
-import { Pk, Symbols } from './Pk'
+import { Blob } from '@pikku/theme-brand'
 import { FanScene } from './FanScene'
 import { LayersScene } from './LayersScene'
 import { TypesScene } from './TypesScene'
@@ -29,7 +29,7 @@ function CopyCmd({ cmd }: { cmd: string }) {
     >
       <span aria-hidden="true">$</span>
       {cmd}
-      <span className="hand text-xl text-clay" style={{ minWidth: '3.2rem' }}>
+      <span className="hand text-xl text-claydeep" style={{ minWidth: '3.2rem' }}>
         {done ? 'copied!' : 'copy'}
       </span>
     </button>
@@ -156,11 +156,11 @@ function Stack() {
             <li key={s.name} className="tech" style={{ ['--wash' as string]: s.wash }}>
               <div className="flex items-center gap-3">
                 <span className="tech-dot" style={{ transform: `rotate(${i % 2 ? 3 : -3}deg)` }}>
-                  <Pk className="w-9 h-9" style={{ color: s.ink }} />
+                  <Blob pose="blob" className="w-9 h-9" color={s.ink} />
                 </span>
                 <h3 className="display text-xl font-semibold">{s.name}</h3>
               </div>
-              <p className="hand text-xl mt-3" style={{ color: s.ink }}>
+              <p className="hand text-xl mt-3 text-soft">
                 {s.what}
               </p>
               <p className="mt-1 text-soft leading-relaxed">{s.why}</p>
@@ -171,7 +171,7 @@ function Stack() {
             style={{ borderStyle: 'dashed', background: 'transparent' }}
           >
             <h3 className="display text-xl font-semibold">and more</h3>
-            <p className="hand text-xl text-clay">Express, Fastify, Redis, NATS, BullMQ…</p>
+            <p className="hand text-xl text-claydeep">Express, Fastify, Redis, NATS, BullMQ…</p>
             <p className="text-soft leading-relaxed">
               Each one is a small adapter behind an interface, so adding yours is a few lines.
             </p>
@@ -312,7 +312,7 @@ function Framework() {
         </div>
       </div>
       <div className="mt-20 md:mt-28 torn px-6 py-8 md:px-12 md:py-12 grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 items-center">
-        <Pk className="w-24 h-24 md:w-32 md:h-32 text-moss" />
+        <Blob pose="blob" className="w-24 h-24 md:w-32 md:h-32 text-moss" />
         <div>
           <h3 className="display text-3xl md:text-4xl font-semibold leading-tight">
             Hundreds of addons. 120,000+ endpoints.
@@ -368,7 +368,6 @@ function Close() {
 export default function StudioHome() {
   return (
     <div className="sh">
-      <Symbols />
       <main>
         <Hero />
         <Stack />

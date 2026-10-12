@@ -67,7 +67,7 @@
 /* ── Group heading inside the wires section ─────────────── */
 
 .groupHead {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -108,13 +108,13 @@
   border-radius: 10px;
   background: var(--paper-accent-bg);
   border: 1px solid var(--paper-accent-border);
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
   margin-bottom: 16px;
 }
 
 /* custom.css forces .wiring-icon to --paper-text-muted on paper pages; inside
    the accent chip it should read as the chip's own colour. */
-.linkCard .linkCardIcon :global(.wiring-icon) { color: var(--paper-accent); }
+.linkCard .linkCardIcon :global(.wiring-icon) { color: var(--paper-accent-dark); }
 
 .linkCardTitleRow {
   display: flex;
@@ -137,12 +137,12 @@
 }
 
 .linkCardTag {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
   background: var(--paper-accent-bg);
   border: 1px solid var(--paper-accent-border);
   border-radius: 20px;
@@ -158,7 +158,7 @@
 }
 
 .linkCardSnippet code {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.5;
   color: #b8b1a3;
@@ -181,7 +181,7 @@
   transition: color 0.2s;
 }
 
-.linkCard:hover .linkCardMore { color: var(--paper-accent); }
+.linkCard:hover .linkCardMore { color: var(--paper-accent-dark); }
 
 .linkCardMore svg { transition: transform 0.2s; }
 .linkCard:hover .linkCardMore svg { transform: translateX(3px); }
@@ -200,12 +200,12 @@
 
 .ctaSection .btnPrimary {
   background: var(--paper-bg);
-  color: var(--paper-code-bg) !important;
+  color: var(--paper-text) !important;
 }
 
 .ctaSection .btnPrimary:hover {
   background: var(--paper-accent-on-dark);
-  color: var(--paper-code-bg) !important;
+  color: var(--color-night) !important;
 }
 
 .ctaSection .btnGhost {

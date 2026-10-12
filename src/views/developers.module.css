@@ -24,7 +24,7 @@
 }
 
 .orbitItem span {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.4px;
   color: var(--paper-text-faint);
@@ -57,7 +57,7 @@
 
 .compareTag {
   margin-left: auto;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   font-weight: 400;
   color: var(--paper-text-faint);
@@ -80,7 +80,7 @@
 }
 
 .ahaColLabel {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -147,13 +147,13 @@
 .docsLink {
   font-size: 14px;
   font-weight: 500;
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
   text-decoration: none;
   margin-top: 6px;
   display: inline-block;
 }
 
-.docsLink:hover { text-decoration: underline; color: var(--paper-accent); }
+.docsLink:hover { text-decoration: underline; color: var(--paper-accent-dark); }
 
 /* ── Runtimes ──────────────────────────────────────────── */
 .runtimeChips {
@@ -204,7 +204,7 @@
 }
 
 .surfaceGroup h3 {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--font-display);
   font-size: 20px;
   font-weight: 500;
   letter-spacing: -0.4px;
@@ -222,7 +222,7 @@
 .surfaceDoors { display: flex; flex-wrap: wrap; gap: 7px; }
 
 .surfaceDoor {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   padding: 4px 9px;
   border: 1px solid var(--paper-border);
@@ -232,18 +232,18 @@
   transition: border-color 0.18s, color 0.18s;
 }
 
-.surfaceDoor:hover { border-color: var(--paper-accent); color: var(--paper-accent); text-decoration: none; }
+.surfaceDoor:hover { border-color: var(--paper-accent); color: var(--paper-accent-dark); text-decoration: none; }
 
 .surfaceNote {
   margin-top: 30px;
   font-size: 14px;
   line-height: 1.7;
-  color: var(--paper-text-faint);
+  color: var(--paper-text-muted);
   max-width: 78ch;
 }
 
 .surfaceNote code {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12.5px;
   background: var(--paper-bg-alt);
   border: none;
@@ -255,7 +255,7 @@
 .surfaceNote a { color: var(--paper-accent-dark); text-decoration: underline; text-underline-offset: 3px; }
 
 .surfaceLead code {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.85em;
   background: var(--paper-bg-alt);
   border: none;
@@ -297,7 +297,7 @@
   margin: 0 0 18px;
   padding: 0;
   border: 0;
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--font-display);
   font-style: italic;
   font-size: 17.5px;
   line-height: 1.6;
@@ -318,7 +318,7 @@
 }
 
 .ctaCmd {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 15px;
   color: var(--paper-text-body);
   background: var(--paper-bg-alt);

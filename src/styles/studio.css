@@ -18,4 +18,4 @@
   border-radius: 14px 18px 13px 17px / 17px 13px 18px 14px;
   box-shadow: 0 1px 0 rgba(43, 34, 25, .08), 2px 3px 0 rgba(43, 34, 25, .06);
 }
-[class*="eyebrow"] { font-family: var(--font-body); letter-spacing: .2em; color: var(--paper-accent); }
+[class*="eyebrow"] { font-family: var(--font-body); letter-spacing: .2em; color: var(--paper-accent-dark); }

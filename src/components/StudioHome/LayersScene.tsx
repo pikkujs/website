@@ -1,4 +1,4 @@
-import { Pk } from './Pk'
+import { Blob } from '@pikku/theme-brand'
 
 const APPS = ['Web', 'iOS & Android', 'Desktop', 'CLI', 'MCP']
 const PIECES = ['Database', 'Queue', 'Scheduler', 'Email', 'Secrets', 'AI']
@@ -9,7 +9,7 @@ export function LayersScene() {
       <svg viewBox="0 0 1000 470" className="hidden md:block w-full h-auto" role="img" aria-labelledby="layT">
         <title id="layT">
           A layer cake. On top, five apps: web, iOS and Android, desktop, CLI and MCP. In the middle,
-          one orange chameleon labelled "your functions". Underneath, six swappable pieces:
+          one orange blob labelled "your functions". Underneath, six swappable pieces:
           database, queue, scheduler, email, secrets and AI. Dotted lines join every app to the
           middle and the middle to every piece.
         </title>
@@ -38,7 +38,7 @@ export function LayersScene() {
             <text key={p} x={91 + i * 160} y="410" fontSize="27">{p}</text>
           ))}
         </g>
-        <use href="#pk" x="420" y="190" width="120" height="120" style={{ color: '#c2410c' }} className="bob" />
+        <Blob pose="blob" x={420} y={190} width={120} height={120} color="#c2410c" />
         <text x="560" y="250" fontSize="32" fill="#c2410c">your functions</text>
         <text x="120" y="248" fontSize="26" fill="#5f5143" textAnchor="middle">auth, validation,</text>
         <text x="120" y="276" fontSize="26" fill="#5f5143" textAnchor="middle">permissions</text>
@@ -50,7 +50,7 @@ export function LayersScene() {
           ))}
         </div>
         <div className="flex items-center gap-3 text-clay hand text-2xl">
-          <Pk className="w-14 h-14" /> your functions
+          <Blob pose="blob" className="w-14 h-14" /> your functions
         </div>
         <div className="flex flex-wrap gap-2">
           {PIECES.map((p) => (

@@ -149,7 +149,7 @@ function renderCards(cards: CardItem[], columns = 3): React.ReactNode {
           {c.icon && (
             <div style={{ marginBottom: 10 }}>{resolveIcon(c.icon, 16, { flexShrink: 0 })}</div>
           )}
-          <div className={styles.cardTitle} style={c.mono ? { fontFamily: 'Geist Mono, monospace' } : undefined}>{c.title}</div>
+          <div className={styles.cardTitle} style={c.mono ? { fontFamily: 'var(--font-mono)' } : undefined}>{c.title}</div>
           <p className={styles.cardBody}>{c.body}</p>
         </div>
       ))}
@@ -351,7 +351,7 @@ function StepCardsRenderer({ s }: { s: StepCardsSection }) {
               <div className={styles.cardTitle}>{step.title}</div>
               <p className={styles.cardBody} style={{ marginBottom: step.command ? 10 : 0 }}>{step.desc}</p>
               {step.command && (
-                <code style={{ fontSize: 11, fontFamily: 'Geist Mono, monospace', color: '#6b6559', background: '#efece4', border: '1px solid #e3ddd0', padding: '3px 7px', borderRadius: 5, display: 'block' }}>
+                <code style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: '#6b6559', background: '#efece4', border: '1px solid #e3ddd0', padding: '3px 7px', borderRadius: 5, display: 'block' }}>
                   {step.command}
                 </code>
               )}

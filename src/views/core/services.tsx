@@ -20,8 +20,8 @@ function Hero() {
           <span className={styles.badge}>Core Concept</span>
           <h1 className={styles.h1}>Your toolbox.<br /><em>Injected.</em></h1>
           <p className={styles.lead}>
-            Two factory functions — <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>pikkuServices</code> and{' '}
-            <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>pikkuWireServices</code> — wire your entire application together with full type safety and tree-shaking.
+            Two factory functions — <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>pikkuServices</code> and{' '}
+            <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>pikkuWireServices</code> — wire your entire application together with full type safety and tree-shaking.
           </p>
           <div className={styles.heroActions}>
             <Link to="/docs/core-features/services" className={styles.btnPrimary}>Read the Docs</Link>
@@ -51,8 +51,8 @@ function TwoFactoriesSection() {
           <div className={styles.eyebrow}>The Two Factories</div>
           <h2 className={styles.h2}>Two functions. <em>Everything wired.</em></h2>
           <p className={styles.lead}>
-            <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>pikkuServices</code> creates singletons at startup.{' '}
-            <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>pikkuWireServices</code> creates per-request services. That's the whole model.
+            <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>pikkuServices</code> creates singletons at startup.{' '}
+            <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>pikkuWireServices</code> creates per-request services. That's the whole model.
           </p>
         </div>
 
@@ -104,7 +104,7 @@ function TreeShakingSection() {
           <div className={styles.eyebrow}>Tree-Shaking</div>
           <h2 className={styles.h2}>Only load what you <em>actually use.</em></h2>
           <p className={styles.lead}>
-            Pikku's CLI generates <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>requiredSingletonServices</code> — a map of which services your filtered functions need. Pair it with dynamic <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>import()</code> calls to skip everything else.
+            Pikku's CLI generates <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>requiredSingletonServices</code> — a map of which services your filtered functions need. Pair it with dynamic <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>import()</code> calls to skip everything else.
           </p>
         </div>
 

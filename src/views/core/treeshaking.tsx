@@ -64,7 +64,7 @@ function HowItWorksSection() {
           {steps.map((step, i) => (
             <div key={i} className={styles.card} style={{ borderTopWidth: 3, borderTopColor: '#1d6070', position: 'relative' }}>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 12 }}>
-                <span style={{ flexShrink: 0, width: 30, height: 30, borderRadius: '50%', background: '#f4e6dd', border: '1px solid #e8cfc3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c', fontSize: 11, fontWeight: 700, fontFamily: 'Geist Mono, monospace' }}>{i + 1}</span>
+                <span style={{ flexShrink: 0, width: 30, height: 30, borderRadius: '50%', background: '#f4e6dd', border: '1px solid #e8cfc3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c', fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{i + 1}</span>
                 <div className={styles.cardTitle} style={{ margin: 0 }}>{step.title}</div>
               </div>
               <p className={styles.cardBody}>{step.desc}</p>
@@ -80,9 +80,9 @@ function HowItWorksSection() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
           {flags.map((item, i) => (
             <div key={i} className={styles.card}>
-              <code style={{ fontFamily: 'Geist Mono, monospace', fontSize: 13, fontWeight: 700, color: '#c2410c' }}>{item.flag}</code>
+              <code style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: '#c2410c' }}>{item.flag}</code>
               <p className={styles.cardBody} style={{ margin: '8px 0 12px' }}>{item.desc}</p>
-              <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '6px 10px', color: '#6b6559' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '6px 10px', color: '#6b6559' }}>
                 $ {item.example}
               </div>
             </div>
@@ -119,11 +119,11 @@ function ArchitecturesSection() {
               </div>
               <div className={styles.cardTitle} style={{ fontSize: 18, textAlign: 'center', marginBottom: 6 }}>{arch.name}</div>
               <p className={styles.cardBody} style={{ textAlign: 'center', marginBottom: 16 }}>{arch.description}</p>
-              <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '5px 9px', color: '#6b6559', marginBottom: 4 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '5px 9px', color: '#6b6559', marginBottom: 4 }}>
                 $ {arch.command}
               </div>
               {arch.altCommand && (
-                <div style={{ fontFamily: 'Geist Mono, monospace', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '5px 9px', color: '#6b6559', marginBottom: 4 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, background: '#efece4', border: '1px solid #e3ddd0', borderRadius: 6, padding: '5px 9px', color: '#6b6559', marginBottom: 4 }}>
                   $ {arch.altCommand}
                 </div>
               )}
@@ -153,7 +153,7 @@ function ServiceLoadingSection() {
           <div className={styles.eyebrow}>Service Loading</div>
           <h2 className={styles.h2}>Only load what you <em>actually use.</em></h2>
           <p className={styles.lead}>
-            The CLI generates a <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>requiredSingletonServices</code> map. Guard heavy imports with dynamic <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>import()</code> — unused services never load.
+            The CLI generates a <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>requiredSingletonServices</code> map. Guard heavy imports with dynamic <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>import()</code> — unused services never load.
           </p>
         </div>
 

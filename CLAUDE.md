@@ -34,3 +34,5 @@ patterns over flat backgrounds.
 - MDX components: `src/components/mdx.tsx` (Tabs, Admonition, Card, Mermaid, etc.).
 - Redirects for old URLs: `scripts/gen-redirects.mjs` (one static redirect page per moved URL; Pages has no server redirects).
 - Registry data is vendored in `src/data`; the hosted registry may be down, the fixture is the fallback.
+
+- Brand: Blob replaces the chameleon; change colours/fonts in packages/brand (docs/BRANDING.md); small accent text uses claydeep, never clay.

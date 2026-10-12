@@ -96,7 +96,7 @@ function CIGateSection() {
           <div className={styles.eyebrow}>CI Integration</div>
           <h2 className={styles.h2}>One line in CI. <em>Zero accidental breaking changes.</em></h2>
           <p className={styles.lead}>
-            Add <code style={{ fontFamily: 'Geist Mono, monospace', color: '#c2410c', fontSize: '0.9em' }}>pikku versions check</code> to your pipeline. Breaking changes fail the build with an actionable fix — before they reach production.
+            Add <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>pikku versions check</code> to your pipeline. Breaking changes fail the build with an actionable fix — before they reach production.
           </p>
         </div>
 
@@ -204,7 +204,7 @@ function WorkflowSection() {
               <div className={styles.cardTitle}>{step.title}</div>
               <p className={styles.cardBody} style={{ marginBottom: step.command ? 10 : 0 }}>{step.desc}</p>
               {step.command && (
-                <code style={{ fontSize: 10, fontFamily: 'Geist Mono, monospace', color: '#6b6559', background: '#efece4', border: '1px solid #e3ddd0', padding: '3px 7px', borderRadius: 5, display: 'block' }}>{step.command}</code>
+                <code style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: '#6b6559', background: '#efece4', border: '1px solid #e3ddd0', padding: '3px 7px', borderRadius: 5, display: 'block' }}>{step.command}</code>
               )}
             </div>
           ))}

@@ -20,7 +20,7 @@
 .heroInner { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
 
 .groupLabel {
-  font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 700;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
   letter-spacing: 1px; text-transform: uppercase; color: #9a9387;
   margin-bottom: 16px;
 }
@@ -43,7 +43,7 @@
 }
 
 .providerBadge {
-  display: inline-block; font-family: 'Geist Mono', monospace;
+  display: inline-block; font-family: var(--font-mono);
   font-size: 10px; font-weight: 600; color: #6b6559;
   background: #efece4; border: 1px solid #e3ddd0;
   border-radius: 4px; padding: 2px 6px; margin: 2px 2px 0 0;
@@ -51,7 +51,7 @@
 
 .cmdBlock {
   background: #fffefb; border: 1px solid #e3ddd0; color: #1a1814;
-  padding: 14px 18px; border-radius: 10px; font-family: 'Geist Mono', monospace;
+  padding: 14px 18px; border-radius: 10px; font-family: var(--font-mono);
   font-size: 14px; max-width: 300px; position: relative; cursor: pointer;
   transition: all 0.2s; margin-bottom: 28px;
 }
