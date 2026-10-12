@@ -1,0 +1,57 @@
+---
+title: "PKU585: Duplicate Personas Definition"
+---
+# PKU585: Duplicate Personas Definition
+
+## Error Message
+
+When the second call is in a different file:
+
+```
+[PKU585] Only one definePersonas(...) is allowed per codebase, so there is one place to read the declarations from and one place to add to. Found a second in src/personas/staff.ts (first: src/personas/customers.ts). Declare them all in one call.
+```
+
+When both calls are in the same file:
+
+```
+[PKU585] Only one definePersonas(...) is allowed per codebase, so there is one place to read the declarations from and one place to add to. Found a second call in src/personas/index.ts. Declare them all in one call.
+```
+
+## What Went Wrong
+
+`definePersonas` was called more than once. It's a single-declaration construct: exactly one call per codebase.
+
+`definePersonas` takes a keyed object, so a single call already declares as many personas as you like. Splitting it across calls buys nothing and costs the thing the construct exists for — one place to read the cast from, and one place to add to. The CLI extracts personas by AST parsing and generates a `PersonaId` union plus a `personas.gen.json` that `pikku persona run` reads straight off disk; that only works when there's one authoritative declaration.
+
+A second call in the *same file* is refused too. "The file" isn't an answer to "where do I add a persona?" when the file holds two calls.
+
+Generated files (`*.gen.ts`) are exempt and never claim the slot, so a scaffolded `pikku-personas.gen.ts` won't collide with your own declaration.
+
+## How to Fix
+
+Merge every call into one keyed object:
+
+```typescript @snippet definePersonas
+```
+
+
+Keep the definitions split across files if you like, for example exporting `buyerPersonas` and `staffPersonas` objects, and merge only at the call site with a single `definePersonas({ ...buyerPersonas, ...staffPersonas })`.
+
+Note that `definePersonas` is read statically — the spread above works because the CLI can resolve the object literals, but a computed or conditionally-built object cannot be extracted (see [PKU124](/docs/pikku-cli/errors/pku124)).
+
+## Persona Best Practices
+
+- Keep the single `definePersonas` call in a predictable place — `src/personas.ts` — so newcomers find the cast immediately.
+- Declare personas that only get acted upon (the account an admin bans, the colleague a document is shared with) alongside the ones that run; declaring is not running.
+- Use plain object literals; personas are parsed, never evaluated.
+- Never edit `pikku-personas.gen.ts` — it's regenerated from your declaration.
+
+## Common Mistakes
+
+The broken shape is one `definePersonas({ susan: ... })` in a buyers file and another `definePersonas({ marcus: ... })` in a staff file, which leaves two places to look.
+
+## Related Errors
+
+- [PKU124: Invalid Value](/docs/pikku-cli/errors/pku124) — `definePersonas()` needs an inline object; it's read statically, never evaluated
+- [PKU581: Duplicate Auth Definition](/docs/pikku-cli/errors/pku581) — the same single-declaration rule for auth
+- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — personas and actors in scenarios

@@ -1,0 +1,65 @@
+/* Browse page for the OpenAPI catalogue. Paper theme: the cards sit on the
+   cream ground the rest of the site uses, so the only strong colour is the
+   accent on a hovered card. */
+
+.mastheadTop {
+  display: flex;
+  align-items: flex-end;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.tally {
+  margin-left: auto;
+  padding-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--paper-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.notice {
+  font-size: 15px;
+  color: var(--paper-text-body);
+  padding: 28px 0;
+  margin: 0;
+}
+
+.notice code {
+  background: var(--paper-bg-dark);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.select {
+  flex: 0 1 auto;
+  max-width: 100%;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--paper-text);
+  background: var(--paper-bg-alt);
+  border: 1px solid var(--paper-border);
+  border-radius: 8px;
+}
+
+.footNote {
+  font-size: 15px;
+  color: var(--paper-text-body);
+  margin: 0;
+}
+
+.footNote a {
+  color: var(--paper-accent-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.headLink {
+  margin: 18px 0 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+.headLink a { color: var(--paper-accent-dark); }
+.headLink a:hover { color: var(--paper-accent-dark); text-decoration: none; }

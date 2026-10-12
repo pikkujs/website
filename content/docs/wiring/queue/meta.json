@@ -1,0 +1,9 @@
+{
+  "title": "Queue",
+  "icon": "queue",
+  "pages": [
+    "client",
+    "examples",
+    "..."
+  ]
+}

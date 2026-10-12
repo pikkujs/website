@@ -1,0 +1,53 @@
+---
+title: "PKU951: Secret Not Declared"
+---
+# PKU951: Secret Not Declared
+
+## Error Message
+
+```
+[PKU951] src/services.ts reads 'STRIPE_API_KEY', 'SENDGRID_KEY', which no defineSecret declares. Declare it so it is validated at deploy time and shown to whoever has to provision it.
+```
+
+This is a **warning**. It prints on every build, but only fails the build with `--fail-on-warn`.
+
+## What Went Wrong
+
+Code calls `secrets.getSecret('SOME_KEY')` for a key that no `defineSecret` declares.
+
+Reading an undeclared secret works — right up until it doesn't. The declaration is what makes the secret *visible*: it's validated at deploy time against a schema, it appears in the requirements view so whoever provisions the environment knows it's needed, and it lets the deployment narrow the secret scope it grants. An undeclared read has none of that, so the first sign it was missing is a production boot failure or, worse, a client silently constructed with `undefined`.
+
+## How to Fix
+
+Declare the secret alongside the code that reads it:
+
+
+```typescript @snippet secrets
+```
+
+`secretId` is the key you read; `name` is how the rest of Pikku refers to the declaration (auth bindings, `pikku secrets`).
+
+
+The read itself stays as it was, and the string it reads must match the declared `secretId`. With the declaration above that is `(await secrets.getSecret('STRIPE_SECRET_KEY')).reveal()`.
+
+Give the schema real constraints where you can — `z.string().startsWith('sk_')` catches a test key pasted into production at deploy time rather than at first charge.
+
+## Secret Handling Best Practices
+
+- Keep declarations in dedicated `*.secret.ts` files so the full set of secrets is enumerable.
+- Declare secrets that addons and credentials need too; the requirements view is only as complete as the declarations.
+- Use static string keys so the deployment can narrow its secret scope (see [PKU952](/docs/pikku-cli/errors/pku952)).
+- Resolve secrets in `services.ts` or middleware and pass configured clients into functions, never the vault itself.
+
+## Common Mistakes
+
+Reading `SENDGRID_KEY` with `secrets.getSecret` and never declaring it leaves nothing telling the operator it is needed.
+
+Declaring it, with a `defineSecret` that sets `secretId: 'SENDGRID_KEY'` and a `schema`, makes it validated and surfaced to whoever provisions it.
+
+## Related Errors
+
+- [PKU952: Secret Key Not Static](/docs/pikku-cli/errors/pku952) — the key is computed, so it can't be declared or scoped
+- [PKU950: Secret Service Aliased](/docs/pikku-cli/errors/pku950) — where `SecretService` may be used at all
+- [PKU953: Secret Revealed Into Sink](/docs/pikku-cli/errors/pku953) — a revealed secret written somewhere it must not go
+- [PKU339: Remote Addon Auth Unresolved](/docs/pikku-cli/errors/pku339) — an auth binding naming a secret that isn't wired

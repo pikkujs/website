@@ -1,0 +1,74 @@
+/* @pikku/theme-brand
+   Values taken from the pikkustudio.app working tree (apps/website/src/styles.css and src/styles/palettes.generated.css, paper palette),
+   Studio commit 667830c, copied on 2026-10-12. This package is now the source of truth for both sites. */
+/* Colour, font, radius and shadow tokens. Plain CSS variables: no framework needed.
+   Naming follows Studio's Tailwind @theme (--color-*, --font-*) so @pikku/theme-studio palettes can override the same names:
+   :root[data-palette='x'] and :root.dark[data-palette='x'] both out-specify the blocks below. */
+:root {
+  --color-paper: #f4ecdd;
+  --color-paper2: #ebdfc8;
+  --color-card: #fbf6ec;
+  --color-ink: #2b2219;
+  --color-soft: #5f5143;
+  --color-clay: #c2410c;
+  --color-claydeep: #9a3412;
+  --color-moss: #55703c;
+  --color-ochre: #b97d12;
+  --color-slate: #3d6373;
+  --color-rose: #a8485f;
+  --color-cloudwash: #f1d9c4;
+  --color-night: #15110d;
+  --color-night2: #1b1814;
+  --color-night3: #1d1812;
+  --color-cream: #ece3d0;
+  --color-mute: #b3a690;
+  --color-faint: #6f6555;
+  --color-ember: #e0a06a;
+  --font-display: 'Fraunces', 'Fraunces Fallback', Georgia, serif;
+  --font-hand: 'Caveat', cursive;
+  --font-body: 'Work Sans', 'Work Sans Fallback', system-ui, sans-serif;
+  --radius-hand-a: 14px 18px 13px 17px / 17px 13px 18px 14px;
+  --radius-hand-b: 16px 12px 17px 13px / 13px 17px 12px 16px;
+  --radius-blob: 52% 48% 50% 50% / 48% 52% 48% 52%;
+  --shadow-ink-btn: 3px 4px 0 var(--color-clay);
+  --shadow-ink-btn-hover: 5px 6px 0 var(--color-clay);
+  --shadow-ink-btn-active: 1px 1px 0 var(--color-clay);
+  --shadow-torn: 0 1px 0 color-mix(in srgb, var(--color-ink) 8%, transparent), 2px 3px 0 color-mix(in srgb, var(--color-ink) 6%, transparent);
+  --cz-surface: var(--color-card);
+  --cz-ink: var(--color-ink);
+  --cz-ink-2: var(--color-soft);
+  --cz-line: var(--color-faint);
+  --cz-accent: var(--color-cloudwash);
+  --cz-accent-ink: var(--color-claydeep);
+  --cz-hover: var(--color-paper2);
+  --cz-ring: var(--color-clay);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .18 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .93 0 0 0 0 .89 0 0 0 0 .82 0 0 0 .045 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --scribble: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M2 9 C 40 3, 80 12, 120 6 S 180 4, 198 8' fill='none' stroke='%23c2410c' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");}
+
+/* Dark. The site toggle puts data-theme=dark on <html>; Studio uses the .dark class. Light is always the default (no prefers-color-scheme switching). */
+:root.dark, :root[data-theme=dark] {
+  --color-paper: #15110d;
+  --color-paper2: #2a221b;
+  --color-card: #1e1813;
+  --color-ink: #ece3d0;
+  --color-soft: #b3a690;
+  --color-clay: #e0a06a;
+  --color-claydeep: #e0a06a;
+  --color-moss: #8daa69;
+  --color-ochre: #c39138;
+  --color-slate: #7a9094;
+  --color-rose: #d78796;
+  --color-cloudwash: #452212;
+  --color-faint: #6f6555;
+  --color-night: #15110d;
+  --color-night2: #1e1813;
+  --color-night3: #2a221b;
+  --color-cream: #ece3d0;
+  --color-mute: #b3a690;
+  --color-ember: #e0a06a;
+}
+:root.dark, :root[data-theme=dark] {
+  --grain: var(--grain-dark);
+  color-scheme: dark;
+}

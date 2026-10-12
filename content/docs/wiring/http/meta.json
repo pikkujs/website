@@ -1,0 +1,12 @@
+{
+  "title": "HTTP",
+  "icon": "http",
+  "pages": [
+    "route-groups",
+    "cors",
+    "fetch-client",
+    "router",
+    "server-sent-events",
+    "..."
+  ]
+}

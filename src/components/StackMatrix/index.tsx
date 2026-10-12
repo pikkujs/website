@@ -87,7 +87,7 @@ const TARGETS: Target[] = [
     id: 'standalone',
     cmd: 'pikku deploy apply -p standalone',
     who: 'Your own box',
-    note: 'Bundles the API, the console and your frontend into a single Node bundle or compiled Bun binary — one file to copy onto a box, or wrap as a desktop app.',
+    note: 'Bundles the API and your frontend into a single Node bundle or compiled Bun binary — one file to copy onto a box, or wrap as a desktop app.',
     services: [
       { role: 'http', impl: 'bundled server' },
       { role: 'channels', impl: 'ws' },

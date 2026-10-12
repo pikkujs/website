@@ -1,0 +1,41 @@
+---
+title: "PKU582: Auth Not Exported"
+---
+# PKU582: Auth Not Exported
+
+## Error Message
+
+```
+[PKU582] pikkuBetterAuth(...) must be assigned to an exported const, e.g. `export const auth = pikkuBetterAuth((services) => betterAuth({...}))` in src/auth/auth.ts
+```
+
+Or, when the binding exists but isn't an exported `const`:
+
+```
+[PKU582] pikkuBetterAuth(...) must be assigned to an exported const so the CLI can import it. Use `export const auth = pikkuBetterAuth(...)` in src/auth/auth.ts
+```
+
+## What Went Wrong
+
+The CLI found a `pikkuBetterAuth(...)` call, but it isn't assigned to an **exported const**. Pikku's codegen imports your auth definition by name to generate the session middleware and auth routes — a bare call, a `let`/`var` binding, or an unexported variable gives it nothing stable to import, so the build fails.
+
+## How to Fix
+
+
+These shapes all fail: a bare `pikkuBetterAuth(...)` call with nothing assigned, a `const auth = ...` that isn't exported, and an `export let auth = ...` binding.
+
+```typescript @snippet betterAuthConfig
+```
+
+Note the argument shape: `pikkuBetterAuth` takes a **factory** `(services) => betterAuth({...})`, so your Better Auth config can use Pikku services (database, secrets) at startup.
+
+## Auth Best Practices
+
+- Export the instance under a simple name (`auth`) from a dedicated file.
+- Don't re-export it through barrels with renames — keep the binding where it's defined.
+- Pass a factory, not a pre-built `betterAuth()` value, so services are injected by Pikku.
+
+## Related Errors
+
+- [PKU581: Duplicate Auth Definition](/docs/pikku-cli/errors/pku581) — more than one `pikkuBetterAuth` found
+- [PKU573: Auth Disabled Requires Sessionless](/docs/pikku-cli/errors/pku573) — auth/session contradictions at the route level

@@ -1,0 +1,73 @@
+---
+title: "PKU559: Function Metadata Not Found"
+---
+# PKU559: Function Metadata Not Found
+
+## Error Message
+
+```
+[PKU559] No function metadata found for '[functionName]'.
+```
+
+## What Went Wrong
+
+Pikku couldn't find metadata for the specified function. This usually means the function isn't wrapped with `pikkuFunc()` or hasn't been properly registered during the inspection phase.
+
+## How to Fix
+
+### Ensure Function is Wrapped with pikkuFunc
+
+A plain async function is invisible to the inspector. Wrap it in `pikkuFunc` and export it:
+
+```typescript @snippet eb-exported-pikku-func
+```
+
+### Make Sure Function is Exported
+
+The `export` keyword matters on its own: a `pikkuFunc` assigned to a const that isn't exported is skipped just like an unwrapped function.
+
+### Verify Function is in Scanned Directory
+
+Check your `pikku.config.json`:
+
+```json
+{
+  "srcDirectories": ["src"], // Make sure your function file is in here
+  "outDir": ".pikku"
+}
+```
+
+## Common Scenarios
+
+### HTTP Routes
+
+```typescript @snippet httpSingleRoute
+```
+
+### Channel Handlers
+
+```typescript @snippet channelWiring
+```
+
+### MCP Prompts
+
+```typescript @snippet mcpPrompt
+```
+
+## Debugging Steps
+
+1. **Verify the function is wrapped** with `pikkuFunc()`
+2. **Check exports** - Make sure the function is exported
+3. **Run `npx pikku prebuild`** to regenerate types
+4. **Check file location** - Ensure it's in a scanned directory
+
+## Common Mistakes
+
+- Using regular async functions instead of `pikkuFunc`
+- Defining the function inline in the wiring call
+- Not exporting the function
+- Typos in the function name reference
+
+## Related Errors
+
+- [PKU236](/docs/pikku-cli/errors/pku236) - Missing Function Property

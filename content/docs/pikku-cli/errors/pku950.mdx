@@ -1,0 +1,54 @@
+---
+title: "PKU950: Secret Service Aliased"
+---
+# PKU950: Secret Service Aliased
+
+## Error Message
+
+```
+[PKU950] Function 'sendInvoice' receives 'vault', which is a SecretService under another name. SecretService is confined to pikkuServices, pikkuWireServices, addon service factories and middleware — give a service the secret value when you construct it and expose only what the function needs.
+```
+
+The `kind` is `Function` or `Permission`, and more than one alias may be listed.
+
+## What Went Wrong
+
+A function or permission destructures a service that is a `SecretService` — not under the name `secrets`, but under an alias, because it was registered in `services.ts` under a different key.
+
+`SecretService` is deliberately confined to the places that *construct* things: `pikkuServices`, `pikkuWireServices`, addon service factories and middleware. Business logic isn't one of them. A function holding a secret service can read any secret in the vault, which makes the blast radius of that function the whole vault rather than the one credential it actually needs — and makes it impossible to tell from the wiring which secrets a function depends on.
+
+Renaming the service doesn't change what it is. The check follows the type, so `vault`, `secretStore` and `sm` are all caught.
+
+## How to Fix
+
+Resolve the secret where the service is constructed, and hand the function only the client it needs:
+
+
+```typescript @snippet shopSecretUsage
+```
+
+The function never sees a secret service: it asks the Stripe addon for a payment intent through `rpc.invoke('stripe:paymentIntentCreate', ...)`, and the addon holds the key.
+
+Middleware is also a legitimate place to resolve a secret — use it when the value depends on the request rather than on startup.
+
+### If the function really is a secret broker
+
+A small number of functions exist precisely to broker secrets (an endpoint that provisions one, for example). Those are marked as secret brokers and are exempt from this check; if you believe your function is one, it should be declared as such rather than aliased around the rule.
+
+## Secret Handling Best Practices
+
+- Resolve secrets once, at construction, and pass the *capability* (a configured client) rather than the *credential*.
+- Call `.reveal()` at the last possible moment and never store the revealed value beyond the client that needs it.
+- Declare every secret with `defineSecret` so it's validated at deploy time and visible to whoever provisions it.
+- Never pass a revealed secret to a log, audit, queue, email or webhook (see [PKU953](/docs/pikku-cli/errors/pku953)).
+
+## Common Mistakes
+
+A function that destructures `vault` (a `SecretService` under an alias) and calls `vault.getSecret('STRIPE_API_KEY').reveal()` itself is the broken shape.
+
+## Related Errors
+
+- [PKU951: Secret Not Declared](/docs/pikku-cli/errors/pku951) — a secret is read without a `defineSecret`
+- [PKU952: Secret Key Not Static](/docs/pikku-cli/errors/pku952) — a secret read with a computed key
+- [PKU953: Secret Revealed Into Sink](/docs/pikku-cli/errors/pku953) — a revealed secret written somewhere it must not go
+- [PKU910: PII in Output](/docs/pikku-cli/errors/pku910) — the related data-classification boundary

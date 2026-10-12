@@ -1,0 +1,10 @@
+{
+  "pages": [
+    "custom-http-runtime",
+    "custom-websocket-handler",
+    "custom-scheduler-handler",
+    "custom-queue-runtime",
+    "custom-mcp-server",
+    "..."
+  ]
+}

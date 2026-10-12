@@ -1,0 +1,89 @@
+---
+title: "PKU954: Personal Data Into Sink"
+---
+# PKU954: Personal Data Into Sink
+
+## Error Message
+
+```
+[PKU954] Function 'sendReceipt' passes personal data to 'logger.info' at line 31 (path 'user.email').
+  A log, the console and a webhook all leave your control — they are shipped to third parties and retained long past the request. Log an id instead, or narrow the value to a non-identifying field. An email to the data subject, an audit in your own database and a queue on your own infrastructure are fine.
+```
+
+This is an **error**-severity diagnostic. It fails the build with `--fail-on-error`, and it only runs when the classification scan is requested — `pikku all --security`.
+
+## What Went Wrong
+
+A value classified as **personal data** (`pii`) reached a **sink** — a call that writes its arguments somewhere the value escapes your control.
+
+The classification doesn't come from the function; it comes from your schema. A column annotated `security: 'pii'` in `db/annotations.ts` is generated as `Pii<T>` — a brand on the column's type — so the moment you read that column out of the database, the value carries the brand. The scan follows it, both inline (`logger.info(user.email)`) and through a local binding, because the local's inferred type keeps the brand too. Reading a whole row counts: a row type is branded wherever any of its columns are, so `logger.info('loaded', user)` leaks the address just as surely as logging the field.
+
+Not every sink rejects PII, and that's the point of the check. Personal data isn't a secret — the rule isn't "never write it down", it's "not where it leaves your control":
+
+| Sink                              | Rejects PII? | Why |
+| --------------------------------- | ------------ | --- |
+| `Logger` — **every** method       | ✅ yes       | Logs are read far more widely than the record, shipped to a third-party aggregator, and retained long past any consent |
+| `console.*`                       | ✅ yes       | No Pikku type, same reach as a logger |
+| `WebhookService.send`             | ✅ yes       | Posts to somebody else's server — the same disclosure, different transport |
+| `EmailService.send`               | ❌ no        | The mail is addressed to the data subject; their own name in it is the point |
+| `AuditService.audit` / `.write`   | ❌ no        | A record in your own database — naming who did what is usually the legal requirement |
+| `AuditLog.write`                  | ❌ no        | Same: your infrastructure, your retention |
+| `QueueService.add`                | ❌ no        | The payload stays on your infrastructure and is consumed by your own worker |
+
+`private` is deliberately absent from all of these. It's a statement about *who may read the row*, not a claim that writing it down is a disclosure — so logging a `private` field is fine as far as this check is concerned.
+
+PKU953 is exactly the same scan for `Secret<T>`: a revealed vault secret is rejected by **every** sink in that table, because none of them has a legitimate reason to receive one. If you're seeing both codes, treat the secret one first.
+
+Sinks are matched on the receiver's resolved core interface, so a renamed or decorated service still counts — but it also means the services parameter has to be typed. A hand-rolled file that calls the raw core factory without annotating its services leaves the parameter `any`, and an `any` receiver matches nothing.
+
+## How to Fix
+
+### Log an identifier instead of the person
+
+This is the fix nine times out of ten. An id is enough to find the record again, and it isn't personal data:
+
+
+```typescript @snippet eb-log-id-not-person
+```
+
+### Narrow the value to something non-identifying
+
+
+Log a derived fact rather than the value. For example, replace `logger.info('signup', { email: user.email })` with a line that logs `{ domain: user.email.split('@')[1], id: user.userId }`.
+
+### Route it to a sink that's allowed to hold it
+
+
+Put the record in the audit trail instead of the log: call `audit.audit({ type: 'profile.viewed', input: { email: user.email } })`.
+
+### If the column isn't really personal data
+
+
+Classification lives in `db/annotations.ts`. Under `user`, `email` keeps `security: 'pii'`, and a public handle like `displayName` can be set to `security: 'public'`.
+
+Re-run `pikku db migrate` so the generated types pick up the change.
+
+### If you've decided this one log line is acceptable
+
+
+Annotate the value with a plain type, such as `const email: string = user.email`, then log it with a comment explaining why (ticket reference). The explicit annotation erases the brand and quiets the scan.
+
+That is the documented limit of a structural marker: it catches the mistake, not someone determined to silence it. Treat it as a deliberate, commented exception — never as the default way to make the build pass.
+
+## Data Classification Best Practices
+
+- Classify columns once, in `db/annotations.ts`, and let the generated types carry it — that's what makes this scan possible at all.
+- Log ids, never people. A `userId` in the log and the personal data in the database is the shape you want.
+- Never log a whole row from a table that has any `pii` column; the brand rides along inside the object.
+- Prefer the audit trail over the application log for anything that has to name a person — it lives on your infrastructure with your retention policy.
+- Run `pikku all --security` in CI; the scan is off by default because inferring every handler's return type is expensive, so nothing else will catch this.
+
+## Common Mistakes
+
+Logging the whole `user` row, calling `console.log(user.email)`, and sending the address through `webhooks.send` are all the broken shape: the address ships to the log aggregator and a third party.
+
+## Related Errors
+
+- [PKU953: Secret Revealed Into Sink](/docs/pikku-cli/errors/pku953) — the same sink scan for vault secrets, which every sink rejects
+- [PKU910: PII in Output](/docs/pikku-cli/errors/pku910) — the same classification brands, checked on what a function returns
+- [PKU483: Secret Column Stored in the Clear](/docs/pikku-cli/errors/pku483) — declaring how a classified column is held at rest

@@ -1,0 +1,23 @@
+{
+  "pages": [
+    "index",
+    "navigation",
+    "[Getting Started](/getting-started)",
+    "philosophy",
+    "core-features",
+    "pikku-cli",
+    "frontend",
+    "wiring",
+    "[SDK](/api)",
+    "deploy",
+    "middleware",
+    "addon",
+    "advanced",
+    "!runtimes",
+    "!custom-runtimes",
+    "!storage",
+    "!api",
+    "!comparison",
+    "..."
+  ]
+}

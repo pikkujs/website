@@ -1,3 +1,4 @@
+import { Blob } from '@pikku/theme-brand'
 const stops = ['Database', 'Function', 'Client', 'Screen']
 
 export function TypesScene() {
@@ -14,9 +15,9 @@ export function TypesScene() {
           Screen. A note says that if the database changes, the screen finds out at build time.
         </title>
         <g
-          stroke="#2b2219"
+          stroke="var(--paper-text)"
           strokeWidth="2.2"
-          fill="#fbf6ec"
+          fill="var(--paper-bg-alt)"
           strokeLinejoin="round"
           filter="url(#rough)"
         >
@@ -33,14 +34,14 @@ export function TypesScene() {
           strokeLinecap="round"
           filter="url(#rough)"
         />
-        <g fontSize="26" fill="#2b2219" textAnchor="middle">
+        <g fontSize="26" fill="var(--paper-text)" textAnchor="middle">
           {stops.map((s, i) => (
             <text key={s} x={63 + i * 130} y="96">
               {s}
             </text>
           ))}
         </g>
-        <g fill="#c2410c" stroke="#fbf6ec" strokeWidth="2">
+        <g fill="#c2410c" stroke="var(--paper-bg-alt)" strokeWidth="2">
           {stops.map((s, i) => (
             <circle key={s} cx={63 + i * 130} cy="122" r="5" />
           ))}
@@ -55,7 +56,7 @@ export function TypesScene() {
         <text x="100" y="186" fontSize="22" fill="#5f5143">
           change the database, and the screen finds out at build time
         </text>
-        <use href="#pk" x="4" y="-4" width="58" height="58" style={{ color: '#c2410c' }} />
+        <Blob pose="blob" x={4} y={-4} width={58} height={58} color="#c2410c" />
       </svg>
 
       <svg
@@ -69,9 +70,9 @@ export function TypesScene() {
           Screen. A note says that if the database changes, the screen finds out at build time.
         </title>
         <g
-          stroke="#2b2219"
+          stroke="var(--paper-text)"
           strokeWidth="2.2"
-          fill="#fbf6ec"
+          fill="var(--paper-bg-alt)"
           strokeLinejoin="round"
           filter="url(#rough)"
         >
@@ -88,14 +89,14 @@ export function TypesScene() {
           strokeLinecap="round"
           filter="url(#rough)"
         />
-        <g fontSize="26" fill="#2b2219" textAnchor="start">
+        <g fontSize="26" fill="var(--paper-text)" textAnchor="start">
           {stops.map((s, i) => (
             <text key={s} x="76" y={36 + i * 96}>
               {s}
             </text>
           ))}
         </g>
-        <g fill="#c2410c" stroke="#fbf6ec" strokeWidth="2">
+        <g fill="#c2410c" stroke="var(--paper-bg-alt)" strokeWidth="2">
           {stops.map((s, i) => (
             <circle key={s} cx="196" cy={60 + i * 96} r="5" />
           ))}
@@ -106,7 +107,7 @@ export function TypesScene() {
         <text x="140" y="456" fontSize="22" fill="#5f5143" textAnchor="middle">
           screen finds out at build time
         </text>
-        <use href="#pk" x="212" y="-6" width="56" height="56" style={{ color: '#c2410c' }} />
+        <Blob pose="blob" x={212} y={-6} width={56} height={56} color="#c2410c" />
       </svg>
     </>
   )

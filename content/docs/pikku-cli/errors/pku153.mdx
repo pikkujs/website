@@ -1,0 +1,69 @@
+---
+title: "PKU153: Agent Tool Not Found"
+---
+# PKU153: Agent Tool Not Found
+
+## Error Message
+
+For a first-party function:
+
+```
+[PKU153] AI agent 'support-agent' references tool 'listOrders', which is not a function in this project.
+```
+
+For an addon function:
+
+```
+[PKU153] AI agent 'support-agent' references tool 'stripe:listOrders', but addon 'stripe' ('@pikku/addon-stripe') exposes no function 'listOrders'.
+```
+
+## What Went Wrong
+
+An agent's `tools` array names a function that doesn't exist. Pikku resolves every tool at build time so it can generate the tool's input schema and description for the model — an unresolvable name has no schema, so the agent would start up offering a tool that fails on the first call.
+
+Two shapes of this error:
+
+- **No namespace** — the name was looked up in your project's own functions and RPC map, and nothing matched. Usually a typo, an un-exported function, or a function in a directory outside `srcDirectories`.
+- **With a namespace** — the addon *is* wired, but it doesn't export a function by that name. Usually a stale addon build, or the addon's function has a different name than its file.
+
+## How to Fix
+
+### If the tool is a first-party function
+
+Make sure the function is exported and lives under a scanned directory:
+
+```typescript @snippet listOrders
+```
+
+```typescript @snippet ea-agent-first-party-tool
+```
+
+`ref(...)` is typed against the generated function map, so an unknown name is a TypeScript error too — if `ref` compiles but PKU153 still fires, regenerate with `npx pikku prebuild`.
+
+### If the tool is an addon function
+
+Rebuild the addon so its metadata is current, then check the exported name:
+
+```bash
+yarn workspace @pikku/addon-stripe build
+npx pikku prebuild
+```
+
+The namespaced name is `<wireAddon name>:<exported function name>` — not the file name and not the RPC route.
+
+## AI Agent Best Practices
+
+- Prefer `ref('name')` over a raw string; it gives you a compile-time error at the call site.
+- Re-run `npx pikku prebuild` after adding or renaming any function an agent references.
+- Keep agent tool lists short and explicit — a long list of `ref`s is easier to audit than a wildcard.
+- Build addons before the consuming project; an unbuilt addon contributes no function metadata.
+
+## Common Mistakes
+
+A function declared with `const` but never exported isn't in the map, so `ref('listOrders')` fails with PKU153. Export it so codegen registers it.
+
+## Related Errors
+
+- [PKU152: Agent Tool Unknown Namespace](/docs/pikku-cli/errors/pku152) — the namespace prefix itself isn't wired
+- [PKU154: Agent Tool Missing Description](/docs/pikku-cli/errors/pku154) — the tool resolves but has no description
+- [PKU559: Function Metadata Not Found](/docs/pikku-cli/errors/pku559) — the same "function isn't registered" cause in a non-agent context

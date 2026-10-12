@@ -1,0 +1,21 @@
+{
+  "title": "Core Features",
+  "pages": [
+    "functions",
+    "wires",
+    "middleware",
+    "services",
+    "server-lifecycle",
+    "secrets",
+    "variables",
+    "analytics",
+    "errors",
+    "user-sessions",
+    "permission-guards",
+    "feature-flags",
+    "testing",
+    "scenarios",
+    "virtual-users",
+    "..."
+  ]
+}

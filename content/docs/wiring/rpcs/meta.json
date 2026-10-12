@@ -1,0 +1,11 @@
+{
+  "title": "RPC",
+  "icon": "rpc",
+  "pages": [
+    "internal",
+    "external",
+    "deployment",
+    "react-query",
+    "..."
+  ]
+}

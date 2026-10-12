@@ -1,0 +1,20 @@
+{
+  "pages": [
+    "aws-lambda",
+    "cloudflare-functions",
+    "azure-functions",
+    "express-middleware",
+    "fastify-plugin",
+    "nextjs-app",
+    "uws-handler",
+    "ws-handler",
+    "bun-server",
+    "node-http-server",
+    "tanstack-start",
+    "bullmq",
+    "pg-boss",
+    "nats",
+    "mcp-server",
+    "..."
+  ]
+}

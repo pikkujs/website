@@ -1,0 +1,50 @@
+---
+title: "PKU370: Missing Title Property"
+---
+# PKU370: Missing Title Property
+
+## Error Message
+
+```
+[PKU370] MCP resource '[uri]' is missing the required 'title' property.
+```
+
+## What Went Wrong
+
+Your MCP resource is missing the required `title` property. Unlike tools and prompts which use `name`, resources require both a `uri` for identification and a `title` for display.
+
+## How to Fix
+
+Add a `title` property to your MCP resource:
+
+```typescript @snippet mcpResource
+```
+
+## Title vs Name vs URI
+
+MCP endpoints use different identification properties:
+
+| Type     | Identifier | Display Name |
+| -------- | ---------- | ------------ |
+| Tool     | `name`     | `name`       |
+| Prompt   | `name`     | `name`       |
+| Resource | `uri`      | `title`      |
+
+Resources are unique because they:
+
+- Use `uri` for technical identification
+- Use `title` for human-readable display
+- Require both properties
+
+## Best Practices
+
+- Use clear, descriptive titles
+- Keep titles concise but informative
+- Use title case (e.g., "User Profile Settings")
+- Avoid redundancy between title and description
+
+## Related Errors
+
+- [PKU111](/docs/pikku-cli/errors/pku111) - Missing Name (for tools/prompts)
+- [PKU123](/docs/pikku-cli/errors/pku123) - Missing Description
+- [PKU220](/docs/pikku-cli/errors/pku220) - Missing URI

@@ -35,8 +35,8 @@ const ADDON_SOURCES = [
   resolve(root, '.addons/packages'),
 ]
 const VENDORED_ADDONS = resolve(root, 'src/data/addons.json')
-const VENDORED_OPENAPIS = resolve(root, 'static/registry/openapis.json')
-const LOGO_DIR = resolve(root, 'static/addons')
+const VENDORED_OPENAPIS = resolve(root, 'public/registry/openapis.json')
+const LOGO_DIR = resolve(root, 'public/addons')
 
 const FABRIC = process.env.PIKKU_FABRIC_URL ?? 'https://api.pikkufabric.com'
 

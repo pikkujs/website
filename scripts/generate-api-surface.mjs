@@ -41,7 +41,7 @@ const VENDORED = resolve(root, 'src/data/surface.json')
     bundle stays empty and the 300-odd KB is a separate, cacheable request.
     It sits beside /api rather than under it: a static directory named `api`
     turns /api into a 301 to /api/, which the route then has to serve. */
-const EXPLORER_DATA = resolve(root, 'static/api-surface.json')
+const EXPLORER_DATA = resolve(root, 'public/api-surface.json')
 
 /**
  * The steps the explorer knows how to place a door under, in the order the

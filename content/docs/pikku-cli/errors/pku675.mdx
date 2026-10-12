@@ -1,0 +1,40 @@
+---
+title: "PKU675: expectEventually Is Scenario-Only"
+---
+# PKU675: expectEventually Is Scenario-Only
+
+## Error Message
+
+```
+[PKU675] Workflow 'processOrder' calls workflow.expectEventually(), which is only available in scenarios (pikkuScenario). Move it into a scenario, or drive the assertion outside the workflow.
+```
+
+## What Went Wrong
+
+A regular workflow (defined with `pikkuWorkflow`) calls `expectEventually()`. That primitive is a **test/eval assertion** — it polls until a condition holds or times out — and it only exists on the scenario wire (`scenario.expectEventually`). Production workflows must stay free of test semantics: an assertion that "eventually" passes has no meaningful failure mode in a durable workflow (retry? compensate? crash?), so the inspector rejects it at build time.
+
+## How to Fix
+
+### If this code is really a test of your system
+
+Make it a scenario instead of a workflow:
+
+```typescript @snippet scenarioBasics
+```
+
+### If this is a production workflow that must wait on something
+
+
+Model the wait as an explicit step with real failure semantics: a `workflow.do('await shipment confirmation', ...)` step that polls with its own retry policy, a trigger, or a queue hand-off, rather than an assertion.
+
+## Workflow Best Practices
+
+- Workflows describe what *must* happen; scenarios describe what you *expect to observe*. Keep the vocabularies separate.
+- If you're tempted to assert inside a workflow, you probably want a scenario that drives that workflow via an actor.
+- Give long waits their own named step so retries and timeouts are visible in the run view.
+
+## Related Errors
+
+- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — the other side of the workflow/scenario boundary
+- [PKU641: Invalid DSL Workflow](/docs/pikku-cli/errors/pku641) — structural workflow validation
+- [PKU600: Workflow Orchestrator Not Configured](/docs/pikku-cli/errors/pku600) — runtime prerequisites for workflows

@@ -65,7 +65,7 @@
   border: 2px solid #2a2720;
   border-radius: 16px;
   padding: 32px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.9;
   color: #d8d2c4;
@@ -102,7 +102,7 @@
   border: 1px solid #d4ccba;
   border-radius: 10px;
   padding: 12px 20px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 14px;
   color: #1a1814;
   margin-bottom: 24px;
@@ -264,12 +264,12 @@
 .defIcon {
   display: flex;
   align-items: center;
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
   flex-shrink: 0;
 }
 
 .defLabel {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
   color: var(--paper-text-head, var(--paper-text));
@@ -393,12 +393,12 @@
 
 .ctaSection .btnPrimary {
   background: var(--paper-bg);
-  color: var(--paper-code-bg) !important;
+  color: var(--paper-text) !important;
 }
 
 .ctaSection .btnPrimary:hover {
   background: var(--paper-accent-on-dark);
-  color: var(--paper-code-bg) !important;
+  color: var(--color-night) !important;
 }
 
 .ctaSection .btnGhost {

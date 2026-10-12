@@ -1,0 +1,17 @@
+/* Entry animations used by the hero scenes */
+@keyframes blob-enter { from { opacity: 0; transform: scale(0.55); } to { opacity: 1; transform: scale(1); } }
+@keyframes icon-fan-out { from { opacity: 0; transform: translate(-50%, -50%) scale(0.15); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.animate-blob-enter { animation: blob-enter 0.7s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-icon-fan-out { animation: icon-fan-out 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+@keyframes orbit-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes orbit-counter-rotate { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+.animate-orbit-rotate { animation: orbit-rotate 90s linear infinite; }
+.animate-orbit-counter-rotate { animation: orbit-counter-rotate 90s linear infinite; }
+@keyframes projection-slide-in { from { opacity: 0; transform: translateX(var(--slide-from, -12px)); } to { opacity: 1; transform: translateX(0); } }
+.projection-node { animation: projection-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes sse-line-appear { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+.sse-line-appear { animation: sse-line-appear 0.4s ease-out both; }
+.card-shadow { box-shadow: 0 1px 0 rgba(43, 34, 25, .08), 2px 3px 0 rgba(43, 34, 25, .06); }
+@media (prefers-reduced-motion: reduce) { .animate-blob-enter, .animate-icon-fan-out, .animate-orbit-rotate, .animate-orbit-counter-rotate, .projection-node, .sse-line-appear { animation: none; } }
+.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Link from '@docusaurus/Link';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import Link from '@/components/site/Link';
+import useBaseUrl from '@/components/site/useBaseUrl';
 import styles from './wall.module.css';
 
 /** One thing on the wall — an addon, or an OpenAPI specification. */

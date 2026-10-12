@@ -1,16 +1,17 @@
+import { Blob } from '@pikku/theme-brand'
 export function DeployScene() {
   return (
     <>
       <svg viewBox="0 0 520 300" className="mt-6 w-full h-auto" role="img" aria-labelledby="depT">
         <title id="depT">
-          The chameleon carries a tied parcel along a dotted path from a laptop to three homes: a
+          The blob carries a tied parcel along a dotted path from a laptop to three homes: a
           serverless cloud, Cloudflare, and your own server.
         </title>
 
         <g
-          stroke="#2b2219"
+          stroke="var(--paper-text)"
           strokeWidth="2.2"
-          fill="#fbf6ec"
+          fill="var(--paper-bg-alt)"
           strokeLinejoin="round"
           filter="url(#rough)"
         >
@@ -24,7 +25,7 @@ export function DeployScene() {
         <path
           d="M110 190 C 160 70, 300 40, 380 70"
           fill="none"
-          stroke="#2b2219"
+          stroke="var(--paper-text)"
           strokeWidth="2.2"
           strokeLinecap="round"
           className="march"
@@ -32,15 +33,7 @@ export function DeployScene() {
         />
 
         <g transform="translate(140 0) scale(.85)">
-          <use
-            href="#pk"
-            x="0"
-            y="0"
-            width="92"
-            height="92"
-            style={{ color: '#c2410c' }}
-            transform="translate(92 0) scale(-1 1)"
-          />
+          <Blob pose="blob" x={0} y={0} width={92} height={92} color="#c2410c" transform="translate(92 0) scale(-1 1)" />
           <g transform="rotate(-8 80 74)" filter="url(#rough)">
             <rect
               x="66"
@@ -48,17 +41,17 @@ export function DeployScene() {
               width="34"
               height="28"
               fill="#d9a441"
-              stroke="#2b2219"
+              stroke="var(--paper-text)"
               strokeWidth="2"
             />
-            <path d="M83 58 v28 M66 72 h34" stroke="#2b2219" strokeWidth="1.6" />
+            <path d="M83 58 v28 M66 72 h34" stroke="var(--paper-text)" strokeWidth="1.6" />
           </g>
         </g>
 
         <g
-          stroke="#2b2219"
+          stroke="var(--paper-text)"
           strokeWidth="2.2"
-          fill="#fbf6ec"
+          fill="var(--paper-bg-alt)"
           strokeLinejoin="round"
           filter="url(#rough)"
         >
@@ -69,11 +62,11 @@ export function DeployScene() {
           />
           <path d="M398 222 L478 220 L480 284 L396 286 Z" />
         </g>
-        <g stroke="#2b2219" strokeWidth="1.8" strokeLinecap="round">
+        <g stroke="var(--paper-text)" strokeWidth="1.8" strokeLinecap="round">
           <path d="M410 240 h54 M410 256 h54 M410 272 h54" />
         </g>
         <circle cx="470" cy="240" r="3" fill="#55703c" />
-        <g fontSize="22" fill="#2b2219">
+        <g fontSize="22" fill="var(--paper-text)">
           <text x="300" y="124" textAnchor="end">
             serverless
           </text>
@@ -86,7 +79,7 @@ export function DeployScene() {
         </g>
         <g
           fill="none"
-          stroke="#2b2219"
+          stroke="var(--paper-text)"
           strokeWidth="1.6"
           strokeDasharray="3 6"
           strokeLinecap="round"

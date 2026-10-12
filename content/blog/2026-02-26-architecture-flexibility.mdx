@@ -1,0 +1,148 @@
+---
+date: 2026-02-26
+title: Architecture Flexibility — Don't Lock Yourself In
+description: Avoid costly rewrites. Start simple, scale smart, switch runtimes without code changes.
+authors: yasser
+tags: [architecture, backend, typescript]
+draft: true
+---
+
+
+Every architecture choice has a cost. The wrong one just hides it longer.
+
+
+
+## The Problem: Decisions That Age Badly
+
+### Microservices Too Soon
+
+**The Decision:** "We'll need to scale, so let's start with microservices."
+
+**The Wall:**
+- Coordination overhead kills velocity
+- Operational complexity from day 1
+- More infrastructure than features
+
+**Result:** Slow to ship and expensive to run — paying the price for premature complexity. Your team spends more on DevOps overhead (orchestration, monitoring, deployments) than you've saved in theoretical scalability gains.
+
+### The Monolith Scaling Wall
+
+**The Decision:** "Keep it simple, build a monolith."
+
+**The Wall:**
+- Can't scale parts independently
+- Deploy everything or nothing
+- One bottleneck affects all features
+
+**Result:** A costly migration project that diverts your team from building business value. Engineering effort gets redirected from features to infrastructure refactoring.
+
+### The Pikku Way
+
+Instead of betting on one architecture upfront, **Pikku lets you adapt**:
+- **Start simple** to save time and money early on (monolith, serverless—whatever fits your current needs)
+- **Switch runtimes** as economics or requirements change (scale, cost, compliance) without code rewrites
+- **Same code, same types, near-zero switching costs** — deploy the same logic to any runtime
+
+**Pikku lets you defer big architectural commitments without incurring technical debt or surprise costs later.** Infrastructure becomes **an addon**, not **a core feature**.
+
+## Real-World Scenario: Adapting Without Rewrites
+
+**How one company adapted infrastructure as economics changed—without a single rewrite:**
+
+```typescript
+// Day 1: Start serverless — zero ops overhead
+import { corsHTTP } from '@pikku/lambda/http'
+
+export const handler = async (event: APIGatewayProxyEvent) => {
+  return await corsHTTP(event, services, createSession)
+}
+
+// ✅ No servers to manage, instant auto-scaling
+// ✅ Pay only for requests, perfect for early stage
+// 💰 Focus 100% on product, not infrastructure
+```
+
+```typescript
+// Year 1: Enterprise client requires on-premise deployment
+import { PikkuExpressServer } from '@pikku/express'
+
+const enterpriseServer = new PikkuExpressServer(config, services, createSession)
+await enterpriseServer.start()
+
+// ✅ Same code, deployed on-premise for compliance
+// ✅ Meets data residency requirements
+// 🎉 Landed enterprise deal worth 10x the infrastructure cost
+```
+
+```typescript
+// Year 2: Lambda gets slow and expensive at scale
+// Switch to Kubernetes cluster (or ECS, or VMs)
+import { PikkuFastifyServer } from '@pikku/fastify'
+
+const server = new PikkuFastifyServer(config, services, createSession)
+await server.start()
+
+// ✅ Predictable costs, better performance
+// ✅ Deploy to Kubernetes, ECS, or any container platform
+// 💰 Cut infrastructure costs by 60% with dedicated resources
+```
+
+**Same code, different economics at each stage.**
+
+## Pikku's Philosophy
+
+1. **Write portable code by default** — No runtime-specific imports in your functions
+2. **Choose your runtime at deploy time** — Not at write time
+3. **Switch without rewrites** — Change config, not code
+4. **Mix and match** — HTTP on Lambda, WebSockets on a server, queues on BullMQ
+
+## The Benefits
+
+<div className="grid md:grid-cols-2 gap-6 my-8">
+
+<Card variant="minimal">
+
+### Start Simple
+
+Begin with the simplest architecture that works. No premature optimization, no unnecessary complexity.
+
+Deploy as a monolith on a single server or go serverless for instant auto-scaling.
+
+</Card>
+
+<Card variant="minimal">
+
+### Scale Smart
+
+When requirements change, adapt your architecture without rewriting code.
+
+Move specific functions to different runtimes based on their needs.
+
+</Card>
+
+<Card variant="minimal">
+
+### Mix & Match
+
+Run different parts of your application on different platforms simultaneously.
+
+HTTP APIs on Lambda, WebSockets on a dedicated server, queues on BullMQ.
+
+</Card>
+
+<Card variant="minimal">
+
+### Zero Rewrites
+
+Infrastructure changes are configuration changes, not code changes.
+
+Your team builds features instead of managing migrations.
+
+</Card>
+
+</div>
+
+## Next Steps
+
+- **[Avoiding vendor lock-in](/blog/2026/02/26/avoiding-vendor-lock-in)** — See the research on why flexibility matters
+- **[Get started](/docs)** — Build your first portable backend

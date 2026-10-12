@@ -37,10 +37,10 @@
 
   display: grid;
   grid-template-rows: auto 1fr;
-  height: calc(100vh - var(--ifm-navbar-height));
+  height: calc(100vh - var(--nav-h));
   overflow: hidden;
   background: var(--ex-bg);
-  font-family: 'Geist', -apple-system, sans-serif;
+  font-family: var(--font-body);
 }
 
 .loading {
@@ -164,7 +164,7 @@
   border: 1px solid var(--ex-line-hard);
   border-radius: 4px;
   color: var(--ex-faint);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   pointer-events: none;
 }
@@ -176,7 +176,7 @@
 .count {
   margin-left: auto;
   color: var(--ex-faint);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   white-space: nowrap;
 }
@@ -235,7 +235,7 @@
   border-radius: 6px;
   background: none;
   color: var(--ex-body);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12.5px;
   text-align: left;
   cursor: pointer;
@@ -290,7 +290,7 @@
 .docHead h1 {
   margin: 0 0 12px;
   color: var(--ex-text);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 22px;
   font-weight: 500;
   letter-spacing: -0.3px;
@@ -309,7 +309,7 @@
   border-radius: 4px;
   background: var(--ex-line-soft);
   color: var(--ex-body);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12.5px;
 }
 
@@ -364,7 +364,7 @@
 
 .sym {
   color: var(--ex-text);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13.5px;
   font-weight: 500;
 }
@@ -388,7 +388,7 @@
   display: block;
   margin-top: 6px;
   color: var(--ex-faint);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
 }
 
@@ -396,7 +396,7 @@
   flex: none;
   padding-top: 2px;
   color: var(--ex-faint);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   text-align: right;
 }
@@ -413,7 +413,7 @@
   border-radius: 4px;
   background: var(--ex-line-soft);
   color: var(--ex-body);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12.5px;
 }
 
@@ -424,7 +424,7 @@
   padding: 1.5px 7px;
   border: 1px solid transparent;
   border-radius: 20px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.2px;
 }
@@ -459,7 +459,7 @@
    row would carry the same specifier, which is the heading above them. */
 .fromDoor {
   color: var(--ex-faint);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
 }
 
@@ -499,7 +499,7 @@
   border: 1px solid var(--ex-line-hard);
   border-radius: 5px;
   color: var(--ex-body);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   text-align: center;
 }
@@ -584,7 +584,7 @@
   border-radius: 8px;
   background: var(--ex-bg);
   color: var(--ex-body);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.8px;
   line-height: 1.62;
   overflow-x: auto;
@@ -622,7 +622,7 @@
   border: none;
   background: none;
   color: var(--ex-text);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.8px;
   word-break: break-word;
 }
@@ -638,7 +638,7 @@
    and labelled with its own length — that number is the warning. */
 .sig summary {
   color: var(--ex-faint);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   cursor: pointer;
 }
@@ -675,7 +675,7 @@
     left: auto;
     z-index: 30;
     width: min(560px, 92%);
-    height: calc(100vh - var(--ifm-navbar-height));
+    height: calc(100vh - var(--nav-h));
     transform: translateX(100%);
     transition: transform 0.18s ease;
     box-shadow: -18px 0 40px rgba(0, 0, 0, 0.5);
@@ -712,7 +712,7 @@
 
   .nav {
     position: fixed;
-    top: var(--ifm-navbar-height);
+    top: var(--nav-h);
     bottom: 0;
     left: 0;
     z-index: 40;
@@ -737,7 +737,7 @@
   .shell[data-nav='open'] .scrim {
     display: block;
     position: fixed;
-    inset: var(--ifm-navbar-height) 0 0;
+    inset: var(--nav-h) 0 0;
     z-index: 35;
     border: none;
     background: rgba(0, 0, 0, 0.5);
@@ -787,6 +787,6 @@
   border-radius: 3px;
   background: var(--ex-line-soft);
   color: var(--ex-text);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.92em;
 }

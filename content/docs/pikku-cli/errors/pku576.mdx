@@ -1,0 +1,67 @@
+---
+title: "PKU576: Permissions in Body Not Allowed"
+---
+# PKU576: Permissions in Body Not Allowed
+
+## Error Message
+
+```
+[PKU576] 'exportUsers' declares `permissionsInBody: true`, which this project has not enabled. It silences the exposed-and-ungated audit without gating anything, so it is opt-in: set `allow: { permissionsInBody: true }` in pikku.config.json if the project accepts permission checks that only a reader can verify. Otherwise express the check as a `permissions` entry, or drop `expose: true` if the function was not meant to be callable from outside.
+```
+
+## What Went Wrong
+
+A function declares `permissionsInBody: true`, and the project hasn't opted into that flag.
+
+`permissionsInBody` is an assertion by the author that the function does its own authorization inside the handler. It changes nothing at runtime — it just tells the exposed-and-ungated audit ([PKU574](/docs/pikku-cli/errors/pku574)) to stop reporting this function. That's exactly why it's gated behind an explicit project-level opt-in: it converts a machine-checkable property into a claim that only a human reading the body can verify, and the audit can no longer tell a genuinely-guarded function from one whose guard was deleted in a later refactor.
+
+Pikku doesn't forbid it — some checks really can't be expressed declaratively — but the project has to accept the trade in writing.
+
+## How to Fix
+
+### Preferred: express the check as a `permissions` entry
+
+```typescript @snippet eb-exposed-with-permission
+```
+
+Declarative permissions run before the body, are visible to the audit, and show up in the authorization view.
+
+### If the function was never meant to be public
+
+Drop the exposure and the flag together:
+
+```typescript @snippet eb-internal-only-func
+```
+
+### If the project genuinely accepts body-checked permissions
+
+Opt in once, project-wide:
+
+```json title="pikku.config.json"
+{
+  "tsconfig": "./tsconfig.json",
+  "srcDirectories": ["src"],
+  "outDir": ".pikku",
+  "allow": {
+    "permissionsInBody": true
+  }
+}
+```
+
+Do this deliberately: it disables the audit's ability to flag *any* function that carries the flag, not just this one.
+
+## Authorization Best Practices
+
+- Keep authorization in the `permissions` field — it runs before the handler and is auditable.
+- Reach for `permissionsInBody` only when the decision depends on data the permission layer genuinely can't see, and say so in a comment.
+- Review every `permissionsInBody: true` function whenever its body changes; nothing else will.
+- Pair the opt-in with `--fail-on-warn` in CI so the remaining declarative gaps still block.
+
+## Common Mistakes
+
+The flag silences the audit while gating nothing: an exposed function whose only protection is an `if (!session?.isAdmin)` inside the body can lose that check in a later refactor without anyone noticing.
+
+## Related Errors
+
+- [PKU574: Exposed Function Has No Gate](/docs/pikku-cli/errors/pku574) — the audit this flag silences
+- [PKU575: Tag Resolves to No Middleware](/docs/pikku-cli/errors/pku575) — another gate that looks present but applies nothing

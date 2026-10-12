@@ -1,0 +1,99 @@
+---
+title: "PKU340: Addon Not Installed"
+---
+# PKU340: Addon Not Installed
+
+## Error Message
+
+```
+[PKU340] Addon 'admin' ('@pikku/addon-admin') is wired with wireAddon but cannot be resolved — every ref('admin:…') will resolve to nothing and the surface will be dead at runtime. Install it, or remove the wireAddon call.
+```
+
+## What Went Wrong
+
+A `wireAddon` declaration names a package that Node can't resolve from your project root. Nothing is installed under that name — no `node_modules` entry, no workspace symlink, no local `addons/` copy.
+
+This one is worth catching at build time because the runtime failure is silent. When the addon package is missing, Pikku's metadata load for it fails, that failure is caught and downgraded to a warning, and generation carries on. Every `ref('admin:…')` then resolves against an empty namespace, so the routes, channels and CLI commands the addon was supposed to contribute simply don't exist. The build succeeds, the deploy succeeds, and the surface 404s in production with nothing in the output explaining why.
+
+Note the check asks the **module resolver**, not `package.json`. An addon is discovered because it's *wired*, not because it's a declared dependency — addons arrive by npm install, by workspace link, and by a local `addons/` directory recorded in `pikku-addons.json`, and only the first of those shows up in `dependencies`. So a package listed in `dependencies` but never installed still fails this check, and a package installed only by workspace link passes it.
+
+## How to Fix
+
+### If the addon comes from npm
+
+Install it, then regenerate:
+
+```bash
+npm install @pikku/addon-admin
+npx pikku prebuild
+```
+
+The `package` you wire must be the package's real name, exactly as published:
+
+```typescript @snippet ea-addon-package-name
+```
+
+### If the addon came from the community registry
+
+`pikku fabric addon add` copies the source into `<addonDir>/<name>/` and registers `<addonDir>/*` as a workspace glob — but the symlink into `node_modules` only appears after an install:
+
+```bash
+npx pikku fabric addon add admin
+yarn install
+npx pikku prebuild
+```
+
+If the directory is there but resolution still fails, the workspace glob didn't take. Check that your **root** `package.json` lists the addon directory in `workspaces`, and that the copied package's own `name` field matches the `package` you wired — the glob links packages by their declared name, not by folder name.
+
+```json title="package.json (root)"
+{
+  "workspaces": ["addons/*"]
+}
+```
+
+### If you don't need the addon
+
+Delete the declaration. A wired addon with no package behind it contributes nothing, so removing the call loses you nothing but the error.
+
+The declaration to delete is one like `wireAddon({ name: 'admin', package: '@pikku/addon-admin' })` that is wired but never installed, which leaves every `ref` into it dead.
+
+Remember to remove the `ref(...)` calls that pointed into that namespace too, or they'll fail their own resolution checks.
+
+### If it's a remote addon
+
+`wireRemoteAddon` is checked differently — its handlers run on the host, so it's judged on being a `devDependency` rather than on resolvability. If you meant remote, change the call and see [PKU338](/docs/pikku-cli/errors/pku338):
+
+```typescript @snippet ea-addon-local-vs-remote
+```
+
+## Addon Best Practices
+
+- Treat `wireAddon` as an import: if the package isn't installed, the wiring is a lie. Wire it in the same change that installs it.
+- After `pikku fabric addon add`, always run the install step — the copied source is inert until the workspace link exists.
+- Keep the addon's package `name` and the wired `package` identical; a renamed folder is fine, a renamed package is not.
+- Run `npx pikku prebuild` on a clean checkout in CI. Hoisting from a sibling project can make a missing addon resolve on your machine and nowhere else.
+- If you fork a copied addon, keep `pikku-addons.json` as-is — it records where the source came from, which is how you find out what you diverged from.
+
+## Common Mistakes
+
+Guessing the package name from the namespace, such as `'@pikku/postgres'` instead of the published `'@pikku/addon-postgres'`, is a common cause. Use the name exactly as published.
+
+```bash title="wrong.sh"
+# ❌ Wrong — source copied, never linked; wireAddon still can't resolve it
+npx pikku fabric addon add invoicing
+npx pikku prebuild
+```
+
+```bash title="correct.sh"
+# ✅ Correct — install links the workspace before generation runs
+npx pikku fabric addon add invoicing
+yarn install
+npx pikku prebuild
+```
+
+## Related Errors
+
+- [PKU338: Remote Addon Not a Dev Dependency](/docs/pikku-cli/errors/pku338) — the `wireRemoteAddon` counterpart, where the package must be a devDependency instead of installed for runtime
+- [PKU339: Remote Addon Auth Unresolved](/docs/pikku-cli/errors/pku339) — the remote addon resolves, but its auth binding names a credential or secret you haven't wired
+- [PKU642: Workflow Graph Addon Not Wired](/docs/pikku-cli/errors/pku642) — an addon that isn't wired at all, rather than wired but missing
+- [PKU920: Addon Wiring Not Allowed](/docs/pikku-cli/errors/pku920) — what an addon may wire once it is installed and resolving

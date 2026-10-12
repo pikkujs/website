@@ -1,0 +1,58 @@
+---
+title: "PKU953: Secret Revealed Into Sink"
+---
+# PKU953: Secret Revealed Into Sink
+
+## Error Message
+
+```
+[PKU953] Function 'provisionWebhook' passes a revealed secret to 'logger.info' at line 42 (path 'credential.token').
+  A vault secret must not be written to a log, an audit, a queue, an email or a webhook. Pass the value only to the client that needs it, and reveal it there.
+```
+
+This is an **error**-severity diagnostic. It fails the build with `--fail-on-error`, and it only runs when the classification scan is requested — `pikku all --security`.
+
+## What Went Wrong
+
+A function calls `.reveal()` on a vault secret and then passes the revealed value to a **sink**: a logger, an audit record, a queue payload, an email body, or an outbound webhook.
+
+Each of those is a copy of the secret outside the vault, and every one of them persists somewhere the vault's access controls don't reach — a log aggregator, an audit table, a queue's dead-letter store, someone's inbox, a third party's request log. Rotation doesn't clean those up. Neither does deleting the secret. This is the single most common way credentials leak from an otherwise well-configured system, and it's usually accidental: a debug log added during an incident, or a whole object logged for context without noticing what's inside it.
+
+The scan walks the sinks as well as the return type, because a secret written out mid-body never shows up in what the function returns.
+
+## How to Fix
+
+Pass the secret only to the client that needs it, and keep it out of everything else:
+
+
+```typescript @snippet shopSecretUsage
+```
+
+Better still, don't reveal it in the function at all — construct the client with the secret in `services.ts` and let the function use a capability rather than a credential (see [PKU950](/docs/pikku-cli/errors/pku950)).
+
+### If you're logging an object that contains a secret
+
+
+Logging a whole object that contains a secret, such as `logger.info('created', credential)`, is the broken shape. Log the fields you need instead, for example the credential id and provider.
+
+### If the value must cross a boundary
+
+Send a reference — a credential id, a secret id — and let the receiving side resolve it from its own vault. That keeps exactly one copy of the value, in exactly one place.
+
+## Secret Handling Best Practices
+
+- Reveal as late as possible, use immediately, and never assign the revealed value to anything longer-lived than the call.
+- Never log, audit or enqueue a whole object that carries a credential — log its identifier.
+- Pass secret *references* across process and service boundaries, never secret values.
+- Run `pikku all --security` in CI; the scan is off by default because it's expensive, so nothing else will catch this.
+
+## Common Mistakes
+
+Revealing a webhook token and passing it into `logger.info('provisioning webhook', { url, token })` is the broken shape: the token lands in the log aggregator.
+
+## Related Errors
+
+- [PKU950: Secret Service Aliased](/docs/pikku-cli/errors/pku950) — keeping the vault out of business logic in the first place
+- [PKU951: Secret Not Declared](/docs/pikku-cli/errors/pku951) — a secret read without a `defineSecret`
+- [PKU952: Secret Key Not Static](/docs/pikku-cli/errors/pku952) — a secret read with a computed key
+- [PKU910: PII in Output](/docs/pikku-cli/errors/pku910) — the same classification scan, applied to personal data

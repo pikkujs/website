@@ -10,7 +10,7 @@ import {
   BotIcon,
   WorkflowIcon,
   GatewayIcon,
-} from '../components/WiringIcons';
+} from '@/components/WiringIcons';
 
 export type WireCategory = 'Protocols' | 'Scheduling & Processing' | 'AI & Orchestration';
 

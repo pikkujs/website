@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Layout from '@theme/Layout';
-import { PaperPage, Section, Wrap, H1, Lead } from '@site/src/components/PaperLayout';
-import { Band, Chips, wall, type WallBand } from '@site/src/components/Catalogue/Wall';
+import Layout from '@/components/site/Layout';
+import { PaperPage, Section, Wrap, H1, Lead } from '@/components/PaperLayout';
+import { Band, Chips, wall, type WallBand } from '@/components/Catalogue/Wall';
 import styles from './catalogue.module.css';
 
 export type AddonEntry = {

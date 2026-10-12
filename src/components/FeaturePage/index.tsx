@@ -1,8 +1,8 @@
 import React from 'react';
-import Link from '@docusaurus/Link';
-import useBrokenLinks from '@docusaurus/useBrokenLinks';
-import Layout from '@theme/Layout';
-import CodeBlock from '@theme/CodeBlock';
+import Link from '@/components/site/Link';
+import useBrokenLinks from '@/components/site/useBrokenLinks';
+import Layout from '@/components/site/Layout';
+import CodeBlock from '@/components/site/CodeBlock';
 import {
   BarChart3, RefreshCw, Zap, ShieldCheck, Clock, Database,
   Shield, Key, Lock, UserCheck, Layers, Variable, FileJson,
@@ -22,7 +22,7 @@ import {
 import { PaperPage, CodeCard } from '../PaperLayout';
 import { WireFanOut } from './WireFanOut';
 import styles from './feature-page.module.css';
-import snippetsMeta from '../../data/snippets-meta.json';
+import snippetsMeta from '@/data/snippets-meta.json';
 import type {
   PageData, Section, ColContent, CardItem, CodeSpec,
   HeroSection, TwoColSection, FeatureGridSection,
@@ -149,7 +149,7 @@ function renderCards(cards: CardItem[], columns = 3): React.ReactNode {
           {c.icon && (
             <div style={{ marginBottom: 10 }}>{resolveIcon(c.icon, 16, { flexShrink: 0 })}</div>
           )}
-          <div className={styles.cardTitle} style={c.mono ? { fontFamily: 'Geist Mono, monospace' } : undefined}>{c.title}</div>
+          <div className={styles.cardTitle} style={c.mono ? { fontFamily: 'var(--font-mono)' } : undefined}>{c.title}</div>
           <p className={styles.cardBody}>{c.body}</p>
         </div>
       ))}
@@ -351,7 +351,7 @@ function StepCardsRenderer({ s }: { s: StepCardsSection }) {
               <div className={styles.cardTitle}>{step.title}</div>
               <p className={styles.cardBody} style={{ marginBottom: step.command ? 10 : 0 }}>{step.desc}</p>
               {step.command && (
-                <code style={{ fontSize: 11, fontFamily: 'Geist Mono, monospace', color: '#6b6559', background: '#efece4', border: '1px solid #e3ddd0', padding: '3px 7px', borderRadius: 5, display: 'block' }}>
+                <code style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: '#6b6559', background: '#efece4', border: '1px solid #e3ddd0', padding: '3px 7px', borderRadius: 5, display: 'block' }}>
                   {step.command}
                 </code>
               )}

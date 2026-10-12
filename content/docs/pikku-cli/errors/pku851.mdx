@@ -1,0 +1,43 @@
+---
+title: "PKU851: Duplicate Function Name"
+---
+# PKU851: Duplicate Function Name
+
+## Error Message
+
+```
+[PKU851] Function name 'getTodo' is not unique. 'getTodo' is already defined in 'src/todos/todos.functions.ts' and cannot be redefined in 'src/legacy/todos.functions.ts'.
+```
+
+Variants for named/exposed RPC lookups:
+
+```
+[PKU851] Function name 'getTodo' is not unique. It already points to 'getTodo@v2' in 'src/todos/todos.functions.ts', but 'fetchTodo@v1' in 'src/legacy/todos.functions.ts' tried to use the same name.
+[PKU851] Exposed function name 'getTodo' is not unique. It already points to 'getTodo@v2' in 'src/todos/todos.functions.ts', but 'fetchTodo@v1' in 'src/legacy/todos.functions.ts' tried to use the same name.
+```
+
+## What Went Wrong
+
+Two Pikku functions in different files share the same name. Function names are global identifiers — they're how RPC calls (`rpc.invoke('getTodo', ...)`), wirings, and generated clients address the function. If two files defined `getTodo`, every reference would be ambiguous, so the CLI fails the build and names both locations.
+
+Common causes: a file was copied for refactoring and both copies still export the function; or an explicit `name:` property duplicates another function's exported name.
+
+## How to Fix
+
+
+The broken shape is `export const getTodo = ...` in `src/legacy/todos.functions.ts` when `src/todos/todos.functions.ts` already exports a `getTodo`.
+
+Either delete the legacy copy or give it a distinct name, such as `getLegacyTodo`.
+
+If the two are actually **versions of the same function**, declare them as versions instead of duplicates — same base name, different `version:` — see [PKU850](/docs/pikku-cli/errors/pku850).
+
+## Function Naming Best Practices
+
+- Names are a global namespace: prefix by domain (`todosGet`, `ordersGet`) in larger apps.
+- Delete dead copies as part of refactors — the inspector scans every file that matches your config's include patterns, including "parked" code.
+- If you use explicit `name:` properties, grep for the name before choosing it.
+
+## Related Errors
+
+- [PKU850: Duplicate Function Version](/docs/pikku-cli/errors/pku850) — two definitions of the same version
+- [PKU559: Function Metadata Not Found](/docs/pikku-cli/errors/pku559) — a referenced function is missing entirely

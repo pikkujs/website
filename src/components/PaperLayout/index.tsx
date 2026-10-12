@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from '@docusaurus/Link';
+import Link from '@/components/site/Link';
 import { ExternalLink } from 'lucide-react';
 import styles from './paper.module.css';
 

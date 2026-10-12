@@ -1,0 +1,17 @@
+{
+  "name": "@pikku/theme-brand",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Shared paper-and-clay brand for pikku.dev and pikkustudio.app: CSS variable tokens, utilities, fonts, Blob and SVG defs.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tokens.css": "./src/tokens.css",
+    "./utilities.css": "./src/utilities.css",
+    "./fonts.css": "./src/fonts.css",
+    "./tailwind-theme.css": "./src/tailwind-theme.css"
+  },
+  "files": ["src", "scripts", "README.md"],
+  "scripts": { "gen": "node scripts/gen-tailwind-theme.mjs" },
+  "peerDependencies": { "react": "^19.0.0" }
+}
