@@ -28,7 +28,7 @@ const contentPages = () => {
   return out
 }
 
-/** These are only imported inside client effects; keep their chunks (mermaid alone is ~6 MB) out of the SSR/Worker bundle. */
+/** These are only imported inside client effects; keep their chunks (mermaid alone is ~6 MB) out of the SSR bundle. */
 const CLIENT_ONLY = ['mermaid', 'react-apexcharts', 'apexcharts', 'asciinema-player', '@stackblitz/sdk']
 const clientOnly = (): Plugin => ({
   name: 'client-only-libs',
@@ -51,7 +51,7 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart({ pages: [{ path: '/search-index.json' }, ...contentPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
       failOnError: false, // vite-link-check is the gate: it names the source file, crawlLinks does not
-      // the catalogue (/addons, /openapis) is rendered by the Worker on request, everything else is prerendered
+      // the catalogue (/addons, /openapis) is rendered by the Node server on request, everything else is prerendered
       filter: ({ path }) => !/^\/(addons|openapis)(\/|$)/.test(path) } }),
     viteReact(),
     // order matters: both must run AFTER the prerender post-build

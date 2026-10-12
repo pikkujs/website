@@ -1,6 +1,6 @@
 # Pikku website
 
-TanStack Start + Fumadocs (headless) site deployed as a Cloudflare Worker with static assets. See README.md for
+TanStack Start + Fumadocs (headless) site shipped as a Docker image (Node origin on Hetzner, Cloudflare CDN in front). See README.md for
 commands and structure. Dev server: `npm run dev` on port 3005.
 
 ## Hard rules
@@ -12,7 +12,7 @@ commands and structure. Dev server: `npm run dev` on port 3005.
 - Deleted pages, never re-link: `/pricing`, `/use-cases/*`, `/instant-reload`, `/manual-setup`.
 - No X or Discord links, no GitHub star-count badge.
 - The link gate (`npm run build` / `npm run check-links`) must stay at 0 broken. Exceptions go in `link-gate.config.mjs` only.
-- Keep the Worker small: Shiki runs at MDX compile time, and heavy browser-only libs (mermaid, apexcharts,
+- Keep the SSR bundle small: Shiki runs at MDX compile time, and heavy browser-only libs (mermaid, apexcharts,
   asciinema-player, stackblitz) are stubbed in server builds by the `clientOnly` plugin in `vite.config.ts`.
 - Use conventional commit messages; install with `npm ci --legacy-peer-deps`.
 

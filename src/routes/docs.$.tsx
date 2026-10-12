@@ -24,7 +24,7 @@ export const Route = createFileRoute('/docs/$')({
   head: ({ loaderData }) => { const d = loaderData as DocData | undefined; return d ? pageHead({ title: d.title, description: d.description || undefined, path: d.url, extra: [{ name: 'source-file', content: 'content/docs/' + d.path }] }) : {} },
   loader: async ({ params }): Promise<DocData & { pageTree: any }> => {
     const slugs = params._splat?.split('/').filter(Boolean) ?? []
-    // SSR/prerender call the functions directly; browser navigation reads prerendered static JSON (no Worker call)
+    // SSR/prerender call the functions directly; browser navigation reads prerendered static JSON (no server call)
     const [data, pageTree] = (import.meta.env.SSR
       ? await Promise.all([serverLoader({ data: slugs }), treeLoader()])
       : await Promise.all([fetchPayload<DocData>(`/payload/docs/${slugs.length ? slugs.join('/') : 'index'}.json`), fetchPayload<Awaited<ReturnType<typeof docsTree>>>('/payload/docs-tree.json')])) as [DocData, Awaited<ReturnType<typeof docsTree>>]

@@ -1,0 +1,21 @@
+# Lives on the Hetzner host in /opt/pikku-website (see README "Deploy").
+# The deploy job runs, in that directory:  docker compose pull && docker compose up -d
+services:
+  website:
+    image: ghcr.io/pikkujs/website:latest
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      REGISTRY_URL: ${REGISTRY_URL:-https://api.pikkustudio.app}
+    # Only Caddy (on the host) talks to it; never expose the port publicly.
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/healthz || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
