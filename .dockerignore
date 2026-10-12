@@ -1,0 +1,15 @@
+node_modules
+dist
+.git
+.github
+.tanstack
+.source
+.claude
+.pikku-core
+.template-online-shop
+screenshots
+*.png
+.DS_Store
+.env*
+npm-debug.log*
+PR_DESCRIPTION.md
