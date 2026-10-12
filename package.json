@@ -60,7 +60,7 @@
     "build": "npm run check-error-docs && npm run gen:data && vite build -c vite.config.cf.ts",
     "build:node": "npm run check-error-docs && npm run gen:data && vite build",
     "preview": "wrangler dev --local",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/gen-routes.mjs && tsc --noEmit",
     "gen:data": "node scripts/gen-data.mjs",
     "check-error-docs": "node scripts/check-error-docs.mjs",
     "validate-links": "node scripts/validate-links.mjs",
