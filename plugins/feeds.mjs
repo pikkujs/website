@@ -1,17 +1,24 @@
 // Ours (Fumadocs ships none): sitemap.xml from the prerendered output + blog RSS/Atom from content/blog.
 import fs from 'node:fs'
 import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 import matter from 'gray-matter'
 import { Feed } from 'feed'
 
 export default function feeds({ site, title = 'Blog', blogDir = 'content/blog', outDir = 'dist/client' }) {
   return {
     name: 'feeds', enforce: 'post', apply: 'build',
-    buildApp: { order: 'post', handler(builder) {
+    buildApp: { order: 'post', async handler(builder) {
       const out = path.resolve(builder.config.root, outDir)
-      // GitHub Pages serves 404.html for unknown paths: the prerendered /404 page becomes that file
-      const nf = path.join(out, '404/index.html')
-      if (fs.existsSync(nf)) { fs.renameSync(nf, path.join(out, '404.html')); fs.rmSync(path.join(out, '404'), { recursive: true }) }
+      // GitHub Pages serves 404.html (HTTP 404) for unknown paths. Render it with the real SSR handler on an unmatched
+      // path, so the HTML is exactly what the client router renders for any unknown URL (no hydration mismatch).
+      const serverEntry = path.resolve(builder.config.root, 'dist/server/server.js')
+      if (fs.existsSync(serverEntry)) {
+        const mod = (await import(pathToFileURL(serverEntry).href + '?nf=' + Date.now())).default
+        const res = await mod.fetch(new Request(site + '/__not-found'))
+        if (res.status === 404) fs.writeFileSync(path.join(out, '404.html'), await res.text())
+        else console.warn('[feeds] 404.html not written: unmatched path rendered with status', res.status)
+      }
       const urls = []
       const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) walk(p); else if (e.name === 'index.html' && !/http-equiv="refresh"/.test(fs.readFileSync(p, 'utf8'))) urls.push('/' + path.relative(out, d).split(path.sep).join('/')) } }
       walk(out)

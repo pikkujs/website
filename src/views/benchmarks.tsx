@@ -27,8 +27,9 @@ function ApexChart({
       }
     >
       {() => {
-        // react-apexcharts exports the component directly (no .default)
-        const Chart = require('react-apexcharts');
+        // Vite's require() returns the ES module namespace, so the component is on .default
+        const mod = require('react-apexcharts');
+        const Chart = mod.default ?? mod;
         return (
           <Chart options={options} series={series} type={type} height={height} />
         );

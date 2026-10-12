@@ -57,7 +57,7 @@ export default defineConfig({
     clientOnly(),
     fumadocsMdx((await import('./source.config.ts')) as any),
     tailwindcss(),
-    tanstackStart({ pages: [{ path: '/search-index.json' }, { path: '/404' }, ...contentPages(), ...catalogPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
+    tanstackStart({ pages: [{ path: '/search-index.json' }, ...contentPages(), ...catalogPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
       failOnError: false, // vite-link-check is the gate: it names the source file, crawlLinks does not
     } }),
     viteReact(),
