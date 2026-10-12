@@ -1,4 +1,5 @@
 import { Highlight, type PrismTheme } from 'prism-react-renderer'
+import './prism-bash'
 import { Check, Copy } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 
@@ -19,6 +20,8 @@ const theme: PrismTheme = {
   ],
 }
 
+const LANG: Record<string, string> = { ts: 'typescript', sh: 'bash', shell: 'bash', zsh: 'bash', console: 'bash' }
+
 /** Page-level code block (marketing pages). Docs/blog code is highlighted by Shiki at build time instead. */
 export default function CodeBlock({ children, language = 'typescript', title }: { children: ReactNode; language?: string; title?: string }) {
   const code = String(children ?? '').replace(/\n$/, '')
@@ -28,7 +31,7 @@ export default function CodeBlock({ children, language = 'typescript', title }: 
     <div className="pk-code pk-code--page">
       {title && <div className="pk-code-title">{title}</div>}
       <button type="button" className="pk-code-copy" onClick={copy} aria-label={done ? 'Copied' : 'Copy code'}>{done ? <Check size={14} /> : <Copy size={14} />}</button>
-      <Highlight theme={theme} code={code} language={language === 'ts' ? 'typescript' : language}>
+      <Highlight theme={theme} code={code} language={LANG[language] ?? language}>
         {({ tokens, getLineProps, getTokenProps, style }) => (
           <pre style={{ ...style, margin: 0 }} tabIndex={0}>
             <code>
@@ -42,6 +45,20 @@ export default function CodeBlock({ children, language = 'typescript', title }: 
         )}
       </Highlight>
     </div>
+  )
+}
+/** Just the coloured tokens, for callers that bring their own <pre> (the feature-page hero panel). */
+export function Tokens({ code, language = 'bash' }: { code: string; language?: string }) {
+  return (
+    <Highlight theme={theme} code={code.replace(/\n$/, '')} language={LANG[language] ?? language}>
+      {({ tokens, getLineProps, getTokenProps }) => (
+        <>{tokens.map((line, i) => (
+          <span key={i} {...getLineProps({ line })} style={{ display: 'block' }}>
+            {line.map((t, k) => <span key={k} {...getTokenProps({ token: t })} />)}
+          </span>
+        ))}</>
+      )}
+    </Highlight>
   )
 }
 export { CodeBlock }

@@ -35,7 +35,7 @@ export function remarkMermaid() {
   }
 }
 
-/** ```bash npm2yarn  -> <PkgTabs npm yarn pnpm bun/> */
+/** ```bash npm2yarn  -> <Tabs> with one highlighted bash block per package manager */
 export function remarkPkgTabs() {
   const conv = (cmd: string, pm: 'yarn' | 'pnpm' | 'bun') =>
     cmd.split('\n').map((l) => {
@@ -51,9 +51,11 @@ export function remarkPkgTabs() {
     visit(tree, 'code', (node: any, index: number | undefined, parent: any) => {
       if (!node.meta || !/\bnpm2yarn\b/.test(node.meta) || !parent) return
       const npm = node.value
-      parent.children[index!] = jsx('PkgTabs', {
-        npm, yarn: conv(npm, 'yarn'), pnpm: conv(npm, 'pnpm'), bun: conv(npm, 'bun'),
-      })
+      // real `bash` code nodes inside the tabs, so Shiki highlights them at build time like every other block
+      const code = (pm: string, value: string) => jsx('TabItem', { value: pm, label: pm }, [{ type: 'code', lang: 'bash', meta: null, value }])
+      parent.children[index!] = jsx('Tabs', { groupId: 'package-manager' }, [
+        code('npm', npm), code('yarn', conv(npm, 'yarn')), code('pnpm', conv(npm, 'pnpm')), code('bun', conv(npm, 'bun')),
+      ])
     })
   }
 }

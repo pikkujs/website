@@ -2,7 +2,7 @@ import React from 'react';
 import Link from '@/components/site/Link';
 import useBrokenLinks from '@/components/site/useBrokenLinks';
 import Layout from '@/components/site/Layout';
-import CodeBlock from '@/components/site/CodeBlock';
+import CodeBlock, { Tokens } from '@/components/site/CodeBlock';
 import {
   BarChart3, RefreshCw, Zap, ShieldCheck, Clock, Database,
   Shield, Key, Lock, UserCheck, Layers, Variable, FileJson,
@@ -262,7 +262,7 @@ function HeroRenderer({ s }: { s: HeroSection }) {
         )}
 
         {s.right?.type === 'code' && (
-          <pre className={styles.heroCode}>{s.right.code}</pre>
+          <pre className={styles.heroCode} data-code-ink=""><Tokens code={s.right.code} language={s.right.language ?? 'bash'} /></pre>
         )}
       </div>
     </div>
