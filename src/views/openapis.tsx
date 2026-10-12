@@ -80,7 +80,7 @@ const PAGE_SIZE = 96;
 const CHIP_LIMIT = 14;
 
 export default function OpenApis(): React.ReactNode {
-  const url = useBaseUrl('/registry-data/openapis.json');
+  const url = useBaseUrl('/__data/openapis-browse.json');
   const [status, setStatus] = useState<Status>('loading');
   const [data, setData] = useState<Catalogue>({ apis: [], providers: [] });
   const [query, setQuery] = useState('');

@@ -1,36 +1,46 @@
-// Smoke test against a running origin: node scripts/smoke.mjs http://localhost:3000
-const base = process.argv[2] || 'http://localhost:3000'
-const EDGE = /s-maxage=31536000/
-const checks = [
-  ['/', 200, /text\/html/, /max-age=0.*s-maxage=31536000.*stale-while-revalidate.*stale-if-error/],
-  ['/developers', 200, /text\/html/, EDGE],
-  ['/docs/wiring/queue', 200, /text\/html/, EDGE],
-  ['/blog/2026/07/11/pikku-0.13', 200, /text\/html/, EDGE],
-  ['/payload/docs/wiring/queue.json', 200, /application\/json/, EDGE],
-  ['/search-index.json', 200, /application\/json/, EDGE],
-  ['/sitemap.xml', 200, /xml/, EDGE],
-  ['/addons', 200, /text\/html/, /s-maxage=3600.*stale-while-revalidate.*stale-if-error/],
-  ['/addons/airtable', 200, /text\/html/, /s-maxage=3600/],
-  ['/openapis', 200, /text\/html/, /s-maxage=3600/],
-  ['/registry-data/openapis.json', 200, /application\/json/, /s-maxage=3600/],
-  ['/favicon.ico', 200, /icon/, /max-age=86400/],
-  ['/fabric', 301, null, null, 'https://pikkufabric.com'],
-  ['/wires/bot', 301, null, null, '/wires/agent'],
-  ['/docs/wiring/queue/', 301, null, null, '/docs/wiring/queue'],
-  ['/no-such-page', 404, /text\/html/, /s-maxage=60/],
-  ['/docs/no-such-page', 404, /text\/html/, /s-maxage=60/],
-  ['/_redirects', 404, null, /s-maxage=60/],
-  ['/healthz', 200, /text\/plain/, /no-store/],
-]
+// Smoke test of dist/client under GitHub Pages semantics: node scripts/smoke.mjs [port]
+import fs from 'node:fs'
+import { startPagesServer } from './pages-server.mjs'
+
+const port = Number(process.argv[2] || 3009)
+const server = await startPagesServer({ port })
+const base = `http://localhost:${port}`
+const get = (p) => fetch(base + p, { redirect: 'manual' })
 let fail = 0
-const asset = (await (await fetch(base + '/')).text()).match(/\/assets\/[^"']+\.(?:js|css)/)?.[0]
-if (asset) checks.push([asset, 200, null, /max-age=31536000, immutable/])
-for (const [p, status, type, cc, loc] of checks) {
-  const r = await fetch(base + p, { redirect: 'manual' })
-  const got = { status: r.status, type: r.headers.get('content-type') ?? '', cc: r.headers.get('cache-control') ?? '', loc: r.headers.get('location') }
-  const ok = got.status === status && (!type || type.test(got.type)) && (!cc || cc.test(got.cc)) && (!loc || got.loc === loc)
+const check = async (name, p, status, test) => {
+  const r = await get(p); const body = r.status === 200 || r.status === 404 ? await r.text() : ''
+  const ok = r.status === status && (!test || test(body, r))
   if (!ok) fail++
-  console.log(ok ? 'ok  ' : 'FAIL', p, got.status, got.cc || '-', got.loc ?? '')
+  console.log(ok ? 'ok  ' : 'FAIL', String(r.status), p, '-', name)
 }
+const has = (s) => (b) => b.includes(s)
+const redirectPage = (to) => (b) => b.includes(`http-equiv="refresh" content="0; url=${to}"`) && b.includes(`rel="canonical"`) && b.includes('window.location.replace')
+
+await check('home', '/', 200, has('<h1'))
+await check('marketing', '/developers/', 200)
+await check('docs page', '/docs/wiring/queue/', 200)
+await check('blog post', '/blog/2026/07/11/pikku-0.13/', 200)
+await check('addon index', '/addons/', 200)
+await check('addon detail', '/addons/airtable/', 200, has('Airtable'))
+await check('openapi index', '/openapis/', 200)
+await check('openapi detail', '/openapis/1forge-com/', 200, has('1Forge'))
+await check('docs payload json', '/payload/docs/wiring/queue.json', 200)
+await check('catalogue data json', '/__data/openapis/1forge-com.json', 200)
+await check('browse data json', '/__data/openapis-browse.json', 200)
+await check('search index', '/search-index.json', 200)
+await check('sitemap', '/sitemap.xml', 200, (b) => !b.includes('<loc>https://pikku.dev/fabric</loc>') && !b.includes('/404<') && b.includes('<loc>https://pikku.dev/openapis/1forge-com</loc>'))
+await check('robots', '/robots.txt', 200)
+await check('CNAME', '/CNAME', 200, (b) => b.trim() === fs.readFileSync('dist/client/CNAME', 'utf8').trim())
+await check('.nojekyll', '/.nojekyll', 200)
+await check('no-slash dir redirects', '/docs/wiring/queue', 301)
+await check('redirect page /fabric', '/fabric/', 200, redirectPage('https://pikkufabric.com'))
+await check('redirect page /wires/bot', '/wires/bot/', 200, redirectPage('/wires/agent'))
+await check('redirect page api-reference', '/docs/api-reference/create/function/', 200, redirectPage('/api#app/function'))
+await check('unknown path -> 404.html', '/no-such-page/', 404, has('lost in the wiring'))
+await check('unknown docs page -> 404', '/docs/no-such/', 404, has('Page not found'))
+await check('unknown openapi slug -> 404', '/openapis/not-a-spec/', 404, has('Page not found'))
+await check('unknown addon slug -> 404', '/addons/not-an-addon/', 404, has('Page not found'))
+await check('404.html is not served as a page', '/404/', 404)
+server.close()
 console.log(fail ? `${fail} failed` : 'all passed')
 process.exit(fail ? 1 : 0)

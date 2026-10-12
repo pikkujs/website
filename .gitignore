@@ -36,3 +36,4 @@ npm-debug.log*
 
 # Impeccable critique snapshots
 /.impeccable
+/src/data/openapi-specs

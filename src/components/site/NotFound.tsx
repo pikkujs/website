@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
-/** 404. Static hosting serves this for any unknown path (wrangler not_found_handling "404-page"). */
+/** 404. GitHub Pages serves the prerendered copy (dist/client/404.html) for any unknown path. */
 export function NotFound() {
   return (
     <section className="nf">

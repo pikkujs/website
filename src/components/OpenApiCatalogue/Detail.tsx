@@ -145,7 +145,9 @@ export default function Detail({ spec }: { spec: Spec }): React.ReactNode {
      is the reader's to choose otherwise, and inventing one here would put a name
      in front of every function that the CLI never writes. */
   const ns = gen ? namespaceFor(gen.addon) : null;
-  const docs = spec.enrichment?.docsUrl ?? spec.docsUrl ?? spec.enrichment?.officialDocs;
+  const rawDocs = spec.enrichment?.docsUrl ?? spec.docsUrl ?? spec.enrichment?.officialDocs;
+  // some catalogue entries carry a bare host ("www.example.com/api"); without a scheme it is read as a relative link
+  const docs = rawDocs && !/^[a-z][a-z0-9+.-]*:/i.test(rawDocs) ? `https://${rawDocs}` : rawDocs;
   const summary = spec.description ? plain(spec.description) : undefined;
 
   /* The generated names are the page's subject; the spec's own operations are

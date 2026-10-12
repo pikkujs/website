@@ -1,5 +1,5 @@
 name: Branch
-run-name: Build, typecheck and link-gate the branch
+run-name: Build, typecheck and link-gate (no deploy)
 on:
   push:
     branches-ignore:
@@ -8,36 +8,20 @@ on:
 
 jobs:
   build:
-    name: Build, typecheck, link gate
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - run: npm ci --legacy-peer-deps
       - run: npm run sync-snippets
       - name: Sync registry (best effort)
-        run: npm run sync-registry || echo "registry sync failed, using vendored data"
-
+        run: npm run sync-registry || echo "registry sync failed, using the committed snapshot"
       - run: npm run typecheck
+      # includes the link gate
       - run: npm run build
-      - run: npm run check-links
-
-  image:
-    name: Docker build (no push)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max

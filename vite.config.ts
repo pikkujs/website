@@ -28,6 +28,16 @@ const contentPages = () => {
   return out
 }
 
+/** Every addon and OpenAPI detail page, so the prerender writes them (the browse tables are client-filled, the crawler cannot find them). */
+const catalogPages = () => {
+  const out: { path: string }[] = []
+  const readJson = (f: string) => JSON.parse(fs.readFileSync(path.resolve(import.meta.dirname, f), 'utf8'))
+  for (const a of readJson('src/data/addons.json').addons) out.push({ path: `/addons/${a.slug}` })
+  // same rule as specSlug in scripts/generate-registry.mjs
+  for (const a of readJson('public/registry/openapis.json').apis) out.push({ path: `/openapis/${String(a.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '')}` })
+  return out
+}
+
 /** These are only imported inside client effects; keep their chunks (mermaid alone is ~6 MB) out of the SSR bundle. */
 const CLIENT_ONLY = ['mermaid', 'react-apexcharts', 'apexcharts', 'asciinema-player', '@stackblitz/sdk']
 const clientOnly = (): Plugin => ({
@@ -43,16 +53,13 @@ export default defineConfig({
     port: 3005, strictPort: true,
   },
   resolve: { alias },
-  // bundle every dependency into dist/server so the production image needs no node_modules
-  ssr: { noExternal: true },
   plugins: [
     clientOnly(),
     fumadocsMdx((await import('./source.config.ts')) as any),
     tailwindcss(),
-    tanstackStart({ pages: [{ path: '/search-index.json' }, ...contentPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
+    tanstackStart({ pages: [{ path: '/search-index.json' }, { path: '/404' }, ...contentPages(), ...catalogPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
       failOnError: false, // vite-link-check is the gate: it names the source file, crawlLinks does not
-      // the catalogue (/addons, /openapis) is rendered by the Node server on request, everything else is prerendered
-      filter: ({ path }) => !/^\/(addons|openapis)(\/|$)/.test(path) } }),
+    } }),
     viteReact(),
     // order matters: both must run AFTER the prerender post-build
     feeds({ site: 'https://pikku.dev', title: 'Pikku Blog' }),
