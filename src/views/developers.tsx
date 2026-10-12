@@ -343,8 +343,8 @@ function RuntimesSection() {
                 width={20}
                 height={20}
                 sources={{
-                  light: `img/logos/${runtime.img.light}`,
-                  dark: `img/logos/${runtime.img.dark}`,
+                  light: `/img/logos/${runtime.img.light}`,
+                  dark: `/img/logos/${runtime.img.dark}`,
                 }}
               />
               {runtime.name}

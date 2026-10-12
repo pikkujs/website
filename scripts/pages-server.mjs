@@ -27,7 +27,9 @@ export function startPagesServer({ dir = 'dist/client', port = 3000 } = {}) {
       const index = path.join(abs, 'index.html')
       if (stat(index)?.isFile()) return send(200, index)
     }
-    send(404, path.join(root, '404.html'))
+    const nf = path.join(root, '404.html')
+    if (stat(nf)?.isFile()) return send(404, nf)
+    res.writeHead(404, { 'content-type': 'text/plain' }); res.end('Not found')
   })
   return new Promise((resolve) => server.listen(port, () => resolve(server)))
 }

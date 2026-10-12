@@ -42,7 +42,7 @@ export function PikkuCircularLayout({
       <div className={`relative z-10 flex flex-col items-center ${animate ? 'animate-chameleon-enter' : ''}`}>
         {centerNode ?? (
           <Image
-            sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }}
+            sources={{ light: '/img/pikku.png', dark: '/img/pikku.png' }}
             width={logoSize}
             height={logoSize}
             className="mx-auto"
