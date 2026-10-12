@@ -1,0 +1,180 @@
+---
+title: "Tree-Shaking and Filtering"
+sidebar_position: 2
+description: "How Pikku analyzes your wirings to ship a monolith, microservices or single functions from one codebase"
+---
+
+
+# Tree-Shaking and Filtering
+
+Pikku analyzes your wirings at build time to generate optimized entry points. This allows you to deploy the same codebase as a monolith, microservices, or individual functions without code changes.
+
+## How It Works
+
+When you run `pikku`, the CLI:
+
+1. **Scans your codebase** for `pikkuFunc` definitions and wirings (`wireHTTP`, `wireChannel`, `wireQueueWorker`, etc.)
+2. **Applies filters** based on CLI arguments (`--http-routes`, `--tags`, `--wires`)
+3. **Determines required services** by analyzing which services each filtered function uses
+4. **Generates a bootstrap** that imports only the needed functions, plus a services map marking only the services they need as required
+
+```typescript @snippet co-treeshake-wiring
+```
+
+### Deploying Everything
+
+```bash
+pikku
+```
+
+Generates a bootstrap that imports all three functions and marks the services they use — `kysely`, `auditLog`, `logger` — as required.
+
+### Deploying Filtered Subset
+
+```bash
+pikku --http-routes=/status
+```
+
+Generates a bootstrap that:
+- ✅ Imports only `getStatus`
+- ✅ Marks only the `logger` service as required
+- ❌ Does NOT import `getUserRecord` or `deleteUserRecord`
+- ❌ Does NOT require `kysely` or `auditLog`
+
+This means your health check endpoint has zero database connection overhead.
+
+## Filter Types
+
+### By Route
+
+```bash
+pikku --http-routes=/admin
+```
+
+Include only functions wired to routes matching `/admin`.
+
+### By Tags
+
+Tag your functions:
+
+```typescript @snippet co-treeshake-tags
+```
+
+Then filter:
+
+```bash
+pikku --tags=reports
+```
+
+### By Protocol Type
+
+```bash
+pikku --wires=http        # Only HTTP handlers
+pikku --wires=queue       # Only queue workers
+pikku --wires=http,queue  # Multiple types
+```
+
+### Combining Filters
+
+```bash
+pikku --http-routes=/admin --tags=payments
+```
+
+Filters are ANDed across categories and ORed within one: a function must match every category you filter on, and any one value inside a category is enough.
+
+## Service Loading
+
+Pikku analyzes which services your filtered functions actually use and writes the answer into `pikku-services.gen.ts` as `requiredSingletonServices` and `requiredWireServices`. Your services factory can then construct only what the deployment needs:
+
+### 1. Static Filtering (Recommended)
+
+When a build's filter set is fixed, only the services it needs have to exist:
+
+In your `services.ts`, import only what this deployment needs. A deployment whose functions only use the logger builds just the logger; the database (`kysely`) and audit services are never imported or loaded.
+
+### 2. Dynamic Filtering (For Shared Bundles)
+
+When you need one bundle to serve multiple filtered deployments, Pikku uses conditional loading:
+
+Read `requiredSingletonServices` from the generated `#pikku/pikku-services.gen.js` and only build what is flagged. Create the logger always; create the JWT service (dynamically importing `JoseJWTService` from `@pikku/jose`) only when `requiredSingletonServices.jwt` is true; create the database only when `requiredSingletonServices.kysely` is true; and return whichever services you built.
+
+The `pikkuServices` wrapper ensures type safety and proper integration with Pikku's service system.
+
+A deploy split regenerates this map **per unit**, so one `services.ts` sees a
+different map in every bundle and each unit constructs only what its own
+functions, middleware and permissions reach. A `services.ts` that constructs
+unconditionally opts out of that entirely: every unit builds every service, and
+the split costs bytes without saving any.
+
+Runtimes are split the same way. `wire.rpc.agent` is offered by every unit, but
+the agent runtime behind it is registered by `@pikku/core/agent` on import
+rather than named by the RPC primitive — so a unit that holds an agent bundles
+it and a unit that holds none does not, instead of every unit paying ~52 KB for
+a runtime it never calls.
+
+### Why This Isn't More Magical
+
+Unlike dependency injection frameworks like NestJS, Pikku:
+
+- **Doesn't use decorators or reflection** - Just static analysis of your code
+- **Doesn't automatically wire dependencies** - You explicitly declare what each function needs
+- **Doesn't have a runtime DI container** - Services are created once at startup, passed to functions
+
+This is intentional. It means:
+
+1. **Faster cold starts** - No reflection or decorator processing at runtime
+2. **Explicit dependencies** - Clear what each function needs
+3. **Better tree-shaking** - Bundlers can eliminate unused code
+4. **Simpler mental model** - No magic, just functions and imports
+
+## Architecture Evolution
+
+The same codebase can be deployed differently as your needs change:
+
+<BundleArchitecturesSection />
+
+### Phase 1: Monolith
+
+```bash
+pikku
+```
+
+Simple deployment, everything in one process.
+
+### Phase 2: Split Services
+
+```bash
+# Public API
+pikku --tags=public
+
+# Admin service
+pikku --tags=admin
+
+# Background workers
+pikku --wires=queue
+```
+
+Independent deployment and scaling per service.
+
+### Phase 3: Individual Functions
+
+```bash
+# One Lambda per critical endpoint
+pikku --http-routes=/users/:id --wires=http
+```
+
+Maximum isolation and optimization.
+
+**No code changes required.**
+
+## What Pikku Generates
+
+Pikku generates entry points with filtered imports. You then use your bundler of choice (esbuild, webpack, etc.) to create the final bundle.
+
+The generated bootstrap (`#pikku/pikku-bootstrap.gen.js`) imports only the
+filtered functions and registers them in Pikku's state. Your runtime entry point
+imports that bootstrap and hands the wired services to a runtime server:
+
+Start the server as usual: create the config and singleton services, import `#pikku/pikku-bootstrap.gen.js` (only the filtered functions are registered), then create a `PikkuExpressServer` with your config plus a `port` and `hostname` and the logger, and call `init()` and `start()`.
+
+The generated code is readable and straightforward - no magic.

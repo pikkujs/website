@@ -1,0 +1,714 @@
+---
+sidebar_position: 0
+title: Pikku CLI
+description: Code generation, scaffolding, and deployment tool
+---
+
+# Pikku CLI
+
+The Pikku CLI scans your codebase, analyzes your functions and wirings, and generates type-safe clients, entry points, schemas, and optimized bundles. It also scaffolds new code, manages function versioning, and deploys your project to cloud providers.
+
+## Quick Start
+
+```bash
+npx pikku
+```
+
+This reads your `pikku.config.json`, scans the configured source directories, and generates everything into your `.pikku/` output directory — types, schemas, wiring metadata, RPC maps, and more.
+
+## Commands
+
+### `pikku` / `pikku all`
+
+Generate all Pikku files (types, schemas, wirings, etc.). This is the default command.
+
+```bash
+npx pikku
+npx pikku all
+```
+
+**Filtering flags** (apply to `all`):
+
+| Flag                                          | Description                                                                                                                                           |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--filter`                                    | Named filter preset(s) from the `namedFilters` map in `pikku.config.json` (comma-separated)                                                           |
+| `--tags, -t` / `--exclude-tags`               | Include/exclude functions by tags (comma-separated)                                                                                                   |
+| `--wires` / `--exclude-wires`                 | Include/exclude wirings by category (comma-separated): `http`, `scheduler`, `trigger`, `channel`, `rpc`, `queue`, `mcp`, `cli`, `workflow`, `agent`, `gateway` |
+| `--directories, -d` / `--exclude-directories` | Include/exclude functions by directories (comma-separated)                                                                                            |
+| `--http-methods` / `--exclude-http-methods`   | Include/exclude HTTP routes by methods (comma-separated)                                                                                              |
+| `--http-routes` / `--exclude-http-routes`     | Include/exclude HTTP routes by route patterns (comma-separated)                                                                                       |
+| `--names, -n` / `--exclude-names`             | Include/exclude functions by name patterns (supports wildcards)                                                                                       |
+| `--target` / `--exclude-target`               | Include/exclude by deploy target (`serverless`, `server`)                                                                                             |
+| `--diff`                                      | On success, emit a structural diff of the generated `.pikku` meta as a `PIKKU_DIFF <json>` line on stdout. Only emitted on exit 0                       |
+| `--force-relative-imports`                    | Emit relative imports even when `packageMappings` would apply (used by per-unit deploy codegen)                                                       |
+
+```bash
+# Public HTTP API only
+npx pikku --tags public --wires http
+
+# Background workers only
+npx pikku --wires queue,scheduler
+
+# Specific routes
+npx pikku --http-routes /api/admin
+```
+
+### `pikku bootstrap`
+
+Generate only type files (setup phase). Useful when you need types before a full generation pass — for example, on first clone or in CI before the main build.
+
+```bash
+npx pikku bootstrap
+```
+
+### `pikku dev`
+
+Start a local development server with all services wired. Watch mode and hot module reload are on by default.
+
+```bash
+npx pikku dev
+npx pikku dev --port 8080        # Custom port (default: 3000)
+npx pikku dev --no-watch         # Disable file watching
+npx pikku dev --no-hmr           # Disable hot module reload
+npx pikku dev --coverage         # Collect V8 precise coverage in-process
+npx pikku dev --test             # Test mode: record service calls for scenario assertions
+npx pikku dev --model cheap:openai/gpt-5-nano   # Repoint model aliases for this run
+```
+
+### `pikku serve`
+
+Start a server using the bundled bun or node runner — no watch, no codegen. For running a built project.
+
+```bash
+npx pikku serve
+npx pikku serve --port 8080
+npx pikku serve --model cheap:openai/gpt-5-nano
+```
+
+Both commands own the full server lifecycle — creating services, starting, and shutting down. Hook into it with [lifecycle hooks](/docs/core-features/server-lifecycle) rather than writing your own entrypoint.
+
+### `pikku watch`
+
+Watch for file changes and regenerate automatically. Your generated types stay in sync as you write code.
+
+```bash
+npx pikku watch
+npx pikku watch --hmr   # Enable hot module reload for registered functions
+```
+
+### `pikku schemas`
+
+Generate JSON schemas for function input/output types.
+
+```bash
+npx pikku schemas
+```
+
+### Client Generation
+
+Generate type-safe clients for specific protocols:
+
+```bash
+npx pikku fetch          # HTTP fetch client
+npx pikku websocket      # WebSocket client
+npx pikku rpc            # RPC client wrappers
+npx pikku react-query    # TanStack React Query hooks from the RPC map
+npx pikku tanstack-start # TanStack Start server-function shim (makeApi)
+npx pikku realtime       # Typed realtime client (WebSocket + SSE helper)
+npx pikku queue-service  # Queue service wrapper
+npx pikku openapi        # OpenAPI specification from HTTP routes
+npx pikku nextjs         # Next.js backend and HTTP wrappers
+```
+
+Most of these require the corresponding output path to be set in `pikku.config.json` under `clientFiles` (e.g., `fetchFile`, `websocketFile`, `reactQueryFile`, `realtimeFile`, `tanstackStartFile`), and they skip silently when it isn't. `openapi` writes to `openAPI.outputFile` instead, and `tanstack-start` needs `rpcWiringsFile` because the shim imports the generated `PikkuRPC` class.
+
+### `pikku new`
+
+Scaffold new files from templates:
+
+```bash
+# Functions
+npx pikku new function myFunc                    # Default: sessionless
+npx pikku new function myFunc --type func        # Requires session
+npx pikku new function myFunc --type void        # No return value
+
+# Wirings
+npx pikku new wiring myRoute                     # Default: http
+npx pikku new wiring myRoute --type channel      # WebSocket channel
+npx pikku new wiring myRoute --type scheduler    # Cron job
+npx pikku new wiring myRoute --type queue        # Queue worker
+npx pikku new wiring myRoute --type mcp          # MCP resource
+npx pikku new wiring myRoute --type cli          # CLI command
+npx pikku new wiring myRoute --type trigger      # Event trigger
+
+# Middleware & Permissions
+npx pikku new middleware myAuth                   # Default: simple
+npx pikku new middleware myAuth --type factory    # Factory pattern
+npx pikku new permission myGuard                  # Default: simple
+npx pikku new permission myGuard --type factory   # Factory pattern
+
+# Addons
+npx pikku new addon my-integration
+npx pikku new addon my-integration --secret       # Include secret schema
+npx pikku new addon my-integration --variable     # Include variable definition
+npx pikku new addon my-integration --oauth        # OAuth2 credential + API service
+npx pikku new addon my-integration --credential apikey  # Per-user credential (apikey, bearer, or oauth2)
+npx pikku new addon my-integration --openapi ./spec.yaml  # Generate from OpenAPI spec
+npx pikku new addon my-integration --auth-config auth.json  # Override the spec's auth
+npx pikku new addon my-integration --mcp          # Expose functions as MCP tools
+npx pikku new addon my-integration --camel-case   # Convert snake_case to camelCase in schemas
+```
+
+`new addon` also takes `--display-name`, `--description`, `--category` (default `General`), `--dir/-d` to choose where the package lands, `--no-test` to skip the test harness, and `--no-build` to skip install + build. The package is created at `<scaffold.addonDir>/addon-<name>` (default: the current working directory).
+
+### `pikku app`
+
+Every app command lives here. An app is an entry in [`frontends`](/docs/pikku-cli/configuration#frontends).
+
+```bash
+npx pikku app new admin --serves staff --personas manager   # a second frontend, from the starter template
+npx pikku app list                                          # every app, where it lives, how it ships
+
+npx pikku app native init admin                  # package it as a desktop/mobile app
+npx pikku app native init admin --android --plugins store,biometric
+npx pikku app native add admin haptics           # add native plugins
+npx pikku app native upgrade admin               # re-apply the config to the project
+npx pikku app native check [name]                # compare native projects with the config, and apps with each other
+```
+
+`app new <slug>` requires `--serves <group>` and `--personas <ids>`, and takes `--template`, `--primary` and `--install` (default on). `app list` shows each app's directory, kind, who it serves, and for native apps the identifier, platforms, mode (`bundle`, `url`, `sidecar`) and plugins.
+
+`native init` takes `--desktop`, `--android` and `--ios` (platforms), `--identifier`, `--product-name`, `--url <origin>` (open a deployed server instead of bundling the UI), `--bundle-server` (ship the compiled server inside a desktop app) and `--plugins` (`store`, `dialog`, `clipboard-manager`, `os`, `notification`, `geolocation`, and the mobile-only `biometric`, `haptics`, `barcode-scanner`, `nfc`). With no platform flag you get desktop, Android and iOS, or desktop alone with `--bundle-server`. `native add <name> <plugins...>` takes the plugins as arguments. `native init` is safe to re-run. The flags are saved into `frontends.<name>.native`; every later command reads the config. See [Native Apps](/docs/deploy/native-apps).
+
+### `pikku enable`
+
+Enable Pikku features by setting `scaffold.<feature> = true` in `pikku.config.json`:
+
+```bash
+npx pikku enable rpc          # Enable public RPC endpoint
+npx pikku enable scenarios    # Enable scenario instrumentation functions
+npx pikku enable agent        # Enable public agent endpoints
+npx pikku enable workflow     # Enable workflow workers
+npx pikku enable events       # Enable the realtime events channel + SSE stream
+npx pikku enable remote-rpc   # Enable the remote internal RPC queue worker + HTTP endpoint
+npx pikku enable remote-jobs  # Enable the remote job inbox routes
+npx pikku enable webhook      # Enable the outgoing webhook delivery queue worker
+```
+
+Authentication is not part of the scaffold flag: it is declared on the function, its wiring, its scopes and its addon, and enforced there on every call.
+
+### `pikku versions`
+
+Manage function contract versioning. Tracks input/output schema hashes to detect breaking changes.
+
+```bash
+npx pikku versions init      # Initialize version manifest (versions.pikku.json)
+npx pikku versions init --force  # Overwrite existing manifest
+npx pikku versions check     # Validate contracts against manifest
+npx pikku versions update    # Update manifest with current hashes
+```
+
+### `pikku deploy`
+
+Deploy your Pikku project to cloud infrastructure.
+
+```bash
+npx pikku deploy plan                    # Show what will be created/updated/deleted
+npx pikku deploy plan --provider serverless  # Use a configured provider (default: cloudflare)
+npx pikku deploy apply                   # Execute the deployment
+npx pikku deploy apply --from-plan       # Deploy from existing plan output
+npx pikku deploy info                    # Show current deployment state
+```
+
+`plan` and `apply` accept `--provider/-p` (default: `cloudflare`), `--runtime node|bun` for the standalone provider (bundle.js vs compiled executable, default `node`), and `--result-file <path>` to write a structured JSON result. A standalone `--runtime bun` apply also installs the compiled binary into every native app with `native.bundleServer` set, as `src-tauri/binaries/<name>-<target triple>`. The trigger is the config, not a flag; there is no `--desktop` option. `info` takes `--provider`.
+
+**Providers:** `cloudflare` (default), `serverless`, `azure`, `standalone` — extendable via the `deploy.providers` map in `pikku.config.json`
+
+The deploy pipeline builds your project, tree-shakes per deployment unit, and provisions infrastructure (workers, queues, cron triggers, secrets) through the provider API.
+
+### `pikku info`
+
+Inspect your Pikku project (for a person to read; use `pikku meta` when tooling consumes the output):
+
+```bash
+npx pikku info                           # List all functions (default)
+npx pikku info functions                 # List all registered functions
+npx pikku info functions --verbose       # Include type, middleware, and file
+npx pikku info tags                      # List all tags with associated functions, middleware, and permissions
+npx pikku info middleware                # List all middleware definitions
+npx pikku info permissions               # List all permission definitions
+npx pikku info --limit 100               # Show more rows (default: 50)
+```
+
+`--limit` and `--verbose` work on the subcommands too.
+
+### `pikku doc`
+
+Print the API surface of the pikku installed here — the doors you import from,
+what each one exports, and how each export is called. The surface is computed when
+the CLI is built and shipped inside it, so what you get back is the version you
+actually have rather than whatever the docs last said.
+
+```bash
+npx pikku doc              # the index: every door, grouped by build step
+npx pikku doc http         # one door: what it exports, and how
+npx pikku doc wireHTTP     # one export: signature, config keys, examples
+npx pikku doc http queue   # several at once, in one call
+npx pikku doc --ai         # the same, plus the skill to load for each door
+npx pikku doc --addon      # the addon surface instead of the application one
+```
+
+`--ai` is the one to point a coding agent at: it names the skill that teaches each
+door, so an agent can load *how* only for the doors it needs, and the export list
+it reads is the installed version rather than something it remembers.
+
+The same content is published as the [SDK explorer](/api).
+
+### `pikku db`
+
+Local development database commands.
+
+```bash
+npx pikku db migrate    # Apply pending SQL migrations and regenerate db/schema.gen.ts
+npx pikku db generate   # Generate SQL migrations from detected schema changes
+npx pikku db check      # Report how the configured database differs from the schema its migrations define
+npx pikku db baseline   # Record pending migrations as applied, for a database that already has what they describe
+npx pikku db codegen    # Regenerate db/schema.gen.ts and db/zod.gen.ts, without connecting to a database
+npx pikku db export     # Publish this package's schema for addon consumers
+npx pikku db reset      # Wipe and recreate the dev database (migrate + seed)
+npx pikku db reset --no-seed  # Migrate only, leaving the database empty
+npx pikku db audit      # Report column classifications and flag columns with no anonymize strategy
+```
+
+`db export` is run from an addon's build, not an application's — see [Shipping Database Tables](/docs/addon/database).
+
+### `pikku binary`
+
+Compile a TypeScript entrypoint to a self-contained native binary via `bun build --compile`. Configure `binary.entrypoint`, `binary.output`, and `binary.targets` in `pikku.config.json`.
+
+```bash
+npx pikku binary
+npx pikku binary --compile-target bun-linux-x64
+```
+
+### `pikku skills`
+
+Install bundled agent skills (Claude Code, opencode, pi; Codex/Gemini coming soon).
+
+```bash
+npx pikku skills list                 # List bundled skills and which are installed
+npx pikku skills install              # Copy bundled skills into the project
+npx pikku skills install --agent opencode  # Target an agent (default: claude)
+npx pikku skills install --only pikku-wiring,pikku-http
+npx pikku skills install --core       # Only skills tagged installGroups: [core]
+npx pikku skills install --fabric     # Only skills tagged installGroups: [fabric]
+npx pikku skills install --client     # Only skills tagged installGroups: [client]
+npx pikku skills install --update     # Overwrite existing skills
+```
+
+When the target agent dispatches subagents, `--agent pi` also projects one agent
+definition per skill that declares an `agent:` block in its frontmatter. Skills
+without one are installed as instructions only: a reference skill has no
+post-condition to judge, and an agent whose acceptance is nothing is a subagent
+sent to read what its caller could have read itself.
+
+```bash
+npx pikku skills install --agent pi --agent-dir ~/.pi/agents
+npx pikku skills install --agent pi --agent-skill-dir .agents/skills
+npx pikku skills install --agent pi --agent-extensions guard,model-router
+```
+
+`--agent-dir` writes the projected agents somewhere other than beside the skills,
+for a host that discovers subagents from a global directory rather than from the
+repository. `--agent-skill-dir` tells those agents where the skills will end up,
+for a host that relocates them after installing. `--agent-extensions` belongs to
+whoever runs the agent rather than to the instructions it follows — a sandbox
+fences its writers and routes their model; the same skill on a developer's
+checkout needs neither.
+
+`skills install` also takes three flags for hosts that relocate or fence their agents: `--agent-extensions` (comma-separated extension paths every projected agent loads), `--agent-dir` (where to write projected agents, overriding the harness default), and `--agent-skill-dir` (the skill directory a projected agent points at).
+
+### `pikku meta`
+
+Inspect project metadata in machine-readable form (for planners and tooling).
+
+```bash
+npx pikku meta context     # Bulk project context in one call
+npx pikku meta clients     # Frontend-targeted metadata (exposed RPCs, workflows, channels)
+npx pikku meta apply ops.json  # Apply a batch of edits to your own source, all-or-nothing (or via stdin)
+
+npx pikku meta functions list
+npx pikku meta functions get myFunction
+npx pikku meta schemas list
+npx pikku meta schemas get mySchema
+npx pikku meta workflows list
+npx pikku meta workflows get myWorkflow
+npx pikku meta middleware list
+npx pikku meta middleware get myMiddleware
+npx pikku meta permissions list
+npx pikku meta permissions get myPermission
+npx pikku meta wires list
+npx pikku meta wires http        # also: scheduler, queue, channel, trigger
+npx pikku meta wires get http
+```
+
+### `pikku emails`
+
+Typed email template generation.
+
+```bash
+npx pikku emails init       # Scaffold emailTemplatesDir with starter locales, theme, partials
+npx pikku emails init --force  # Overwrite an existing email scaffold
+npx pikku emails generate   # Generate typed email renderers and metadata
+```
+
+Requires `emailTemplatesDir` in `pikku.config.json` (`emails init` writes it for you).
+
+### `pikku scenario`
+
+Run and inspect scenarios (`pikkuScenario`) against a configured environment. Environments live under `environments` in `pikku.config.json`; the actor secret comes from the `SCENARIO_ACTOR_SECRET` environment variable.
+
+```bash
+npx pikku scenario list                    # List scenarios with names and descriptions
+npx pikku scenario run staging             # Run all scenarios against the staging environment
+npx pikku scenario run staging --flows onboarding,checkout
+npx pikku scenario run staging --features checkout
+npx pikku scenario run staging --tags smoke
+npx pikku scenario run staging --exclude-tags slow
+npx pikku scenario run staging --run browser   # Drive each actor through 'browser', 'cli', or 'default'
+npx pikku scenario run staging --strict        # Fail a `then` with no witness for --run
+npx pikku scenario run local --spawn --keep-alive  # Start `pikku dev` for the run
+npx pikku scenario run local --coverage        # Per-scenario server coverage (target must run with --coverage)
+npx pikku scenario run staging --trace --screenshots --video all
+npx pikku scenario run staging --api-url https://sandbox.example.com --app-url https://app.example.com
+```
+
+`--video` takes `failed` (the default), `all`, or `off`. `--api-url` and `--app-url` override the environment for one run; `--app-url` also accepts `<app>=<url>` pairs for products whose personas sign into different frontends.
+
+`pikku scenario guide` writes the user guide your suite already contains, as markdown: each page's editorial prose merged with the steps and screenshots the latest run recorded.
+
+```bash
+npx pikku scenario guide
+npx pikku scenario guide --docs docs --output out/guide   # defaults: docs, <outDir>/guide
+npx pikku scenario guide --run-id <id>                    # build from a specific run
+npx pikku scenario guide --allow-undocumented             # report undocumented features instead of failing
+npx pikku scenario guide --artifact-base /docs/_media/    # prefix for figure paths
+```
+
+### `pikku examples`
+
+Worked examples of the things that are easy to get wrong and hard to discover. Read one, or write it into your project already renamed onto your own entity.
+
+```bash
+npx pikku examples list                    # Every example, with what it's for
+npx pikku examples list --group scenario   # Only names starting with this (-g)
+npx pikku examples show <name> --entity Order   # Print one, renamed onto your entity (-n, -e)
+npx pikku examples add --name <name> --entity Order   # Write it into this project
+npx pikku examples add --name <name> --app web        # --app / -a: which frontend a screen belongs to
+```
+
+### `pikku persona`
+
+The people this app is for, and running one against a real stage. Personas are declared in code with `definePersonas`; `persona secret` mints per-persona credentials from `SCENARIO_ACTOR_SECRET` (exported to a run as `PIKKU_PERSONA_SECRETS`).
+
+```bash
+npx pikku persona list
+npx pikku persona run staging susan            # Sign in as a persona and work the API in character
+npx pikku persona run staging susan --disposition careless --goals "find a cheaper plan"
+npx pikku persona run staging susan --model openai/gpt-5-mini --out run.json
+npx pikku persona sync staging                 # Report which personas an environment will provision
+npx pikku persona secret                       # Mint credentials for every persona
+npx pikku persona secret susan admin           # Just these two
+```
+
+`persona run` also takes `--steps` (default 40), `--mutations`, `--duration 30m`, `--seed`, `--allow-approval`, `--skip-role-check`, and `--api-url`.
+
+### `pikku audit`
+
+Audit dependencies for security advisories (always) and available updates (`--outdated`); writes `.pikku/audit.json`.
+
+```bash
+npx pikku audit
+npx pikku audit --outdated
+```
+
+### `pikku validate`
+
+Run every check that applies to this project — app structure, and the published file set of any addon it contains.
+
+```bash
+npx pikku validate
+```
+
+### `pikku dist`
+
+Copy the generated files `tsc` cannot emit — the `.gen.json` meta and hand-authored `.d.ts` — into the build output. Run it after `tsc`, as a package's build script.
+
+```bash
+npx pikku dist
+npx pikku dist --dist-dir dist/server  # Defaults to the tsconfig's compilerOptions.outDir
+```
+
+### `pikku update`
+
+Report which `@pikku/*` dependencies can be updated, and the peers those updates need. Reports only, until you pass `--update`.
+
+```bash
+npx pikku update            # report only
+npx pikku update --update   # actually write the new versions
+```
+
+`--update-peers` also writes the ranges unsatisfied peers require (implies `--update`), `--no-install` leaves `node_modules` alone, `--tag` picks a dist-tag (default `latest`), and `--registry` overrides the registry to read versions from.
+
+### `pikku semver`
+
+Derive a release's semver by comparing this build's surface against a deployed one, and write `.pikku/changes.gen.json`. Pass `--emit` to produce this build's snapshot instead of comparing it — publish that to serve as the next baseline.
+
+```bash
+npx pikku semver                      # compare against the deployed baseline
+npx pikku semver --against ./old-pikku  # baseline: a .pikku dir, a snapshot file, or a URL
+npx pikku semver --fail-on minor      # exit non-zero at or above this level
+npx pikku semver --emit --out surface.json   # publish a new baseline
+```
+
+### `pikku scopes` / `pikku roles`
+
+Inspect and maintain the authorization scopes declared with `defineScope` and the roles declared with `defineSystemRole`.
+
+```bash
+npx pikku scopes audit    # Report scopes in the database no longer declared in code, and the roles holding them
+npx pikku scopes prune    # Remove them — reports first, deletes with --yes
+npx pikku roles audit     # Report system roles in the database no longer declared in code, and how many people hold them
+npx pikku roles prune --yes
+```
+
+### `pikku examples`
+
+Worked examples of the things that are easy to get wrong and hard to discover. Read one, or write it straight into your project, already named for your own entity.
+
+```bash
+npx pikku examples list                       # Every example, with what each one is for
+npx pikku examples list --group scenario      # Only the examples whose name starts with "scenario"
+npx pikku examples show -n <name> -e <entity> # Print one example, renamed onto your entity
+npx pikku examples add -n <name> -e <entity>  # Write it into this project
+```
+
+`--entity` (`-e`) is the domain symbol the example's own entity is renamed onto, so a recipe written about an `order` comes out about your `invoice`. `show` prints it along with everything the recipe says about itself. `add` writes it into the project, or says what is in the way and writes nothing. In a project with more than one frontend, `--app` (`-a`) picks which one a screen belongs to.
+
+### `pikku knowledge`
+
+Inspect and maintain the knowledge base — what this app is, in the language its users use.
+
+The knowledge base is the `knowledge/` folder at your repo root: markdown notes (slices, entities, decisions, questions...) about what the app *means*, for whoever picks the project up next, human or agent. Pikku already knows every function, route and table from the generated meta, so the notes cover what a generator can't derive: why a rule was chosen, what it rules out, what's still unanswered. A note's `resource:` frontmatter (`func:revokeGrant, table:grant`) points at the code it's about, and each section keeps an `index.md` listing its notes. These commands keep all that honest. The layout, note fields and section meanings are in [Knowledge Base](/docs/core-features/knowledge).
+
+```bash
+npx pikku knowledge validate        # Check the knowledge base against the app-project profile
+npx pikku knowledge index           # Refresh every index.md to list the notes actually in it
+npx pikku knowledge index --check   # Report stale indexes without writing — a CI gate
+npx pikku knowledge gaps            # List notes no change builds yet
+npx pikku knowledge plan <...>      # A changeset's technical plan (below)
+```
+
+| Subcommand | What it does | Options |
+| --- | --- | --- |
+| `validate` | Checks the base against the app-project profile: every note typed, every section indexed, every slice gated, and every `resource:` still pointing at something that exists. Also lists code things (functions and so on) that no note describes ("orphans"). | none |
+| `index` | Rewrites each section's `index.md` so it lists the notes actually in it. Only the generated block is replaced; the prose around it is left alone. | `--check` (default `false`): report stale indexes without writing anything |
+| `gaps` | Lists notes that no change builds yet: new ones, ones edited since they were built, or ones merged with items deferred. Notes already filed as a change are left out. | none |
+| `plan` | See below | see below |
+
+All of them also take the global options (`--config/-c`, `--log-level/-l`, `--output text|json`).
+
+**Exit codes.**
+
+- `validate` exits `1` when it finds an error (the base contradicts itself). Warnings alone don't fail it. The orphans are reported as a single `PKU960` warning ("N things in the code that no note describes"), so `npx pikku knowledge validate --fail-on-warn` is how you make missing coverage fail a pipeline. Without it, orphans are just printed (the first ten, then "and N more").
+- `index --check` exits `1` if any index is stale and prints which files; plain `index` writes them and exits `0`.
+- `gaps` only reports. It reads the project's changes (the same store `pikku changes` uses), so it needs a project context to run.
+
+#### `pikku knowledge plan`
+
+A changeset's technical plan — the shape of the work, checked before it is built rather than after.
+
+```bash
+npx pikku knowledge plan schema                          # Print the plan schema
+npx pikku knowledge plan show <changeset>                # Print a changeset's plan
+npx pikku knowledge plan show <changeset> --for-build    # Render it as the ordered list of work
+npx pikku knowledge plan progress <changeset>            # What the changeset still owes its plan
+npx pikku knowledge plan set <changeset> <file>          # Validate a plan and write it
+npx pikku knowledge plan defer <changeset> <item> --reason "..."  # Move an item to the next pass
+```
+
+| Subcommand | Arguments | Options | What it does |
+| --- | --- | --- | --- |
+| `schema` | none | none | Prints the plan schema, so you write a plan against what is enforced rather than guessing. |
+| `show` | `<changeset>` | `--for-build` (default `false`): render as the ordered list of work a build follows, rather than as stored | Prints the changeset's plan. |
+| `progress` | `<changeset>` | none | Says what the changeset still owes its plan, read from the generated meta rather than from what was claimed. Output is grouped as DONE, MISSING, DEFERRED and PROBLEMS. |
+| `set` | `<changeset> <file>` | none | Validates the plan and writes it, or writes nothing and tells you what's wrong (and prints the schema). |
+| `defer` | `<changeset> <item>` | `--reason/-r`: why this item can't land in the first pass | Moves one first-pass item to the next pass with the reason on the record. |
+
+Exit codes: `progress` exits `1` until the plan's first pass is built, which is what a merge gate reads. A `MISSING` item can be built or deferred; a `PROBLEM` (it exists but does something else) is never deferred, you fix it. `set` and `defer` exit `1` when they refuse, and `show` exits `1` if there's no plan to show.
+
+### `pikku import`
+
+Import workflows from other systems.
+
+```bash
+npx pikku import n8n <file>          # A single export, an export array, or a directory of exports
+npx pikku import n8n workflow.json --out src/workflows
+```
+
+### `pikku login` / `pikku logout` / `pikku whoami`
+
+Authenticate the CLI against a Pikku server (device-authorization flow). Used by commands that talk to a running server.
+
+```bash
+npx pikku login                          # Default: http://localhost:3000
+npx pikku login --url https://api.example.com
+npx pikku login --client-id my-agent --scope "openid profile" --auth-path /auth
+npx pikku login --no-open                # Don't open the verification URL in a browser
+npx pikku whoami                         # Show the current CLI session
+npx pikku whoami --url https://api.example.com
+npx pikku logout                         # Remove a stored CLI session
+npx pikku logout --url https://api.example.com
+```
+
+### `pikku fabric`
+
+The PikkuFabric command group. Most commands take `--branch/-b` to pick the stage and `--api-url` to override the fabric-api URL for one call; `--json` gives machine-readable output where noted. [Deploying with Fabric](/docs/deploy/fabric) covers the workflow; this is the command map.
+
+| Command | What it does |
+|---|---|
+| `fabric login` | Authenticate against fabric-api. `--api-key`, `--token`, `--api-url`, `--console-url`, `--no-browser` (just print the link) |
+| `fabric init <repo>` | Adopt an existing git repo as a fabric project. `--name`, `--branch` (default `main`), `--organization`, `--force` (replace `fabric.config.json`), `--api-url` |
+| `fabric link` | Register the current repo as a project and queue an initial deploy. `--github`, `--gitea` (host it on fabric's git server), `--repo-name`, `--organization`, `--api-url` |
+| `fabric validate` | Check the project structure for fabric compatibility, with fix hints. `--skip-typecheck` |
+| `fabric smoke` | Clean-room smoke test in a temp worktree: install, codegen, migrate, check `pikku dev` starts. `--keep-temp`, `--timeout-seconds`, `--startup-timeout-seconds`, `--port` |
+| `fabric status` | Linked project status (active and in-flight deploy) |
+| `fabric projects` | Projects in your organization, with ids (works unlinked) |
+| `fabric deploy apply [branch]` | Build and deploy a branch or production. `--production`, `--ref`, `--deployment-id`, `--detach`, `--auto-approve/-y`, `--allow-destructive`, `--timeout` (seconds, default 900), `--json` |
+| `fabric deploy list` / `units` | Recent deployments / deployed worker units for a branch (`-b`) |
+| `fabric rollback <branch> [target]` | Roll live back to a previous artifact. `--list`, `--dry-run`, `--yes/-y` |
+| `fabric secrets set\|list\|delete\|rotate` | Stage-scoped secrets. `set <name>` takes `--value` (else prompts or reads stdin) and `--force`; `list` takes `--json`; `delete <name>` and `rotate` take `--force` |
+| `fabric variables set\|get <name>` | Stage-scoped variables. `set --value` is read as JSON when it parses; `get --json` |
+| `fabric domains list\|add\|remove` | Custom domains for production. `add <hostname> --target api\|app` (default `api`) |
+| `fabric db schema` | Live stage database schema (`-b`) |
+| `fabric logs` | Stream or fetch logs. `-b`, `--deployment`, `--level`, `--since` (e.g. `15m`), `--follow/-f`, `--json` |
+| `fabric metrics` | Request rate, error rate and latency. `-b`, `--hours` (default 24), `--function`, `--json` |
+| `fabric trace <traceId>` | Every event for one trace. `-b`, `--json` |
+| `fabric errors` | Recent error-level events with trace ids. `-b`, `--function` |
+| `fabric addon verify\|publish [dir]` | Check an addon directory is ready, then publish it to the community registry |
+| `fabric addon add <id>` | Install a registry addon into `addons/` (`--dir` overrides `addons.addonDir`) |
+| `fabric llm key` | Mint or reuse a developer-scoped Fabric AI gateway key. `--shell`, `--env`, `--json` |
+| `fabric report [title]` | Report a finding (something about pikku that cost you time). Takes `--kind product\|harness`, `--expected`, `--actual`, `--repro`, `--workaround`, `--proposal`, `--unresolved`, `--stdin` and more; see `pikku fabric report --help` |
+| `fabric findings list\|flush\|clear` | Findings held locally because they couldn't be sent: list, send, or discard them |
+
+#### `pikku fabric changes`
+
+The todo list filed from inside a deployed stage. Read what's open, file what was decided elsewhere, claim a batch, ask what you need to know, and tick items off.
+
+```bash
+npx pikku fabric changes list                         # Open changes, grouped the way they'll be worked
+npx pikku fabric changes show --change-id <id>        # One change with its thread and circled elements
+npx pikku fabric changes file --title "Group totals" --route /checkout
+npx pikku fabric changes claim --change-ids a,b --title "Checkout polish"
+npx pikku fabric changes ask --change-id <id> --question "Reprice them?" --option "Reprice" --option "Leave"
+npx pikku fabric changes shot --change-id <id> --label "Grouped totals" --image shot.png
+npx pikku fabric changes done --change-id <id> --note "Fixed in the totals row"
+```
+
+| Subcommand | Options |
+|---|---|
+| `list` | `--project-id/-p`, `--stage-id`, `--route`, `--group-id`, `--pickup-only`, `--include-done`, `--limit` (default 50, max 200) |
+| `show` | `--change-id` |
+| `file` | `--project-id/-p`, `--stage-id`, `--branch`, `--title/-t`, `--body`, `--body-file`, `--route`, `--locale` |
+| `claim` | `--project-id/-p`, `--group-id`, `--change-ids`, `--title`, `--claimed-by`, `--lease-minutes` (default 30) |
+| `ask` | `--change-id`, `--question/-q`, `--option` (repeatable), `--author-name` |
+| `shot` | `--change-id`, `--label`, `--image` or `--image-base64`, `--content-type`, `--kind option\|evidence` (default `option`), `--author-name` |
+| `done` | `--change-id`, `--branch`, `--head-commit`, `--note`, `--author-name` |
+
+Every `changes` subcommand also accepts `--api-url`.
+
+## Global Options
+
+These flags work with any command:
+
+| Flag                                | Description                                                                                                          |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `--config, -c`                      | Path to `pikku.config.json` file                                                                                     |
+| `--log-level, -l`                   | Set log level (default: `info`)                                                                                      |
+| `--output`                          | Output format: `text` (default) or `json` (emits NDJSON)                                                             |
+| `--json, -j`                        | Alias for `--output json`                                                                                            |
+| `--out-dir, -o`                     | Override output directory                                                                                            |
+| `--user-session-type`               | Specify which UserSession type to use (when multiple exist)                                                          |
+| `--singleton-services-factory-type` | Specify which singleton services factory to use                                                                      |
+| `--wire-services-factory-type`      | Specify which wire services factory to use                                                                           |
+| `--state-output`                    | Save inspector state to JSON file for reuse                                                                          |
+| `--state-input`                     | Load inspector state from JSON (skips inspection)                                                                    |
+| `--security`                        | Run the data-classification security lint (scans function return types for Private/Pii/Secret leaks). Off by default |
+| `--fail-on-error`                   | Fail the build on error-severity diagnostics (default: only critical fail)                                           |
+| `--fail-on-warn`                    | Fail the build on warn-severity diagnostics (implies `--fail-on-error`)                                              |
+| `--fail-on-critical`                | Fail the build on critical diagnostics. Always on; accepted for symmetry with the two above                          |
+| `--strict-meta`                     | Fail when an AI agent's tool has no description — a quality gate, off by default. A `title` does not satisfy it      |
+| `--tsc`                             | After codegen, run a real `tsc --noEmit` and fail on type errors (full diagnostics with code frames)                 |
+| `--tsc-summary`                     | Like `--tsc` but prints a compact one-line-per-error summary — cheap for CI and AI agents                            |
+
+## Common Workflows
+
+### Development
+
+```bash
+# Run the whole platform locally
+npx pikku dev
+
+# Or just watch mode with hot reload, no server
+npx pikku watch --hmr
+```
+
+### CI / Production Build
+
+```bash
+npx pikku
+```
+
+### Deploy
+
+```bash
+# Preview what will change
+npx pikku deploy plan
+
+# Ship it
+npx pikku deploy apply
+```
+
+### Filter by Environment
+
+```bash
+# Public API only
+npx pikku --tags public --wires http
+
+# Admin service
+npx pikku --tags admin --http-routes /admin
+
+# Background workers
+npx pikku --wires queue,scheduler
+```
+
+### Monorepo with Shared SDK
+
+```json
+{
+  "clientFiles": {
+    "fetchFile": "packages/sdk/pikku-fetch.gen.ts",
+    "websocketFile": "packages/sdk/pikku-websocket.gen.ts"
+  },
+  "packageMappings": {
+    "packages/sdk": "@my-app/sdk"
+  }
+}
+```
+
+## Next Steps
+
+- **[Configuration](/docs/pikku-cli/configuration)** — Configure `pikku.config.json` for your project
+- **[Tree-Shaking](/docs/pikku-cli/tree-shaking)** — Learn how filtering and tree-shaking work
+- **[Errors](/docs/pikku-cli/errors)** — CLI error code reference
+- **[SDK](/api)** — What `pikku doc` prints, as a page you can navigate

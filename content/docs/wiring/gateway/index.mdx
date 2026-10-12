@@ -1,0 +1,175 @@
+---
+sidebar_position: 0
+title: Introduction
+description: Multi-platform messaging integrations
+ai: true
+---
+
+# Gateway
+
+Gateways are a meta-wiring for messaging platform integrations. They provide a normalized interface for building chatbots and messaging handlers that work across multiple platforms — WhatsApp, Slack, Telegram, WebChat, and more — without platform-specific boilerplate.
+
+Your handler function receives the same `GatewayInboundMessage` regardless of which platform sent the message. Pikku normalizes inbound messages, routes them through your middleware, calls your function, and auto-sends responses via the platform's API.
+
+:::tip[Ready-made adapters]
+For Slack you don't need to write an adapter — [`@pikku/gateway-slack`](/docs/wiring/gateway/slack) ships one with OAuth, slash commands, and signature verification built in.
+:::
+
+## Your First Gateway
+
+Here's a WhatsApp webhook gateway:
+
+```typescript @snippet wb-gateway-handler
+```
+
+```typescript @snippet wb-gateway-webhook
+```
+
+Pikku automatically:
+- Registers POST and GET HTTP routes for the webhook
+- Handles webhook verification challenges on both GET and POST (e.g., WhatsApp's GET challenge, Slack's POST-based `url_verification`)
+- Parses inbound messages via the adapter
+- Calls your handler function with normalized data
+- Auto-sends responses back via the platform's API
+
+## Transport Types
+
+Gateways support three transport mechanisms:
+
+### Webhook
+
+The platform POSTs messages to your application. This is the most common pattern for cloud APIs like WhatsApp Cloud API, Slack Events API, and Telegram Bot API.
+
+```typescript @snippet wb-gateway-webhook
+```
+
+Pikku registers both a `POST` route (message receiver) and a `GET` route (webhook verification) at the given path. The adapter's `verifyWebhook` method handles platform-specific verification challenges automatically — on both GET (e.g., WhatsApp challenge) and POST (e.g., Slack `url_verification`).
+
+### WebSocket
+
+Clients connect via WebSocket for real-time messaging. Ideal for embedded web chat widgets and browser-based messaging.
+
+```typescript @snippet gatewayWebsocket
+```
+
+Internally, this uses Pikku's Channel wiring. The adapter normalizes WebSocket messages into the same `GatewayInboundMessage` format, and responses are sent back through the WebSocket connection.
+
+### Listener
+
+A standalone event loop with no HTTP routes. Used for platforms that require a persistent client connection — like Baileys (WhatsApp via phone), Signal CLI, or Matrix sync.
+
+```typescript @snippet wb-gateway-listener
+```
+
+Listener gateways are started via the `GatewayService`. The adapter's `init()` method establishes the connection and calls your handler for each incoming message.
+
+## The GatewayAdapter Interface
+
+Each platform needs an adapter that normalizes messages and handles sending:
+
+An adapter implements these members:
+
+| Member | Purpose |
+|--------|---------|
+| `name` | Platform name (for example `'whatsapp'`, `'slack'`, `'telegram'`) |
+| `parse(data)` | Turns a platform-specific payload into a normalized `GatewayInboundMessage`. Return `null` to ignore it (delivery receipts, for example) |
+| `send(senderId, message)` | Sends a message to a specific sender via the platform's API |
+| `init(onMessage)` | Starts the adapter (listener gateways). Call `onMessage` for each incoming event |
+| `close()` | Tears the adapter down |
+| `verifyWebhook(data, request?)` | Optional, webhook type only. Handles verification challenges and returns a `WebhookVerificationResult` |
+
+Here's a complete (if minimal) adapter, for a web chat. A real platform adapter fills in `parse`, `send` and `verifyWebhook` against that platform's API:
+
+```typescript @snippet gatewayAdapter
+```
+
+## Adapter Factories
+
+`wireGateway` runs at module load, but real platform adapters usually need secrets or services that only exist after your app boots — the WhatsApp access token, a Slack signing secret, a database connection. Instead of an adapter instance, pass a factory that receives your singleton services:
+
+```typescript @snippet wb-gateway-adapter-factory
+```
+
+The factory type is `(services) => GatewayAdapter | Promise<GatewayAdapter>`. It's resolved lazily — on the first inbound request for webhook and websocket gateways, or on gateway start for listeners — and cached for the lifetime of the gateway. Concurrent first requests share a single construction.
+
+:::note[Verify route is always registered]
+For a factory adapter, Pikku can't know whether the adapter implements `verifyWebhook` until the factory first runs, so the GET verification route is registered unconditionally. If the resolved adapter has no `verifyWebhook`, the route responds with `{ error: 'Verification not supported' }`.
+:::
+
+## Message Types
+
+### GatewayInboundMessage
+
+The normalized message your handler receives:
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `senderId` | `string` | Platform-specific sender ID |
+| `text` | `string` | Message text content |
+| `raw` | `unknown` | Original platform payload |
+| `attachments` | `GatewayAttachment[]` | Files, images and so on (optional) |
+| `metadata` | `Record<string, unknown>` | Platform-specific metadata (optional) |
+
+### GatewayOutboundMessage
+
+The message you return from your handler (auto-sent via the adapter):
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `text` | `string` | Plain text response (optional) |
+| `richContent` | `Record<string, unknown>` | Platform-specific rich content (optional) |
+| `attachments` | `GatewayAttachment[]` | Files, images and so on (optional) |
+
+### GatewayAttachment
+
+File and media attachments shared by both inbound and outbound messages:
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `type` | `string` | Attachment type (for example `'image'`, `'document'`) |
+| `url` | `string` | URL to the file (optional) |
+| `data` | `ArrayBuffer \| Uint8Array` | Raw file data (optional) |
+| `mimeType` | `string` | MIME type (for example `'image/png'`), optional |
+| `filename` | `string` | Original filename (optional) |
+
+If your handler returns an outbound message with `text`, `richContent`, or `attachments`, Pikku automatically calls `adapter.send()` to deliver it.
+
+## The wire.gateway Object
+
+Inside your handler and middleware, `wire.gateway` provides context about the current gateway:
+
+- `gateway.gatewayName`: the name you gave the gateway (for example `'whatsapp'`)
+- `gateway.senderId`: the sender's ID
+- `gateway.platform`: the adapter's `name`
+- `gateway.send(msg)`: send a proactive message
+
+Use `wire.gateway.send()` when you need to send additional messages beyond the auto-sent return value.
+
+## Middleware and Permissions
+
+Gateways support the full middleware system. Permissions are not a gateway
+option — declare them on the handler function itself with
+`pikkuFunc({ …, permissions })`:
+
+```typescript @snippet wb-gateway-middleware
+```
+
+Middleware receives `wire.gateway`, so you can write gateway-aware middleware. The `rateLimit` middleware in the snippet above reads `wire.gateway`, so it knows which platform and sender it's dealing with. It can answer directly with `wire.gateway.send()` and skip the handler by not calling `next()`.
+
+## GatewayService for Listeners
+
+Listener gateways need to be started explicitly. The `GatewayService` manages their lifecycle:
+
+```typescript @snippet wb-gateway-service
+```
+
+`LocalGatewayService` iterates over all registered listener gateways, calls `adapter.init()` with the message handler, and manages cleanup on shutdown.
+
+## Multiple Gateways
+
+Register as many gateways as you need — they all share the same handler function:
+
+```typescript @snippet wb-gateway-multiple
+```
+
+Your handler function stays the same — the adapter normalizes platform differences. Use `wire.gateway.platform` if you need platform-specific behavior. See the [`#pikku/gateway` door in the SDK explorer](/api#app/gateway) for every export on the door.

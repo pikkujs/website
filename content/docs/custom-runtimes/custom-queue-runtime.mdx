@@ -1,0 +1,60 @@
+---
+icon: queue
+title: Custom Queue Runtime
+image: /img/logos/custom-light.svg
+hide_title: true
+description: "Build a queue runtime from a QueueService and QueueWorkers"
+---
+
+<DocHeaderHero title={frontmatter.title} image={frontmatter.image} />
+
+Creating a custom queue runtime in Pikku involves implementing two classes: `QueueService` for job publishing and `QueueWorkers` for job processing. Here's how to build one using pg-boss as an example.
+
+## Implementation Pattern
+
+### 1. Create Your QueueService Implementation
+
+Handle job publishing and retrieval:
+
+Source: [`PgBossQueueService`](https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/pg-boss-queue-service.ts)
+
+### 2. Create Your QueueWorkers Implementation
+
+Handle job processing and worker lifecycle:
+
+Source: [`PgBossQueueWorkers`](https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/pg-boss-queue-worker.ts)
+
+### 3. Create Mapping Utilities
+
+Convert between Pikku types and your queue library:
+
+Source: [`pg-boss Utils`](https://github.com/pikkujs/pikku/blob/main/packages/services/queue-pg-boss/src/utils.ts)
+
+## Key Implementation Requirements
+
+### Job Execution
+
+All queue implementations must call `runQueueJob()` to execute jobs:
+
+In your worker processor, call `runQueueJob` from `@pikku/core/queue` with the job (a `QueueJob`: `{ id, queueName, data, ... }`) and, optionally, an `updateProgress` callback to report progress back to the queue. Singleton services are resolved from Pikku's global state, which the bootstrap import sets up.
+
+### Worker Registration
+
+Use the registration helper to validate and register workers:
+
+Source: [`Queue Registration Helper`](https://github.com/pikkujs/pikku/blob/main/packages/core/src/wirings/queue/register-queue-helper.ts)
+
+### Configuration Mapping
+
+Define supported and unsupported configurations:
+
+The mapping is a `QueueConfigMapping` with two parts, shown here for pg-boss:
+
+| Part | Pikku option | Maps to |
+| --- | --- | --- |
+| `supported` | `batchSize` | pg-boss `teamSize` |
+| `supported` | `pollInterval` | pg-boss `intervalSeconds` (the polling interval) |
+| `unsupported` | `lockDuration` | "Managed internally by pg-boss" |
+| `unsupported` | `visibilityTimeout` | "Uses PostgreSQL locks instead" |
+
+The `unsupported` entries carry the explanation shown to users who set those options.

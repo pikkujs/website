@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+@import '@pikku/theme-brand/tailwind-theme.css';
+@import '@pikku/theme-brand/fonts.css';
+@import '@pikku/theme-brand/tokens.css';
+@import '@pikku/theme-brand/utilities.css';
+@import './styles/tokens.css';
+@import './styles/base.css';
+@import './styles/prose.css';
+@import './styles/shell.css';
+@import './styles/anim.css';
+@import './styles/studio.css';
+@import './styles/docs.css';
+
+@source '../packages/brand/src';
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

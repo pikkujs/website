@@ -1,0 +1,46 @@
+---
+title: "PKU571: Route Param Mismatch"
+---
+# PKU571: Route Param Mismatch
+
+## Error Message
+
+```
+[PKU571] Route '/todos/:todoId' has path parameter(s) [todoId] not found in function 'getTodo' input type. Input type has: [id]
+```
+
+## What Went Wrong
+
+Your HTTP route declares a path parameter (the `:todoId` segment) that doesn't exist as a property on the wired function's input type. Pikku maps each `:param` in the route onto a same-named field of the input object — if the names don't line up, the function would receive `undefined` for that field on every request. The CLI catches this at build time by comparing the route pattern against the function's input type (or its schema).
+
+## How to Fix
+
+Make the path parameter name and the input property name match — change whichever side is wrong.
+
+### If the route is wrong
+
+In the broken version the function's input has a field named `id` while the route declares `:todoId`, so the two never line up.
+
+The route's `:itemId` segment has to match the `itemId` field on `getItem`'s input:
+
+```typescript @snippet httpSingleRoute
+```
+
+### If the input type is wrong
+
+To keep the route as it is, rename the input property instead: a route of `/todos/:todoId` needs an input field named `todoId`.
+
+## HTTP Route Best Practices
+
+- Name path params after the input field, not the other way around — the input type is shared by every transport the function is wired to.
+- Keep params primitive (string/number); nested objects belong in the body.
+- After renaming an input field, re-run `pikku all` — this check is exactly what catches stale routes.
+
+## Common Mistakes
+
+Casing counts. A route of `/users/:userID` against an input field named `userId` is a mismatch.
+
+## Related Errors
+
+- [PKU572: Route Query Mismatch](/docs/pikku-cli/errors/pku572) — the same check for query parameters
+- [PKU573: Auth Disabled Requires Sessionless](/docs/pikku-cli/errors/pku573) — another build-time route validation

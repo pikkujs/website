@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
-import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
-import CodeBlock from '@theme/CodeBlock';
-import { PaperPage, Section, Wrap, H1, Lead, CodeCard } from '@site/src/components/PaperLayout';
-import { Mark, wall } from '@site/src/components/Catalogue/Wall';
-import addons from '@site/src/components/AddonCatalogue/catalogue.module.css';
+import Layout from '@/components/site/Layout';
+import Link from '@/components/site/Link';
+import CodeBlock from '@/components/site/CodeBlock';
+import { PaperPage, Section, Wrap, H1, Lead, CodeCard } from '@/components/PaperLayout';
+import { Mark, wall } from '@/components/Catalogue/Wall';
+import addons from '@/components/AddonCatalogue/catalogue.module.css';
 import styles from './openapi-detail.module.css';
 
 /** One operation as the spec declares it. */
@@ -145,7 +145,9 @@ export default function Detail({ spec }: { spec: Spec }): React.ReactNode {
      is the reader's to choose otherwise, and inventing one here would put a name
      in front of every function that the CLI never writes. */
   const ns = gen ? namespaceFor(gen.addon) : null;
-  const docs = spec.enrichment?.docsUrl ?? spec.docsUrl ?? spec.enrichment?.officialDocs;
+  const rawDocs = spec.enrichment?.docsUrl ?? spec.docsUrl ?? spec.enrichment?.officialDocs;
+  // some catalogue entries carry a bare host ("www.example.com/api"); without a scheme it is read as a relative link
+  const docs = rawDocs && !/^[a-z][a-z0-9+.-]*:/i.test(rawDocs) ? `https://${rawDocs}` : rawDocs;
   const summary = spec.description ? plain(spec.description) : undefined;
 
   /* The generated names are the page's subject; the spec's own operations are

@@ -1,0 +1,45 @@
+/* GENERATED from tokens.css by scripts/gen-tailwind-theme.mjs, do not edit.
+   Import after tailwindcss. Declares the names so utilities exist; tokens.css (imported by the site) stays the single source of values. */
+@theme {
+  --color-paper: #f4ecdd;
+  --color-paper2: #ebdfc8;
+  --color-card: #fbf6ec;
+  --color-ink: #2b2219;
+  --color-soft: #5f5143;
+  --color-clay: #c2410c;
+  --color-claydeep: #9a3412;
+  --color-moss: #55703c;
+  --color-ochre: #b97d12;
+  --color-slate: #3d6373;
+  --color-rose: #a8485f;
+  --color-cloudwash: #f1d9c4;
+  --color-night: #15110d;
+  --color-night2: #1b1814;
+  --color-night3: #1d1812;
+  --color-cream: #ece3d0;
+  --color-mute: #b3a690;
+  --color-faint: #6f6555;
+  --color-ember: #e0a06a;
+  --font-display: 'Fraunces', 'Fraunces Fallback', Georgia, serif;
+  --font-hand: 'Caveat', cursive;
+  --font-body: 'Work Sans', 'Work Sans Fallback', system-ui, sans-serif;
+  --color-paper: #15110d;
+  --color-paper2: #2a221b;
+  --color-card: #1e1813;
+  --color-ink: #ece3d0;
+  --color-soft: #b3a690;
+  --color-clay: #e0a06a;
+  --color-claydeep: #e0a06a;
+  --color-moss: #8daa69;
+  --color-ochre: #c39138;
+  --color-slate: #7a9094;
+  --color-rose: #d78796;
+  --color-cloudwash: #452212;
+  --color-faint: #6f6555;
+  --color-night: #15110d;
+  --color-night2: #1e1813;
+  --color-night3: #2a221b;
+  --color-cream: #ece3d0;
+  --color-mute: #b3a690;
+  --color-ember: #e0a06a;
+}

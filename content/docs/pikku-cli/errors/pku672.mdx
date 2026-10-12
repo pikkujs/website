@@ -1,0 +1,40 @@
+---
+title: "PKU672: CLI Client-Side Renderer Has Services"
+---
+# PKU672: CLI Client-Side Renderer Has Services
+
+## Error Message
+
+```
+[PKU672] Cannot generate CLI channel client for 'todos-cli': renderers cannot depend on services (client-side execution)
+  - renderTodoTable depends on: database, logger
+
+Renderers used in CLI-over-channel must be service-free since they execute on the client.
+```
+
+## What Went Wrong
+
+You're generating a client for a CLI program that runs over a channel (the CLI-over-channel mode, where commands execute on the server and output is rendered locally). One of your renderers destructures services — but renderers in this mode run **on the client machine**, where server services like `database` simply don't exist. Pikku aborts client generation (and deletes any stale generated client) rather than shipping a client that would crash.
+
+## How to Fix
+
+
+A renderer that destructures `database` or `logger` from services and queries data is the broken shape.
+
+Keep the renderer to pure presentation: it takes the data the command returned and formats it.
+
+```typescript @snippet cliRenderer
+```
+
+If a renderer genuinely needs server data, return that data from the command function so it arrives over the channel.
+
+## CLI Best Practices
+
+- Treat renderers like React components: props in (the command output), pixels out — no I/O.
+- Keep everything the renderer needs on the command's output type; that contract is what travels over the channel.
+- Logging in renderers should use plain `console`, not the server `logger` service.
+
+## Related Errors
+
+- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — the same client-side rule applied to scenarios
+- [PKU410: Services Not Destructured](/docs/pikku-cli/errors/pku410) — how the inspector tracks service usage

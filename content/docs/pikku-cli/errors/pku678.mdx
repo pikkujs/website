@@ -1,0 +1,49 @@
+---
+title: "PKU678: Scenario Step Target Not Static"
+---
+# PKU678: Scenario Step Target Not Static
+
+## Error Message
+
+```
+[PKU678] Scenario 'checkoutFlow' calls step 'adds the item' with a target that isn't a string literal. A step target must be statically resolvable so it can be bundled, typed and drawn — loop over data sets instead of computing the step name.
+```
+
+## What Went Wrong
+
+A scenario step's *target* — the second argument, naming the step function to run — is a computed expression rather than a string literal.
+
+Pikku extracts scenarios by reading the source, not by running it. The step target is what tells the CLI which function to bundle into the scenario's runner, which input and output types to check the call against, and which node to draw in the scenario graph. A computed name is unavailable at build time, so all three fall through: the step can't be bundled, the call can't be typed, and the flow can't be drawn.
+
+This nearly always comes from trying to parameterise the *step* when the intent was to parameterise the *data*.
+
+## How to Fix
+
+
+Keep the target a string literal and vary the data instead. Loop over a constant list of data sets with a plain `for...of`, passing a computed step *name* (for example `` `adds ${item.label}` ``) but a literal target such as `'addToCart'` and `{ sku: item.sku }` as the data.
+
+The step name (first argument) is narrative text and may be built at runtime. Only the target must be a literal.
+
+### If you genuinely need different steps
+
+
+Branch explicitly, so each target is still a literal: an `if (paymentMethod === 'card')` arm that calls `'payByCard'` and an `else` arm that calls `'payByInvoice'`.
+
+Or, better, write two scenarios — one story per flow reads better than one flow with a switch in it.
+
+## Scenario Best Practices
+
+- Treat the step target as part of the scenario's structure, not its data; structure is static, data varies.
+- Loop over data sets to cover variations; branch only when the *shape* of the flow genuinely differs.
+- Keep the computed part in the step name so the report still reads specifically ("adds espresso", not "adds item").
+- Re-run `npx pikku prebuild` after adding steps — targets are resolved at generation time.
+
+## Common Mistakes
+
+The wrong shape builds the target at runtime, for example `` `add${capitalize(item.kind)}ToCart` ``, so nothing can be resolved at build time.
+
+## Related Errors
+
+- [PKU679: Scenario Not Extractable](/docs/pikku-cli/errors/pku679) — the whole scenario failed to extract
+- [PKU677: Scenario Browser Step Needs Actor](/docs/pikku-cli/errors/pku677) — a browser step called without an actor
+- [PKU641: Invalid DSL Workflow](/docs/pikku-cli/errors/pku641) — DSL workflow extraction rules

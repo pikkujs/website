@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
-import CodeBlock from '@theme/CodeBlock';
-import { PaperPage, Section, Wrap, H1, Lead, CodeCard } from '@site/src/components/PaperLayout';
-import { Mark, wall } from '@site/src/components/Catalogue/Wall';
+import Layout from '@/components/site/Layout';
+import Link from '@/components/site/Link';
+import CodeBlock from '@/components/site/CodeBlock';
+import { PaperPage, Section, Wrap, H1, Lead, CodeCard } from '@/components/PaperLayout';
+import { Mark, wall } from '@/components/Catalogue/Wall';
 import type { AddonEntry } from './Browse';
 import styles from './catalogue.module.css';
 

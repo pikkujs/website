@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+
+# One deploy at a time; let a running deploy finish rather than cancelling it halfway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Build
@@ -14,29 +20,29 @@ jobs:
         with:
           submodules: true
 
-      - run: corepack enable
-        shell: bash
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-      - run: yarn install
-      - run: yarn sync-snippets
-      # The OpenAPI catalogue's per-spec detail files are generated, not tracked
-      # (20MB). Without this step the plugin finds nothing and every
-      # /openapis/<spec> route disappears from the build.
-      - run: yarn sync-registry
-      - run: yarn build
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm run sync-snippets
+      # Refreshes the vendored addon / OpenAPI catalogue, including the per-spec detail files (generated, not
+      # tracked). Best effort: if the hosted registry is down the committed snapshot is used.
+      - name: Sync registry (best effort)
+        run: npm run sync-registry || echo "registry sync failed, using the committed snapshot"
+      - run: npm run typecheck
+      # prerenders everything into dist/client and runs the link gate (fails on any broken internal link)
+      - run: npm run build
       - name: Upload static files as artifact
         id: deployment
-        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: build/
+          path: dist/client/
 
   deploy:
     name: Deploy to github pages
     permissions:
-      pages: write 
+      pages: write
       id-token: write
     environment:
       name: github-pages

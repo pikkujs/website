@@ -1,0 +1,9 @@
+{
+  "title": "Channel",
+  "icon": "websocket",
+  "pages": [
+    "channel-route",
+    "websocket-client",
+    "..."
+  ]
+}

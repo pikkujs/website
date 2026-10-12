@@ -1,8 +1,10 @@
 {
-  // This file is not used in compilation. It is here just for a nice editor experience.
-  "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
-    "baseUrl": ".",
-    "resolveJsonModule": true
-  }
+    "target": "ES2022", "module": "ESNext", "moduleResolution": "Bundler", "jsx": "react-jsx",
+    "strict": true, "skipLibCheck": true, "noEmit": true, "allowImportingTsExtensions": true,
+    "types": ["vite/client"],
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src", "packages/brand/src", "vite.config.ts", "vite.config.cf.ts", "source.config.ts"],
+  "exclude": ["legacy", "node_modules", "dist"]
 }

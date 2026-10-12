@@ -1,0 +1,9 @@
+{
+  "title": "CLI",
+  "icon": "cli",
+  "pages": [
+    "local-cli",
+    "remote-cli",
+    "..."
+  ]
+}

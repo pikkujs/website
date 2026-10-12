@@ -1,0 +1,28 @@
+---
+title: "PKU347: Addon Uses Mapping Not Wired"
+---
+# PKU347: Addon Uses Mapping Not Wired
+
+## Error Message
+
+```
+[PKU347] Addon '[name]' uses '[package]' as '[target]', but no addon is wired under the name '[target]'. Wired: [names]
+[PKU347] Addon '[name]' uses '[package]' as '[target]', but '[target]' is wired from '[other package]'.
+```
+
+## What Went Wrong
+
+`uses` on `wireAddon` maps a package your addon depends on to the name of another addon you wired in this app. The inspector found one of two problems:
+
+- nothing is wired under that target name, or
+- something is wired under it, but from a different package than the one you mapped.
+
+## How to Fix
+
+1. Check the list after `Wired:` in the message and make sure a `wireAddon` exists under exactly the target name.
+2. Make sure that `wireAddon` points at the same package you named in `uses`.
+3. Run `pikku all` again.
+
+## Related Errors
+
+- [PKU348](/docs/pikku-cli/errors/pku348) - Addon Needs Not Mapped

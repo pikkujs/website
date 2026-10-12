@@ -15,7 +15,7 @@
 .tally {
   margin-left: auto;
   padding-bottom: 10px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--paper-text-muted);
   font-variant-numeric: tabular-nums;
@@ -27,7 +27,7 @@
   border: 1px solid var(--paper-code-light-border);
   background: var(--paper-code-light-bg);
   border-radius: 6px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13.5px;
   line-height: 1.6;
   color: var(--paper-code-light-text);
@@ -46,7 +46,7 @@
   align-items: center;
   gap: 7px;
   margin-bottom: 30px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -74,7 +74,7 @@
 }
 
 .blockTitle {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--font-display);
   font-size: 26px;
   font-weight: 500;
   letter-spacing: -0.5px;
@@ -83,7 +83,7 @@
 }
 
 .blockNote {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -93,7 +93,7 @@
 .table th {
   text-align: left;
   padding: 0 14px 9px 0;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
   text-transform: uppercase;
@@ -108,7 +108,7 @@
   vertical-align: top;
 }
 .table code {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12.5px;
   color: var(--paper-text);
   background: var(--paper-bg-alt);
@@ -130,7 +130,7 @@
 
 
 .rpc {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 14px;
   color: var(--paper-text);
   background: none;
@@ -150,7 +150,7 @@
 
 .sig {
   margin-top: 7px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--paper-text-faint);
 }
@@ -163,7 +163,7 @@
   border-radius: 6px;
   background: transparent;
   color: var(--paper-text-body);
-  font-family: 'Geist', sans-serif;
+  font-family: var(--font-body);
   font-size: 14px;
   cursor: pointer;
 }
@@ -220,7 +220,7 @@
   align-items: center;
   gap: 9px;
   margin-bottom: 16px;
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   color: var(--paper-text-faint);
 }
@@ -256,16 +256,16 @@
 }
 
 .stepN {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
 }
 
 .stepTitle {
   margin: 0;
-  font-family: 'Newsreader', serif;
+  font-family: var(--font-display);
   font-size: 21px;
   font-weight: 500;
   line-height: 1.2;
@@ -278,7 +278,7 @@
   border: 1px solid var(--paper-border);
   border-radius: 3px;
   background: var(--paper-bg-alt);
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1.5;
   color: var(--paper-text);
@@ -292,7 +292,7 @@
   color: var(--paper-text-muted);
 }
 .stepBody code {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   background: none;
   border: 0;
@@ -322,9 +322,9 @@
 }
 
 .secretId {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--paper-accent);
+  color: var(--paper-accent-dark);
   background: none;
   border: 0;
   padding: 0;
@@ -341,7 +341,7 @@
 }
 
 .optional {
-  font-family: 'Geist Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.07em;
   text-transform: uppercase;

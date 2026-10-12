@@ -1,8 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Link from '@docusaurus/Link';
-import Image from '@theme/ThemedImage';
-import { Code2 } from 'lucide-react';
+import Link from '@/components/site/Link';
+import { Blob } from '@pikku/theme-brand';
 
 /** Reusable component for Pikku logo surrounded by icons */
 export function PikkuCircularLayout({
@@ -41,15 +39,9 @@ export function PikkuCircularLayout({
         </div>
       )}
 
-      <div className={`relative z-10 flex flex-col items-center ${animate ? 'animate-chameleon-enter' : ''}`}>
+      <div className={`relative z-10 flex flex-col items-center ${animate ? 'animate-blob-enter' : ''}`}>
         {centerNode ?? (
-          <Image
-            sources={{ light: 'img/pikku.png', dark: 'img/pikku.png' }}
-            width={logoSize}
-            height={logoSize}
-            className="mx-auto"
-            style={{ objectFit: 'contain' }}
-          />
+          <Blob pose="blob" size={logoSize} color="#c2410c" className="mx-auto" />
         )}
         {centerOverlay && (
           <div className="mt-2 text-center">{centerOverlay}</div>
@@ -87,42 +79,7 @@ export function PikkuCircularLayout({
   );
 }
 
-/** Navbar pill that links between the overview and developer pages */
-export function NavbarPageToggle({ isDeveloperPage }: { isDeveloperPage: boolean }) {
-  const [container, setContainer] = React.useState<HTMLElement | null>(null);
-
-  React.useEffect(() => {
-    const el = document.createElement('div');
-    el.className = 'navbar__item navbar-dev-toggle';
-    el.style.display = 'flex';
-    el.style.alignItems = 'center';
-
-    if (window.innerWidth < 997) {
-      // Mobile: insert after logo in left navbar items
-      const navLeft = document.querySelector('.navbar__items:not(.navbar__items--right)');
-      if (!navLeft) return;
-      navLeft.appendChild(el);
-    } else {
-      // Desktop: insert at start of right navbar items
-      const navRight = document.querySelector('.navbar__items--right');
-      if (!navRight) return;
-      navRight.insertBefore(el, navRight.firstChild);
-    }
-    setContainer(el);
-
-    return () => { el.remove(); };
-  }, []);
-
-  if (!container) return null;
-  return ReactDOM.createPortal(
-    <Link
-      to={isDeveloperPage ? '/' : '/developers'}
-      className="navbar-dev-pill"
-      title={isDeveloperPage ? 'Back to the product overview' : 'The technical deep-dive, for engineers'}
-    >
-      <Code2 style={{ width: 14, height: 14, flexShrink: 0 }} />
-      <span>{isDeveloperPage ? 'Overview' : 'For developers'}</span>
-    </Link>,
-    container
-  );
+/** The overview/developer pill now lives in the site navbar; kept so page code stays unchanged. */
+export function NavbarPageToggle(_: { isDeveloperPage: boolean }) {
+  return null;
 }

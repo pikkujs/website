@@ -1,94 +1,29 @@
-import React, { ReactNode } from 'react';
-import Link from '@docusaurus/Link';
-import clsx from 'clsx';
+import type { ReactNode } from 'react'
+import { Link } from '@tanstack/react-router'
+import { cn } from '@/lib/utils'
 
 export interface CardProps {
-  /** Optional icon or image to display at the top */
-  icon?: ReactNode;
-  /** Card title */
-  title?: string;
-  /** Card description/content */
-  description?: string | ReactNode;
-  /** Optional link configuration */
-  link?: {
-    href: string;
-    text: string;
-    external?: boolean;
-  };
-  /** Additional CSS classes */
-  className?: string;
-  /** Children for custom card content */
-  children?: ReactNode;
-  /** Variant for different card styles */
-  variant?: 'default' | 'white' | 'testimonial' | 'minimal';
+  icon?: ReactNode
+  title?: string
+  description?: string | ReactNode
+  link?: { href: string; text: string; external?: boolean }
+  className?: string
+  children?: ReactNode
+  variant?: 'default' | 'white' | 'testimonial' | 'minimal'
 }
 
-/**
- * Reusable Card component with consistent Pikku styling
- *
- * Variants:
- * - default: bg-neutral-50 dark:bg-neutral-900 with border-2 border-primary (main pikku style)
- * - white: bg-white dark:bg-neutral-900 with subtle border (for lighter sections)
- * - testimonial: bg-white dark:bg-neutral-900 with gray border (for testimonials)
- * - minimal: bg-white dark:bg-neutral-800 without border (for simple cards)
- *
- * @example
- * ```tsx
- * <Card
- *   icon="💰"
- *   title="Cost Optimization"
- *   description="Start optimizing your infrastructure budget"
- *   link={{ href: '/why/vendor-lock-in', text: 'Learn more →' }}
- *   variant="default"
- * />
- * ```
- */
-export default function Card({
-  icon,
-  title,
-  description,
-  link,
-  className,
-  children,
-  variant = 'default'
-}: CardProps) {
-  const variantClasses = {
-    default: 'bg-[#0d0d0d] rounded-lg p-6 border border-neutral-800 card-shadow',
-    white: 'bg-[#0d0d0d] rounded-lg p-6 border border-neutral-800 card-shadow',
-    testimonial: 'bg-[#0d0d0d] rounded-lg p-6 border border-neutral-800 card-shadow',
-    minimal: 'bg-[#0d0d0d] rounded-lg p-6 card-shadow'
-  };
-
+/** Content card used in blog posts and docs. Paper surface, wobbly corners. */
+export default function Card({ icon, title, description, link, className, children, variant = 'default' }: CardProps) {
   return (
-    <div className={clsx(variantClasses[variant], className)}>
-      {icon && (
-        <div className="text-5xl mb-4">
-          {icon}
-        </div>
-      )}
-
-      {title && (
-        <h3 className="text-xl font-bold mb-3">
-          {title}
-        </h3>
-      )}
-
-      {description && (
-        <div className="text-sm text-neutral-700 dark:text-neutral-300 mb-4">
-          {typeof description === 'string' ? <p>{description}</p> : description}
-        </div>
-      )}
-
+    <div className={cn('pk-card', variant === 'minimal' && 'pk-card--minimal', className)}>
+      {icon && <div className="mb-3 text-4xl">{icon}</div>}
+      {title && <h3 className="pk-card-title">{title}</h3>}
+      {description && <div className="pk-card-desc">{typeof description === 'string' ? <p>{description}</p> : description}</div>}
       {children}
-
-      {link && (
-        <Link
-          to={link.href}
-          className="text-primary hover:underline font-medium text-sm inline-block mt-2"
-        >
-          {link.text}
-        </Link>
-      )}
+      {link && (link.external || /^https?:/.test(link.href)
+        ? <a href={link.href} target="_blank" rel="noreferrer" className="pk-card-link">{link.text}</a>
+        : <Link to={link.href as any} className="pk-card-link">{link.text}</Link>)}
     </div>
-  );
+  )
 }
+export { Card }

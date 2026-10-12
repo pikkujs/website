@@ -1,0 +1,47 @@
+---
+title: "PKU600: Workflow Orchestrator Not Configured"
+sidebar_position: 600
+---
+
+# PKU600: Workflow Orchestrator Not Configured
+
+## Error Message
+
+```
+[PKU600] Workflows detected but workflowService service not configured.
+Please add workflowService to your singleton services
+```
+
+## What Went Wrong
+
+The Pikku CLI found workflow definitions in your project but can't generate the workflow wiring because `workflowService` isn't present in your `SingletonServices` type. The inspector uses the `SingletonServices` interface to determine which services your app has available — if `workflowService` is absent, it can't proceed.
+
+## How to Fix
+
+Add a `workflowService` implementation to your `createSingletonServices` function and make sure it's typed via `SingletonServices`.
+
+### Option 1: PostgreSQL (pg-boss + Kysely)
+
+Build a `PgKyselyWorkflowService` from `@pikku/kysely-postgres`, backed by a `PgKyselyLeaseService`, both on your `PikkuKysely` connection. Call `init()` on each (the workflow service creates its tables on first run) and return `leaseService` and `workflowService` from `createSingletonServices`.
+
+### Option 2: Redis (BullMQ)
+
+Build a `RedisWorkflowService` and a `RedisLeaseService` from `@pikku/redis`, both constructed with your Redis URL (the workflow service also takes the lease service), and return them from `createSingletonServices`.
+
+### Option 3: In-memory (local dev / tests)
+
+Create an `InMemoryWorkflowService` from `@pikku/core/services` and return it as `workflowService` from `createSingletonServices`. State is lost on restart, so keep it to local dev and tests.
+
+## How the Inspector Detects This
+
+The CLI checks for `workflowService` in your `SingletonServices` type — it reads the TypeScript type, not your runtime values. If you've added the service at runtime but haven't updated the `SingletonServices` interface, you'll still see this error.
+
+
+The generated `RequiredSingletonServices` type in `pikku-services.gen.ts` must include `workflowService` among its required keys. It is auto-generated, so if it's stale, regenerate it rather than editing it.
+
+If the generated file is stale, running `pikku generate` again after fixing your services file will update it.
+
+## Related Docs
+
+- [Workflow Configuration](/docs/wiring/workflows/configuration) — full setup guide with state storage options
+- [PKU641](/docs/pikku-cli/errors/pku641) - Invalid DSL Workflow

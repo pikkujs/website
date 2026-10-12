@@ -1,30 +1,17 @@
-import React, { useEffect, useRef } from 'react'
-import sdk from '@stackblitz/sdk'
+import { useEffect, useRef } from 'react'
 
-export const Stackblitz: React.FunctionComponent<{ repo: string, initialFiles: string[] }> = ({ repo, initialFiles }) => {
-  const containerRef = useRef(null);
-
+/** Embeds a pikkujs GitHub template in StackBlitz. Client-only; the SDK is loaded after mount. */
+export function Stackblitz({ repo, initialFiles }: { repo: string; initialFiles: string[] }) {
+  const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const load = async () => {
+    let live = true
+    import('@stackblitz/sdk').then(async ({ default: sdk }) => {
+      if (!live || !ref.current) return
       try {
-        const openFile = initialFiles.map(f => f) 
-        await sdk.embedGithubProject(
-          containerRef.current,
-          `pikkujs/${repo}`, {
-          height: 800,
-          openFile, //:openFile.filter(f => !f.startsWith('client/')),
-          view: 'editor',
-          showSidebar: false,
-          clickToLoad: false,
-        });
-      } catch (error) {
-        console.error('Failed to load StackBlitz project:', error)
-      }
-    }
-    load()
-  }, [repo, initialFiles]);
-
-  return <div className='h-[800px] rounded-md border border-zinc-2'>
-    <div ref={containerRef}></div>
-  </div>;
+        await sdk.embedGithubProject(ref.current, `pikkujs/${repo}`, { height: 800, openFile: initialFiles, view: 'editor', showSidebar: false, clickToLoad: false })
+      } catch (e) { console.error('Failed to load StackBlitz project:', e) }
+    })
+    return () => { live = false }
+  }, [repo, initialFiles.join(',')])
+  return <div className="pk-embed" style={{ height: 800 }}><div ref={ref} /></div>
 }

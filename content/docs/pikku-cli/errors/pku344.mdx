@@ -1,0 +1,29 @@
+---
+title: "PKU344: Addon Expose Not Static"
+---
+# PKU344: Addon Expose Not Static
+
+## Error Message
+
+```
+[PKU344] wireAddon's expose must be true, false or an array of string literals, got: SELECTED
+```
+
+## What Went Wrong
+
+`wireAddon`'s `expose` was given something the build can't read without running your code: a variable, a spread, or a function call.
+
+The build needs the exact list. The deploy analyzer uses it to decide which addon functions go into the unit that serves `/rpc`, and the ungated-function warning ([PKU574](/docs/pikku-cli/errors/pku574)) uses it to check what you've opened. If it guessed, the deployed units could disagree with what the runtime allows.
+
+## How to Fix
+
+A variable, such as `const SELECTED = [...]` passed as `expose: SELECTED`, is the broken shape: the build can't see what it holds. Write the list inline:
+
+```typescript @snippet ea-addon-expose-inline
+```
+
+`true` and `false` are also fine.
+
+## Related Errors
+
+- [PKU343: Addon Exposed Function Not Found](/docs/pikku-cli/errors/pku343): the list names a function the addon doesn't publish

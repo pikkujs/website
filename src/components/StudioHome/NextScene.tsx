@@ -1,3 +1,4 @@
+import { Blob } from '@pikku/theme-brand'
 export function NextScene() {
   return (
     <>
@@ -24,7 +25,7 @@ export function NextScene() {
           filter="url(#rough)"
         />
         <g className="bob">
-          <use href="#pk" x="50" y="20" width="220" height="220" style={{ color: '#f0a56f' }} />
+          <Blob pose="blob" x={50} y={20} width={220} height={220} color="#f0a56f" />
         </g>
         <text x="196" y="40" fontSize="26" fill="#f0a56f" transform="rotate(6 196 40)">
           see you there

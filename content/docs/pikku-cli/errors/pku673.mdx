@@ -1,0 +1,39 @@
+---
+title: "PKU673: Scenario Has Services"
+---
+# PKU673: Scenario Has Services
+
+## Error Message
+
+```
+[PKU673] User flow 'checkoutFlow' destructures services: database, email. User flows may only use 'logger'/'config' — drive everything else through actor steps (workflow.do(step, rpc, data, { actor: actors.x })) so the flow runs against the target environment.
+```
+
+## What Went Wrong
+
+A scenario (defined with `pikkuScenario`) destructures server services other than `logger` or `config`. Scenarios are stories of remote calls: they run *against* a target environment (local dev, staging, production) through actors, they don't run *inside* it. If a scenario touched `database` directly, it would read whatever database the machine running the scenario happens to have — not the environment under test — silently invalidating the whole run.
+
+That's why only `logger` and `config` are allowed; everything else must go through actor steps, which execute as RPCs against the target.
+
+## How to Fix
+
+
+The broken shape is a scenario that destructures `database` and reads `database.get('orders', 'latest')` directly, which runs on the wrong machine.
+
+Each read or write goes through an actor step, and only `logger` (or `config`) is destructured:
+
+```typescript @snippet scenarioBasics
+```
+
+If you need a check the target can't express as an existing RPC, add a function for it and wire it — the scenario then exercises the same surface your real clients use.
+
+## Scenario Best Practices
+
+- Think of a scenario as a scripted user, not a test with backdoor access — assertions come from what actors can observe.
+- Use `scenario.expectEventually()` for asynchronous outcomes instead of polling services.
+- Keep `logger` for narrative output and `config` for target-specific parameters; nothing else.
+
+## Related Errors
+
+- [PKU675: expectEventually Is Scenario-Only](/docs/pikku-cli/errors/pku675) — the mirror rule: workflows can't use scenario assertions
+- [PKU672: CLI Client-Side Renderer Has Services](/docs/pikku-cli/errors/pku672) — the same runs-elsewhere rule for CLI renderers

@@ -1,29 +1,27 @@
 name: Branch
-run-name: Publish to github pages
+run-name: Build, typecheck and link-gate (no deploy)
 on:
   push:
     branches-ignore:
       - main
+  pull_request:
+
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out website repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           submodules: true
-
-      - run: corepack enable
-        shell: bash
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-      - run: yarn install
-      - run: yarn sync-snippets
-      # The OpenAPI catalogue's per-spec detail files are generated, not tracked
-      # (20MB). Without this step the plugin finds nothing and every
-      # /openapis/<spec> route disappears from the build.
-      - run: yarn sync-registry
-      - run: yarn build
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm run sync-snippets
+      - name: Sync registry (best effort)
+        run: npm run sync-registry || echo "registry sync failed, using the committed snapshot"
+      - run: npm run typecheck
+      # includes the link gate
+      - run: npm run build

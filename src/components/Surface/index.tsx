@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import useBaseUrl from '@/components/site/useBaseUrl';
 import { docBlocks, inlineSpans, originChip, originText, unfence } from './surface-docs';
 import { proseFor, stepsOf } from './surface-steps';
 import type {

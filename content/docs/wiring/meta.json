@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "channels",
+    "cli",
+    "gateway",
+    "http",
+    "mcp",
+    "queue",
+    "rpcs",
+    "scheduled-tasks",
+    "triggers",
+    "workflows",
+    "credentials",
+    "..."
+  ]
+}

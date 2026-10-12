@@ -1,0 +1,50 @@
+---
+title: "PKU952: Secret Key Not Static"
+---
+# PKU952: Secret Key Not Static
+
+## Error Message
+
+```
+[PKU952] src/services.ts reads a secret with a non-literal key (`${provider}_API_KEY`). The deployment cannot narrow its secret scope around a key it cannot see.
+```
+
+This is a **warning**. It prints on every build, but only fails the build with `--fail-on-warn`.
+
+## What Went Wrong
+
+`secrets.getSecret(...)` was called with a computed key — a template literal, a variable, a property lookup — rather than a string literal.
+
+Pikku reads secret usage statically so the deployment can grant each service access to exactly the secrets it names, and no more. A computed key defeats that: the tooling can't tell whether the code reads one secret or every secret in the vault, so it can't narrow the scope. In practice that means the deployed role ends up with broad vault access, and the "which secrets does this service need?" question has no answer anyone can check.
+
+It also means the key can't be declared with `defineSecret`, so you'll usually see [PKU951](/docs/pikku-cli/errors/pku951) alongside this.
+
+## How to Fix
+
+
+Make the key a literal at each call site: `secrets.getSecret('STRIPE_API_KEY')` and `secrets.getSecret('SENDGRID_KEY')` are both visible to the scanner.
+
+### If the provider genuinely varies
+
+
+Branch on the provider and read a literal in each arm: a `switch` (or ternary) where the stripe case calls `getSecret('STRIPE_API_KEY')` and the adyen case calls `getSecret('ADYEN_API_KEY')`.
+
+This is longer than the template literal it replaces, and that's the point: both keys are now declarable, provisionable and scopeable, and a new provider can't quietly widen the service's vault access.
+
+## Secret Handling Best Practices
+
+- Treat the secret key as configuration structure, not data — enumerate it rather than computing it.
+- Declare every literal key with `defineSecret` so it's validated and surfaced (see [PKU951](/docs/pikku-cli/errors/pku951)).
+- Resolve secrets at construction time in `services.ts` or middleware, then pass configured clients onward.
+- Run CI with `--fail-on-warn` if your project treats secret scoping as non-negotiable.
+
+## Common Mistakes
+
+A template-literal key such as `` `${provider.toUpperCase()}_API_KEY` `` is the broken shape: the scanner sees one unknowable key, so the scope can't be narrowed.
+
+## Related Errors
+
+- [PKU951: Secret Not Declared](/docs/pikku-cli/errors/pku951) — usually fires alongside this one
+- [PKU950: Secret Service Aliased](/docs/pikku-cli/errors/pku950) — where `SecretService` may be used
+- [PKU953: Secret Revealed Into Sink](/docs/pikku-cli/errors/pku953) — a revealed secret written somewhere it must not go
+- [PKU678: Scenario Step Target Not Static](/docs/pikku-cli/errors/pku678) — the same "must be statically resolvable" rule elsewhere

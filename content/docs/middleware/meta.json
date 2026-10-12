@@ -1,0 +1,11 @@
+{
+  "title": "Middleware",
+  "pages": [
+    "better-auth",
+    "auth-jwt",
+    "auth-apikey",
+    "auth-cookie",
+    "built-in",
+    "..."
+  ]
+}

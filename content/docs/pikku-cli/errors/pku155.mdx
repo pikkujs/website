@@ -1,0 +1,74 @@
+---
+title: "PKU155: Agent Scorer Not Found"
+---
+# PKU155: Agent Scorer Not Found
+
+## Error Message
+
+```
+[PKU155] AI agent 'assistant' (src/agents/assistant.agent.ts) asks to be graded by scorer 'brevty', which is not declared in this project. Declared scorers: brevity, correctness.
+```
+
+If the project declares no scorers at all, the last sentence reads `Declared scorers: none.`
+
+## What Went Wrong
+
+An agent's `scorers` array names a scorer that isn't declared anywhere Pikku scanned. Every name in that array is resolved at build time against the scorers found by `pikkuAgentScorer` and `pikkuAgentJudge`.
+
+This is a build failure on purpose. At runtime, an unresolvable scorer name is only warned about and skipped — the run has already answered the user, so failing it would be worse than not grading it. Which means a typo here costs nothing you'd ever notice: the agent ships, runs happily, and quietly grades nothing forever. Catching it at build time is the only moment it's visible.
+
+The usual causes:
+
+- **A typo** — `'brevty'` for `'brevity'`. The message lists every declared scorer, so compare against that list first.
+- **The name doesn't match the scorer's `name` field.** The registry key is `name:` inside the config, not the exported variable.
+- **The scorer isn't in a scanned directory,** or the file isn't exported, so nothing registered it.
+- **The scorer lives outside a `*.scorer.ts` / `*.scorers.ts` file.** Pikku requires scorers in their own file, and `pikku validate` errors separately on that.
+- **Stale codegen** — the scorer is new and `.pikku` hasn't been regenerated since.
+
+## How to Fix
+
+Start with the `Declared scorers:` list in the message. If the name you wanted is in it, you have a typo — fix the string on the agent:
+
+```typescript @snippet aiAgent
+```
+
+If the name isn't in the list, the scorer doesn't exist yet. Declare it in a `*.scorer.ts` file:
+
+```typescript @snippet agentScorer
+```
+
+Or, for a quality code can't check, use a judge:
+
+```typescript @snippet agentJudge
+```
+
+Then regenerate so the scorer name lands in the generated union:
+
+```bash
+npx pikku prebuild
+```
+
+After that, `scorers` is typed against the declared names — a bad name is a TypeScript error at the agent, not just a build critical. If `scorers` type-checks but PKU155 still fires, your `.pikku` output is stale; run `prebuild` again.
+
+If the scorer is declared but still isn't listed, check that its file matches `*.scorer.ts` or `*.scorers.ts`, sits under a directory in `srcDirectories`, and exports the declaration.
+
+## Agent Scorer Best Practices
+
+- Keep scorers in `*.scorer.ts` files next to the agents they grade — they're edited for the opposite reason to the agent, and a rubric buried in an agent definition is one nobody reviews as a rubric.
+- Make `name` and the exported variable the same word. They're independent, and any drift between them shows up as this error.
+- Give judges a low `sampleRate` on live traffic — a judge is a model call per graded run, and grading every run doubles what the agent costs.
+- Set `requiresReference: true` on any scorer that grades against a known-correct answer. Live traffic has no answer key, so the runtime never samples such a scorer — it only runs in tests.
+- Prefer a `pikkuAgentScorer` over a `pikkuAgentJudge` where code can express the check: it grades on the fast lane, costs nothing, and never disagrees with itself.
+
+## Common Mistakes
+
+Naming the exported variable instead of the scorer's own `name` field causes PKU155. A scorer declared with `name: 'brevity'` and exported as `brevityScorer` is referenced as `scorers: ['brevity']`, not `scorers: ['brevityScorer']`.
+
+A scorer or judge that is declared but never exported is never registered by codegen, so its name resolves to nothing. Export it from a `*.scorer.ts` file.
+
+## Related Errors
+
+- [PKU153: Agent Tool Not Found](/docs/pikku-cli/errors/pku153) — the same unresolvable-reference failure for an agent's `tools`
+- [PKU154: Agent Tool Missing Description](/docs/pikku-cli/errors/pku154) — the reference resolves, but the metadata behind it is incomplete
+- [PKU152: Agent Tool Unknown Namespace](/docs/pikku-cli/errors/pku152) — a namespaced agent reference whose addon isn't wired
+- [PKU146: Invalid Model](/docs/pikku-cli/errors/pku146) — the model a `pikkuAgentJudge` grades with must be a valid model too
