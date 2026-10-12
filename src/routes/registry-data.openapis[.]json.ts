@@ -5,6 +5,6 @@ import { openApiCatalogue } from '@/lib/catalogue'
 export const Route = createFileRoute('/registry-data/openapis.json')({
   server: { handlers: { GET: async () => {
     const { stale, ...body } = await openApiCatalogue()
-    return new Response(JSON.stringify(body), { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400', 'x-registry-stale': String(stale) } })
+    return new Response(JSON.stringify(body), { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400', 'x-registry-stale': String(stale) } })
   } } },
 })

@@ -26,19 +26,10 @@ async function registryGet<T>(path: string): Promise<T> {
 }
 
 /**
- * Static JSON from public/__data, read per request. On Workers that is the ASSETS binding (the
- * files live in the static assets, not in the Worker bundle); under Node (vite dev, the prerender)
- * it is the file on disk.
+ * Static JSON from __data, read per request from disk: public/ under vite dev, dist/client in the
+ * production image (the working directory is the app root).
  */
 async function asset<T>(rel: string): Promise<T | null> {
-  try {
-    const spec = 'cloudflare:workers'
-    const { env } = await import(/* @vite-ignore */ spec)
-    if (env?.ASSETS) {
-      const r = await env.ASSETS.fetch(new Request('https://assets.invalid/__data/' + rel))
-      return r.ok ? ((await r.json()) as T) : null
-    }
-  } catch { /* not on Workers */ }
   const fs = await import(/* @vite-ignore */ 'node:fs/promises')
   const path = await import(/* @vite-ignore */ 'node:path')
   for (const base of ['public', 'dist/client']) {

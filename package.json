@@ -41,7 +41,6 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.63.1",
     "@pikku/inspector": "^0.12.89",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.5",
@@ -51,15 +50,13 @@
     "prettier": "^3.8.4",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^8.3.4",
-    "wrangler": "^4.149.0"
+    "vite": "^8.3.4"
   },
   "scripts": {
     "dev": "vite dev --port 3005",
     "predev": "npm run gen:data",
-    "build": "npm run check-error-docs && npm run gen:data && vite build -c vite.config.cf.ts",
-    "build:node": "npm run check-error-docs && npm run gen:data && vite build",
-    "preview": "wrangler dev --local",
+    "build": "npm run check-error-docs && npm run gen:data && vite build",
+    "preview": "node server/server.mjs",
     "typecheck": "node scripts/gen-routes.mjs && tsc --noEmit",
     "gen:data": "node scripts/gen-data.mjs",
     "check-error-docs": "node scripts/check-error-docs.mjs",
@@ -70,7 +67,8 @@
     "sync-submodules": "sh scripts/sync-submodules.sh",
     "sync-registry": "node scripts/generate-registry.mjs",
     "install-hooks": "sh scripts/install-hooks.sh",
-    "screenshots": "node scripts/screenshots.mjs"
+    "screenshots": "node scripts/screenshots.mjs",
+    "start": "node server/server.mjs"
   },
   "engines": {
     "node": ">=22"

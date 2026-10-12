@@ -43,6 +43,8 @@ export default defineConfig({
     port: 3005, strictPort: true,
   },
   resolve: { alias },
+  // bundle every dependency into dist/server so the production image needs no node_modules
+  ssr: { noExternal: true },
   plugins: [
     clientOnly(),
     fumadocsMdx((await import('./source.config.ts')) as any),

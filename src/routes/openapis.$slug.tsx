@@ -5,7 +5,7 @@ import { pageHead } from '@/lib/seo'
 
 export const Route = createFileRoute('/openapis/$slug')({
   loader: async ({ params }) => { const r = await getOpenApi({ data: params.slug }); if (!r) throw notFound(); return r },
-  headers: () => ({ 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' }),
+  headers: () => ({ 'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=86400' }),
   head: ({ loaderData, params }) => pageHead({ title: `${loaderData?.api.title ?? loaderData?.api.name ?? params.slug} OpenAPI`, description: `Generate a typed Pikku addon from the ${loaderData?.api.title ?? params.slug} OpenAPI specification.`, path: `/openapis/${params.slug}` }),
   component: () => {
     const { api } = Route.useLoaderData()
