@@ -1,5 +1,6 @@
 ---
 title: WebhookService
+description: "Send signed outgoing webhooks, delivered through a queue"
 ---
 
 The WebhookService sends outgoing webhooks — signed HTTP POSTs to somebody else's server. It is registered as the `webhookService` singleton service. Delivery is never inline: `send()` signs the body and enqueues a job on the `pikku-outgoing-webhooks` queue, and a generated queue worker does the actual request. That means it depends on [`QueueService`](./queue-service), and that a failed delivery is retried by the queue rather than by the caller.

@@ -1,6 +1,7 @@
 ---
 title: AuditService
 ai: true
+description: "The durable sink for audit events: who did what, when, through which wire"
 ---
 
 The AuditService is the durable sink for audit events — who did what, when, through which wire. It is registered as the `audit` singleton service. Functions don't call it directly: they write through the per-invocation `auditLog` wire service, which buffers or forwards events depending on the function's audit configuration.

@@ -1,5 +1,6 @@
 ---
 title: VariablesService
+description: "Environment variables and configuration values, even where process.env is unavailable"
 ---
 
 The VariablesService provides access to environment variables and configuration values. This abstraction is necessary because some runtimes (like Cloudflare Workers) don't expose variables via `process.env`.

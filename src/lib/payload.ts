@@ -1,4 +1,5 @@
 import { source, blogSource } from './source'
+import { childrenOf, hubData } from './docs-hub'
 
 /**
  * Metadata-only payloads for docs and blog. They are the single source of truth for both
@@ -9,7 +10,14 @@ import { source, blogSource } from './source'
  */
 export const docPayload = (slugs: string[]) => {
   const page = source.getPage(slugs)
-  return page ? { path: page.path, url: page.url, title: page.data.title ?? '', description: page.data.description ?? '', ai: !!(page.data as any).ai, hideTitle: !!(page.data as any).hide_title } : null
+  if (!page) return null
+  const children = childrenOf(page.url)
+  return {
+    path: page.path, url: page.url, title: page.data.title ?? '', description: page.data.description ?? '', ai: !!(page.data as any).ai, hideTitle: !!(page.data as any).hide_title,
+    // /docs is the hub; every other section index lists its children as rows
+    hub: page.url === '/docs' ? hubData() : undefined,
+    children: page.url !== '/docs' && children.length ? children : undefined,
+  }
 }
 export const docsTree = async () => source.serializePageTree(source.getPageTree())
 

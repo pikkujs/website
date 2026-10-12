@@ -1,5 +1,6 @@
 ---
 title: ScopeService
+description: "Resolves and administers user scopes when a session is built"
 ---
 
 The ScopeService resolves and administers user scopes. It is registered as the `scopeService` singleton service, and it is called **when a session is being built — never by the function runner**. By the time your function runs, `session.scopes` is already a plain array of strings that core reads and never re-fetches.

@@ -1,5 +1,6 @@
 ---
 title: SchemaService
+description: "Validates function inputs against the generated JSON schemas at runtime"
 ---
 
 The SchemaService validates function inputs against JSON schemas at runtime. Pikku's CLI generates those schemas automatically from your TypeScript types — you don't write schemas by hand. At bootstrap, the generated schemas are compiled into the service; on every function call, input data is validated before your function runs.

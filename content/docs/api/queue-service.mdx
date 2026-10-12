@@ -1,5 +1,6 @@
 ---
 title: QueueService
+description: "The producer side of background queues: enqueue jobs and read them back by id"
 ---
 
 The QueueService is the producer side of [background queues](/docs/wiring/queue) — it hands a job to whatever queue backend you registered and reads jobs back by id. It is registered as the `queueService` singleton service. The consumer side is separate: a `QueueWorkers` adapter from the same package subscribes to the queues declared with `wireQueueWorker` and runs them.

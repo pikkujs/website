@@ -1,5 +1,6 @@
 ---
 title: SessionService
+description: "Read and change the session through the wire"
 ---
 
 The session is managed through the **wire** (the 3rd function argument), not a singleton service. Functions read `session` and call `setSession()` / `clearSession()` / `getSession()`; every wire also exposes `hasSessionChanged()` and `pikkuUserId`. Core backs those with the `SessionService` contract in `user-session-service.ts` and the built-in `PikkuSessionService` class, but you neither register nor reach for it — the HTTP, channel and function runners construct one per invocation.

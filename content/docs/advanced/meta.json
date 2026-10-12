@@ -1,10 +1,4 @@
 {
   "title": "Advanced",
-  "pages": [
-    "...",
-    "../runtimes",
-    "../custom-runtimes",
-    "../storage",
-    "../api"
-  ]
+  "pages": ["..."]
 }

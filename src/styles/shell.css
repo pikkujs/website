@@ -85,3 +85,15 @@
 .nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .nf-hint { margin-top: 28px; color: var(--paper-text-faint); font-size: .86rem; }
 .themed-img-dark { display: none; } [data-theme=dark] .themed-img-light { display: none; } [data-theme=dark] .themed-img-dark { display: inline; }
+.cmdk-group { padding: 0; }
+.cmdk-group + .cmdk-group { margin-top: 6px; }
+.cmdk-group ul { list-style: none; margin: 0; padding: 0; }
+.cmdk-group-h { margin: 6px 12px 2px; font: 700 .68rem var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--paper-text-muted); }
+.cmdk-item .wiring-icon { color: currentColor; }
+.cmdk-foot { display: flex; gap: 16px; margin: 0; padding: 9px 16px; border-top: 1px solid var(--paper-border); font-size: .76rem; color: var(--paper-text-muted); }
+.cmdk-foot kbd { font: 500 .68rem var(--font-mono); padding: 1px 5px; margin-right: 4px; border-radius: 5px; border: 1px solid var(--paper-border-strong); }
+@media (max-width: 640px) { .cmdk-foot { display: none; } }
+
+.cmdk-item { cursor: pointer; }
+.cmdk-row { display: flex; align-items: center; gap: 10px; width: 100%; }
+.cmdk-item.is-active .cmdk-crumb { color: var(--paper-text-muted); }
