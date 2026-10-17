@@ -18,7 +18,7 @@ const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
 
-const PRETTIER_BIN = path.resolve(__dirname, '../node_modules/.bin/prettier')
+const PRETTIER_BIN = path.resolve(__dirname, '../../../node_modules/.bin/prettier')
 
 function formatSnippet(code) {
   if (!PRETTIER_BIN) return code
@@ -32,7 +32,7 @@ function formatSnippet(code) {
   }
 }
 
-const SUBMODULE_SRC = path.resolve(__dirname, '../.template-online-shop/packages/functions/src')
+const SUBMODULE_SRC = path.resolve(__dirname, '../../../.template-online-shop/packages/functions/src')
 const OUTPUT_FILE      = path.resolve(__dirname, '../src/data/snippets.json')
 const OUTPUT_META_FILE = path.resolve(__dirname, '../src/data/snippets-meta.json')
 
@@ -116,7 +116,7 @@ function extractSnippets(content, rel, problems) {
 
 // ── Main ───────────────────────────────────────────────────
 
-const TEMPLATE_ROOT = path.resolve(__dirname, '../.template-online-shop')
+const TEMPLATE_ROOT = path.resolve(__dirname, '../../../.template-online-shop')
 const files   = findTsFiles(SUBMODULE_SRC)
 // Frontend snippets: every app's src/ plus its vite.config.ts.
 const APPS_DIR = path.join(TEMPLATE_ROOT, 'apps')

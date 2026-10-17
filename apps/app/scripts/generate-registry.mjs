@@ -31,8 +31,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
  * regenerating the catalogue with holes in it.
  */
 const ADDON_SOURCES = [
-  resolve(root, '../addons/packages'),
-  resolve(root, '.addons/packages'),
+  resolve(root, '../../../addons/packages'),
+  resolve(root, '../../.addons/packages'),
 ]
 const VENDORED_ADDONS = resolve(root, 'src/data/addons.json')
 const VENDORED_OPENAPIS = resolve(root, 'public/registry/openapis.json')

@@ -32,9 +32,9 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
  * there to check prose against, and only has a surface if someone has built it.
  */
 const SOURCES = [
-  resolve(root, 'node_modules/@pikku/cli/surface.json'),
-  resolve(root, '../pikku/packages/cli/surface.json'),
-  resolve(root, '.pikku-core/packages/cli/surface.json'),
+  resolve(root, '../../node_modules/@pikku/cli/surface.json'),
+  resolve(root, '../../../pikku/packages/cli/surface.json'),
+  resolve(root, '../../.pikku-core/packages/cli/surface.json'),
 ]
 const VENDORED = resolve(root, 'src/data/surface.json')
 /** The explorer at /api fetches this rather than importing it, so the page
