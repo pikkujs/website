@@ -45,12 +45,12 @@ export function Section({ children, variant = 'default', id, style }: { children
 
 /* ── Buttons ───────────────────────────────────────────── */
 export function BtnPrimary({ to, href, children, onClick }: { to?: string; href?: string; children: React.ReactNode; onClick?: () => void }) {
-  if (to || href) return <Link to={to ?? href!} className={styles.btnPrimary}>{children}</Link>;
+  if (to || href) return <Link to={to ?? href!} className={styles.btnPrimary} data-cta={to ?? href}>{children}</Link>;
   return <button className={styles.btnPrimary} onClick={onClick}>{children}</button>;
 }
 
 export function BtnGhost({ to, href, children }: { to?: string; href?: string; children: React.ReactNode }) {
-  return <Link to={to ?? href!} className={styles.btnGhost}>{children}</Link>;
+  return <Link to={to ?? href!} className={styles.btnGhost} data-cta={to ?? href}>{children}</Link>;
 }
 
 /* ── Badge (e.g. "Core Concept") ───────────────────────── */

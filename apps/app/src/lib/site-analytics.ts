@@ -5,7 +5,12 @@
  * cookie, no localStorage; the server derives device/browser/os/visitor id itself. Does nothing during SSR/prerender
  * and when Do Not Track or Global Privacy Control is on. A failed send never reaches the page.
  */
-type Event = { name: 'page_viewed'; path: string; referrer?: string; utm_source?: string; utm_medium?: string; utm_campaign?: string; lang?: string }
+type Event =
+  | { name: 'page_viewed'; path: string; referrer?: string; utm_source?: string; utm_medium?: string; utm_campaign?: string; lang?: string }
+  | { name: 'cta_clicked'; id: string; path: string }
+  | { name: 'code_copied'; path: string }
+  | { name: 'search_opened'; path: string }
+  | { name: 'outbound_clicked'; host: string }
 
 const BASE = import.meta.env.VITE_SITE_ANALYTICS_URL as string | undefined
 const FLUSH_MS = 5000
@@ -58,4 +63,34 @@ export function trackPageView(pathname: string) {
   event.utm_medium = cap(q.get('utm_medium'), 128)
   event.utm_campaign = cap(q.get('utm_campaign'), 128)
   push(JSON.parse(JSON.stringify(event)) as Event) // drops undefined keys: the server schema rejects unknown ones
+}
+
+export function trackSearchOpened() {
+  if (enabled()) push({ name: 'search_opened', path: location.pathname.slice(0, 512) })
+}
+
+let listening = false
+
+/**
+ * Click events without touching every component: buttons carry `data-cta`, external links report their host
+ * only (never the URL), and clipboard writes (the code blocks' copy buttons) count as code_copied.
+ */
+export function listenForClicks() {
+  if (!enabled() || listening) return
+  listening = true
+  document.addEventListener('click', (e) => {
+    const el = e.target instanceof Element ? e.target : null
+    const cta = el?.closest<HTMLElement>('[data-cta]')
+    if (cta) return push({ name: 'cta_clicked', id: (cta.dataset.cta ?? '').slice(0, 64), path: location.pathname.slice(0, 512) })
+    const a = el?.closest<HTMLAnchorElement>('a[href]')
+    if (a && a.host && a.host !== location.host && /^https?:$/.test(a.protocol)) push({ name: 'outbound_clicked', host: a.hostname.slice(0, 128) })
+  }, { capture: true })
+  const clip = navigator.clipboard
+  if (clip?.writeText) {
+    const orig = clip.writeText.bind(clip)
+    clip.writeText = (text: string) => {
+      push({ name: 'code_copied', path: location.pathname.slice(0, 512) })
+      return orig(text)
+    }
+  }
 }

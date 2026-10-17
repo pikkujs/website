@@ -8,7 +8,7 @@ import { Navbar } from '@/components/site/Navbar'
 import { Footer } from '@/components/site/Footer'
 import { NotFound } from '@/components/site/NotFound'
 import { pageHead } from '@/lib/seo'
-import { trackPageView } from '@/lib/site-analytics'
+import { listenForClicks, trackPageView } from '@/lib/site-analytics'
 
 // Runs before first paint: light by default, remembered choice wins. No flash.
 const THEME_INIT = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light'}catch(e){document.documentElement.dataset.theme='light'}`
@@ -41,6 +41,7 @@ export const Route = createRootRoute({
 function Analytics() {
   const router = useRouter()
   useEffect(() => {
+    listenForClicks()
     trackPageView(location.pathname) // first view of the page load (a no-op unless VITE_SITE_ANALYTICS_URL is set)
     return router.subscribe('onResolved', ({ toLocation, fromLocation }) => {
       if (toLocation.pathname === fromLocation?.pathname) return

@@ -64,6 +64,8 @@ const pushRecent = (r: Recent) => { try { localStorage.setItem(RECENT_KEY, JSON.
 type Group = { key: string; label: string; entries: (Item | (Recent & { recent: true }))[] }
 
 /** Command palette over the prerendered /search-index.json (no server call, no third party). */
+import { trackSearchOpened } from '@/lib/site-analytics'
+
 export function SearchDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const [q, setQ] = useState('')
   const [cursor, setCursor] = useState(0)
@@ -72,7 +74,7 @@ export function SearchDialog({ open, onOpenChange }: { open: boolean; onOpenChan
   const [recent, setRecent] = useState<Recent[]>([])
   const nav = useNavigate()
   useEffect(() => { if (open && !index) loadIndex().then(setIndex).catch(() => setFailed(true)) }, [open, index])
-  useEffect(() => { if (open) setRecent(readRecent()) }, [open])
+  useEffect(() => { if (open) { setRecent(readRecent()); trackSearchOpened() } }, [open])
 
   const groups = useMemo<Group[]>(() => {
     if (q.trim()) {
