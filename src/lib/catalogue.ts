@@ -16,7 +16,7 @@ async function read<T>(rel: string): Promise<T> {
     throw notFound()
   }
   // the Worker serves live detail JSON at /live/*; the static site's snapshot lives at /__data/*
-  return fetchPayload<T>(`/${import.meta.env.VITE_CATALOGUE_SOURCE === 'registry' ? 'live' : '__data'}/${rel}`)
+  return fetchPayload<T>(`/${import.meta.env.VITE_CATALOGUE_SOURCE === 'registry' ? `live/${rel.replace(/\.json$/, '')}` : `__data/${rel}`}`)
 }
 
 const LABELS: Record<string, string> = { ai: 'AI', crm: 'CRM', devops: 'DevOps', ecommerce: 'E-commerce' }

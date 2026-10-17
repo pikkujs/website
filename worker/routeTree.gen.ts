@@ -12,8 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapCatalogueDotxmlRouteImport } from './routes/sitemap-catalogue[.]xml'
 import { Route as AddonsSlugRouteImport } from './routes/addons.$slug'
 import { Route as OpenapisSlugRouteImport } from './routes/openapis.$slug'
-import { Route as LiveAddonsSlugDotjsonRouteImport } from './routes/live.addons.$slug[.]json'
-import { Route as LiveOpenapisSlugDotjsonRouteImport } from './routes/live.openapis.$slug[.]json'
+import { Route as LiveAddonsSlugRouteImport } from './routes/live.addons.$slug'
+import { Route as LiveOpenapisSlugRouteImport } from './routes/live.openapis.$slug'
 
 const SitemapCatalogueDotxmlRoute = SitemapCatalogueDotxmlRouteImport.update({
   id: '/sitemap-catalogue.xml',
@@ -30,14 +30,14 @@ const OpenapisSlugRoute = OpenapisSlugRouteImport.update({
   path: '/openapis/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LiveAddonsSlugDotjsonRoute = LiveAddonsSlugDotjsonRouteImport.update({
-  id: '/live/addons/$slug.json',
-  path: '/live/addons/$slug.json',
+const LiveAddonsSlugRoute = LiveAddonsSlugRouteImport.update({
+  id: '/live/addons/$slug',
+  path: '/live/addons/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LiveOpenapisSlugDotjsonRoute = LiveOpenapisSlugDotjsonRouteImport.update({
-  id: '/live/openapis/$slug.json',
-  path: '/live/openapis/$slug.json',
+const LiveOpenapisSlugRoute = LiveOpenapisSlugRouteImport.update({
+  id: '/live/openapis/$slug',
+  path: '/live/openapis/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -45,23 +45,23 @@ export interface FileRoutesByFullPath {
   '/sitemap-catalogue.xml': typeof SitemapCatalogueDotxmlRoute
   '/addons/$slug': typeof AddonsSlugRoute
   '/openapis/$slug': typeof OpenapisSlugRoute
-  '/live/addons/$slug.json': typeof LiveAddonsSlugDotjsonRoute
-  '/live/openapis/$slug.json': typeof LiveOpenapisSlugDotjsonRoute
+  '/live/addons/$slug': typeof LiveAddonsSlugRoute
+  '/live/openapis/$slug': typeof LiveOpenapisSlugRoute
 }
 export interface FileRoutesByTo {
   '/sitemap-catalogue.xml': typeof SitemapCatalogueDotxmlRoute
   '/addons/$slug': typeof AddonsSlugRoute
   '/openapis/$slug': typeof OpenapisSlugRoute
-  '/live/addons/$slug.json': typeof LiveAddonsSlugDotjsonRoute
-  '/live/openapis/$slug.json': typeof LiveOpenapisSlugDotjsonRoute
+  '/live/addons/$slug': typeof LiveAddonsSlugRoute
+  '/live/openapis/$slug': typeof LiveOpenapisSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/sitemap-catalogue.xml': typeof SitemapCatalogueDotxmlRoute
   '/addons/$slug': typeof AddonsSlugRoute
   '/openapis/$slug': typeof OpenapisSlugRoute
-  '/live/addons/$slug.json': typeof LiveAddonsSlugDotjsonRoute
-  '/live/openapis/$slug.json': typeof LiveOpenapisSlugDotjsonRoute
+  '/live/addons/$slug': typeof LiveAddonsSlugRoute
+  '/live/openapis/$slug': typeof LiveOpenapisSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -69,30 +69,30 @@ export interface FileRouteTypes {
     | '/sitemap-catalogue.xml'
     | '/addons/$slug'
     | '/openapis/$slug'
-    | '/live/addons/$slug.json'
-    | '/live/openapis/$slug.json'
+    | '/live/addons/$slug'
+    | '/live/openapis/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/sitemap-catalogue.xml'
     | '/addons/$slug'
     | '/openapis/$slug'
-    | '/live/addons/$slug.json'
-    | '/live/openapis/$slug.json'
+    | '/live/addons/$slug'
+    | '/live/openapis/$slug'
   id:
     | '__root__'
     | '/sitemap-catalogue.xml'
     | '/addons/$slug'
     | '/openapis/$slug'
-    | '/live/addons/$slug.json'
-    | '/live/openapis/$slug.json'
+    | '/live/addons/$slug'
+    | '/live/openapis/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   SitemapCatalogueDotxmlRoute: typeof SitemapCatalogueDotxmlRoute
   AddonsSlugRoute: typeof AddonsSlugRoute
   OpenapisSlugRoute: typeof OpenapisSlugRoute
-  LiveAddonsSlugDotjsonRoute: typeof LiveAddonsSlugDotjsonRoute
-  LiveOpenapisSlugDotjsonRoute: typeof LiveOpenapisSlugDotjsonRoute
+  LiveAddonsSlugRoute: typeof LiveAddonsSlugRoute
+  LiveOpenapisSlugRoute: typeof LiveOpenapisSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -118,18 +118,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OpenapisSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/live/addons/$slug.json': {
-      id: '/live/addons/$slug.json'
-      path: '/live/addons/$slug.json'
-      fullPath: '/live/addons/$slug.json'
-      preLoaderRoute: typeof LiveAddonsSlugDotjsonRouteImport
+    '/live/addons/$slug': {
+      id: '/live/addons/$slug'
+      path: '/live/addons/$slug'
+      fullPath: '/live/addons/$slug'
+      preLoaderRoute: typeof LiveAddonsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/live/openapis/$slug.json': {
-      id: '/live/openapis/$slug.json'
-      path: '/live/openapis/$slug.json'
-      fullPath: '/live/openapis/$slug.json'
-      preLoaderRoute: typeof LiveOpenapisSlugDotjsonRouteImport
+    '/live/openapis/$slug': {
+      id: '/live/openapis/$slug'
+      path: '/live/openapis/$slug'
+      fullPath: '/live/openapis/$slug'
+      preLoaderRoute: typeof LiveOpenapisSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -139,8 +139,8 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapCatalogueDotxmlRoute: SitemapCatalogueDotxmlRoute,
   AddonsSlugRoute: AddonsSlugRoute,
   OpenapisSlugRoute: OpenapisSlugRoute,
-  LiveAddonsSlugDotjsonRoute: LiveAddonsSlugDotjsonRoute,
-  LiveOpenapisSlugDotjsonRoute: LiveOpenapisSlugDotjsonRoute,
+  LiveAddonsSlugRoute: LiveAddonsSlugRoute,
+  LiveOpenapisSlugRoute: LiveOpenapisSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
