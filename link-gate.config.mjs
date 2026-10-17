@@ -1,9 +1,9 @@
 // The ONE place that says which internal links the prerender link gate may not find in dist/client.
 // `npm run build` (vite-link-check plugin) and `npm run check-links` both read this.
 //
-// - ssrRoutes: routes with no prerendered HTML (none: the site is fully static, no server at runtime).
+// - ssrRoutes: routes with no prerendered HTML: addon and OpenAPI detail pages, rendered live by the Worker from the registry.
 // - pendingPages: pages not yet ported (none; every internal link must resolve or the build fails).
-export const ssrRoutes = []
+export const ssrRoutes = ['/addons/[^/]+', '/openapis/[^/]+']
 export const pendingPages = []
 
 const startsWith = (list) => new RegExp(`^(${list.map((r) => r.replace(/\//g, '\\/')).join('|')})(\\/|$)`)

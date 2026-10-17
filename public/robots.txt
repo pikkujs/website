@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://pikku.dev/sitemap.xml
+Sitemap: https://pikku.dev/sitemap-catalogue.xml

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { registrySlugs } from '../registry'
+import { registrySlugs } from '@/lib/registry'
 import { SITE } from '@/lib/seo'
 
 // Listed in the static site's sitemap index, so crawlers find every addon and spec the Worker serves.

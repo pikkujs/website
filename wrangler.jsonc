@@ -1,9 +1,15 @@
 {
-  // The catalogue Worker: renders /addons/:slug and /openapis/:slug live from the Studio registry.
-  // Everything else on pikku.dev is the static site (GitHub Pages). Build: `npm run build:worker`.
-  "name": "pikku-catalogue",
-  "main": "worker/server.ts",
+  // pikku.dev: one Worker. Prerendered docs/blog are static assets; addon and OpenAPI detail pages render live from
+  // the Studio registry, cached at the edge by the custom server entry src/server.ts. Build and deploy with `npm run deploy`.
+  "name": "pikku-website",
+  "main": "@tanstack/react-start/server-entry",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    // prerendering writes x/index.html; our canonical form has no trailing slash
+    "html_handling": "drop-trailing-slash",
+    // unmatched paths fall through to the Worker (catalogue pages, 404s)
+    "not_found_handling": "none"
+  },
   "observability": { "enabled": true }
 }

@@ -55,9 +55,8 @@
   "scripts": {
     "dev": "vite dev --port 3005",
     "predev": "npm run gen:data",
-    "build:worker": "vite build -c vite.config.worker.ts",
-    "dev:worker": "vite dev -c vite.config.worker.ts --port 3020",
-    "build": "npm run check-error-docs && npm run gen:brand && npm run gen:data && vite build",
+    "deploy": "npm run build && wrangler deploy -c dist/server/wrangler.json",
+    "build": "npm run check-error-docs && npm run gen:brand && npm run gen:data && vite build && CF_BUILD=1 vite build",
     "preview": "node scripts/pages-server.mjs",
     "typecheck": "node scripts/gen-routes.mjs && tsc --noEmit",
     "gen:data": "node scripts/gen-data.mjs",

@@ -6,10 +6,12 @@ import { fumadocsMdx } from 'fumadocs-mdx/vite'
 import path from 'node:path'
 import fs from 'node:fs'
 import type { Plugin } from 'vite'
+import { cloudflare } from '@cloudflare/vite-plugin'
 import linkCrawl from './packages/vite-link-check/src/index.js'
 import feeds from './plugins/feeds.mjs'
 import { isIgnored, isKnown } from './link-gate.config.mjs'
 
+const CF = process.env.CF_BUILD === '1'
 const alias: Record<string, string> = { '@': path.resolve(import.meta.dirname, 'src') }
 
 /** Every docs/blog page's payload URL, so the prerender writes /payload/**.json next to the HTML. */
@@ -48,21 +50,26 @@ const clientOnly = (): Plugin => ({
   load(id) { if (id === '\0client-only-empty') return 'export default {}' },
 })
 
-export default defineConfig({
+export default defineConfig(async ({ command }) => ({
   server: {
     port: 3005, strictPort: true,
   },
   resolve: { alias },
+  // Production is a Cloudflare Worker: prerendered pages are static assets, the catalogue renders live from the registry.
+  // Two passes (see "build" in package.json): the Node build prerenders (the prerenderer needs a Node server bundle), then
+  // CF_BUILD=1 adds the Worker bundle over it without prerendering, so the client assets (same hashes) stay as they are.
+  define: command === 'build' ? { 'import.meta.env.VITE_CATALOGUE_SOURCE': JSON.stringify('registry') } : {},
+  environments: CF ? { client: { build: { emptyOutDir: false } } } : {},
   plugins: [
+    ...(CF ? [cloudflare({ viteEnvironment: { name: 'ssr' } })] : []),
     clientOnly(),
     fumadocsMdx((await import('./source.config.ts')) as any),
     tailwindcss(),
-    tanstackStart({ pages: [{ path: '/search-index.json' }, ...contentPages(), ...catalogPages()], prerender: { enabled: true, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
+    tanstackStart({ pages: [{ path: '/search-index.json' }, ...contentPages(), ...(command === 'build' ? [] : catalogPages())], prerender: { enabled: !CF, crawlLinks: true, autoSubfolderIndex: true, concurrency: 8,
       failOnError: false, // vite-link-check is the gate: it names the source file, crawlLinks does not
     } }),
     viteReact(),
     // order matters: both must run AFTER the prerender post-build
-    feeds({ site: 'https://pikku.dev', title: 'Pikku Blog' }),
-    linkCrawl({ isIgnored, isKnown }),
+    ...(CF ? [] : [feeds({ site: 'https://pikku.dev', title: 'Pikku Blog' }), linkCrawl({ isIgnored, isKnown })]),
   ],
-})
+}))

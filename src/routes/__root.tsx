@@ -14,7 +14,7 @@ const THEME_INIT = `try{var t=localStorage.getItem('theme');document.documentEle
 // Production only, after load, so analytics never competes with first render.
 const GA_BOOT = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','${GA_ID}');window.addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${GA_ID}';document.head.appendChild(s)},800)})`
 
-export const rootOptions: NonNullable<Parameters<typeof createRootRoute>[0]> = {
+export const Route = createRootRoute({
   head: () => {
     const base = pageHead({ path: '/' })
     return {
@@ -38,9 +38,7 @@ export const rootOptions: NonNullable<Parameters<typeof createRootRoute>[0]> = {
   },
   notFoundComponent: NotFound,
   component: Root,
-}
-
-export const Route = createRootRoute(rootOptions)
+})
 
 function Analytics() {
   const router = useRouter()

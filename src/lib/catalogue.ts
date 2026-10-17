@@ -33,7 +33,7 @@ const LIVE = import.meta.env.VITE_CATALOGUE_SOURCE === 'registry'
 export const getAddon = async (slug: string) => {
   if (!/^[\w-]+$/.test(slug)) return null
   if (LIVE && import.meta.env.SSR) {
-    const a = await (await import('../../worker/registry')).registryAddon(slug)
+    const a = await (await import('./registry')).registryAddon(slug)
     return a ? ({ ...a, categoryLabel: labelOf(a.category) } as AddonDetail) : null
   }
   const a = await read<any>(`addons/${slug}.json`)
@@ -42,7 +42,7 @@ export const getAddon = async (slug: string) => {
 
 export const getOpenApi = async (slug: string) => {
   if (!/^[\w-]+$/.test(slug)) return null
-  if (LIVE && import.meta.env.SSR) return (await import('../../worker/registry')).registryOpenApi(slug) as any
+  if (LIVE && import.meta.env.SSR) return (await import('./registry')).registryOpenApi(slug) as any
   return read<Record<string, any> & { slug: string; name: string }>(`openapis/${slug}.json`)
 }
 

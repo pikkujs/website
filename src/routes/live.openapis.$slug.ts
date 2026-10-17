@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { registryOpenApi } from '../registry'
+import { registryOpenApi } from '@/lib/registry'
 
 export const Route = createFileRoute('/live/openapis/$slug')({
   server: { handlers: { GET: async ({ params }: any) => {
