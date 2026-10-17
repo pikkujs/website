@@ -1,0 +1,19 @@
+---
+title: "PKU644: Single-Step Workflow"
+description: "PKU644: Workflow has only one step, why it happens and how to fix it"
+---
+# PKU644: Single-Step Workflow
+
+## Error Message
+
+```
+[PKU644] Workflow has only one step
+```
+
+## What Went Wrong
+
+The inspector found a workflow with a single step. This is a warning: a workflow earns its keep by sequencing, retrying or waiting between steps, and with one step it adds a durable run for something a plain function would do.
+
+## How to Fix
+
+Add the steps the workflow is meant to coordinate, or call the function directly (an RPC, queue worker or HTTP route) and drop the workflow.
