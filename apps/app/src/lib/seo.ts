@@ -1,7 +1,6 @@
 export const SITE = 'https://pikku.dev'
 export const SITE_NAME = 'Pikku'
 export const DEFAULT_DESCRIPTION = 'Open-source TypeScript backend platform. One command runs your database, auth, email, workflows and AI agents locally, same as production.'
-export const GA_ID = 'G-SNE58L9QKR'
 
 /** Per-page <head>: title, description, canonical and Open Graph / Twitter tags. `path` is the canonical pathname. */
 const clamp = (s: string, n: number) => (s.length <= n ? s : s.slice(0, s.lastIndexOf(' ', n - 1)).replace(/[,;:\s]+$/, '') + '…')

@@ -7,13 +7,11 @@ import { SvgDefs, GOOGLE_FONTS_HREF } from '@pikku/theme-brand'
 import { Navbar } from '@/components/site/Navbar'
 import { Footer } from '@/components/site/Footer'
 import { NotFound } from '@/components/site/NotFound'
-import { GA_ID, pageHead } from '@/lib/seo'
+import { pageHead } from '@/lib/seo'
 import { trackPageView } from '@/lib/site-analytics'
 
 // Runs before first paint: light by default, remembered choice wins. No flash.
 const THEME_INIT = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light'}catch(e){document.documentElement.dataset.theme='light'}`
-// Production only, after load, so analytics never competes with first render.
-const GA_BOOT = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','${GA_ID}');window.addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${GA_ID}';document.head.appendChild(s)},800)})`
 
 export const Route = createRootRoute({
   head: () => {
@@ -33,7 +31,6 @@ export const Route = createRootRoute({
       ],
       scripts: [
         { children: THEME_INIT },
-        ...(import.meta.env.PROD ? [{ children: `if(location.hostname==='pikku.dev'||location.hostname==='www.pikku.dev'){${GA_BOOT}}` }] : []),
       ],
     }
   },
@@ -47,8 +44,6 @@ function Analytics() {
     trackPageView(location.pathname) // first view of the page load (a no-op unless VITE_SITE_ANALYTICS_URL is set)
     return router.subscribe('onResolved', ({ toLocation, fromLocation }) => {
       if (toLocation.pathname === fromLocation?.pathname) return
-      const w = window as any
-      if (typeof w.gtag === 'function') w.gtag('config', GA_ID, { page_path: toLocation.pathname })
       trackPageView(toLocation.pathname)
     })
   }, [router])
