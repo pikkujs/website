@@ -38,6 +38,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.64.0",
     "@pikku/inspector": "^0.12.89",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.5",
@@ -48,11 +49,14 @@
     "prettier": "^3.8.4",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vite": "^8.3.4"
+    "vite": "^8.3.4",
+    "wrangler": "^4.151.1"
   },
   "scripts": {
     "dev": "vite dev --port 3005",
     "predev": "npm run gen:data",
+    "build:worker": "vite build -c vite.config.worker.ts",
+    "dev:worker": "vite dev -c vite.config.worker.ts --port 3020",
     "build": "npm run check-error-docs && npm run gen:brand && npm run gen:data && vite build",
     "preview": "node scripts/pages-server.mjs",
     "typecheck": "node scripts/gen-routes.mjs && tsc --noEmit",

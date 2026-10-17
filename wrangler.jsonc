@@ -1,0 +1,9 @@
+{
+  // The catalogue Worker: renders /addons/:slug and /openapis/:slug live from the Studio registry.
+  // Everything else on pikku.dev is the static site (GitHub Pages). Build: `npm run build:worker`.
+  "name": "pikku-catalogue",
+  "main": "worker/server.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true }
+}
