@@ -59,7 +59,7 @@ export default defineConfig(async ({ command }) => ({
   // Two passes (see "build" in package.json): the Node build prerenders (the prerenderer needs a Node server bundle), then
   // CF_BUILD=1 adds the Worker bundle over it without prerendering, so the client assets (same hashes) stay as they are.
   define: command === 'build' ? { 'import.meta.env.VITE_CATALOGUE_SOURCE': JSON.stringify('registry') } : {},
-  environments: CF ? { client: { build: { emptyOutDir: false } } } : {},
+  environments: (CF ? { client: { build: { emptyOutDir: false } } } : {}) as any,
   plugins: [
     ...(CF ? [cloudflare({ viteEnvironment: { name: 'ssr' } })] : []),
     clientOnly(),

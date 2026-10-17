@@ -1,39 +1,33 @@
 /* ════════════════════════════════════════════════════════════════
-   The surface explorer's chrome.
+   The SDK explorer's chrome.
 
-   Every page on this site is paper — cream ground, Newsreader, an orange-red
-   accent — and every one of them puts its code on ink: the warm near-black of
-   --paper-code-bg that the terminals and the homepage's ink band already use.
-   This page is that slab at full bleed. It is not a fourth palette and it is
-   not the console's blue; it is the dark surface the site already owns, which
-   is why the navbar above it stays paper.
-
-   The local --ex-* tokens exist so the mapping from the site's palette to a
-   dense application surface is written down once, at the top, rather than
-   guessed at in forty declarations.
+   Same paper as every other page: cream ground, Newsreader, clay accent. It
+   follows the site's light/dark toggle because every --ex-* token below is
+   an alias of a --paper-* token, and [data-theme=dark] swaps those. Code
+   inside the panes sits on the same ground as the page (hairline-bordered,
+   not a slab), so the page reads as one sheet.
    ════════════════════════════════════════════════════════════════ */
 
 .shell {
   /* ground */
-  --ex-bg: var(--paper-code-bg);
-  --ex-rail: var(--paper-code-bg-bar);
-  --ex-line: var(--paper-code-border);
+  --ex-bg: var(--paper-bg);
+  --ex-rail: var(--paper-bg-alt);
+  --ex-line: var(--paper-border);
   /* Hairlines inside a pane, where --ex-line is already the pane's edge. */
-  --ex-line-soft: rgba(242, 239, 231, 0.055);
-  --ex-line-hard: rgba(242, 239, 231, 0.11);
+  --ex-line-soft: color-mix(in srgb, var(--paper-text) 7%, transparent);
+  --ex-line-hard: var(--paper-border-strong);
 
-  /* ink type, at the three weights tokens.css defines for this ground */
-  --ex-text: var(--paper-on-dark-text);
-  --ex-body: var(--paper-on-dark-body);
-  --ex-faint: var(--paper-on-dark-faint);
+  --ex-text: var(--paper-text);
+  --ex-body: var(--paper-text-body);
+  --ex-faint: var(--paper-text-muted);
 
-  /* the accent, lifted for the dark ground */
-  --ex-accent: var(--paper-accent-on-dark);
-  --ex-accent-line: rgba(232, 131, 74, 0.32);
-  --ex-accent-tint: rgba(232, 131, 74, 0.09);
-  --ex-accent-fill: rgba(232, 131, 74, 0.15);
+  /* the accent: claydeep reads on cream, ember on the dark theme (--paper-accent-dark swaps with it) */
+  --ex-accent: var(--paper-accent-dark);
+  --ex-accent-line: var(--paper-accent-border);
+  --ex-accent-tint: var(--paper-accent-ring-sm);
+  --ex-accent-fill: var(--paper-accent-bg);
 
-  --ex-hover: rgba(242, 239, 231, 0.04);
+  --ex-hover: color-mix(in srgb, var(--paper-text) 5%, transparent);
 
   display: grid;
   grid-template-rows: auto 1fr;
@@ -436,9 +430,9 @@
 }
 
 .class {
-  border-color: rgba(111, 179, 192, 0.3);
-  background: rgba(111, 179, 192, 0.1);
-  color: var(--paper-code-teal);
+  border-color: color-mix(in srgb, var(--hue-teal) 35%, transparent);
+  background: color-mix(in srgb, var(--hue-teal) 10%, transparent);
+  color: var(--hue-teal);
 }
 
 .const,
@@ -450,9 +444,9 @@
 }
 
 .deprecated {
-  border-color: rgba(239, 68, 68, 0.28);
-  background: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
+  border-color: color-mix(in srgb, #dc2626 35%, transparent);
+  background: color-mix(in srgb, #dc2626 9%, transparent);
+  color: #b91c1c;
 }
 
 /* Where a search result lives. Only search shows it — inside one door every
@@ -678,7 +672,7 @@
     height: calc(100vh - var(--nav-h));
     transform: translateX(100%);
     transition: transform 0.18s ease;
-    box-shadow: -18px 0 40px rgba(0, 0, 0, 0.5);
+    box-shadow: -18px 0 40px rgba(0, 0, 0, 0.18);
   }
 
   .panel[data-open] {
@@ -740,7 +734,7 @@
     inset: var(--nav-h) 0 0;
     z-index: 35;
     border: none;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.35);
   }
 
   .doc {

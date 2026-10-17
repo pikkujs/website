@@ -203,8 +203,8 @@
 /* ── quickstart hero ──────────────────────────────────── */
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-  gap: 44px;
+  grid-template-columns: minmax(0, 1fr); /* code is never set in columns */
+  gap: 28px;
   align-items: center;
   margin-top: 22px;
 }
