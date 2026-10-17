@@ -134,3 +134,26 @@ a.tag:hover { color: var(--paper-accent-dark); border-color: var(--paper-accent)
 .doc-main .hub-section { margin-top: 36px; }
 .doc-main .hub-section + .pager { margin-top: 28px; }
 @media (max-width: 640px) { .doc-top { flex-direction: column; } }
+
+/* ---- features shell: the docs sidebar beside the feature pages (they keep their full width, so no TOC column) ---- */
+.feat-shell { grid-template-columns: 260px minmax(0, 1fr); gap: 0 32px; }
+.feat-main { min-width: 0; padding: 22px 0 48px; }
+.feat-crumbs { max-width: 1140px; margin: 0 auto 4px; padding: 0 32px; }
+.feat-pager { max-width: 1140px; margin: 40px auto 0; padding: 0 32px; }
+.feat-hub-main { max-width: 900px; margin: 0 auto; padding: 14px 0 0; }
+.feat-hub-main .hub-lead h1 em { font-style: italic; color: var(--paper-accent-dark); }
+.feat-hub-main .hub-section { margin-top: 8px; }
+.hub-code { display: block; margin-top: 6px; overflow-x: auto; white-space: nowrap; font: 400 .78rem/1.5 var(--font-mono); color: var(--paper-accent-dark); scrollbar-width: none; }
+.feat-hub-more { margin: 0; font-size: .95rem; color: var(--paper-text-muted); }
+.feat-hub-more a { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.feat-hub-more b { display: inline-flex; align-items: center; gap: 4px; color: var(--paper-accent-dark); }
+.feat-hub-more a:hover b { text-decoration: underline; text-underline-offset: 3px; }
+/* the feature pages lay out two columns of code down to ~1000px, so the sidebar folds into the menu sheet earlier than in the docs */
+@media (max-width: 1180px) {
+  .feat-shell { grid-template-columns: minmax(0, 1fr); padding: 0; }
+  .feat-shell .doc-side { display: none; }
+  .feat-shell .doc-bar { display: block; padding: 8px 16px; }
+  .feat-hub-main { padding: 0 16px; }
+  .feat-crumbs, .feat-pager { padding: 0 20px; }
+}
+@media (max-width: 640px) { .feat-pager { grid-template-columns: minmax(0, 1fr); } }
