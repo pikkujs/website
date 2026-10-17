@@ -3,6 +3,7 @@ date: 2022-02-22
 title: Why I haven't used nestJS
 description: A very high level / personal comparison between the two frameworks
 image: nestjs.svg
+authors: yasser
 ---
 
 Before I begin, today is 20220222 as an ISO date. I had to blog something!
@@ -21,21 +22,21 @@ And having worked on (large) projects directly using express/other HTTP servers,
 
 So, why didn't I go with nestJS?
 
-### Deployment options
+## Deployment options
 
 My first requirement was to build something that can deploy to functionless servers without including the entire HTTP-server stack across with it. Projects like [serverless-express](https://github.com/vendia/serverless-express) and [guides on how to do it with nest](https://docs.nestjs.com/faq/serverless) exist, but the issue remains that it provides a lot of code bloat to get it working (resulting in increased runtime and costs per invocation). Serverless functions aren't for everyone, especially with their random latency and warm-up times. But at the end of the day, the cost-benefit can work in your favour, especially if you factor in all the extra monitoring required to scale docker/ec2 machines/non-functional services or services that barely ever compute anything.
 
-### Decorators
+## Decorators
 
 Certainly a pet peeve, but the fact both Angular and NestJS are relying so heavily on decorators [a language feature that hasn't yet passed stage 2](https://github.com/tc39/proposal-decorators) didn't boost my confidence levels (especially when I first wrote it two years ago). Stage two means it's most likely going to be included in the final spec, so this no longer matters as much.
 
-### Angular inspiration / Services Injection
+## Angular inspiration / Services Injection
 
 Now I have been lucky enough to work on dependency injection mechanisms in frontend javascript applications back when XML was still favoured over JSON. And the benefits are great; you get to inject different services depending on whether you're running a test, developing locally, running in the cloud, deploying in an enterprise setting. Generally, having the option to mix and match your 'runtime' requirements is excellent. But the amount of code and decorators and magic required to get it working is sometimes just really hard to wrap your head around. I'm currently working on a project where they are moving from PHP to nestJS, and the number of files used as a scaffold was pretty intense, mainly because they don't even have more than one type of service or interface to exchange.
 
-So I guess my point is, rather than having to do [this](https://docs.nestjs.com/providers):
+So I guess my point is, rather than having to do it [the NestJS providers way](https://docs.nestjs.com/providers):
 
-#### nestJS
+### nestJS
 
 ```typescript
 // Service
@@ -87,9 +88,9 @@ import { CatsService } from './cats/cats.service';
 export class AppModule {}
 ```
 
-I find it a little easier to do [this](https://pikku.io/code/):
+I find it a little easier to do it [the Pikku way](https://pikku.io/code/):
 
-#### Pikku
+### Pikku
 
 ```typescript
 // Service
@@ -135,9 +136,9 @@ export const setupServices = async (config: Config): Promise<Services> => {
 
 I know that's quite a bit of code, apologies for that. However, the main point I'm trying to get across is that, at least for my coding style and ADD, having very explicit/normal functions makes more sense.
 
-### Seperating HTTP from Logic
+## Seperating HTTP from Logic
 
-#### Data
+### Data
 
 Okay, so in the examples above, we can see the recommended way in which nestJS lays out its code. You have a controller that the HTTP command gets routed to, and it then parses the required data and passes it onto a service, which tends to be HTTP agnostic.
 
@@ -170,7 +171,7 @@ I instead make the following assumption. If I receive any data, it will follow t
 
 Currently, there is a rule of precedence, which means it overwrites the values when merging. But it probably makes sense to add a validation rule to throw an error if the values don't match going forward to avoid odd API usage.
 
-#### Errors
+### Errors
 
 Errors following a similar thought pattern. In nestJS, it has a concept of a [HttpException](https://docs.nestjs.com/exception-filters), which means if something goes wrong in your controller, you end up throwing an exception which is either HTTP based or extends an HTTP error. So if something happens in your HTTP agnostic service layer, you throw a standard JS error, which is then caught in your controller and translated to something HTTP based.
 
@@ -192,11 +193,11 @@ addErrors([CatNotFoundError,  { status: 404, message: 'error.cat_not_found' }])
 
 Is it significantly different? Not really. But it's less documentation and verbosity - no filters or decorators needed. The extends EError is a javascript issue to get around `instanceof` not working with node_modules. That was a painful discovery 😂.
 
-#### Typescript
+### Typescript
 
 Pikku is tightly bound to typescript. It automatically creates JSON validation schemas from your data types. If you're using Postgres or MySQL, it can even directly link to your data schemas to enforce the data model. So there are no DTOs, which means you also lost some of the extra functionality it provides (like default values).
 
-#### Request Scoped Services
+### Request Scoped Services
 
 Honestly don't know if this is a thing you can do in nestJS or not. But in Pikku, you can lazy load services for each HTTP request.
 
@@ -207,7 +208,7 @@ A couple of example benefits in my projects:
 - You can prefix all logs for a request with a UUID for better traceability
 - Etc
 
-### The good stuff
+## The good stuff
 
 So I want to re-acknowledge that nestJS is a really powerful framework. If I didn't have a lot of time to kill during the first lockdown, plus wanting to understand the HTTP stack I'm working with (previously, I only ever used sockets, all the way back to long polling in IE6 😅). 
 

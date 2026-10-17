@@ -2,6 +2,7 @@
 date: 2021-08-01
 title: React and VanillaJS Services 
 description: A dive into the use-service-hook to tie state management directly to ES6 classes without the need for contexts or redux
+authors: yasser
 ---
 
 Today I want to share a design that I have been using for maintaining state in react since the emergence of hooks.
@@ -12,21 +13,21 @@ There have been quite a few posts lately around how redux is a bit too complex f
 
 Before I begin, I'm not great at content writing, so if you find any mistakes feel free to fix them in a PR or let me know so I can improve going forward. Thanks!
 
-### My state-management experiences
+## My state-management experiences
 
 You can skip this part if you want to see [how it just works](#the-now---how-it-works).
 
-#### The earliest era
+### The earliest era
 
 The evolution of state management in my day to day job started in 2010. Back then we have a custom rendering framework (as almost all companies did) and we had a vanilla JS model. The logic was separated and for the most part, we just wrote JS classes (via adding methods directly to the prototype) and emitted events whenever things changed and called the methods directly from the controller. It was a simple life, except everything was custom written and the custom framework is very similar to XML.. but it was 2010.
 
-#### The early mid-era
+### The early mid-era
 
 We then moved towards [KnockoutJS](https://knockoutjs.com/). It was one of the more powerful frameworks around (mostly competing VS [jQuery](https://jquery.com/) and [Angular1](https://angularjs.org/) and works by having your properties all being observables. So `name()` returns name, `name('bob')` updates it. If you tied your HTML to the observable it would be able to read and update it.
 
 The library itself was great, but unfortunately, the adoption went a bit too far and the entire logic ended up moving into the view. This meant we no longer had vanillaJS domain logic, and all of our code was driven by observables. This resulted in us implementing a reactive layer on top to sort out those events and aggregate them, which again led to reinventing the wheel. Plus, that's just the first level of impact in terms of knock-on effects. We ended up writing a proprietary semi BDD testing layer and it was just.. odd. This was still back in the days of IE6 support, so just using a shim of `forEach` would occasionally result in the screen of unresponsiveness, let alone thousands of observables going off due to ping pong effects.
 
-#### The mid era
+### The mid era
 
 So I was eventually allowed to implement another design. The exact memory is a little fuzzy, but I'm tempted to say it was because we (myself and two colleagues) won a hackathon where we were able to implement a trade model with an infinite (memory and CPU constraints aside) amount of sub-trades. Turned out there was another team who had to implement that feature and a scrum master helped make the case. The solution wasn't perfect since it was still based on observables, but it worked for small to medium model sizes.
 
@@ -54,11 +55,11 @@ This pretty much meant you can allow a very small JS library to deal with all co
 
 The biggest impact was in older browsers. We sped up rendering complex tickets from seconds to milliseconds, mostly by avoiding hundreds of observables being triggered during load time. Detaching from knockout also meant we were able to write some pure vanilla JS components using the same logic, which back then had a large performance improvement when dealing with windowing.
 
-#### The startup era
+### The startup era
 
 This period was mostly based on backend development, so a blog post for another day. For the frontend, we just bought an Angular 1 template for 7 bucks and tweaked it to work. Wasn't great, Angular1 was already years old but there weren't yet any quality React or Vue templates ready to use.
 
-#### The late mid-era
+### The late mid-era
 
 After the startup crashed I had the fortunate luck of getting a position with a group of team members from the early/mid ERA. In less than a year they built a feature-rich real-time financial web application that worked well on both phones and desktops. During this era, I got my crash introduction to React, Redux and Reselect.
 
@@ -70,13 +71,13 @@ The main/only downsides I encountered were:
 
 It's worth mentioning this was all before Hooks came out, and in the last couple of months, the team already simplified/refactored a bunch of HOC to be easier to worth with. 
 
-#### The recent era
+### The recent era
 
 I don't want to go too deep into this era since there are just too many oddities to explain. Let's just say it was a bit of a dark and weird place in state management history. I started freelancing and saw different state management systems which just baffled me in terms of complexity. Inheritance, composition, observables, reactive code all sort of forcefully existing together. Unfortunately, it was one of those "the original developer set it up" sorts of situations and the cost of changing it was extremely high.
 
 I also started on my projects initially with the impression I'll use redux and typescript to build all my logic. But as I constantly refactored things whilst adding features I found the process painful. I was doing most of my logic in the model layer and switching from the backend to the frontend always gave me a bit of dread. There had to be a way for me to regain my sanity.
 
-###  The now - how it works
+##  The now - how it works
 
 So I got up one day and wrote down the following criteria (in order of importance):
 
@@ -226,30 +227,30 @@ And that's all folks!
 
 Let us revisit the requirements:
 
-##### 1: It has to be super typescript friendly
-##### 2: It has to be React agnostic
-##### 3: It has to be unit testable
+### 1: It has to be super typescript friendly
+### 2: It has to be React agnostic
+### 3: It has to be unit testable
 
 > All of the above is achieved by just using normal ES6 classes.
 
-##### 4: It has to support both `sync` and `async` methods 
+### 4: It has to support both `sync` and `async` methods 
 
 > Using ES6 classes this works. The main obstacle is just that anything that needs to be initialised in a `getState` method can't be async because otherwise, the state would contain a promise. So you call the method if it's undefined expect the event to be called with the initial value shortly after
 
-##### 5: It has to have no dependencies
+### 5: It has to have no dependencies
 
 > I had to use another EventEmitter library because the one included in the shim isn't browser
 friendly. So the only dependency is EventEmitter3
 
-##### 6: React: has to be performant and only update what and when I want it to
+### 6: React: has to be performant and only update what and when I want it to
 
 > So I have used this pattern for three applications so far. I can say it has made debugging CPU consumption much easier because the stack trace is minimal. I'm currently developing a large audiobook editor in-browser and it has so far held up to all my expectations without any debugging
 
-##### 7: React: has to be super easy to use
+### 7: React: has to be super easy to use
 
 > Not that much to learn thankfully, everything is pretty much contained in those lines of code above.
 
-##### 8: Passing reference to it should be simple
+### 8: Passing reference to it should be simple
 
 > So the classes themselves are created once using `useMemo` and can then be passed through via a context or using props. Either way, it should never trigger a rerender unless the service itself changes, which is a whole different story.
 
@@ -261,11 +262,11 @@ return <EmployeeContent.Provider value={employeeService}>
 
 I am a bit lazy and just use singletons when possible. Saves me from having to use contexts across the board.
 
-##### 9: Should be easy to create sub-states. A state per component for example.
+### 9: Should be easy to create sub-states. A state per component for example.
 
 > This was important for me because I have classes that back certain complex components in react. Because of the approach above, there's no complex state creation. Create the class and it deletes when the component is removed. If the class needs cleanup code you can just `useEffect`.
 
-#### The end
+### The end
 
 I hope this was an enjoyable read! This website is a work in the process alongside the projects that depend
 on pikku. I'm looking forward to sharing some of the libraries and thoughts there along the way.

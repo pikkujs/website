@@ -8,7 +8,7 @@ Pikku can generate a typed HTTP client for your `wireHTTP` routes. It is a thin 
 
 ![Pikku Client](/img/pikku-fetch.gif)
 
-### Generating the client
+## Generating the client
 
 Point `clientFiles.fetchFile` at the file you want generated, then run the CLI:
 
@@ -33,14 +33,14 @@ The generated file exports two things:
 
 With the `fetchFile` above, the generated file is importable as `#pikku/pikku-fetch.gen.js`.
 
-### Using it directly
+## Using it directly
 
 ```typescript @snippet fetchClient
 ```
 
 The first argument is the route pattern as written in `wireHTTP` (including `:params`). The data argument carries path params, query params and the body merged into one object — the same shape the function receives.
 
-### Methods
+## Methods
 
 | Method | Description |
 |--------|-------------|
@@ -56,13 +56,13 @@ The first argument is the route pattern as written in `wireHTTP` (including `:pa
 
 Non-2xx responses throw a `PikkuFetchError` (from `@pikku/fetch`) carrying the status, the parsed server error and the raw `Response`.
 
-### Using it with React
+## Using it with React
 
 In a React app, pass the class to `createPikku` from `@pikku/react` so the fetch instance is shared by the RPC and realtime clients. Pass `PikkuFetch` (from `#pikku/pikku-fetch.gen.js`) and `PikkuRPC` (from `#pikku/pikku-rpc.gen.js`) to `createPikku` from `@pikku/react`, together with your `serverUrl`. The returned object is what you hand to `PikkuProvider`.
 
 `createPikku` accepts the same options as `PikkuFetch` (`transformDate`, `credentials`, `mode`, `cache`, `authHeaders`) plus `serverUrl`. Inside components, `usePikkuFetch()` returns the instance.
 
-### Configuration options
+## Configuration options
 
 Construct `PikkuFetch` directly with the same options: `serverUrl`, `transformDate` (turn date-like strings into `Date` objects), `credentials` (for example `'include'` to forward cookies) and `authHeaders` (for example an `apiKey`).
 

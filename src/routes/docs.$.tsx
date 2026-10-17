@@ -17,7 +17,7 @@ import { HubRow, HubSection } from '@/components/docs/HubRow'
 import { PinButton } from '@/components/docs/pins'
 import type { ChildRow, HubData } from '@/lib/docs-hub'
 import { Toc } from '@/components/Toc'
-import { pageHead } from '@/lib/seo'
+import { pageHead, SITE } from '@/lib/seo'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ChevronRight, Menu, Pencil, X } from 'lucide-react'
 
@@ -26,7 +26,7 @@ const REPO = 'https://github.com/pikkujs/website/blob/main/content/docs/'
 type DocData = { path: string; url: string; title: string; description?: string; ai?: boolean; hideTitle?: boolean; hub?: HubData; children?: ChildRow[] }
 export const Route = createFileRoute('/docs/$')({
   component: Page,
-  head: ({ loaderData }) => { const d = loaderData as DocData | undefined; return d ? pageHead({ title: d.title, description: d.description || undefined, path: d.url, extra: [{ name: 'source-file', content: 'content/docs/' + d.path }] }) : {} },
+  head: ({ loaderData }) => { const d = loaderData as DocData | undefined; return d ? pageHead({ title: d.title, description: d.description || undefined, path: d.url, jsonLd: { '@type': 'TechArticle', headline: d.title, description: d.description || undefined, url: SITE + d.url, publisher: { '@type': 'Organization', name: 'Pikku', url: SITE } } }) : {} },
   loader: async ({ params }): Promise<DocData & { pageTree: any }> => {
     const slugs = params._splat?.split('/').filter(Boolean) ?? []
     // SSR/prerender call the functions directly; browser navigation reads prerendered static JSON (no server call)

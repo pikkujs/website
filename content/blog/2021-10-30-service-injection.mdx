@@ -3,6 +3,7 @@ date: 2021-10-30
 title: Service Lookup
 description: How and why pikku uses services
 image: service.svg
+authors: yasser
 ---
 
 :::info[Updated for Pikku v0.11]
@@ -19,7 +20,7 @@ And there's also the issue around testing, cloud development and local developme
 
 This is where pikkus service management comes into play.
 
-### Examples
+## Examples
 
 So a function in pikku has three inputs and one output:
 
@@ -74,7 +75,7 @@ When developing locally, you don't want to have all of those things to actually 
 
 And that's where dependency injection comes in handy!
 
-### Seting up services
+## Seting up services
 
 All service management is done in a single setup services class:
 
@@ -113,7 +114,7 @@ That method does two important things:
     - Putting all database queries in a transaction automatically, with the userId set on the database session which allows audit logs to magically work.
     - Abstracting header details from the pikkuFuncs (pikku hides away all HTTP concepts so the code is deployment library agnostic)
 
-### There are two ways you can do dependency injection
+## There are two ways you can do dependency injection
 
 1) Create an entire stub for a service and figure it out in the setup layer
 
@@ -152,7 +153,7 @@ export class Slack {
 
 I'm usually in favour of the second since it's less duplication and you don't need to create an interface that multiple classes rely on.
 
-### Testing 
+## Testing 
 
 The final benefit we'll mention is you can easily test your services with awesome libraries like sinon.
 
@@ -177,7 +178,7 @@ describe('hello function', () => {
 
 The final benefit is that you can switch out services really easily, if you want to use socketIO locally but ably.io remotely for example, pretty simple. It's just normal interfaces after all!
 
-### Some example services we wrote / use:
+## Some example services we wrote / use:
 
 * JWT
 
