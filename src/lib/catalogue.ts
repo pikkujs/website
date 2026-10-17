@@ -15,7 +15,8 @@ async function read<T>(rel: string): Promise<T> {
     const { notFound } = await import('@tanstack/react-router')
     throw notFound()
   }
-  return fetchPayload<T>(`/__data/${rel}`)
+  // the Worker serves live detail JSON at /live/*; the static site's snapshot lives at /__data/*
+  return fetchPayload<T>(`/${import.meta.env.VITE_CATALOGUE_SOURCE === 'registry' ? `live/${rel.replace(/\.json$/, '')}` : `__data/${rel}`}`)
 }
 
 const LABELS: Record<string, string> = { ai: 'AI', crm: 'CRM', devops: 'DevOps', ecommerce: 'E-commerce' }
@@ -26,14 +27,22 @@ export const listAddons = async () =>
     slug: string; name: string; title: string; category: string; categoryLabel: string; description: string | null; functionCount: number
   })
 
+/** The Worker build (vite.config.worker.ts) reads detail pages live from the Studio registry instead of the snapshot. */
+const LIVE = import.meta.env.VITE_CATALOGUE_SOURCE === 'registry'
+
 export const getAddon = async (slug: string) => {
   if (!/^[\w-]+$/.test(slug)) return null
+  if (LIVE && import.meta.env.SSR) {
+    const a = await (await import('./registry')).registryAddon(slug)
+    return a ? ({ ...a, categoryLabel: labelOf(a.category) } as AddonDetail) : null
+  }
   const a = await read<any>(`addons/${slug}.json`)
   return { ...a, categoryLabel: labelOf(a.category), functions: (a.functions ?? []) as Fn[], secrets: (a.secrets ?? []) as Secret[] } as AddonDetail
 }
 
 export const getOpenApi = async (slug: string) => {
   if (!/^[\w-]+$/.test(slug)) return null
+  if (LIVE && import.meta.env.SSR) return (await import('./registry')).registryOpenApi(slug) as any
   return read<Record<string, any> & { slug: string; name: string }>(`openapis/${slug}.json`)
 }
 

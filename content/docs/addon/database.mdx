@@ -4,8 +4,6 @@ title: Database Tables
 description: Shipping a table from an addon and folding it into the consumer's migrations
 ---
 
-# Shipping Database Tables
-
 An addon can ship its own tables. It does not create them.
 
 An addon has no database of its own — it runs inside the consuming application, against that application's database. If it created tables at boot it would put a second authority on a schema the consumer's migrations already own, and the consumer would have no record of what appeared or when. So an addon *declares* what it needs, `pikku db export` publishes that declaration, and the consumer's `pikku db generate` folds it into its own migration history, where it can be reviewed like any other migration.

@@ -7,19 +7,12 @@ import { SvgDefs, GOOGLE_FONTS_HREF } from '@pikku/theme-brand'
 import { Navbar } from '@/components/site/Navbar'
 import { Footer } from '@/components/site/Footer'
 import { NotFound } from '@/components/site/NotFound'
-import { GA_ID, pageHead, SITE } from '@/lib/seo'
+import { GA_ID, pageHead } from '@/lib/seo'
 
 // Runs before first paint: light by default, remembered choice wins. No flash.
 const THEME_INIT = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light'}catch(e){document.documentElement.dataset.theme='light'}`
 // Production only, after load, so analytics never competes with first render.
 const GA_BOOT = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','${GA_ID}');window.addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=${GA_ID}';document.head.appendChild(s)},800)})`
-
-const JSON_LD = JSON.stringify({
-  '@context': 'https://schema.org', '@type': 'SoftwareSourceCode', name: 'Pikku',
-  description: 'Open-source TypeScript backend platform. One command runs database, auth, content, email, secrets, workflows and AI agents locally, identical to production. Deploy anywhere.',
-  url: SITE, codeRepository: 'https://github.com/pikkujs/pikku', programmingLanguage: 'TypeScript', license: 'https://opensource.org/licenses/MIT',
-  author: { '@type': 'Organization', name: 'Pikku', url: SITE },
-})
 
 export const Route = createRootRoute({
   head: () => {
@@ -39,7 +32,6 @@ export const Route = createRootRoute({
       ],
       scripts: [
         { children: THEME_INIT },
-        { type: 'application/ld+json', children: JSON_LD },
         ...(import.meta.env.PROD ? [{ children: `if(location.hostname==='pikku.dev'||location.hostname==='www.pikku.dev'){${GA_BOOT}}` }] : []),
       ],
     }

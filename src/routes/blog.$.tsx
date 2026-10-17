@@ -7,7 +7,7 @@ import { Suspense, use } from 'react'
 import { useMDXComponents } from '@/components/mdx'
 import { Prose } from '@/components/mdx'
 import { Link } from '@tanstack/react-router'
-import { pageHead } from '@/lib/seo'
+import { pageHead, SITE } from '@/lib/seo'
 import { authors } from '@/data/authors'
 import { TagList, fmtDate } from '@/components/BlogParts'
 
@@ -26,7 +26,10 @@ export const Route = createFileRoute('/blog/$')({
     await blog.getPage(data.path)?.preload()
     return data
   },
-  head: ({ loaderData }) => loaderData ? pageHead({ title: loaderData.title, description: loaderData.description || undefined, path: loaderData.url, type: 'article', extra: [{ name: 'source-file', content: 'content/blog/' + loaderData.path }] }) : {},
+  head: ({ loaderData }) => loaderData ? pageHead({
+    title: loaderData.title, description: loaderData.description || undefined, path: loaderData.url, type: 'article', published: loaderData.date,
+    jsonLd: { '@type': 'BlogPosting', headline: loaderData.title, description: loaderData.description || undefined, datePublished: loaderData.date, mainEntityOfPage: SITE + loaderData.url, author: { '@type': 'Organization', name: 'Pikku', url: SITE }, publisher: { '@type': 'Organization', name: 'Pikku', url: SITE } },
+  }) : {},
   component: Page,
 })
 function Body({ path }: { path: string }) {

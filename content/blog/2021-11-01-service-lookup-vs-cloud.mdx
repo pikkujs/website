@@ -3,6 +3,7 @@ date: 2021-11-01
 title: Service Lookup Continued
 description: A bit more detail as to why we use service lookups
 image: cloud-service
+authors: yasser
 ---
 
 So I got some great feedback on hackernews on a couple of things and wanted to write a bit more of an opinion piece.
@@ -15,7 +16,7 @@ So the first thing I need to clarify is that all functions receive a `service lo
 
 If you want to skip to my pro/cons, that's the last section!
 
-### Brief History
+## Brief History
 
 The first time I started using `service lookups` was in a frontend framework where the idea was that you could quickly develop components in the frontend vs stubbed or real services by just setting the environment. Doing so was incredibly important because it was a FinTech solution where we had to simulate lots of different states. We provided fake data to test results (connection status, prices, etc.) via workbench tools. Doing so allows us to avoid having to write stub backend services. Those would need to do the whole roundtrip through the server (which would have been a hassle, especially since our backend language selection was Java or C).
 
@@ -23,7 +24,7 @@ Then came the real-time node server [deepstream.io](https://deepstream.io/). Dee
 
 Finally came deepstreamHub, the enterprise version of deepstream.io. deepstreamHub required us to allow things to run locally for enterprise machines and use AWS services for the cloud offering. We managed to get the entire thing running on Kubernetes and via local services in less than a day using service lookups.
 
-### Pikku
+## Pikku
 
 I started working on personal projects after deepstreamHub, and I was doing so while travelling due to the failed startup misery recovery process. So my main requirement was that everything should work offline. I didn't want to deal with flaky connections, and to be honest, I was coding for fun, so constantly deploying wasn't the top of my requirements!
 
@@ -142,9 +143,9 @@ If running locally, it would then live in a `.upload` directory on my dist. If r
 
 So now multiply this by the number of services used (as mentioned in pt1, we use notification services, salesforce, hologram, etc.).
 
-### Notes
+## Notes
 
-#### Why not just use the cloud? It's the actual environment!
+### Why not just use the cloud? It's the actual environment!
 
 So I get this point a lot when I talk to people about local vs cloud development. My *(personal)* opinion is that companies that spin-up entire AWS accounts for each developer are going at it wrong. I know that's a strong statement, and I don't mean offence. Conflicting opinions are what leads to so many exciting solutions!
 
@@ -158,11 +159,11 @@ The main question I usually like to ask is: what benefit do you get out of it? I
 
 Is it possible we got a bit too excited about current settings and just ended up uploading our functions to serverless via hot deploy because we can? Or that docker and Kubernetes are so incredible that we run complex infrastructure locally to mimic production, regardless of the CPU/Memory overhead? Running my side projects on the side, I sure don't want to tell anyone who helps that I'll need to give them AWS access to add a few simple features.
 
-#### Why not use factory methods and stick to it is more functional?
+### Why not use factory methods and stick to it is more functional?
 
 That works entirely. I didn't want to create factory methods because I  like the autocompletion provided by just writing `services` and seeing what shows up. So far, I have built a few complex SaaS products with a maximum of ten services. Also, factories require the same amount of work to be set up as services.
 
-#### Using singleton services is not the same as using global state
+### Using singleton services is not the same as using global state
 
 I mean, it is, but it isn't. It is because you can only have one, and hence the state is just encapsulated within a scope similar to global. But it isn't because being encapsulated and part of a simple lifecycle manager provides benefits instead of just having it imported.
 
@@ -214,7 +215,7 @@ export class Database {
 
 You now benefit from not having to depend on process calls (which is helpful since the order of teardown occasionally matters). You can also ensure you create it after you retrieve the DB credentials from another async service. And you can ensure the connection details work. Yes, it adds a couple of milliseconds to startup time, but it's easier to validate fails on startup than when it's needed.
 
-#### You can also quickly mock imported singletons in node. It is a bit dirtier but possible.
+### You can also quickly mock imported singletons in node. It is a bit dirtier but possible.
 
 But why? I have written a lot of tests, and mocking services was always a huge pain (proxyquire in my experience). Why not just put a simple API on top and let Sinon mock it out for you in seconds?
 
@@ -225,18 +226,18 @@ const services = {
 }
 ```
 
-#### Non singleton services
+### Non singleton services
 
 It's worth also mentioning again that we use both singleton services (pool database connections, realtime services) and session services (client database connections, header services, etc). The main difference is a session service is create for each request and is aware of the actual user session / user request. This is useful for things like having a transaction automatically create in the database with the correct session id set (for automatic audit logs) or anything else.
 
-#### Singleton services are not local state holders!
+### Singleton services are not local state holders!
 
 This part is pretty important. Singleton services are singletons only because they sometimes need to hold a connection! They should never be used to share details across multiple invocations. This isn't something I can guarantee but it's the same as any lambda invocation. If it isn't on an external disk don't be upset if it gets lost! The only reason they are singletons and not functions is because of database pools / the way configuration works in certain third party APIs. A service could just be an object you pass in if you want (`isReady` and `close` APIs are optional). 
 
-#### Not for everyone
+### Not for everyone
 
 I completely get how alot of people prefer doing things differently. There isn't always a right or wrong! I hope I provided a few insights into why I find this approach easier though.
 
-### Feedback wanted
+## Feedback wanted
 
 I would love some feedback on why you think this might be a terrible approach. I understand that dependency injection / service lookups in other solutions can get very complex and involve config files and hair pulling. If there's anything you think can be improved or products in common please let me know!
