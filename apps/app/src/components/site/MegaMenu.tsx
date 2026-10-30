@@ -7,6 +7,7 @@ import { menuColumns } from './nav-data'
 export function MegaMenu() {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const byHover = useRef(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const clear = () => { if (timer.current) clearTimeout(timer.current) }
   const onKey = useCallback((e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }, [])
@@ -18,8 +19,8 @@ export function MegaMenu() {
   }, [open, onKey])
   useEffect(() => clear, [])
   return (
-    <div className="mega" ref={ref} onMouseEnter={() => { clear(); setOpen(true) }} onMouseLeave={() => { clear(); timer.current = setTimeout(() => setOpen(false), 160) }}>
-      <button type="button" className="nav-link mega-trigger" aria-expanded={open} aria-haspopup="true" aria-controls="mega-panel" onClick={() => setOpen((v) => !v)}>
+    <div className="mega" ref={ref} onMouseEnter={() => { clear(); if (!open) byHover.current = true; setOpen(true) }} onMouseLeave={() => { clear(); timer.current = setTimeout(() => { byHover.current = false; setOpen(false) }, 160) }}>
+      <button type="button" className="nav-link mega-trigger" aria-expanded={open} aria-haspopup="true" aria-controls="mega-panel" onClick={() => { if (byHover.current) { byHover.current = false; setOpen(true) } else setOpen((v) => !v) }}>
         Features <ChevronDown size={14} aria-hidden className={open ? 'rot' : ''} />
       </button>
       <div id="mega-panel" className={`mega-panel${open ? ' is-open' : ''}`} hidden={!open && undefined}>
