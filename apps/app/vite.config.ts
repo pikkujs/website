@@ -14,6 +14,7 @@ import { isIgnored, isKnown } from './link-gate.config.mjs'
 // adapter on top (vite.config.cf.ts) and prerenders under it, so nothing here is provider-specific.
 const alias: Record<string, string> = { '@': path.resolve(import.meta.dirname, 'src') }
 
+const isDraft = (f: string) => /^draft:\s*true\s*$/m.test(/^---\n([\s\S]*?)\n---/.exec(fs.readFileSync(f, 'utf8'))?.[1] ?? '')
 /** Every docs/blog page's payload URL, so the prerender writes /payload/**.json next to the HTML. */
 const contentPages = () => {
   const out: { path: string }[] = [{ path: '/payload/docs-tree.json' }, { path: '/payload/blog-index.json' }]
@@ -25,7 +26,7 @@ const contentPages = () => {
   }
   if (fs.existsSync(blogDir)) for (const f of walk(blogDir)) {
     const m = /^(\d{4})-(\d{2})-(\d{2})-(.+?)\.mdx?$/.exec(path.basename(f))
-    if (m) out.push({ path: `/payload/blog/${m[1]}/${m[2]}/${m[3]}/${m[4]}.json` })
+    if (m && !isDraft(f)) out.push({ path: `/payload/blog/${m[1]}/${m[2]}/${m[3]}/${m[4]}.json` })
   }
   return out
 }

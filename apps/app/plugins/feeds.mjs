@@ -33,6 +33,7 @@ export default function feeds({ site, title = 'Blog', blogDir = 'content/blog', 
       const posts = fs.readdirSync(dir).filter((f) => /^\d{4}-\d{2}-\d{2}-.+\.mdx?$/.test(f)).sort().reverse()
       for (const f of posts) {
         const m = /^(\d{4})-(\d{2})-(\d{2})-(.+?)\.mdx?$/.exec(f), { data } = matter(fs.readFileSync(path.join(dir, f), 'utf8'))
+        if (data.draft) continue
         const url = `${site}/blog/${m[1]}/${m[2]}/${m[3]}/${m[4]}`
         feed.addItem({ title: data.title ?? m[4], id: url, link: url, description: data.description ?? '', date: new Date(`${m[1]}-${m[2]}-${m[3]}`) })
       }
