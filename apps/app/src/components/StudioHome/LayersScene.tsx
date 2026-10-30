@@ -16,10 +16,10 @@ export function LayersScene() {
         <ellipse cx="500" cy="235" rx="360" ry="62" fill="#e8b48f" opacity=".4" filter="url(#wash)" />
         <g fill="none" stroke="var(--paper-text)" strokeWidth="2.2" strokeLinecap="round" className="march" filter="url(#rough)">
           {APPS.map((_, i) => (
-            <path key={i} d={`M${115 + i * 192.5} 112 C ${115 + i * 192.5} 170, ${420 + i * 40} 170, ${420 + i * 40} 205`} />
+            <path key={i} d={`M${115 + i * 192.5} 112 C ${115 + i * 192.5} 175, ${450 + i * 15} 165, ${450 + i * 15} 218`} />
           ))}
           {PIECES.map((_, i) => (
-            <path key={i} d={`M${100 + i * 160} 358 C ${100 + i * 160} 300, ${390 + i * 44} 300, ${390 + i * 44} 268`} />
+            <path key={i} d={`M${100 + i * 160} 358 C ${100 + i * 160} 300, ${445 + i * 18} 330, ${445 + i * 18} 282`} />
           ))}
         </g>
         <g stroke="var(--paper-text)" strokeWidth="2.2" strokeLinejoin="round" fill="var(--paper-bg-alt)" filter="url(#rough)">

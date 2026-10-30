@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Link from '@/components/site/Link'
 import { Blob } from '@pikku/theme-brand'
+import { LOGOS } from './logos'
 import { FanScene } from './FanScene'
 import { LayersScene } from './LayersScene'
 import { TypesScene } from './TypesScene'
@@ -10,16 +11,17 @@ import './studio-home.css'
 
 const GITHUB = 'https://github.com/pikkujs/pikku'
 
-function CopyCmd({ cmd }: { cmd: string }) {
+function CopyCmd({ cmd, prompt, copy }: { cmd: string; prompt?: boolean; copy?: string }) {
   const [done, setDone] = useState(false)
   return (
     <button
       type="button"
       className="cmd"
+      style={prompt ? { whiteSpace: 'normal', textAlign: 'left', alignItems: 'flex-start' } : undefined}
       aria-label={`Copy ${cmd}`}
       onClick={() => {
         try {
-          void navigator.clipboard.writeText(cmd)
+          void navigator.clipboard.writeText(copy ?? cmd)
         } catch {
           /* clipboard unavailable: the command is still on screen */
         }
@@ -27,7 +29,7 @@ function CopyCmd({ cmd }: { cmd: string }) {
         setTimeout(() => setDone(false), 1600)
       }}
     >
-      <span aria-hidden="true">$</span>
+      {!prompt && <span aria-hidden="true">$</span>}
       {cmd}
       <span className="hand text-xl text-claydeep" style={{ minWidth: '3.2rem' }}>
         {done ? 'copied!' : 'copy'}
@@ -71,9 +73,20 @@ function Hero() {
   )
 }
 
-const STACK: { name: string; what: string; why: string; ink: string; wash: string }[] = [
+function StackLogo({ id }: { id: string }) {
+  const [box, d, extra] = LOGOS[id]
+  return (
+    <svg viewBox={box} aria-hidden="true" className="tech-logo">
+      {extra && <path d={extra} />}
+      <path d={d} />
+    </svg>
+  )
+}
+
+const STACK: { name: string; logos: string[]; what: string; why: string; ink: string; wash: string }[] = [
   {
     name: 'TanStack',
+    logos: ['tanstack'],
     what: 'Start loaders, actions and server routes',
     why: 'Your pages call your functions directly, so there is no second API layer to write and keep in sync.',
     ink: 'var(--hue-ochre)',
@@ -81,6 +94,7 @@ const STACK: { name: string; what: string; why: string; ink: string; wash: strin
   },
   {
     name: 'React',
+    logos: ['react'],
     what: 'The web app is plain React',
     why: 'It imports a generated, typed client. Rename a function and the compiler shows you every screen that used it.',
     ink: 'var(--hue-slate)',
@@ -88,6 +102,7 @@ const STACK: { name: string; what: string; why: string; ink: string; wash: strin
   },
   {
     name: 'better-auth',
+    logos: ['betterauth'],
     what: 'Sign-in, sessions and API keys',
     why: 'The session becomes the caller of your function, so the same permission check runs on HTTP, queues and MCP alike.',
     ink: 'var(--hue-rose)',
@@ -95,6 +110,7 @@ const STACK: { name: string; what: string; why: string; ink: string; wash: strin
   },
   {
     name: 'Vercel AI SDK',
+    logos: ['vercel'],
     what: 'Runs your AI agents',
     why: 'Any provider the SDK supports works, so you change models with a string, not a rewrite.',
     ink: 'var(--hue-plum)',
@@ -102,6 +118,7 @@ const STACK: { name: string; what: string; why: string; ink: string; wash: strin
   },
   {
     name: 'Tauri',
+    logos: ['tauri'],
     what: 'Desktop, iOS and Android shells',
     why: 'The same web app ships as an installable app, with the backend bundled in when you want it offline.',
     ink: 'var(--hue-moss)',
@@ -109,6 +126,7 @@ const STACK: { name: string; what: string; why: string; ink: string; wash: strin
   },
   {
     name: 'Kysely',
+    logos: ['kysely'],
     what: 'Typed SQL',
     why: 'Queries are checked against your schema, and the types flow on into your functions and your client.',
     ink: 'var(--hue-teal)',
@@ -116,6 +134,7 @@ const STACK: { name: string; what: string; why: string; ink: string; wash: strin
   },
   {
     name: 'Bun',
+    logos: ['bun'],
     what: 'A fast runtime and a single binary',
     why: 'Run your server on Bun, or compile the whole app into one executable you can copy anywhere.',
     ink: 'var(--hue-clay)',
@@ -123,6 +142,7 @@ const STACK: { name: string; what: string; why: string; ink: string; wash: strin
   },
   {
     name: 'MCP',
+    logos: ['mcp'],
     what: 'Model Context Protocol',
     why: 'Any function can be a tool an AI assistant calls, with the same auth and validation as everything else.',
     ink: 'var(--hue-indigo)',
@@ -130,6 +150,7 @@ const STACK: { name: string; what: string; why: string; ink: string; wash: strin
   },
   {
     name: 'SQLite & Postgres',
+    logos: ['sqlite', 'postgres'],
     what: 'Local file or real server',
     why: 'Start on a file on your laptop and move to Postgres later. Your functions only see the interface.',
     ink: 'var(--hue-ochre)',
@@ -155,8 +176,10 @@ function Stack() {
           {STACK.map((s, i) => (
             <li key={s.name} className="tech" style={{ ['--wash' as string]: s.wash }}>
               <div className="flex items-center gap-3">
-                <span className="tech-dot" style={{ transform: `rotate(${i % 2 ? 3 : -3}deg)` }}>
-                  <Blob pose="blob" className="w-9 h-9" color={s.ink} />
+                <span className="tech-dot" style={{ color: s.ink }}>
+                  {s.logos.map((l) => (
+                    <StackLogo key={l} id={l} />
+                  ))}
                 </span>
                 <h3 className="display text-xl font-semibold">{s.name}</h3>
               </div>
@@ -171,9 +194,9 @@ function Stack() {
             style={{ borderStyle: 'dashed', background: 'transparent' }}
           >
             <h3 className="display text-xl font-semibold">and more</h3>
-            <p className="hand text-xl text-claydeep">Express, Fastify, Redis, NATS, BullMQ…</p>
+            <p className="hand text-xl text-claydeep">Next.js, MongoDB, Express, Fastify, Redis, NATS…</p>
             <p className="text-soft leading-relaxed">
-              Each one is a small adapter behind an interface, so adding yours is a few lines.
+              Use what you already have. They just aren't wired up as tightly as the tools above, and they're no worse off than in any other setup. Each one is a small adapter behind an interface, so adding yours is a few lines.
             </p>
           </li>
         </ul>
@@ -206,7 +229,7 @@ function Layers() {
           Apps on top. Backend underneath. Pikku in the middle.
         </h2>
         <p className="mt-4 text-lg text-soft leading-relaxed">
-          Either side can change without rewriting the other, and the whole thing is ordinary
+          None of them know about each other, only about your functions. So either side can change without rewriting the other, and the whole thing is ordinary
           TypeScript you can open, read and change.
         </p>
       </div>
@@ -251,14 +274,14 @@ function Modular() {
             don't fit, the compiler says so before you ship.
           </p>
         </div>
-        <div className="mt-10 grid gap-5">
+        <div className="mt-12 grid gap-8">
           {PICKS.map((p) => (
             <div key={p.row} className="grid md:grid-cols-[11rem_1fr] gap-2 md:gap-6 items-center">
               <div>
                 <h3 className="display text-2xl font-semibold">{p.row}</h3>
                 <p className="hand text-lg text-soft">{p.hint}</p>
               </div>
-              <ul className="flex flex-wrap gap-3 list-none p-0">
+              <ul className="flex flex-wrap gap-4 list-none p-0">
                 {p.items.map((it, i) => (
                   <li
                     key={it}
@@ -272,12 +295,12 @@ function Modular() {
             </div>
           ))}
         </div>
-        <p className="hand text-2xl text-clay mt-10 -rotate-1">a few mixes</p>
-        <ul className="mt-3 grid gap-4 md:grid-cols-3 list-none p-0">
+        <p className="hand text-2xl text-clay mt-16 -rotate-1">a few mixes</p>
+        <ul className="mt-6 grid gap-6 md:grid-cols-3 list-none p-0">
           {RECIPES.map((r) => (
-            <li key={r.title} className="torn px-6 py-6">
+            <li key={r.title} className="torn px-8 py-8">
               <h3 className="display text-2xl font-semibold">{r.title}</h3>
-              <p className="mt-2 text-soft leading-relaxed">{r.mix}</p>
+              <p className="mt-3 text-soft leading-relaxed">{r.mix}</p>
             </li>
           ))}
         </ul>
@@ -288,38 +311,39 @@ function Modular() {
 
 function Framework() {
   return (
-    <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-16 md:pb-24">
-      <div className="grid md:grid-cols-2 gap-14 md:gap-12">
+    <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-20 md:pb-32">
+      <div className="grid md:grid-cols-2 gap-16 md:gap-16">
         <div>
           <h3 className="display text-3xl md:text-4xl font-semibold leading-tight">
             Types stitched from server to screen.
           </h3>
-          <p className="mt-3 text-soft text-lg leading-relaxed">
+          <p className="mt-4 text-soft text-lg leading-relaxed">
             The types generated from your database and your functions flow all the way through the
             generated client to the interface, so a mismatch is caught before it ships.
           </p>
-          <TypesScene />
+          <div className="mt-10"><TypesScene /></div>
         </div>
         <div>
           <h3 className="display text-3xl md:text-4xl font-semibold leading-tight">
             Carry it anywhere.
           </h3>
-          <p className="mt-3 text-soft text-lg leading-relaxed">
+          <p className="mt-4 text-soft text-lg leading-relaxed">
             The same app runs serverless, on Cloudflare, or on a plain server you rent. Start on
             your laptop, choose a home later, and move house without a rewrite.
           </p>
-          <DeployScene />
+          <div className="mt-10"><DeployScene /></div>
         </div>
       </div>
       <div className="mt-20 md:mt-28 torn px-6 py-8 md:px-12 md:py-12 grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 items-center">
         <Blob pose="blob" className="w-24 h-24 md:w-32 md:h-32 text-moss" />
         <div>
           <h3 className="display text-3xl md:text-4xl font-semibold leading-tight">
-            Hundreds of addons. 120,000+ endpoints.
+            2,500+ connectors, ready to call.
           </h3>
           <p className="mt-2 text-soft text-lg leading-relaxed max-w-2xl">
-            Addons reach the rest of the world, from payments to mail to every OpenAPI service we
-            could find. Every one is typed, and you can write your own.
+            Addons reach the rest of the world, from payments to mail. Over 200 are hand-built, and
+            every OpenAPI service we could find is wrapped too. Every one is typed, and you can
+            write your own.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -356,6 +380,16 @@ function Close() {
               <a href={GITHUB} className="btn-line">
                 View on GitHub
               </a>
+            </div>
+            <p className="hand text-2xl mt-8" style={{ color: '#f0a56f' }}>
+              or hand it to your AI coding agent
+            </p>
+            <div className="mt-2 max-w-xl">
+              <CopyCmd
+                prompt
+                cmd="Use https://pikku.dev/prompt.md to …"
+                copy="Use https://pikku.dev/prompt.md to "
+              />
             </div>
           </div>
           <NextScene />

@@ -1,8 +1,10 @@
 /* The Studio-style homepage. Every rule is scoped under .sh so nothing leaks
    into the docs. Visual language ported from the Studio marketing site. */
 .sh { color: var(--color-ink); font-family: var(--font-body); }
-/* zero-specificity reset so Tailwind margin utilities always win */
-:where(.sh) :where(h1, h2, h3, p, ol, ul, figure) { margin: 0; }
+/* in the base layer so Tailwind's margin utilities (a later layer) win; unlayered CSS would beat them */
+@layer base {
+  :where(.sh) :where(h1, h2, h3, p, ol, ul, figure) { margin: 0; }
+}
 .sh .display {
   font-family: var(--font-display);
   font-variation-settings: 'SOFT' 100, 'opsz' 120;
@@ -73,6 +75,12 @@
   display: grid; place-items: center; width: 48px; height: 48px; flex-shrink: 0;
   background: var(--wash); border-radius: 50% 46% 52% 48% / 48% 52% 46% 50%;
 }
+.sh .tech-dot { width: auto; min-width: 48px; height: 48px; gap: .4rem; padding: 0 .6rem; grid-auto-flow: column; }
+.sh .tech-logo {
+  width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.1px;
+  stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke;
+}
+.sh .tech-logo path { vector-effect: non-scaling-stroke; stroke-width: 1.4px; }
 .sh .block-piece {
   color: #2b2219;
   font-weight: 600; font-size: 1.05rem; padding: .5rem 1rem;
