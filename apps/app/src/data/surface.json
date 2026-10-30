@@ -1,5 +1,5 @@
 {
-  "version": "0.12.160",
+  "version": "0.12.191",
   "entryPoints": [
     {
       "id": "app",
@@ -87,6 +87,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -131,8 +135,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "scopes?: import(\"#pikku/scopes/pikku-scopes.gen.js\").ScopeId[]",
@@ -220,6 +224,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -280,8 +288,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "scopes?: import(\"#pikku/scopes/pikku-scopes.gen.js\").ScopeId[]",
@@ -366,6 +374,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -426,8 +438,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "scopes?: import(\"#pikku/scopes/pikku-scopes.gen.js\").ScopeId[]",
@@ -501,6 +513,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -545,8 +561,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "skip?: string",
@@ -616,6 +632,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -660,8 +680,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "skip?: string",
@@ -811,6 +831,13 @@
                   "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
+                  "line": "incomingWebhookService?: IncomingWebhookService",
+                  "doc": "Queues what webhook trigger sources receive. Required once any `wireTriggerWebhookSource` is wired."
+                },
+                {
+                  "line": "leaseService?: LeaseService"
+                },
+                {
                   "line": "logger: Logger"
                 },
                 {
@@ -834,6 +861,10 @@
                   "doc": "Session store for persisting user sessions keyed by pikkuUserId"
                 },
                 {
+                  "line": "triggerSourceStore?: TriggerSourceStore",
+                  "doc": "Which trigger sources an operator enabled, and what enabling registered."
+                },
+                {
                   "line": "variables: VariablesService"
                 },
                 {
@@ -842,7 +873,7 @@
                 },
                 {
                   "line": "virtualUserScheduleStore?: VirtualUserScheduleStore",
-                  "doc": "Each persona's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
+                  "doc": "Each virtual user's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
                 },
                 {
                   "line": "webhookService?: WebhookService",
@@ -867,10 +898,6 @@
               "signature": "UserSession",
               "members": [
                 {
-                  "line": "actor?: boolean",
-                  "doc": "True when the session belongs to a synthetic scenario actor — lets audits/analytics address synthetic traffic"
-                },
-                {
                   "line": "orgId?: string",
                   "doc": "The tenant the session is acting inside, when the project has more than one."
                 },
@@ -881,6 +908,10 @@
                 {
                   "line": "scopes?: string[]",
                   "doc": "Scopes granted to this session, checked against a function's `scopes`. Populated by whoever builds the session — core reads them, never fetches."
+                },
+                {
+                  "line": "virtualUser?: boolean",
+                  "doc": "True when the session belongs to a synthetic scenario virtual user — lets audits/analytics address synthetic traffic"
                 }
               ]
             },
@@ -939,6 +970,13 @@
                   "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
+                  "line": "incomingWebhookService?: IncomingWebhookService",
+                  "doc": "Queues what webhook trigger sources receive. Required once any `wireTriggerWebhookSource` is wired."
+                },
+                {
+                  "line": "leaseService?: LeaseService"
+                },
+                {
                   "line": "logger: Logger"
                 },
                 {
@@ -962,6 +1000,10 @@
                   "doc": "Session store for persisting user sessions keyed by pikkuUserId"
                 },
                 {
+                  "line": "triggerSourceStore?: TriggerSourceStore",
+                  "doc": "Which trigger sources an operator enabled, and what enabling registered."
+                },
+                {
                   "line": "variables: VariablesService"
                 },
                 {
@@ -970,7 +1012,7 @@
                 },
                 {
                   "line": "virtualUserScheduleStore?: VirtualUserScheduleStore",
-                  "doc": "Each persona's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
+                  "doc": "Each virtual user's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
                 },
                 {
                   "line": "webhookService?: WebhookService",
@@ -1038,6 +1080,13 @@
                   "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
+                  "line": "incomingWebhookService?: IncomingWebhookService",
+                  "doc": "Queues what webhook trigger sources receive. Required once any `wireTriggerWebhookSource` is wired."
+                },
+                {
+                  "line": "leaseService?: LeaseService"
+                },
+                {
                   "line": "logger: Logger"
                 },
                 {
@@ -1058,6 +1107,10 @@
                   "doc": "Session store for persisting user sessions keyed by pikkuUserId"
                 },
                 {
+                  "line": "triggerSourceStore?: TriggerSourceStore",
+                  "doc": "Which trigger sources an operator enabled, and what enabling registered."
+                },
+                {
                   "line": "variables: VariablesService"
                 },
                 {
@@ -1066,7 +1119,7 @@
                 },
                 {
                   "line": "virtualUserScheduleStore: VirtualUserScheduleStore",
-                  "doc": "Each persona's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
+                  "doc": "Each virtual user's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
                 },
                 {
                   "line": "webhookService: WebhookService",
@@ -1086,7 +1139,7 @@
           "specifier": "#pikku/setup",
           "name": "setup",
           "step": "create a function",
-          "summary": "The three factories a project declares exactly once — its config, its singleton services and its per-wire services. An addon declares the same three in its own flavour, handed the logger, variables and secrets the host application already built. Everything else on this page is imported by features; these are imported by bootstrap and then left alone.",
+          "summary": "The factories a project declares exactly once — its config, its singleton services and its per-wire services — and, for an application, the server lifecycle that runs work before and after the server starts and stops. An addon declares the first three in its own flavour, handed the logger, variables and secrets the host application already built, and has no lifecycle: it does not own a server. Everything else on this page is imported by features; these are imported by bootstrap and then left alone.",
           "skill": "pikku-services",
           "symbols": [
             {
@@ -1127,6 +1180,30 @@
               "signature": "(func: (variables?: any, ...args: any[]) => Promise<Config>) => (variables?: any, ...args: any[]) => Promise<Config>",
               "examples": [
                 "export const createConfig = pikkuConfig(async () => ({\n  port: parseInt(process.env.API_PORT || '4003', 10),\n  hostname: process.env.HOST || '0.0.0.0',\n}))"
+              ]
+            },
+            {
+              "name": "pikkuServerLifecycle",
+              "kind": "function",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "Declares the work to run around the server's life: `beforeStart`, `afterStart`, `beforeStop` and `afterStop`. Each is optional and receives the singleton services, already created and already set, so startup work that needs a service — migrations, seeding, starting a queue consumer — belongs here rather than in the services factory.",
+              "docs": "Declares the work to run around the server's life: `beforeStart`,\n`afterStart`, `beforeStop` and `afterStop`. Each is optional and receives\nthe singleton services, already created and already set, so startup work that\nneeds a service — migrations, seeding, starting a queue consumer — belongs\nhere rather than in the services factory.\n\nExport exactly one, from anywhere in `srcDirectories`. Only `pikku dev` and\n`pikku serve` run these hooks; a runtime that owns its own entrypoint does\nnot.\n\nOrder is beforeStart, the server starts, afterStart; on shutdown beforeStop,\nservices stop, the server stops, afterStop. `afterStop` runs once the\nservices are already stopped, so anything that needs a live service goes in\n`beforeStop`.",
+              "signature": "(lifecycle: ServerLifecycle<RequiredSingletonServices>) => ServerLifecycle<RequiredSingletonServices>",
+              "members": [
+                {
+                  "line": "afterStart?: ((services: RequiredSingletonServices) => void | Promise<void>)"
+                },
+                {
+                  "line": "afterStop?: ((services: RequiredSingletonServices) => void | Promise<void>)"
+                },
+                {
+                  "line": "beforeStart?: ((services: RequiredSingletonServices) => void | Promise<void>)"
+                },
+                {
+                  "line": "beforeStop?: ((services: RequiredSingletonServices) => void | Promise<void>)"
+                }
               ]
             },
             {
@@ -1179,12 +1256,24 @@
                   "doc": "Requires a session for every function in the addon, whatever each one declares. Gates an addon whose functions are individually open."
                 },
                 {
+                  "line": "contentBucket?: string",
+                  "doc": "The folder of the content store this instance owns. Everything it stores lands under it and it cannot see past it. Defaults to `name`."
+                },
+                {
+                  "line": "contentGrants?: Record<string, \"read\" | \"write\">",
+                  "doc": "Paths outside its own folder this instance may use, by path prefix: `read` allows reads and signed downloads, `write` adds uploads, writes and deletes. The longest matching prefix decides. The addon names a granted path by starting its bucket with `@`."
+                },
+                {
                   "line": "credentialGrants?: string[]",
                   "doc": "Credentials this instance may read on top of the ones it declared."
                 },
                 {
                   "line": "credentialOverrides?: CredentialOverrides",
                   "doc": "Points a credential the addon reads at a different key in this deployment, and — in the object form — decides whether it is per-user or deployment-wide. An addon declares a default; the wiring decides."
+                },
+                {
+                  "line": "globalContent?: string",
+                  "doc": "Hands over the whole `ContentService` unscoped. The value is the reason, recorded in the deploy manifest."
                 },
                 {
                   "line": "globalCredentials?: string",
@@ -1221,6 +1310,14 @@
                 {
                   "line": "tags?: string[]",
                   "doc": "Filters this addon in and out of a build — see the `tags` option on `pikku all`. It has no effect at runtime."
+                },
+                {
+                  "line": "ui?: boolean",
+                  "doc": "Mounts the screens the addon ships (see `defineScreens`) in the host under `/addons/<name>`. Without it the addon's screens are ignored. The package must declare at least one, or `pikku all` rejects the wiring."
+                },
+                {
+                  "line": "uses?: Record<string, string>",
+                  "doc": "The other addons this one may call, as `{ '<package>': '<name>' }`: the package it was written against, and the name that package is wired under in this app. The addon calls `'<package>:<function>'`; anything it did not list is refused, whatever else the app has wired."
                 },
                 {
                   "line": "variableOverrides?: Record<string, string>",
@@ -1568,7 +1665,7 @@
               "docs": "One `AnalyticsService` over several destinations.\n\nA composite rather than a change to the interface, so a single-destination\napp never meets it and a sink is the same class whether it runs alone or\nbeside three others.\n\nSettled, not awaited in sequence: `flush()` runs inside the invocation, so a\nvendor that is slow must not add its latency to the request and a vendor that\nis down must not cost the others their events. A destination that throws is\nreported by the caller's existing flush guard, which already treats analytics\nas best-effort.",
               "signature": "(sinks: ReadonlyArray<AnalyticsSink | AnalyticsService>) => AnalyticsService",
               "examples": [
-                "export const createSingletonServices = pikkuServices(\n  async (config, existingServices) => {\n    const variables =\n      existingServices?.variables ??\n      new TypedVariablesService(new LocalVariablesService())\n    const secrets =\n      existingServices?.secrets ??\n      new TypedSecretService(new LocalSecretService(variables))\n    const logger = existingServices?.logger ?? new JsonConsoleLogger()\n    const schema = existingServices?.schema ?? new CFWorkerSchemaService(logger)\n    const emailService =\n      existingServices?.emailService ??\n      new GeneratedTemplateEmailService({\n        delegate: new LocalEmailService(),\n      })\n    // The durable audit sink. In a deployed stage fabric injects the platform's\n    // audit service; locally it falls back to a no-op so nothing is persisted.\n    const audit = existingServices?.audit ?? new NoopAuditService()\n    // kysely is injected by pikku dev (node:sqlite) or the CF Worker workflow (libsql).\n    // The template never constructs its own dialect — dialects are fabric/runtime\n    // concerns — so it must always be provided by the runtime.\n    if (!existingServices?.kysely) {\n      throw new Error(\n        'kysely service was not injected by the runtime (pikku dev / fabric)'\n      )\n    }\n    const kysely: Kysely<DB> = existingServices.kysely\n\n    // Per-user credential store (wire.getCredential) — needed by addons imported\n    // with --auth per-user/delegated. A deployed stage injects it: credentials are\n    // sealed to the stage, and only its secrets Worker holds the key. There is no\n    // fallback because there is no key to fall back to — the template used to\n    // build a `KyselyCredentialService` from a `CREDENTIALS_KEY` secret, which was\n    // the stage's own KEK handed to every unit. Outside a stage the app runs fine\n    // and credential-using addon calls fail with a clear error from the addon's\n    // wire services; wire your own `credentialService` here if you need one.\n    const credentialService = existingServices?.credentialService\n\n    // Both destinations, because they answer different questions: the logger is\n    // what makes an event visible while the app is being built, and fabric's\n    // forwarder no-ops entirely outside a deployed stage. Wired here rather than\n    // left to the default, which is the logger alone.\n    const analyticsService =\n      existingServices?.analyticsService ??\n      fanOutAnalytics([\n        new LoggerAnalyticsService(logger),\n        fabricAnalyticsService({\n          variables,\n          queueService: existingServices?.queueService,\n        }),\n      ])\n\n    return {\n      ...(existingServices ?? {}),\n      config,\n      workflowService: existingServices?.workflowService,\n      workflowRunService: existingServices?.workflowRunService,\n      variables,\n      secrets,\n      schema,\n      logger,\n      emailService,\n      audit,\n      kysely,\n      analyticsService,\n      analyticsIdentity: shopAnalyticsIdentity,\n      // Constructed once here rather than read per call: the payment provider's\n      // credentials belong to service construction, and functions cannot reach\n      // `secrets` at all (every function-facing services type is bounded by\n      // SecretlessServices).\n      ...(credentialService ? { credentialService } : {}),\n    }\n  }\n)"
+                "export const createSingletonServices = pikkuServices(\n  async (config, existingServices) => {\n    const variables =\n      existingServices?.variables ??\n      new TypedVariablesService(new LocalVariablesService())\n    const secrets =\n      existingServices?.secrets ??\n      new TypedSecretService(new LocalSecretService(variables))\n    const logger = existingServices?.logger ?? new JsonConsoleLogger()\n    const schema = existingServices?.schema ?? new CFWorkerSchemaService(logger)\n    const emailService =\n      existingServices?.emailService ??\n      new GeneratedTemplateEmailService({\n        delegate: new LocalEmailService(),\n      })\n    // The durable audit sink. In a deployed stage cloud injects the platform's\n    // audit service; locally it falls back to a no-op so nothing is persisted.\n    const audit = existingServices?.audit ?? new NoopAuditService()\n    // kysely is injected by pikku dev (node:sqlite) or the CF Worker workflow (libsql).\n    // The template never constructs its own dialect — dialects are cloud/runtime\n    // concerns — so it must always be provided by the runtime.\n    if (!existingServices?.kysely) {\n      throw new Error(\n        'kysely service was not injected by the runtime (pikku dev / cloud)'\n      )\n    }\n    const kysely: Kysely<DB> = existingServices.kysely\n\n    // Per-user credential store (wire.getCredential) — needed by addons imported\n    // with --auth per-user/delegated. A deployed stage injects it: credentials are\n    // sealed to the stage, and only its secrets Worker holds the key. There is no\n    // fallback because there is no key to fall back to — the template used to\n    // build a `KyselyCredentialService` from a `CREDENTIALS_KEY` secret, which was\n    // the stage's own KEK handed to every unit. Outside a stage the app runs fine\n    // and credential-using addon calls fail with a clear error from the addon's\n    // wire services; wire your own `credentialService` here if you need one.\n    const credentialService = existingServices?.credentialService\n\n    return {\n      ...(existingServices ?? {}),\n      config,\n      workflowService: existingServices?.workflowService,\n      workflowRunService: existingServices?.workflowRunService,\n      variables,\n      secrets,\n      schema,\n      logger,\n      emailService,\n      audit,\n      kysely,\n      analyticsIdentity: shopAnalyticsIdentity,\n      // Constructed once here rather than read per call: the payment provider's\n      // credentials belong to service construction, and functions cannot reach\n      // `secrets` at all (every function-facing services type is bounded by\n      // SecretlessServices).\n      ...(credentialService ? { credentialService } : {}),\n      // Webhook sources queue what they receive, so they need the runtime's queue.\n      ...(existingServices?.queueService &&\n      !existingServices.incomingWebhookService\n        ? {\n            incomingWebhookService: new IncomingWebhookService(\n              existingServices.queueService\n            ),\n          }\n        : {}),\n    }\n  }\n)"
               ]
             },
             {
@@ -1603,13 +1700,6 @@
               "signature": "(wire: AnyWire, name: string, options: MintCookieOptions, mint: () => string) => string | undefined",
               "members": [
                 {
-                  "line": "actor?: ScenarioPersona<string, ScenarioRpcMap>",
-                  "doc": "The persona this step runs as, injected by the runner. Required on a `browser` binding, which cannot be provisioned without one, and on any binding whose step declares `actor: true`. A step that declares neither has no `actor` on its wire at all rather than an optional one — a pure assertion has nobody to be, and `attemptsSignIn` deliberately posts credentials instead of reusing an actor's session."
-                },
-                {
-                  "line": "actors?: ScenarioPersonas"
-                },
-                {
                   "line": "addonNamespace?: string"
                 },
                 {
@@ -1639,11 +1729,11 @@
                   "line": "gateway?: PikkuGateway"
                 },
                 {
-                  "line": "getCredential?: GetCredential<Record<string, unknown>>",
+                  "line": "getCredential: <T>(name: string) => NoInfer<T> | Promise<NoInfer<T> | null> | null",
                   "doc": "Get a single credential by name — lazy-loads from CredentialService on first call, sync thereafter"
                 },
                 {
-                  "line": "getCredentials?: (() => Record<string, unknown> | Promise<Record<string, unknown>>)",
+                  "line": "getCredentials: () => Record<string, unknown> | Promise<Record<string, unknown>>",
                   "doc": "Get all resolved credentials — lazy-loads from CredentialService on first call, sync thereafter"
                 },
                 {
@@ -1702,6 +1792,13 @@
                 },
                 {
                   "line": "trigger?: PikkuTrigger<unknown>"
+                },
+                {
+                  "line": "virtualUser?: ScenarioVirtualUser<string, ScenarioRpcMap>",
+                  "doc": "The virtual user this step runs as, injected by the runner. Required on a `browser` binding, which cannot be provisioned without one, and on any binding whose step declares `virtualUser: true`. A step that declares neither has no `virtualUser` on its wire at all rather than an optional one — a pure assertion has nobody to be, and `attemptsSignIn` deliberately posts credentials instead of reusing a virtual user's session."
+                },
+                {
+                  "line": "virtualUsers?: ScenarioVirtualUsers"
                 },
                 {
                   "line": "wireId?: string"
@@ -1820,6 +1917,21 @@
               },
               "signature": "new ConflictError(message?: string)",
               "status": 409
+            },
+            {
+              "name": "CredentialRejectedError",
+              "kind": "class",
+              "origin": {
+                "via": "core",
+                "subpath": "./errors"
+              },
+              "signature": "new CredentialRejectedError(credentialName: string, reauth: \"sign-in\" | \"connect\", message?: string)",
+              "members": [
+                {
+                  "line": "payload: { error: \"credential_rejected\"; credentialName: string; reauth: \"sign-in\" | \"connect\"; }"
+                }
+              ],
+              "status": 403
             },
             {
               "name": "ErrorDetails",
@@ -2236,7 +2348,7 @@
                 "subpath": "./errors"
               },
               "summary": "An administrative operation targeted a role that is declared in code.",
-              "docs": "An administrative operation targeted a role that is declared in code.\n\nSystem roles ship with the product: the console may show and grant them, but\nrenaming, re-scoping or deleting one would let a UI action silently change\nwhat a declared persona means, and what every scenario written against that\nrole is actually testing.",
+              "docs": "An administrative operation targeted a role that is declared in code.\n\nSystem roles ship with the product: the console may show and grant them, but\nrenaming, re-scoping or deleting one would let a UI action silently change\nwhat a declared virtual user means, and what every scenario written against that\nrole is actually testing.",
               "signature": "new SystemRoleImmutableError(role: string, operation: string)",
               "members": [
                 {
@@ -2748,8 +2860,35 @@
                   "line": "secrets: any"
                 },
                 {
-                  "line": "setSecret: <K>(key: K, value: K extends \"BETTER_AUTH_SECRET\" ? CredentialsMap[K] : unknown) => Promise<void>"
+                  "line": "setEncryptedSecret: (key: string, sealed: string) => Promise<void>",
+                  "doc": "Stores a value sealed to this service's public key, so the plaintext never reaches the caller's process. `sealed` is the serialized envelope, opaque here. Optional: only stores that hold a sealing key implement it."
+                },
+                {
+                  "line": "setSecret: <K>(key: K, value: K extends keyof CredentialsMap ? CredentialsMap[K] : unknown) => Promise<void>"
                 }
+              ]
+            }
+          ]
+        },
+        {
+          "specifier": "#pikku/utils",
+          "name": "utils",
+          "step": "enhance it",
+          "summary": "Small helpers a function body reaches for, such as `parseJson`, which turns text or bytes into JSON or refuses with a 400.",
+          "skill": null,
+          "symbols": [
+            {
+              "name": "parseJson",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "."
+              },
+              "summary": "`JSON.parse` of text or UTF-8 bytes, refusing anything that is not JSON with a 400 rather than a 500.",
+              "docs": "`JSON.parse` of text or UTF-8 bytes, refusing anything that is not JSON with\na 400 rather than a 500.",
+              "signature": "<T = any>(input: string | Uint8Array) => T",
+              "examples": [
+                "/**\n * Reads a warehouse delivery into trigger events. The source's `verify` has\n * already checked the signature by the time this runs, so all that is left is\n * the shape: `parseJson` answers a body that is not JSON with a 400, and each\n * event's `id` lets a redelivery be recognised rather than run twice.\n */\nexport const warehouseWebhookReceive = pikkuWebhookReceive({\n  description: 'Read a warehouse webhook into trigger events',\n  func: async (_services, { body }) => {\n    const event = parseJson(body)\n    return { events: [{ name: event.type, id: event.id, data: event.data }] }\n  },\n})"
               ]
             }
           ]
@@ -2802,7 +2941,7 @@
                 }
               ],
               "examples": [
-                "export const DatabaseUrlSchema = z.string()\nexport const LowStockThresholdSchema = z.number().int().positive()\nexport const ScenarioActorSecretSchema = z.string()\nexport const BetterAuthUrlSchema = z.string().url()\n\ndefineVariable({\n  name: 'databaseUrl',\n  displayName: 'Database URL',\n  description: 'Primary database connection string (Postgres or libsql URL)',\n  variableId: 'DATABASE_URL',\n  schema: DatabaseUrlSchema,\n})\n\ndefineVariable({\n  name: 'lowStockThreshold',\n  displayName: 'Low Stock Threshold',\n  description: 'Item stock level that triggers a low-stock alert',\n  variableId: 'LOW_STOCK_THRESHOLD',\n  schema: LowStockThresholdSchema,\n})\n\ndefineVariable({\n  name: 'scenarioActorSecret',\n  displayName: 'Scenario Actor Secret',\n  description:\n    'Impersonation secret for `pikku scenario run` actors. Leave unset to disable actor sign-in',\n  variableId: 'SCENARIO_ACTOR_SECRET',\n  schema: ScenarioActorSecretSchema,\n})\n\ndefineVariable({\n  name: 'betterAuthUrl',\n  displayName: 'Better Auth Base URL',\n  description:\n    'Public origin the API is served from, used for auth callbacks and redirects',\n  variableId: 'BETTER_AUTH_URL',\n  schema: BetterAuthUrlSchema,\n})"
+                "export const DatabaseUrlSchema = z.string()\nexport const LowStockThresholdSchema = z.number().int().positive()\nexport const VirtualUserVerifyKeySchema = z.string()\nexport const BetterAuthUrlSchema = z.string().url()\n\ndefineVariable({\n  name: 'databaseUrl',\n  displayName: 'Database URL',\n  description: 'Primary database connection string (Postgres or libsql URL)',\n  variableId: 'DATABASE_URL',\n  schema: DatabaseUrlSchema,\n})\n\ndefineVariable({\n  name: 'lowStockThreshold',\n  displayName: 'Low Stock Threshold',\n  description: 'Item stock level that triggers a low-stock alert',\n  variableId: 'LOW_STOCK_THRESHOLD',\n  schema: LowStockThresholdSchema,\n})\n\ndefineVariable({\n  name: 'virtualUserVerifyKey',\n  displayName: 'Virtual User Verify Key',\n  description:\n    'Public key that checks the signed statements `pikku scenario run` presents. Leave unset to refuse virtual user sign-in from outside the app',\n  variableId: 'VIRTUAL_USER_VERIFY_KEY',\n  schema: VirtualUserVerifyKeySchema,\n  optional: true,\n})\n\ndefineVariable({\n  name: 'betterAuthUrl',\n  displayName: 'Better Auth Base URL',\n  description:\n    'Public origin the API is served from, used for auth callbacks and redirects',\n  variableId: 'BETTER_AUTH_URL',\n  schema: BetterAuthUrlSchema,\n})"
               ]
             },
             {
@@ -3764,6 +3903,19 @@
               ]
             },
             {
+              "name": "pikkuWebhookReceive",
+              "kind": "function",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "A webhook source's `receive`: reads the request into events, or answers a handshake through `http.response`. It is public (`auth: false`) and only its source's route runs it, so it is never callable as an RPC. Signatures are the source's `verify`.",
+              "docs": "A webhook source's `receive`: reads the request into events, or answers a\nhandshake through `http.response`. It is public (`auth: false`) and only its source's route runs it,\nso it is never callable as an RPC. Signatures are the source's `verify`.",
+              "signature": "(config: { title?: string; description?: string; tags?: string[]; func: (services: Omit<SingletonServices, \"secrets\">, request: WebhookRequest, wire: { http: WebhookHTTP; }) => Promise<WebhookReceiveResult | void>; }) => { auth: false; title?: string; description?: string; tags?: string[]; func: (services: Omit<SingletonServices, \"secrets\">, request: WebhookRequest, wire: { http: WebhookHTTP; }) => Promise<WebhookReceiveResult | void>; }",
+              "examples": [
+                "/**\n * Reads a warehouse delivery into trigger events. The source's `verify` has\n * already checked the signature by the time this runs, so all that is left is\n * the shape: `parseJson` answers a body that is not JSON with a 400, and each\n * event's `id` lets a redelivery be recognised rather than run twice.\n */\nexport const warehouseWebhookReceive = pikkuWebhookReceive({\n  description: 'Read a warehouse webhook into trigger events',\n  func: async (_services, { body }) => {\n    const event = parseJson(body)\n    return { events: [{ name: event.type, id: event.id, data: event.data }] }\n  },\n})"
+              ]
+            },
+            {
               "name": "wireTrigger",
               "kind": "function",
               "origin": {
@@ -3805,6 +3957,45 @@
               "signature": "<TInput = unknown, TOutput = unknown>(source: TriggerSource<TInput, TOutput>) => void",
               "examples": [
                 "/**\n * The other half of the same trigger, and the shape a source is actually for:\n * something outside the app pushes, and the app listens.\n *\n * `name` is the contract — it must spell the `wireTrigger` above exactly, or\n * the two never meet. Compare the sweep: a source that starts its own timer is\n * `wireScheduler` written badly, while a source that holds a subscription is\n * the only thing that can do this at all.\n */\nwireTriggerSource({\n  name: 'low-stock',\n  func: warehouseStockFeed,\n  input: { threshold: 5 },\n})"
+              ]
+            },
+            {
+              "name": "wireTriggerWebhookSource",
+              "kind": "function",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "Receives a provider's webhooks as trigger events. Pikku mounts an open route at `route` (default `/webhooks/<name>`) that runs `receive`, validates each event against `events`, and queues it for the trigger named `<name>:<event>`. `check`, `setup` and `teardown` register the route with the provider at deploy, via `pikku webhooks`.",
+              "docs": "Receives a provider's webhooks as trigger events. Pikku mounts an open route\nat `route` (default `/webhooks/<name>`) that runs `receive`, validates each\nevent against `events`, and queues it for the trigger named\n`<name>:<event>`. `check`, `setup` and `teardown` register the route with\nthe provider at deploy, via `pikku webhooks`.",
+              "signature": "<Events extends Record<string, StandardSchemaV1> = Record<string, StandardSchemaV1<unknown, unknown>>>(source: TriggerWebhookSource<Events>) => void",
+              "members": [
+                {
+                  "line": "credential?: string",
+                  "doc": "The credential holding the signing secret. Defaults to {@link webhookSecretCredentialName}. Declaring `verify` declares this credential too, as a singleton string, so it needs no `defineCredential`."
+                },
+                {
+                  "line": "credentialDescription?: string",
+                  "doc": "What the secret is and where to find it, shown to whoever has to set it."
+                },
+                {
+                  "line": "events?: Events",
+                  "doc": "What the source can produce. Each event's data is validated against its schema before it is queued."
+                },
+                {
+                  "line": "method?: \"post\" | \"get\" | \"head\" | \"put\" | WebhookSourceMethod[]",
+                  "doc": "Several for providers that verify the URL with a GET and deliver with a POST."
+                },
+                {
+                  "line": "name: string",
+                  "doc": "Triggers subscribe to `<name>:<event>`. Unique across every kind of trigger source."
+                },
+                {
+                  "line": "route?: string",
+                  "doc": "Defaults to `/webhooks/<name>`."
+                }
+              ],
+              "examples": [
+                "/**\n * The same alert, pushed by the warehouse over a webhook instead of held open\n * as a subscription. Pikku mounts `POST /webhooks/warehouse`, validates each\n * event against `events`, and queues it for the trigger named\n * `warehouse:<event>`, so the warehouse is answered at once and a failing\n * handler is retried by the queue rather than by the sender.\n *\n * `verify` refuses any delivery whose body is not signed with the secret in\n * the `warehouseWebhookSecret` credential, before `receive` turns the raw\n * request into events. Declaring it declares that credential too.\n */\nwireTriggerWebhookSource({\n  name: 'warehouse',\n  events: { 'stock.low': LowStockPayload },\n  verify: {\n    hmac: {\n      header: 'x-warehouse-signature',\n      algorithm: 'sha256',\n      encoding: 'hex',\n    },\n  },\n  credentialDescription:\n    'The signing secret from the warehouse webhook settings',\n  receive: warehouseWebhookReceive,\n})\n\nwireTrigger({\n  name: 'warehouse:stock.low',\n  func: onLowStock,\n})"
               ]
             }
           ]
@@ -3896,7 +4087,7 @@
               "docs": "Builds this project's Better Auth instance. The factory is handed the\nsingleton services, with typed `secrets` and `variables`, and is called\nlazily so config and secrets are resolved before auth is constructed.",
               "signature": "<I extends BetterAuthInstance>(factory: (services: AuthSingletonServices) => I | Promise<I>) => PikkuBetterAuthFactory<I>",
               "examples": [
-                "export const auth = pikkuBetterAuth(\n  async ({\n    kysely,\n    secrets,\n    variables,\n    emailService,\n    scopeService,\n    logger,\n  }) => {\n    // `.reveal()` at the sink, not earlier: getSecret hands back a nominal\n    // SecretValue that no concretely-typed parameter accepts, so every disclosure\n    // is one greppable call. Better Auth wants the raw string, and this is where\n    // it stops being a secret in the type system.\n    const BETTER_AUTH_SECRET = (\n      await secrets.getSecret('BETTER_AUTH_SECRET')\n    ).reveal()\n    // Genuinely optional: unset simply disables /api/auth/sign-in/actor (scenarios\n    // off for this deployment) — the actor plugin refuses all sign-ins\n    // without it.\n    const SCENARIO_ACTOR_SECRET = await secrets\n      .getSecret('SCENARIO_ACTOR_SECRET')\n      .then((value) => value?.reveal())\n      .catch(() => undefined)\n    // Fabric operator admin: the RSA public key the control plane's token is\n    // verified against. The Fabric deployer pushes FABRIC_AUTH_PUBLIC_KEY onto\n    // every stage; locally it's simply absent, which disables /sign-in/fabric.\n    // Asymmetric — the app verifies, it can never forge an operator login.\n    const FABRIC_AUTH_PUBLIC_KEY = await variables.get('FABRIC_AUTH_PUBLIC_KEY')\n    // The opt-in that lets a deployed stage run scenarios. Read through\n    // `variables` rather than left to `process.env`, because a Worker receives\n    // it as a binding and has no populated environment to find it in.\n    const ALLOW_ACTOR_SIGN_IN = await variables.get(ACTOR_SIGN_IN_OPT_IN_ENV)\n\n    return betterAuth({\n      secret: BETTER_AUTH_SECRET,\n      database: { db: kysely, type: 'sqlite' },\n      emailAndPassword: {\n        enabled: true,\n        // Without this, `requestPasswordReset` succeeds on the client and silently\n        // sends nothing — the \"Forgot password?\" flow looks wired and dead-ends.\n        // Better Auth builds `url` from its baseURL + the client's redirectTo, so\n        // the app only supplies the message. Errors are logged, never swallowed:\n        // a reset the user never receives must be visible in the logs.\n        sendResetPassword: async ({ user, url }) => {\n          await emailService.send({\n            to: user.email,\n            template: {\n              name: 'reset-password',\n              data: { email: user.email, resetUrl: url },\n            },\n          })\n        },\n      },\n      // Stateless session: CLI splits out betterAuthStatelessSession so non-auth\n      // units verify the signed cookie instead of bundling better-auth. pikku #737.\n      session: { cookieCache: { enabled: true } },\n      advanced: { database: { generateId: 'uuid' } },\n      // Scenario actors: synthetic users (user.actor = true, see\n      // db/sqlite/0002-user-actor.sql) signed in by pikkuScenario via\n      // POST /api/auth/sign-in/actor { email, secret }. Never signs in real users.\n      //\n      // pikkuBan(): adds the banned/banExpires/banReason columns (see\n      // db/sqlite/0003-admin.sql) and the session hook that refuses a banned\n      // user a session. better-auth's own admin() is refused by the inspector:\n      // it authorizes on a `user.role` column while pikku authorizes on scopes,\n      // and everything else it offered — list, create, ban, remove, revoke\n      // sessions, set password — is scoped RPCs in @pikku/addon-admin.\n      //\n      // pikkuFabric(): exposes /api/auth/sign-in/fabric — the Fabric control plane\n      // mints a short-lived RS256 token and signs in as a synthetic `fabric: true`\n      // admin operator (db/sqlite/0004-fabric.sql), so the console Users tab can\n      // list/impersonate real users without the operator being one of them. It\n      // verifies against FABRIC_AUTH_PUBLIC_KEY; a missing key disables the\n      // endpoint.\n      //\n      // `personas` is what provisions the scenario actors. The plugin creates a\n      // declared persona's account the first time an operator asks to act as an\n      // address the stage has no row for, so a deploy carries its actors with it\n      // without a bootstrap step. This does NOT belong in `pikkuServerLifecycle`'s\n      // afterStart: that hook only ever runs under `pikku dev` and `pikku serve`,\n      // so a deployed stage would provision nobody.\n      plugins: [\n        pikkuActor({\n          secret: SCENARIO_ACTOR_SECRET,\n          allowSignIn: ALLOW_ACTOR_SIGN_IN,\n        }),\n        pikkuBan(),\n        pikkuFabric({\n          publicKey: FABRIC_AUTH_PUBLIC_KEY,\n          scopeService,\n          logger,\n          personas: {\n            personas: personaConfigs,\n            environments: personaEnvironments,\n          },\n        }),\n      ],\n    })\n  }\n)"
+                "export const auth = pikkuBetterAuth(\n  async ({ kysely, secrets, variables, emailService }) => {\n    // `.reveal()` at the sink, not earlier: getSecret hands back a nominal\n    // SecretValue that no concretely-typed parameter accepts, so every disclosure\n    // is one greppable call. Better Auth wants the raw string, and this is where\n    // it stops being a secret in the type system.\n    const BETTER_AUTH_SECRET = (\n      await secrets.getSecret('BETTER_AUTH_SECRET')\n    ).reveal()\n    // The public half of this stage's virtual user key pair, from the deployer; `pikku dev`\n    // sets it for you. Without it the app registers no endpoint for callers outside it\n    // (and says so at boot). Runs inside the app do not need it.\n    const VIRTUAL_USER_VERIFY_KEY = await variables.get(\n      'VIRTUAL_USER_VERIFY_KEY'\n    )\n    // The opt-in that lets a deployed stage run scenarios. Read through\n    // `variables` rather than left to `process.env`, because a Worker receives\n    // it as a binding and has no populated environment to find it in.\n    const ALLOW_VIRTUAL_USER_SIGN_IN = await variables.get(\n      VIRTUAL_USER_SIGN_IN_OPT_IN_ENV\n    )\n\n    return betterAuth({\n      secret: BETTER_AUTH_SECRET,\n      database: { db: kysely, type: 'sqlite' },\n      emailAndPassword: {\n        enabled: true,\n        // Without this, `requestPasswordReset` succeeds on the client and silently\n        // sends nothing — the \"Forgot password?\" flow looks wired and dead-ends.\n        // Better Auth builds `url` from its baseURL + the client's redirectTo, so\n        // the app only supplies the message. Errors are logged, never swallowed:\n        // a reset the user never receives must be visible in the logs.\n        sendResetPassword: async ({ user, url }) => {\n          await emailService.send({\n            to: user.email,\n            template: {\n              name: 'reset-password',\n              data: { email: user.email, resetUrl: url },\n            },\n          })\n        },\n      },\n      // Stateless session: CLI splits out betterAuthStatelessSession so non-auth\n      // units verify the signed cookie instead of bundling better-auth. pikku #737.\n      session: { cookieCache: { enabled: true } },\n      advanced: { database: { generateId: 'uuid' } },\n      // Scenario virtual users: synthetic users (user.virtualUser = true, see\n      // db/sqlite/0001-better-auth.sql) signed in by pikkuScenario via\n      // POST /api/auth/sign-in/virtual-user { email, secret }. Never signs in real users.\n      //\n      // pikkuBan(): adds the banned/banExpires/banReason columns (see\n      // db/sqlite/0003-admin.sql) and the session hook that refuses a banned\n      // user a session. better-auth's own admin() is refused by the inspector:\n      // it authorizes on a `user.role` column while pikku authorizes on scopes,\n      // and everything else it offered — list, create, ban, remove, revoke\n      // sessions, set password — is scoped RPCs in @pikku/addon-admin.\n      plugins: [\n        pikkuVirtualUser({\n          verifyKey: VIRTUAL_USER_VERIFY_KEY,\n          allowSignIn: ALLOW_VIRTUAL_USER_SIGN_IN,\n        }),\n        pikkuBan(),\n      ],\n    })\n  }\n)"
               ]
             },
             {
@@ -3979,8 +4170,8 @@
                 "via": "core",
                 "subpath": "./role"
               },
-              "summary": "No-op function for declaring system roles. This exists purely for TypeScript type checking and will be tree-shaken. The CLI extracts metadata via AST parsing and generates a `SystemRoleName` union, so a persona naming an undeclared role fails the build.",
-              "docs": "No-op function for declaring system roles.\nThis exists purely for TypeScript type checking and will be tree-shaken.\nThe CLI extracts metadata via AST parsing and generates a `SystemRoleName`\nunion, so a persona naming an undeclared role fails the build.\n\nA system role is a role that ships with the product: the console may grant\nit, but cannot rename, re-scope or delete it. Roles an admin composes in the\nconsole are unaffected and are not declared here.\n\nRemoval is deliberately not destructive. Deleting a declaration leaves the\nrow in the store, marked undeclared and inert, until `pikku roles prune` —\nthe same additive contract `defineScope` has, and for the same reason: a\nmid-deploy revocation is not something a code edit should be able to cause.",
+              "summary": "No-op function for declaring system roles. This exists purely for TypeScript type checking and will be tree-shaken. The CLI extracts metadata via AST parsing and generates a `SystemRoleName` union, so a virtual user naming an undeclared role fails the build.",
+              "docs": "No-op function for declaring system roles.\nThis exists purely for TypeScript type checking and will be tree-shaken.\nThe CLI extracts metadata via AST parsing and generates a `SystemRoleName`\nunion, so a virtual user naming an undeclared role fails the build.\n\nA system role is a role that ships with the product: the console may grant\nit, but cannot rename, re-scope or delete it. Roles an admin composes in the\nconsole are unaffected and are not declared here.\n\nRemoval is deliberately not destructive. Deleting a declaration leaves the\nrow in the store, marked undeclared and inert, until `pikku roles prune` —\nthe same additive contract `defineScope` has, and for the same reason: a\nmid-deploy revocation is not something a code edit should be able to cause.",
               "signature": "(_config: CoreSystemRoles) => void",
               "examples": [
                 "```typescript\ndefineSystemRole({\n  buyer: {\n    displayName: 'Buyer',\n    description: 'Can browse the catalogue and place orders',\n    scopes: ['catalogue:read', 'orders:create'],\n  },\n  admin: {\n    description: 'Everything',\n    scopes: ['admin'],\n  },\n})\n```"
@@ -4318,7 +4509,7 @@
                   "doc": "Unique across the project. It is how the graph is started and how its runs are grouped."
                 },
                 {
-                  "line": "nodes: Record<string, 118 names (pikku meta)>",
+                  "line": "nodes: Record<string, 170 names (pikku meta)>",
                   "doc": "The graph's steps, keyed by node id, each naming a function. `pikku meta` lists the names available here."
                 },
                 {
@@ -4348,8 +4539,16 @@
                   "doc": "Suspend workflow until a human records a decision against this gate"
                 },
                 {
+                  "line": "compensatingFor?: CompensatingFor<unknown>",
+                  "doc": "Set only while a function's `compensate` is running: the outcome of the forward call being undone. `undefined` on a forward run."
+                },
+                {
                   "line": "getRun: () => Promise<WorkflowRun>",
                   "doc": "Get the current workflow run"
+                },
+                {
+                  "line": "milestone: WorkflowWireMilestone",
+                  "doc": "A named checkpoint. On failure the unwind stops at the last milestone reached and the run rests there. The name must be a string literal."
                 },
                 {
                   "line": "name: string",
@@ -4406,13 +4605,13 @@
               "kind": "function",
               "origin": {
                 "via": "core",
-                "subpath": "./workflow"
+                "subpath": "./services"
               },
               "summary": "A cookie store for a scenario run, so a step that signs in leaves the session cookie behind for the steps after it.",
               "docs": "A cookie store for a scenario run, so a step that signs in leaves the session\ncookie behind for the steps after it.",
               "signature": "(apiUrl: string) => ScenarioCookieJar",
               "examples": [
-                "/**\n * Signing up is the one flow an actor cannot perform, because an actor is\n * already signed in before the first step runs. The jar is what makes it\n * possible from a bare `fetch`: it keeps the Set-Cookie the sign-up returned\n * and replays it on the next call, so the session survives the hop the way a\n * browser's would.\n */\nexport const signsUpShopper = pikkuScenarioStep<\n  { email: string; password: string },\n  { signedUpAs?: string }\n>({\n  name: 'signsUpShopper',\n  description: 'signs a new shopper up and reads back the session it created',\n  template: 'signs up as {email}',\n  default: async (_services, { email, password }, { scenarioStep }) => {\n    const { apiUrl } = requireScenarioEnv(scenarioStep)\n    const jar = createCookieJar(apiUrl)\n    await jar.fetch(`${apiUrl}/auth/sign-up/email`, {\n      method: 'POST',\n      headers: { 'content-type': 'application/json' },\n      body: JSON.stringify({ email, password, name: email }),\n    })\n    const session = await readScenarioHttpResponse<{\n      user?: { email?: string }\n    } | null>(await jar.fetch(`${apiUrl}/auth/get-session`))\n    return { signedUpAs: session.body?.user?.email }\n  },\n})"
+                "/**\n * Signing up is the one flow a virtual user cannot perform, because a virtual user is\n * already signed in before the first step runs. The jar is what makes it\n * possible from a bare `fetch`: it keeps the Set-Cookie the sign-up returned\n * and replays it on the next call, so the session survives the hop the way a\n * browser's would.\n */\nexport const signsUpShopper = pikkuScenarioStep<\n  { email: string; password: string },\n  { signedUpAs?: string }\n>({\n  name: 'signsUpShopper',\n  description: 'signs a new shopper up and reads back the session it created',\n  template: 'signs up as {email}',\n  default: async (_services, { email, password }, { scenarioStep }) => {\n    const { apiUrl } = requireScenarioEnv(scenarioStep)\n    const jar = createCookieJar(apiUrl)\n    await jar.fetch(`${apiUrl}/auth/sign-up/email`, {\n      method: 'POST',\n      headers: { 'content-type': 'application/json' },\n      body: JSON.stringify({ email, password, name: email }),\n    })\n    const session = await readScenarioHttpResponse<{\n      user?: { email?: string }\n    } | null>(await jar.fetch(`${apiUrl}/auth/get-session`))\n    return { signedUpAs: session.body?.user?.email }\n  },\n})"
               ]
             },
             {
@@ -4435,18 +4634,18 @@
                 "via": "core",
                 "subpath": "./workflow"
               },
-              "summary": "One actor's browser session, handed to a step as `wire.browser`.",
-              "docs": "One actor's browser session, handed to a step as `wire.browser`.\n\nOnly what every driver can honour is declared here. A driver package adds\nthe rest by declaration-merging onto this interface — `@pikku/playwright`\ncontributes `page`, `context` and `locate` — so a step written against the\nstructural surface keeps working whichever driver runs it.",
+              "summary": "One virtual user's browser session, handed to a step as `wire.browser`.",
+              "docs": "One virtual user's browser session, handed to a step as `wire.browser`.\n\nEvery virtual user gets their own, so a two-virtual-user scenario drives two sessions and\n`screenshot` files each shot under the virtual user it belongs to.\n\nOnly what every driver can honour is declared here. A driver package adds\nthe rest by declaration-merging onto this interface — `@pikku/playwright`\ncontributes `page`, `context` and `locate` — so a step written against the\nstructural surface keeps working whichever driver runs it.",
               "members": [
-                {
-                  "line": "actor: string",
-                  "doc": "The actor whose browser context this is"
-                },
                 {
                   "line": "goto: (url: string) => Promise<void>"
                 },
                 {
                   "line": "screenshot: (name?: string, options?: ScenarioScreenshotOptions) => Promise<Uint8Array>"
+                },
+                {
+                  "line": "virtualUser: string",
+                  "doc": "The virtual user whose browser context this is"
                 }
               ]
             },
@@ -4491,7 +4690,7 @@
               },
               "summary": "One surface's implementation of a step.",
               "docs": "One surface's implementation of a step.\n\nEach binding is typed independently, so a browser binding gets a non-optional\n`wire.browser` and a cli binding a non-optional `wire.cli` without either\nleaking into the other.",
-              "signature": "PikkuFunctionScenarioStep<In, Out, Surface, HasActor>"
+              "signature": "PikkuFunctionScenarioStep<In, Out, Surface, HasVirtualUser>"
             },
             {
               "name": "pikkuPlatformScenarioStep",
@@ -4500,7 +4699,7 @@
                 "via": "generated"
               },
               "summary": "A step in which the app acts on itself — \"Given the platform has expired the trial\".",
-              "docs": "A step in which the app acts on itself — \"Given the platform has expired the\ntrial\".\n\nThe grammatical subject of that sentence is not a user of your app; it **is**\nyour app, which is why it is its own declaration rather than a persona with an\nasterisk. A persona is a person.\n\nLocal-test-only, and never in a virtual user's catalogue: a virtual user that\ncould expire its own trial is manufacturing the outcome it exists to discover.",
+              "docs": "A step in which the app acts on itself — \"Given the platform has expired the\ntrial\".\n\nThe grammatical subject of that sentence is not a user of your app; it **is**\nyour app, which is why it is its own declaration rather than a virtual user with an\nasterisk. A virtual user is a person.\n\nLocal-test-only, and never in a virtual user's catalogue: a virtual user that\ncould expire its own trial is manufacturing the outcome it exists to discover.",
               "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuSubjectScenarioStepConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuSubjectScenarioStepConfig<In, Out>): PikkuFunctionConfig<In, Out, \"scenarioStep\">; }",
               "examples": [
                 "/**\n * Shipping is the shop acting on itself: no shopper clicks it, and the order\n * update the customer receives is a consequence rather than a request.\n */\nexport const shipsTheOrder = pikkuPlatformScenarioStep<\n  { orderId: string },\n  { orderId: string }\n>({\n  name: 'shipsTheOrder',\n  description:\n    'ships an order, which is what tells the shopper it is on its way',\n  template: 'ships order {orderId}',\n  func: async (_services, { orderId }, { rpc }) => {\n    await rpc.invoke('notifyOrderShipped', { orderId })\n    return { orderId }\n  },\n})"
@@ -4512,11 +4711,11 @@
               "origin": {
                 "via": "generated"
               },
-              "summary": "A scenario: a complex workflow that drives the app the way users do. Steps run as actors over the REAL transport — `scenario.do(step, rpc, data, { actor: actors.yasser })` — so flows double as e2e tests and staged/production health checks (no state reset; scope what you create).",
-              "docs": "A scenario: a complex workflow that drives the app the way users do.\nSteps run as actors over the REAL transport — `scenario.do(step, rpc,\ndata, { actor: actors.yasser })` — so flows double as e2e tests and\nstaged/production health checks (no state reset; scope what you create).",
-              "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenario\" | \"actors\", PikkuFunctionScenario<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown>, InputSchema, OutputSchema>; <In, Out = unknown>(func: PikkuFunctionScenario<In, Out> | PikkuFunctionConfig<In, Out, \"scenario\" | \"actors\", PikkuFunctionScenario<In, Out>>): PikkuFunctionConfig<In, Out, \"scenario\" | \"actors\">; }",
+              "summary": "A scenario: a complex workflow that drives the app the way users do. Steps run as virtual users over the REAL transport — `scenario.do(step, rpc, data, { virtualUser: virtualUsers.yasser })` — so flows double as e2e tests and staged/production health checks (no state reset; scope what you create).",
+              "docs": "A scenario: a complex workflow that drives the app the way users do.\nSteps run as virtual users over the REAL transport — `scenario.do(step, rpc,\ndata, { virtualUser: virtualUsers.yasser })` — so flows double as e2e tests and\nstaged/production health checks (no state reset; scope what you create).",
+              "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenario\" | \"virtualUsers\", PikkuFunctionScenario<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown>, InputSchema, OutputSchema>; <In, Out = unknown>(func: PikkuFunctionScenario<In, Out> | PikkuFunctionConfig<In, Out, \"scenario\" | \"virtualUsers\", PikkuFunctionScenario<In, Out>>): PikkuFunctionConfig<In, Out, \"scenario\" | \"virtualUsers\">; }",
               "examples": [
-                "// A scenario is a workflow whose steps run as real users (\"actors\") over the\n// real transport — sign-in, auth middleware, permissions and serialization are\n// all exercised end-to-end. The same flow doubles as an e2e test and a\n// staging/production health check. Actors are registered in pikku.config.json.\nexport const shopperBuysAnItem = pikkuScenario({\n  title: 'Shopper buys an item',\n  description: 'Browse the catalogue, fill a basket and pay for an order.',\n  tags: ['checkout'],\n  func: async ({ logger }, _input, { scenario, actors }) => {\n    if (!actors?.shopper) {\n      throw new Error(\n        'shopperBuysAnItem needs the `shopper` actor — run via `pikku scenario run`'\n      )\n    }\n    const shopper = actors.shopper\n\n    // Each step names what the actor is trying to achieve, the exposed RPC\n    // that achieves it, and who performs it. The call goes through the actor's\n    // authenticated client — never internal dispatch.\n    const basket = await scenario.do(\n      'Shopper opens their basket',\n      'getBasket',\n      {},\n      { actor: shopper }\n    )\n\n    const catalogue = await scenario.do(\n      'Shopper browses the catalogue',\n      'listItems',\n      { search: 'mug' },\n      { actor: shopper }\n    )\n    if (catalogue.items.length === 0)\n      throw new Error('Catalogue has no mugs to buy')\n\n    await scenario.do(\n      'Shopper adds a mug to the basket',\n      'addToBasket',\n      {\n        basketId: basket.basketId,\n        itemId: catalogue.items[0]!.itemId,\n        quantity: 1,\n      },\n      { actor: shopper }\n    )\n\n    const order = await scenario.do(\n      'Shopper checks out',\n      'createOrder',\n      {\n        basketId: basket.basketId,\n        shippingAddress: {\n          line1: '1 High Street',\n          city: 'London',\n          postcode: 'N1 1AA',\n          country: 'GB',\n        },\n      },\n      { actor: shopper }\n    )\n\n    // Durable polling step: re-invokes the RPC as the actor until the\n    // predicate passes, or `within` elapses and fails the scenario.\n    await scenario.expectEventually(\n      'Order is paid',\n      'getOrder',\n      { orderId: order.orderId },\n      (o: { status: string }) => o.status === 'paid',\n      { actor: shopper, within: '30s', interval: 500 }\n    )\n\n    logger.info(\n      `Scenario order ${order.orderId} paid: ${order.totalCents} cents`\n    )\n    return { orderId: order.orderId, totalCents: order.totalCents }\n  },\n})"
+                "// A scenario is a workflow whose steps run as real users (\"virtualUsers\") over the\n// real transport — sign-in, auth middleware, permissions and serialization are\n// all exercised end-to-end. The same flow doubles as an e2e test and a\n// staging/production health check. Virtual users are registered in pikku.config.json.\nexport const shopperBuysAnItem = pikkuScenario({\n  title: 'Shopper buys an item',\n  description: 'Browse the catalogue, fill a basket and pay for an order.',\n  tags: ['checkout'],\n  func: async ({ logger }, _input, { scenario, virtualUsers }) => {\n    if (!virtualUsers?.shopper) {\n      throw new Error(\n        'shopperBuysAnItem needs the `shopper` virtual user — run via `pikku scenario run`'\n      )\n    }\n    const shopper = virtualUsers.shopper\n\n    // Each step names what the virtual user is trying to achieve, the exposed RPC\n    // that achieves it, and who performs it. The call goes through the virtual user's\n    // authenticated client — never internal dispatch.\n    const basket = await scenario.do(\n      'Shopper opens their basket',\n      'getBasket',\n      {},\n      { virtualUser: shopper }\n    )\n\n    const catalogue = await scenario.do(\n      'Shopper browses the catalogue',\n      'listItems',\n      { search: 'mug' },\n      { virtualUser: shopper }\n    )\n    if (catalogue.items.length === 0)\n      throw new Error('Catalogue has no mugs to buy')\n\n    await scenario.do(\n      'Shopper adds a mug to the basket',\n      'addToBasket',\n      {\n        basketId: basket.basketId,\n        itemId: catalogue.items[0]!.itemId,\n        quantity: 1,\n      },\n      { virtualUser: shopper }\n    )\n\n    const order = await scenario.do(\n      'Shopper checks out',\n      'createOrder',\n      {\n        basketId: basket.basketId,\n        shippingAddress: {\n          line1: '1 High Street',\n          city: 'London',\n          postcode: 'N1 1AA',\n          country: 'GB',\n        },\n      },\n      { virtualUser: shopper }\n    )\n\n    // Durable polling step: re-invokes the RPC as the virtual user until the\n    // predicate passes, or `within` elapses and fails the scenario.\n    await scenario.expectEventually(\n      'Order is paid',\n      'getOrder',\n      { orderId: order.orderId },\n      (o: { status: string }) => o.status === 'paid',\n      { virtualUser: shopper, within: '30s', interval: 500 }\n    )\n\n    logger.info(\n      `Scenario order ${order.orderId} paid: ${order.totalCents} cents`\n    )\n    return { orderId: order.orderId, totalCents: order.totalCents }\n  },\n})"
               ]
             },
             {
@@ -4529,7 +4728,7 @@
               "docs": "Declares a scenario hook. Returns the function verbatim — a hook is never\nregistered, so this exists purely to give an inline hook a call site to be\ncontextually typed from, the way every other pikku primitive is.",
               "signature": "<In = unknown, Ctx = unknown>(hook: PikkuFunctionScenario<In, void, Ctx>) => PikkuFunctionScenario<In, void, Ctx>",
               "examples": [
-                "/**\n * Empties the shopper's basket before the assistant is asked to fill it.\n *\n * The scenario's real assertion is \"the basket now has the mug\", and a basket\n * a previous run left full satisfies that whether or not the assistant did\n * anything. A hook runs outside the recorded steps, so the tidying never shows\n * up in the report as something the shopper did.\n */\nconst emptiesTheBasket = pikkuScenarioHook(\n  async (_services, _data, { actors }) => {\n    const basket = await actors.shopper.invoke('getBasket', {})\n    for (const item of basket.items) {\n      await actors.shopper.invoke('removeFromBasket', {\n        basketId: basket.basketId,\n        itemId: item.itemId,\n      })\n    }\n  }\n)"
+                "/**\n * Empties the shopper's basket before the assistant is asked to fill it.\n *\n * The scenario's real assertion is \"the basket now has the mug\", and a basket\n * a previous run left full satisfies that whether or not the assistant did\n * anything. A hook runs outside the recorded steps, so the tidying never shows\n * up in the report as something the shopper did.\n */\nconst emptiesTheBasket = pikkuScenarioHook(\n  async (_services, _data, { virtualUsers }) => {\n    const basket = await virtualUsers.shopper.invoke('getBasket', {})\n    for (const item of basket.items) {\n      await virtualUsers.shopper.invoke('removeFromBasket', {\n        basketId: basket.basketId,\n        itemId: item.itemId,\n      })\n    }\n  }\n)"
               ]
             },
             {
@@ -4575,6 +4774,10 @@
                 {
                   "line": "before?: CorePikkuFunctionHook<any, any, any>",
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
+                },
+                {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
                 },
                 {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
@@ -4637,8 +4840,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "scopes?: import(\"#pikku/scopes/pikku-scopes.gen.js\").ScopeId[]",
@@ -4684,11 +4887,11 @@
               "origin": {
                 "via": "generated"
               },
-              "summary": "A named, reusable scenario step, declaring one implementation per surface an actor can drive it through.",
-              "docs": "A named, reusable scenario step, declaring one implementation per surface an\nactor can drive it through.\n\nThe step's identity is what the actor is trying to do; which surface carries\nit out is a binding. That is what lets one ladder run through a real browser,\nover the websocket, or entirely server-side — and what makes \"how much of this\nflow can a human actually reach\" a number rather than a guess.\n\nSteps are deliberately NOT registered as RPCs: a browser-driving step must\nnever be network-callable.",
-              "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { actor: true; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { actor: true; }): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { browser: {}; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { browser: {}; }): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out>): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; }",
+              "summary": "A named, reusable scenario step, declaring one implementation per surface an virtual user can drive it through.",
+              "docs": "A named, reusable scenario step, declaring one implementation per surface an\nvirtual user can drive it through.\n\nThe step's identity is what the virtual user is trying to do; which surface carries\nit out is a binding. That is what lets one ladder run through a real browser,\nover the websocket, or entirely server-side — and what makes \"how much of this\nflow can a human actually reach\" a number rather than a guess.\n\nSteps are deliberately NOT registered as RPCs: a browser-driving step must\nnever be network-callable.",
+              "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { virtualUser: true; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { virtualUser: true; }): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { browser: {}; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { browser: {}; }): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out>): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; }",
               "examples": [
-                "export const opensPage = pikkuScenarioStep({\n  name: 'opensPage',\n  description: 'opens an app page as the signed-in actor',\n  template: 'opens {path}',\n  input: OpensPageInput,\n  output: OpensPageOutput,\n  browser: async (_services, { path }, { browser }) => {\n    const actor = session(browser)\n    const status = await actor.gotoApp(path)\n    let pathname = path\n    try {\n      pathname = new URL(actor.page.url()).pathname\n    } catch {\n      // A page that never navigated keeps the requested path — the assertion in\n      // the scenario is what reports that, not a thrown URL parse error.\n    }\n    return { pathname, status }\n  },\n})"
+                "export const opensPage = pikkuScenarioStep({\n  name: 'opensPage',\n  description: 'opens an app page as the signed-in virtual user',\n  template: 'opens {path}',\n  input: OpensPageInput,\n  output: OpensPageOutput,\n  browser: async (_services, { path }, { browser }) => {\n    const virtualUser = session(browser)\n    const status = await virtualUser.gotoApp(path)\n    let pathname = path\n    try {\n      pathname = new URL(virtualUser.page.url()).pathname\n    } catch {\n      // A page that never navigated keeps the requested path — the assertion in\n      // the scenario is what reports that, not a thrown URL parse error.\n    }\n    return { pathname, status }\n  },\n})"
               ]
             },
             {
@@ -4713,7 +4916,7 @@
                 "subpath": "./services"
               },
               "summary": "POST JSON somewhere and report what came back, without throwing on a 4xx/5xx.",
-              "docs": "POST JSON somewhere and report what came back, without throwing on a 4xx/5xx.\n\nEvery scenario that reaches past a persona was writing this by hand — the same\n`content-type`, the same `JSON.stringify`, the same drain — and the copies had\ndrifted: some returned `res.json()`, which loses the status and throws\noutright when the target answers an empty body or an HTML error page. A\nrefusal is the expected outcome of a permissions scenario, so it has to\nsurvive as data.",
+              "docs": "POST JSON somewhere and report what came back, without throwing on a 4xx/5xx.\n\nEvery scenario that reaches past a virtual user was writing this by hand — the same\n`content-type`, the same `JSON.stringify`, the same drain — and the copies had\ndrifted: some returned `res.json()`, which loses the status and throws\noutright when the target answers an empty body or an HTML error page. A\nrefusal is the expected outcome of a permissions scenario, so it has to\nsurvive as data.",
               "signature": "<T = unknown>(url: string, { body, headers, method, fetch: send, }?: ScenarioJsonRequest) => Promise<ScenarioHttpResponse<T>>",
               "examples": [
                 "export const startsCheckout = pikkuScenarioStep<\n  { basketId: string; userId: string },\n  CheckoutRun\n>({\n  name: 'startsCheckout',\n  description: 'starts the checkout workflow over HTTP and reports the run',\n  template: 'starts checkout for {basketId}',\n  default: async (_services, { basketId, userId }, { scenarioStep }) => {\n    const { apiUrl } = requireScenarioEnv(scenarioStep)\n    const response = await postScenarioJson<{ runId?: string } | undefined>(\n      `${apiUrl}/workflow/checkoutWorkflow/start`,\n      {\n        body: {\n          data: {\n            basketId,\n            userId,\n            shippingAddress: {\n              line1: '1 High Street',\n              city: 'London',\n              postcode: 'N1 1AA',\n              country: 'GB',\n            },\n          },\n        },\n      }\n    )\n    return { ...response, runId: response.body?.runId }\n  },\n})"
@@ -4727,7 +4930,7 @@
                 "subpath": "./services"
               },
               "summary": "Drain a response into the shape a step can carry: the parsed body (an empty one counting as no body at all) alongside the text it was parsed from.",
-              "docs": "Drain a response into the shape a step can carry: the parsed body (an empty\none counting as no body at all) alongside the text it was parsed from.\n\n`invokeRaw` returns this, and a step that has to reach past a persona — a\nroute with no RPC, an identity no persona can hold — reaches for this rather\nthan writing the same record by hand.",
+              "docs": "Drain a response into the shape a step can carry: the parsed body (an empty\none counting as no body at all) alongside the text it was parsed from.\n\n`invokeRaw` returns this, and a step that has to reach past a virtual user — a\nroute with no RPC, an identity no virtual user can hold — reaches for this rather\nthan writing the same record by hand.",
               "signature": "<T = unknown>(res: Response) => Promise<ScenarioHttpResponse<T>>",
               "examples": [
                 "export const awaitsCheckout = pikkuScenarioStep<\n  { run: CheckoutRun; timeoutMs?: number },\n  CheckoutRun\n>({\n  name: 'awaitsCheckout',\n  description: 'waits for a started checkout run to reach a terminal status',\n  template: 'waits for the checkout to finish',\n  default: async (_services, { run, timeoutMs }, { scenarioStep }) => {\n    if (!run.runId) throw new Error(`Checkout never started: ${run.serialized}`)\n    const { apiUrl } = requireScenarioEnv(scenarioStep)\n    let last = ''\n    const finished = await pollUntil(\n      async () => {\n        const response = await readScenarioHttpResponse<\n          { status?: string } | undefined\n        >(\n          await fetch(`${apiUrl}/workflow/checkoutWorkflow/status/${run.runId}`)\n        )\n        last = response.serialized\n        const outcome = response.body?.status\n        return outcome && TERMINAL.includes(outcome)\n          ? { ...response, runId: run.runId, outcome }\n          : undefined\n      },\n      { timeoutMs: timeoutMs ?? 30_000, intervalMs: 100 }\n    )\n    if (!finished) {\n      throw new Error(`Run ${run.runId} never finished: ${last}`)\n    }\n    return finished\n  },\n})"
@@ -4781,8 +4984,8 @@
                 "via": "core",
                 "subpath": "./workflow"
               },
-              "summary": "How an actor drives the system for one step.",
-              "docs": "How an actor drives the system for one step.\n\nA step declares one implementation per surface it supports, and the runner\npicks between them — so the same ladder can run through a real browser, over\nthe websocket, or entirely server-side.\n\n`default` is the floor: it is what every other surface falls back to, so it\ncan never itself fall back."
+              "summary": "How a virtual user drives the system for one step.",
+              "docs": "How a virtual user drives the system for one step.\n\nA step declares one implementation per surface it supports, and the runner\npicks between them — so the same ladder can run through a real browser, over\nthe websocket, or entirely server-side.\n\n`default` is the floor: it is what every other surface falls back to, so it\ncan never itself fall back."
             },
             {
               "name": "TestIdSelector",
@@ -4816,15 +5019,6 @@
               ]
             },
             {
-              "name": "TypedPersonas",
-              "kind": "type",
-              "origin": {
-                "via": "generated"
-              },
-              "summary": "The personas this project declares, keyed by name — the `actors` a scenario step runs as.",
-              "docs": "The personas this project declares, keyed by name — the `actors` a scenario\nstep runs as."
-            },
-            {
               "name": "TypedScenario",
               "kind": "type",
               "origin": {
@@ -4839,6 +5033,10 @@
                   "doc": "Suspend workflow until a human records a decision against this gate"
                 },
                 {
+                  "line": "compensatingFor?: CompensatingFor<unknown>",
+                  "doc": "Set only while a function's `compensate` is running: the outcome of the forward call being undone. `undefined` on a forward run."
+                },
+                {
                   "line": "context: ScenarioContext<Out>",
                   "doc": "Scratch the body writes and the `before`/`after` hooks read. A hook is a separate function and cannot see the body's locals, so this is how teardown learns the ids the body minted. Deliberately *not* a world: it is scoped to one run, and scenario steps cannot reach it. Steps stay pure functions of their declared inputs, so the ladder in the report remains a complete account of what a step saw."
                 },
@@ -4848,7 +5046,7 @@
                 },
                 {
                   "line": "expectEventually: <TOutput = any, TInput = any>(stepName: string, rpcName: string, data: TInput, predicate: (output: TOutput) => boolean, options?: WorkflowExpectEventuallyOptions) => Promise<TOutput>",
-                  "doc": "Durable polling step: invoke `rpcName` (as an actor when `options.actor` is set) until `predicate` passes or `options.within` elapses."
+                  "doc": "Durable polling step: invoke `rpcName` (as a virtual user when `options.virtualUser` is set) until `predicate` passes or `options.within` elapses."
                 },
                 {
                   "line": "expectScore: (stepName: string, runId: string, scorerName: string, options?: WorkflowExpectScoreOptions) => Promise<{ score: number; reason?: string; }>",
@@ -4861,6 +5059,10 @@
                 {
                   "line": "getRun: () => Promise<WorkflowRun>",
                   "doc": "Get the current workflow run"
+                },
+                {
+                  "line": "milestone: WorkflowWireMilestone",
+                  "doc": "A named checkpoint. On failure the unwind stops at the last milestone reached and the run rests there. The name must be a string literal."
                 },
                 {
                   "line": "name: string",
@@ -4895,6 +5097,15 @@
               },
               "summary": "The typed half of a scenario wire: `given`/`when`/`then`, narrowed to the names declared by `pikkuScenarioStep` in this project. `given` and `when` differ only in the prose the reporter renders; `then` additionally makes the step's bindings witnesses rather than alternatives.",
               "docs": "The typed half of a scenario wire: `given`/`when`/`then`, narrowed to the\nnames declared by `pikkuScenarioStep` in this project. `given` and `when`\ndiffer only in the prose the reporter renders; `then` additionally makes the\nstep's bindings witnesses rather than alternatives."
+            },
+            {
+              "name": "TypedVirtualUsers",
+              "kind": "type",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "The virtual users this project declares, keyed by name — the `virtual users` a scenario step runs as.",
+              "docs": "The virtual users this project declares, keyed by name — the `virtual users` a scenario\nstep runs as."
             }
           ]
         }
@@ -4986,6 +5197,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -5030,8 +5245,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "scopes?: never[]",
@@ -5119,6 +5334,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -5179,8 +5398,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "scopes?: never[]",
@@ -5265,6 +5484,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -5325,8 +5548,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "scopes?: never[]",
@@ -5400,6 +5623,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -5444,8 +5671,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "skip?: string",
@@ -5515,6 +5742,10 @@
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
                 },
                 {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
+                },
+                {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
                   "doc": "Where this function is deployed when the build can go either way. `auto` lets the analyser decide from what the function touches."
                 },
@@ -5559,8 +5790,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "skip?: string",
@@ -5730,7 +5961,14 @@
                   "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
+                  "line": "incomingWebhookService?: IncomingWebhookService",
+                  "doc": "Queues what webhook trigger sources receive. Required once any `wireTriggerWebhookSource` is wired."
+                },
+                {
                   "line": "jwt?: JWTService"
+                },
+                {
+                  "line": "leaseService?: LeaseService"
                 },
                 {
                   "line": "logger: Logger"
@@ -5759,6 +5997,10 @@
                   "doc": "Session store for persisting user sessions keyed by pikkuUserId"
                 },
                 {
+                  "line": "triggerSourceStore?: TriggerSourceStore",
+                  "doc": "Which trigger sources an operator enabled, and what enabling registered."
+                },
+                {
                   "line": "variables: VariablesService"
                 },
                 {
@@ -5767,7 +6009,7 @@
                 },
                 {
                   "line": "virtualUserScheduleStore?: VirtualUserScheduleStore",
-                  "doc": "Each persona's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
+                  "doc": "Each virtual user's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
                 },
                 {
                   "line": "webhookService?: WebhookService",
@@ -5792,10 +6034,6 @@
               "signature": "UserSession",
               "members": [
                 {
-                  "line": "actor?: boolean",
-                  "doc": "True when the session belongs to a synthetic scenario actor — lets audits/analytics address synthetic traffic"
-                },
-                {
                   "line": "orgId?: string",
                   "doc": "The tenant the session is acting inside, when the project has more than one."
                 },
@@ -5810,6 +6048,10 @@
                 {
                   "line": "userId?: string",
                   "doc": "Who the session belongs to, as your own system identifies them. Pikku only carries it."
+                },
+                {
+                  "line": "virtualUser?: boolean",
+                  "doc": "True when the session belongs to a synthetic scenario virtual user — lets audits/analytics address synthetic traffic"
                 }
               ]
             },
@@ -5888,7 +6130,14 @@
                   "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
+                  "line": "incomingWebhookService?: IncomingWebhookService",
+                  "doc": "Queues what webhook trigger sources receive. Required once any `wireTriggerWebhookSource` is wired."
+                },
+                {
                   "line": "jwt?: JWTService"
+                },
+                {
+                  "line": "leaseService?: LeaseService"
                 },
                 {
                   "line": "logger: Logger"
@@ -5917,6 +6166,10 @@
                   "doc": "Session store for persisting user sessions keyed by pikkuUserId"
                 },
                 {
+                  "line": "triggerSourceStore?: TriggerSourceStore",
+                  "doc": "Which trigger sources an operator enabled, and what enabling registered."
+                },
+                {
                   "line": "variables: VariablesService"
                 },
                 {
@@ -5925,7 +6178,7 @@
                 },
                 {
                   "line": "virtualUserScheduleStore?: VirtualUserScheduleStore",
-                  "doc": "Each persona's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
+                  "doc": "Each virtual user's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
                 },
                 {
                   "line": "webhookService?: WebhookService",
@@ -6013,7 +6266,14 @@
                   "doc": "The global feature-flag config, read by the function runner to enforce a flag's availability. Inert when absent: a project that declares no flag carries nothing, and a `featureFlag:` with no source registered is a no-op rather than a closed door."
                 },
                 {
+                  "line": "incomingWebhookService?: IncomingWebhookService",
+                  "doc": "Queues what webhook trigger sources receive. Required once any `wireTriggerWebhookSource` is wired."
+                },
+                {
                   "line": "jwt?: JWTService"
+                },
+                {
+                  "line": "leaseService?: LeaseService"
                 },
                 {
                   "line": "logger: Logger"
@@ -6039,6 +6299,10 @@
                   "doc": "Session store for persisting user sessions keyed by pikkuUserId"
                 },
                 {
+                  "line": "triggerSourceStore?: TriggerSourceStore",
+                  "doc": "Which trigger sources an operator enabled, and what enabling registered."
+                },
+                {
                   "line": "variables: VariablesService"
                 },
                 {
@@ -6047,7 +6311,7 @@
                 },
                 {
                   "line": "virtualUserScheduleStore?: VirtualUserScheduleStore",
-                  "doc": "Each persona's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
+                  "doc": "Each virtual user's cadence, for apps that want their virtual users to keep going without being asked. Separate from the run store on purpose: wiring nothing is how an app says it only wants the runs it starts itself."
                 },
                 {
                   "line": "webhookService?: WebhookService",
@@ -6067,7 +6331,7 @@
           "specifier": "#pikku/addon/setup",
           "name": "setup",
           "step": "create a function",
-          "summary": "The three factories a project declares exactly once — its config, its singleton services and its per-wire services. An addon declares the same three in its own flavour, handed the logger, variables and secrets the host application already built. Everything else on this page is imported by features; these are imported by bootstrap and then left alone.",
+          "summary": "The factories a project declares exactly once — its config, its singleton services and its per-wire services — and, for an application, the server lifecycle that runs work before and after the server starts and stops. An addon declares the first three in its own flavour, handed the logger, variables and secrets the host application already built, and has no lifecycle: it does not own a server. Everything else on this page is imported by features; these are imported by bootstrap and then left alone.",
           "skill": "pikku-services",
           "symbols": [
             {
@@ -6484,7 +6748,7 @@
               "docs": "One `AnalyticsService` over several destinations.\n\nA composite rather than a change to the interface, so a single-destination\napp never meets it and a sink is the same class whether it runs alone or\nbeside three others.\n\nSettled, not awaited in sequence: `flush()` runs inside the invocation, so a\nvendor that is slow must not add its latency to the request and a vendor that\nis down must not cost the others their events. A destination that throws is\nreported by the caller's existing flush guard, which already treats analytics\nas best-effort.",
               "signature": "(sinks: ReadonlyArray<AnalyticsSink | AnalyticsService>) => AnalyticsService",
               "examples": [
-                "export const createSingletonServices = pikkuServices(\n  async (config, existingServices) => {\n    const variables =\n      existingServices?.variables ??\n      new TypedVariablesService(new LocalVariablesService())\n    const secrets =\n      existingServices?.secrets ??\n      new TypedSecretService(new LocalSecretService(variables))\n    const logger = existingServices?.logger ?? new JsonConsoleLogger()\n    const schema = existingServices?.schema ?? new CFWorkerSchemaService(logger)\n    const emailService =\n      existingServices?.emailService ??\n      new GeneratedTemplateEmailService({\n        delegate: new LocalEmailService(),\n      })\n    // The durable audit sink. In a deployed stage fabric injects the platform's\n    // audit service; locally it falls back to a no-op so nothing is persisted.\n    const audit = existingServices?.audit ?? new NoopAuditService()\n    // kysely is injected by pikku dev (node:sqlite) or the CF Worker workflow (libsql).\n    // The template never constructs its own dialect — dialects are fabric/runtime\n    // concerns — so it must always be provided by the runtime.\n    if (!existingServices?.kysely) {\n      throw new Error(\n        'kysely service was not injected by the runtime (pikku dev / fabric)'\n      )\n    }\n    const kysely: Kysely<DB> = existingServices.kysely\n\n    // Per-user credential store (wire.getCredential) — needed by addons imported\n    // with --auth per-user/delegated. A deployed stage injects it: credentials are\n    // sealed to the stage, and only its secrets Worker holds the key. There is no\n    // fallback because there is no key to fall back to — the template used to\n    // build a `KyselyCredentialService` from a `CREDENTIALS_KEY` secret, which was\n    // the stage's own KEK handed to every unit. Outside a stage the app runs fine\n    // and credential-using addon calls fail with a clear error from the addon's\n    // wire services; wire your own `credentialService` here if you need one.\n    const credentialService = existingServices?.credentialService\n\n    // Both destinations, because they answer different questions: the logger is\n    // what makes an event visible while the app is being built, and fabric's\n    // forwarder no-ops entirely outside a deployed stage. Wired here rather than\n    // left to the default, which is the logger alone.\n    const analyticsService =\n      existingServices?.analyticsService ??\n      fanOutAnalytics([\n        new LoggerAnalyticsService(logger),\n        fabricAnalyticsService({\n          variables,\n          queueService: existingServices?.queueService,\n        }),\n      ])\n\n    return {\n      ...(existingServices ?? {}),\n      config,\n      workflowService: existingServices?.workflowService,\n      workflowRunService: existingServices?.workflowRunService,\n      variables,\n      secrets,\n      schema,\n      logger,\n      emailService,\n      audit,\n      kysely,\n      analyticsService,\n      analyticsIdentity: shopAnalyticsIdentity,\n      // Constructed once here rather than read per call: the payment provider's\n      // credentials belong to service construction, and functions cannot reach\n      // `secrets` at all (every function-facing services type is bounded by\n      // SecretlessServices).\n      ...(credentialService ? { credentialService } : {}),\n    }\n  }\n)"
+                "export const createSingletonServices = pikkuServices(\n  async (config, existingServices) => {\n    const variables =\n      existingServices?.variables ??\n      new TypedVariablesService(new LocalVariablesService())\n    const secrets =\n      existingServices?.secrets ??\n      new TypedSecretService(new LocalSecretService(variables))\n    const logger = existingServices?.logger ?? new JsonConsoleLogger()\n    const schema = existingServices?.schema ?? new CFWorkerSchemaService(logger)\n    const emailService =\n      existingServices?.emailService ??\n      new GeneratedTemplateEmailService({\n        delegate: new LocalEmailService(),\n      })\n    // The durable audit sink. In a deployed stage cloud injects the platform's\n    // audit service; locally it falls back to a no-op so nothing is persisted.\n    const audit = existingServices?.audit ?? new NoopAuditService()\n    // kysely is injected by pikku dev (node:sqlite) or the CF Worker workflow (libsql).\n    // The template never constructs its own dialect — dialects are cloud/runtime\n    // concerns — so it must always be provided by the runtime.\n    if (!existingServices?.kysely) {\n      throw new Error(\n        'kysely service was not injected by the runtime (pikku dev / cloud)'\n      )\n    }\n    const kysely: Kysely<DB> = existingServices.kysely\n\n    // Per-user credential store (wire.getCredential) — needed by addons imported\n    // with --auth per-user/delegated. A deployed stage injects it: credentials are\n    // sealed to the stage, and only its secrets Worker holds the key. There is no\n    // fallback because there is no key to fall back to — the template used to\n    // build a `KyselyCredentialService` from a `CREDENTIALS_KEY` secret, which was\n    // the stage's own KEK handed to every unit. Outside a stage the app runs fine\n    // and credential-using addon calls fail with a clear error from the addon's\n    // wire services; wire your own `credentialService` here if you need one.\n    const credentialService = existingServices?.credentialService\n\n    return {\n      ...(existingServices ?? {}),\n      config,\n      workflowService: existingServices?.workflowService,\n      workflowRunService: existingServices?.workflowRunService,\n      variables,\n      secrets,\n      schema,\n      logger,\n      emailService,\n      audit,\n      kysely,\n      analyticsIdentity: shopAnalyticsIdentity,\n      // Constructed once here rather than read per call: the payment provider's\n      // credentials belong to service construction, and functions cannot reach\n      // `secrets` at all (every function-facing services type is bounded by\n      // SecretlessServices).\n      ...(credentialService ? { credentialService } : {}),\n      // Webhook sources queue what they receive, so they need the runtime's queue.\n      ...(existingServices?.queueService &&\n      !existingServices.incomingWebhookService\n        ? {\n            incomingWebhookService: new IncomingWebhookService(\n              existingServices.queueService\n            ),\n          }\n        : {}),\n    }\n  }\n)"
               ]
             },
             {
@@ -6519,13 +6783,6 @@
               "signature": "(wire: AnyWire, name: string, options: MintCookieOptions, mint: () => string) => string | undefined",
               "members": [
                 {
-                  "line": "actor?: ScenarioPersona<string, ScenarioRpcMap>",
-                  "doc": "The persona this step runs as, injected by the runner. Required on a `browser` binding, which cannot be provisioned without one, and on any binding whose step declares `actor: true`. A step that declares neither has no `actor` on its wire at all rather than an optional one — a pure assertion has nobody to be, and `attemptsSignIn` deliberately posts credentials instead of reusing an actor's session."
-                },
-                {
-                  "line": "actors?: ScenarioPersonas"
-                },
-                {
                   "line": "addonNamespace?: string"
                 },
                 {
@@ -6555,11 +6812,11 @@
                   "line": "gateway?: PikkuGateway"
                 },
                 {
-                  "line": "getCredential?: GetCredential<Record<string, unknown>>",
+                  "line": "getCredential: <T>(name: string) => NoInfer<T> | Promise<NoInfer<T> | null> | null",
                   "doc": "Get a single credential by name — lazy-loads from CredentialService on first call, sync thereafter"
                 },
                 {
-                  "line": "getCredentials?: (() => Record<string, unknown> | Promise<Record<string, unknown>>)",
+                  "line": "getCredentials: () => Record<string, unknown> | Promise<Record<string, unknown>>",
                   "doc": "Get all resolved credentials — lazy-loads from CredentialService on first call, sync thereafter"
                 },
                 {
@@ -6618,6 +6875,13 @@
                 },
                 {
                   "line": "trigger?: PikkuTrigger<unknown>"
+                },
+                {
+                  "line": "virtualUser?: ScenarioVirtualUser<string, ScenarioRpcMap>",
+                  "doc": "The virtual user this step runs as, injected by the runner. Required on a `browser` binding, which cannot be provisioned without one, and on any binding whose step declares `virtualUser: true`. A step that declares neither has no `virtualUser` on its wire at all rather than an optional one — a pure assertion has nobody to be, and `attemptsSignIn` deliberately posts credentials instead of reusing a virtual user's session."
+                },
+                {
+                  "line": "virtualUsers?: ScenarioVirtualUsers"
                 },
                 {
                   "line": "wireId?: string"
@@ -6736,6 +7000,21 @@
               },
               "signature": "new ConflictError(message?: string)",
               "status": 409
+            },
+            {
+              "name": "CredentialRejectedError",
+              "kind": "class",
+              "origin": {
+                "via": "core",
+                "subpath": "./errors"
+              },
+              "signature": "new CredentialRejectedError(credentialName: string, reauth: \"sign-in\" | \"connect\", message?: string)",
+              "members": [
+                {
+                  "line": "payload: { error: \"credential_rejected\"; credentialName: string; reauth: \"sign-in\" | \"connect\"; }"
+                }
+              ],
+              "status": 403
             },
             {
               "name": "ErrorDetails",
@@ -7152,7 +7431,7 @@
                 "subpath": "./errors"
               },
               "summary": "An administrative operation targeted a role that is declared in code.",
-              "docs": "An administrative operation targeted a role that is declared in code.\n\nSystem roles ship with the product: the console may show and grant them, but\nrenaming, re-scoping or deleting one would let a UI action silently change\nwhat a declared persona means, and what every scenario written against that\nrole is actually testing.",
+              "docs": "An administrative operation targeted a role that is declared in code.\n\nSystem roles ship with the product: the console may show and grant them, but\nrenaming, re-scoping or deleting one would let a UI action silently change\nwhat a declared virtual user means, and what every scenario written against that\nrole is actually testing.",
               "signature": "new SystemRoleImmutableError(role: string, operation: string)",
               "members": [
                 {
@@ -7664,8 +7943,35 @@
                   "line": "secrets: any"
                 },
                 {
+                  "line": "setEncryptedSecret: (key: string, sealed: string) => Promise<void>",
+                  "doc": "Stores a value sealed to this service's public key, so the plaintext never reaches the caller's process. `sealed` is the serialized envelope, opaque here. Optional: only stores that hold a sealing key implement it."
+                },
+                {
                   "line": "setSecret: <K>(key: K, value: K extends \"EXAMPLE_API_CREDENTIALS\" ? CredentialsMap[K] : unknown) => Promise<void>"
                 }
+              ]
+            }
+          ]
+        },
+        {
+          "specifier": "#pikku/addon/utils",
+          "name": "utils",
+          "step": "enhance it",
+          "summary": "Small helpers a function body reaches for, such as `parseJson`, which turns text or bytes into JSON or refuses with a 400.",
+          "skill": null,
+          "symbols": [
+            {
+              "name": "parseJson",
+              "kind": "function",
+              "origin": {
+                "via": "core",
+                "subpath": "."
+              },
+              "summary": "`JSON.parse` of text or UTF-8 bytes, refusing anything that is not JSON with a 400 rather than a 500.",
+              "docs": "`JSON.parse` of text or UTF-8 bytes, refusing anything that is not JSON with\na 400 rather than a 500.",
+              "signature": "<T = any>(input: string | Uint8Array) => T",
+              "examples": [
+                "/**\n * Reads a warehouse delivery into trigger events. The source's `verify` has\n * already checked the signature by the time this runs, so all that is left is\n * the shape: `parseJson` answers a body that is not JSON with a 400, and each\n * event's `id` lets a redelivery be recognised rather than run twice.\n */\nexport const warehouseWebhookReceive = pikkuWebhookReceive({\n  description: 'Read a warehouse webhook into trigger events',\n  func: async (_services, { body }) => {\n    const event = parseJson(body)\n    return { events: [{ name: event.type, id: event.id, data: event.data }] }\n  },\n})"
               ]
             }
           ]
@@ -7718,7 +8024,7 @@
                 }
               ],
               "examples": [
-                "export const DatabaseUrlSchema = z.string()\nexport const LowStockThresholdSchema = z.number().int().positive()\nexport const ScenarioActorSecretSchema = z.string()\nexport const BetterAuthUrlSchema = z.string().url()\n\ndefineVariable({\n  name: 'databaseUrl',\n  displayName: 'Database URL',\n  description: 'Primary database connection string (Postgres or libsql URL)',\n  variableId: 'DATABASE_URL',\n  schema: DatabaseUrlSchema,\n})\n\ndefineVariable({\n  name: 'lowStockThreshold',\n  displayName: 'Low Stock Threshold',\n  description: 'Item stock level that triggers a low-stock alert',\n  variableId: 'LOW_STOCK_THRESHOLD',\n  schema: LowStockThresholdSchema,\n})\n\ndefineVariable({\n  name: 'scenarioActorSecret',\n  displayName: 'Scenario Actor Secret',\n  description:\n    'Impersonation secret for `pikku scenario run` actors. Leave unset to disable actor sign-in',\n  variableId: 'SCENARIO_ACTOR_SECRET',\n  schema: ScenarioActorSecretSchema,\n})\n\ndefineVariable({\n  name: 'betterAuthUrl',\n  displayName: 'Better Auth Base URL',\n  description:\n    'Public origin the API is served from, used for auth callbacks and redirects',\n  variableId: 'BETTER_AUTH_URL',\n  schema: BetterAuthUrlSchema,\n})"
+                "export const DatabaseUrlSchema = z.string()\nexport const LowStockThresholdSchema = z.number().int().positive()\nexport const VirtualUserVerifyKeySchema = z.string()\nexport const BetterAuthUrlSchema = z.string().url()\n\ndefineVariable({\n  name: 'databaseUrl',\n  displayName: 'Database URL',\n  description: 'Primary database connection string (Postgres or libsql URL)',\n  variableId: 'DATABASE_URL',\n  schema: DatabaseUrlSchema,\n})\n\ndefineVariable({\n  name: 'lowStockThreshold',\n  displayName: 'Low Stock Threshold',\n  description: 'Item stock level that triggers a low-stock alert',\n  variableId: 'LOW_STOCK_THRESHOLD',\n  schema: LowStockThresholdSchema,\n})\n\ndefineVariable({\n  name: 'virtualUserVerifyKey',\n  displayName: 'Virtual User Verify Key',\n  description:\n    'Public key that checks the signed statements `pikku scenario run` presents. Leave unset to refuse virtual user sign-in from outside the app',\n  variableId: 'VIRTUAL_USER_VERIFY_KEY',\n  schema: VirtualUserVerifyKeySchema,\n  optional: true,\n})\n\ndefineVariable({\n  name: 'betterAuthUrl',\n  displayName: 'Better Auth Base URL',\n  description:\n    'Public origin the API is served from, used for auth callbacks and redirects',\n  variableId: 'BETTER_AUTH_URL',\n  schema: BetterAuthUrlSchema,\n})"
               ]
             },
             {
@@ -7846,6 +8152,100 @@
           ]
         },
         {
+          "specifier": "#pikku/addon/cli",
+          "name": "cli",
+          "step": "wire it up",
+          "summary": "Wires a function as a command, with its flags and arguments derived from the function input.",
+          "skill": "pikku-wiring",
+          "symbols": [
+            {
+              "name": "defineCLICommands",
+              "kind": "function",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "Type-safe helper for defining CLI commands that can be composed and spread into wireCLI.",
+              "docs": "Type-safe helper for defining CLI commands that can be composed and spread into wireCLI.",
+              "signature": "<T extends Record<string, CoreCLICommandConfig<any, PikkuMiddleware, PikkuCLIRender<any>, any>>>(commands: T) => T",
+              "examples": [
+                "// The command map is a contract of its own, so it can be declared once and\n// wired wherever the program is assembled.\nconst shopCommands = defineCLICommands({\n  report: pikkuCLICommand({\n    description: 'Generate the daily sales report',\n    func: dailySalesReport,\n  }),\n  cleanup: pikkuCLICommand({\n    description: 'Remove baskets abandoned for more than 24 h',\n    func: cleanupAbandonedBaskets,\n  }),\n  items: pikkuCLICommand({\n    description: 'List all items in the catalogue',\n    func: listItems,\n  }),\n})"
+              ]
+            },
+            {
+              "name": "pikkuCLICommand",
+              "kind": "function",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "Creates a CLI command definition with automatic option inference from the function's input type. This allows TypeScript to automatically derive CLI options from the function signature.",
+              "docs": "Creates a CLI command definition with automatic option inference from the function's input type.\nThis allows TypeScript to automatically derive CLI options from the function signature.",
+              "signature": "<FuncConfig extends PikkuFunctionConfig<any, any, \"cli\" | \"rpc\" | \"session\">, Params extends string>(config: CLICommandConfig<FuncConfig, any, any, Params>) => CoreCLICommandConfig<FuncConfig, PikkuMiddleware, PikkuCLIRender<any>, string>",
+              "members": [
+                {
+                  "line": "auth?: boolean",
+                  "doc": "Whether running this requires a logged-in session. Defaults to true — a command is closed unless it says otherwise."
+                },
+                {
+                  "line": "description?: string",
+                  "doc": "The one-line summary listed beside the command name."
+                },
+                {
+                  "line": "func?: FuncConfig",
+                  "doc": "The function to run. Omit it on a command that exists only to hold `subcommands`."
+                },
+                {
+                  "line": "isDefault?: boolean",
+                  "doc": "Runs when the parent is invoked with no subcommand named."
+                },
+                {
+                  "line": "middleware?: PikkuMiddleware[]",
+                  "doc": "Wraps every run of this command."
+                },
+                {
+                  "line": "options?: { [K in keyof ExtractFunctionInput<FuncConfig>]?: { description?: string; short?: string; type?: CLIOptionType; default?: ExtractFunctionInput<FuncConfig>[K] | undefined; choices?: readonly ExtractFunctionInput<FuncConfig>[K][] | undefined; } | undefined; }",
+                  "doc": "Flags, keyed by the input field each one fills. A field with no entry is still accepted as `--field`; an entry is how it gets a short form, a default, or help text."
+                },
+                {
+                  "line": "parameters?: ValidateParameters<Params, ExtractFunctionInput<FuncConfig>>",
+                  "doc": "Positional arguments, written the way `--help` prints them: `<env>` is required, `[region]` optional. Each name must be a key of the function's input schema, so a typo is a compile error rather than an argument that silently never arrives."
+                },
+                {
+                  "line": "permissions?: any[]",
+                  "doc": "Permission checks run before the function, for a command that not every logged-in user may run."
+                },
+                {
+                  "line": "render?: PikkuCLIRender<any, SingletonServices>",
+                  "doc": "Prints the result. The function returns data and this is the only thing that writes to stdout, which is what lets one command serve both a human reading it and a script parsing it."
+                },
+                {
+                  "line": "subcommands?: Record<string, CoreCLICommandConfig<any, PikkuMiddleware, PikkuCLIRender<any, SingletonServices>, any>>",
+                  "doc": "Nested commands, keyed by the word that selects them: `deploy plan` is `deploy` with a `plan` subcommand."
+                },
+                {
+                  "line": "title?: string",
+                  "doc": "The heading shown above this command's own help."
+                }
+              ],
+              "examples": [
+                "// The command map is a contract of its own, so it can be declared once and\n// wired wherever the program is assembled.\nconst shopCommands = defineCLICommands({\n  report: pikkuCLICommand({\n    description: 'Generate the daily sales report',\n    func: dailySalesReport,\n  }),\n  cleanup: pikkuCLICommand({\n    description: 'Remove baskets abandoned for more than 24 h',\n    func: cleanupAbandonedBaskets,\n  }),\n  items: pikkuCLICommand({\n    description: 'List all items in the catalogue',\n    func: listItems,\n  }),\n})\n\nwireCLI({ program: 'shop', commands: shopCommands })"
+              ]
+            },
+            {
+              "name": "pikkuCLIRender",
+              "kind": "function",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "Creates a type-safe CLI renderer with access to your application's singleton services. The renderer receives the full singleton services and output data to format and display results.",
+              "docs": "Creates a type-safe CLI renderer with access to your application's singleton services.\nThe renderer receives the full singleton services and output data to format and display results.",
+              "signature": "<Data, RequiredServices extends SingletonServices = SingletonServices>(render: (services: SingletonServices, data: Data) => void | Promise<void>) => PikkuCLIRender<Data, RequiredServices>",
+              "examples": [
+                "type ItemList = {\n  items: Array<{\n    itemId: string\n    name: string\n    priceCents: number\n    stock: number\n  }>\n}\n\nexport const itemRenderer = pikkuCLIRender<ItemList>((_services, { items }) => {\n  const rows = items.map(\n    (i) =>\n      `${i.itemId.padEnd(14)} ${i.name.padEnd(20)} £${(i.priceCents / 100).toFixed(2).padStart(8)}  ${String(i.stock).padStart(5)}`\n  )\n  console.log(\n    ['ID             NAME                  PRICE     STOCK', ...rows].join('\\n')\n  )\n})"
+              ]
+            }
+          ]
+        },
+        {
           "specifier": "#pikku/addon/http",
           "name": "http",
           "step": "wire it up",
@@ -7933,6 +8333,55 @@
               "signature": "{ <InputSchema extends StandardSchemaV1, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuTriggerFunctionConfigWithSchema<InputSchema, OutputSchema>): PikkuTriggerFunctionConfig<InferSchemaOutput<InputSchema>, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, InputSchema, OutputSchema>; <TInput, TOutput = unknown>(triggerOrConfig: PikkuTriggerFunction<TInput, TOutput> | PikkuTriggerFunctionConfig<TInput, TOutput>): PikkuTriggerFunctionConfig<TInput, TOutput>; }",
               "examples": [
                 "```typescript\nexport const redisSubscribeTrigger = pikkuTriggerFunc<\n  { channel: string },\n  { message: string }\n>(async ({ redis }, { channel }, { trigger }) => {\n  const subscriber = redis.duplicate()\n  await subscriber.subscribe(channel, (msg) => {\n    trigger.invoke({ message: msg })\n  })\n  return () => subscriber.unsubscribe()\n})\n\nexport const redisSubscribeTrigger = pikkuTriggerFunc({\n  title: 'Redis Subscribe Trigger',\n  description: 'Listens to Redis pub/sub channel',\n  input: z.object({ channel: z.string() }),\n  output: z.object({ message: z.string() }),\n  func: async ({ redis }, { channel }, { trigger }) => {\n    const subscriber = redis.duplicate()\n    await subscriber.subscribe(channel, (msg) => {\n      trigger.invoke({ message: msg })\n    })\n    return () => subscriber.unsubscribe()\n  }\n})\n```"
+              ]
+            },
+            {
+              "name": "pikkuWebhookReceive",
+              "kind": "function",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "A webhook source's `receive`: reads the request into events, or answers a handshake through `http.response`. It is public (`auth: false`) and only its source's route runs it, so it is never callable as an RPC. Signatures are the source's `verify`.",
+              "docs": "A webhook source's `receive`: reads the request into events, or answers a\nhandshake through `http.response`. It is public (`auth: false`) and only its source's route runs it,\nso it is never callable as an RPC. Signatures are the source's `verify`.",
+              "signature": "(config: { title?: string; description?: string; tags?: string[]; func: (services: Omit<SingletonServices, \"secrets\">, request: WebhookRequest, wire: { http: WebhookHTTP; }) => Promise<WebhookReceiveResult | void>; }) => { auth: false; title?: string; description?: string; tags?: string[]; func: (services: Omit<SingletonServices, \"secrets\">, request: WebhookRequest, wire: { http: WebhookHTTP; }) => Promise<WebhookReceiveResult | void>; }",
+              "examples": [
+                "/**\n * Reads a warehouse delivery into trigger events. The source's `verify` has\n * already checked the signature by the time this runs, so all that is left is\n * the shape: `parseJson` answers a body that is not JSON with a 400, and each\n * event's `id` lets a redelivery be recognised rather than run twice.\n */\nexport const warehouseWebhookReceive = pikkuWebhookReceive({\n  description: 'Read a warehouse webhook into trigger events',\n  func: async (_services, { body }) => {\n    const event = parseJson(body)\n    return { events: [{ name: event.type, id: event.id, data: event.data }] }\n  },\n})"
+              ]
+            },
+            {
+              "name": "wireTriggerWebhookSource",
+              "kind": "function",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "Declares a webhook source this addon ships. An app that wires the addon mounts its route and can register it with the provider, but the source stays off until someone turns it on. Declaration only: nothing runs here.",
+              "docs": "Declares a webhook source this addon ships. An app that wires the addon\nmounts its route and can register it with the provider, but the source\nstays off until someone turns it on. Declaration only: nothing runs here.",
+              "signature": "<Events extends Record<string, StandardSchemaV1> = Record<string, StandardSchemaV1<unknown, unknown>>>(_source: TriggerWebhookSource<Events>) => void",
+              "members": [
+                {
+                  "line": "credential?: string",
+                  "doc": "The credential holding the signing secret. Defaults to {@link webhookSecretCredentialName}. Declaring `verify` declares this credential too, as a singleton string, so it needs no `defineCredential`."
+                },
+                {
+                  "line": "credentialDescription?: string",
+                  "doc": "What the secret is and where to find it, shown to whoever has to set it."
+                },
+                {
+                  "line": "events?: Events",
+                  "doc": "What the source can produce. Each event's data is validated against its schema before it is queued."
+                },
+                {
+                  "line": "method?: \"post\" | \"put\" | \"get\" | \"head\" | WebhookSourceMethod[]",
+                  "doc": "Several for providers that verify the URL with a GET and deliver with a POST."
+                },
+                {
+                  "line": "name: string",
+                  "doc": "Triggers subscribe to `<name>:<event>`. Unique across every kind of trigger source."
+                },
+                {
+                  "line": "route?: string",
+                  "doc": "Defaults to `/webhooks/<name>`."
+                }
               ]
             }
           ]
@@ -8094,8 +8543,8 @@
                 "via": "core",
                 "subpath": "./role"
               },
-              "summary": "No-op function for declaring system roles. This exists purely for TypeScript type checking and will be tree-shaken. The CLI extracts metadata via AST parsing and generates a `SystemRoleName` union, so a persona naming an undeclared role fails the build.",
-              "docs": "No-op function for declaring system roles.\nThis exists purely for TypeScript type checking and will be tree-shaken.\nThe CLI extracts metadata via AST parsing and generates a `SystemRoleName`\nunion, so a persona naming an undeclared role fails the build.\n\nA system role is a role that ships with the product: the console may grant\nit, but cannot rename, re-scope or delete it. Roles an admin composes in the\nconsole are unaffected and are not declared here.\n\nRemoval is deliberately not destructive. Deleting a declaration leaves the\nrow in the store, marked undeclared and inert, until `pikku roles prune` —\nthe same additive contract `defineScope` has, and for the same reason: a\nmid-deploy revocation is not something a code edit should be able to cause.",
+              "summary": "No-op function for declaring system roles. This exists purely for TypeScript type checking and will be tree-shaken. The CLI extracts metadata via AST parsing and generates a `SystemRoleName` union, so a virtual user naming an undeclared role fails the build.",
+              "docs": "No-op function for declaring system roles.\nThis exists purely for TypeScript type checking and will be tree-shaken.\nThe CLI extracts metadata via AST parsing and generates a `SystemRoleName`\nunion, so a virtual user naming an undeclared role fails the build.\n\nA system role is a role that ships with the product: the console may grant\nit, but cannot rename, re-scope or delete it. Roles an admin composes in the\nconsole are unaffected and are not declared here.\n\nRemoval is deliberately not destructive. Deleting a declaration leaves the\nrow in the store, marked undeclared and inert, until `pikku roles prune` —\nthe same additive contract `defineScope` has, and for the same reason: a\nmid-deploy revocation is not something a code edit should be able to cause.",
               "signature": "(_config: CoreSystemRoles) => void",
               "examples": [
                 "```typescript\ndefineSystemRole({\n  buyer: {\n    displayName: 'Buyer',\n    description: 'Can browse the catalogue and place orders',\n    scopes: ['catalogue:read', 'orders:create'],\n  },\n  admin: {\n    description: 'Everything',\n    scopes: ['admin'],\n  },\n})\n```"
@@ -8463,8 +8912,16 @@
                   "doc": "Suspend workflow until a human records a decision against this gate"
                 },
                 {
+                  "line": "compensatingFor?: CompensatingFor<unknown>",
+                  "doc": "Set only while a function's `compensate` is running: the outcome of the forward call being undone. `undefined` on a forward run."
+                },
+                {
                   "line": "getRun: () => Promise<WorkflowRun>",
                   "doc": "Get the current workflow run"
+                },
+                {
+                  "line": "milestone: WorkflowWireMilestone",
+                  "doc": "A named checkpoint. On failure the unwind stops at the last milestone reached and the run rests there. The name must be a string literal."
                 },
                 {
                   "line": "name: string",
@@ -8521,13 +8978,13 @@
               "kind": "function",
               "origin": {
                 "via": "core",
-                "subpath": "./workflow"
+                "subpath": "./services"
               },
               "summary": "A cookie store for a scenario run, so a step that signs in leaves the session cookie behind for the steps after it.",
               "docs": "A cookie store for a scenario run, so a step that signs in leaves the session\ncookie behind for the steps after it.",
               "signature": "(apiUrl: string) => ScenarioCookieJar",
               "examples": [
-                "/**\n * Signing up is the one flow an actor cannot perform, because an actor is\n * already signed in before the first step runs. The jar is what makes it\n * possible from a bare `fetch`: it keeps the Set-Cookie the sign-up returned\n * and replays it on the next call, so the session survives the hop the way a\n * browser's would.\n */\nexport const signsUpShopper = pikkuScenarioStep<\n  { email: string; password: string },\n  { signedUpAs?: string }\n>({\n  name: 'signsUpShopper',\n  description: 'signs a new shopper up and reads back the session it created',\n  template: 'signs up as {email}',\n  default: async (_services, { email, password }, { scenarioStep }) => {\n    const { apiUrl } = requireScenarioEnv(scenarioStep)\n    const jar = createCookieJar(apiUrl)\n    await jar.fetch(`${apiUrl}/auth/sign-up/email`, {\n      method: 'POST',\n      headers: { 'content-type': 'application/json' },\n      body: JSON.stringify({ email, password, name: email }),\n    })\n    const session = await readScenarioHttpResponse<{\n      user?: { email?: string }\n    } | null>(await jar.fetch(`${apiUrl}/auth/get-session`))\n    return { signedUpAs: session.body?.user?.email }\n  },\n})"
+                "/**\n * Signing up is the one flow a virtual user cannot perform, because a virtual user is\n * already signed in before the first step runs. The jar is what makes it\n * possible from a bare `fetch`: it keeps the Set-Cookie the sign-up returned\n * and replays it on the next call, so the session survives the hop the way a\n * browser's would.\n */\nexport const signsUpShopper = pikkuScenarioStep<\n  { email: string; password: string },\n  { signedUpAs?: string }\n>({\n  name: 'signsUpShopper',\n  description: 'signs a new shopper up and reads back the session it created',\n  template: 'signs up as {email}',\n  default: async (_services, { email, password }, { scenarioStep }) => {\n    const { apiUrl } = requireScenarioEnv(scenarioStep)\n    const jar = createCookieJar(apiUrl)\n    await jar.fetch(`${apiUrl}/auth/sign-up/email`, {\n      method: 'POST',\n      headers: { 'content-type': 'application/json' },\n      body: JSON.stringify({ email, password, name: email }),\n    })\n    const session = await readScenarioHttpResponse<{\n      user?: { email?: string }\n    } | null>(await jar.fetch(`${apiUrl}/auth/get-session`))\n    return { signedUpAs: session.body?.user?.email }\n  },\n})"
               ]
             },
             {
@@ -8550,18 +9007,18 @@
                 "via": "core",
                 "subpath": "./workflow"
               },
-              "summary": "One actor's browser session, handed to a step as `wire.browser`.",
-              "docs": "One actor's browser session, handed to a step as `wire.browser`.\n\nOnly what every driver can honour is declared here. A driver package adds\nthe rest by declaration-merging onto this interface — `@pikku/playwright`\ncontributes `page`, `context` and `locate` — so a step written against the\nstructural surface keeps working whichever driver runs it.",
+              "summary": "One virtual user's browser session, handed to a step as `wire.browser`.",
+              "docs": "One virtual user's browser session, handed to a step as `wire.browser`.\n\nEvery virtual user gets their own, so a two-virtual-user scenario drives two sessions and\n`screenshot` files each shot under the virtual user it belongs to.\n\nOnly what every driver can honour is declared here. A driver package adds\nthe rest by declaration-merging onto this interface — `@pikku/playwright`\ncontributes `page`, `context` and `locate` — so a step written against the\nstructural surface keeps working whichever driver runs it.",
               "members": [
-                {
-                  "line": "actor: string",
-                  "doc": "The actor whose browser context this is"
-                },
                 {
                   "line": "goto: (url: string) => Promise<void>"
                 },
                 {
                   "line": "screenshot: (name?: string, options?: ScenarioScreenshotOptions) => Promise<Uint8Array>"
+                },
+                {
+                  "line": "virtualUser: string",
+                  "doc": "The virtual user whose browser context this is"
                 }
               ]
             },
@@ -8606,7 +9063,7 @@
               },
               "summary": "One surface's implementation of a step.",
               "docs": "One surface's implementation of a step.\n\nEach binding is typed independently, so a browser binding gets a non-optional\n`wire.browser` and a cli binding a non-optional `wire.cli` without either\nleaking into the other.",
-              "signature": "PikkuFunctionScenarioStep<In, Out, Surface, HasActor>"
+              "signature": "PikkuFunctionScenarioStep<In, Out, Surface, HasVirtualUser>"
             },
             {
               "name": "pikkuPlatformScenarioStep",
@@ -8615,7 +9072,7 @@
                 "via": "generated"
               },
               "summary": "A step in which the app acts on itself — \"Given the platform has expired the trial\".",
-              "docs": "A step in which the app acts on itself — \"Given the platform has expired the\ntrial\".\n\nThe grammatical subject of that sentence is not a user of your app; it **is**\nyour app, which is why it is its own declaration rather than a persona with an\nasterisk. A persona is a person.\n\nLocal-test-only, and never in a virtual user's catalogue: a virtual user that\ncould expire its own trial is manufacturing the outcome it exists to discover.",
+              "docs": "A step in which the app acts on itself — \"Given the platform has expired the\ntrial\".\n\nThe grammatical subject of that sentence is not a user of your app; it **is**\nyour app, which is why it is its own declaration rather than a virtual user with an\nasterisk. A virtual user is a person.\n\nLocal-test-only, and never in a virtual user's catalogue: a virtual user that\ncould expire its own trial is manufacturing the outcome it exists to discover.",
               "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuSubjectScenarioStepConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuSubjectScenarioStepConfig<In, Out>): PikkuFunctionConfig<In, Out, \"scenarioStep\">; }",
               "examples": [
                 "/**\n * Shipping is the shop acting on itself: no shopper clicks it, and the order\n * update the customer receives is a consequence rather than a request.\n */\nexport const shipsTheOrder = pikkuPlatformScenarioStep<\n  { orderId: string },\n  { orderId: string }\n>({\n  name: 'shipsTheOrder',\n  description:\n    'ships an order, which is what tells the shopper it is on its way',\n  template: 'ships order {orderId}',\n  func: async (_services, { orderId }, { rpc }) => {\n    await rpc.invoke('notifyOrderShipped', { orderId })\n    return { orderId }\n  },\n})"
@@ -8627,11 +9084,11 @@
               "origin": {
                 "via": "generated"
               },
-              "summary": "A scenario: a complex workflow that drives the app the way users do. Steps run as actors over the REAL transport — `scenario.do(step, rpc, data, { actor: actors.yasser })` — so flows double as e2e tests and staged/production health checks (no state reset; scope what you create).",
-              "docs": "A scenario: a complex workflow that drives the app the way users do.\nSteps run as actors over the REAL transport — `scenario.do(step, rpc,\ndata, { actor: actors.yasser })` — so flows double as e2e tests and\nstaged/production health checks (no state reset; scope what you create).",
-              "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenario\" | \"actors\", PikkuFunctionScenario<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown>, InputSchema, OutputSchema>; <In, Out = unknown>(func: PikkuFunctionScenario<In, Out> | PikkuFunctionConfig<In, Out, \"scenario\" | \"actors\", PikkuFunctionScenario<In, Out>>): PikkuFunctionConfig<In, Out, \"scenario\" | \"actors\">; }",
+              "summary": "A scenario: a complex workflow that drives the app the way users do. Steps run as virtual users over the REAL transport — `scenario.do(step, rpc, data, { virtualUser: virtualUsers.yasser })` — so flows double as e2e tests and staged/production health checks (no state reset; scope what you create).",
+              "docs": "A scenario: a complex workflow that drives the app the way users do.\nSteps run as virtual users over the REAL transport — `scenario.do(step, rpc,\ndata, { virtualUser: virtualUsers.yasser })` — so flows double as e2e tests and\nstaged/production health checks (no state reset; scope what you create).",
+              "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenario\" | \"virtualUsers\", PikkuFunctionScenario<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown>, InputSchema, OutputSchema>; <In, Out = unknown>(func: PikkuFunctionScenario<In, Out> | PikkuFunctionConfig<In, Out, \"scenario\" | \"virtualUsers\", PikkuFunctionScenario<In, Out>>): PikkuFunctionConfig<In, Out, \"scenario\" | \"virtualUsers\">; }",
               "examples": [
-                "// A scenario is a workflow whose steps run as real users (\"actors\") over the\n// real transport — sign-in, auth middleware, permissions and serialization are\n// all exercised end-to-end. The same flow doubles as an e2e test and a\n// staging/production health check. Actors are registered in pikku.config.json.\nexport const shopperBuysAnItem = pikkuScenario({\n  title: 'Shopper buys an item',\n  description: 'Browse the catalogue, fill a basket and pay for an order.',\n  tags: ['checkout'],\n  func: async ({ logger }, _input, { scenario, actors }) => {\n    if (!actors?.shopper) {\n      throw new Error(\n        'shopperBuysAnItem needs the `shopper` actor — run via `pikku scenario run`'\n      )\n    }\n    const shopper = actors.shopper\n\n    // Each step names what the actor is trying to achieve, the exposed RPC\n    // that achieves it, and who performs it. The call goes through the actor's\n    // authenticated client — never internal dispatch.\n    const basket = await scenario.do(\n      'Shopper opens their basket',\n      'getBasket',\n      {},\n      { actor: shopper }\n    )\n\n    const catalogue = await scenario.do(\n      'Shopper browses the catalogue',\n      'listItems',\n      { search: 'mug' },\n      { actor: shopper }\n    )\n    if (catalogue.items.length === 0)\n      throw new Error('Catalogue has no mugs to buy')\n\n    await scenario.do(\n      'Shopper adds a mug to the basket',\n      'addToBasket',\n      {\n        basketId: basket.basketId,\n        itemId: catalogue.items[0]!.itemId,\n        quantity: 1,\n      },\n      { actor: shopper }\n    )\n\n    const order = await scenario.do(\n      'Shopper checks out',\n      'createOrder',\n      {\n        basketId: basket.basketId,\n        shippingAddress: {\n          line1: '1 High Street',\n          city: 'London',\n          postcode: 'N1 1AA',\n          country: 'GB',\n        },\n      },\n      { actor: shopper }\n    )\n\n    // Durable polling step: re-invokes the RPC as the actor until the\n    // predicate passes, or `within` elapses and fails the scenario.\n    await scenario.expectEventually(\n      'Order is paid',\n      'getOrder',\n      { orderId: order.orderId },\n      (o: { status: string }) => o.status === 'paid',\n      { actor: shopper, within: '30s', interval: 500 }\n    )\n\n    logger.info(\n      `Scenario order ${order.orderId} paid: ${order.totalCents} cents`\n    )\n    return { orderId: order.orderId, totalCents: order.totalCents }\n  },\n})"
+                "// A scenario is a workflow whose steps run as real users (\"virtualUsers\") over the\n// real transport — sign-in, auth middleware, permissions and serialization are\n// all exercised end-to-end. The same flow doubles as an e2e test and a\n// staging/production health check. Virtual users are registered in pikku.config.json.\nexport const shopperBuysAnItem = pikkuScenario({\n  title: 'Shopper buys an item',\n  description: 'Browse the catalogue, fill a basket and pay for an order.',\n  tags: ['checkout'],\n  func: async ({ logger }, _input, { scenario, virtualUsers }) => {\n    if (!virtualUsers?.shopper) {\n      throw new Error(\n        'shopperBuysAnItem needs the `shopper` virtual user — run via `pikku scenario run`'\n      )\n    }\n    const shopper = virtualUsers.shopper\n\n    // Each step names what the virtual user is trying to achieve, the exposed RPC\n    // that achieves it, and who performs it. The call goes through the virtual user's\n    // authenticated client — never internal dispatch.\n    const basket = await scenario.do(\n      'Shopper opens their basket',\n      'getBasket',\n      {},\n      { virtualUser: shopper }\n    )\n\n    const catalogue = await scenario.do(\n      'Shopper browses the catalogue',\n      'listItems',\n      { search: 'mug' },\n      { virtualUser: shopper }\n    )\n    if (catalogue.items.length === 0)\n      throw new Error('Catalogue has no mugs to buy')\n\n    await scenario.do(\n      'Shopper adds a mug to the basket',\n      'addToBasket',\n      {\n        basketId: basket.basketId,\n        itemId: catalogue.items[0]!.itemId,\n        quantity: 1,\n      },\n      { virtualUser: shopper }\n    )\n\n    const order = await scenario.do(\n      'Shopper checks out',\n      'createOrder',\n      {\n        basketId: basket.basketId,\n        shippingAddress: {\n          line1: '1 High Street',\n          city: 'London',\n          postcode: 'N1 1AA',\n          country: 'GB',\n        },\n      },\n      { virtualUser: shopper }\n    )\n\n    // Durable polling step: re-invokes the RPC as the virtual user until the\n    // predicate passes, or `within` elapses and fails the scenario.\n    await scenario.expectEventually(\n      'Order is paid',\n      'getOrder',\n      { orderId: order.orderId },\n      (o: { status: string }) => o.status === 'paid',\n      { virtualUser: shopper, within: '30s', interval: 500 }\n    )\n\n    logger.info(\n      `Scenario order ${order.orderId} paid: ${order.totalCents} cents`\n    )\n    return { orderId: order.orderId, totalCents: order.totalCents }\n  },\n})"
               ]
             },
             {
@@ -8644,7 +9101,7 @@
               "docs": "Declares a scenario hook. Returns the function verbatim — a hook is never\nregistered, so this exists purely to give an inline hook a call site to be\ncontextually typed from, the way every other pikku primitive is.",
               "signature": "<In = unknown, Ctx = unknown>(hook: PikkuFunctionScenario<In, void, Ctx>) => PikkuFunctionScenario<In, void, Ctx>",
               "examples": [
-                "/**\n * Empties the shopper's basket before the assistant is asked to fill it.\n *\n * The scenario's real assertion is \"the basket now has the mug\", and a basket\n * a previous run left full satisfies that whether or not the assistant did\n * anything. A hook runs outside the recorded steps, so the tidying never shows\n * up in the report as something the shopper did.\n */\nconst emptiesTheBasket = pikkuScenarioHook(\n  async (_services, _data, { actors }) => {\n    const basket = await actors.shopper.invoke('getBasket', {})\n    for (const item of basket.items) {\n      await actors.shopper.invoke('removeFromBasket', {\n        basketId: basket.basketId,\n        itemId: item.itemId,\n      })\n    }\n  }\n)"
+                "/**\n * Empties the shopper's basket before the assistant is asked to fill it.\n *\n * The scenario's real assertion is \"the basket now has the mug\", and a basket\n * a previous run left full satisfies that whether or not the assistant did\n * anything. A hook runs outside the recorded steps, so the tidying never shows\n * up in the report as something the shopper did.\n */\nconst emptiesTheBasket = pikkuScenarioHook(\n  async (_services, _data, { virtualUsers }) => {\n    const basket = await virtualUsers.shopper.invoke('getBasket', {})\n    for (const item of basket.items) {\n      await virtualUsers.shopper.invoke('removeFromBasket', {\n        basketId: basket.basketId,\n        itemId: item.itemId,\n      })\n    }\n  }\n)"
               ]
             },
             {
@@ -8690,6 +9147,10 @@
                 {
                   "line": "before?: CorePikkuFunctionHook<any, any, any>",
                   "doc": "Scenarios only: runs before the scenario body, with the scenario's own signature. Throwing skips the body and fails the run, but `after` still runs."
+                },
+                {
+                  "line": "compensate?: ((services: any, data: any, wire: any) => Promise<any> | any)",
+                  "doc": "Undoes this function's effect when a workflow that called it unwinds. It receives the function's own input, and `wire.workflow.compensatingFor` carries the forward output (or the error, when the forward step failed). It is never callable on its own — only the workflow engine runs it."
                 },
                 {
                   "line": "deploy?: \"auto\" | \"server\" | \"serverless\"",
@@ -8752,8 +9213,8 @@
                   "doc": "Publishes the function in this package's remote surface, which is what a `wireRemoteAddon` consumer gets a typed client for."
                 },
                 {
-                  "line": "requiresActor?: boolean",
-                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a persona, so the runner injects `wire.actor`."
+                  "line": "requiresVirtualUser?: boolean",
+                  "doc": "Scenario steps only, and set by the definer rather than by hand: this step needs a virtual user, so the runner injects `wire.virtualUser`."
                 },
                 {
                   "line": "scopes?: never[]",
@@ -8799,11 +9260,11 @@
               "origin": {
                 "via": "generated"
               },
-              "summary": "A named, reusable scenario step, declaring one implementation per surface an actor can drive it through.",
-              "docs": "A named, reusable scenario step, declaring one implementation per surface an\nactor can drive it through.\n\nThe step's identity is what the actor is trying to do; which surface carries\nit out is a binding. That is what lets one ladder run through a real browser,\nover the websocket, or entirely server-side — and what makes \"how much of this\nflow can a human actually reach\" a number rather than a guess.\n\nSteps are deliberately NOT registered as RPCs: a browser-driving step must\nnever be network-callable.",
-              "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { actor: true; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { actor: true; }): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { browser: {}; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { browser: {}; }): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out>): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; }",
+              "summary": "A named, reusable scenario step, declaring one implementation per surface an virtual user can drive it through.",
+              "docs": "A named, reusable scenario step, declaring one implementation per surface an\nvirtual user can drive it through.\n\nThe step's identity is what the virtual user is trying to do; which surface carries\nit out is a binding. That is what lets one ladder run through a real browser,\nover the websocket, or entirely server-side — and what makes \"how much of this\nflow can a human actually reach\" a number rather than a guess.\n\nSteps are deliberately NOT registered as RPCs: a browser-driving step must\nnever be network-callable.",
+              "signature": "{ <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { virtualUser: true; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { virtualUser: true; }): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema, true> & { browser: {}; }): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out, true> & { browser: {}; }): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; <InputSchema extends StandardSchemaV1 | undefined = undefined, OutputSchema extends StandardSchemaV1 | undefined = undefined>(config: PikkuScenarioStepConfigWithSchema<InputSchema, OutputSchema>): PikkuFunctionConfig<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"scenarioStep\" | \"browser\" | \"cli\", PikkuFunctionScenarioStep<InputSchema extends StandardSchemaV1 ? InferSchemaOutput<InputSchema> : unknown, OutputSchema extends StandardSchemaV1 ? InferSchemaOutput<OutputSchema> : unknown, \"browser\" | \"cli\" | \"default\">, InputSchema, OutputSchema>; <In, Out = unknown>(config: PikkuScenarioStepConfig<In, Out>): PikkuFunctionConfig<In, Out, \"scenarioStep\" | \"browser\" | \"cli\">; }",
               "examples": [
-                "export const opensPage = pikkuScenarioStep({\n  name: 'opensPage',\n  description: 'opens an app page as the signed-in actor',\n  template: 'opens {path}',\n  input: OpensPageInput,\n  output: OpensPageOutput,\n  browser: async (_services, { path }, { browser }) => {\n    const actor = session(browser)\n    const status = await actor.gotoApp(path)\n    let pathname = path\n    try {\n      pathname = new URL(actor.page.url()).pathname\n    } catch {\n      // A page that never navigated keeps the requested path — the assertion in\n      // the scenario is what reports that, not a thrown URL parse error.\n    }\n    return { pathname, status }\n  },\n})"
+                "export const opensPage = pikkuScenarioStep({\n  name: 'opensPage',\n  description: 'opens an app page as the signed-in virtual user',\n  template: 'opens {path}',\n  input: OpensPageInput,\n  output: OpensPageOutput,\n  browser: async (_services, { path }, { browser }) => {\n    const virtualUser = session(browser)\n    const status = await virtualUser.gotoApp(path)\n    let pathname = path\n    try {\n      pathname = new URL(virtualUser.page.url()).pathname\n    } catch {\n      // A page that never navigated keeps the requested path — the assertion in\n      // the scenario is what reports that, not a thrown URL parse error.\n    }\n    return { pathname, status }\n  },\n})"
               ]
             },
             {
@@ -8828,7 +9289,7 @@
                 "subpath": "./services"
               },
               "summary": "POST JSON somewhere and report what came back, without throwing on a 4xx/5xx.",
-              "docs": "POST JSON somewhere and report what came back, without throwing on a 4xx/5xx.\n\nEvery scenario that reaches past a persona was writing this by hand — the same\n`content-type`, the same `JSON.stringify`, the same drain — and the copies had\ndrifted: some returned `res.json()`, which loses the status and throws\noutright when the target answers an empty body or an HTML error page. A\nrefusal is the expected outcome of a permissions scenario, so it has to\nsurvive as data.",
+              "docs": "POST JSON somewhere and report what came back, without throwing on a 4xx/5xx.\n\nEvery scenario that reaches past a virtual user was writing this by hand — the same\n`content-type`, the same `JSON.stringify`, the same drain — and the copies had\ndrifted: some returned `res.json()`, which loses the status and throws\noutright when the target answers an empty body or an HTML error page. A\nrefusal is the expected outcome of a permissions scenario, so it has to\nsurvive as data.",
               "signature": "<T = unknown>(url: string, { body, headers, method, fetch: send, }?: ScenarioJsonRequest) => Promise<ScenarioHttpResponse<T>>",
               "examples": [
                 "export const startsCheckout = pikkuScenarioStep<\n  { basketId: string; userId: string },\n  CheckoutRun\n>({\n  name: 'startsCheckout',\n  description: 'starts the checkout workflow over HTTP and reports the run',\n  template: 'starts checkout for {basketId}',\n  default: async (_services, { basketId, userId }, { scenarioStep }) => {\n    const { apiUrl } = requireScenarioEnv(scenarioStep)\n    const response = await postScenarioJson<{ runId?: string } | undefined>(\n      `${apiUrl}/workflow/checkoutWorkflow/start`,\n      {\n        body: {\n          data: {\n            basketId,\n            userId,\n            shippingAddress: {\n              line1: '1 High Street',\n              city: 'London',\n              postcode: 'N1 1AA',\n              country: 'GB',\n            },\n          },\n        },\n      }\n    )\n    return { ...response, runId: response.body?.runId }\n  },\n})"
@@ -8842,7 +9303,7 @@
                 "subpath": "./services"
               },
               "summary": "Drain a response into the shape a step can carry: the parsed body (an empty one counting as no body at all) alongside the text it was parsed from.",
-              "docs": "Drain a response into the shape a step can carry: the parsed body (an empty\none counting as no body at all) alongside the text it was parsed from.\n\n`invokeRaw` returns this, and a step that has to reach past a persona — a\nroute with no RPC, an identity no persona can hold — reaches for this rather\nthan writing the same record by hand.",
+              "docs": "Drain a response into the shape a step can carry: the parsed body (an empty\none counting as no body at all) alongside the text it was parsed from.\n\n`invokeRaw` returns this, and a step that has to reach past a virtual user — a\nroute with no RPC, an identity no virtual user can hold — reaches for this rather\nthan writing the same record by hand.",
               "signature": "<T = unknown>(res: Response) => Promise<ScenarioHttpResponse<T>>",
               "examples": [
                 "export const awaitsCheckout = pikkuScenarioStep<\n  { run: CheckoutRun; timeoutMs?: number },\n  CheckoutRun\n>({\n  name: 'awaitsCheckout',\n  description: 'waits for a started checkout run to reach a terminal status',\n  template: 'waits for the checkout to finish',\n  default: async (_services, { run, timeoutMs }, { scenarioStep }) => {\n    if (!run.runId) throw new Error(`Checkout never started: ${run.serialized}`)\n    const { apiUrl } = requireScenarioEnv(scenarioStep)\n    let last = ''\n    const finished = await pollUntil(\n      async () => {\n        const response = await readScenarioHttpResponse<\n          { status?: string } | undefined\n        >(\n          await fetch(`${apiUrl}/workflow/checkoutWorkflow/status/${run.runId}`)\n        )\n        last = response.serialized\n        const outcome = response.body?.status\n        return outcome && TERMINAL.includes(outcome)\n          ? { ...response, runId: run.runId, outcome }\n          : undefined\n      },\n      { timeoutMs: timeoutMs ?? 30_000, intervalMs: 100 }\n    )\n    if (!finished) {\n      throw new Error(`Run ${run.runId} never finished: ${last}`)\n    }\n    return finished\n  },\n})"
@@ -8896,8 +9357,8 @@
                 "via": "core",
                 "subpath": "./workflow"
               },
-              "summary": "How an actor drives the system for one step.",
-              "docs": "How an actor drives the system for one step.\n\nA step declares one implementation per surface it supports, and the runner\npicks between them — so the same ladder can run through a real browser, over\nthe websocket, or entirely server-side.\n\n`default` is the floor: it is what every other surface falls back to, so it\ncan never itself fall back."
+              "summary": "How a virtual user drives the system for one step.",
+              "docs": "How a virtual user drives the system for one step.\n\nA step declares one implementation per surface it supports, and the runner\npicks between them — so the same ladder can run through a real browser, over\nthe websocket, or entirely server-side.\n\n`default` is the floor: it is what every other surface falls back to, so it\ncan never itself fall back."
             },
             {
               "name": "TestIdSelector",
@@ -8931,15 +9392,6 @@
               ]
             },
             {
-              "name": "TypedPersonas",
-              "kind": "type",
-              "origin": {
-                "via": "generated"
-              },
-              "summary": "The personas this project declares, keyed by name — the `actors` a scenario step runs as.",
-              "docs": "The personas this project declares, keyed by name — the `actors` a scenario\nstep runs as."
-            },
-            {
               "name": "TypedScenario",
               "kind": "type",
               "origin": {
@@ -8954,6 +9406,10 @@
                   "doc": "Suspend workflow until a human records a decision against this gate"
                 },
                 {
+                  "line": "compensatingFor?: CompensatingFor<unknown>",
+                  "doc": "Set only while a function's `compensate` is running: the outcome of the forward call being undone. `undefined` on a forward run."
+                },
+                {
                   "line": "context: ScenarioContext<Out>",
                   "doc": "Scratch the body writes and the `before`/`after` hooks read. A hook is a separate function and cannot see the body's locals, so this is how teardown learns the ids the body minted. Deliberately *not* a world: it is scoped to one run, and scenario steps cannot reach it. Steps stay pure functions of their declared inputs, so the ladder in the report remains a complete account of what a step saw."
                 },
@@ -8963,7 +9419,7 @@
                 },
                 {
                   "line": "expectEventually: <TOutput = any, TInput = any>(stepName: string, rpcName: string, data: TInput, predicate: (output: TOutput) => boolean, options?: WorkflowExpectEventuallyOptions) => Promise<TOutput>",
-                  "doc": "Durable polling step: invoke `rpcName` (as an actor when `options.actor` is set) until `predicate` passes or `options.within` elapses."
+                  "doc": "Durable polling step: invoke `rpcName` (as a virtual user when `options.virtualUser` is set) until `predicate` passes or `options.within` elapses."
                 },
                 {
                   "line": "expectScore: (stepName: string, runId: string, scorerName: string, options?: WorkflowExpectScoreOptions) => Promise<{ score: number; reason?: string; }>",
@@ -8976,6 +9432,10 @@
                 {
                   "line": "getRun: () => Promise<WorkflowRun>",
                   "doc": "Get the current workflow run"
+                },
+                {
+                  "line": "milestone: WorkflowWireMilestone",
+                  "doc": "A named checkpoint. On failure the unwind stops at the last milestone reached and the run rests there. The name must be a string literal."
                 },
                 {
                   "line": "name: string",
@@ -9010,6 +9470,15 @@
               },
               "summary": "The typed half of a scenario wire: `given`/`when`/`then`, narrowed to the names declared by `pikkuScenarioStep` in this project. `given` and `when` differ only in the prose the reporter renders; `then` additionally makes the step's bindings witnesses rather than alternatives.",
               "docs": "The typed half of a scenario wire: `given`/`when`/`then`, narrowed to the\nnames declared by `pikkuScenarioStep` in this project. `given` and `when`\ndiffer only in the prose the reporter renders; `then` additionally makes the\nstep's bindings witnesses rather than alternatives."
+            },
+            {
+              "name": "TypedVirtualUsers",
+              "kind": "type",
+              "origin": {
+                "via": "generated"
+              },
+              "summary": "The virtual users this project declares, keyed by name — the `virtual users` a scenario step runs as.",
+              "docs": "The virtual users this project declares, keyed by name — the `virtual users` a scenario\nstep runs as."
             }
           ]
         }

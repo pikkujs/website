@@ -1,3 +1,9 @@
 # Fingerprinted build output never changes under the same name.
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Markdown downloads by default; plain text stays readable in a tab and agents are unaffected.
+/prompt.md
+  Content-Type: text/plain; charset=utf-8
+/api-surface.md
+  Content-Type: text/plain; charset=utf-8

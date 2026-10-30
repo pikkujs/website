@@ -18,6 +18,7 @@
  * the explorer says, change the JSDoc in the pikku source.
  */
 
+import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -154,3 +155,25 @@ console.log(
 console.log(`[api-surface] read  ${source}`)
 console.log(`[api-surface] wrote ${VENDORED}`)
 console.log(`[api-surface] wrote ${EXPLORER_DATA}`)
+
+/*
+   public/api-surface.md — the same surface as plain text for an AI agent, one
+   section per door, rendered by `pikku doc --ai` so it is never hand-written.
+   The setup prompt (public/prompt.md) points agents here.
+*/
+const cliBin = resolve(root, '../../node_modules/.bin/pikku')
+const doors = entryPoint.leaves.map((leaf) => leaf.name)
+const sections = doors.map((door) =>
+  execFileSync(cliBin, ['doc', '--ai', door], { encoding: 'utf8' })
+    .replace(/^\s*◇◆ pikku ::\s*/, '')
+    .trimEnd()
+)
+const surfaceMd = [
+  `# Pikku API surface (pikku ${doc.version})`,
+  '',
+  'Every door you import from in an app, and what each exports. Generated from the installed CLI (`pikku doc`). Run `pikku doc <name>` for one export in full.',
+  '',
+  ...sections.flatMap((section) => [section, '']),
+].join('\n')
+writeFileSync(resolve(root, 'public/api-surface.md'), surfaceMd)
+console.log(`[api-surface] wrote public/api-surface.md (${doors.length} doors)`)
