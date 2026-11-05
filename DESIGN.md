@@ -62,9 +62,9 @@ typography:
     lineHeight: 1
   code:
     fontFamily: "ui-monospace, SF Mono, Menlo, Consolas, monospace"
-    fontSize: "0.9rem"
+    fontSize: "0.85rem"
     fontWeight: 400
-    lineHeight: 1.6
+    lineHeight: 1.65
 rounded:
   hand-a: "14px 18px 13px 17px / 17px 13px 18px 14px"
   hand-b: "16px 12px 17px 13px / 13px 17px 12px 16px"
