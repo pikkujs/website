@@ -18,7 +18,7 @@ commands and structure. Dev server: `npm run dev` on port 3005.
 
 ## Design
 
-The whole site is the cream and serif "paper" theme: Fraunces (display), Work Sans (body), Caveat (hand), Geist Mono.
+The whole site is the cream and serif "paper" theme: Fraunces (display), Work Sans (body), Caveat (hand), and the platform mono stack. The style guide is `DESIGN.md`.
 Palette: paper `#f4ecdd`, clay `#c2410c`, ink `#2b2219`. Colours are CSS variables (`--paper-*`) in
 `src/styles/tokens.css`, with a light default and a dark theme via `<html data-theme>`. Never hardcode colours or
 `text-white`; wiring icons use the `.wiring-icon` class. Avoid generic AI aesthetics (no Inter/Roboto/Arial, no
@@ -35,4 +35,4 @@ patterns over flat backgrounds.
 - Redirects for old URLs: `scripts/gen-redirects.mjs` (one static redirect page per moved URL; Pages has no server redirects).
 - Registry data is vendored in `src/data`; the hosted registry may be down, the fixture is the fallback.
 
-- Brand: Pikku is its own brand, so the logo and mascot are the chameleon (`Pk` from `packages/brand`, the `#pk` symbol in `SvgDefs`). Never use Studio's Blob here. Change colours/fonts in packages/brand (docs/BRANDING.md); small accent text uses claydeep, never clay.
+- Brand: Pikku is its own brand, so the logo and mascot are the chameleon (`Pk` from `packages/brand`, the `#pk` symbol in `SvgDefs`). Change colours/fonts in packages/brand (`DESIGN.md`); small accent text uses claydeep, never clay.

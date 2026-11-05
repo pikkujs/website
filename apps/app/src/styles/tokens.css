@@ -6,7 +6,7 @@
   --font-display: 'Fraunces', 'Fraunces Fallback', Georgia, serif;
   --font-body: 'Work Sans', 'Work Sans Fallback', system-ui, sans-serif;
   --font-hand: 'Caveat', cursive;
-  /* Studio has no monospace face; code uses the platform's own */
+  /* No monospace webfont; code uses the platform's own */
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   --paper-bg: var(--color-paper);
@@ -36,7 +36,7 @@
   --paper-accent-ring: color-mix(in srgb, var(--color-clay) 22%, transparent);
   --paper-accent-ring-sm: color-mix(in srgb, var(--color-clay) 12%, transparent);
 
-  /* ink slab (code cards, terminals, dark sections): Studio's .band colours */
+  /* ink slab (code cards, terminals, dark sections): the .band colours */
   --paper-code-bg: var(--color-night);
   --paper-code-bg-bar: #1d1812;
   --paper-code-border: color-mix(in srgb, var(--color-cream) 16%, var(--color-night));
@@ -90,7 +90,7 @@
   --code-block-bar: var(--color-paper2);
   --code-block-border: color-mix(in srgb, var(--color-cream) 16%, var(--color-card));
   --code-block-text: var(--color-ink);
-  --paper-text-faint: var(--color-soft); /* Studio's faint (#6f6555) is below 4.5:1 on dark paper */
+  --paper-text-faint: var(--color-soft); /* faint (#6f6555) is below 4.5:1 on dark paper */
   --paper-ok: var(--color-moss);
   --code-bg: var(--paper-code-bg); --code-plain: var(--paper-code-text); --code-kw: var(--color-ember); --code-str: var(--paper-code-teal);
   --code-num: var(--paper-code-hl); --code-cmt: var(--paper-code-dim); --code-fn: var(--paper-code-green); --code-type: var(--color-rose);

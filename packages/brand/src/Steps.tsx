@@ -63,7 +63,7 @@ function Cursors() {
 const builtin = { browser: Browser, note: NoteIcon, pikku: PikkuIcon, cursors: Cursors } as const
 
 /**
- * The four-step pattern from pikkustudio.app: numbered-by-order, hand-drawn dotted path between steps,
+ * The four-step pattern: numbered-by-order, hand-drawn dotted path between steps,
  * one illustration each. Needs <SvgDefs /> on the page and the tokens/utilities CSS. Pass your own copy.
  */
 export function Steps({ steps, className = '' }: { steps: Step[]; className?: string }) {

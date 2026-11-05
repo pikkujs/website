@@ -1,4 +1,4 @@
-/* Studio look for the marketing pages (PaperLayout & friends use CSS modules; these attribute selectors
+/* Paper look for the marketing pages (PaperLayout & friends use CSS modules; these attribute selectors
    add the hand-drawn corners and offset shadows on top of their hashed class names). */
 [data-paper-page] { font-family: var(--font-body); }
 

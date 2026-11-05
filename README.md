@@ -93,4 +93,4 @@ URLs, the sitemap and the link gate use the slashless form, as the previous site
 
 ## Brand
 
-Tokens, utilities, fonts, the Pikku chameleon and SVG defs come from the workspace package `packages/brand` (`@pikku/theme-brand`), shared with pikkustudio.app. See `docs/BRANDING.md`. `npm run gen:brand` regenerates its Tailwind theme file (the build does this).
+Tokens, utilities, fonts, the Pikku chameleon and SVG defs come from the workspace package `packages/brand` (`@pikku/theme-brand`). See `DESIGN.md`. `bun run gen` in `packages/brand` regenerates its Tailwind theme file (the build does this).
