@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite dev --port 7104",
     "predev": "node scripts/gen-data.mjs",
-    "build": "node scripts/check-error-docs.mjs && node scripts/gen-data.mjs && vite build",
+    "build": "node scripts/check-error-docs.mjs && vite build",
     "preview": "vite preview --port 7104",
     "lint": "oxlint",
     "tsc": "node scripts/gen-routes.mjs && tsc --noEmit --incremental --tsBuildInfoFile node_modules/.cache/app-tsc.tsbuildinfo",

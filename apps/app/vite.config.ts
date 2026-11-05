@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { fumadocsMdx } from 'fumadocs-mdx/vite'
 import path from 'node:path'
 import fs from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import type { Plugin } from 'vite'
 import linkCrawl from '../../packages/vite-link-check/src/index.js'
 import feeds from './plugins/feeds.mjs'
@@ -41,6 +42,20 @@ const catalogPages = () => {
   return out
 }
 
+/** Writes public/__data before anything reads it. A plugin, not a package script, because Studio's CI runs vite build directly. */
+const genData = (): Plugin => {
+  let done = false
+  return {
+    name: 'gen-data',
+    apply: 'build',
+    buildStart() {
+      if (done) return
+      done = true
+      execFileSync(process.execPath, ['scripts/gen-data.mjs'], { cwd: import.meta.dirname, stdio: 'inherit' })
+    },
+  }
+}
+
 /** These are only imported inside client effects; keep their chunks (mermaid alone is ~6 MB) out of the SSR bundle. */
 const CLIENT_ONLY = ['mermaid', 'react-apexcharts', 'apexcharts', 'asciinema-player', '@stackblitz/sdk']
 const clientOnly = (): Plugin => ({
@@ -60,6 +75,7 @@ export default defineConfig({
   // Addon and OpenAPI detail pages read the Studio registry on the server in production builds.
   define: isBuild ? { 'import.meta.env.VITE_CATALOGUE_SOURCE': JSON.stringify('registry') } : {},
   plugins: [
+    genData(),
     clientOnly(),
     fumadocsMdx(await import('./source.config') as any),
     tailwindcss(),
