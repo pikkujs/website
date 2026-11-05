@@ -14,7 +14,7 @@ At its core, Pikku treats all application logic as pure, testable functions. Whe
 ```
 
 The function receives:
-- **Services**: Dependency-injected services (database, logger, etc.)
+- **Services**: Shared services each function looks up (database, logger, etc.)
 - **Data**: Input data (normalized from any protocol)
 - **Wire**: Transport-specific details (session, HTTP, channel, etc.)
 

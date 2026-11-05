@@ -6,7 +6,7 @@ export type MenuEntry = { id: string; label: string; description: string; url: s
 
 export const coreEntries: MenuEntry[] = [
   { id: 'function', label: 'Functions', description: 'One signature, every protocol', url: '/core/function', icon: Code2 },
-  { id: 'services', label: 'Services', description: 'Injected toolbox with tree-shaking', url: '/core/services', icon: Wrench },
+  { id: 'services', label: 'Services', description: 'Service lookup with tree-shaking', url: '/core/services', icon: Wrench },
   { id: 'security', label: 'Security', description: 'Sessions, permissions & auth', url: '/core/security', icon: Shield },
   { id: 'versioning', label: 'Versioning', description: 'Contract hashing & CI enforcement', url: '/core/versioning', icon: GitBranch },
   { id: 'secrets', label: 'Secrets & Variables', description: 'Type-safe config with Zod', url: '/core/secrets', icon: Key },
@@ -41,7 +41,7 @@ export const primaryLinks = [
 
 export const footerColumns = [
   { title: 'Product', items: [
-    { label: 'Overview', to: '/' }, { label: 'For developers', to: '/developers' }, { label: 'Features', to: '/features' },
+    { label: 'Overview', to: '/' }, { label: 'Features', to: '/features' },
     { label: 'Benchmarks', to: '/benchmarks' }, { label: 'Fabric (managed hosting)', to: 'https://pikkufabric.com' } ] },
   { title: 'Learn', items: [
     { label: 'Getting Started', to: '/getting-started' }, { label: 'Documentation', to: '/docs' }, { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },

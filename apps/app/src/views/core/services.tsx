@@ -17,7 +17,7 @@ function Hero() {
       <div className={styles.heroInner}>
         <div>
           <span className={styles.badge}>Core Concept</span>
-          <h1 className={styles.h1}>Your toolbox.<br /><em>Injected.</em></h1>
+          <h1 className={styles.h1}>Your toolbox.<br /><em>One lookup away.</em></h1>
           <p className={styles.lead}>
             Two factory functions — <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>pikkuServices</code> and{' '}
             <code style={{ fontFamily: 'var(--font-mono)', color: '#c2410c', fontSize: '0.9em' }}>pikkuWireServices</code> — wire your entire application together with full type safety and tree-shaking.
@@ -171,7 +171,7 @@ function CTASection() {
 export default function ServicesPage() {
   return (
     <Layout
-      title="Services — Your Toolbox, Injected"
+      title="Services — Your Toolbox, One Lookup Away"
       description="Pikku services use two factory functions — pikkuServices and pikkuWireServices — with automatic tree-shaking via RequiredSingletonServices."
     >
       <PaperPage>

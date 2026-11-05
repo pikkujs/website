@@ -56,7 +56,7 @@ const page: PageData = {
         items: [
           { title: 'Standard cron format', body: 'Five-field Unix cron expressions — nothing proprietary to learn.' },
           { title: 'No input, no output', body: 'Scheduled functions use pikkuVoidFunc — they run on a timer, not on demand.' },
-          { title: 'Service injection', body: 'Access databases, email, logging, and any other service via dependency injection.' },
+          { title: 'Service lookup', body: 'Reach databases, email, logging, and any other service through the services object.' },
         ],
       },
     },

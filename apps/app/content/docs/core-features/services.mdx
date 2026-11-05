@@ -94,6 +94,7 @@ Key points:
 
 - **`pikkuConfig`** wraps your config factory - no generic types needed
 - **`pikkuServices`** wraps your singleton services factory - receives `(config, existingServices?)` and types are inferred
+- **`existingServices`** is what the runtime already built, such as `kysely` and `logger` under `pikku dev`. Keep those and add your own
 - **`pikkuWireServices`** wraps your wire services factory - receives `(singletonServices, wire)` and types are inferred
 - Pikku automatically merges wire services with singleton services, so your functions have access to both
 - Don't spread `...singletonServices` – Pikku handles that for you

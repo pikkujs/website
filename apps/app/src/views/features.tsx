@@ -28,7 +28,7 @@ const frameworkCards: FeatureCard[] = [
   {
     title: 'Services',
     url: '/core/services',
-    description: 'Inject what you need. Tree-shake what you don\'t. Type-safe dependency injection without decorators.',
+    description: 'Ask for what you need. Tree-shake what you don\'t. Type-safe service lookup without decorators.',
     icon: Wrench,
   },
   {

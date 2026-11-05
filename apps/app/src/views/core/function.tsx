@@ -130,8 +130,8 @@ function ServicesSection() {
       <div className={styles.wrap}>
         <div className={styles.sectionHead}>
           <div className={styles.eyebrow}>Services</div>
-          <h2 className={styles.h2}>Your toolbox, <em>injected</em></h2>
-          <p className={styles.lead}>Services are dependency-injected into every function. Register once, destructure anywhere.</p>
+          <h2 className={styles.h2}>Your toolbox, <em>one lookup away</em></h2>
+          <p className={styles.lead}>Every function gets the services object as its first argument. Register once, destructure what you need.</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 5fr) minmax(0, 7fr)', gap: 40, maxWidth: 1040, alignItems: 'start' }}

@@ -1,5 +1,5 @@
 {
-  "base": "https://github.com/pikkujs/template-online-shop/blob/4a52dd038cececca0f9c5c806747d02ebba77f82/",
+  "base": "https://github.com/pikkujs/template-online-shop/blob/5a22896183893ae019b62a371b0c5c2f17363235/",
   "sources": {
     "betterAuthConfig": {
       "path": "packages/functions/src/auth.ts#L28-L101",
@@ -1072,11 +1072,11 @@
       "path": "packages/functions/src/scopes.ts#L17-L51"
     },
     "shopServices": {
-      "path": "packages/functions/src/services.ts#L30-L174",
+      "path": "packages/functions/src/services.ts#L30-L178",
       "trimmed": true
     },
     "shopWireServices": {
-      "path": "packages/functions/src/services.ts#L178-L196"
+      "path": "packages/functions/src/services.ts#L182-L200"
     },
     "workflowSteps": {
       "path": "packages/functions/src/wirings/checkout.workflow.ts#L14-L37"

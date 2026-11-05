@@ -182,7 +182,7 @@ For per-request services, export `createWireServices` built with `pikkuAddonWire
 
 ### Write Functions
 
-Functions use your injected services like any other Pikku function. Declare their
+Functions use your services like any other Pikku function. Declare their
 schemas in a file of their own, one that never imports `#pikku`:
 
 In `src/functions/mailSend.schemas.ts`, define two Zod schemas: `MailSendInput` is an object with string `to`, `subject` and `body`, and `MailSendOutput` is an object with a boolean `success`.
