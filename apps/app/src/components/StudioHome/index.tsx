@@ -334,21 +334,86 @@ function Framework() {
           <div className="mt-10"><DeployScene /></div>
         </div>
       </div>
-      <div className="mt-20 md:mt-28 torn px-6 py-8 md:px-12 md:py-12 grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 items-center">
-        <Pk className="w-24 h-24 md:w-32 md:h-32 text-moss" />
-        <div>
-          <h3 className="display text-3xl md:text-4xl font-semibold leading-tight">
-            2,500+ connectors, ready to call.
-          </h3>
-          <p className="mt-2 text-soft text-lg leading-relaxed max-w-2xl">
-            Addons reach the rest of the world, from payments to mail. Over 200 are hand-built, and
-            every OpenAPI service we could find is wrapped too. Every one is typed, and you can
-            write your own.
+    </section>
+  )
+}
+
+const ADDON_KINDS: { name: string; hint: string; why: string; wash: string; ink: string }[] = [
+  {
+    name: 'Inside your app',
+    hint: 'you trust it',
+    why: 'A connector running in your own process, installed like any other package.',
+    wash: '#d7e3c8',
+    ink: '#55703c',
+  },
+  {
+    name: 'From an OpenAPI doc',
+    hint: 'all you have is a spec',
+    why: 'Point Pikku at any OpenAPI doc and plug the whole API in as typed functions.',
+    wash: '#c9dbe2',
+    ink: '#3d6373',
+  },
+  {
+    name: 'In its own container',
+    hint: "it's yours, but you're not so sure",
+    why: 'A remote addon you run in a Docker image, so it stays sandboxed from your app.',
+    wash: '#efd9a9',
+    ink: '#b97d12',
+  },
+  {
+    name: 'Run by someone else',
+    hint: 'not your problem to host',
+    why: 'A remote Pikku process someone else runs entirely. You just call it.',
+    wash: '#ddd0ea',
+    ink: '#6b4e8a',
+  },
+]
+
+function Addons() {
+  return (
+    <section className="bg-paper2/70 border-y-2 border-dashed border-ink/15">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-16 md:py-24">
+        <div className="max-w-2xl">
+          <p className="hand text-2xl text-clay">everything you didn't build</p>
+          <h2 className="display text-4xl md:text-5xl font-semibold leading-tight mt-1">
+            Trust an addon as far as you want.
+          </h2>
+          <p className="mt-4 text-lg text-soft leading-relaxed">
+            Addons reach the rest of the world, from payments to mail. There are 2,500+ ready to
+            call: over 200 hand-built, plus every OpenAPI service we could find. Where one runs is
+            up to you, and you call it the same typed way wherever it is.
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 list-none p-0">
+          {ADDON_KINDS.map((a) => (
+            <li key={a.name} className="tech" style={{ ['--wash' as string]: a.wash }}>
+              <Pk className="w-14 h-14" style={{ color: a.ink }} />
+              <h3 className="display text-xl font-semibold mt-3">{a.name}</h3>
+              <p className="hand text-xl mt-1 text-soft">{a.hint}</p>
+              <p className="mt-1 text-soft leading-relaxed">{a.why}</p>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 torn px-6 py-8 md:px-12 md:py-10 grid md:grid-cols-[auto_1fr] gap-6 md:gap-10 items-center">
+          <Pk className="w-20 h-20 md:w-24 md:h-24 text-moss" />
+          <div>
+            <p className="hand text-2xl text-clay">works on your own code too</p>
+            <h3 className="display text-2xl md:text-3xl font-semibold leading-tight mt-1">
+              Need real guardrails? Make it an addon.
+            </h3>
+            <p className="mt-2 text-soft text-lg leading-relaxed max-w-2xl">
+              An addon is a self-contained piece of functionality, so you can split your own app
+              along lines that hold. Tree-shaking already gets you microservices from one codebase. Addons
+              give those pieces clearer boundaries.
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/addons" className="btn-line">
             Browse the addons
+          </Link>
+          <Link to="/docs/addon" className="btn-line">
+            Read the addon docs
           </Link>
         </div>
       </div>
@@ -408,6 +473,7 @@ export default function StudioHome() {
         <Layers />
         <Modular />
         <Framework />
+        <Addons />
         <Close />
       </main>
     </div>
