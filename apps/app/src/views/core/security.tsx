@@ -6,7 +6,6 @@ import { Shield, Lock, KeyRound, UserCheck, Layers, Copy, Check, ShieldCheck, Co
 import { PaperPage, CodeCard } from '@/components/PaperLayout';
 import styles from './security.module.css';
 import snippets from '@/data/snippets.json';
-import { snippetSourceUrl } from '@/lib/snippets';
 
 const authConfigCode = snippets.betterAuthConfig;
 const getProfileCode = snippets.shopGetProfile;
@@ -72,13 +71,13 @@ function SessionSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('betterAuthConfig')} filename="auth.ts" badge="pikkuBetterAuth" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard snippet="betterAuthConfig" filename="auth.ts" badge="pikkuBetterAuth" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{authConfigCode}</CodeBlock>
           </CodeCard>
-          <CodeCard sourceUrl={snippetSourceUrl('shopGetProfile')} filename="getProfile.func.ts" badge="session" icon={<UserCheck size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard snippet="shopGetProfile" filename="getProfile.func.ts" badge="session" icon={<UserCheck size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{getProfileCode}</CodeBlock>
           </CodeCard>
-          <CodeCard sourceUrl={snippetSourceUrl('sessionFunction')} filename="get-session.function.ts" badge="session" icon={<KeyRound size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard snippet="sessionFunction" filename="get-session.function.ts" badge="session" icon={<KeyRound size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{sessionFuncCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -108,16 +107,16 @@ function PermissionsSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard sourceUrl={snippetSourceUrl('shopIsAuthenticated')} filename="auth.ts" badge="pikkuAuth" icon={<ShieldCheck size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard snippet="shopIsAuthenticated" filename="auth.ts" badge="pikkuAuth" icon={<ShieldCheck size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{authCode}</CodeBlock>
             </CodeCard>
-            <CodeCard sourceUrl={snippetSourceUrl('shopIsOrderOwner')} filename="permissions.ts" badge="pikkuPermission" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard snippet="shopIsOrderOwner" filename="permissions.ts" badge="pikkuPermission" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{permissionCode}</CodeBlock>
             </CodeCard>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard sourceUrl={snippetSourceUrl('scopedFunction')} filename="delete-order.function.ts" badge="func.ts" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard snippet="scopedFunction" filename="delete-order.function.ts" badge="func.ts" icon={<Lock size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{usageCode}</CodeBlock>
             </CodeCard>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -176,10 +175,10 @@ function MiddlewareSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 32 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('betterAuthConfig')} filename="middleware.ts" badge="built-in" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard snippet="betterAuthConfig" filename="middleware.ts" badge="built-in" icon={<Shield size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{middlewareCode}</CodeBlock>
           </CodeCard>
-          <CodeCard sourceUrl={snippetSourceUrl('shopAuthScope')} filename="scopes.ts" badge="4 levels" icon={<Layers size={13} style={{ color: '#c2410c' }} />}>
+          <CodeCard snippet="shopAuthScope" filename="scopes.ts" badge="4 levels" icon={<Layers size={13} style={{ color: '#c2410c' }} />}>
             <CodeBlock language="typescript">{scopeCode}</CodeBlock>
           </CodeCard>
         </div>

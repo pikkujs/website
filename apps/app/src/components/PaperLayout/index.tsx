@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from '@/components/site/Link';
 import { ExternalLink } from 'lucide-react';
+import { isSnippetTrimmed, snippetSourceUrl } from '@/lib/snippets';
 import styles from './paper.module.css';
 
 export { styles as paper };
@@ -72,13 +73,17 @@ export function CardBody({ children }: { children: React.ReactNode }) {
 }
 
 /* ── Code card ─────────────────────────────────────────── */
-export function CodeCard({ filename, badge, icon, sourceUrl, children }: {
+export function CodeCard({ filename, badge, icon, snippet, collapsed, children }: {
   filename: string;
   badge?: string;
   icon?: React.ReactNode;
-  sourceUrl?: string;
+  snippet?: string;
+  /** The page cut the code down itself, on top of anything the snippet hides. */
+  collapsed?: boolean;
   children: React.ReactNode;
 }) {
+  const sourceUrl = snippetSourceUrl(snippet);
+  const partial = collapsed || isSnippetTrimmed(snippet);
   return (
     <div className={styles.codeCard} data-code-ink="" data-code-card="">
       <div className={styles.codeCardBar}>
@@ -91,9 +96,10 @@ export function CodeCard({ filename, badge, icon, sourceUrl, children }: {
             href={sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={styles.codeCardSourceLink}
+            className={`${styles.codeCardSourceLink} ${partial ? styles.codeCardFullLink : ''}`}
             title="View source on GitHub"
           >
+            {partial && 'View full code'}
             <ExternalLink size={11} />
           </a>
         )}

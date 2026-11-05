@@ -6,7 +6,6 @@ import { Key, Variable, ShieldCheck, RefreshCw, ArrowRight, BookOpen } from 'luc
 import { PaperPage, CodeCard } from '@/components/PaperLayout';
 import styles from './secrets.module.css';
 import snippets from '@/data/snippets.json';
-import { snippetSourceUrl } from '@/lib/snippets';
 
 const secretsCode = snippets.secrets;
 const variablesCode = snippets.variables;
@@ -73,7 +72,7 @@ function SecretsSection() {
               </div>
             ))}
           </div>
-          <CodeCard sourceUrl={snippetSourceUrl('secrets')} filename="secrets.ts" badge="wireSecret">
+          <CodeCard snippet="secrets" filename="secrets.ts" badge="wireSecret">
             <CodeBlock language="typescript">{secretsCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -98,7 +97,7 @@ function VariablesSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
-          <CodeCard sourceUrl={snippetSourceUrl('variables')} filename="variables.ts" badge="wireVariable">
+          <CodeCard snippet="variables" filename="variables.ts" badge="wireVariable">
             <CodeBlock language="typescript">{variablesCode}</CodeBlock>
           </CodeCard>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -149,7 +148,7 @@ function OAuth2Section() {
               </div>
             </div>
           </div>
-          <CodeCard sourceUrl={snippetSourceUrl('shopSecretUsage')} filename="oauth2.ts" badge="defineCredential">
+          <CodeCard snippet="shopSecretUsage" filename="oauth2.ts" badge="defineCredential">
             <CodeBlock language="typescript">{oauth2Code}</CodeBlock>
           </CodeCard>
         </div>

@@ -203,6 +203,12 @@
   flex-shrink: 0;
 }
 
+.codeCardFullLink {
+  gap: 4px;
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
 .codeCardSourceLink:hover {
   opacity: 1;
   color: var(--paper-accent-dark);

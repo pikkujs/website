@@ -22,7 +22,6 @@ import {
 import { PaperPage, CodeCard } from '../PaperLayout';
 import { WireFanOut } from './WireFanOut';
 import styles from './feature-page.module.css';
-import snippetsMeta from '@/data/snippets-meta.json';
 import type {
   PageData, Section, ColContent, CardItem, CodeSpec,
   HeroSection, TwoColSection, FeatureGridSection,
@@ -34,13 +33,6 @@ import type {
 // is reported as a broken anchor by every page that links to it.
 function useSectionAnchor(id: string | undefined) {
   useBrokenLinks().collectAnchor(id);
-}
-
-const GITHUB_BASE = 'https://github.com/pikkujs/template-online-shop/blob/main/packages/functions/src/';
-function snippetSourceUrl(key: string | undefined): string | undefined {
-  if (!key) return undefined;
-  const file = (snippetsMeta as Record<string, string>)[key];
-  return file ? GITHUB_BASE + file : undefined;
 }
 
 /* ── Icon resolution ─────────────────────────────────────── */
@@ -164,7 +156,8 @@ function renderCodeSpec(spec: CodeSpec): React.ReactNode {
       filename={spec.filename}
       badge={spec.badge}
       icon={spec.icon ? resolveIcon(spec.icon, 13) : undefined}
-      sourceUrl={snippetSourceUrl(spec.snippetKey)}
+      snippet={spec.snippetKey}
+      collapsed={spec.collapse}
     >
       <CodeBlock language={spec.language ?? 'typescript'}>{code}</CodeBlock>
     </CodeCard>

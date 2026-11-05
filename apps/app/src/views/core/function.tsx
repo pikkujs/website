@@ -13,7 +13,6 @@ import {
 import { PaperPage, CodeCard, CheckItem, StepBadge } from '@/components/PaperLayout';
 import styles from './function.module.css';
 import snippets from '@/data/snippets.json';
-import { snippetSourceUrl } from '@/lib/snippets';
 
 /* ════════════════════════════════════════════════════════
    1. Hero
@@ -104,7 +103,7 @@ function ThreeParamsSection() {
         </div>
 
         <div style={{ maxWidth: 820 }}>
-          <CodeCard sourceUrl={snippetSourceUrl('funcThreeParams')} filename="get-order.function.ts" badge="func.ts">
+          <CodeCard snippet="funcThreeParams" filename="get-order.function.ts" badge="func.ts">
             <CodeBlock language="typescript">{threeParamsCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -151,10 +150,10 @@ function ServicesSection() {
             ))}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard sourceUrl={snippetSourceUrl('shopServices')} filename="services.ts" badge="startup">
+            <CodeCard snippet="shopServices" filename="services.ts" badge="startup">
               <CodeBlock language="typescript">{singletonServicesCode}</CodeBlock>
             </CodeCard>
-            <CodeCard sourceUrl={snippetSourceUrl('shopWireServices')} filename="wire-services.ts" badge="per-request">
+            <CodeCard snippet="shopWireServices" filename="wire-services.ts" badge="per-request">
               <CodeBlock language="typescript">{wireServicesCode}</CodeBlock>
             </CodeCard>
           </div>
@@ -206,7 +205,7 @@ function VersioningSection() {
           </div>
 
           <div>
-            <CodeCard sourceUrl={snippetSourceUrl('shopVersionedItem')} filename="getBook.func.ts" badge="version: 1 → 2">
+            <CodeCard snippet="shopVersionedItem" filename="getBook.func.ts" badge="version: 1 → 2">
               <CodeBlock language="typescript">{versionedFuncCode}</CodeBlock>
             </CodeCard>
             <div className={styles.checkList}>
@@ -261,10 +260,10 @@ function SessionSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 20, maxWidth: 1040 }}
           className="lg:grid-cols-2 grid-cols-1">
-          <CodeCard sourceUrl={snippetSourceUrl('sessionFunction')} filename="get-session.function.ts" badge="func.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
+          <CodeCard snippet="sessionFunction" filename="get-session.function.ts" badge="func.ts" icon={<Lock className="w-4 h-4" style={{ color: '#8a8475' }} />}>
             <CodeBlock language="typescript">{loginCode}</CodeBlock>
           </CodeCard>
-          <CodeCard sourceUrl={snippetSourceUrl('shopGetProfile')} filename="getMe.func.ts" badge="func.ts" icon={<Shield className="w-4 h-4" style={{ color: '#8a8475' }} />}>
+          <CodeCard snippet="shopGetProfile" filename="getMe.func.ts" badge="func.ts" icon={<Shield className="w-4 h-4" style={{ color: '#8a8475' }} />}>
             <CodeBlock language="typescript">{getMeCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -320,10 +319,10 @@ function EveryProtocolSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 20, maxWidth: 1040 }}
           className="lg:grid-cols-2 grid-cols-1">
-          <CodeCard sourceUrl={snippetSourceUrl('getItem')} filename="getBook.func.ts" badge="func.ts">
+          <CodeCard snippet="getItem" filename="getBook.func.ts" badge="func.ts">
             <CodeBlock language="typescript">{everyProtocolFunc}</CodeBlock>
           </CodeCard>
-          <CodeCard sourceUrl={snippetSourceUrl('funcMultiWire')} filename="wirings.ts" badge="wiring.ts">
+          <CodeCard snippet="funcMultiWire" filename="wirings.ts" badge="wiring.ts">
             <CodeBlock language="typescript">{everyProtocolWirings}</CodeBlock>
           </CodeCard>
         </div>

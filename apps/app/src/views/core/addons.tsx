@@ -6,7 +6,6 @@ import { Puzzle, Package, Tag, Key, Upload, BookOpen, ArrowRight, Check } from '
 import { PaperPage, CodeCard } from '@/components/PaperLayout';
 import styles from './addons.module.css';
 import snippets from '@/data/snippets.json';
-import { snippetSourceUrl } from '@/lib/snippets';
 
 const consumingCode = snippets['rt-addon-typed-invoke'];
 const creatingSecretCode = snippets['ea-define-crm-secret'];
@@ -74,7 +73,7 @@ function ConsumingSection() {
               </div>
             ))}
           </div>
-          <CodeCard sourceUrl={snippetSourceUrl('rt-addon-typed-invoke')} filename="createStripeCustomer.func.ts" badge="consuming">
+          <CodeCard snippet="rt-addon-typed-invoke" filename="createStripeCustomer.func.ts" badge="consuming">
             <CodeBlock language="typescript">{consumingCode}</CodeBlock>
           </CodeCard>
         </div>
@@ -101,7 +100,7 @@ function CreatingSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'start' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard sourceUrl={snippetSourceUrl('ea-define-crm-secret')} filename="crm.secret.ts" badge="defineSecret">
+            <CodeCard snippet="ea-define-crm-secret" filename="crm.secret.ts" badge="defineSecret">
               <CodeBlock language="typescript">{creatingSecretCode}</CodeBlock>
             </CodeCard>
             <div className={styles.card}>

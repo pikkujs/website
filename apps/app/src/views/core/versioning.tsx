@@ -6,7 +6,6 @@ import { ArrowRight, Hash, FileJson, ShieldCheck, Lock, Search, Copy, Check } fr
 import { PaperPage, CodeCard } from '@/components/PaperLayout';
 import styles from './versioning.module.css';
 import snippets from '@/data/snippets.json';
-import { snippetSourceUrl } from '@/lib/snippets';
 
 const versionedFuncCode = snippets.shopVersionedItem;
 
@@ -128,7 +127,7 @@ function VersionedFunctionsSection() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 32, alignItems: 'start' }}>
-          <CodeCard sourceUrl={snippetSourceUrl('shopVersionedItem')} filename="getBook.func.ts" badge="version: 1 → 2">
+          <CodeCard snippet="shopVersionedItem" filename="getBook.func.ts" badge="version: 1 → 2">
             <CodeBlock language="typescript">{versionedFuncCode}</CodeBlock>
           </CodeCard>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

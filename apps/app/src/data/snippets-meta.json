@@ -1,428 +1,1311 @@
 {
-  "betterAuthConfig": "auth.ts",
-  "fetchClient": "client-examples.ts",
-  "rpcClient": "client-examples.ts",
-  "aiAgentInvokeClient": "client-examples.ts",
-  "aiAgentStreamClient": "client-examples.ts",
-  "writeFunction": "functions/basket/add-to-basket.function.ts",
-  "addToBasket": "functions/basket/add-to-basket.function.ts",
-  "getBasket": "functions/basket/get-basket.function.ts",
-  "removeFromBasket": "functions/basket/remove-from-basket.function.ts",
-  "createCategory": "functions/categories/create-category.function.ts",
-  "listCategories": "functions/categories/list-categories.function.ts",
-  "shopGetProfile": "functions/get-profile.function.ts",
-  "sessionFunction": "functions/get-session.function.ts",
-  "createItem": "functions/items/create-item.function.ts",
-  "shopVersionedItem": "functions/items/get-item.function.ts",
-  "getItem": "functions/items/get-item.function.ts",
-  "readFunction": "functions/items/list-items.function.ts",
-  "listItems": "functions/items/list-items.function.ts",
-  "updateItem": "functions/items/update-item.function.ts",
-  "queueWorkerFunction": "functions/notifications/send-order-confirmation.function.ts",
-  "sendOrderConfirmation": "functions/notifications/send-order-confirmation.function.ts",
-  "writeAuditEvent": "functions/notifications/write-audit-event.function.ts",
-  "lowStockTrigger": "functions/on-low-stock.function.ts",
-  "cancelOrder": "functions/orders/cancel-order.function.ts",
-  "auditDispatch": "functions/orders/create-order.function.ts",
-  "createOrder": "functions/orders/create-order.function.ts",
-  "scopedFunction": "functions/orders/delete-order.function.ts",
-  "funcThreeParams": "functions/orders/get-order.function.ts",
-  "getOrder": "functions/orders/get-order.function.ts",
-  "listOrders": "functions/orders/list-orders.function.ts",
-  "approvalDescription": "functions/orders/refund-order.function.ts",
-  "cleanupFunction": "functions/reports/cleanup-abandoned-baskets.function.ts",
-  "cleanupAbandonedBaskets": "functions/reports/cleanup-abandoned-baskets.function.ts",
-  "scheduledFunction": "functions/reports/daily-sales-report.function.ts",
-  "dailySalesReport": "functions/reports/daily-sales-report.function.ts",
-  "rpcInternalCall": "functions/sweep-low-stock.function.ts",
-  "analyticsEvents": "lib/analytics.example.ts",
-  "recordAnalyticsEvent": "lib/analytics.example.ts",
-  "createAnalyticsClient": "lib/analytics.example.ts",
-  "cookieAnalyticsIdentity": "lib/analytics.example.ts",
-  "anonymousAnalyticsIdentity": "lib/analytics.example.ts",
-  "mintVendorCookie": "lib/analytics.example.ts",
-  "analyticsIdentity": "lib/analytics.example.ts",
-  "analyticsService": "lib/analytics.example.ts",
-  "analyticsServices": "lib/analytics.example.ts",
-  "fanOutAnalytics": "lib/analytics.example.ts",
-  "missingServiceError": "lib/error.example.ts",
-  "isExpectedError": "lib/error.example.ts",
-  "errorUsage": "lib/error.example.ts",
-  "addError": "lib/error.example.ts",
-  "customErrorUsage": "lib/error.example.ts",
-  "errorMessages": "lib/error.example.ts",
-  "extendPikkuError": "lib/error.example.ts",
-  "co-func-basic": "lib/examples/core.example.ts",
-  "co-func-services": "lib/examples/core.example.ts",
-  "co-func-wire-http": "lib/examples/core.example.ts",
-  "co-func-typed-input": "lib/examples/core.example.ts",
-  "co-func-session-read": "lib/examples/core.example.ts",
-  "co-func-auth-flow": "lib/examples/core.example.ts",
-  "co-permission-basic": "lib/examples/core.example.ts",
-  "co-permission-on-func": "lib/examples/core.example.ts",
-  "co-permission-quota": "lib/examples/core.example.ts",
-  "co-permission-global": "lib/examples/core.example.ts",
-  "co-permission-throw-vs-false": "lib/examples/core.example.ts",
-  "co-auth-flags": "lib/examples/core.example.ts",
-  "co-auth-with-permissions": "lib/examples/core.example.ts",
-  "co-permission-factory": "lib/examples/core.example.ts",
-  "co-func-errors": "lib/examples/core.example.ts",
-  "co-func-zod": "lib/examples/core.example.ts",
-  "co-func-expose": "lib/examples/core.example.ts",
-  "co-session-update": "lib/examples/core.example.ts",
-  "co-session-optional": "lib/examples/core.example.ts",
-  "co-session-refresh-middleware": "lib/examples/core.example.ts",
-  "co-session-wire-ops": "lib/examples/core.example.ts",
-  "co-wire-http": "lib/examples/core.example.ts",
-  "co-wire-channel": "lib/examples/core.example.ts",
-  "co-wire-trigger": "lib/examples/core.example.ts",
-  "co-wire-rpc-remote": "lib/examples/core.example.ts",
-  "co-service-interface": "lib/examples/core.example.ts",
-  "co-service-use": "lib/examples/core.example.ts",
-  "co-lifecycle-minimal": "lib/examples/core.example.ts",
-  "co-lifecycle": "lib/examples/core.example.ts",
-  "co-feature-flags-define": "lib/examples/core.example.ts",
-  "co-feature-flag-assert": "lib/examples/core.example.ts",
-  "co-feature-flag-resolve": "lib/examples/core.example.ts",
-  "co-scenario-step": "lib/examples/core.example.ts",
-  "co-eventhub-broadcast-all": "lib/examples/core.example.ts",
-  "co-eventhub-exclude-sender": "lib/examples/core.example.ts",
-  "co-eventhub-room": "lib/examples/core.example.ts",
-  "co-eventhub-presence": "lib/examples/core.example.ts",
-  "co-eventhub-notifications": "lib/examples/core.example.ts",
-  "co-exception-usage": "lib/examples/core.example.ts",
-  "co-exception-messages": "lib/examples/core.example.ts",
-  "co-logger-usage": "lib/examples/core.example.ts",
-  "co-audit-function": "lib/examples/core.example.ts",
-  "co-email-send": "lib/examples/core.example.ts",
-  "co-jwt-encode-decode": "lib/examples/core.example.ts",
-  "co-scheduler-rpc": "lib/examples/core.example.ts",
-  "co-user-session-service": "lib/examples/core.example.ts",
-  "co-variables-typed": "lib/examples/core.example.ts",
-  "co-variables-service": "lib/examples/core.example.ts",
-  "co-versioning-invoke": "lib/examples/core.example.ts",
-  "co-node-metadata": "lib/examples/core.example.ts",
-  "co-create-api-key": "lib/examples/core.example.ts",
-  "co-cookie-login": "lib/examples/core.example.ts",
-  "co-credential-read": "lib/examples/core.example.ts",
-  "co-credential-service": "lib/examples/core.example.ts",
-  "co-oauth-app-secret": "lib/examples/core.example.ts",
-  "co-cors-global": "lib/examples/core.example.ts",
-  "co-http-timeout": "lib/examples/core.example.ts",
-  "co-telemetry": "lib/examples/core.example.ts",
-  "co-better-auth-session": "lib/examples/core.example.ts",
-  "co-better-auth-stateless": "lib/examples/core.example.ts",
-  "co-arch-func": "lib/examples/core.example.ts",
-  "co-arch-wire": "lib/examples/core.example.ts",
-  "co-arch-registration": "lib/examples/core.example.ts",
-  "co-arch-tags": "lib/examples/core.example.ts",
-  "co-philosophy-email": "lib/examples/core.example.ts",
-  "co-philosophy-wire": "lib/examples/core.example.ts",
-  "co-types-func": "lib/examples/core.example.ts",
-  "co-comparison-pikku": "lib/examples/core.example.ts",
-  "co-treeshake-wiring": "lib/examples/core.example.ts",
-  "co-treeshake-tags": "lib/examples/core.example.ts",
-  "co-test-direct-call": "lib/examples/core.example.ts",
-  "co-test-session": "lib/examples/core.example.ts",
-  "co-test-error": "lib/examples/core.example.ts",
-  "co-test-mock-helper": "lib/examples/core.example.ts",
-  "co-secret-client": "lib/examples/core.example.ts",
-  "ea-addon-secret-override": "lib/examples/errors-a.example.ts",
-  "ea-addon-namespace": "lib/examples/errors-a.example.ts",
-  "ea-addon-local-vs-remote": "lib/examples/errors-a.example.ts",
-  "ea-define-crm-credential": "lib/examples/errors-a.example.ts",
-  "ea-define-crm-secret": "lib/examples/errors-a.example.ts",
-  "ea-addon-package-name": "lib/examples/errors-a.example.ts",
-  "ea-remote-addon-credential": "lib/examples/errors-a.example.ts",
-  "ea-remote-addon-secret": "lib/examples/errors-a.example.ts",
-  "ea-addon-mcp-list": "lib/examples/errors-a.example.ts",
-  "ea-addon-mcp-all": "lib/examples/errors-a.example.ts",
-  "ea-addon-expose": "lib/examples/errors-a.example.ts",
-  "ea-addon-expose-inline": "lib/examples/errors-a.example.ts",
-  "ea-define-screens": "lib/examples/errors-a.example.ts",
-  "ea-addon-no-ui": "lib/examples/errors-a.example.ts",
-  "ea-addon-ui": "lib/examples/errors-a.example.ts",
-  "ea-node-config": "lib/examples/errors-a.example.ts",
-  "ea-agent-model": "lib/examples/errors-a.example.ts",
-  "ea-agent-addon-tool": "lib/examples/errors-a.example.ts",
-  "ea-agent-first-party-tool": "lib/examples/errors-a.example.ts",
-  "ea-tool-description": "lib/examples/errors-a.example.ts",
-  "ea-agent-provider-options": "lib/examples/errors-a.example.ts",
-  "ea-http-tags": "lib/examples/errors-a.example.ts",
-  "ea-http-func": "lib/examples/errors-a.example.ts",
-  "ea-execute-cli": "lib/examples/errors-a.example.ts",
-  "ea-services-destructured": "lib/examples/errors-a.example.ts",
-  "ea-wires-destructured": "lib/examples/errors-a.example.ts",
-  "ea-static-import": "lib/examples/errors-a.example.ts",
-  "ea-lazy-service-setup": "lib/examples/errors-a.example.ts",
-  "ea-exported-contract-type": "lib/examples/errors-a.example.ts",
-  "ea-inline-contract-type": "lib/examples/errors-a.example.ts",
-  "ea-exported-schema": "lib/examples/errors-a.example.ts",
-  "ea-schema-file": "lib/examples/errors-a.example.ts",
-  "ea-wiring-file": "lib/examples/errors-a.example.ts",
-  "ea-wire-shape-schema": "lib/examples/errors-a.example.ts",
-  "ea-convert-in-function": "lib/examples/errors-a.example.ts",
-  "ea-schema-constraints": "lib/examples/errors-a.example.ts",
-  "ea-schema-output-date": "lib/examples/errors-a.example.ts",
-  "ea-annotation-boolean": "lib/examples/errors-a.example.ts",
-  "ea-annotation-json": "lib/examples/errors-a.example.ts",
-  "ea-annotation-number": "lib/examples/errors-a.example.ts",
-  "ea-annotation-format": "lib/examples/errors-a.example.ts",
-  "ea-annotation-hashed": "lib/examples/errors-a.example.ts",
-  "ea-annotation-plain": "lib/examples/errors-a.example.ts",
-  "ea-annotation-no-form": "lib/examples/errors-a.example.ts",
-  "ea-annotation-wrapped": "lib/examples/errors-a.example.ts",
-  "eb-exported-pikku-func": "lib/examples/errors-b.example.ts",
-  "eb-public-and-private-routes": "lib/examples/errors-b.example.ts",
-  "eb-exposed-requires-session": "lib/examples/errors-b.example.ts",
-  "eb-exposed-with-permission": "lib/examples/errors-b.example.ts",
-  "eb-exposed-public-on-purpose": "lib/examples/errors-b.example.ts",
-  "eb-addon-gate": "lib/examples/errors-b.example.ts",
-  "eb-internal-only-func": "lib/examples/errors-b.example.ts",
-  "eb-safe-projection": "lib/examples/errors-b.example.ts",
-  "eb-log-id-not-person": "lib/examples/errors-b.example.ts",
-  "eb-wire-graph-addon": "lib/examples/errors-b.example.ts",
-  "rt-wire-addon-local": "lib/examples/runtimes.example.ts",
-  "rt-wire-addon-postgres": "lib/examples/runtimes.example.ts",
-  "rt-addon-expose": "lib/examples/runtimes.example.ts",
-  "rt-addon-typed-invoke": "lib/examples/runtimes.example.ts",
-  "rt-addon-trigger-handler": "lib/examples/runtimes.example.ts",
-  "rt-wire-addon-multiple": "lib/examples/runtimes.example.ts",
-  "rt-wire-addon-secret-overrides": "lib/examples/runtimes.example.ts",
-  "rt-wire-addon-labels": "lib/examples/runtimes.example.ts",
-  "rt-wire-addon-global-credentials": "lib/examples/runtimes.example.ts",
-  "wa-http-first-function": "lib/examples/wiring-a.example.ts",
-  "wa-http-first-wire": "lib/examples/wiring-a.example.ts",
-  "wa-http-permissions": "lib/examples/wiring-a.example.ts",
-  "wa-http-wiring-config": "lib/examples/wiring-a.example.ts",
-  "wa-http-route-params": "lib/examples/wiring-a.example.ts",
-  "wa-http-public-route": "lib/examples/wiring-a.example.ts",
-  "wa-http-wire-middleware": "lib/examples/wiring-a.example.ts",
-  "wa-http-global-pattern-middleware": "lib/examples/wiring-a.example.ts",
-  "wa-http-sse-flag": "lib/examples/wiring-a.example.ts",
-  "wa-http-data-flow-get": "lib/examples/wiring-a.example.ts",
-  "wa-http-data-flow-post": "lib/examples/wiring-a.example.ts",
-  "wa-http-custom-error": "lib/examples/wiring-a.example.ts",
-  "wa-http-error-usage": "lib/examples/wiring-a.example.ts",
-  "wa-http-define-routes": "lib/examples/wiring-a.example.ts",
-  "wa-http-wire-route-groups": "lib/examples/wiring-a.example.ts",
-  "wa-http-base-path": "lib/examples/wiring-a.example.ts",
-  "wa-http-route-array": "lib/examples/wiring-a.example.ts",
-  "wa-router-add-http-middleware": "lib/examples/wiring-a.example.ts",
-  "wa-router-global-middleware": "lib/examples/wiring-a.example.ts",
-  "wa-router-pattern-middleware": "lib/examples/wiring-a.example.ts",
-  "wa-router-global-permission": "lib/examples/wiring-a.example.ts",
-  "wa-router-jwt-auth": "lib/examples/wiring-a.example.ts",
-  "wa-router-request-logger": "lib/examples/wiring-a.example.ts",
-  "wa-router-security-headers": "lib/examples/wiring-a.example.ts",
-  "wa-cors-middleware": "lib/examples/wiring-a.example.ts",
-  "wa-sse-progress": "lib/examples/wiring-a.example.ts",
-  "wa-sse-periodic": "lib/examples/wiring-a.example.ts",
-  "wa-sse-functions": "lib/examples/wiring-a.example.ts",
-  "wa-sse-stream-protocol": "lib/examples/wiring-a.example.ts",
-  "wa-sse-wiring": "lib/examples/wiring-a.example.ts",
-  "wa-sse-dual-wiring": "lib/examples/wiring-a.example.ts",
-  "wa-sse-initial-message": "lib/examples/wiring-a.example.ts",
-  "wa-sse-finite-close": "lib/examples/wiring-a.example.ts",
-  "wa-fetch-subscribe-sse": "lib/examples/wiring-a.example.ts",
-  "wa-openapi-wire": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-first-functions": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-first-wiring": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-typed-resource": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-search-resource": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-review-prompt": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-wiring-config": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-error": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-error-usage": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-tool-first": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-expose-true": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-addon-all": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-addon-list": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-complex-domain": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-complex-adapter": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-image-tool": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-tool-config": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-res-first": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-res-first-wiring": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-res-static": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-res-param-adapter": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-res-wiring-config": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-res-errors-domain": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-res-errors-adapter": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-res-multi-adapter": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-prompt-static": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-prompt-dynamic": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-prompt-register": "lib/examples/wiring-a.example.ts",
-  "wa-mcp-prompt-multi": "lib/examples/wiring-a.example.ts",
-  "wa-wf-replay": "lib/examples/wiring-a.example.ts",
-  "wa-wf-quick-example": "lib/examples/wiring-a.example.ts",
-  "wa-wf-start": "lib/examples/wiring-a.example.ts",
-  "wa-wf-rpc-step-syntax": "lib/examples/wiring-a.example.ts",
-  "wa-wf-rpc-step-example": "lib/examples/wiring-a.example.ts",
-  "wa-wf-inline-step-syntax": "lib/examples/wiring-a.example.ts",
-  "wa-wf-inline-step-example": "lib/examples/wiring-a.example.ts",
-  "wa-wf-inline-caching": "lib/examples/wiring-a.example.ts",
-  "wa-wf-sleep-examples": "lib/examples/wiring-a.example.ts",
-  "wa-wf-workflow-step-wire": "lib/examples/wiring-a.example.ts",
-  "wa-wf-cancellation": "lib/examples/wiring-a.example.ts",
-  "wa-wf-step-order": "lib/examples/wiring-a.example.ts",
-  "wa-wf-get-run": "lib/examples/wiring-a.example.ts",
-  "wa-wf-get-run-history": "lib/examples/wiring-a.example.ts",
-  "wa-wf-poll": "lib/examples/wiring-a.example.ts",
-  "wa-graph-basic": "lib/examples/wiring-a.example.ts",
-  "wa-graph-agent-node": "lib/examples/wiring-a.example.ts",
-  "wa-graph-sequential": "lib/examples/wiring-a.example.ts",
-  "wa-graph-parallel": "lib/examples/wiring-a.example.ts",
-  "wa-graph-branch-fn": "lib/examples/wiring-a.example.ts",
-  "wa-graph-on-error": "lib/examples/wiring-a.example.ts",
-  "wa-graph-state": "lib/examples/wiring-a.example.ts",
-  "wa-cred-define": "lib/examples/wiring-a.example.ts",
-  "wa-cred-oauth2": "lib/examples/wiring-a.example.ts",
-  "wa-cred-singleton": "lib/examples/wiring-a.example.ts",
-  "wa-cred-api-key": "lib/examples/wiring-a.example.ts",
-  "wa-cred-agent": "lib/examples/wiring-a.example.ts",
-  "wb-queue-worker-config": "lib/examples/wiring-b.example.ts",
-  "wb-queue-error-handling": "lib/examples/wiring-b.example.ts",
-  "wb-queue-add-job": "lib/examples/wiring-b.example.ts",
-  "wb-queue-job-status": "lib/examples/wiring-b.example.ts",
-  "wb-queue-wait-for-completion": "lib/examples/wiring-b.example.ts",
-  "wb-queue-lock-duration": "lib/examples/wiring-b.example.ts",
-  "wb-queue-priority-workers": "lib/examples/wiring-b.example.ts",
-  "wb-queue-enqueue-by-priority": "lib/examples/wiring-b.example.ts",
-  "wb-rpc-remote-call": "lib/examples/wiring-b.example.ts",
-  "wb-rpc-error-handling": "lib/examples/wiring-b.example.ts",
-  "wb-rpc-exposed-endpoint": "lib/examples/wiring-b.example.ts",
-  "wb-rpc-deployment-start": "lib/examples/wiring-b.example.ts",
-  "wb-channel-authenticate": "lib/examples/wiring-b.example.ts",
-  "wb-channel-authenticate-wiring": "lib/examples/wiring-b.example.ts",
-  "wb-channel-lifecycle": "lib/examples/wiring-b.example.ts",
-  "wb-channel-lifecycle-wiring": "lib/examples/wiring-b.example.ts",
-  "wb-channel-opening-data": "lib/examples/wiring-b.example.ts",
-  "wb-channel-send": "lib/examples/wiring-b.example.ts",
-  "wb-channel-room-connect": "lib/examples/wiring-b.example.ts",
-  "wb-channel-broadcast": "lib/examples/wiring-b.example.ts",
-  "wb-cron-void-func": "lib/examples/wiring-b.example.ts",
-  "wb-cron-manual-trigger": "lib/examples/wiring-b.example.ts",
-  "wb-cron-expressions": "lib/examples/wiring-b.example.ts",
-  "wb-cron-basic-wiring": "lib/examples/wiring-b.example.ts",
-  "wb-cron-metrics-middleware": "lib/examples/wiring-b.example.ts",
-  "wb-cron-middleware-wiring": "lib/examples/wiring-b.example.ts",
-  "wb-cron-error-handling": "lib/examples/wiring-b.example.ts",
-  "wb-cron-grouped": "lib/examples/wiring-b.example.ts",
-  "wb-cron-orchestrate": "lib/examples/wiring-b.example.ts",
-  "wb-gateway-handler": "lib/examples/wiring-b.example.ts",
-  "wb-gateway-webhook": "lib/examples/wiring-b.example.ts",
-  "wb-gateway-listener": "lib/examples/wiring-b.example.ts",
-  "wb-gateway-adapter-factory": "lib/examples/wiring-b.example.ts",
-  "wb-gateway-middleware": "lib/examples/wiring-b.example.ts",
-  "wb-gateway-service": "lib/examples/wiring-b.example.ts",
-  "wb-gateway-multiple": "lib/examples/wiring-b.example.ts",
-  "wb-cli-parameters": "lib/examples/wiring-b.example.ts",
-  "wb-cli-nested": "lib/examples/wiring-b.example.ts",
-  "wb-cli-progress": "lib/examples/wiring-b.example.ts",
-  "wb-cli-remote-renderers": "lib/examples/wiring-b.example.ts",
-  "wb-agent-basic": "lib/examples/wiring-b.example.ts",
-  "wb-agent-multi": "lib/examples/wiring-b.example.ts",
-  "wb-agent-model": "lib/examples/wiring-b.example.ts",
-  "wb-agent-voice": "lib/examples/wiring-b.example.ts",
-  "firstMiddleware": "lib/middleware.example.ts",
-  "bearerAuth": "lib/middleware.example.ts",
-  "apiKeyAuth": "lib/middleware.example.ts",
-  "cookieAuth": "lib/middleware.example.ts",
-  "machineAuth": "lib/middleware.example.ts",
-  "corsMiddleware": "lib/middleware.example.ts",
-  "requireOrigin": "lib/middleware.example.ts",
-  "middlewareFactory": "lib/middleware.example.ts",
-  "middlewareSignature": "lib/middleware.example.ts",
-  "authMiddleware": "lib/middleware.example.ts",
-  "functionMiddleware": "lib/middleware.example.ts",
-  "tagMiddleware": "lib/middleware.example.ts",
-  "channelMiddleware": "lib/middleware.example.ts",
-  "channelMiddlewareFactory": "lib/middleware.example.ts",
-  "addChannelMiddleware": "lib/middleware.example.ts",
-  "agentMiddleware": "lib/middleware.example.ts",
-  "middlewareOrder": "lib/middleware.example.ts",
-  "transportAware": "lib/middleware.example.ts",
-  "errorHandlerMiddleware": "lib/middleware.example.ts",
-  "conditionalCache": "lib/middleware.example.ts",
-  "cookieParser": "lib/middleware.example.ts",
-  "definePersonas": "personas.virtual-user.ts",
-  "defineRoles": "roles.ts",
-  "defineScopes": "scopes.ts",
-  "shopServices": "services.ts",
-  "shopWireServices": "services.ts",
-  "workflowSteps": "wirings/checkout.workflow.ts",
-  "shopSecretUsage": "wirings/checkout.workflow.ts",
-  "queuePublish": "wirings/checkout.workflow.ts",
-  "wireWorkflow": "wirings/checkout.workflow.ts",
-  "checkoutWorkflow": "wirings/checkout.workflow.ts",
-  "workflowHTTPWiring": "wirings/checkout.workflow.ts",
-  "workflowBranching": "wirings/checkout.workflow.ts",
-  "workflowPatterns": "wirings/checkout.workflow.ts",
-  "aiAgent": "wirings/shop.bot.ts",
-  "aiAgentInvoke": "wirings/shop.bot.ts",
-  "aiAgentStream": "wirings/shop.bot.ts",
-  "aiAgentApprove": "wirings/shop.bot.ts",
-  "wireChannel": "wirings/shop.channel.ts",
-  "orderStatusChannel": "wirings/shop.channel.ts",
-  "channelWiring": "wirings/shop.channel.ts",
-  "channelPubSub": "wirings/shop.channel.ts",
-  "remoteChannelFunc": "wirings/shop.channel.ts",
-  "wireCli": "wirings/shop.cli.ts",
-  "cliSubcommands": "wirings/shop.cli.ts",
-  "cliWiring": "wirings/shop.cli.ts",
-  "cliUsage": "wirings/shop.cli.ts",
-  "cliRenderer": "wirings/shop.cli.ts",
-  "shopCredential": "wirings/shop.credential.ts",
-  "cronMiddleware": "wirings/shop.cron.ts",
-  "wireScheduler": "wirings/shop.cron.ts",
-  "cronWirings": "wirings/shop.cron.ts",
-  "cronSkip": "wirings/shop.cron.ts",
-  "shopAuthScope": "wirings/shop.delete-order.http.ts",
-  "scenarioFeature": "wirings/shop.feature.ts",
-  "gatewayAdapter": "wirings/shop.gateway.ts",
-  "gatewayWebsocket": "wirings/shop.gateway.ts",
-  "wireHttp": "wirings/shop.http.ts",
-  "shopRoutes": "wirings/shop.http.ts",
-  "httpSingleRoute": "wirings/shop.http.ts",
-  "httpAuthRoute": "wirings/shop.http.ts",
-  "httpMiddleware": "wirings/shop.http.ts",
-  "funcMultiWire": "wirings/shop.http.ts",
-  "mcpTools": "wirings/shop.mcp.ts",
-  "mcpSingleTool": "wirings/shop.mcp.ts",
-  "mcpResource": "wirings/shop.mcp.ts",
-  "mcpPrompt": "wirings/shop.mcp.ts",
-  "mcpWireObject": "wirings/shop.mcp.ts",
-  "wireQueue": "wirings/shop.queue.ts",
-  "queueWirings": "wirings/shop.queue.ts",
-  "queueConfig": "wirings/shop.queue.ts",
-  "queueJobControl": "wirings/shop.queue.ts",
-  "rpcFunc": "wirings/shop.rpc.ts",
-  "addonScenarioStep": "wirings/shop.scenario-steps.ts",
-  "platformScenarioStep": "wirings/shop.scenario-steps.ts",
-  "scenarioHook": "wirings/shop.scenario-steps.ts",
-  "scenarioPostJson": "wirings/shop.scenario-steps.ts",
-  "scenarioPollUntil": "wirings/shop.scenario-steps.ts",
-  "scenarioCookieJar": "wirings/shop.scenario-steps.ts",
-  "scenarioRunner": "wirings/shop.scenario-steps.ts",
-  "scenarioSteps": "wirings/shop.scenario.ts",
-  "scenarioBasics": "wirings/shop.scenario.ts",
-  "converseSteps": "wirings/shop.scenario.ts",
-  "scenarioConverse": "wirings/shop.scenario.ts",
-  "agentScorer": "wirings/shop.scoring.ts",
-  "agentJudge": "wirings/shop.scoring.ts",
-  "secrets": "wirings/shop.secret.ts",
-  "shopIsAuthenticated": "wirings/shop.security.ts",
-  "permissionFunction": "wirings/shop.security.ts",
-  "shopIsOrderOwner": "wirings/shop.security.ts",
-  "permissionsCompact": "wirings/shop.security.ts",
-  "wireTrigger": "wirings/shop.trigger.ts",
-  "triggerSource": "wirings/shop.trigger.ts",
-  "variables": "wirings/shop.variable.ts",
-  "co-react-provider": "apps/app/src/examples/core.example.tsx",
-  "co-react-feature-flags": "apps/app/src/examples/core.example.tsx",
-  "i18n-messages-usage": "apps/app/src/i18n/i18n-usage.example.tsx",
-  "enum-label-lookup": "apps/app/src/i18n/i18n-usage.example.tsx",
-  "create-locale-store": "apps/app/src/i18n/locale-store.ts",
-  "paraglide-enums-vite-config": "apps/app/vite.config.ts"
+  "base": "https://github.com/pikkujs/template-online-shop/blob/4a52dd038cececca0f9c5c806747d02ebba77f82/",
+  "sources": {
+    "betterAuthConfig": {
+      "path": "packages/functions/src/auth.ts#L28-L101",
+      "trimmed": true
+    },
+    "fetchClient": {
+      "path": "packages/functions/src/client-examples.ts#L13-L26"
+    },
+    "rpcClient": {
+      "path": "packages/functions/src/client-examples.ts#L30-L39"
+    },
+    "aiAgentInvokeClient": {
+      "path": "packages/functions/src/client-examples.ts#L43-L54"
+    },
+    "aiAgentStreamClient": {
+      "path": "packages/functions/src/client-examples.ts#L58-L68"
+    },
+    "writeFunction": {
+      "path": "packages/functions/src/functions/basket/add-to-basket.function.ts#L13-L55"
+    },
+    "addToBasket": {
+      "path": "packages/functions/src/functions/basket/add-to-basket.function.ts#L12-L56"
+    },
+    "getBasket": {
+      "path": "packages/functions/src/functions/basket/get-basket.function.ts#L28-L82"
+    },
+    "removeFromBasket": {
+      "path": "packages/functions/src/functions/basket/remove-from-basket.function.ts#L10-L27"
+    },
+    "createCategory": {
+      "path": "packages/functions/src/functions/categories/create-category.function.ts#L18-L36"
+    },
+    "listCategories": {
+      "path": "packages/functions/src/functions/categories/list-categories.function.ts#L14-L25"
+    },
+    "shopGetProfile": {
+      "path": "packages/functions/src/functions/get-profile.function.ts#L4-L20"
+    },
+    "sessionFunction": {
+      "path": "packages/functions/src/functions/get-session.function.ts#L13-L33"
+    },
+    "createItem": {
+      "path": "packages/functions/src/functions/items/create-item.function.ts#L24-L62"
+    },
+    "shopVersionedItem": {
+      "path": "packages/functions/src/functions/items/get-item.function.ts#L21-L67",
+      "trimmed": true
+    },
+    "getItem": {
+      "path": "packages/functions/src/functions/items/get-item.function.ts#L71-L98",
+      "trimmed": true
+    },
+    "readFunction": {
+      "path": "packages/functions/src/functions/items/list-items.function.ts#L31-L82",
+      "trimmed": true
+    },
+    "listItems": {
+      "path": "packages/functions/src/functions/items/list-items.function.ts#L30-L83",
+      "trimmed": true
+    },
+    "updateItem": {
+      "path": "packages/functions/src/functions/items/update-item.function.ts#L15-L37"
+    },
+    "queueWorkerFunction": {
+      "path": "packages/functions/src/functions/notifications/send-order-confirmation.function.ts#L11-L45",
+      "trimmed": true
+    },
+    "sendOrderConfirmation": {
+      "path": "packages/functions/src/functions/notifications/send-order-confirmation.function.ts#L10-L46",
+      "trimmed": true
+    },
+    "writeAuditEvent": {
+      "path": "packages/functions/src/functions/notifications/write-audit-event.function.ts#L14-L32"
+    },
+    "lowStockTrigger": {
+      "path": "packages/functions/src/functions/on-low-stock.function.ts#L11-L29"
+    },
+    "cancelOrder": {
+      "path": "packages/functions/src/functions/orders/cancel-order.function.ts#L8-L71"
+    },
+    "auditDispatch": {
+      "path": "packages/functions/src/functions/orders/create-order.function.ts#L127-L132"
+    },
+    "createOrder": {
+      "path": "packages/functions/src/functions/orders/create-order.function.ts#L24-L138"
+    },
+    "scopedFunction": {
+      "path": "packages/functions/src/functions/orders/delete-order.function.ts#L4-L18"
+    },
+    "funcThreeParams": {
+      "path": "packages/functions/src/functions/orders/get-order.function.ts#L24-L71",
+      "trimmed": true
+    },
+    "getOrder": {
+      "path": "packages/functions/src/functions/orders/get-order.function.ts#L23-L72",
+      "trimmed": true
+    },
+    "listOrders": {
+      "path": "packages/functions/src/functions/orders/list-orders.function.ts#L10-L24"
+    },
+    "approvalDescription": {
+      "path": "packages/functions/src/functions/orders/refund-order.function.ts#L7-L33"
+    },
+    "cleanupFunction": {
+      "path": "packages/functions/src/functions/reports/cleanup-abandoned-baskets.function.ts#L5-L23"
+    },
+    "cleanupAbandonedBaskets": {
+      "path": "packages/functions/src/functions/reports/cleanup-abandoned-baskets.function.ts#L4-L24"
+    },
+    "scheduledFunction": {
+      "path": "packages/functions/src/functions/reports/daily-sales-report.function.ts#L5-L59",
+      "trimmed": true
+    },
+    "dailySalesReport": {
+      "path": "packages/functions/src/functions/reports/daily-sales-report.function.ts#L4-L60",
+      "trimmed": true
+    },
+    "rpcInternalCall": {
+      "path": "packages/functions/src/functions/sweep-low-stock.function.ts#L11-L35"
+    },
+    "analyticsEvents": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L23-L32"
+    },
+    "recordAnalyticsEvent": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L36-L46"
+    },
+    "createAnalyticsClient": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L50-L57"
+    },
+    "cookieAnalyticsIdentity": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L61-L64"
+    },
+    "anonymousAnalyticsIdentity": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L68-L70"
+    },
+    "mintVendorCookie": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L81-L93"
+    },
+    "analyticsIdentity": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L97-L104"
+    },
+    "analyticsService": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L108-L113"
+    },
+    "analyticsServices": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L117-L121"
+    },
+    "fanOutAnalytics": {
+      "path": "packages/functions/src/lib/analytics.example.ts#L125-L132"
+    },
+    "missingServiceError": {
+      "path": "packages/functions/src/lib/error.example.ts#L13-L17"
+    },
+    "isExpectedError": {
+      "path": "packages/functions/src/lib/error.example.ts#L21-L24"
+    },
+    "errorUsage": {
+      "path": "packages/functions/src/lib/error.example.ts#L28-L50"
+    },
+    "addError": {
+      "path": "packages/functions/src/lib/error.example.ts#L54-L71"
+    },
+    "customErrorUsage": {
+      "path": "packages/functions/src/lib/error.example.ts#L75-L104"
+    },
+    "errorMessages": {
+      "path": "packages/functions/src/lib/error.example.ts#L108-L120"
+    },
+    "extendPikkuError": {
+      "path": "packages/functions/src/lib/error.example.ts#L124-L124"
+    },
+    "co-func-basic": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L42-L56"
+    },
+    "co-func-services": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L60-L67"
+    },
+    "co-func-wire-http": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L71-L76"
+    },
+    "co-func-typed-input": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L80-L95"
+    },
+    "co-func-session-read": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L99-L104"
+    },
+    "co-func-auth-flow": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L108-L142"
+    },
+    "co-permission-basic": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L146-L160"
+    },
+    "co-permission-on-func": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L164-L178"
+    },
+    "co-permission-quota": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L182-L205"
+    },
+    "co-permission-global": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L209-L212"
+    },
+    "co-permission-throw-vs-false": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L216-L237"
+    },
+    "co-auth-flags": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L241-L263"
+    },
+    "co-auth-with-permissions": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L267-L277"
+    },
+    "co-permission-factory": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L281-L298"
+    },
+    "co-func-errors": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L302-L320"
+    },
+    "co-func-zod": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L324-L340"
+    },
+    "co-func-expose": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L344-L352"
+    },
+    "co-session-update": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L356-L363"
+    },
+    "co-session-optional": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L367-L380"
+    },
+    "co-session-refresh-middleware": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L384-L390"
+    },
+    "co-session-wire-ops": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L394-L402"
+    },
+    "co-wire-http": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L406-L420"
+    },
+    "co-wire-channel": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L424-L432"
+    },
+    "co-wire-trigger": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L436-L445"
+    },
+    "co-wire-rpc-remote": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L449-L458"
+    },
+    "co-service-interface": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L462-L482"
+    },
+    "co-service-use": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L486-L502"
+    },
+    "co-lifecycle-minimal": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L506-L510"
+    },
+    "co-lifecycle": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L517-L533"
+    },
+    "co-feature-flags-define": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L537-L547"
+    },
+    "co-feature-flag-assert": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L551-L562"
+    },
+    "co-feature-flag-resolve": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L566-L580"
+    },
+    "co-scenario-step": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L584-L599"
+    },
+    "co-eventhub-broadcast-all": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L603-L612"
+    },
+    "co-eventhub-exclude-sender": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L616-L625"
+    },
+    "co-eventhub-room": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L629-L662"
+    },
+    "co-eventhub-presence": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L666-L682"
+    },
+    "co-eventhub-notifications": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L686-L706"
+    },
+    "co-exception-usage": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L710-L753",
+      "trimmed": true
+    },
+    "co-exception-messages": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L757-L767"
+    },
+    "co-logger-usage": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L771-L777"
+    },
+    "co-audit-function": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L781-L792"
+    },
+    "co-email-send": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L796-L804"
+    },
+    "co-jwt-encode-decode": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L808-L844",
+      "trimmed": true
+    },
+    "co-scheduler-rpc": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L848-L853"
+    },
+    "co-user-session-service": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L857-L874"
+    },
+    "co-variables-typed": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L878-L884"
+    },
+    "co-variables-service": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L888-L898"
+    },
+    "co-versioning-invoke": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L902-L911"
+    },
+    "co-node-metadata": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L915-L935"
+    },
+    "co-create-api-key": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L939-L944"
+    },
+    "co-cookie-login": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L948-L965"
+    },
+    "co-credential-read": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L969-L981"
+    },
+    "co-credential-service": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L985-L999"
+    },
+    "co-oauth-app-secret": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1003-L1014"
+    },
+    "co-cors-global": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1018-L1025"
+    },
+    "co-http-timeout": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1029-L1040"
+    },
+    "co-telemetry": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1044-L1046"
+    },
+    "co-better-auth-session": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1050-L1060"
+    },
+    "co-better-auth-stateless": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1064-L1066"
+    },
+    "co-arch-func": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1070-L1085"
+    },
+    "co-arch-wire": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1089-L1110"
+    },
+    "co-arch-registration": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1114-L1139"
+    },
+    "co-arch-tags": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1143-L1158"
+    },
+    "co-philosophy-email": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1162-L1181"
+    },
+    "co-philosophy-wire": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1185-L1191"
+    },
+    "co-types-func": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1195-L1203"
+    },
+    "co-comparison-pikku": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1207-L1226"
+    },
+    "co-treeshake-wiring": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1230-L1252"
+    },
+    "co-treeshake-tags": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1256-L1259"
+    },
+    "co-test-direct-call": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1263-L1285"
+    },
+    "co-test-session": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1289-L1307"
+    },
+    "co-test-error": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1311-L1326"
+    },
+    "co-test-mock-helper": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1330-L1357"
+    },
+    "co-secret-client": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1361-L1370"
+    },
+    "ea-addon-secret-override": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L21-L26"
+    },
+    "ea-addon-namespace": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L32-L34"
+    },
+    "ea-addon-local-vs-remote": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L40-L48"
+    },
+    "ea-define-crm-credential": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L54-L60"
+    },
+    "ea-define-crm-secret": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L66-L73"
+    },
+    "ea-addon-package-name": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L79-L80"
+    },
+    "ea-remote-addon-credential": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L86-L92"
+    },
+    "ea-remote-addon-secret": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L98-L105"
+    },
+    "ea-addon-mcp-list": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L111-L116"
+    },
+    "ea-addon-mcp-all": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L122-L123"
+    },
+    "ea-addon-expose": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L129-L133"
+    },
+    "ea-addon-expose-inline": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L139-L144"
+    },
+    "ea-define-screens": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L149-L160"
+    },
+    "ea-addon-no-ui": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L165-L166"
+    },
+    "ea-addon-ui": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L172-L173"
+    },
+    "ea-node-config": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L182-L186"
+    },
+    "ea-agent-model": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L194-L200"
+    },
+    "ea-agent-addon-tool": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L204-L211"
+    },
+    "ea-agent-first-party-tool": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L215-L222"
+    },
+    "ea-tool-description": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L226-L238"
+    },
+    "ea-agent-provider-options": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L242-L253"
+    },
+    "ea-http-tags": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L262-L268"
+    },
+    "ea-http-func": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L274-L282"
+    },
+    "ea-execute-cli": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L288-L293"
+    },
+    "ea-services-destructured": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L302-L311"
+    },
+    "ea-wires-destructured": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L315-L321"
+    },
+    "ea-static-import": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L325-L332"
+    },
+    "ea-lazy-service-setup": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L336-L342"
+    },
+    "ea-exported-contract-type": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L350-L361"
+    },
+    "ea-inline-contract-type": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L365-L371"
+    },
+    "ea-exported-schema": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L375-L381"
+    },
+    "ea-schema-file": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L385-L386"
+    },
+    "ea-wiring-file": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L391-L396"
+    },
+    "ea-wire-shape-schema": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L401-L405"
+    },
+    "ea-convert-in-function": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L409-L416"
+    },
+    "ea-schema-constraints": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L420-L425"
+    },
+    "ea-schema-output-date": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L429-L433"
+    },
+    "ea-annotation-boolean": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L441-L446"
+    },
+    "ea-annotation-json": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L450-L455"
+    },
+    "ea-annotation-number": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L459-L464"
+    },
+    "ea-annotation-format": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L468-L473"
+    },
+    "ea-annotation-hashed": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L477-L482"
+    },
+    "ea-annotation-plain": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L486-L491"
+    },
+    "ea-annotation-no-form": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L495-L500"
+    },
+    "ea-annotation-wrapped": {
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L504-L509"
+    },
+    "eb-exported-pikku-func": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L10-L14"
+    },
+    "eb-public-and-private-routes": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L18-L31"
+    },
+    "eb-exposed-requires-session": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L35-L41"
+    },
+    "eb-exposed-with-permission": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L45-L57"
+    },
+    "eb-exposed-public-on-purpose": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L61-L68"
+    },
+    "eb-addon-gate": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L72-L74"
+    },
+    "eb-internal-only-func": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L78-L83"
+    },
+    "eb-safe-projection": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L87-L97"
+    },
+    "eb-log-id-not-person": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L101-L111"
+    },
+    "eb-wire-graph-addon": {
+      "path": "packages/functions/src/lib/examples/errors-b.example.ts#L115-L117"
+    },
+    "rt-wire-addon-local": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L6-L11"
+    },
+    "rt-wire-addon-postgres": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L15-L20"
+    },
+    "rt-addon-expose": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L24-L34"
+    },
+    "rt-addon-typed-invoke": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L38-L48"
+    },
+    "rt-addon-trigger-handler": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L52-L67"
+    },
+    "rt-wire-addon-multiple": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L71-L75"
+    },
+    "rt-wire-addon-secret-overrides": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L79-L87"
+    },
+    "rt-wire-addon-labels": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L91-L93"
+    },
+    "rt-wire-addon-global-credentials": {
+      "path": "packages/functions/src/lib/examples/runtimes.example.ts#L97-L104"
+    },
+    "wa-http-first-function": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L15-L30"
+    },
+    "wa-http-first-wire": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L69-L75"
+    },
+    "wa-http-permissions": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L79-L88"
+    },
+    "wa-http-wiring-config": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L92-L105"
+    },
+    "wa-http-route-params": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L109-L121"
+    },
+    "wa-http-public-route": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L125-L133"
+    },
+    "wa-http-wire-middleware": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L137-L144"
+    },
+    "wa-http-global-pattern-middleware": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L158-L164"
+    },
+    "wa-http-sse-flag": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L168-L175"
+    },
+    "wa-http-data-flow-get": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L179-L189"
+    },
+    "wa-http-data-flow-post": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L193-L203"
+    },
+    "wa-http-custom-error": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L207-L213"
+    },
+    "wa-http-error-usage": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L217-L243"
+    },
+    "wa-http-define-routes": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L262-L273"
+    },
+    "wa-http-wire-route-groups": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L284-L291"
+    },
+    "wa-http-base-path": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L295-L304"
+    },
+    "wa-http-route-array": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L308-L316"
+    },
+    "wa-router-add-http-middleware": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L337-L343"
+    },
+    "wa-router-global-middleware": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L347-L367"
+    },
+    "wa-router-pattern-middleware": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L371-L424",
+      "trimmed": true
+    },
+    "wa-router-global-permission": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L430-L433"
+    },
+    "wa-router-jwt-auth": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L437-L458"
+    },
+    "wa-router-request-logger": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L462-L480"
+    },
+    "wa-router-security-headers": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L484-L498"
+    },
+    "wa-cors-middleware": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L502-L506"
+    },
+    "wa-sse-progress": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L517-L527"
+    },
+    "wa-sse-periodic": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L537-L549"
+    },
+    "wa-sse-functions": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L512-L553"
+    },
+    "wa-sse-stream-protocol": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L561-L569"
+    },
+    "wa-sse-wiring": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L573-L576"
+    },
+    "wa-sse-dual-wiring": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L580-L586"
+    },
+    "wa-sse-initial-message": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L593-L598"
+    },
+    "wa-sse-finite-close": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L610-L615"
+    },
+    "wa-fetch-subscribe-sse": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L627-L636"
+    },
+    "wa-openapi-wire": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L640-L653"
+    },
+    "wa-mcp-first-functions": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L668-L699"
+    },
+    "wa-mcp-first-wiring": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L703-L716"
+    },
+    "wa-mcp-typed-resource": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L720-L724"
+    },
+    "wa-mcp-search-resource": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L728-L742"
+    },
+    "wa-mcp-review-prompt": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L746-L764"
+    },
+    "wa-mcp-wiring-config": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L768-L781"
+    },
+    "wa-mcp-error": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L785-L791"
+    },
+    "wa-mcp-error-usage": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L795-L814"
+    },
+    "wa-mcp-tool-first": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L820-L856",
+      "trimmed": true
+    },
+    "wa-mcp-expose-true": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L860-L873"
+    },
+    "wa-mcp-addon-all": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L877-L884"
+    },
+    "wa-mcp-addon-list": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L888-L895"
+    },
+    "wa-mcp-complex-domain": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L899-L914"
+    },
+    "wa-mcp-complex-adapter": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L918-L932"
+    },
+    "wa-mcp-image-tool": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L936-L954"
+    },
+    "wa-mcp-tool-config": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L958-L972"
+    },
+    "wa-mcp-res-first": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L978-L1012",
+      "trimmed": true
+    },
+    "wa-mcp-res-first-wiring": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1016-L1024"
+    },
+    "wa-mcp-res-static": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1028-L1039"
+    },
+    "wa-mcp-res-param-adapter": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1043-L1056"
+    },
+    "wa-mcp-res-wiring-config": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1060-L1072"
+    },
+    "wa-mcp-res-errors-domain": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1076-L1098"
+    },
+    "wa-mcp-res-errors-adapter": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1102-L1113"
+    },
+    "wa-mcp-res-multi-adapter": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1117-L1134"
+    },
+    "wa-mcp-prompt-static": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1140-L1150"
+    },
+    "wa-mcp-prompt-dynamic": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1154-L1199",
+      "trimmed": true
+    },
+    "wa-mcp-prompt-register": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1203-L1217"
+    },
+    "wa-mcp-prompt-multi": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1221-L1240"
+    },
+    "wa-wf-replay": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1256-L1271"
+    },
+    "wa-wf-quick-example": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1275-L1300"
+    },
+    "wa-wf-start": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1304-L1313"
+    },
+    "wa-wf-rpc-step-syntax": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1320-L1328"
+    },
+    "wa-wf-rpc-step-example": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1332-L1346"
+    },
+    "wa-wf-inline-step-syntax": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1350-L1360"
+    },
+    "wa-wf-inline-step-example": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1370-L1389"
+    },
+    "wa-wf-inline-caching": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1393-L1401"
+    },
+    "wa-wf-sleep-examples": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1405-L1407"
+    },
+    "wa-wf-workflow-step-wire": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1414-L1437"
+    },
+    "wa-wf-cancellation": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1441-L1464"
+    },
+    "wa-wf-step-order": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1468-L1482"
+    },
+    "wa-wf-get-run": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1488-L1504"
+    },
+    "wa-wf-get-run-history": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1508-L1523"
+    },
+    "wa-wf-poll": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1527-L1568",
+      "trimmed": true
+    },
+    "wa-graph-basic": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1574-L1616",
+      "trimmed": true
+    },
+    "wa-graph-agent-node": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1620-L1643"
+    },
+    "wa-graph-sequential": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1647-L1658"
+    },
+    "wa-graph-parallel": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1662-L1674"
+    },
+    "wa-graph-branch-fn": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1678-L1698"
+    },
+    "wa-graph-on-error": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1702-L1719"
+    },
+    "wa-graph-state": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1723-L1735"
+    },
+    "wa-cred-define": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1741-L1747"
+    },
+    "wa-cred-oauth2": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1751-L1766"
+    },
+    "wa-cred-singleton": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1770-L1785"
+    },
+    "wa-cred-api-key": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1789-L1794"
+    },
+    "wa-cred-agent": {
+      "path": "packages/functions/src/lib/examples/wiring-a.example.ts#L1798-L1807"
+    },
+    "wb-queue-worker-config": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L38-L64"
+    },
+    "wb-queue-error-handling": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L68-L84"
+    },
+    "wb-queue-add-job": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L88-L114"
+    },
+    "wb-queue-job-status": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L118-L146"
+    },
+    "wb-queue-wait-for-completion": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L150-L164"
+    },
+    "wb-queue-lock-duration": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L176-L187"
+    },
+    "wb-queue-priority-workers": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L191-L208"
+    },
+    "wb-queue-enqueue-by-priority": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L212-L225"
+    },
+    "wb-rpc-remote-call": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L233-L238"
+    },
+    "wb-rpc-error-handling": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L242-L252"
+    },
+    "wb-rpc-exposed-endpoint": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L256-L275"
+    },
+    "wb-rpc-deployment-start": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L279-L295"
+    },
+    "wb-channel-authenticate": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L303-L326"
+    },
+    "wb-channel-authenticate-wiring": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L330-L342"
+    },
+    "wb-channel-lifecycle": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L346-L368"
+    },
+    "wb-channel-lifecycle-wiring": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L372-L387"
+    },
+    "wb-channel-opening-data": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L391-L401"
+    },
+    "wb-channel-send": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L405-L421"
+    },
+    "wb-channel-room-connect": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L425-L440"
+    },
+    "wb-channel-broadcast": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L444-L458"
+    },
+    "wb-cron-void-func": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L466-L477"
+    },
+    "wb-cron-manual-trigger": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L500-L506"
+    },
+    "wb-cron-expressions": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L510-L545"
+    },
+    "wb-cron-basic-wiring": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L549-L559"
+    },
+    "wb-cron-metrics-middleware": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L563-L591"
+    },
+    "wb-cron-middleware-wiring": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L595-L606"
+    },
+    "wb-cron-error-handling": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L610-L623"
+    },
+    "wb-cron-grouped": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L627-L636"
+    },
+    "wb-cron-orchestrate": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L640-L651"
+    },
+    "wb-gateway-handler": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L664-L674"
+    },
+    "wb-gateway-webhook": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L680-L688"
+    },
+    "wb-gateway-listener": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L692-L699"
+    },
+    "wb-gateway-adapter-factory": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L703-L727"
+    },
+    "wb-gateway-middleware": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L731-L757"
+    },
+    "wb-gateway-service": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L761-L769"
+    },
+    "wb-gateway-multiple": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L773-L795"
+    },
+    "wb-cli-parameters": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L803-L818"
+    },
+    "wb-cli-nested": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L822-L835"
+    },
+    "wb-cli-progress": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L839-L850"
+    },
+    "wb-cli-remote-renderers": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L854-L864"
+    },
+    "wb-agent-basic": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L872-L880"
+    },
+    "wb-agent-multi": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L884-L907"
+    },
+    "wb-agent-model": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L911-L918"
+    },
+    "wb-agent-voice": {
+      "path": "packages/functions/src/lib/examples/wiring-b.example.ts#L922-L932"
+    },
+    "firstMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L27-L39"
+    },
+    "bearerAuth": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L44-L53"
+    },
+    "apiKeyAuth": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L57-L64"
+    },
+    "cookieAuth": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L68-L77"
+    },
+    "machineAuth": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L43-L78"
+    },
+    "corsMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L82-L94"
+    },
+    "requireOrigin": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L98-L102"
+    },
+    "middlewareFactory": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L106-L135"
+    },
+    "middlewareSignature": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L139-L144"
+    },
+    "authMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L148-L167"
+    },
+    "functionMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L191-L203"
+    },
+    "tagMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L207-L213"
+    },
+    "channelMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L217-L222"
+    },
+    "channelMiddlewareFactory": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L226-L232"
+    },
+    "addChannelMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L236-L239"
+    },
+    "agentMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L243-L256"
+    },
+    "middlewareOrder": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L260-L275"
+    },
+    "transportAware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L279-L303"
+    },
+    "errorHandlerMiddleware": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L307-L324"
+    },
+    "conditionalCache": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L328-L348"
+    },
+    "cookieParser": {
+      "path": "packages/functions/src/lib/middleware.example.ts#L352-L363"
+    },
+    "definePersonas": {
+      "path": "packages/functions/src/personas.virtual-user.ts#L17-L69",
+      "trimmed": true
+    },
+    "defineRoles": {
+      "path": "packages/functions/src/roles.ts#L18-L50"
+    },
+    "defineScopes": {
+      "path": "packages/functions/src/scopes.ts#L17-L51"
+    },
+    "shopServices": {
+      "path": "packages/functions/src/services.ts#L30-L174",
+      "trimmed": true
+    },
+    "shopWireServices": {
+      "path": "packages/functions/src/services.ts#L178-L196"
+    },
+    "workflowSteps": {
+      "path": "packages/functions/src/wirings/checkout.workflow.ts#L14-L37"
+    },
+    "shopSecretUsage": {
+      "path": "packages/functions/src/wirings/checkout.workflow.ts#L72-L121"
+    },
+    "queuePublish": {
+      "path": "packages/functions/src/wirings/checkout.workflow.ts#L125-L148"
+    },
+    "wireWorkflow": {
+      "path": "packages/functions/src/wirings/checkout.workflow.ts#L153-L193"
+    },
+    "checkoutWorkflow": {
+      "path": "packages/functions/src/wirings/checkout.workflow.ts#L152-L194"
+    },
+    "workflowHTTPWiring": {
+      "path": "packages/functions/src/wirings/checkout.workflow.ts#L198-L221"
+    },
+    "workflowBranching": {
+      "path": "packages/functions/src/wirings/checkout.workflow.ts#L274-L285"
+    },
+    "workflowPatterns": {
+      "path": "packages/functions/src/wirings/checkout.workflow.ts#L246-L294",
+      "trimmed": true
+    },
+    "aiAgent": {
+      "path": "packages/functions/src/wirings/shop.bot.ts#L14-L24"
+    },
+    "aiAgentInvoke": {
+      "path": "packages/functions/src/wirings/shop.bot.ts#L28-L34"
+    },
+    "aiAgentStream": {
+      "path": "packages/functions/src/wirings/shop.bot.ts#L38-L44"
+    },
+    "aiAgentApprove": {
+      "path": "packages/functions/src/wirings/shop.bot.ts#L48-L62"
+    },
+    "wireChannel": {
+      "path": "packages/functions/src/wirings/shop.channel.ts#L19-L29"
+    },
+    "orderStatusChannel": {
+      "path": "packages/functions/src/wirings/shop.channel.ts#L18-L30"
+    },
+    "channelWiring": {
+      "path": "packages/functions/src/wirings/shop.channel.ts#L34-L46"
+    },
+    "channelPubSub": {
+      "path": "packages/functions/src/wirings/shop.channel.ts#L50-L62"
+    },
+    "remoteChannelFunc": {
+      "path": "packages/functions/src/wirings/shop.channel.ts#L66-L76"
+    },
+    "wireCli": {
+      "path": "packages/functions/src/wirings/shop.cli.ts#L8-L15"
+    },
+    "cliSubcommands": {
+      "path": "packages/functions/src/wirings/shop.cli.ts#L7-L16"
+    },
+    "cliWiring": {
+      "path": "packages/functions/src/wirings/shop.cli.ts#L20-L28"
+    },
+    "cliUsage": {
+      "path": "packages/functions/src/wirings/shop.cli.ts#L32-L41"
+    },
+    "cliRenderer": {
+      "path": "packages/functions/src/wirings/shop.cli.ts#L45-L54"
+    },
+    "shopCredential": {
+      "path": "packages/functions/src/wirings/shop.credential.ts#L22-L39"
+    },
+    "cronMiddleware": {
+      "path": "packages/functions/src/wirings/shop.cron.ts#L8-L23"
+    },
+    "wireScheduler": {
+      "path": "packages/functions/src/wirings/shop.cron.ts#L18-L30"
+    },
+    "cronWirings": {
+      "path": "packages/functions/src/wirings/shop.cron.ts#L17-L31"
+    },
+    "cronSkip": {
+      "path": "packages/functions/src/wirings/shop.cron.ts#L35-L61"
+    },
+    "shopAuthScope": {
+      "path": "packages/functions/src/wirings/shop.delete-order.http.ts#L5-L16"
+    },
+    "scenarioFeature": {
+      "path": "packages/functions/src/wirings/shop.feature.ts#L6-L17"
+    },
+    "gatewayAdapter": {
+      "path": "packages/functions/src/wirings/shop.gateway.ts#L17-L39"
+    },
+    "gatewayWebsocket": {
+      "path": "packages/functions/src/wirings/shop.gateway.ts#L43-L52"
+    },
+    "wireHttp": {
+      "path": "packages/functions/src/wirings/shop.http.ts#L22-L51",
+      "trimmed": true
+    },
+    "shopRoutes": {
+      "path": "packages/functions/src/wirings/shop.http.ts#L21-L52",
+      "trimmed": true
+    },
+    "httpSingleRoute": {
+      "path": "packages/functions/src/wirings/shop.http.ts#L58-L64"
+    },
+    "httpAuthRoute": {
+      "path": "packages/functions/src/wirings/shop.http.ts#L68-L72"
+    },
+    "httpMiddleware": {
+      "path": "packages/functions/src/wirings/shop.http.ts#L76-L91"
+    },
+    "funcMultiWire": {
+      "path": "packages/functions/src/wirings/shop.http.ts#L95-L97"
+    },
+    "mcpTools": {
+      "path": "packages/functions/src/wirings/shop.mcp.ts#L4-L38",
+      "trimmed": true
+    },
+    "mcpSingleTool": {
+      "path": "packages/functions/src/wirings/shop.mcp.ts#L42-L49"
+    },
+    "mcpResource": {
+      "path": "packages/functions/src/wirings/shop.mcp.ts#L53-L70"
+    },
+    "mcpPrompt": {
+      "path": "packages/functions/src/wirings/shop.mcp.ts#L74-L91"
+    },
+    "mcpWireObject": {
+      "path": "packages/functions/src/wirings/shop.mcp.ts#L95-L119"
+    },
+    "wireQueue": {
+      "path": "packages/functions/src/wirings/shop.queue.ts#L9-L17"
+    },
+    "queueWirings": {
+      "path": "packages/functions/src/wirings/shop.queue.ts#L8-L18"
+    },
+    "queueConfig": {
+      "path": "packages/functions/src/wirings/shop.queue.ts#L22-L32"
+    },
+    "queueJobControl": {
+      "path": "packages/functions/src/wirings/shop.queue.ts#L37-L56"
+    },
+    "rpcFunc": {
+      "path": "packages/functions/src/wirings/shop.rpc.ts#L5-L20"
+    },
+    "addonScenarioStep": {
+      "path": "packages/functions/src/wirings/shop.scenario-steps.ts#L14-L37"
+    },
+    "platformScenarioStep": {
+      "path": "packages/functions/src/wirings/shop.scenario-steps.ts#L41-L51"
+    },
+    "scenarioHook": {
+      "path": "packages/functions/src/wirings/shop.scenario-steps.ts#L55-L66"
+    },
+    "scenarioPostJson": {
+      "path": "packages/functions/src/wirings/shop.scenario-steps.ts#L79-L84"
+    },
+    "scenarioPollUntil": {
+      "path": "packages/functions/src/wirings/shop.scenario-steps.ts#L88-L98"
+    },
+    "scenarioCookieJar": {
+      "path": "packages/functions/src/wirings/shop.scenario-steps.ts#L113-L122"
+    },
+    "scenarioRunner": {
+      "path": "packages/functions/src/wirings/shop.scenario-steps.ts#L129-L129"
+    },
+    "scenarioSteps": {
+      "path": "packages/functions/src/wirings/shop.scenario.ts#L22-L39"
+    },
+    "scenarioBasics": {
+      "path": "packages/functions/src/wirings/shop.scenario.ts#L4-L76",
+      "trimmed": true
+    },
+    "converseSteps": {
+      "path": "packages/functions/src/wirings/shop.scenario.ts#L96-L111"
+    },
+    "scenarioConverse": {
+      "path": "packages/functions/src/wirings/shop.scenario.ts#L80-L116",
+      "trimmed": true
+    },
+    "agentScorer": {
+      "path": "packages/functions/src/wirings/shop.scoring.ts#L4-L19"
+    },
+    "agentJudge": {
+      "path": "packages/functions/src/wirings/shop.scoring.ts#L23-L31"
+    },
+    "secrets": {
+      "path": "packages/functions/src/wirings/shop.secret.ts#L5-L16"
+    },
+    "shopIsAuthenticated": {
+      "path": "packages/functions/src/wirings/shop.security.ts#L4-L6"
+    },
+    "permissionFunction": {
+      "path": "packages/functions/src/wirings/shop.security.ts#L11-L20"
+    },
+    "shopIsOrderOwner": {
+      "path": "packages/functions/src/wirings/shop.security.ts#L10-L21"
+    },
+    "permissionsCompact": {
+      "path": "packages/functions/src/wirings/shop.security.ts#L25-L26"
+    },
+    "wireTrigger": {
+      "path": "packages/functions/src/wirings/shop.trigger.ts#L7-L10"
+    },
+    "triggerSource": {
+      "path": "packages/functions/src/wirings/shop.trigger.ts#L14-L27"
+    },
+    "variables": {
+      "path": "packages/functions/src/wirings/shop.variable.ts#L5-L44",
+      "trimmed": true
+    },
+    "co-react-provider": {
+      "path": "apps/app/src/examples/core.example.tsx#L7-L13"
+    },
+    "co-react-feature-flags": {
+      "path": "apps/app/src/examples/core.example.tsx#L17-L26"
+    },
+    "i18n-messages-usage": {
+      "path": "apps/app/src/i18n/i18n-usage.example.tsx#L6-L17"
+    },
+    "enum-label-lookup": {
+      "path": "apps/app/src/i18n/i18n-usage.example.tsx#L21-L32"
+    },
+    "create-locale-store": {
+      "path": "apps/app/src/i18n/locale-store.ts#L6-L15"
+    },
+    "paraglide-enums-vite-config": {
+      "path": "apps/app/vite.config.ts#L17-L26"
+    }
+  }
 }

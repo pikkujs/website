@@ -40,6 +40,9 @@
 .pk-code-copy:hover { color: var(--paper-accent-dark); border-color: var(--code-block-border); }
 @media (hover: none) { .pk-code-copy { opacity: 1; } }
 .pk-code-title + .pk-code-copy { top: .28rem; }
+.pk-code + .pk-code-source { margin: -.9em 0 1.4em; text-align: right; font: .75rem var(--font-mono); }
+.pk-code-source a { color: var(--paper-text-muted); }
+.pk-code-source a:hover { color: var(--paper-accent-dark); }
 
 /* Admonitions */
 .pk-adm { --c: var(--paper-text-faint); margin: 1.5em 0; padding: .9rem 1.1rem; border: 1px solid color-mix(in srgb, var(--c) 40%, var(--paper-border)); border-left: 4px solid var(--c); border-radius: 12px; background: color-mix(in srgb, var(--c) 9%, var(--paper-bg)); font-size: .95em; }

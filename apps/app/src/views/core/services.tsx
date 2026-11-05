@@ -7,7 +7,6 @@ import { PaperPage, CodeCard } from '@/components/PaperLayout';
 import styles from './services.module.css';
 
 import snippets from '@/data/snippets.json';
-import { snippetSourceUrl } from '@/lib/snippets';
 
 const singletonCode = snippets.shopServices;
 const wireCode = snippets.shopWireServices;
@@ -71,10 +70,10 @@ function TwoFactoriesSection() {
             ))}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <CodeCard sourceUrl={snippetSourceUrl('shopServices')} filename="services.ts" badge="startup" icon={<Database size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard snippet="shopServices" filename="services.ts" badge="startup" icon={<Database size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{singletonCode}</CodeBlock>
             </CodeCard>
-            <CodeCard sourceUrl={snippetSourceUrl('shopWireServices')} filename="services.ts" badge="per-request" icon={<RefreshCw size={13} style={{ color: '#c2410c' }} />}>
+            <CodeCard snippet="shopWireServices" filename="services.ts" badge="per-request" icon={<RefreshCw size={13} style={{ color: '#c2410c' }} />}>
               <CodeBlock language="typescript">{wireCode}</CodeBlock>
             </CodeCard>
           </div>
