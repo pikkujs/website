@@ -6,7 +6,7 @@ const PIECES = ['Database', 'Queue', 'Scheduler', 'Email', 'Secrets', 'AI']
 export function LayersScene() {
   return (
     <>
-      <svg viewBox="0 0 1000 470" className="hidden md:block w-full h-auto" role="img" aria-labelledby="layT">
+      <svg viewBox="0 0 1000 500" className="hidden md:block w-full h-auto" role="img" aria-labelledby="layT">
         <title id="layT">
           A layer cake. On top, five apps: web, iOS and Android, desktop, CLI and MCP. In the middle,
           one orange chameleon labelled "your functions". Underneath, six swappable pieces:
@@ -16,10 +16,10 @@ export function LayersScene() {
         <ellipse cx="500" cy="235" rx="360" ry="62" fill="#e8b48f" opacity=".4" filter="url(#wash)" />
         <g fill="none" stroke="var(--paper-text)" strokeWidth="2.2" strokeLinecap="round" className="march" filter="url(#rough)">
           {APPS.map((_, i) => (
-            <path key={i} d={`M${115 + i * 192.5} 112 C ${115 + i * 192.5} 175, ${450 + i * 15} 165, ${450 + i * 15} 218`} />
+            <path key={i} d={`M${115 + i * 192.5} 122 Q ${(115 + i * 192.5 + 444 + i * 18) / 2} 134, ${444 + i * 18} 172`} />
           ))}
           {PIECES.map((_, i) => (
-            <path key={i} d={`M${100 + i * 160} 358 C ${100 + i * 160} 300, ${445 + i * 18} 330, ${445 + i * 18} 282`} />
+            <path key={i} d={`M${91 + i * 160} 380 Q ${(91 + i * 160 + 430 + i * 20) / 2} 368, ${430 + i * 20} 324`} />
           ))}
         </g>
         <g stroke="var(--paper-text)" strokeWidth="2.2" strokeLinejoin="round" fill="var(--paper-bg-alt)" filter="url(#rough)">
@@ -27,7 +27,7 @@ export function LayersScene() {
             <path key={i} d={`M${40 + i * 192.5} 24 L${190 + i * 192.5} 20 L${192 + i * 192.5} 110 L${38 + i * 192.5} 114 Z`} />
           ))}
           {PIECES.map((_, i) => (
-            <path key={i} d={`M${24 + i * 160} 362 L${158 + i * 160} 360 L${160 + i * 160} 440 L${22 + i * 160} 442 Z`} fill={i % 2 ? 'var(--paper-bg-dark)' : 'var(--paper-bg-alt)'} />
+            <path key={i} d={`M${24 + i * 160} 392 L${158 + i * 160} 390 L${160 + i * 160} 470 L${22 + i * 160} 472 Z`} fill={i % 2 ? 'var(--paper-bg-dark)' : 'var(--paper-bg-alt)'} />
           ))}
         </g>
         <g fontSize="30" fill="var(--paper-text)" textAnchor="middle">
@@ -35,7 +35,7 @@ export function LayersScene() {
             <text key={a} x={115 + i * 192.5} y="76" fontSize={a.length > 9 ? 24 : 30}>{a}</text>
           ))}
           {PIECES.map((p, i) => (
-            <text key={p} x={91 + i * 160} y="410" fontSize="27">{p}</text>
+            <text key={p} x={91 + i * 160} y="440" fontSize="27">{p}</text>
           ))}
         </g>
         <Pk x={420} y={190} width={120} height={120} color="#c2410c" />
