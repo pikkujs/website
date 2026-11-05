@@ -10,7 +10,7 @@ commands and structure. Dev server: `npm run dev` on port 3005.
   `npm run sync-snippets` from the `.template-online-shop` submodule (edit there, push, sync, commit both).
   Trim examples with `// @snippet hide` / `show`; `keep` and `skip` override the rule that drops 3+ line comments.
 - The Console is deleted. No Console links, docs, `pikku serve --console`, or mega-menu entry.
-- Deleted pages, never re-link: `/pricing`, `/use-cases/*`, `/instant-reload`, `/manual-setup`.
+- Deleted pages, never re-link: `/pricing`, `/use-cases/*`, `/instant-reload`, `/manual-setup`, `/developers`.
 - No X or Discord links, no GitHub star-count badge.
 - The link gate (`npm run build` / `npm run check-links`) must stay at 0 broken. Exceptions go in `link-gate.config.mjs` only.
 - Keep the prerender bundle lean: Shiki runs at MDX compile time, and heavy browser-only libs (mermaid, apexcharts,

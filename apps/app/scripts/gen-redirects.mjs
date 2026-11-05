@@ -13,7 +13,7 @@ const page = (to) => {
 }
 const surface = JSON.parse(fs.readFileSync('src/data/surface.json', 'utf8'))
 const app = surface.entryPoints.find((e) => e.id === 'app')
-const r = new Map([[OLD, '/api'], [`${OLD}/addons`, '/api#addon'], ['/fabric', 'https://pikkufabric.com'], ['/wires/bot', '/wires/agent']])
+const r = new Map([[OLD, '/api'], [`${OLD}/addons`, '/api#addon'], ['/fabric', 'https://pikkufabric.com'], ['/developers', '/'], ['/wires/bot', '/wires/agent']])
 for (const s of new Set(Object.values(SLUGS))) r.set(`${OLD}/${s}`, '/api')
 for (const leaf of app.leaves) { const s = SLUGS[leaf.step]; if (s) r.set(`${OLD}/${s}/${leaf.name}`, `/api#app/${leaf.name}`) }
 for (const [from, to] of r) { const d = path.join('public', from); fs.mkdirSync(d, { recursive: true }); fs.writeFileSync(path.join(d, 'index.html'), page(to)) }

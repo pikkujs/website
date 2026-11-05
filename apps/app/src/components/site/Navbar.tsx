@@ -25,7 +25,6 @@ export function Navbar() {
     window.addEventListener('pikku:search', open)
     return () => { window.removeEventListener('keydown', k); window.removeEventListener('pikku:search', open) }
   }, [])
-  const onDev = path === '/developers'
   const active = (to: string) => path === to || path.startsWith(to + '/')
   return (
     <header className="site-nav">
@@ -39,7 +38,6 @@ export function Navbar() {
           {primaryLinks.map((l) => <RLink key={l.to} to={l.to as any} className={`nav-link${active(l.to) ? ' is-active' : ''}`} aria-current={active(l.to) ? 'page' : undefined}>{l.label}</RLink>)}
         </div>
         <div className="nav-right">
-          <RLink to={(onDev ? '/' : '/developers') as any} className="navbar-dev-pill">{onDev ? '← Platform overview' : 'For developers →'}</RLink>
           <button type="button" className="nav-search" onClick={() => setSearch(true)} aria-label="Search the docs (Ctrl or Cmd K)">
             <Search size={16} aria-hidden /><span className="nav-search-label">Search</span><kbd>⌘K</kbd>
           </button>
@@ -59,7 +57,6 @@ export function Navbar() {
             </div>
             <div className="sheet-body">
               <button type="button" className="nav-search sheet-search" onClick={() => { setMenu(false); setSearch(true) }}><Search size={16} aria-hidden /> Search the docs</button>
-              <RLink to={(onDev ? '/' : '/developers') as any} className="navbar-dev-pill sheet-pill">{onDev ? '← Platform overview' : 'For developers →'}</RLink>
               <ul className="sheet-list">
                 {primaryLinks.map((l) => <li key={l.to}><RLink to={l.to as any}>{l.label}</RLink></li>)}
                 <li><a href="https://pikkufabric.com" target="_blank" rel="noopener noreferrer">Fabric ↗</a></li>

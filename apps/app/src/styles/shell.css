@@ -9,8 +9,6 @@
 .nav-link:hover { color: var(--paper-accent-dark); }
 .nav-link.is-active { color: var(--paper-accent-dark); background-image: var(--scribble); background-repeat: no-repeat; background-size: calc(100% - 24px) .45em; background-position: 12px calc(100% - 2px); }
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-.navbar-dev-pill { display: inline-flex; align-items: center; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--paper-border-strong); color: var(--paper-text-body); font: 500 .8rem/1 var(--font-body); white-space: nowrap; transition: border-color .2s, color .2s; }
-.navbar-dev-pill:hover { border-color: var(--paper-accent); color: var(--paper-accent-dark); }
 .nav-icon-btn { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 10px; color: var(--paper-text-body); background: none; border: 0; cursor: pointer; }
 .nav-icon-btn:hover { color: var(--paper-accent-dark); background: var(--paper-bg-dark); }
 .nav-burger { display: none; }
@@ -18,7 +16,7 @@
 .nav-search:hover { border-color: var(--paper-border-strong); color: var(--paper-text); }
 .nav-search kbd, .cmdk-input kbd, .nf-hint kbd { font: 500 .7rem var(--font-mono); padding: 2px 6px; border-radius: 6px; border: 1px solid var(--paper-border); background: var(--paper-bg-dark); color: var(--paper-text-muted); }
 @media (max-width: 1180px) { .nav-search-label, .nav-search kbd { display: none; } .nav-search { width: 38px; padding: 0; justify-content: center; } }
-@media (max-width: 960px) { .nav-links, .nav-gh, .nav-right > .navbar-dev-pill { display: none; } .nav-burger { display: grid; } }
+@media (max-width: 960px) { .nav-links, .nav-gh { display: none; } .nav-burger { display: grid; } }
 
 /* mega menu */
 .mega { position: static; }
@@ -48,7 +46,6 @@
 .sheet-group a { display: block; padding: 8px; font-size: .95rem; color: var(--paper-text-body); border-radius: 8px; }
 .sheet-group a:hover { color: var(--paper-accent-dark); background: var(--paper-bg-dark); }
 .sheet-search { width: 100%; height: 44px; }
-.sheet-pill { align-self: flex-start; }
 .sheet-all { font-weight: 600; color: var(--paper-accent-dark); padding: 8px; }
 @keyframes pk-fade { from { opacity: 0; } }
 @keyframes pk-slide { from { transform: translateX(24px); opacity: 0; } }

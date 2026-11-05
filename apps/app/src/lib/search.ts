@@ -8,7 +8,6 @@ export type SearchRow = [url: string, title: string, description: string, headin
 const SITE_PAGES: SearchRow[] = [
   ['/getting-started', 'Getting started', 'Create a project, run npx pikku dev, deploy', []],
   ['/features', 'Features', 'Two concepts, eleven wire types', []],
-  ['/developers', 'For developers', 'One function, every wiring', []],
   ['/benchmarks', 'Benchmarks', 'Express, Fastify, uWS and in-process fetch compared', []],
   ['/api', 'SDK reference', 'Everything Pikku gives you to import', []],
   ['/addons', 'Addon catalogue', 'Typed functions for hundreds of services', []],
