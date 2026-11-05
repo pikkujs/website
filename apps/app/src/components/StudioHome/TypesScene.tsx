@@ -1,4 +1,4 @@
-import { Blob } from '@pikku/theme-brand'
+import { Pk } from '@pikku/theme-brand'
 const stops = ['Database', 'Function', 'Client', 'Screen']
 
 export function TypesScene() {
@@ -56,7 +56,7 @@ export function TypesScene() {
         <text x="100" y="186" fontSize="22" fill="#5f5143">
           change the database, and the screen finds out at build time
         </text>
-        <Blob pose="blob" x={4} y={-4} width={58} height={58} color="#c2410c" />
+        <Pk x={4} y={-4} width={58} height={58} color="#c2410c" />
       </svg>
 
       <svg
@@ -107,7 +107,7 @@ export function TypesScene() {
         <text x="140" y="456" fontSize="22" fill="#5f5143" textAnchor="middle">
           screen finds out at build time
         </text>
-        <Blob pose="blob" x={212} y={-6} width={56} height={56} color="#c2410c" />
+        <Pk x={212} y={-6} width={56} height={56} color="#c2410c" />
       </svg>
     </>
   )

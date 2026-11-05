@@ -29,7 +29,7 @@
   --font-body: 'Work Sans', 'Work Sans Fallback', system-ui, sans-serif;
   --radius-hand-a: 14px 18px 13px 17px / 17px 13px 18px 14px;
   --radius-hand-b: 16px 12px 17px 13px / 13px 17px 12px 16px;
-  --radius-blob: 52% 48% 50% 50% / 48% 52% 48% 52%;
+  --radius-organic: 52% 48% 50% 50% / 48% 52% 48% 52%;
   --shadow-ink-btn: 3px 4px 0 var(--color-clay);
   --shadow-ink-btn-hover: 5px 6px 0 var(--color-clay);
   --shadow-ink-btn-active: 1px 1px 0 var(--color-clay);

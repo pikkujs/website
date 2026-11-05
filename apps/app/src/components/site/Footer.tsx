@@ -1,4 +1,4 @@
-import { BlobMark } from '@pikku/theme-brand'
+import { Pk } from '@pikku/theme-brand'
 import Link from './Link'
 import { footerColumns } from './nav-data'
 
@@ -7,7 +7,7 @@ export function Footer() {
     <footer className="site-footer">
       <div className="site-footer-in">
         <div className="foot-brand">
-          <BlobMark size={52} color="var(--color-clay)" />
+          <Pk size={52} color="var(--color-clay)" />
           <p>Run a whole platform from one command. Open-source, TypeScript, deploy anywhere.</p>
         </div>
         {footerColumns.map((c) => (

@@ -1,5 +1,5 @@
-export { Blob, BlobMark, BLOB_POSES, BLOB_POSE_IDS } from './Blob'
-export type { BlobProps, BlobPoseName } from './Blob'
+export { Pk } from './Pk'
+export type { PkProps } from './Pk'
 export { SvgDefs } from './SvgDefs'
 export { Steps } from './Steps'
 export type { Step } from './Steps'

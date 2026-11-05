@@ -1,12 +1,12 @@
 import { Link } from '@tanstack/react-router'
-import { Blob } from '@pikku/theme-brand'
+import { Pk } from '@pikku/theme-brand'
 
 /** 404. GitHub Pages serves the prerendered copy (dist/client/404.html) for any unknown path. */
 export function NotFound() {
   return (
     <section className="nf">
       <title>Page not found | Pikku</title>
-      <Blob pose="ask" size={120} color="#c2410c" className="mx-auto" />
+      <Pk size={120} color="var(--color-clay)" className="mx-auto" />
       <p className="nf-hand">lost in the wiring?</p>
       <h1 className="nf-code">404</h1>
       <p className="nf-copy">That page isn't wired to anything. It may have moved when the site did.</p>

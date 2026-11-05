@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Blob } from './Blob'
+import { Pk } from './Pk'
 
 export type Step = {
   title: string
@@ -7,7 +7,7 @@ export type Step = {
   /** a short handwritten note shown in Caveat above the title */
   note?: string
   /** one of the built-in illustrations, or your own node (88x88 box) */
-  illustration?: 'browser' | 'note' | 'blob' | 'cursors' | ReactNode
+  illustration?: 'browser' | 'note' | 'pikku' | 'cursors' | ReactNode
 }
 
 const ring = (radius: string) => ({ borderRadius: radius, border: '2px solid var(--color-ink)' })
@@ -38,10 +38,10 @@ function NoteIcon() {
   )
 }
 
-function BlobIcon() {
+function PikkuIcon() {
   return (
     <div className={`${box} grid place-items-center border-2 border-ink`} style={{ borderRadius: '54% 46% 52% 48% / 46% 54% 48% 52%' }}>
-      <Blob pose="blob" className="w-14 h-14 text-clay -scale-x-100" />
+      <Pk className="w-14 h-14 text-clay -scale-x-100" />
     </div>
   )
 }
@@ -60,7 +60,7 @@ function Cursors() {
   )
 }
 
-const builtin = { browser: Browser, note: NoteIcon, blob: BlobIcon, cursors: Cursors } as const
+const builtin = { browser: Browser, note: NoteIcon, pikku: PikkuIcon, cursors: Cursors } as const
 
 /**
  * The four-step pattern from pikkustudio.app: numbered-by-order, hand-drawn dotted path between steps,

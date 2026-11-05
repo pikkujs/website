@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Link from '@/components/site/Link'
-import { Blob } from '@pikku/theme-brand'
+import { Pk } from '@pikku/theme-brand'
 import { LOGOS } from './logos'
 import { FanScene } from './FanScene'
 import { LayersScene } from './LayersScene'
@@ -335,7 +335,7 @@ function Framework() {
         </div>
       </div>
       <div className="mt-20 md:mt-28 torn px-6 py-8 md:px-12 md:py-12 grid md:grid-cols-[auto_1fr_auto] gap-6 md:gap-10 items-center">
-        <Blob pose="blob" className="w-24 h-24 md:w-32 md:h-32 text-moss" />
+        <Pk className="w-24 h-24 md:w-32 md:h-32 text-moss" />
         <div>
           <h3 className="display text-3xl md:text-4xl font-semibold leading-tight">
             2,500+ connectors, ready to call.

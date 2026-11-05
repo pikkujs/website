@@ -35,4 +35,4 @@ patterns over flat backgrounds.
 - Redirects for old URLs: `scripts/gen-redirects.mjs` (one static redirect page per moved URL; Pages has no server redirects).
 - Registry data is vendored in `src/data`; the hosted registry may be down, the fixture is the fallback.
 
-- Brand: Blob replaces the chameleon; change colours/fonts in packages/brand (docs/BRANDING.md); small accent text uses claydeep, never clay.
+- Brand: Pikku is its own brand, so the logo and mascot are the chameleon (`Pk` from `packages/brand`, the `#pk` symbol in `SvgDefs`). Never use Studio's Blob here. Change colours/fonts in packages/brand (docs/BRANDING.md); small accent text uses claydeep, never clay.

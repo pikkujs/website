@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from '@/components/site/Link';
-import { Blob } from '@pikku/theme-brand';
+import { Pk } from '@pikku/theme-brand';
 
 /** Reusable component for Pikku logo surrounded by icons */
 export function PikkuCircularLayout({
@@ -39,9 +39,9 @@ export function PikkuCircularLayout({
         </div>
       )}
 
-      <div className={`relative z-10 flex flex-col items-center ${animate ? 'animate-blob-enter' : ''}`}>
+      <div className={`relative z-10 flex flex-col items-center ${animate ? 'animate-logo-enter' : ''}`}>
         {centerNode ?? (
-          <Blob pose="blob" size={logoSize} color="#c2410c" className="mx-auto" />
+          <Pk size={logoSize} color="var(--color-clay)" className="mx-auto" />
         )}
         {centerOverlay && (
           <div className="mt-2 text-center">{centerOverlay}</div>
