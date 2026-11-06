@@ -1,9 +1,16 @@
-import { useEffect, useState } from 'react'
+import { isValidElement, useEffect, useState, type ReactNode } from 'react'
 import { Pin } from 'lucide-react'
 import { usePins } from '@/components/docs/pins'
 import { Link } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 import { WiringIcon } from '@/components/WiringIcons'
+
+// Fumadocs turns tree names into a span with dangerouslySetInnerHTML, so read the text back out of it.
+function nodeText(node: ReactNode): string {
+  if (typeof node === 'string') return node
+  if (!isValidElement<{ dangerouslySetInnerHTML?: { __html: string } }>(node)) return ''
+  return String(node.props.dangerouslySetInnerHTML?.__html ?? '').replace(/<[^>]*>/g, '')
+}
 
 // frontmatter/meta.json `icon: "http,websocket"` -> wiring icons (replaces customProps.wirings)
 const Icons = ({ icon }: { icon?: any }) =>
@@ -18,7 +25,7 @@ const holds = (n: any, path: string): boolean =>
 
 function Folder({ n, path, onNavigate }: { n: any; path: string; onNavigate?: () => void }) {
   const active = holds(n, path)
-  const key = String(n.index?.url ?? n.name)
+  const key = n.index?.url ?? nodeText(n.name)
   const [open, setOpen] = useState(active)
   // restore what the reader left open (after mount, so the server HTML and first paint agree)
   useEffect(() => { if (!active && remembered().includes(key)) setOpen(true) }, [active, key])
@@ -28,7 +35,7 @@ function Folder({ n, path, onNavigate }: { n: any; path: string; onNavigate?: ()
     <li className="tn-folder">
       <div className={`tn-row${n.index?.url === path ? ' is-active' : ''}`}>
         {n.index ? <Link to={n.index.url as any} className="tn-link" onClick={onNavigate}><Icons icon={n.icon} />{n.name}</Link> : <button type="button" className="tn-link tn-label" onClick={toggle}><Icons icon={n.icon} />{n.name}</button>}
-        <button type="button" className="tn-chev" aria-label={`${open ? 'Collapse' : 'Expand'} ${n.name}`} aria-expanded={open} onClick={toggle}>
+        <button type="button" className="tn-chev" aria-label={`${open ? 'Collapse' : 'Expand'} ${nodeText(n.name)}`} aria-expanded={open} onClick={toggle}>
           <ChevronRight size={14} className={open ? 'is-open' : ''} />
         </button>
       </div>
