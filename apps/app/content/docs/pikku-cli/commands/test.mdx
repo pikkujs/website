@@ -1,0 +1,96 @@
+---
+title: Test
+description: Run scenarios and virtual users, and check your project
+---
+
+# Test
+
+Run scenarios and virtual users, and check your project.
+
+## `pikku scenario`
+
+Run and inspect scenarios (`pikkuScenario`) against a configured environment. Environments live under `environments` in `pikku.config.json`.
+
+```bash
+npx pikku scenario list                    # List scenarios with names and descriptions
+npx pikku scenario run staging             # Run all scenarios against the staging environment
+npx pikku scenario run staging --flows onboarding,checkout
+npx pikku scenario run staging --features checkout
+npx pikku scenario run staging --tags smoke
+npx pikku scenario run staging --exclude-tags slow
+npx pikku scenario run staging --run browser   # Drive each virtual user through 'browser', 'cli', or 'default'
+npx pikku scenario run staging --strict        # Fail a `then` with no witness for --run
+npx pikku scenario run local --spawn --keep-alive  # Start `pikku dev` for the run
+npx pikku scenario run local --coverage        # Per-scenario server coverage (target must run with --coverage)
+npx pikku scenario run staging --trace --screenshots --video all
+npx pikku scenario run staging --api-url https://sandbox.example.com --app-url https://app.example.com
+```
+
+`--video` takes `failed` (the default), `all`, or `off`. `--api-url` and `--app-url` override the environment for one run; `--app-url` also accepts `<app>=<url>` pairs for products whose virtual users sign into different frontends.
+
+`pikku scenario guide` writes the user guide your suite already contains, as markdown: each page's editorial prose merged with the steps and screenshots the latest run recorded.
+
+```bash
+npx pikku scenario guide
+npx pikku scenario guide --docs docs --output out/guide   # defaults: docs, <outDir>/guide
+npx pikku scenario guide --run-id <id>                    # build from a specific run
+npx pikku scenario guide --allow-undocumented             # report undocumented features instead of failing
+npx pikku scenario guide --artifact-base /docs/_media/    # prefix for figure paths
+```
+
+## `pikku virtual-user`
+
+The people this app is for, and running one against a real stage. Virtual users are declared in code with `defineVirtualUsers`.
+
+```bash
+npx pikku virtual-user list
+npx pikku virtual-user run staging susan            # Sign in as a virtual user and work the API in character
+npx pikku virtual-user run staging susan --disposition careless --goals "find a cheaper plan"
+npx pikku virtual-user run staging susan --model openai/gpt-5-mini --out run.json
+npx pikku virtual-user sync staging                 # Report which virtual users an environment will provision
+```
+
+`virtual-user run` also takes `--steps` (default 40), `--mutations`, `--duration 30m`, `--seed`, `--allow-approval`, `--skip-role-check`, and `--api-url`.
+
+## `pikku validate`
+
+Run every check that applies to this project — app structure, and the published file set of any addon it contains.
+
+```bash
+npx pikku validate
+```
+
+## `pikku audit`
+
+Audit dependencies for security advisories (always) and available updates (`--outdated`); writes `.pikku/audit.json`.
+
+```bash
+npx pikku audit
+npx pikku audit --outdated
+```
+
+## `pikku examples`
+
+Worked examples of the things that are easy to get wrong and hard to discover. Read one, or write it into your project already renamed onto your own entity.
+
+```bash
+npx pikku examples list                    # Every example, with what it's for
+npx pikku examples list --group scenario   # Only names starting with this (-g)
+npx pikku examples show <name> --entity Order   # Print one, renamed onto your entity (-n, -e)
+npx pikku examples add --name <name> --entity Order   # Write it into this project
+npx pikku examples add --name <name> --app web        # --app / -a: which frontend a screen belongs to
+```
+
+## `pikku examples`
+
+Worked examples of the things that are easy to get wrong and hard to discover. Read one, or write it straight into your project, already named for your own entity.
+
+```bash
+npx pikku examples list                       # Every example, with what each one is for
+npx pikku examples list --group scenario      # Only the examples whose name starts with "scenario"
+npx pikku examples show -n <name> -e <entity> # Print one example, renamed onto your entity
+npx pikku examples add -n <name> -e <entity>  # Write it into this project
+```
+
+`--entity` (`-e`) is the domain symbol the example's own entity is renamed onto, so a recipe written about an `order` comes out about your `invoice`. `show` prints it along with everything the recipe says about itself. `add` writes it into the project, or says what is in the way and writes nothing. In a project with more than one frontend, `--app` (`-a`) picks which one a screen belongs to.
+

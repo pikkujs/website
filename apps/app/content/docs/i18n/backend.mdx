@@ -1,0 +1,57 @@
+---
+title: Backend
+description: Server-side i18n in Pikku. Read the user's locale from their session and render emails and other output in their language.
+ai: true
+---
+
+# Backend i18n
+
+The frontend handles what a person reads on screen. Everything else a person
+reads comes from your functions: emails, generated documents, notifications,
+messages sent through a gateway. Those run on the server, often with no browser
+in sight, so they can't ask a locale store. They use the user's session.
+
+## The locale lives on the session
+
+Put the user's locale on your session type, and set it wherever you create the
+session. A session belongs to a user, so every function working for that user
+can read it, whichever wire called the function: HTTP, a queue, a CLI command or
+an agent.
+
+Pikku doesn't add this field for you. It's a field on your own session, usually
+loaded from the user's saved preference.
+
+Functions then pick it up from the wire, like the rest of the session:
+
+```typescript @snippet i18n-session-email
+```
+
+## Translating on the server
+
+Paraglide messages work on the server too. Pass the locale explicitly, as in
+`m.order_shipped({ orderId }, { locale: session.locale })`, so the function
+never depends on ambient state. Send translated text back only where the server
+is the one producing the text. Data the frontend displays should stay data, so
+the frontend can render it through its own messages.
+
+## Emails
+
+Email templates carry their own locale catalogues, separate from the UI
+messages. They live in `locales/<locale>.json` inside `emailTemplatesDir`.
+`pikku emails init` scaffolds an `en` and a `de` catalogue; `pikku emails
+generate` reads every file in that folder and generates typed renderers. The
+generated `EmailLocale` type is the union of the catalogue file names, and a
+template reference takes an optional `locale`.
+
+```bash
+pikku emails init
+pikku emails generate
+```
+
+See [Email service](/docs/api/email-service) for sending.
+
+## Next steps
+
+- **[User sessions](/docs/core-features/user-sessions)**: what a session holds and how it's set
+- **[Email service](/docs/api/email-service)**: sending localized templates
+- **[Frontend i18n](/docs/i18n/frontend)**: messages and locale selection in the UI

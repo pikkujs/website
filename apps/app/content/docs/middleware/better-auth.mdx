@@ -97,13 +97,13 @@ Export the route handlers from `toNextJsAuthHandler(auth, createConfig, createSi
 
 `toNextJsAuthHandler` accepts your `pikkuBetterAuth` factory plus the config/services creators, resolves the instance once, and returns Next.js `GET`/`POST`/`PATCH`/`PUT`/`DELETE` route handlers. It also re-exports Better Auth's `nextCookies` plugin for server-action cookie handling.
 
-## Actors (synthetic test users)
+## Virtual users (synthetic test users)
 
-The `pikkuActor` plugin adds a `POST /sign-in/actor` endpoint used by [scenarios](/docs/core-features/testing) to sign in synthetic users during automated flows:
+The `pikkuVirtualUser` plugin adds a `POST /sign-in/virtual-user` endpoint used by [scenarios](/docs/core-features/testing) to sign in synthetic users during automated flows:
 
-Add the `pikkuActor` plugin from `@pikku/better-auth` to the `plugins` array of your `betterAuth` config, passing `secret` set to the revealed `SCENARIO_ACTOR_SECRET` secret.
+Add the `pikkuVirtualUser` plugin from `@pikku/better-auth` to the `plugins` array of your `betterAuth` config, passing `verifyKey` set to `await variables.get('VIRTUAL_USER_VERIFY_KEY')`.
 
-Actor rows are flagged with an `actor: true` column and auto-created on first sign-in. Sign-in for a non-actor user is always refused — knowing the secret never impersonates real users — and the flag rides into the Pikku session so audits and analytics can identify synthetic traffic. A missing secret disables the endpoint entirely.
+Virtual user rows are flagged with a `virtualUser: true` column and auto-created on first sign-in. Sign-in for a user who is not a virtual user is always refused — knowing the secret never impersonates real users — and the flag rides into the Pikku session so audits and analytics can identify synthetic traffic. A missing secret disables the endpoint entirely.
 
 ## Delegated sign-in (upstream credentials)
 
@@ -131,7 +131,7 @@ Add the `pikkuDelegatedAuth` plugin from `@pikku/better-auth` to the `plugins` a
 ### Guard rails
 
 - Exactly **one** upstream system of record per app — additional imported APIs are linked integrations, not extra login methods.
-- An email already bound to a *different* upstream user is refused, and delegated identities never attach to synthetic operator/actor rows.
+- An email already bound to a *different* upstream user is refused, and delegated identities never attach to synthetic operator/virtual user rows.
 - The user's email is not updated on later sign-ins — an upstream email change must not collide with another local row.
 
 :::tip[Generated authenticate callback]

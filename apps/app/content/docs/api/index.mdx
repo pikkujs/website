@@ -110,13 +110,13 @@ only trace it leaves: `start(run)`, `complete(runId, outcome)`,
 500-step budget carries more transcript than every other column put together,
 and `list` would pay for it on every row.
 
-The schedule store is each persona's cadence, for apps that want their virtual
-users to keep going without being asked: `set(schedule)`, `get(persona)`,
-`list()`, `due(now)`, `claim(persona, …)` — which pushes the next run out — and
-`remove(persona)`. The claim runs *before* the run is dispatched, so a tick that
+The schedule store is each virtual user's cadence, for apps that want their virtual
+users to keep going without being asked: `set(schedule)`, `get(virtualUserId)`,
+`list()`, `due(now)`, `claim(virtualUserId, …)` — which pushes the next run out — and
+`remove(virtualUserId)`. The claim runs *before* the run is dispatched, so a tick that
 dies halfway does not leave a row due for the next tick to re-dispatch. The cost
 is that a dispatch which throws waits a full interval instead of retrying — the
-right way round, since a persona failing to start should not be retried every
+right way round, since a virtual user failing to start should not be retried every
 minute for a week.
 
 The two are separate on purpose: wiring nothing is how an app says it only wants

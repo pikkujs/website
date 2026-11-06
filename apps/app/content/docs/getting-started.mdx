@@ -1,0 +1,72 @@
+---
+title: Getting Started
+description: From an empty folder to a running platform. Create a project, run npx pikku dev, and get a complete backend, running locally and ready to deploy.
+---
+
+Two commands stand between you and a complete backend: database, auth, content, email and workflows, running locally and ready to deploy.
+
+## 1. Create your project
+
+The generator scaffolds a working project. Pick a template, and you get example functions, wirings, and a local database schema to start from.
+
+```bash
+npm create pikku@latest
+cd my-app
+```
+
+## 2. Start the whole platform
+
+One command boots everything. Not just an HTTP server: the database is introspected and typed, auth and content are live, and email previews work.
+
+```bash
+npx pikku dev
+```
+
+- Database up, schema introspected, end-to-end types generated
+- Auth, content, secrets and email previews already working
+- Exactly what runs in production, with no separate local setup to maintain
+
+## 3. Write a function, wire it up
+
+A Pikku function receives your services and typed input, with no decorators and no classes.
+
+```typescript @snippet listCategories
+```
+
+Wiring connects it to the outside world. Add more wires whenever you like; the function never changes.
+
+```typescript @snippet httpSingleRoute
+```
+
+The same function can also be wired to [WebSocket](/docs/wiring/channels), [RPC](/docs/wiring/rpcs), [queues](/docs/wiring/queue), [cron](/docs/wiring/scheduled-tasks), [workflows](/docs/wiring/workflows), [AI agents](/docs/wiring/ai-agents), [MCP](/docs/wiring/mcp) and the [CLI](/docs/wiring/cli).
+
+## 4. Ship it
+
+The same application deploys three ways. Run `npx pikku deploy plan` first to see exactly what will be created.
+
+**Standalone:** one self-contained server you run on infrastructure you control.
+
+```bash
+npx pikku deploy apply -p standalone
+```
+
+**Your cloud:** deploy to Cloudflare or AWS. Your account, your bill, no lock-in.
+
+```bash
+npx pikku deploy apply -p cloudflare
+```
+
+**Fabric:** managed hosting with observability and an assistant that knows your system.
+
+```bash
+npx pikku fabric deploy apply
+```
+
+## What's next
+
+- **[Core Features](/docs/core-features)**: functions, services, middleware, permissions
+- **[Channels](/docs/wiring/channels)**: real-time with WebSocket
+- **[Queues](/docs/wiring/queue)**: background job processing
+- **[AI Agents](/docs/wiring/ai-agents)**: conversational AI with tools
+- **[Workflows](/docs/wiring/workflows)**: durable multi-step processes
+- **[MCP](/docs/wiring/mcp)**: expose functions to AI models

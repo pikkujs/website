@@ -1,10 +1,11 @@
 import { Link } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { DocIcon } from './DocIcon'
 import type { Hue } from '@/lib/docs-hub'
 
 /** One row of a hub card: coloured icon tile, bold title, one line of text, chevron. */
-export function HubRow({ url, title, text, icon, hue, aside, small }: { url: string; title: string; text?: string; icon?: string; hue: Hue; aside?: string; small?: boolean }) {
+export function HubRow({ url, title, text, icon, hue, aside, small }: { url: string; title: ReactNode; text?: string; icon?: string; hue: Hue; aside?: string; small?: boolean }) {
   return (
     <Link to={url as any} className={`hub-row${small ? ' hub-row-sm' : ''}`}>
       <span className="hub-tile" data-hue={hue}><DocIcon icon={icon} size={small ? 17 : 20} /></span>

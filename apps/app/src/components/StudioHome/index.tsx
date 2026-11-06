@@ -52,7 +52,7 @@ function Hero() {
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <CopyCmd cmd="npx pikku dev" />
-          <Link to="/getting-started" className="btn-ink">
+          <Link to="/docs/getting-started" className="btn-ink">
             Get started
           </Link>
           <Link to="/docs" className="btn-line">
@@ -439,7 +439,7 @@ function Close() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <CopyCmd cmd="npx pikku dev" />
-              <Link to="/getting-started" className="btn-ink">
+              <Link to="/docs/getting-started" className="btn-ink">
                 Get started
               </Link>
               <a href={GITHUB} className="btn-line">

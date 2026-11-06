@@ -39,24 +39,23 @@ generated fetch client (`serverUrl`, auth hooks, and so on).
 | `usePikkuWorkflow(name)` | Running one named workflow — `.start` / `.run` / `.status` |
 | `usePikkuFeatureFlags()` / `useFeatureFlag(key)` | Reading the caller's feature flags |
 | `usePikkuAnalytics()` | Sending product-analytics events |
-| `useDevActors()` | The "Sign in as …" scenario-actor switcher in dev |
 
 For rendering, mutating or paginating data, use the generated React Query hooks
 instead — they add caching, deduplication and unmount handling that a manual
 effect does not.
 
-## Dev actors
+## Dev virtual users
 
-`useDevActors()` implements the logic half of the dev actor switcher:
-`parseDevActors`, `parseDevActorSecrets` and `signInAsActor` back it, and
-`@pikku/mantine/dev` renders the control on top. It lets a local app sign in as a
-declared persona so you can drive the same scenarios the CLI runs, from the UI.
+The `pikkuVirtualUser` plugin from `@pikku/better-auth` serves a "Sign in as …" switcher.
+`GET /sign-in/virtual-users` lists the declared virtual users your app may offer, and
+`POST /sign-in/switch-virtual-user` signs in as one by id. It's open under `pikku dev`,
+so a local app can drive the same people the CLI runs.
 
 ## i18n
 
 The package exports the i18n gate types (`I18nString`, `I18nNode`, `asI18n`) and
 the locale store (`createLocaleStore`) that `@pikku/mantine` uses to render only
-translated strings. See [Internationalization](/docs/frontend/i18n) for the full workflow.
+translated strings. See [Internationalization](/docs/i18n/frontend) for the full workflow.
 
 ## Next Steps
 

@@ -24,21 +24,21 @@
 .wireLine {
   margin-top: 28px;
   padding: 14px 18px;
-  border: 1px solid var(--paper-code-light-border);
-  background: var(--paper-code-light-bg);
+  border: 1px solid var(--paper-border);
+  background: var(--code-bg);
   border-radius: 6px;
   font-family: var(--font-mono);
   font-size: 13.5px;
   line-height: 1.6;
-  color: var(--paper-code-light-text);
+  color: var(--code-plain);
   overflow-x: auto;
   white-space: pre;
 }
-.wireLine .tKw { color: var(--paper-code-light-kw); }
-.wireLine .tFn { color: var(--paper-code-light-fn); }
-.wireLine .tProp { color: var(--paper-code-light-prop); }
-.wireLine .tStr { color: var(--paper-code-light-str); }
-.wireLine .tPunct { color: var(--paper-code-light-punct); }
+.wireLine .tKw { color: var(--code-kw); }
+.wireLine .tFn { color: var(--code-fn); }
+.wireLine .tProp { color: var(--code-prop); }
+.wireLine .tStr { color: var(--code-str); }
+.wireLine .tPunct { color: var(--code-punct); }
 
 /* ── detail page ──────────────────────────────────────── */
 .back {

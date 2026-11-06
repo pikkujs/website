@@ -13,9 +13,9 @@
     "user-sessions",
     "permission-guards",
     "feature-flags",
+    "virtual-users",
     "testing",
     "scenarios",
-    "virtual-users",
     "..."
   ]
 }

@@ -32,7 +32,7 @@ Read the reason printed after the colon — it names the exact construct — and
 
 ### `try` / `catch`
 
-Handle failure as a step option rather than a language construct: pass `onError: 'continue'` alongside the actor, then assert on the outcome in a following step.
+Handle failure as a step option rather than a language construct: pass `onError: 'continue'` alongside the virtual user, then assert on the outcome in a following step.
 
 ### Steps inside a callback
 
@@ -59,7 +59,7 @@ npx pikku prebuild
 
 Wrapping steps in `try`/`catch` is the wrong shape, because it is not part of the DSL and nothing extracts.
 
-The fixed version runs the step with `{ actor: actors.susan, onError: 'continue' }` and follows it with a `scenario.then(...)` that asserts the validation error.
+The fixed version runs the step with `{ virtualUser: virtualUsers.susan, onError: 'continue' }` and follows it with a `scenario.then(...)` that asserts the validation error.
 
 ## Related Errors
 

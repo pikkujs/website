@@ -26,7 +26,7 @@ const sectionOf = (url: string): string => {
 const LABEL = (k: string): [string, string] => SECTIONS[k] ?? ({ docs: ['Documentation', 'l:FileText'], blog: ['Blog', 'l:FileText'], addons: ['Addon catalogue', 'l:Puzzle'], openapis: ['OpenAPI catalogue', 'l:FileJson'], site: ['Site', 'l:FileText'] } as Record<string, [string, string]>)[k]
 
 // suggested when the box is empty: real pages, resolved against the index (a missing one is skipped)
-const SUGGESTED = ['/getting-started', '/docs/core-features/functions', '/docs/wiring', '/docs/deploy', '/docs/pikku-cli']
+const SUGGESTED = ['/docs/getting-started', '/docs/core-features/functions', '/docs/wiring', '/docs/deploy', '/docs/pikku-cli']
 
 let cache: Promise<Item[]> | null = null
 /** Loaded once, on first open: ~0.3 MB of titles, descriptions and headings. */

@@ -14,7 +14,7 @@ When your application runs across multiple instances (microservices, scaled depl
 ```
 1. Each instance registers with DeploymentService (ID, endpoint, functions)
 2. Instances send periodic heartbeats to stay active
-3. When rpc.remote('functionName', data) is called:
+3. When rpc.mesh('functionName', data) is called:
    a. Pikku hands the call to DeploymentService.invoke(funcName, data, ...)
    b. The deployment service invokes the function on that instance - it owns
       resolving the target and the transport
@@ -55,7 +55,7 @@ The snippet above also deregisters on shutdown with `deploymentService.stop()`.
 
 ### 5. Call Remote Functions
 
-From any instance, use `rpc.remote()` to call functions on other instances:
+From any instance, use `rpc.mesh()` to call functions on other instances:
 
 ```typescript @snippet wb-rpc-remote-call
 ```
@@ -87,7 +87,7 @@ See [Storage Backends](/docs/storage) for setup details.
 | Method | Description |
 |--------|-------------|
 | `rpc.invoke(name, data)` | Call a function in the current process |
-| `rpc.remote(name, data)` | Call a function on a remote instance via DeploymentService |
+| `rpc.mesh(name, data)` | Call a function on a remote instance via DeploymentService |
 | `rpc.exposed(name, data)` | Call an exposed function (enforces `expose: true`) |
 
 ## Session Forwarding

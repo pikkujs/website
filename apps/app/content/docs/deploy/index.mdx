@@ -459,7 +459,7 @@ Install the dialect the build needs — `@pikku/kysely-node-sqlite` for a node
 bundle, `@pikku/kysely-bun-sqlite` for a compiled bun binary, or
 `@pikku/kysely-postgres` — or the bundle cannot resolve it.
 
-The frontend it embeds is the one in `frontends` that sets `serve` — see [Frontends](/docs/pikku-cli/configuration#frontends). Build it first; the deploy reads `dist` and never builds it.
+The frontend it embeds is the one in `frontends` that sets `serve` — see [Frontends](/docs/pikku-cli/configuration/advanced#frontends). Build it first; the deploy reads `dist` and never builds it.
 
 A `--runtime bun` build also installs the compiled binary into every native app whose `native.bundleServer` is set, so the desktop app runs its own server as a sidecar. See [Native Apps](/docs/deploy/native-apps).
 
@@ -490,5 +490,5 @@ existing `.deploy/<provider>/` build without rebuilding.
 
 ## Next Steps
 
-- **[Configuration](/docs/pikku-cli/configuration#deploy)** — Full deploy config reference
+- **[Configuration](/docs/pikku-cli/configuration/advanced#deploy)** — Full deploy config reference
 - **[Tree-Shaking](/docs/pikku-cli/tree-shaking)** — How per-unit tree-shaking works
