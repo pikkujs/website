@@ -36,7 +36,7 @@ export function DocsHub({ hub }: { hub: HubData }) {
           <p className="hub-eyebrow">Start here</p>
           <h2 id="hub-start-h">From an empty folder to a running platform</h2>
           <ol className="hub-steps">{START.map((s) => <li key={s.n}><span>{s.n}</span>{s.t}</li>)}</ol>
-          <Link to="/getting-started" className="hub-btn">Open the guide <ArrowRight size={16} aria-hidden /></Link>
+          <Link to={"/docs/getting-started" as any} className="hub-btn">Open the guide <ArrowRight size={16} aria-hidden /></Link>
         </div>
         <svg className="hub-start-art" viewBox="0 0 320 240" aria-hidden focusable="false">
           <circle cx="250" cy="40" r="110" className="a1" /><circle cx="60" cy="200" r="90" className="a2" /><circle cx="190" cy="140" r="52" className="a3" /><circle cx="285" cy="170" r="9" className="a4" />

@@ -26,7 +26,7 @@ RPC steps call other Pikku functions via queue workers. They execute asynchronou
 - **`retryDelay`**: (string | number) Fixed delay between retries (`'5s'`, `'1min'`, or ms). Omitted, retried steps use exponential backoff. Pass `'exponential'` to force it.
 - **`description`**: (string) Human-readable description of the step.
 - **`onError`**: (string) Compensation RPC to invoke when the step ultimately fails.
-- **`actor`**: (string) Actor the step runs as.
+- **`virtualUser`**: (string) Virtual user the step runs as.
 
 ### Accessing Workflow Context in RPC Functions
 

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useBaseUrl from '@/components/site/useBaseUrl';
+import { Tokens } from '@/components/site/CodeBlock';
 import { docBlocks, inlineSpans, originChip, originText, unfence } from './surface-docs';
 import { proseFor, stepsOf } from './surface-steps';
 import type {
@@ -250,7 +251,7 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
             {blocks.map((block, index) =>
               block.kind === 'code' ? (
                 <pre key={index} className={styles.code}>
-                  {block.text}
+                  <Tokens code={block.text} language="typescript" />
                 </pre>
               ) : (
                 <p key={index} className={styles.prose}>
@@ -277,7 +278,7 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
         <div>
           <div className={styles.lab}>import it from</div>
           <pre className={`${styles.code} ${styles.wrap}`}>
-            import {'{'} {symbol.name} {'}'} from '{leaf.specifier}'
+            <Tokens code={`import { ${symbol.name} } from '${leaf.specifier}'`} language="typescript" />
           </pre>
         </div>
 
@@ -288,7 +289,7 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
             </div>
             {symbol.examples.map((example, index) => (
               <pre key={index} className={styles.code}>
-                {unfence(example)}
+                <Tokens code={unfence(example)} language="typescript" />
               </pre>
             ))}
           </div>
@@ -300,7 +301,9 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
             <div className={styles.members}>
               {symbol.members.map((member) => (
                 <div key={member.line} className={styles.member}>
-                  <code>{member.line}</code>
+                  <code>
+                    <Tokens code={member.line} language="typescript" />
+                  </code>
                   {member.doc && (
                     <p>
                       <Prose text={member.doc} />
@@ -315,7 +318,9 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
         {symbol.signature && (
           <details className={styles.sig}>
             <summary>signature · {symbol.signature.length} chars</summary>
-            <pre className={styles.code}>{symbol.signature}</pre>
+            <pre className={`${styles.code} ${styles.wrap}`}>
+              <Tokens code={symbol.signature} language="typescript" />
+            </pre>
           </details>
         )}
 

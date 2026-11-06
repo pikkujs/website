@@ -1,0 +1,199 @@
+---
+title: Develop
+description: Generate code, run your app locally and scaffold new pieces
+---
+
+# Develop
+
+Generate code, run your app locally and scaffold new pieces.
+
+## `pikku` / `pikku all`
+
+Generate all Pikku files (types, schemas, wirings, etc.). This is the default command.
+
+```bash
+npx pikku
+npx pikku all
+```
+
+**Filtering flags** (apply to `all`):
+
+| Flag                                          | Description                                                                                                                                           |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--filter`                                    | Named filter preset(s) from the `namedFilters` map in `pikku.config.json` (comma-separated)                                                           |
+| `--tags, -t` / `--exclude-tags`               | Include/exclude functions by tags (comma-separated)                                                                                                   |
+| `--wires` / `--exclude-wires`                 | Include/exclude wirings by category (comma-separated): `http`, `scheduler`, `trigger`, `channel`, `rpc`, `queue`, `mcp`, `cli`, `workflow`, `agent`, `gateway` |
+| `--directories, -d` / `--exclude-directories` | Include/exclude functions by directories (comma-separated)                                                                                            |
+| `--http-methods` / `--exclude-http-methods`   | Include/exclude HTTP routes by methods (comma-separated)                                                                                              |
+| `--http-routes` / `--exclude-http-routes`     | Include/exclude HTTP routes by route patterns (comma-separated)                                                                                       |
+| `--names, -n` / `--exclude-names`             | Include/exclude functions by name patterns (supports wildcards)                                                                                       |
+| `--target` / `--exclude-target`               | Include/exclude by deploy target (`serverless`, `server`)                                                                                             |
+| `--diff`                                      | On success, emit a structural diff of the generated `.pikku` meta as a `PIKKU_DIFF <json>` line on stdout. Only emitted on exit 0                       |
+| `--force-relative-imports`                    | Emit relative imports even when `packageMappings` would apply (used by per-unit deploy codegen)                                                       |
+
+```bash
+# Public HTTP API only
+npx pikku --tags public --wires http
+
+# Background workers only
+npx pikku --wires queue,scheduler
+
+# Specific routes
+npx pikku --http-routes /api/admin
+```
+
+## `pikku bootstrap`
+
+Generate only type files (setup phase). Useful when you need types before a full generation pass — for example, on first clone or in CI before the main build.
+
+```bash
+npx pikku bootstrap
+```
+
+## `pikku dev`
+
+Start a local development server with all services wired. Watch mode and hot module reload are on by default.
+
+```bash
+npx pikku dev
+npx pikku dev --port 8080        # Custom port (default: 3000)
+npx pikku dev --no-watch         # Disable file watching
+npx pikku dev --no-hmr           # Disable hot module reload
+npx pikku dev --coverage         # Collect V8 precise coverage in-process
+npx pikku dev --test             # Test mode: record service calls for scenario assertions
+npx pikku dev --model cheap:openai/gpt-5-nano   # Repoint model aliases for this run
+```
+
+## `pikku serve`
+
+Start a server using the bundled bun or node runner — no watch, no codegen. For running a built project.
+
+```bash
+npx pikku serve
+npx pikku serve --port 8080
+npx pikku serve --model cheap:openai/gpt-5-nano
+```
+
+Both commands own the full server lifecycle — creating services, starting, and shutting down. Hook into it with [lifecycle hooks](/docs/core-features/server-lifecycle) rather than writing your own entrypoint.
+
+## `pikku watch`
+
+Watch for file changes and regenerate automatically. Your generated types stay in sync as you write code.
+
+```bash
+npx pikku watch
+npx pikku watch --hmr   # Enable hot module reload for registered functions
+```
+
+## `pikku schemas`
+
+Generate JSON schemas for function input/output types.
+
+```bash
+npx pikku schemas
+```
+
+## Client Generation
+
+Generate type-safe clients for specific protocols:
+
+```bash
+npx pikku fetch          # HTTP fetch client
+npx pikku websocket      # WebSocket client
+npx pikku rpc            # RPC client wrappers
+npx pikku react-query    # TanStack React Query hooks from the RPC map
+npx pikku tanstack-start # TanStack Start server-function shim (makeApi)
+npx pikku realtime       # Typed realtime client (WebSocket + SSE helper)
+npx pikku queue-service  # Queue service wrapper
+npx pikku openapi        # OpenAPI specification from HTTP routes
+npx pikku nextjs         # Next.js backend and HTTP wrappers
+```
+
+Most of these require the corresponding output path to be set in `pikku.config.json` under `clientFiles` (e.g., `fetchFile`, `websocketFile`, `reactQueryFile`, `realtimeFile`, `tanstackStartFile`), and they skip silently when it isn't. `openapi` writes to `openAPI.outputFile` instead, and `tanstack-start` needs `rpcWiringsFile` because the shim imports the generated `PikkuRPC` class.
+
+## `pikku new`
+
+Scaffold new files from templates:
+
+```bash
+# Functions
+npx pikku new function myFunc                    # Default: sessionless
+npx pikku new function myFunc --type func        # Requires session
+npx pikku new function myFunc --type void        # No return value
+
+# Wirings
+npx pikku new wiring myRoute                     # Default: http
+npx pikku new wiring myRoute --type channel      # WebSocket channel
+npx pikku new wiring myRoute --type scheduler    # Cron job
+npx pikku new wiring myRoute --type queue        # Queue worker
+npx pikku new wiring myRoute --type mcp          # MCP resource
+npx pikku new wiring myRoute --type cli          # CLI command
+npx pikku new wiring myRoute --type trigger      # Event trigger
+
+# Middleware & Permissions
+npx pikku new middleware myAuth                   # Default: simple
+npx pikku new middleware myAuth --type factory    # Factory pattern
+npx pikku new permission myGuard                  # Default: simple
+npx pikku new permission myGuard --type factory   # Factory pattern
+
+# Addons
+npx pikku new addon my-integration
+npx pikku new addon my-integration --secret       # Include secret schema
+npx pikku new addon my-integration --variable     # Include variable definition
+npx pikku new addon my-integration --oauth        # OAuth2 credential + API service
+npx pikku new addon my-integration --credential apikey  # Per-user credential (apikey, bearer, or oauth2)
+npx pikku new addon my-integration --openapi ./spec.yaml  # Generate from OpenAPI spec
+npx pikku new addon my-integration --auth-config auth.json  # Override the spec's auth
+npx pikku new addon my-integration --mcp          # Expose functions as MCP tools
+npx pikku new addon my-integration --camel-case   # Convert snake_case to camelCase in schemas
+```
+
+`new addon` also takes `--display-name`, `--description`, `--category` (default `General`), `--dir/-d` to choose where the package lands, `--no-test` to skip the test harness, and `--no-build` to skip install + build. The package is created at `<scaffold.addonDir>/addon-<name>` (default: the current working directory).
+
+## `pikku enable`
+
+Enable Pikku features by setting `scaffold.<feature> = true` in `pikku.config.json`:
+
+```bash
+npx pikku enable rpc          # Enable public RPC endpoint
+npx pikku enable scenarios    # Enable scenario instrumentation functions
+npx pikku enable agent        # Enable public agent endpoints
+npx pikku enable workflow     # Enable workflow workers
+npx pikku enable events       # Enable the realtime events channel + SSE stream
+npx pikku enable mesh-rpc     # Enable the mesh RPC queue worker + HTTP endpoint
+npx pikku enable remote-jobs  # Enable the remote job inbox routes
+npx pikku enable webhook      # Enable the outgoing webhook delivery queue worker
+```
+
+Authentication is not part of the scaffold flag: it is declared on the function, its wiring, its scopes and its addon, and enforced there on every call.
+
+## `pikku db`
+
+Local development database commands.
+
+```bash
+npx pikku db migrate    # Apply pending SQL migrations and regenerate db/schema.gen.ts
+npx pikku db generate   # Generate SQL migrations from detected schema changes
+npx pikku db check      # Report how the configured database differs from the schema its migrations define
+npx pikku db baseline   # Record pending migrations as applied, for a database that already has what they describe
+npx pikku db codegen    # Regenerate db/schema.gen.ts and db/zod.gen.ts, without connecting to a database
+npx pikku db export     # Publish this package's schema for addon consumers
+npx pikku db reset      # Wipe and recreate the dev database (migrate + seed)
+npx pikku db reset --no-seed  # Migrate only, leaving the database empty
+npx pikku db audit      # Report column classifications and flag columns with no anonymize strategy
+```
+
+`db export` is run from an addon's build, not an application's — see [Shipping Database Tables](/docs/addon/database).
+
+## `pikku emails`
+
+Typed email template generation.
+
+```bash
+npx pikku emails init       # Scaffold emailTemplatesDir with starter locales, theme, partials
+npx pikku emails init --force  # Overwrite an existing email scaffold
+npx pikku emails generate   # Generate typed email renderers and metadata
+```
+
+Requires `emailTemplatesDir` in `pikku.config.json` (`emails init` writes it for you).
+

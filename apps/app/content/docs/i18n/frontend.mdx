@@ -1,62 +1,13 @@
 ---
-title: Internationalization
-description: How language works in Pikku end to end — meta in code, translated UI strings, locale selection, enum labels, RTL and the i18n-debug mask
+title: Frontend
+description: Translated UI strings in a Pikku frontend, with Paraglide messages, locale selection, RTL, enum labels and the i18n-debug mask
 ---
 
-# Internationalization
+# Frontend i18n
 
-"Which language?" has a few different answers in a Pikku project, and they live
-in different places. This page walks through all of them: what you author in
-code, what the frontend renders, how the active locale gets picked, and the
-tooling that stops you shipping an untranslated string.
-
-## The big picture
-
-| Layer | What it covers | Where it lives |
-| --- | --- | --- |
-| **Identifiers** | Function, component, type and file names; database tables and columns | Always English. Nothing changes this |
-| **Meta** | `description`, `name`, `title` and step templates you author in backend code | `metaLocale` in `pikku.config.json` |
-| **Product UI** | Every string a user sees in your app | `messages/<locale>.json`, compiled by [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) |
-| **Locale selection** | Which locale is active, how it's remembered, which way text flows | `createLocaleStore` from `@pikku/react` |
-| **Enum labels** | Human labels for closed sets (statuses, roles, kinds) | `enum__*` message keys + `@pikku/paraglide` |
-| **Email** | Per-locale strings for email templates | `locales/<locale>.json` inside `emailTemplatesDir` |
-| **Checks** | Catching hardcoded copy and bad config | TypeScript, the i18n-debug mask locale, `pikku` config validation, the Fabric validator |
-
-"The whole product is German" is a statement about the product, not the
-codebase. You can run a fully German app with English identifiers, English
-`baseLocale`, and German messages. Keeping those axes separate is what makes
-adding a language later a file drop instead of a rewrite.
-
-Every package named here is plain tooling you opt into. The core runtime has no
-opinion on your UI language.
-
-## Meta: `metaLocale`
-
-`metaLocale` in `pikku.config.json` is the language tag for the meta you write
-in code: function and step `description`s, feature and scenario `name`/`title`,
-step `template` strings, role and persona descriptions.
-
-| Key | Type | Default | Notes |
-| --- | --- | --- | --- |
-| `metaLocale` | `string` | `"en"` | A BCP-47 tag such as `en`, `de`, `pt-BR` |
-
-How the CLI treats it:
-
-- The value is canonicalised, so `EN-gb` and `en-GB` end up as the same thing.
-- Use a hyphen, not an underscore. `de_DE` fails config loading with an error
-  explaining the BCP-47 form.
-- A non-string value fails the same way.
-- The old spelling `locale` is rejected with an error telling you to rename it
-  to `metaLocale`. The value is unchanged.
-- It never renames anything. A German `metaLocale` buys you German
-  descriptions, not a `getUebersicht` function.
-- It is not the language your app speaks to users. That's the product UI
-  setting below.
-- Right now nothing reads it back: setting it records the language of your
-  authored meta and validates the tag, but it doesn't change what any tool
-  renders yet.
-
-See [CLI configuration](/docs/pikku-cli/configuration) for the full key list.
+Every string a user sees in your app is a compiled message, and the locale store
+decides which language is active. See the [overview](/docs/i18n) for how this
+fits with the backend.
 
 ## Product UI: messages
 
@@ -120,18 +71,6 @@ it with the Fabric tool's `fabric i18n` command (it ships with Fabric, not
 with the `pikku` CLI): `fabric i18n --default-locale <lang>` writes
 `active.json`, and `fabric i18n --add-locale <lang>` adds the language to
 `locales` and seeds `messages/<lang>.json` from `en.json`.
-
-## Adding a language
-
-1. Create `messages/<locale>.json` with the same keys as `messages/en.json`.
-2. Add the locale to `locales` in `project.inlang/settings.json`.
-3. Add it to `locales` in your `createLocaleStore` call.
-4. Set `defaultLocale` there (or in your `active.json`) if it should be the
-   language a new visitor lands in.
-5. Recompile. The Vite plugin does this on save; otherwise run
-   `paraglide-js compile`.
-
-Email templates have their own catalogues — see [Emails](#emails).
 
 ## Choosing and switching the locale
 
@@ -344,48 +283,7 @@ Reload after changing the localStorage flag.
 The package also exports `maskCatalog` and `maskMessage` if you want to build
 the masked catalogue yourself.
 
-## Emails
-
-Email templates carry their own locale catalogues, separate from the UI
-messages. They live in `locales/<locale>.json` inside `emailTemplatesDir`.
-`pikku emails init` scaffolds an `en` and a `de` catalogue; `pikku emails
-generate` reads every file in that folder and generates typed renderers. The
-generated `EmailLocale` type is the union of the catalogue file names, and a
-template reference takes an optional `locale`.
-
-```bash
-pikku emails init
-pikku emails generate
-```
-
-See [Email service](/docs/api/email-service) for sending.
-
-## Checks that protect you
-
-| Check | What it catches |
-| --- | --- |
-| TypeScript | A missing or renamed message key; a dropped enum member; a bare string on an `I18nNode` prop |
-| `pikku` config loading | A malformed `metaLocale`; the old `locale` key |
-| Mask locale | Hardcoded copy in plain JSX, `aria-label`, `alt`, `document.title` |
-| Fabric validator | An app whose `baseLocale` isn't `en`; browser-test steps that locate elements by literal copy that also exists in the base catalogue, since a copy edit then breaks the test as a timeout rather than a clear failure |
-
-For scenario steps, locate by the message key's value from the catalogue rather
-than a copied literal.
-
-## What not to do
-
-- **Don't resolve a message key at runtime.** No `m['enum__' + x]()`, no
-  key-string helper. Map to a message function.
-- **Don't `asI18n()` a hardcoded English string.** Fixed copy is `m.<key>()`; an
-  enum value goes through its generated label map.
-- **Don't set `baseLocale` to your product's language.** It names the message
-  source and stays `en`.
-- **Don't add the mask locale to `locales`.**
-- **Don't import another app's generated Paraglide runtime into a shared
-  package.** Pass `overwriteGetLocale` in from the app instead.
-
 ## Next steps
 
 - **[React](/docs/frontend/react)**: provider and client hooks
-- **[Pikku CLI configuration](/docs/pikku-cli/configuration)**: `metaLocale` and the rest of the config
-- **[Email service](/docs/api/email-service)**: sending localized templates
+- **[Backend i18n](/docs/i18n/backend)**: server-side output in the user's locale

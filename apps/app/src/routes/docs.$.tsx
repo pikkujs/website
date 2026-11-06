@@ -85,7 +85,7 @@ function Content({ path, tree, url, ai, hideTitle, hub, rows }: { path: string; 
         <div className="doc-edit"><a href={REPO + path} target="_blank" rel="noreferrer"><Pencil size={14} aria-hidden /> Edit this page on GitHub</a></div>
         {related.length ? (
           <HubSection id="related" title="Keep going" blurb="More from this section.">
-            {related.map((k: any, i: number) => <HubRow key={k.url} url={k.url} title={String(k.name)} icon="l:FileText" hue={HUES[i % HUES.length]} small />)}
+            {related.map((k: any, i: number) => <HubRow key={k.url} url={k.url} title={k.name} icon="l:FileText" hue={HUES[i % HUES.length]} small />)}
           </HubSection>
         ) : null}
         <nav className="pager" aria-label="Previous and next page">

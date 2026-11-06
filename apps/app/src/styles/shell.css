@@ -63,6 +63,8 @@
 
 /* footer */
 .site-footer { margin-top: 80px; background: var(--paper-bg-dark); border-top: 1px solid var(--paper-border); }
+/* These pages end on a full-bleed section with its own padding, so the footer sits straight under it. */
+main:has(.sh, [data-flush-footer]) + .site-footer { margin-top: 0; }
 .site-footer-in { max-width: 1200px; margin: 0 auto; padding: 48px 24px 28px; display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; }
 .foot-brand img { height: 52px; width: auto; }
 .foot-brand p { margin: 12px 0 0; max-width: 28ch; font-size: .92rem; color: var(--paper-text-muted); }

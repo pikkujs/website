@@ -6,7 +6,6 @@ export type SearchRow = [url: string, title: string, description: string, headin
 
 // Marketing pages are not in the content tree; list the ones worth finding.
 const SITE_PAGES: SearchRow[] = [
-  ['/getting-started', 'Getting started', 'Create a project, run npx pikku dev, deploy', []],
   ['/features', 'Features', 'Two concepts, eleven wire types', []],
   ['/benchmarks', 'Benchmarks', 'Express, Fastify, uWS and in-process fetch compared', []],
   ['/api', 'SDK reference', 'Everything Pikku gives you to import', []],

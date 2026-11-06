@@ -7,7 +7,7 @@ description: "PKU680: Scenario 'checkoutFlow' has given/when steps but never ass
 ## Error Message
 
 ```
-[PKU680] Scenario 'checkoutFlow' has given/when steps but never asserts. Add a scenario.then(...) naming what the actor should now see — a flow with no 'then' only proves nothing threw, and contributes nothing to witness coverage.
+[PKU680] Scenario 'checkoutFlow' has given/when steps but never asserts. Add a scenario.then(...) naming what the virtual user should now see — a flow with no 'then' only proves nothing threw, and contributes nothing to witness coverage.
 ```
 
 ## What Went Wrong
@@ -19,9 +19,9 @@ Such a flow proves exactly one thing: nothing threw. It doesn't check that the o
 ## How to Fix
 
 
-Add a `then` step that names what the actor should now observe, after the `given` and `when` steps. For example, after `checks out`, add `scenario.then('sees the order confirmed', 'seesOrderStatus', { status: 'confirmed' }, { actor: actors.susan })`.
+Add a `then` step that names what the virtualUser should now observe, after the `given` and `when` steps. For example, after `checks out`, add `scenario.then('sees the order confirmed', 'seesOrderStatus', { status: 'confirmed' }, { virtualUser: virtualUsers.susan })`.
 
-The assertion must be something the *actor* can observe — a page they see, a response they get, a record they can read back. That constraint is the point: it keeps scenarios testing the surface real clients use.
+The assertion must be something the *virtual user* can observe — a page they see, a response they get, a record they can read back. That constraint is the point: it keeps scenarios testing the surface real clients use.
 
 ### If the witness is an expectation helper
 
@@ -36,7 +36,7 @@ Use `asserts: true` honestly — it's the same kind of claim as `permissionsInBo
 ## Scenario Best Practices
 
 - Write the `then` first if you can; it's the reason the flow exists.
-- Phrase assertions as what the actor sees, not as what the database contains.
+- Phrase assertions as what the virtual user sees, not as what the database contains.
 - Use `scenario.expectEventually()` for asynchronous outcomes rather than sleeping and hoping.
 - Assert on data attributes rather than rendered copy — copy goes through i18n.
 
@@ -47,6 +47,6 @@ The wrong shape drives the whole flow with `given` and `when` steps and never ch
 ## Related Errors
 
 - [PKU675: expectEventually Is Scenario-Only](/docs/pikku-cli/errors/pku675) — where `expectEventually` may be used
-- [PKU677: Scenario Browser Step Needs Actor](/docs/pikku-cli/errors/pku677) — browser steps need an actor
+- [PKU677: Scenario Browser Step Needs Virtual user](/docs/pikku-cli/errors/pku677) — browser steps need a virtual user
 - [PKU679: Scenario Not Extractable](/docs/pikku-cli/errors/pku679) — a scenario that would run with zero steps
-- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — assertions come from what actors can observe
+- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — assertions come from what virtual users can observe
