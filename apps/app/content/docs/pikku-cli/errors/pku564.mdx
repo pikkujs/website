@@ -1,0 +1,19 @@
+---
+title: "PKU564: Factory Not A Direct Call"
+description: "PKU564: A factory is wrapped in a cast, why it happens and how to fix it"
+---
+# PKU564: Factory Not A Direct Call
+
+## Error Message
+
+```
+[PKU564] A factory is wrapped in a cast
+```
+
+## What Went Wrong
+
+A factory is wrapped in a cast or assertion around the `pikku...Factory(...)` call. The inspector reads a factory only from a direct call, so it would not be registered.
+
+## How to Fix
+
+Remove the cast and fix the type mismatch it hides in the factory itself.

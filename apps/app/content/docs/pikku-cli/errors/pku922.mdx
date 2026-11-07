@@ -1,0 +1,19 @@
+---
+title: "PKU922: Addon Remote Contract Not Zod"
+description: "PKU922: A remotely exposed addon function must use Zod schemas, why it happens and how to fix it"
+---
+# PKU922: Addon Remote Contract Not Zod
+
+## Error Message
+
+```
+[PKU922] A remotely exposed addon function must use Zod schemas
+```
+
+## What Went Wrong
+
+A function exposed by an addon to remote callers declares its input or output with something other than a Zod schema.
+
+## How to Fix
+
+Define the input and output as Zod schemas.

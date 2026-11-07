@@ -34,6 +34,6 @@
     "@pikku/playwright": "^0.12.87",
     "@playwright/test": "^1.50.0",
     "@types/node": "^24",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }

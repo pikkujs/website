@@ -1,0 +1,19 @@
+---
+title: "PKU353: Remote Addon Package Invalid"
+description: "PKU353: The wireRemoteAddon package could not be parsed, why it happens and how to fix it"
+---
+# PKU353: Remote Addon Package Invalid
+
+## Error Message
+
+```
+[PKU353] The wireRemoteAddon package could not be parsed
+```
+
+## What Went Wrong
+
+The package given to `wireRemoteAddon` is not a valid package name with an optional version range.
+
+## How to Fix
+
+Use a valid package spec such as `@scope/name@^1.2.0`.

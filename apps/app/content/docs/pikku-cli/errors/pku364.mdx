@@ -1,0 +1,19 @@
+---
+title: "PKU364: Addon Legacy Contributors"
+description: "PKU364: The addon still declares pikku.contributors, why it happens and how to fix it"
+---
+# PKU364: Addon Legacy Contributors
+
+## Error Message
+
+```
+[PKU364] The addon still declares pikku.contributors
+```
+
+## What Went Wrong
+
+The addon's package.json still declares `pikku.contributors`, which is no longer read.
+
+## How to Fix
+
+Remove it and register the contributors with `defineContributors` in the addon's source.

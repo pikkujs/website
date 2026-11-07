@@ -1,0 +1,19 @@
+---
+title: "PKU354: Addon Dependency Version Mismatch"
+description: "PKU354: An addon dependency resolves to a version outside the declared range, why it happens and how to fix it"
+---
+# PKU354: Addon Dependency Version Mismatch
+
+## Error Message
+
+```
+[PKU354] An addon dependency resolves to a version outside the declared range
+```
+
+## What Went Wrong
+
+An addon declares a dependency on another addon, and the version wired in your project does not satisfy the declared range.
+
+## How to Fix
+
+Wire a version of the dependency that satisfies the range, or update the addon.

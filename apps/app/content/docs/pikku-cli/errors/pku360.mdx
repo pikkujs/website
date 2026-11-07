@@ -1,0 +1,19 @@
+---
+title: "PKU360: Contributors Not Static"
+description: "PKU360: defineContributors must be called with an object literal, why it happens and how to fix it"
+---
+# PKU360: Contributors Not Static
+
+## Error Message
+
+```
+[PKU360] defineContributors must be called with an object literal
+```
+
+## What Went Wrong
+
+`defineContributors` was called with something other than an object literal keyed by contributor name, or an entry is not statically readable.
+
+## How to Fix
+
+Pass an object literal keyed by contributor name.

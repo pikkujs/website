@@ -1,0 +1,19 @@
+---
+title: "PKU363: Addon Contributor Unknown"
+description: "PKU363: The addon registers no such contributor, why it happens and how to fix it"
+---
+# PKU363: Addon Contributor Unknown
+
+## Error Message
+
+```
+[PKU363] The addon registers no such contributor
+```
+
+## What Went Wrong
+
+`wireAddon` opts in to a contributor the addon does not register, or the addon's contributors manifest could not be read.
+
+## How to Fix
+
+Use a name the addon registers (the message lists them), or fix the manifest.

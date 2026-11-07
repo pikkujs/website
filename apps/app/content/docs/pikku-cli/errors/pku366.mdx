@@ -1,0 +1,19 @@
+---
+title: "PKU366: Studio Package Files Missing"
+description: "PKU366: package.json files does not list a directory the addon ships, why it happens and how to fix it"
+---
+# PKU366: Studio Package Files Missing
+
+## Error Message
+
+```
+[PKU366] package.json files does not list a directory the addon ships
+```
+
+## What Went Wrong
+
+The addon ships `agents/` or `skills/`, but the `files` list in package.json omits it, so the published package would not include it.
+
+## How to Fix
+
+Add `agents` or `skills` to `files` in package.json.

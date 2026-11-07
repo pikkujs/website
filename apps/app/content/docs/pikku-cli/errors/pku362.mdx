@@ -1,0 +1,19 @@
+---
+title: "PKU362: Addon Contributors Not Static"
+description: "PKU362: contributors must be an array of string literals, why it happens and how to fix it"
+---
+# PKU362: Addon Contributors Not Static
+
+## Error Message
+
+```
+[PKU362] contributors must be an array of string literals
+```
+
+## What Went Wrong
+
+The `contributors` option of `wireAddon` or `wireRemoteAddon` is not an array of string literals.
+
+## How to Fix
+
+Write the contributor names as an array of string literals.
