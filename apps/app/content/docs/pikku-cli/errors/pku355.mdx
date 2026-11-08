@@ -1,0 +1,19 @@
+---
+title: "PKU355: Addon Uses Not Declared"
+description: "PKU355: The addon does not declare the mapped name in pikku.uses, why it happens and how to fix it"
+---
+# PKU355: Addon Uses Not Declared
+
+## Error Message
+
+```
+[PKU355] The addon does not declare the mapped name in pikku.uses
+```
+
+## What Went Wrong
+
+`wireAddon` maps a name to a target, but the addon's package.json does not declare that name in `pikku.uses`.
+
+## How to Fix
+
+Map only names the addon lists in `pikku.uses`, then run `pikku all` again.

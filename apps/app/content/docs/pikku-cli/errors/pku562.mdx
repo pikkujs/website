@@ -1,0 +1,19 @@
+---
+title: "PKU562: Disabled Function Referenced"
+description: "PKU562: A function declared disabled is still used, why it happens and how to fix it"
+---
+# PKU562: Disabled Function Referenced
+
+## Error Message
+
+```
+[PKU562] A function declared disabled is still used
+```
+
+## What Went Wrong
+
+A function declared `disabled` is still called or referenced elsewhere (for example inline, or via an RPC call).
+
+## How to Fix
+
+Remove what uses it, or remove `disabled`.

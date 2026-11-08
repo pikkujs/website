@@ -1,0 +1,19 @@
+---
+title: "PKU350: Remote Addon Package Not Static"
+description: "PKU350: wireRemoteAddon's package must be a string literal, why it happens and how to fix it"
+---
+# PKU350: Remote Addon Package Not Static
+
+## Error Message
+
+```
+[PKU350] wireRemoteAddon's package must be a string literal
+```
+
+## What Went Wrong
+
+`wireRemoteAddon` sets its package to something other than a string literal. The inspector reads the package statically, so it cannot follow a variable or expression.
+
+## How to Fix
+
+Write the package name (and its version range) as a string literal, then run `pikku all` again.

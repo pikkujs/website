@@ -1,0 +1,19 @@
+---
+title: "PKU351: Remote Addon SDK Core Mismatch"
+description: "PKU351: The SDK was generated against a different @pikku/core, why it happens and how to fix it"
+---
+# PKU351: Remote Addon SDK Core Mismatch
+
+## Error Message
+
+```
+[PKU351] The SDK was generated against a different @pikku/core
+```
+
+## What Went Wrong
+
+The SDK of a remote addon was generated against a different `@pikku/core` version than the one installed. This is a warning: the SDK types may not line up.
+
+## How to Fix
+
+Update `@pikku/core`, or pin an SDK version built for the installed core.

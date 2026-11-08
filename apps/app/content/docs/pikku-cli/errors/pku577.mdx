@@ -1,0 +1,19 @@
+---
+title: "PKU577: Registration Not A Direct Call"
+description: "PKU577: A middleware or permission helper is used as a value, why it happens and how to fix it"
+---
+# PKU577: Registration Not A Direct Call
+
+## Error Message
+
+```
+[PKU577] A middleware or permission helper is used as a value
+```
+
+## What Went Wrong
+
+A middleware or permission helper is used as a value instead of being called directly. The inspector records them only where the helper is called, so what it registers would never run.
+
+## How to Fix
+
+Call the helper directly.

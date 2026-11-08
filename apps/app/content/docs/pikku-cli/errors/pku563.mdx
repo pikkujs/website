@@ -1,0 +1,19 @@
+---
+title: "PKU563: Unused Function"
+description: "PKU563: A function is defined but never used, why it happens and how to fix it"
+---
+# PKU563: Unused Function
+
+## Error Message
+
+```
+[PKU563] A function is defined but never used
+```
+
+## What Went Wrong
+
+A function is defined but nothing wires or calls it.
+
+## How to Fix
+
+Wire or call it, or mark it `disabled` and let the build show what depends on it.

@@ -1,0 +1,19 @@
+---
+title: "PKU352: Remote Addon SDK Integrity Mismatch"
+description: "PKU352: The downloaded SDK does not match its published integrity, why it happens and how to fix it"
+---
+# PKU352: Remote Addon SDK Integrity Mismatch
+
+## Error Message
+
+```
+[PKU352] The downloaded SDK does not match its published integrity
+```
+
+## What Went Wrong
+
+The SDK tarball for a remote addon failed an integrity check: the digest is not sha512, the download hashes to a different value, its manifest names another package or version, or the registry now serves a different version than the lock file pins. Nothing is installed.
+
+## How to Fix
+
+If the change is expected, remove the addon's entry from the addons lock file and run `pikku all` again. Otherwise treat the registry content as untrusted.

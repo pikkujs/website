@@ -1,0 +1,19 @@
+---
+title: "PKU358: Studio Message Key Missing"
+description: "PKU358: definePlugin uses a message key missing from messages/en.json, why it happens and how to fix it"
+---
+# PKU358: Studio Message Key Missing
+
+## Error Message
+
+```
+[PKU358] definePlugin uses a message key missing from messages/en.json
+```
+
+## What Went Wrong
+
+`definePlugin` references a message key that does not exist in the addon's `messages/en.json`.
+
+## How to Fix
+
+Add the key to `messages/en.json`, or correct the key.
