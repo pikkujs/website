@@ -17,7 +17,7 @@ export function Footer() {
           </nav>
         ))}
       </div>
-      <div className="foot-copy">MIT License · Copyright © 2020–{new Date().getFullYear()} Yasser Fadl &amp; Pikku Contributors.</div>
+      <div className="foot-copy">Framework MIT · CLI and Studio AGPL-3.0 · Copyright © 2020–{new Date().getFullYear()} Yasser Fadl &amp; Pikku Contributors.</div>
     </footer>
   )
 }
