@@ -4,7 +4,7 @@ import snippets from '@/data/snippets.json';
 
 const basicsCode = snippets.cliWiring;
 
-const basicsUsage = snippets.cliUsage;
+const basicsUsage = snippets.cliUsage.replace(/^\/\/ ?/gm, '');
 
 const subcommandsCode = snippets.cliSubcommands;
 

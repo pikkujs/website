@@ -1,0 +1,180 @@
+---
+title: Inspect
+description: Read what your project contains, for you and your AI tools
+---
+
+# Inspect
+
+Read what your project contains, for you and your AI tools.
+
+## `pikku info`
+
+Inspect your Pikku project (for a person to read; use `pikku meta` when tooling consumes the output):
+
+```bash
+npx pikku info                           # List all functions (default)
+npx pikku info functions                 # List all registered functions
+npx pikku info functions --verbose       # Include type, middleware, and file
+npx pikku info tags                      # List all tags with associated functions, middleware, and permissions
+npx pikku info middleware                # List all middleware definitions
+npx pikku info permissions               # List all permission definitions
+npx pikku info --limit 100               # Show more rows (default: 50)
+```
+
+`--limit` and `--verbose` work on the subcommands too.
+
+## `pikku doc`
+
+Print the API surface of the pikku installed here — the doors you import from,
+what each one exports, and how each export is called. The surface is computed when
+the CLI is built and shipped inside it, so what you get back is the version you
+actually have rather than whatever the docs last said.
+
+```bash
+npx pikku doc              # the index: every door, grouped by build step
+npx pikku doc http         # one door: what it exports, and how
+npx pikku doc wireHTTP     # one export: signature, config keys, examples
+npx pikku doc http queue   # several at once, in one call
+npx pikku doc --ai         # the same, plus the skill to load for each door
+npx pikku doc --addon      # the addon surface instead of the application one
+```
+
+`--ai` is the one to point a coding agent at: it names the skill that teaches each
+door, so an agent can load *how* only for the doors it needs, and the export list
+it reads is the installed version rather than something it remembers.
+
+The same content is published as the [SDK explorer](/api).
+
+## `pikku meta`
+
+Inspect project metadata in machine-readable form (for planners and tooling).
+
+```bash
+npx pikku meta context     # Bulk project context in one call
+npx pikku meta clients     # Frontend-targeted metadata (exposed RPCs, workflows, channels)
+npx pikku meta apply ops.json  # Apply a batch of edits to your own source, all-or-nothing (or via stdin)
+
+npx pikku meta functions list
+npx pikku meta functions get myFunction
+npx pikku meta schemas list
+npx pikku meta schemas get mySchema
+npx pikku meta workflows list
+npx pikku meta workflows get myWorkflow
+npx pikku meta middleware list
+npx pikku meta middleware get myMiddleware
+npx pikku meta permissions list
+npx pikku meta permissions get myPermission
+npx pikku meta wires list
+npx pikku meta wires http        # also: scheduler, queue, channel, trigger
+npx pikku meta wires get http
+```
+
+## `pikku scopes` / `pikku roles`
+
+Inspect and maintain the authorization scopes declared with `defineScope` and the roles declared with `defineSystemRole`.
+
+```bash
+npx pikku scopes audit    # Report scopes in the database no longer declared in code, and the roles holding them
+npx pikku scopes prune    # Remove them — reports first, deletes with --yes
+npx pikku roles audit     # Report system roles in the database no longer declared in code, and how many people hold them
+npx pikku roles prune --yes
+```
+
+## `pikku knowledge`
+
+Inspect and maintain the knowledge base — what this app is, in the language its users use.
+
+The knowledge base is the `knowledge/` folder at your repo root: markdown notes (slices, entities, decisions, questions...) about what the app *means*, for whoever picks the project up next, human or agent. Pikku already knows every function, route and table from the generated meta, so the notes cover what a generator can't derive: why a rule was chosen, what it rules out, what's still unanswered. A note's `resource:` frontmatter (`func:revokeGrant, table:grant`) points at the code it's about, and each section keeps an `index.md` listing its notes. These commands keep all that honest. The layout, note fields and section meanings are in [Knowledge Base](/docs/core-features/knowledge).
+
+```bash
+npx pikku knowledge validate        # Check the knowledge base against the app-project profile
+npx pikku knowledge index           # Refresh every index.md to list the notes actually in it
+npx pikku knowledge index --check   # Report stale indexes without writing — a CI gate
+npx pikku knowledge gaps            # List notes no change builds yet
+npx pikku knowledge plan <...>      # A changeset's technical plan (below)
+```
+
+| Subcommand | What it does | Options |
+| --- | --- | --- |
+| `validate` | Checks the base against the app-project profile: every note typed, every section indexed, every slice gated, and every `resource:` still pointing at something that exists. Also lists code things (functions and so on) that no note describes ("orphans"). | none |
+| `index` | Rewrites each section's `index.md` so it lists the notes actually in it. Only the generated block is replaced; the prose around it is left alone. | `--check` (default `false`): report stale indexes without writing anything |
+| `gaps` | Lists notes that no change builds yet: new ones, ones edited since they were built, or ones merged with items deferred. Notes already filed as a change are left out. | none |
+| `plan` | See below | see below |
+
+All of them also take the global options (`--config/-c`, `--log-level/-l`, `--output text|json`).
+
+**Exit codes.**
+
+- `validate` exits `1` when it finds an error (the base contradicts itself). Warnings alone don't fail it. The orphans are reported as a single `PKU960` warning ("N things in the code that no note describes"), so `npx pikku knowledge validate --fail-on-warn` is how you make missing coverage fail a pipeline. Without it, orphans are just printed (the first ten, then "and N more").
+- `index --check` exits `1` if any index is stale and prints which files; plain `index` writes them and exits `0`.
+- `gaps` only reports. It reads the project's changes (the same store `pikku changes` uses), so it needs a project context to run.
+
+### `pikku knowledge plan`
+
+A changeset's technical plan — the shape of the work, checked before it is built rather than after.
+
+```bash
+npx pikku knowledge plan schema                          # Print the plan schema
+npx pikku knowledge plan show <changeset>                # Print a changeset's plan
+npx pikku knowledge plan show <changeset> --for-build    # Render it as the ordered list of work
+npx pikku knowledge plan progress <changeset>            # What the changeset still owes its plan
+npx pikku knowledge plan set <changeset> <file>          # Validate a plan and write it
+npx pikku knowledge plan defer <changeset> <item> --reason "..."  # Move an item to the next pass
+```
+
+| Subcommand | Arguments | Options | What it does |
+| --- | --- | --- | --- |
+| `schema` | none | none | Prints the plan schema, so you write a plan against what is enforced rather than guessing. |
+| `show` | `<changeset>` | `--for-build` (default `false`): render as the ordered list of work a build follows, rather than as stored | Prints the changeset's plan. |
+| `progress` | `<changeset>` | none | Says what the changeset still owes its plan, read from the generated meta rather than from what was claimed. Output is grouped as DONE, MISSING, DEFERRED and PROBLEMS. |
+| `set` | `<changeset> <file>` | none | Validates the plan and writes it, or writes nothing and tells you what's wrong (and prints the schema). |
+| `defer` | `<changeset> <item>` | `--reason/-r`: why this item can't land in the first pass | Moves one first-pass item to the next pass with the reason on the record. |
+
+Exit codes: `progress` exits `1` until the plan's first pass is built, which is what a merge gate reads. A `MISSING` item can be built or deferred; a `PROBLEM` (it exists but does something else) is never deferred, you fix it. `set` and `defer` exit `1` when they refuse, and `show` exits `1` if there's no plan to show.
+
+## `pikku import`
+
+Import workflows from other systems.
+
+```bash
+npx pikku import n8n <file>          # A single export, an export array, or a directory of exports
+npx pikku import n8n workflow.json --out src/workflows
+```
+
+## `pikku skills`
+
+Install bundled agent skills (Claude Code, opencode, pi; Codex/Gemini coming soon).
+
+```bash
+npx pikku skills list                 # List bundled skills and which are installed
+npx pikku skills install              # Copy bundled skills into the project
+npx pikku skills install --agent opencode  # Target an agent (default: claude)
+npx pikku skills install --only pikku-wiring,pikku-http
+npx pikku skills install --core       # Only skills tagged installGroups: [core]
+npx pikku skills install --fabric     # Only skills tagged installGroups: [fabric]
+npx pikku skills install --client     # Only skills tagged installGroups: [client]
+npx pikku skills install --update     # Overwrite existing skills
+```
+
+When the target agent dispatches subagents, `--agent pi` also projects one agent
+definition per skill that declares an `agent:` block in its frontmatter. Skills
+without one are installed as instructions only: a reference skill has no
+post-condition to judge, and an agent whose acceptance is nothing is a subagent
+sent to read what its caller could have read itself.
+
+```bash
+npx pikku skills install --agent pi --agent-dir ~/.pi/agents
+npx pikku skills install --agent pi --agent-skill-dir .agents/skills
+npx pikku skills install --agent pi --agent-extensions guard,model-router
+```
+
+`--agent-dir` writes the projected agents somewhere other than beside the skills,
+for a host that discovers subagents from a global directory rather than from the
+repository. `--agent-skill-dir` tells those agents where the skills will end up,
+for a host that relocates them after installing. `--agent-extensions` belongs to
+whoever runs the agent rather than to the instructions it follows — a sandbox
+fences its writers and routes their model; the same skill on a developer's
+checkout needs neither.
+
+`skills install` also takes three flags for hosts that relocate or fence their agents: `--agent-extensions` (comma-separated extension paths every projected agent loads), `--agent-dir` (where to write projected agents, overriding the harness default), and `--agent-skill-dir` (the skill directory a projected agent points at).
+

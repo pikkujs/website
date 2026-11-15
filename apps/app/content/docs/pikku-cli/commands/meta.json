@@ -1,0 +1,10 @@
+{
+  "title": "Commands",
+  "pages": [
+    "develop",
+    "build-and-deploy",
+    "test",
+    "inspect",
+    "fabric"
+  ]
+}

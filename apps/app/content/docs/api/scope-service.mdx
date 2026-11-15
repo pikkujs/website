@@ -139,7 +139,7 @@ allows.
 It requires Better Auth: `pikku_user_role.user_id` references its `user` table
 with `ON DELETE CASCADE`, so deleting a user takes their grants with it.
 `pikku_role_scopes` has a foreign key into `pikku_scopes`, so the database itself
-refuses to grant a scope that was never declared — which is how persona
+refuses to grant a scope that was never declared — which is how virtual user
 provisioning discovers a role whose declaration was never synced.
 
 Import `KyselyScopeService` from `@pikku/kysely`, construct it with your Kysely instance and await `init()`.

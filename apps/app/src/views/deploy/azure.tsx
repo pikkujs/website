@@ -27,7 +27,7 @@ const page: PageData = {
       h1: 'Deploy to Azure.\n_Functions + Queues + Timers._',
       lead: 'Pikku generates Azure Functions v4 code from your functions — HTTP triggers, Storage Queue triggers, and Timer triggers. You deploy with the Azure CLI.',
       cta: [
-        { label: 'Read the Docs', to: '/getting-started' },
+        { label: 'Read the Docs', to: '/docs/getting-started' },
         { label: 'How It Works', to: '#how-it-works', primary: false },
       ],
       right: {
@@ -138,7 +138,7 @@ $ func azure functionapp publish my-app`,
       lead: 'Generate. Deploy. Done. Your Pikku functions running on Azure Functions with zero boilerplate.',
       cmd: 'npm install @pikku/deploy-azure',
       buttons: [
-        { label: 'Azure Functions Guide', to: '/getting-started' },
+        { label: 'Azure Functions Guide', to: '/docs/getting-started' },
         { label: 'All Features', to: '/features', primary: false },
       ],
     },

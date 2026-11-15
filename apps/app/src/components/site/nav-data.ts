@@ -44,7 +44,7 @@ export const footerColumns = [
     { label: 'Overview', to: '/' }, { label: 'Features', to: '/features' },
     { label: 'Benchmarks', to: '/benchmarks' }, { label: 'Fabric (managed hosting)', to: 'https://pikkufabric.com' } ] },
   { title: 'Learn', items: [
-    { label: 'Getting Started', to: '/getting-started' }, { label: 'Documentation', to: '/docs' }, { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },
+    { label: 'Getting Started', to: '/docs/getting-started' }, { label: 'Documentation', to: '/docs' }, { label: 'Wiring (HTTP, WS, Queues…)', to: '/docs/wiring/http' },
     { label: 'Runtimes', to: '/docs/runtimes/fastify-plugin' }, { label: 'CLI Reference', to: '/docs/pikku-cli' } ] },
   { title: 'Community', items: [
     { label: 'GitHub', to: 'https://github.com/pikkujs/pikku' }, { label: 'Blog', to: '/blog' }, { label: 'Addon catalogue', to: '/addons' } ] },

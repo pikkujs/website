@@ -7,7 +7,7 @@ ai: true
 
 # Native Apps
 
-A native app is one of your [`frontends`](/docs/pikku-cli/configuration#frontends)
+A native app is one of your [`frontends`](/docs/pikku-cli/configuration/advanced#frontends)
 packaged in a [Tauri](https://tauri.app) shell, so people install it rather than
 visit it. It is still the same frontend: the configuration lives on its
 `frontends` entry, and the Tauri project is written beside it and committed.
@@ -97,7 +97,7 @@ All of it lives at `frontends.<name>.native`:
 | `url` | `string` | Open a deployed origin instead of bundling `dist` |
 | `bundleServer` | `boolean` | Ship the compiled server as a sidecar. Desktop only |
 
-If the app you want to package does not exist yet, `pikku app new <slug> --serves <group> --personas <ids>`
+If the app you want to package does not exist yet, `pikku app new <slug> --serves <group> --virtual-users <ids>`
 writes one from the starter template and adds its `frontends` entry. Both flags
 are required; `--template`, `--primary` and `--install` (default on) are optional.
 

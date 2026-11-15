@@ -13,7 +13,7 @@ export function NotFound() {
       <div className="nf-actions">
         <Link to="/" className="btn-ink">Back home</Link>
         <Link to={"/docs" as any} className="btn-line">Browse the docs</Link>
-        <Link to={"/getting-started" as any} className="btn-line">Getting started</Link>
+        <Link to={"/docs/getting-started" as any} className="btn-line">Getting started</Link>
       </div>
       <p className="nf-hint">Press <kbd>⌘K</kbd> to search the docs.</p>
     </section>

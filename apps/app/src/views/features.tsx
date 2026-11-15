@@ -238,7 +238,7 @@ function CTASection() {
         </button>
 
         <div className={styles.ctaActions}>
-          <Link to="/getting-started" className={styles.btnPrimary}>Start Building</Link>
+          <Link to="/docs/getting-started" className={styles.btnPrimary}>Start Building</Link>
           <Link to="https://github.com/pikkujs/pikku" className={styles.btnGhost}>GitHub</Link>
         </div>
       </div>

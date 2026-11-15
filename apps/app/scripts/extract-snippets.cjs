@@ -66,6 +66,22 @@ function findTsFiles(dir, results = []) {
 
 // ── Snippet extraction ─────────────────────────────────────
 
+/* Wirings are top-level calls, but the template wraps its examples in a function so that importing
+   the file doesn't register them. The docs show them as you would write them: no wrapper. */
+const WRAPPER_START = /^(?:export )?(?:const \w+ = \(\) => \{|function \w+\([^)]*\) \{)$/
+const unwrapWirings = (code) => {
+  const lines = code.split('\n')
+  const out = []
+  for (let i = 0; i < lines.length; i++) {
+    const end = WRAPPER_START.test(lines[i]) ? lines.findIndex((l, j) => j > i && /^\};?$/.test(l)) : -1
+    const body = end > 0 ? lines.slice(i + 1, end) : []
+    if (!body.some((l) => /^  wire[A-Z]/.test(l))) { out.push(lines[i]); continue }
+    out.push(...body.map((l) => l.replace(/^  /, '')))
+    i = end
+  }
+  return out.join('\n')
+}
+
 /** Strip the common leading indent, then run the result through prettier. */
 function dedent(lines) {
   const nonEmpty = lines.filter((l) => l.trim().length > 0)
@@ -159,7 +175,7 @@ function extractSnippets(content, rel, problems) {
       if (collected) {
         if (hidden.delete(name)) problems.push(`"@snippet hide" never shown in ${name} (${rel})`)
         snippets[name] = {
-          code: formatSnippet(dedent(dropCommentBlocks(collected))),
+          code: formatSnippet(unwrapWirings(dedent(dropCommentBlocks(collected)))),
           lines: `L${regions.get(name).start}-L${index}`,
           trimmed: regions.get(name).trimmed,
         }
@@ -232,6 +248,12 @@ if (problems.length > 0) {
 }
 
 fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true })
+const empty = Object.keys(all).filter((k) => !all[k].trim())
+if (empty.length) {
+  console.error(`Empty snippets (all comments? add // @snippet keep): ${empty.join(', ')}`)
+  process.exit(1)
+}
+
 fs.writeFileSync(OUTPUT_FILE, JSON.stringify(all, null, 2) + '\n')
 // Pinned to the commit the code came from, so a link's line numbers stay right as the template moves on.
 const commit = execSync('git rev-parse HEAD', { cwd: TEMPLATE_ROOT, encoding: 'utf8' }).trim()

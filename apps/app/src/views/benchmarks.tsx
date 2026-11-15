@@ -683,7 +683,7 @@ function CTASection() {
 
         <div className="flex flex-col sm:flex-row gap-4">
           <Link
-            to="/getting-started"
+            to="/docs/getting-started"
             className="bg-primary text-card dark:text-night hover:bg-primary px-8 py-3 rounded-lg font-semibold text-lg transition-all hover:scale-105 shadow-lg shadow-cyan-500/20 no-underline hover:text-card dark:hover:text-night hover:no-underline"
           >
             Get Started

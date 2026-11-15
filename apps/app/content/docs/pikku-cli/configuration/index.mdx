@@ -1,0 +1,271 @@
+---
+sidebar_position: 1
+title: Configuration
+description: The pikku.config.json options most projects need
+---
+
+# Configuration
+
+The `pikku.config.json` file configures how the Pikku CLI scans your codebase and generates files. The CLI looks for it in the current directory and walks up parent directories until it hits the git repository root, so you can run `pikku` from anywhere inside your project.
+
+## Minimal Configuration
+
+```json
+{
+  "tsconfig": "./tsconfig.json",
+  "srcDirectories": ["src"],
+  "outDir": ".pikku"
+}
+```
+
+## Core Options
+
+<div data-code-ink="">
+
+```text
+Core Options:
+
+  tsconfig <string>  (required)
+      Path to TypeScript configuration file, resolved against rootDir
+  srcDirectories <string[]>  (required)
+      Directories to scan for Pikku functions and wirings
+  outDir <string>  (required)
+      Where generated files are written (conventionally .pikku)
+```
+
+</div>
+
+Those three are all most projects need. Everything else has a sensible default, and lives in [Advanced configuration](/docs/pikku-cli/configuration/advanced).
+
+
+In addon mode (`"addon": true`) the generated tree roots at `outDir/addon`, so every leaf an addon authors is reached as `#pikku/addon/<leaf>`.
+
+## Client Generation
+
+Client files can be specified under a `clientFiles` object. When set, the corresponding `pikku <command>` generates a type-safe client at that path. Paths are resolved relative to the config file directory.
+
+```json
+{
+  "clientFiles": {
+    "fetchFile": "sdk/pikku-fetch.gen.ts",
+    "websocketFile": "sdk/pikku-websocket.gen.ts",
+    "rpcWiringsFile": "sdk/pikku-rpc.gen.ts",
+    "queueWiringsFile": "sdk/pikku-queue.gen.ts",
+    "mcpJsonFile": "sdk/pikku-mcp.gen.json",
+    "nextBackendFile": "pikku-nextjs.ts",
+    "nextHTTPFile": "pikku-nextjs-http.ts"
+  }
+}
+```
+
+| Key | CLI Command | Description |
+|-----|-------------|-------------|
+| `fetchFile` | `pikku fetch` | Type-safe HTTP fetch client |
+| `websocketFile` | `pikku websocket` | Type-safe WebSocket client |
+| `rpcWiringsFile` | `pikku rpc` | RPC client wrappers |
+| `reactQueryFile` | `pikku react-query` | TanStack React Query hooks |
+| `realtimeFile` | `pikku realtime` | Typed realtime client (WebSocket + SSE) |
+| `tanstackStartFile` | `pikku tanstack-start` | TanStack Start server-function shim (`makeApi`). Requires `rpcWiringsFile` |
+| `queueWiringsFile` | `pikku queue-service` | Queue service wrapper |
+| `nextBackendFile` | `pikku nextjs` | Next.js backend integration |
+| `nextHTTPFile` | `pikku nextjs` | Next.js HTTP route handler |
+| `scopesFile` | `pikku` | Browser-side scope client — the project's `ScopeId` union plus `hasScopes()`. No imports, so a frontend never reaches into `@pikku/core` |
+| `mcpJsonFile` | `pikku` | MCP server JSON manifest |
+
+`clientFiles` also accepts `nextBackendTransport` (`local` \| `worker-rpc` \| `http`; default `local`), `nextBackendFetcherImport` (required for `worker-rpc`), and `realtimeEventHubTopicsImport` for advanced Next.js / realtime setups.
+
+:::note[`startServerFnsFile` was renamed]
+Older configs used `startServerFnsFile` for the TanStack Start shim. It is now `tanstackStartFile`; a config still using the old key fails at startup naming the replacement.
+:::
+
+## Environments and Scenarios
+
+`environments` names the targets a run can point at. It is top-level rather than under `scenarios` because a scenario suite and a virtual user run are two different things that both point at an environment.
+
+```json
+{
+  "environments": {
+    "staging": {
+      "apiUrl": "https://staging.example.com/api",
+      "signInPath": "/auth/sign-in/virtual-user",
+      "rpcPath": "/rpc"
+    }
+  },
+  "scenarios": {
+    "emailDomain": "staging.example.com",
+    "browserDriver": "@pikku/playwright",
+    "model": "openai/gpt-5-mini"
+  }
+}
+```
+
+<div data-code-ink="">
+
+```text
+Environments and Scenarios:
+
+  environments.<name>.apiUrl <string>
+      Required. Base URL, including the HTTP prefix
+  environments.<name>.signInPath <string>
+      Virtual user sign-in path under apiUrl (default: /auth/sign-in/virtual-
+      user)
+  environments.<name>.sessionPath <string>
+      Where the session and its roles are read back (default: get-session
+      under the sign-in path's mount)
+  environments.<name>.rpcPath <string>
+      Exposed-RPC prefix under apiUrl (default: /rpc)
+  environments.<name>.appUrl <string>
+      Frontend base URL for browser steps
+  environments.<name>.production <boolean>
+      Marks an environment with real consequences: only an accountable virtual
+      user may run against it
+  scenarios.emailDomain <string>
+      Mail domain a virtual user's address is built on (default:
+      virtualuser.invalid, a domain nobody can own)
+  scenarios.browserDriver <string>
+      Package driving browser step bindings. Anything exporting a
+      ScenarioBrowserProvider works (default: @pikku/playwright)
+  scenarios.model <string>
+      Model a virtual user thinks with. Not the model under test; a step can
+      override it per conversation
+  scenarios.reset <{ enabled, keep? }>
+      Roll the local database back to its seeded state between scenarios: the
+      runner copies every table once, then restores the rows before each
+      scenario (a feature's before hook setup is captured too). keep lists
+      tables the rollback leaves alone — put session and account tables there,
+      or every virtualUser is signed out mid-run. Refused unless the run
+      targets an apiUrl on this machine
+```
+
+</div>
+
+Virtual users are declared in code with `defineVirtualUsers`, not in `pikku.config.json`:
+
+```typescript @snippet defineVirtualUsers
+```
+
+Addresses are never written down: each is derived from the virtual user id and `scenarios.emailDomain`, and codegen materialises one virtual user per virtual user for scenario runs.
+
+Sign-in keys are never configured here. Virtual users sign in with a signed statement that the app checks against `VIRTUAL_USER_VERIFY_KEY`.
+
+## Local Database
+
+Configure how the CLI reaches the local development database used by `pikku dev` and the `pikku db` commands:
+
+```json
+{
+  "db": {
+    "schema": "app",
+    "pgliteExtensions": ["citext"]
+  }
+}
+```
+
+<div data-code-ink="">
+
+```text
+Local Database:
+
+  db.schema <string>
+      Postgres schema the generated runtime migrations create their tables in.
+      Postgres only; with no schema the DDL is unqualified and lands wherever
+      search_path points
+  db.defaultSchema <string>
+      Schema whose qualifier is dropped from the generated Kysely types, so
+      app.user is queried as selectFrom('user'). Usually the same value as
+      db.schema; set it only for a schema the connection's search_path
+      resolves
+  db.pgliteExtensions <string[]>
+      Postgres extensions the CLI's embedded PGlite databases must load — the
+      local dev database and the shadow one every db command migrates to diff
+      a schema. A bare name is one of PGlite's bundled contrib extensions
+      (hstore, citext, …); anything else must be a project dependency, such as
+      @electric-sql/pglite-pgvector
+```
+
+</div>
+
+The dialect is not configured here. It comes from your project's `createConfig()`: a `postgresUrl` means Postgres, and an `sqliteDb` (or a `db/sqlite/` migrations directory) means SQLite. The `db.engine` and `db.pgVersion` keys are still accepted for compatibility but are not read by the current CLI.
+
+## Example Configurations
+
+### Full-Featured App
+
+```json
+{
+  "tsconfig": "./tsconfig.json",
+  "srcDirectories": ["src"],
+  "outDir": ".pikku",
+  "globalHTTPPrefix": "/api",
+  "clientFiles": {
+    "fetchFile": "sdk/pikku-fetch.gen.ts",
+    "websocketFile": "sdk/pikku-websocket.gen.ts"
+  },
+  "scaffold": {
+    "pikkuDir": "src/pikku",
+    "rpc": true,
+    "agent": true,
+    "workflow": true
+  },
+  "deploy": {
+    "providers": {
+      "cloudflare": "@pikku/deploy-cloudflare"
+    },
+    "defaultProvider": "cloudflare"
+  }
+}
+```
+
+### Next.js Application
+
+```json
+{
+  "tsconfig": "./tsconfig.json",
+  "srcDirectories": ["./backend"],
+  "outDir": "./backend/.pikku",
+  "clientFiles": {
+    "nextBackendFile": "./pikku-nextjs.ts"
+  }
+}
+```
+
+### Monorepo with Shared SDK
+
+```json
+{
+  "tsconfig": "./tsconfig.json",
+  "srcDirectories": ["packages/functions/src"],
+  "outDir": "packages/functions/.pikku",
+  "clientFiles": {
+    "fetchFile": "packages/sdk/pikku-fetch.gen.ts",
+    "websocketFile": "packages/sdk/pikku-websocket.gen.ts"
+  },
+  "packageMappings": {
+    "packages/sdk": "@my-app/sdk",
+    "packages/functions": "@my-app/functions"
+  }
+}
+```
+
+### Config Inheritance
+
+Base config (`pikku.config.base.json`):
+```json
+{
+  "tsconfig": "./tsconfig.json",
+  "srcDirectories": ["src"],
+  "outDir": ".pikku"
+}
+```
+
+Extended config (`pikku.config.json`):
+```json
+{
+  "extends": "./pikku.config.base.json",
+  "filters": {
+    "tags": ["public"],
+    "wires": ["http"]
+  }
+}
+```
+

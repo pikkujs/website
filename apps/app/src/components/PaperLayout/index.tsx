@@ -9,7 +9,7 @@ export { styles as paper };
 /* ── Page wrapper ──────────────────────────────────────── */
 export function PaperPage({ children }: { children: React.ReactNode }) {
   return (
-    <div className={styles.page} data-paper-page="">{children}</div>
+    <div className={styles.page} data-paper-page="" data-flush-footer="">{children}</div>
   );
 }
 

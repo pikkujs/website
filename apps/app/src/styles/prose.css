@@ -24,11 +24,15 @@
 .pk-table table { border-collapse: collapse; width: 100%; font-size: .93em; }
 .pk-table th { background: var(--paper-bg-dark); text-align: left; font-weight: 600; color: var(--paper-text); }
 .pk-table th, .pk-table td { padding: .6em .9em; border-bottom: 1px solid var(--paper-border); vertical-align: top; }
+.pk-table tbody tr { background: var(--paper-bg-alt); }
 .pk-table tr:last-child td { border-bottom: 0; }
 
 /* Shiki dual theme: tokens carry --shiki-light / --shiki-dark */
 .shiki, .shiki span { color: var(--shiki-light); font-style: var(--shiki-light-font-style); font-weight: var(--shiki-light-font-weight); text-decoration: var(--shiki-light-text-decoration); }
 [data-theme=dark] .shiki, [data-theme=dark] .shiki span { color: var(--shiki-dark); font-style: var(--shiki-dark-font-style); font-weight: var(--shiki-dark-font-weight); text-decoration: var(--shiki-dark-text-decoration); }
+
+/* Plain text on ink, such as --help output: the token colours are paper's. */
+[data-code-ink] .shiki, [data-code-ink] .shiki span { color: var(--code-plain); }
 
 /* Code blocks */
 .pk-code { position: relative; margin: 1.4em 0; border: 1px solid var(--code-block-border); border-radius: 12px; overflow: hidden; background: var(--code-block-bg); }

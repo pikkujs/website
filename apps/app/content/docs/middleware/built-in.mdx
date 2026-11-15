@@ -58,7 +58,7 @@ Every entry carries the wire metadata (`traceId`, `wireType`, `wireId`) and is t
 
 ## Remote RPC auth
 
-`pikkuRemoteAuthMiddleware` protects the `/remote/rpc/*` endpoints used for [remote RPC calls](/docs/wiring/rpcs) between services. It verifies a JWT bearer token (audience `pikku-remote`), checks the token is scoped to the function being called, and decrypts the caller's session so it carries across service boundaries.
+`pikkuMeshAuthMiddleware` protects the `/mesh/rpc/*` endpoints used for [remote RPC calls](/docs/wiring/rpcs) between services. It verifies a JWT bearer token (audience `pikku-remote`), checks the token is scoped to the function being called, and decrypts the caller's session so it carries across service boundaries.
 
 It activates only when the `PIKKU_REMOTE_SECRET` secret is configured — without it, remote RPC endpoints reject all calls and everything else passes through untouched. The generated bootstrap wires this up for you when you use remote RPCs; you rarely register it by hand.
 

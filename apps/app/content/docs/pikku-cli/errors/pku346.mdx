@@ -7,7 +7,7 @@ description: "PKU346: wireAddon('[name]') sets ui: true, but [package] declares 
 ## Error Message
 
 ```
-[PKU346] wireAddon('[name]') sets ui: true, but [package] declares no screens. Add a defineScreens call to the package, or drop ui.
+[PKU346] wireAddon('[name]') sets ui: true, but [package] declares no screens. Add a definePlugin call to the package, or drop ui.
 ```
 
 ## What Went Wrong
@@ -21,7 +21,7 @@ If the package only ships functions, drop `ui`:
 ```typescript @snippet ea-addon-no-ui
 ```
 
-If it should ship screens, declare them in the package with `defineScreens` and run `pikku all` there so the screens manifest is published:
+If it should ship screens, declare them in the package with `definePlugin` and run `pikku all` there so the screens manifest is published:
 
 ```typescript @snippet ea-addon-ui
 ```
