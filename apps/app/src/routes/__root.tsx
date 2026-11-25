@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { createRootRoute, HeadContent, Outlet, Scripts, useRouter } from '@tanstack/react-router'
+import { createRootRoute, HeadContent, Outlet, Scripts, useMatches, useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { TanstackProvider } from 'fumadocs-core/framework/tanstack' // headless provider (no fumadocs-ui)
 import '../styles.css'
@@ -9,6 +9,12 @@ import { Footer } from '@/components/site/Footer'
 import { NotFound } from '@/components/site/NotFound'
 import { pageHead } from '@/lib/seo'
 import { listenForClicks, trackPageView } from '@/lib/site-analytics'
+
+declare module '@tanstack/react-router' {
+  interface StaticDataRouteOption {
+    noFooter?: boolean
+  }
+}
 
 // Runs before first paint: light by default, remembered choice wins. No flash.
 const THEME_INIT = `try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light'}catch(e){document.documentElement.dataset.theme='light'}`
@@ -51,6 +57,7 @@ function Analytics() {
 }
 
 function Root() {
+  const noFooter = useMatches({ select: (matches) => matches.some((m) => m.staticData.noFooter) })
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
       <head><HeadContent /></head>
@@ -60,7 +67,7 @@ function Root() {
         <TanstackProvider>
           <Navbar />
           <main id="main" tabIndex={-1}><Outlet /></main>
-          <Footer />
+          {!noFooter && <Footer />}
           <Analytics />
         </TanstackProvider>
         <Scripts />

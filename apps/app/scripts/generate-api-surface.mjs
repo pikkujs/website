@@ -11,11 +11,8 @@
  * We vendor a copy into src/data/surface.json so the site builds without the
  * monorepo checked out next to it.
  *
- * This script used to render the surface into ~28 markdown pages under
- * docs/api-reference/ as well. It no longer does: the explorer is the one
- * place the surface is published, and a generated page that restates it is a
- * second copy to keep honest. Nothing here is written by hand — to change what
- * the explorer says, change the JSDoc in the pikku source.
+ * Nothing here is written by hand: to change what the explorer says, change
+ * the JSDoc in the pikku source.
  */
 
 import { execFileSync } from 'node:child_process'
@@ -34,7 +31,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
  */
 const SOURCES = [
   resolve(root, '../../node_modules/@pikku/cli/surface.json'),
-  resolve(root, '../../../pikku/packages/cli/surface.json'),
+  resolve(root, '../../../../pikku/main/packages/cli/surface.json'),
   resolve(root, '../../.pikku-core/packages/cli/surface.json'),
 ]
 const VENDORED = resolve(root, 'src/data/surface.json')
@@ -113,14 +110,13 @@ if (unknown.length > 0) {
 }
 
 /* ── the explorer's copy ────────────────────────────────────
-   Same data, cut down to what src/components/Surface renders. The cut is
-   the console's own `isEntrypoint` (surface-steps.ts): types and interfaces
-   are reached through the values that take them, so listing them as exports
+   Same data, cut down to what src/components/Surface renders: types and
+   interfaces are reached through the values that take them, so listing them as exports
    in their own right is noise. Everything else the panel can show — docs,
    examples, members, signature — is kept.
 
    The prose for each step is NOT copied. It is fixed UI copy that lives in
-   the component, exactly as it is a message rather than data in the console.
+   the component.
 */
 const explorerDoc = {
   version: doc.version,
@@ -135,6 +131,7 @@ const explorerDoc = {
         name: leaf.name,
         step: leaf.step,
         summary: leaf.summary,
+        skill: leaf.skill ?? undefined,
         symbols: leaf.symbols.filter(
           (symbol) => symbol.kind !== 'type' && symbol.kind !== 'interface'
         ),

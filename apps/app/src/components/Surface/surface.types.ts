@@ -1,12 +1,4 @@
-/* ════════════════════════════════════════════════════════════════
-   Copied verbatim from packages/console/src/components/surface/surface.types.ts,
-   minus the usage types the website has no source for.
-
-   `SurfacePage.tsx` in the console says why the copy is legitimate:
-   "the doc and the measured usage are supplied rather than fetched here, so the
-   same page serves the website — which has the doc for a released version and
-   can measure nothing — and the console, which has both."
-   ════════════════════════════════════════════════════════════════ */
+/* The shape of public/api-surface.json. */
 
 export type SurfaceKind =
   | 'function'
@@ -50,7 +42,8 @@ export interface SurfaceSymbol {
   signature?: string;
   examples?: string[];
   members?: SurfaceMember[];
-  status?: string;
+  /** The HTTP status an error class answers with. */
+  status?: number;
   deprecated?: string;
 }
 
@@ -60,6 +53,8 @@ export interface SurfaceLeaf {
   name: string;
   step: SurfaceStep;
   summary: string;
+  /** The Pikku agent skill that teaches this door, when the data names one. */
+  skill?: string;
   symbols: SurfaceSymbol[];
 }
 
