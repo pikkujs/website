@@ -12,7 +12,7 @@ const SITE_PAGES: SearchRow[] = [
   ['/api', 'SDK reference', 'Everything Pikku gives you to import', []],
   ['/addons', 'Addon catalogue', 'Typed functions for hundreds of services', []],
   ['/openapis', 'OpenAPI catalogue', 'Generate typed addons from OpenAPI specifications', []],
-  ['/core/function', 'Pikku functions', 'Write once, wire everywhere', []],
+  ['/core/function', 'Pikku functions', 'One function, many ways in', []],
   ['/core/services', 'Services', 'pikkuServices and pikkuWireServices', []],
   ['/core/security', 'Sessions and permissions', 'One security API, every transport', []],
   ['/core/secrets', 'Secrets and variables', 'Typed config with Zod', []],

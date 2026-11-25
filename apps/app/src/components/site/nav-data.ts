@@ -5,7 +5,7 @@ import { wireTypes, wireCategories } from '@/data/wireTypes'
 export type MenuEntry = { id: string; label: string; description: string; url: string; icon: LucideIcon | React.FC<{ className?: string; size?: number }> }
 
 export const coreEntries: MenuEntry[] = [
-  { id: 'function', label: 'Functions', description: 'One signature, every protocol', url: '/core/function', icon: Code2 },
+  { id: 'function', label: 'Functions', description: 'One function, many ways in', url: '/core/function', icon: Code2 },
   { id: 'services', label: 'Services', description: 'Service lookup with tree-shaking', url: '/core/services', icon: Wrench },
   { id: 'security', label: 'Security', description: 'Sessions, permissions & auth', url: '/core/security', icon: Shield },
   { id: 'versioning', label: 'Versioning', description: 'Contract hashing & CI enforcement', url: '/core/versioning', icon: GitBranch },
