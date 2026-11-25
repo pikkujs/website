@@ -1,131 +1,130 @@
 ---
 title: Versioning & Contracts
-description: Version your functions and detect breaking API changes automatically
+description: Keep old callers working when a function's input or output changes, and fail CI when a recorded contract changes by accident
 ai: true
 ---
 
 # Versioning & Contracts
 
-Pikku has built-in function versioning. You add `version: N` to a function, and the CLI handles the rest — generating versioned IDs, tracking contract hashes, and catching breaking changes before they hit production.
+A function's input and output schemas are a contract. Generated clients, other services and running workflows are built against that shape. If you change it in place, they break, and nothing tells you.
 
-## Versioning Functions
+Pikku solves this in two parts:
 
-Add `version` to any function definition:
+- **Versions.** You keep the old function next to the new one. Callers that name `getItem@v1` get the old shape. Callers that name `getItem` get the newest.
+- **A contract check.** Pikku records a hash of every function's input and output schemas in `versions.pikku.json`. `pikku versions check` fails when a recorded schema changes, so a breaking change cannot slip through review.
+
+You need this once something you don't deploy in the same release calls your functions: a published client, another team's service, or a workflow that started on the old version and is still running. Before that, you can change schemas freely and skip this page.
+
+## Turn it on
+
+Create the manifest and record your current functions:
+
+```bash
+npx pikku versions init
+npx pikku versions update
+```
+
+`init` writes an empty manifest. `update` fills it with the schema hashes of every function you have now. Run both: with an empty manifest, the check has nothing to compare against and always passes. Until `init` has run, `update` only prints a warning and versioning stays off.
+
+Commit `versions.pikku.json`. It is the record the check compares against, not a build output.
+
+Then add the check to CI. See [Run the check in CI](#run-the-check-in-ci).
+
+From now on, every function's schemas are recorded, whether or not it has a `version`. A function that has no `version` and no versioned siblings is recorded as version 1.
+
+## Make a breaking change
+
+Say `getItem` returns `itemId`, `name` and `priceCents`, and you want it to return more. Don't edit it in place. Instead:
+
+1. Rename the existing export to `getItemV1`, add `version: 1`, and leave its schemas exactly as they are.
+2. Add the new export, `getItemV2`, with `version: 2` and the new output schema.
 
 ```typescript @snippet shopVersionedItem
 ```
 
-The trailing `V2` is stripped because it matches the version, so the second export registers as `getItem@v2` rather than `getItemV2@v2`.
+The ID comes from the export name. A trailing `V<n>` that matches `version` is removed, so `getItemV1` registers as `getItem@v1` and `getItemV2` as `getItem@v2`. Both stay callable, and callers of version 1 see no change.
 
-The CLI inspector reads the `version` property and generates versioned function IDs using the `@v` separator — so `getItem` with `version: 2` becomes `getItem@v2` internally.
+If an export name can't end in `V<n>` (for example `legacyGetItem`), set both `override: 'getItem'` and `version: 1` on it.
 
-### How Versions Resolve
-
-- **Base name** (`getItem`) always points to the **latest** version
-- **Versioned name** (`getItem@v1`) points to that exact version
-- If you have an unversioned function alongside versioned ones, the unversioned one automatically becomes `latest + 1`
-
-So with `getItemV1` pinned as `version: 1` and a plain `getItem` without a version, the plain one becomes `getItem@v2`.
-
-The ID comes from the exported name with a matching `V<n>` suffix removed, so `getItemV1` with `version: 1` becomes `getItem@v1`. Use `override: 'getItem'` when the export cannot follow that convention (for example `legacyGetItem`).
-
-### Calling Versioned Functions
-
-From RPC clients, you just use the name:
-
-```typescript @snippet co-versioning-invoke
-```
-
-The same applies to exposed RPCs — external clients can target a specific version or let it resolve to the latest.
-
-## Contract Tracking
-
-Pikku tracks the "contract" of each function — its name and input/output schemas — and detects when contracts change between releases. This prevents accidental breaking changes when multiple clients depend on your API.
-
-### How It Works
-
-1. Each function's contract is hashed (function key + input schema + output schema → hex hash)
-2. Hashes are stored in a **version manifest** (`versions.pikku.json`)
-3. `npx pikku versions check` compares current contracts against the manifest
-4. If a contract changed without a version bump, the check fails
-
-### Initialize the Manifest
-
-```bash
-npx pikku versions init
-```
-
-This creates an empty `versions.pikku.json` (`{ "manifestVersion": 1, "contracts": {} }`). It does not record any hashes — run `npx pikku versions update` straight after, or `check` has nothing to compare against.
-
-### Check for Breaking Changes
-
-```bash
-npx pikku versions check
-```
-
-Compares current function contracts against the manifest. Fails if:
-- A published contract was modified (input/output schema changed)
-- A version bump is required but not applied
-
-### Update the Manifest
+Then record the new version:
 
 ```bash
 npx pikku versions update
 ```
 
-Records the current contracts into the manifest. Run this after bumping function versions. The `pikku all` command also calls this automatically at the end of every build; it refuses to overwrite a published version's hash, but a contract that changed without a bump is reported as a diagnostic rather than crashing the build — `npx pikku versions check` is the hard gate.
+`pikku all` also runs this step at the end of every build, so a normal build records it too.
 
-## Version Manifest
+:::note
+Fix bugs in the body of an old version freely. Only its input and output schemas are part of the contract.
+:::
 
-The manifest file (`versions.pikku.json`) tracks contract history:
+## Call a version
 
-```json
-{
-  "manifestVersion": 1,
-  "contracts": {
-    "createUser": {
-      "latest": 2,
-      "versions": {
-        "1": { "inputHash": "a1b2c3d4", "outputHash": "e5f6g7h8" },
-        "2": { "inputHash": "i9j0k1l2", "outputHash": "m3n4o5p6" }
-      }
-    }
-  }
-}
+The base name calls the newest version. A versioned name calls exactly that version:
+
+```typescript @snippet co-versioning-invoke
 ```
 
-Each function entry contains:
-- `latest` — the current version number
-- `versions` — a map of version numbers to input/output hash pairs
+The same applies to exposed functions: external clients can name `getItem@v1` or just `getItem`.
 
-## Versioning Rules
+The newest version is the highest number. If you keep a plain export with no `version` next to versioned ones, Pikku gives it the next number up and treats it as the newest. With `getItemV1` (`version: 1`) and a plain `getItem`, the plain one becomes `getItem@v2`.
 
-The contract system enforces strict rules:
+Asking for a version that no longer exists behaves differently by caller. An external client calling an exposed function gets an error saying that version is no longer served. A call from inside your app with `rpc.invoke` falls back to the newest version and logs a warning.
 
-| Rule | Description |
-|------|-------------|
-| **Immutability** | Published version hashes cannot change |
-| **Sequential versioning** | New versions must be `latest + 1` |
-| **No gaps** | Cannot skip version numbers (e.g., 1 → 3) |
-| **Change detection** | Modified contracts require a version bump |
-| **Manifest consistency** | The `latest` field must match the highest version key |
+## When the check fails
 
-## Error Codes
+The common failure is a schema change on a function that is already recorded. It does not matter whether the function had a `version`. This is error PKU861, and the check prints the function and the fix:
 
-| Code | Name | Description |
-|------|------|-------------|
-| PKU850 | `DUPLICATE_FUNCTION_VERSION` | Two exports declare the same version of one function |
-| PKU851 | `DUPLICATE_FUNCTION_NAME` | Two exports resolve to the same function name |
-| PKU860 | `MANIFEST_MISSING` | Version manifest not found — run `versions init` |
-| PKU861 | `FUNCTION_VERSION_MODIFIED` | Contract hash changed for an existing version (immutable) |
-| PKU862 | `CONTRACT_CHANGED_REQUIRES_BUMP` | Latest contract changed without a version bump |
-| PKU863 | `VERSION_REGRESSION_OR_CONFLICT` | New version is ≤ latest but not in the manifest |
-| PKU864 | `VERSION_GAP_NOT_ALLOWED` | Version skips a number (e.g., 1 → 3) |
-| PKU865 | `MANIFEST_INTEGRITY_ERROR` | `latest` field doesn't match the highest version key |
+```
+✗ getItem@v1 — published contract was modified
+  Recorded hash: a1b2c3d4
+  Current hash:  9f8e7d6c
 
-## CI Integration
+  Published versions are immutable. Either revert
+  the schema change or create version 2 instead.
+```
 
-Add contract checking to your CI pipeline to catch breaking changes before they're deployed:
+The two hashes are of the input schema only. If you changed only the output, they print the same value. The command then exits with `Version check failed.`
+
+You have two choices:
+
+- **The change was a mistake.** Revert it. Look for a shared type or schema that several functions use: changing it changes all of them.
+- **The change is intended.** Restore the old schemas on the old export and keep it as version 1. Put the change in a new export with the next version, as in [Make a breaking change](#make-a-breaking-change). Then run `npx pikku versions update`.
+
+While a recorded schema has changed, `versions update` saves nothing at all, not even new functions. It prints the error and exits normally. `pikku all` does the same and keeps building. Add `--fail-on-error` to `pikku all` to make it fail.
+
+`versions update` only guards recorded versions. It records a skipped number or an unrecorded old version as it finds them, and so does `pikku all`. Once that rewritten manifest is committed, `versions check` passes, in CI too. To catch the mistake, run `versions check` before you run `versions update` or build, and review changes to `versions.pikku.json` as you would code: a new version of a recorded function is one higher than the one before it.
+
+### Error codes
+
+The check reports these codes. Each links to a page with the full message and fixes.
+
+| Code | What it means | What to do |
+|------|---------------|------------|
+| [PKU860](/docs/pikku-cli/errors/pku860) | `versions.pikku.json` does not exist. | Run `versions init`, then `versions update`. |
+| [PKU861](/docs/pikku-cli/errors/pku861) | A recorded version's input or output schema changed. | Revert, or keep the old version and add the next one. |
+| [PKU862](/docs/pikku-cli/errors/pku862) | The manifest names a `latest` version that has no recorded hashes. | Usually a hand-edited or badly merged manifest. It comes with PKU863 or PKU865. Restore the missing entry from Git, then run `versions check`. |
+| [PKU863](/docs/pikku-cli/errors/pku863) | The code has a version at or below `latest` that the manifest does not record. | Usually a merge conflict in `versions.pikku.json`. Resolve it, then run `versions update`. |
+| [PKU864](/docs/pikku-cli/errors/pku864) | A new version of a recorded function skips a number, such as 1 to 3. | Use the next number, `latest + 1`. |
+| [PKU865](/docs/pikku-cli/errors/pku865) | A manifest entry's `latest` is not its highest version. | Run `versions update`. |
+
+Two related errors stop the build itself, not the check:
+
+| Code | What it means |
+|------|---------------|
+| [PKU850](/docs/pikku-cli/errors/pku850) | Two exports declare the same version of one function. |
+| [PKU851](/docs/pikku-cli/errors/pku851) | Two exports resolve to the same function name. |
+
+### What the check does not catch
+
+- **A version you delete.** Removing `getItemV1` from the code is not an error. Its entry stays in the manifest, but nothing checks that the function still exists. Bumping `version` from 1 to 2 on a function without keeping the old export passes the check and drops version 1.
+- **New functions.** A function the manifest has not recorded yet is never compared, and it can start at any version. `versions update` records it.
+- **Changes in a function's body.** Only the input and output schemas are hashed.
+- **Incoming webhook receivers.** They are left out of the manifest.
+
+## Run the check in CI
+
+Run the check on every pull request:
 
 ```yaml
 # GitHub Actions example
@@ -133,12 +132,48 @@ Add contract checking to your CI pipeline to catch breaking changes before they'
   run: npx pikku versions check
 ```
 
-If a function's input or output schema changed, the check fails and the developer must explicitly bump the version — making breaking changes intentional rather than accidental.
+Put this step before any step that runs `pikku all`, because a build can add to the manifest before the check reads it. The check works on a fresh checkout, with nothing generated yet, and does not change the manifest.
 
-## Typical Workflow
+The check compares the code against the committed `versions.pikku.json`. If a recorded schema changed, the job fails with the output shown in [When the check fails](#when-the-check-fails). If it passes, it prints `Version manifest check passed.`
 
-1. **Develop** — Change function inputs/outputs as needed
-2. **Check** — `npx pikku versions check` detects the contract change
-3. **Bump** — Add or increment `version` on the function
-4. **Update** — `npx pikku versions update` records the new contract
-5. **Commit** — Check in the updated `versions.pikku.json`
+## Reference
+
+### Commands
+
+| Command | What it does |
+|---------|--------------|
+| `npx pikku versions init` | Creates an empty `versions.pikku.json` in the project root. Fails if one exists; add `--force` to overwrite it. |
+| `npx pikku versions update` | Records the current schema hashes. Adds new functions and new versions. Saves nothing if a recorded version changed. |
+| `npx pikku versions check` | Inspects the project and compares it against the manifest. Exits with an error if any rule below is broken. |
+
+### The manifest
+
+`versions.pikku.json` has one entry per function. Each entry lists every recorded version and the newest one:
+
+```json
+{
+  "manifestVersion": 1,
+  "contracts": {
+    "getItem": {
+      "latest": 2,
+      "versions": {
+        "1": { "inputHash": "3f9a1c07", "outputHash": "b82e4d15" },
+        "2": { "inputHash": "3f9a1c07", "outputHash": "e07c9a2b" }
+      }
+    }
+  }
+}
+```
+
+Each hash is the first 8 hex characters of a SHA-256 of the function's base name and one schema. In this example, version 2 kept the same input and changed the output.
+
+### The rules
+
+- A recorded version's schemas never change.
+- A new version of a recorded function is exactly `latest + 1`. No numbers are skipped.
+- Each entry's `latest` is its highest recorded version.
+
+## Next steps
+
+- [`pikku versions` in the CLI reference](/docs/pikku-cli#pikku-versions)
+- [Functions](/docs/core-features/functions)

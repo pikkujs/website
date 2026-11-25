@@ -1,6 +1,6 @@
 ---
 title: "PKU862: Contract Changed, Requires Bump"
-description: "PKU862: Contract for getTodo changed, why it happens and how to fix it"
+description: "PKU862: the manifest names a latest version that has no recorded hashes, why it happens and how to fix it"
 ---
 # PKU862: Contract Changed, Requires Bump
 
@@ -10,56 +10,40 @@ description: "PKU862: Contract for getTodo changed, why it happens and how to fi
 [PKU862] Contract for getTodo changed. Set `version: 3` on the function or run 'pikku versions update'.
 ```
 
-`pikku versions check` renders it with hash detail:
+`pikku versions check` prints it like this:
 
 ```
 ✗ getTodo — contract changed without version bump
-  Input schema hash:  a1b2c3d4 → 9f8e7d6c
-  Output schema hash: e5f6a7b8 (unchanged)
+  Input schema hash:  unknown → a1b2c3d4
+  Output schema hash: unknown → e5f6a7b8
 
   Set `version: 3` on the function, then run:
-  npx pikku versions-update
+  npx pikku versions update
 ```
 
 ## What Went Wrong
 
-The **latest** version of a function has a different input or output contract than what `versions.pikku.json` recorded — you changed the function's types/schemas without bumping its version. Consumers (generated clients, other services, published addons) pin themselves to a version's contract; changing it in place would break them without any signal. The check fails so the change becomes an explicit, versioned event.
+Despite its name and message, this is not what you get for changing a schema without a new version. That is [PKU861](/docs/pikku-cli/errors/pku861).
+
+PKU862 means `versions.pikku.json` is damaged: a function's `latest` names a version that has no recorded hashes, while your code still has that version. The `unknown` in the output is the missing record. It usually follows a hand edit or a badly resolved merge, and it appears with [PKU863](/docs/pikku-cli/errors/pku863), [PKU865](/docs/pikku-cli/errors/pku865), or both.
 
 ## How to Fix
 
-### If the change should be a new version (consumers exist)
+Do not raise `version`, whatever the message suggests. Repair the manifest:
 
-1. Set the next version on the function:
-
-Set the next version on the function with the `version` property, one higher than the version recorded in the manifest:
-
-```typescript @snippet shopVersionedItem
-```
-
-2. Record it in the manifest:
+1. Find the commit that last had the function's entry intact, for example with `git log -p versions.pikku.json`.
+2. Restore the missing version and its hashes. After a merge, keep the versions from both branches.
+3. Check the result:
 
 ```bash
-npx pikku versions update
+npx pikku versions check
 ```
 
-### If nothing depends on the old contract yet
+If the version was never committed, run `npx pikku versions update` to record it. This records the schemas as your code has them now, so first make sure they are the ones callers use.
 
-You can accept the in-place change by re-recording the manifest:
+## Related
 
-```bash
-npx pikku versions update
-```
-
-This overwrites the recorded hashes for the latest version. Only do this pre-release or when you control every consumer.
-
-## Contract Versioning Best Practices
-
-- Decide the policy per function surface: exposed/public functions always bump; internal ones may re-record while unreleased.
-- Watch for indirect contract changes — editing a shared type changes the contract of every function using it.
-- Run `pikku versions check` in CI so this error appears in the PR that caused it, with the hash diff in the log.
-
-## Related Errors
-
-- [PKU861: Function Version Modified](/docs/pikku-cli/errors/pku861) — the same drift on an *older, immutable* version
-- [PKU864: Version Gap Not Allowed](/docs/pikku-cli/errors/pku864) — bump to `latest + 1`, not further
-- [PKU860: Manifest Missing](/docs/pikku-cli/errors/pku860) — the manifest hasn't been initialized
+- [Versioning & Contracts](/docs/core-features/versioning)
+- [PKU861: Function Version Modified](/docs/pikku-cli/errors/pku861): a recorded schema changed
+- [PKU863: Version Regression or Conflict](/docs/pikku-cli/errors/pku863): a version is in the code but not in the manifest
+- [PKU865: Manifest Integrity Error](/docs/pikku-cli/errors/pku865): `latest` is not the highest recorded version
