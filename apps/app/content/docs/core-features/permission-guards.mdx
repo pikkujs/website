@@ -22,7 +22,9 @@ Use them in your function:
 ```typescript @snippet co-permission-on-func
 ```
 
-Each key is a separate permission group, and groups use **OR logic** - the function executes if *either* `auth` or `owner` passes. To require both checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
+Only the person who placed the order can cancel it. `requireOwnership` also rejects a request with no session, so it needs no separate sign-in check.
+
+Each key under `permissions` is a separate group, and groups use **OR logic**: the function executes if *any* group passes. Adding a "signed in" check beside `owner` would let any signed-in user cancel any order. To require several checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
 
 ### Session-Only Checks with `pikkuAuth`
 
@@ -136,7 +138,7 @@ Keep your permissions in one `permissions.ts` file. A `requireAuth` that checks 
 
 Then import and use:
 
-Import the permissions where you define functions and use them by key. A resource update takes `permissions: { auth: requireAuth, owner: requireOwnership }`. A user deletion takes `scopes: ['admin:users:remove']` for the capability and `permissions: { teamMember: requireTeamMember }` for being on the owning team. Both run: scopes AND together first, then permissions OR across keys.
+Import the permissions where you define functions and use them by key. A resource update takes `permissions: { owner: requireOwnership }`. A user deletion takes `scopes: ['admin:users:remove']` for the capability and `permissions: { teamMember: requireTeamMember }` for being on the owning team. Both run: scopes AND together first, then permissions OR across keys.
 
 ## Permission Factories
 
