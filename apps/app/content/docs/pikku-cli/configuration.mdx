@@ -170,7 +170,7 @@ Generates `GET <globalHTTPPrefix>/feature-flags`, a read wire returning the flag
 
 #### `virtualUser`
 
-Generates the virtual-user surface: exposed RPCs to run a persona (`runVirtualUser`), read and list runs and their steps, and set schedules, plus a queue worker named `pikku-virtual-user-runs`. Requires at least one persona declared with `definePersonas`; with none, codegen fails with a message saying so. A scheduled tick (`tickVirtualUserSchedules`) is generated but deliberately not wired: pikku won't start spending model budget for you, so you add the `wireScheduler` yourself. The model comes from `scenarios.model`.
+Generates the virtual-user surface: exposed RPCs to run a persona (`runVirtualUser`), read and list runs and their steps, and set schedules, plus a queue worker named `pikku-virtual-user-runs`. Requires at least one persona declared with `defineVirtualUsers`; with none, codegen fails with a message saying so. A scheduled tick (`tickVirtualUserSchedules`) is generated but deliberately not wired: pikku won't start spending model budget for you, so you add the `wireScheduler` yourself. The model comes from `scenarios.model`.
 
 #### `scenarios`
 
@@ -229,9 +229,9 @@ A `model` containing `/` is used as written; a bare name that is not in this tab
 | `scenarios.model` | `string` | Model a persona thinks with. Not the model under test; a step can override it per conversation |
 | `scenarios.reset` | `{ enabled, keep? }` | Roll the local database back to its seeded state between scenarios: the runner copies every table once, then restores the rows before each scenario (a feature's `before` hook setup is captured too). `keep` lists tables the rollback leaves alone — put session and account tables there, or every actor is signed out mid-run. Refused unless the run targets an `apiUrl` on this machine |
 
-Personas are declared in code with `definePersonas`, not in `pikku.config.json`:
+Personas are declared in code with `defineVirtualUsers`, not in `pikku.config.json`:
 
-```typescript @snippet definePersonas
+```typescript @snippet defineVirtualUsers
 ```
 
 Addresses are never written down: each is derived from the persona id and `scenarios.emailDomain`, and codegen materialises one actor per persona for scenario runs.

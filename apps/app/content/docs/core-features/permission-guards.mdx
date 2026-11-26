@@ -59,7 +59,7 @@ Use it in a function by listing it under `permissions`, as in the first example 
 
 ## Permission Groups
 
-You can compose multiple permissions. List as many as you need under `permissions`, each under its own key: for example `auth: requireAuth` next to `premium: requirePremium`, where the second permission looks up the user's record and checks an `isPremium` flag.
+You can compose multiple permissions. Each key under `permissions` is another way in: with `owner: requireOwnership` next to `teamMember: requireTeamMember`, either the owner or a team member can proceed. Don't add a requirement as a new key. If the owner must also have a premium plan, put both checks in one array: `premiumOwner: [requireOwnership, requirePremium]`.
 
 ## Complex Permissions
 
@@ -155,7 +155,7 @@ Permission factories are useful when you have similar permission logic that vari
 
 **Keep permissions focused** - One check per permission:
 
-Keep each permission to a single responsibility: separate `requireAuth`, `requireOwnership` and `requireVerified` permissions, each registered under its own key, rather than one `requireEverything` that checks the session, a role and email verification at once. A role check in particular belongs in `scopes`, not in a permission.
+Keep each permission to a single responsibility: separate `requireOwnership` and `requireEmailVerified` permissions rather than one `requireEverything` that checks the session, a role and email verification at once. When both must pass, put them in one array. Separate keys mean either one is enough. A role check in particular belongs in `scopes`, not in a permission.
 
 **Optimize expensive checks** - Cache when possible:
 

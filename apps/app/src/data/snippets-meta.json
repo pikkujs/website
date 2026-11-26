@@ -1,9 +1,8 @@
 {
-  "base": "https://github.com/pikkujs/template-online-shop/blob/5a22896183893ae019b62a371b0c5c2f17363235/",
+  "base": "https://github.com/pikkujs/template-online-shop/blob/295f65c532518fc31cece3b0caa69553a064f266/",
   "sources": {
     "betterAuthConfig": {
-      "path": "packages/functions/src/auth.ts#L28-L101",
-      "trimmed": true
+      "path": "packages/functions/src/auth.ts#L32-L91"
     },
     "fetchClient": {
       "path": "packages/functions/src/client-examples.ts#L13-L26"
@@ -44,12 +43,12 @@
     "createItem": {
       "path": "packages/functions/src/functions/items/create-item.function.ts#L24-L62"
     },
-    "shopVersionedItem": {
-      "path": "packages/functions/src/functions/items/get-item.function.ts#L21-L67",
+    "getItem": {
+      "path": "packages/functions/src/functions/items/get-item.function.ts#L44-L74",
       "trimmed": true
     },
-    "getItem": {
-      "path": "packages/functions/src/functions/items/get-item.function.ts#L71-L98",
+    "shopVersionedItem": {
+      "path": "packages/functions/src/functions/items/get-item.function.ts#L21-L75",
       "trimmed": true
     },
     "readFunction": {
@@ -193,210 +192,213 @@
       "path": "packages/functions/src/lib/examples/core.example.ts#L146-L160"
     },
     "co-permission-on-func": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L164-L178"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L164-L177"
     },
     "co-permission-quota": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L182-L205"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L181-L204"
     },
     "co-permission-global": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L209-L212"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L208-L211"
     },
     "co-permission-throw-vs-false": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L216-L237"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L215-L236"
     },
     "co-auth-flags": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L241-L263"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L240-L262"
     },
     "co-auth-with-permissions": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L267-L277"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L266-L276"
     },
     "co-permission-factory": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L281-L298"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L280-L297"
     },
     "co-func-errors": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L302-L320"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L301-L319"
     },
     "co-func-zod": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L324-L340"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L323-L339"
     },
     "co-func-expose": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L344-L352"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L343-L351"
     },
     "co-session-update": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L356-L363"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L355-L362"
     },
     "co-session-optional": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L367-L380"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L366-L379"
     },
     "co-session-refresh-middleware": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L384-L390"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L383-L389"
     },
     "co-session-wire-ops": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L394-L402"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L393-L401"
     },
     "co-wire-http": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L406-L420"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L405-L419"
     },
     "co-wire-channel": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L424-L432"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L423-L431"
     },
     "co-wire-trigger": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L436-L445"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L435-L444"
     },
     "co-wire-rpc-remote": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L449-L458"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L448-L457"
     },
     "co-service-interface": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L462-L482"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L461-L481"
     },
     "co-service-use": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L486-L502"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L485-L501"
     },
     "co-lifecycle-minimal": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L506-L510"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L505-L509"
     },
     "co-lifecycle": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L517-L533"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L516-L532"
     },
     "co-feature-flags-define": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L537-L547"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L536-L546"
     },
     "co-feature-flag-assert": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L551-L562"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L550-L561"
     },
     "co-feature-flag-resolve": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L566-L580"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L565-L579"
     },
     "co-scenario-step": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L584-L599"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L583-L598"
     },
     "co-eventhub-broadcast-all": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L603-L612"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L602-L611"
     },
     "co-eventhub-exclude-sender": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L616-L625"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L615-L624"
     },
     "co-eventhub-room": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L629-L662"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L628-L661"
     },
     "co-eventhub-presence": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L666-L682"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L665-L681"
     },
     "co-eventhub-notifications": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L686-L706"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L685-L705"
     },
     "co-exception-usage": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L710-L753",
+      "path": "packages/functions/src/lib/examples/core.example.ts#L709-L752",
       "trimmed": true
     },
     "co-exception-messages": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L757-L767"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L756-L766"
     },
     "co-logger-usage": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L771-L777"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L770-L776"
     },
     "co-audit-function": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L781-L792"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L780-L791"
     },
     "co-email-send": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L796-L804"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L795-L803"
+    },
+    "i18n-session-email": {
+      "path": "packages/functions/src/lib/examples/core.example.ts#L807-L821"
     },
     "co-jwt-encode-decode": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L808-L844",
+      "path": "packages/functions/src/lib/examples/core.example.ts#L825-L861",
       "trimmed": true
     },
     "co-scheduler-rpc": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L848-L853"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L865-L870"
     },
     "co-user-session-service": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L857-L874"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L874-L891"
     },
     "co-variables-typed": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L878-L884"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L895-L901"
     },
     "co-variables-service": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L888-L898"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L905-L915"
     },
     "co-versioning-invoke": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L902-L911"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L919-L928"
     },
     "co-node-metadata": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L915-L935"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L932-L952"
     },
     "co-create-api-key": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L939-L944"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L956-L961"
     },
     "co-cookie-login": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L948-L965"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L965-L982"
     },
     "co-credential-read": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L969-L981"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L986-L998"
     },
     "co-credential-service": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L985-L999"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1002-L1016"
     },
     "co-oauth-app-secret": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1003-L1014"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1020-L1031"
     },
     "co-cors-global": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1018-L1025"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1035-L1042"
     },
     "co-http-timeout": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1029-L1040"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1046-L1057"
     },
     "co-telemetry": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1044-L1046"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1061-L1063"
     },
     "co-better-auth-session": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1050-L1060"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1067-L1077"
     },
     "co-better-auth-stateless": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1064-L1066"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1081-L1083"
     },
     "co-arch-func": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1070-L1085"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1087-L1102"
     },
     "co-arch-wire": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1089-L1110"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1106-L1127"
     },
     "co-arch-registration": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1114-L1139"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1131-L1156"
     },
     "co-arch-tags": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1143-L1158"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1160-L1175"
     },
     "co-philosophy-email": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1162-L1181"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1179-L1198"
     },
     "co-philosophy-wire": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1185-L1191"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1202-L1208"
     },
     "co-types-func": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1195-L1203"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1212-L1220"
     },
     "co-comparison-pikku": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1207-L1226"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1224-L1243"
     },
     "co-treeshake-wiring": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1230-L1252"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1247-L1269"
     },
     "co-treeshake-tags": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1256-L1259"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1273-L1276"
     },
     "co-test-direct-call": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1263-L1285"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1280-L1302"
     },
     "co-test-session": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1289-L1307"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1306-L1324"
     },
     "co-test-error": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1311-L1326"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1328-L1343"
     },
     "co-test-mock-helper": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1330-L1357"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1347-L1374"
     },
     "co-secret-client": {
-      "path": "packages/functions/src/lib/examples/core.example.ts#L1361-L1370"
+      "path": "packages/functions/src/lib/examples/core.example.ts#L1378-L1387"
     },
     "ea-addon-secret-override": {
       "path": "packages/functions/src/lib/examples/errors-a.example.ts#L21-L26"
@@ -435,103 +437,103 @@
       "path": "packages/functions/src/lib/examples/errors-a.example.ts#L139-L144"
     },
     "ea-define-screens": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L149-L160"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L149-L161"
     },
     "ea-addon-no-ui": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L165-L166"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L166-L167"
     },
     "ea-addon-ui": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L172-L173"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L173-L174"
     },
     "ea-node-config": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L182-L186"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L183-L187"
     },
     "ea-agent-model": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L194-L200"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L195-L201"
     },
     "ea-agent-addon-tool": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L204-L211"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L205-L212"
     },
     "ea-agent-first-party-tool": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L215-L222"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L216-L223"
     },
     "ea-tool-description": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L226-L238"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L227-L239"
     },
     "ea-agent-provider-options": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L242-L253"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L243-L254"
     },
     "ea-http-tags": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L262-L268"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L263-L269"
     },
     "ea-http-func": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L274-L282"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L275-L283"
     },
     "ea-execute-cli": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L288-L293"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L289-L294"
     },
     "ea-services-destructured": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L302-L311"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L303-L312"
     },
     "ea-wires-destructured": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L315-L321"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L316-L322"
     },
     "ea-static-import": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L325-L332"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L326-L333"
     },
     "ea-lazy-service-setup": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L336-L342"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L337-L343"
     },
     "ea-exported-contract-type": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L350-L361"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L351-L362"
     },
     "ea-inline-contract-type": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L365-L371"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L366-L372"
     },
     "ea-exported-schema": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L375-L381"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L376-L382"
     },
     "ea-schema-file": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L385-L386"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L386-L387"
     },
     "ea-wiring-file": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L391-L396"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L392-L397"
     },
     "ea-wire-shape-schema": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L401-L405"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L402-L406"
     },
     "ea-convert-in-function": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L409-L416"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L410-L417"
     },
     "ea-schema-constraints": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L420-L425"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L421-L426"
     },
     "ea-schema-output-date": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L429-L433"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L430-L434"
     },
     "ea-annotation-boolean": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L441-L446"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L442-L447"
     },
     "ea-annotation-json": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L450-L455"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L451-L456"
     },
     "ea-annotation-number": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L459-L464"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L460-L465"
     },
     "ea-annotation-format": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L468-L473"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L469-L474"
     },
     "ea-annotation-hashed": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L477-L482"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L478-L483"
     },
     "ea-annotation-plain": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L486-L491"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L487-L492"
     },
     "ea-annotation-no-form": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L495-L500"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L496-L501"
     },
     "ea-annotation-wrapped": {
-      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L504-L509"
+      "path": "packages/functions/src/lib/examples/errors-a.example.ts#L505-L510"
     },
     "eb-exported-pikku-func": {
       "path": "packages/functions/src/lib/examples/errors-b.example.ts#L10-L14"
@@ -1061,10 +1063,6 @@
     "cookieParser": {
       "path": "packages/functions/src/lib/middleware.example.ts#L352-L363"
     },
-    "definePersonas": {
-      "path": "packages/functions/src/personas.virtual-user.ts#L17-L69",
-      "trimmed": true
-    },
     "defineRoles": {
       "path": "packages/functions/src/roles.ts#L18-L50"
     },
@@ -1077,6 +1075,10 @@
     },
     "shopWireServices": {
       "path": "packages/functions/src/services.ts#L182-L200"
+    },
+    "defineVirtualUsers": {
+      "path": "packages/functions/src/shop.virtual-user.ts#L17-L69",
+      "trimmed": true
     },
     "workflowSteps": {
       "path": "packages/functions/src/wirings/checkout.workflow.ts#L14-L37"
@@ -1140,10 +1142,10 @@
       "path": "packages/functions/src/wirings/shop.cli.ts#L20-L28"
     },
     "cliUsage": {
-      "path": "packages/functions/src/wirings/shop.cli.ts#L32-L41"
+      "path": "packages/functions/src/wirings/shop.cli.ts#L32-L42"
     },
     "cliRenderer": {
-      "path": "packages/functions/src/wirings/shop.cli.ts#L45-L54"
+      "path": "packages/functions/src/wirings/shop.cli.ts#L46-L55"
     },
     "shopCredential": {
       "path": "packages/functions/src/wirings/shop.credential.ts#L22-L39"
@@ -1286,7 +1288,7 @@
       "path": "packages/functions/src/wirings/shop.trigger.ts#L14-L27"
     },
     "variables": {
-      "path": "packages/functions/src/wirings/shop.variable.ts#L5-L44",
+      "path": "packages/functions/src/wirings/shop.variable.ts#L5-L55",
       "trimmed": true
     },
     "co-react-provider": {
