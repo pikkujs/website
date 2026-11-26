@@ -8,7 +8,7 @@ export function Footer() {
       <div className="site-footer-in">
         <div className="foot-brand">
           <Pk size={52} color="var(--color-clay)" />
-          <p>Run a whole platform from one command. Open-source, TypeScript, deploy anywhere.</p>
+          <p>One function, every way in. Open-source TypeScript for apps, agents and backends.</p>
         </div>
         {footerColumns.map((c) => (
           <nav key={c.title} aria-label={c.title} className="foot-col">
@@ -17,7 +17,7 @@ export function Footer() {
           </nav>
         ))}
       </div>
-      <div className="foot-copy">MIT License · Copyright © 2020–{new Date().getFullYear()} Yasser Fadl &amp; Pikku Contributors.</div>
+      <div className="foot-copy">@pikku/core and the runtimes are MIT · Copyright © 2020–{new Date().getFullYear()} Yasser Fadl &amp; Pikku Contributors.</div>
     </footer>
   )
 }
