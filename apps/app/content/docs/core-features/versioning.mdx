@@ -37,12 +37,16 @@ From now on, every function's schemas are recorded, whether or not it has a `ver
 Say `getItem` returns `itemId`, `name` and `priceCents`, and you want it to return more. Don't edit it in place. Instead:
 
 1. Rename the existing export to `getItemV1`, add `version: 1`, and leave its schemas exactly as they are.
-2. Add the new export, `getItemV2`, with `version: 2` and the new output schema.
+2. Add a new `getItem` export with `version: 2` and the new output schema.
 
 ```typescript @snippet shopVersionedItem
 ```
 
-The ID comes from the export name. A trailing `V<n>` that matches `version` is removed, so `getItemV1` registers as `getItem@v1` and `getItemV2` as `getItem@v2`. Both stay callable, and callers of version 1 see no change.
+The ID comes from the export name and `version`. A trailing `V<n>` that matches `version` is removed, so `getItemV1` registers as `getItem@v1`, and `getItem` as `getItem@v2`. Both stay callable.
+
+Code that imports or calls `getItem` now gets version 2. A caller that still needs the old shape has to name `getItem@v1`.
+
+For version 3, do the same again: rename the current export to `getItemV2`, then add a new `getItem` with `version: 3`.
 
 If an export name can't end in `V<n>` (for example `legacyGetItem`), set both `override: 'getItem'` and `version: 1` on it.
 
@@ -89,7 +93,7 @@ The two hashes are of the input schema only. If you changed only the output, the
 You have two choices:
 
 - **The change was a mistake.** Revert it. Look for a shared type or schema that several functions use: changing it changes all of them.
-- **The change is intended.** Restore the old schemas on the old export and keep it as version 1. Put the change in a new export with the next version, as in [Make a breaking change](#make-a-breaking-change). Then run `npx pikku versions update`.
+- **The change is intended.** Restore the old schemas and keep that definition as version 1. Put the change in a new definition with the next version, as in [Make a breaking change](#make-a-breaking-change). Then run `npx pikku versions update`.
 
 While a recorded schema has changed, `versions update` saves nothing at all, not even new functions. It prints the error and exits normally. `pikku all` does the same and keeps building. Add `--fail-on-error` to `pikku all` to make it fail.
 

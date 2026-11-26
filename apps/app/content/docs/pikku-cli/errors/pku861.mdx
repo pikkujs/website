@@ -41,7 +41,7 @@ Revert it. Look for a shared type or schema: changing one changes every function
 
 ### If the change is intended
 
-Restore the old schemas on the old export and keep it as version 1. Put the change in a new export with the next version, the way `getItemV2` sits beside `getItemV1` here:
+Restore the old schemas and keep that definition as version 1. Put the change in a new definition with the next version, the way `getItem` (version 2) sits beside `getItemV1` here:
 
 ```typescript @snippet shopVersionedItem
 ```
