@@ -1,55 +1,55 @@
 ---
-title: "PKU677: Scenario Browser Step Needs Actor"
-description: "PKU677: Scenario 'checkoutFlow' calls step 'searchesAddons', which declares a browser binding, without an actor, why it happens and how to fix it"
+title: "PKU677: Scenario Step Needs Virtual User"
+description: "PKU677: Scenario 'checkoutFlow' calls step 'searchesAddons', which declares a browser binding, without a virtual user, why it happens and how to fix it"
 ---
-# PKU677: Scenario Browser Step Needs Actor
+# PKU677: Scenario Step Needs Virtual User
 
 ## Error Message
 
 ```
-[PKU677] Scenario 'checkoutFlow' calls step 'searchesAddons', which declares a browser binding, without an actor. Pass { actor: actors.<name> } so the browser context signs in as that persona.
+[PKU677] Scenario 'checkoutFlow' calls step 'searchesAddons', which declares a browser binding, without a virtual user. Pass { virtualUser: virtualUsers.<name> } so it runs as that virtual user.
 ```
 
 ## What Went Wrong
 
-A scenario calls a step that has a `browser` binding, but the step call has no `{ actor: … }` option.
+A scenario calls a step that has a `browser` binding, or declares `virtualUser: true`, but the step call has no `{ virtualUser: … }` option. For a `virtualUser: true` step the message says it `is driven by a virtual user` instead.
 
-A browser step drives a real page. Which page — and, crucially, *whose session* — comes entirely from the actor: the actor is the signed-in persona whose browser context the step runs in. Without one there's no session, so the step would open an anonymous browser and the scenario would either fail on a login wall or, worse, quietly exercise the logged-out version of the UI while reading as though it tested the logged-in one.
+A browser step drives a real page. Which page — and, crucially, *whose session* — comes entirely from the virtual user: the step runs in that signed-in user's browser context. Without one there's no session, so the step would open an anonymous browser and the scenario would either fail on a login wall or, worse, quietly exercise the logged-out version of the UI while reading as though it tested the logged-in one.
 
-Non-browser steps can legitimately omit the actor; browser steps cannot.
+Other steps can legitimately omit the virtual user; browser and `virtualUser: true` steps cannot.
 
 ## How to Fix
 
-Pass the actor on the step call:
+Pass the virtual user on the step call:
 
 
 ```typescript @snippet scenarioSteps
 ```
 
-Every browser step in a flow normally takes the same actor — that's what makes it one user's story. Switching actors mid-flow is legitimate (an admin approving what a buyer submitted) but should be deliberate.
+Every browser step in a flow normally takes the same virtual user — that's what makes it one user's story. Switching virtual users mid-flow is legitimate (an admin approving what a buyer submitted) but should be deliberate.
 
-If the actor doesn't exist yet, declare the persona with `defineVirtualUsers` — actors are materialised from personas.
+If the virtual user doesn't exist yet, declare it with `defineVirtualUsers`.
 
 ### If the step shouldn't be a browser step
 
-A step that only needs to read or write data through the API doesn't need a `browser` binding at all. Give it a plain step body instead, and it can run without an actor.
+A step that only needs to read or write data through the API doesn't need a `browser` binding at all. Give it a plain step body instead, without `virtualUser: true`, and it can run without a virtual user.
 
 ## Scenario Best Practices
 
-- Guard on the actor at the top of the flow so a misconfigured run fails with a clear message rather than deep inside a step.
-- Keep one actor per flow unless the scenario is genuinely about two people interacting.
+- Guard on the virtual user at the top of the flow so a misconfigured run fails with a clear message rather than deep inside a step.
+- Keep one virtual user per flow unless the scenario is genuinely about two people interacting.
 - Assert through data attributes rather than rendered copy — copy goes through i18n, and reading it back tests your English, not your behaviour.
-- Run scenarios with `pikku scenario run <environment>` so actors are seeded and signed in.
+- Run scenarios with `pikku scenario run <environment>` so virtual users are signed in.
 
 ## Common Mistakes
 
-A browser step called without an actor, such as `scenario.when('searches for coffee', 'searchesAddons', { query: 'coffee' })`, has no session to run in.
+A browser step called without a virtual user, such as `scenario.when('searches for coffee', 'searchesAddons', { query: 'coffee' })`, has no session to run in.
 
-The fix is to pass `{ actor: actors.susan }` as the fourth argument of the step call, as in the steps above.
+The fix is to pass `{ virtualUser: virtualUsers.susan }` as the fourth argument of the step call, as in the steps above.
 
 ## Related Errors
 
 - [PKU678: Scenario Step Target Not Static](/docs/pikku-cli/errors/pku678) — the step target isn't a string literal
 - [PKU680: Scenario Has No Assertion](/docs/pikku-cli/errors/pku680) — a step ladder with no `then`
-- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — why scenarios go through actors rather than services
-- [PKU585: Duplicate Personas Definition](/docs/pikku-cli/errors/pku585) — where actors' personas are declared
+- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — why scenarios go through virtual users rather than services
+- [PKU585: Duplicate Virtual Users Definition](/docs/pikku-cli/errors/pku585) — where virtual users are declared

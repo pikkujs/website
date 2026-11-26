@@ -1,18 +1,18 @@
 ---
 title: "PKU345: Addon Screens Are Not Static"
-description: "PKU345: defineScreens: '[field]' must be a literal, why it happens and how to fix it"
+description: "PKU345: A screen's [field] must be a literal, why it happens and how to fix it"
 ---
 # PKU345: Addon Screens Are Not Static
 
 ## Error Message
 
 ```
-[PKU345] defineScreens: '[field]' must be a literal.
+[PKU345] A screen's [field] must be a literal, got: [source]
 ```
 
 ## What Went Wrong
 
-`pikku all` reads `defineScreens` without running your code, so every field it records — a screen's `path`, `title`, `nav`, `scopes` and `app`, and the addon's `title` and `icon` — has to be written out as a literal. A variable, a template with substitutions or a function call can't be read.
+`pikku all` reads `definePlugin` without running your code, so every field it records — a screen's `path`, `title`, `scope`, `nav`, `scopes` and `app`, and the addon's `title` and `screens` — has to be written out as a literal. A variable, a template with substitutions or a function call can't be read.
 
 ## How to Fix
 

@@ -49,14 +49,14 @@ Content-Type: application/json
 
 See [Exposed RPCs](/docs/wiring/rpcs/external) for details.
 
-### Remote RPCs
+### Mesh RPCs
 
-Remote RPCs let you invoke functions hosted on other instances — across microservices, scaled deployments, or separate processes. Pikku's deployment service handles function discovery and routing automatically:
+Mesh RPCs let you invoke functions hosted on other instances — across microservices, scaled deployments, or separate processes. Pikku's deployment service handles function discovery and routing automatically:
 
 ```typescript @snippet wb-rpc-remote-call
 ```
 
-**Use remote RPCs for:**
+**Use mesh RPCs for:**
 - Cross-instance function invocation
 - Microservice communication
 - Distributed workloads across scaled deployments
@@ -76,7 +76,7 @@ See [Remote](/docs/wiring/rpcs/deployment) for details.
 - Building integrations between systems
 - Type-safe API consumption
 
-**Remote RPC (`rpc.remote()`)**:
+**Mesh RPC (`rpc.mesh()`)**:
 - Calling functions on other instances
 - Microservice-to-microservice communication
 - Distributed deployments where functions live on different servers

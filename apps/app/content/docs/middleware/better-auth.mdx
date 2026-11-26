@@ -97,13 +97,22 @@ Export the route handlers from `toNextJsAuthHandler(auth, createConfig, createSi
 
 `toNextJsAuthHandler` accepts your `pikkuBetterAuth` factory plus the config/services creators, resolves the instance once, and returns Next.js `GET`/`POST`/`PATCH`/`PUT`/`DELETE` route handlers. It also re-exports Better Auth's `nextCookies` plugin for server-action cookie handling.
 
-## Actors (synthetic test users)
+## Virtual users (synthetic test users)
 
-The `pikkuActor` plugin adds a `POST /sign-in/actor` endpoint used by [scenarios](/docs/core-features/testing) to sign in synthetic users during automated flows:
+The `pikkuVirtualUser` plugin signs in the synthetic users that [scenarios](/docs/core-features/testing) and [virtual user runs](/docs/core-features/virtual-users) act as. Add it from `@pikku/better-auth` to the `plugins` array of your `betterAuth` config, as in the setup above:
 
-Add the `pikkuActor` plugin from `@pikku/better-auth` to the `plugins` array of your `betterAuth` config, passing `secret` set to the revealed `SCENARIO_ACTOR_SECRET` secret.
+| Option | Description |
+|--------|-------------|
+| `virtualUserSignIn` | `{ virtualUsers }`: who may sign in, typically the generated `virtualUserList` |
+| `verifyKey` | The stage's public key, from the `VIRTUAL_USER_VERIFY_KEY` variable. `pikku dev` sets it for you |
+| `allowSignIn` | The opt-in value for a stage outside `pikku dev`. Falls back to the `PIKKU_ALLOW_VIRTUAL_USER_SIGN_IN` environment variable |
+| `scopeService` | Under `pikku dev`, lets sign-in grant the roles each virtual user declares |
 
-Actor rows are flagged with an `actor: true` column and auto-created on first sign-in. Sign-in for a non-actor user is always refused — knowing the secret never impersonates real users — and the flag rides into the Pikku session so audits and analytics can identify synthetic traffic. A missing secret disables the endpoint entirely.
+A caller outside the app, such as the CLI, signs in with `POST /sign-in/virtual-user { statement }`: a short-lived, single-use statement signed with the private key that matches `verifyKey`. A run inside the app signs in through `auth.api`, which the HTTP router never serves.
+
+Sign-in is open under `pikku dev` (never with `NODE_ENV=production`). Any other stage stays shut unless the opt-in is set to exactly `passwordless-virtual-user-sign-in`; while it is shut, the plugin registers no sign-in endpoint for either caller. Don't set it in production.
+
+Virtual user rows are flagged with a `virtualUser: true` column and are created on first sign-in only under `pikku dev`; a deployed stage provisions them with `provisionVirtualUsers`. Sign-in for a user that isn't a virtual user is always refused — a valid statement never impersonates real users — and the flag rides into the Pikku session so audits and analytics can identify synthetic traffic.
 
 ## Delegated sign-in (upstream credentials)
 
@@ -131,7 +140,7 @@ Add the `pikkuDelegatedAuth` plugin from `@pikku/better-auth` to the `plugins` a
 ### Guard rails
 
 - Exactly **one** upstream system of record per app — additional imported APIs are linked integrations, not extra login methods.
-- An email already bound to a *different* upstream user is refused, and delegated identities never attach to synthetic operator/actor rows.
+- An email already bound to a *different* upstream user is refused, and delegated identities never attach to synthetic virtual user rows.
 - The user's email is not updated on later sign-ins — an upstream email change must not collide with another local row.
 
 :::tip[Generated authenticate callback]

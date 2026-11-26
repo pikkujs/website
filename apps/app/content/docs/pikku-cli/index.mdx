@@ -166,7 +166,7 @@ npx pikku new addon my-integration --camel-case   # Convert snake_case to camelC
 Every app command lives here. An app is an entry in [`frontends`](/docs/pikku-cli/configuration#frontends).
 
 ```bash
-npx pikku app new admin --serves staff --personas manager   # a second frontend, from the starter template
+npx pikku app new admin --serves staff --virtual-users manager   # a second frontend, from the starter template
 npx pikku app list                                          # every app, where it lives, how it ships
 
 npx pikku app native init admin                  # package it as a desktop/mobile app
@@ -176,7 +176,7 @@ npx pikku app native upgrade admin               # re-apply the config to the pr
 npx pikku app native check [name]                # compare native projects with the config, and apps with each other
 ```
 
-`app new <slug>` requires `--serves <group>` and `--personas <ids>`, and takes `--template`, `--primary` and `--install` (default on). `app list` shows each app's directory, kind, who it serves, and for native apps the identifier, platforms, mode (`bundle`, `url`, `sidecar`) and plugins.
+`app new <slug>` requires `--serves <group>` and `--virtual-users <ids>`, and takes `--template`, `--primary` and `--install` (default on). `app list` shows each app's directory, kind, who it serves, and for native apps the identifier, platforms, mode (`bundle`, `url`, `sidecar`) and plugins.
 
 `native init` takes `--desktop`, `--android` and `--ios` (platforms), `--identifier`, `--product-name`, `--url <origin>` (open a deployed server instead of bundling the UI), `--bundle-server` (ship the compiled server inside a desktop app) and `--plugins` (`store`, `dialog`, `clipboard-manager`, `os`, `notification`, `geolocation`, and the mobile-only `biometric`, `haptics`, `barcode-scanner`, `nfc`). With no platform flag you get desktop, Android and iOS, or desktop alone with `--bundle-server`. `native add <name> <plugins...>` takes the plugins as arguments. `native init` is safe to re-run. The flags are saved into `frontends.<name>.native`; every later command reads the config. See [Native Apps](/docs/deploy/native-apps).
 
@@ -190,7 +190,7 @@ npx pikku enable scenarios    # Enable scenario instrumentation functions
 npx pikku enable agent        # Enable public agent endpoints
 npx pikku enable workflow     # Enable workflow workers
 npx pikku enable events       # Enable the realtime events channel + SSE stream
-npx pikku enable remote-rpc   # Enable the remote internal RPC queue worker + HTTP endpoint
+npx pikku enable mesh-rpc     # Enable the mesh RPC queue worker + HTTP endpoint
 npx pikku enable remote-jobs  # Enable the remote job inbox routes
 npx pikku enable webhook      # Enable the outgoing webhook delivery queue worker
 ```
@@ -366,7 +366,7 @@ Requires `emailTemplatesDir` in `pikku.config.json` (`emails init` writes it for
 
 ### `pikku scenario`
 
-Run and inspect scenarios (`pikkuScenario`) against a configured environment. Environments live under `environments` in `pikku.config.json`; the actor secret comes from the `SCENARIO_ACTOR_SECRET` environment variable.
+Run and inspect scenarios (`pikkuScenario`) against a configured environment. Environments live under `environments` in `pikku.config.json`; virtual users sign in with a statement signed by the key `pikku dev` created, or by `VIRTUAL_USER_SIGNING_KEY` for a deployed stage.
 
 ```bash
 npx pikku scenario list                    # List scenarios with names and descriptions
@@ -375,7 +375,7 @@ npx pikku scenario run staging --flows onboarding,checkout
 npx pikku scenario run staging --features checkout
 npx pikku scenario run staging --tags smoke
 npx pikku scenario run staging --exclude-tags slow
-npx pikku scenario run staging --run browser   # Drive each actor through 'browser', 'cli', or 'default'
+npx pikku scenario run staging --run browser   # Drive each virtual user through 'browser', 'cli', or 'default'
 npx pikku scenario run staging --strict        # Fail a `then` with no witness for --run
 npx pikku scenario run local --spawn --keep-alive  # Start `pikku dev` for the run
 npx pikku scenario run local --coverage        # Per-scenario server coverage (target must run with --coverage)
@@ -383,7 +383,7 @@ npx pikku scenario run staging --trace --screenshots --video all
 npx pikku scenario run staging --api-url https://sandbox.example.com --app-url https://app.example.com
 ```
 
-`--video` takes `failed` (the default), `all`, or `off`. `--api-url` and `--app-url` override the environment for one run; `--app-url` also accepts `<app>=<url>` pairs for products whose personas sign into different frontends.
+`--video` takes `failed` (the default), `all`, or `off`. `--api-url` and `--app-url` override the environment for one run; `--app-url` also accepts `<app>=<url>` pairs for products whose virtual users sign into different frontends.
 
 `pikku scenario guide` writes the user guide your suite already contains, as markdown: each page's editorial prose merged with the steps and screenshots the latest run recorded.
 
@@ -407,21 +407,20 @@ npx pikku examples add --name <name> --entity Order   # Write it into this proje
 npx pikku examples add --name <name> --app web        # --app / -a: which frontend a screen belongs to
 ```
 
-### `pikku persona`
+### `pikku virtual-user`
 
-The people this app is for, and running one against a real stage. Personas are declared in code with `defineVirtualUsers`; `persona secret` mints per-persona credentials from `SCENARIO_ACTOR_SECRET` (exported to a run as `PIKKU_PERSONA_SECRETS`).
+The people this app is for, and running one against a real stage. Virtual users are declared in code with `defineVirtualUsers`; `run` and `rpc` sign in with the key `pikku dev` created, or `VIRTUAL_USER_SIGNING_KEY` for a deployed stage.
 
 ```bash
-npx pikku persona list
-npx pikku persona run staging susan            # Sign in as a persona and work the API in character
-npx pikku persona run staging susan --disposition careless --goals "find a cheaper plan"
-npx pikku persona run staging susan --model openai/gpt-5-mini --out run.json
-npx pikku persona sync staging                 # Report which personas an environment will provision
-npx pikku persona secret                       # Mint credentials for every persona
-npx pikku persona secret susan admin           # Just these two
+npx pikku virtual-user list
+npx pikku virtual-user run staging susan            # Sign in as a virtual user and work the API in character
+npx pikku virtual-user run staging susan --disposition careless --goals "find a cheaper plan"
+npx pikku virtual-user run staging susan --model openai/gpt-5-mini --out run.json
+npx pikku virtual-user sync staging                 # Report which virtual users an environment will provision
+npx pikku virtual-user rpc getOrder --as susan      # Call one RPC as a virtual user (--data, --environment, --api-url)
 ```
 
-`persona run` also takes `--steps` (default 40), `--mutations`, `--duration 30m`, `--seed`, `--allow-approval`, `--skip-role-check`, and `--api-url`.
+`virtual-user run` also takes `--steps` (default 40), `--mutations`, `--duration 30m`, `--seed`, `--allow-approval`, `--skip-role-check`, and `--api-url`.
 
 ### `pikku audit`
 

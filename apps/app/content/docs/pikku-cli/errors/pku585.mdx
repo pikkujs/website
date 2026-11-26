@@ -1,32 +1,32 @@
 ---
-title: "PKU585: Duplicate Personas Definition"
+title: "PKU585: Duplicate Virtual Users Definition"
 description: "PKU585: Only one defineVirtualUsers(...) is allowed per codebase, so there is one place to read the declarations from and…, why it happens and how to fix it"
 ---
-# PKU585: Duplicate Personas Definition
+# PKU585: Duplicate Virtual Users Definition
 
 ## Error Message
 
 When the second call is in a different file:
 
 ```
-[PKU585] Only one defineVirtualUsers(...) is allowed per codebase, so there is one place to read the declarations from and one place to add to. Found a second in src/personas/staff.ts (first: src/personas/customers.ts). Declare them all in one call.
+[PKU585] Only one defineVirtualUsers(...) is allowed per codebase, so there is one place to read the declarations from and one place to add to. Found a second in src/virtual-users/staff.ts (first: src/virtual-users/customers.ts). Declare them all in one call.
 ```
 
 When both calls are in the same file:
 
 ```
-[PKU585] Only one defineVirtualUsers(...) is allowed per codebase, so there is one place to read the declarations from and one place to add to. Found a second call in src/personas/index.ts. Declare them all in one call.
+[PKU585] Only one defineVirtualUsers(...) is allowed per codebase, so there is one place to read the declarations from and one place to add to. Found a second call in src/virtual-users/index.ts. Declare them all in one call.
 ```
 
 ## What Went Wrong
 
 `defineVirtualUsers` was called more than once. It's a single-declaration construct: exactly one call per codebase.
 
-`defineVirtualUsers` takes a keyed object, so a single call already declares as many personas as you like. Splitting it across calls buys nothing and costs the thing the construct exists for — one place to read the cast from, and one place to add to. The CLI extracts personas by AST parsing and generates a `PersonaId` union plus a `personas.gen.json` that `pikku persona run` reads straight off disk; that only works when there's one authoritative declaration.
+`defineVirtualUsers` takes a keyed object, so a single call already declares as many virtual users as you like. Splitting it across calls buys nothing and costs the thing the construct exists for — one place to read the cast from, and one place to add to. The CLI extracts virtual users by AST parsing and generates a `VirtualUserName` union plus a `pikku-virtual-users-meta.gen.json`; that only works when there's one authoritative declaration.
 
-A second call in the *same file* is refused too. "The file" isn't an answer to "where do I add a persona?" when the file holds two calls.
+A second call in the *same file* is refused too. "The file" isn't an answer to "where do I add a virtual user?" when the file holds two calls.
 
-Generated files (`*.gen.ts`) are exempt and never claim the slot, so a scaffolded `pikku-personas.gen.ts` won't collide with your own declaration.
+Generated files (`*.gen.ts`) are exempt and never claim the slot, so the generated `pikku-virtual-users.gen.ts` won't collide with your own declaration.
 
 ## How to Fix
 
@@ -36,16 +36,16 @@ Merge every call into one keyed object:
 ```
 
 
-Keep the definitions split across files if you like, for example exporting `buyerPersonas` and `staffPersonas` objects, and merge only at the call site with a single `defineVirtualUsers({ ...buyerPersonas, ...staffPersonas })`.
+Keep the definitions split across files if you like, for example exporting `buyers` and `staff` objects, and merge only at the call site with a single `defineVirtualUsers({ ...buyers, ...staff })`.
 
 Note that `defineVirtualUsers` is read statically — the spread above works because the CLI can resolve the object literals, but a computed or conditionally-built object cannot be extracted (see [PKU124](/docs/pikku-cli/errors/pku124)).
 
-## Persona Best Practices
+## Virtual User Best Practices
 
-- Keep the single `defineVirtualUsers` call in a predictable place — `src/personas.ts` — so newcomers find the cast immediately.
-- Declare personas that only get acted upon (the account an admin bans, the colleague a document is shared with) alongside the ones that run; declaring is not running.
-- Use plain object literals; personas are parsed, never evaluated.
-- Never edit `pikku-personas.gen.ts` — it's regenerated from your declaration.
+- Keep the single `defineVirtualUsers` call in a predictable place — `src/virtual-users.ts` — so newcomers find the cast immediately.
+- Declare virtual users that only get acted upon (the account an admin bans, the colleague a document is shared with) alongside the ones that run; declaring is not running.
+- Use plain object literals; virtual users are parsed, never evaluated.
+- Never edit `pikku-virtual-users.gen.ts` — it's regenerated from your declaration.
 
 ## Common Mistakes
 
@@ -55,4 +55,4 @@ The broken shape is one `defineVirtualUsers({ susan: ... })` in a buyers file an
 
 - [PKU124: Invalid Value](/docs/pikku-cli/errors/pku124) — `defineVirtualUsers()` needs an inline object; it's read statically, never evaluated
 - [PKU581: Duplicate Auth Definition](/docs/pikku-cli/errors/pku581) — the same single-declaration rule for auth
-- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — personas and actors in scenarios
+- [PKU673: Scenario Has Services](/docs/pikku-cli/errors/pku673) — virtual users in scenarios
