@@ -1,10 +1,10 @@
 ---
 title: DeploymentService
 ai: true
-description: "Service discovery and remote RPC dispatch between deployments"
+description: "Service discovery and mesh RPC dispatch between deployments"
 ---
 
-The DeploymentService handles service discovery and remote RPC dispatch between deployments. When your functions are split across multiple deployments (e.g. an HTTP server plus a queue worker, or per-provider serverless functions), it resolves which deployment owns a function and carries the call there — including session propagation and the network transport. It is registered as the `deploymentService` singleton service.
+The DeploymentService handles service discovery and mesh RPC dispatch between deployments. When your functions are split across multiple deployments (e.g. an HTTP server plus a queue worker, or per-provider serverless functions), it resolves which deployment owns a function and carries the call there — including session propagation and the network transport. It is registered as the `deploymentService` singleton service.
 
 ## Interface
 
@@ -29,7 +29,7 @@ Deregisters the deployment and stops heartbeating.
 
 ### `invoke(funcName: string, data: unknown, session?: unknown, traceId?: string): Promise<unknown>`
 
-Dispatches a remote RPC call to whichever deployment owns the function. The implementation owns the full transport: target resolution (endpoint, service binding, etc.), session propagation (JWT signing, headers), and the network call itself.
+Dispatches a mesh RPC call to whichever deployment owns the function. The implementation owns the full transport: target resolution (endpoint, service binding, etc.), session propagation (JWT signing, headers), and the network call itself.
 
 - **Parameters:**
   - `funcName`: The function to invoke

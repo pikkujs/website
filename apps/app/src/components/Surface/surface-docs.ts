@@ -1,7 +1,5 @@
 import type { SurfaceOrigin } from './surface.types';
 
-/* Copied from packages/console/src/components/surface/surface-docs.ts. */
-
 export type SurfaceDocBlock =
   | { kind: 'prose'; text: string }
   | { kind: 'code'; text: string };
@@ -32,12 +30,8 @@ export const docBlocks = (docs: string): SurfaceDocBlock[] => {
 };
 
 /**
- * Where a symbol was declared, as a sentence rather than a path. The console's
- * surface-copy.ts does this through Paraglide messages; the website has no
- * catalogue, so the English is inlined — the same three sentences as
- * `surface_origin_*` in packages/console/messages/en.json, except that a core
- * subpath arrives as `./errors` and is resolved to the specifier you would
- * actually type, the way scripts/generate-api-surface.mjs already writes it.
+ * Where a symbol was declared, as a sentence rather than a path. A core subpath
+ * arrives as `./errors` and is resolved to the specifier you would type.
  */
 export const originText = (origin?: SurfaceOrigin): string => {
   if (!origin) return '';
@@ -67,8 +61,7 @@ export const unfence = (example: string): string =>
  * Upstream JSDoc writes specifiers and export names in backticks, so a summary
  * rendered as plain text shows the backticks themselves. Splitting on them is
  * the whole of the markdown this page needs — the doc comments contain no other
- * inline syntax, and the generated reference does the same thing in reverse
- * (scripts/generate-api-surface.mjs adds backticks where JSDoc forgot them).
+ * inline syntax.
  */
 export const inlineSpans = (text: string): { code: boolean; text: string }[] =>
   text

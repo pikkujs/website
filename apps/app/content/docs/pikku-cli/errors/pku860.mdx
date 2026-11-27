@@ -12,38 +12,32 @@ description: "PKU860: Version manifest not found at /path/to/project/versions.pi
 
 ## What Went Wrong
 
-You ran a versions check (`pikku versions check`, or a CI step that calls it), but the project has no `versions.pikku.json` manifest yet.
+You ran `pikku versions check`, or a CI step that calls it, and the project has no `versions.pikku.json`.
 
-The manifest is the recorded history of your function contracts: for every versioned function it stores the input/output schema hashes of each published version. The check compares your current code against it — with no manifest, there is nothing to compare against, so the command fails rather than silently passing.
+The manifest records the input and output schema hashes of each function version. The check compares your code against it. With no manifest there is nothing to compare, so the command fails.
 
 ## How to Fix
 
-Initialize the manifest once, then commit it:
+Create the manifest, record your current functions, then commit the file:
 
 ```bash
 npx pikku versions init
+npx pikku versions update
 git add versions.pikku.json
-git commit -m "chore: initialize pikku version manifest"
+git commit -m "chore: record pikku contracts"
 ```
 
-From then on:
+Run both Pikku commands. `init` only writes an empty manifest, and a check against an empty manifest always passes. Until `init` has run, `versions update` prints a warning and records nothing.
 
-- `pikku versions check` — verifies current contracts against the manifest (run this in CI).
-- `pikku versions update` — records intentional contract changes into the manifest after you bump versions.
-
-## Contract Versioning Best Practices
-
-- Commit `versions.pikku.json` — it's a shared record, not a build artifact.
-- Run `versions check` in CI so contract breaks are caught in review, not by consumers.
-- Initialize the manifest early; adopting it after clients depend on your contracts means the first snapshot can't protect what already shipped.
+If the manifest should already exist, restore it from Git instead. A new one records your schemas as they are now, so a change made since the old one was lost goes unnoticed.
 
 ## Common Mistakes
 
-- Adding `versions.pikku.json` to `.gitignore` — every CI run then fails with PKU860.
-- Running the check from a subdirectory whose `rootDir` doesn't contain the manifest.
+- Adding `versions.pikku.json` to `.gitignore`. A fresh CI checkout then has no manifest.
+- Setting a `rootDir` that does not contain the manifest. Pikku looks for it there.
 
-## Related Errors
+## Related
 
-- [PKU862: Contract Changed, Requires Bump](/docs/pikku-cli/errors/pku862) — what the check reports when a contract drifts
-- [PKU865: Manifest Integrity Error](/docs/pikku-cli/errors/pku865) — the manifest exists but is internally inconsistent
-- [PKU861: Function Version Modified](/docs/pikku-cli/errors/pku861) — a published version was edited
+- [Versioning & Contracts](/docs/core-features/versioning)
+- [PKU861: Function Version Modified](/docs/pikku-cli/errors/pku861): a recorded schema changed
+- [PKU865: Manifest Integrity Error](/docs/pikku-cli/errors/pku865): the manifest is inconsistent

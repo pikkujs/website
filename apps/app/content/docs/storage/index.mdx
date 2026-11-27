@@ -38,7 +38,7 @@ Each backend implements one or more of these core interfaces:
 | `WebhookService` | Outgoing webhook delivery history | `@pikku/kysely` (`KyselyWebhookService`; the `QueueWebhookService` default in core is queue-only and throws on the delivery-read methods) |
 | `ScopeService` | User scope resolution and administration | `@pikku/kysely` (`KyselyScopeService`) |
 | `VirtualUserRunStore` | Virtual-user run records and transcripts | `@pikku/kysely` (`KyselyVirtualUserRunStore`) |
-| `VirtualUserScheduleStore` | Per-persona virtual-user cadence | `@pikku/kysely` (`KyselyVirtualUserScheduleStore`) |
+| `VirtualUserScheduleStore` | Per-virtual-user cadence | `@pikku/kysely` (`KyselyVirtualUserScheduleStore`) |
 
 ## Quick Comparison
 

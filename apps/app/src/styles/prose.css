@@ -25,6 +25,8 @@
 .pk-table th { background: var(--paper-bg-dark); text-align: left; font-weight: 600; color: var(--paper-text); }
 .pk-table th, .pk-table td { padding: .6em .9em; border-bottom: 1px solid var(--paper-border); vertical-align: top; }
 .pk-table tr:last-child td { border-bottom: 0; }
+/* A first column that names a thing keeps the name on one line; the table scrolls if it has to. */
+.pk-table th:first-child, .pk-table td:first-child > a:only-child { white-space: nowrap; }
 
 /* Shiki dual theme: tokens carry --shiki-light / --shiki-dark */
 .shiki, .shiki span { color: var(--shiki-light); font-style: var(--shiki-light-font-style); font-weight: var(--shiki-light-font-weight); text-decoration: var(--shiki-light-text-decoration); }

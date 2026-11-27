@@ -48,13 +48,13 @@ const page: PageData = {
       component: 'two-col',
       eyebrow: 'RPC Methods',
       h2: 'Four ways to _call_',
-      lead: 'Internal, remote, exposed, or workflow — every call is type-safe and session-aware.',
+      lead: 'Internal, mesh, exposed, or workflow — every call is type-safe and session-aware.',
       variant: 'alt',
       left: {
         type: 'cards',
         cards: [
           { icon: 'zap', title: 'rpc.invoke(name, data)', body: 'Call a function from within the same instance. Session inherited, depth tracked.', mono: true },
-          { icon: 'globe', title: 'rpc.remote(name, data)', body: 'Call a function on another instance via DeploymentService. Session forwarded securely.', mono: true },
+          { icon: 'globe', title: 'rpc.mesh(name, data)', body: 'Call a function on another instance via DeploymentService. Session forwarded securely.', mono: true },
           { icon: 'lock', title: 'rpc.exposed(name, data)', body: 'Call any function with expose: true. Used by public HTTP RPC endpoints.', mono: true },
           { icon: 'git-branch', title: 'rpc.startWorkflow(name, input)', body: 'Start a workflow by name and get back a runId. Integrates with the workflow engine.', mono: true },
         ],

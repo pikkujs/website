@@ -121,7 +121,7 @@ Only `path` is accepted as an object key. A bare string, an unknown key, and the
 | `agent` | Agent HTTP endpoints | `agent/agent.gen.ts` | `agent` |
 | `workflow` | Workflow HTTP routes | `workflow/workflow-routes.gen.ts` | `workflow` |
 | `events` | `/events` WebSocket channel + `/events/:topic` SSE | `realtime/events.gen.ts` | `events` |
-| `remoteRpc` | Remote internal RPC worker + `POST /remote/rpc/:rpcName` | `rpc/rpc-remote.gen.ts` | `remote-rpc` |
+| `meshRpc` | Mesh RPC worker + `POST /mesh/rpc/:rpcName` | `rpc/rpc-mesh.gen.ts` | `mesh-rpc` |
 | `remoteJobs` | Job inbox routes for queue and scheduled work | `remote-jobs/remote-jobs.gen.ts` | `remote-jobs` |
 | `webhook` | Outgoing webhook delivery queue worker | `webhook/webhook.gen.ts` | `webhook` |
 | `analytics` | `POST /analytics` ingest | `analytics/analytics.gen.ts` | none (set by hand) |
@@ -148,9 +148,9 @@ Wires the workflow routes: `/workflow/:workflowName/start`, `/run`, `/approve/:r
 
 Generates the realtime scaffold: a WebSocket channel at `/events` (clients subscribe and unsubscribe to topics) and an SSE route at `/events/:topic`. Both subscribe clients through the `eventHub` service, so provide one in your singleton services. When `clientFiles.fetchFile` is set and `clientFiles.realtimeFile` is not, the realtime client is written to `realtime.gen.ts` next to the fetch client. Off: no realtime channel; `pikku realtime` has nothing to point at.
 
-#### `remoteRpc`
+#### `meshRpc`
 
-Generates a queue worker named `pikku-remote-internal-rpc` and `POST /remote/rpc/:rpcName`, both running functions marked `remote: true`. The HTTP side is guarded by pikku's remote-auth middleware rather than a user session. Turn it on when one pikku deployment calls another's internal functions. Since the worker is a queue worker, you need a queue service.
+Generates a queue worker named `pikku-mesh-rpc` and `POST /mesh/rpc/:rpcName`, both running functions marked `remote: true`. The HTTP side is guarded by pikku's mesh-auth middleware rather than a user session. Turn it on when one pikku deployment calls another's internal functions. Since the worker is a queue worker, you need a queue service.
 
 #### `remoteJobs`
 
@@ -170,7 +170,7 @@ Generates `GET <globalHTTPPrefix>/feature-flags`, a read wire returning the flag
 
 #### `virtualUser`
 
-Generates the virtual-user surface: exposed RPCs to run a persona (`runVirtualUser`), read and list runs and their steps, and set schedules, plus a queue worker named `pikku-virtual-user-runs`. Requires at least one persona declared with `definePersonas`; with none, codegen fails with a message saying so. A scheduled tick (`tickVirtualUserSchedules`) is generated but deliberately not wired: pikku won't start spending model budget for you, so you add the `wireScheduler` yourself. The model comes from `scenarios.model`.
+Generates the virtual-user surface: exposed RPCs to run a virtual user (`runVirtualUser`), read and list runs and their steps, and set schedules, plus a queue worker named `pikku-virtual-user-runs`. Requires at least one virtual user declared with `defineVirtualUsers`; with none, codegen fails with a message saying so. A scheduled tick (`tickVirtualUserSchedules`) is generated but deliberately not wired: pikku won't start spending model budget for you, so you add the `wireScheduler` yourself. The model comes from `scenarios.model`.
 
 #### `scenarios`
 
@@ -197,14 +197,14 @@ A `model` containing `/` is used as written; a bare name that is not in this tab
 
 ## Environments and Scenarios
 
-`environments` names the targets a run can point at. It is top-level rather than under `scenarios` because a scenario suite and a persona run are two different things that both point at an environment.
+`environments` names the targets a run can point at. It is top-level rather than under `scenarios` because a scenario suite and a virtual user run are two different things that both point at an environment.
 
 ```json
 {
   "environments": {
     "staging": {
       "apiUrl": "https://staging.example.com/api",
-      "signInPath": "/auth/sign-in/actor",
+      "signInPath": "/auth/sign-in/virtual-user",
       "rpcPath": "/rpc"
     }
   },
@@ -219,24 +219,24 @@ A `model` containing `/` is used as written; a bare name that is not in this tab
 | Option | Type | Description |
 |--------|------|-------------|
 | `environments.<name>.apiUrl` | `string` | Required. Base URL, including the HTTP prefix |
-| `environments.<name>.signInPath` | `string` | Actor sign-in path under `apiUrl` (default: `/auth/sign-in/actor`) |
+| `environments.<name>.signInPath` | `string` | Virtual user sign-in path under `apiUrl` (default: `/auth/sign-in/virtual-user`) |
 | `environments.<name>.sessionPath` | `string` | Where the session and its roles are read back (default: `get-session` under the sign-in path's mount) |
 | `environments.<name>.rpcPath` | `string` | Exposed-RPC prefix under `apiUrl` (default: `/rpc`) |
 | `environments.<name>.appUrl` | `string` | Frontend base URL for browser steps |
-| `environments.<name>.production` | `boolean` | Marks an environment with real consequences: only an `accountable` persona may run against it |
-| `scenarios.emailDomain` | `string` | Mail domain a persona's address is built on (default: `personas.invalid`, a domain nobody can own) |
+| `environments.<name>.production` | `boolean` | Marks an environment with real consequences: only an `accountable` virtual user may run against it |
+| `scenarios.emailDomain` | `string` | Mail domain a virtual user's address is built on (default: `virtualuser.invalid`, a domain nobody can own) |
 | `scenarios.browserDriver` | `string` | Package driving `browser` step bindings. Anything exporting a `ScenarioBrowserProvider` works (default: `@pikku/playwright`) |
-| `scenarios.model` | `string` | Model a persona thinks with. Not the model under test; a step can override it per conversation |
-| `scenarios.reset` | `{ enabled, keep? }` | Roll the local database back to its seeded state between scenarios: the runner copies every table once, then restores the rows before each scenario (a feature's `before` hook setup is captured too). `keep` lists tables the rollback leaves alone — put session and account tables there, or every actor is signed out mid-run. Refused unless the run targets an `apiUrl` on this machine |
+| `scenarios.model` | `string` | Model a virtual user thinks with. Not the model under test; a step can override it per conversation |
+| `scenarios.reset` | `{ enabled, keep? }` | Roll the local database back to its seeded state between scenarios: the runner copies every table once, then restores the rows before each scenario (a feature's `before` hook setup is captured too). `keep` lists tables the rollback leaves alone — put session and account tables there, or every virtual user is signed out mid-run. Refused unless the run targets an `apiUrl` on this machine |
 
-Personas are declared in code with `definePersonas`, not in `pikku.config.json`:
+Virtual users are declared in code with `defineVirtualUsers`, not in `pikku.config.json`:
 
-```typescript @snippet definePersonas
+```typescript @snippet defineVirtualUsers
 ```
 
-Addresses are never written down: each is derived from the persona id and `scenarios.emailDomain`, and codegen materialises one actor per persona for scenario runs.
+Addresses are never written down: each is derived from the virtual user id and `scenarios.emailDomain`, and codegen gives scenario runs one typed `virtualUsers` entry per declaration.
 
-The actor secret is never configured here — it comes from the `SCENARIO_ACTOR_SECRET` environment variable at run time.
+No signing key is configured here. `pikku dev` creates one for its own server; for a deployed stage, the CLI reads `VIRTUAL_USER_SIGNING_KEY` from the environment at run time.
 
 ## Local Database
 
@@ -510,7 +510,7 @@ Configure lint rules. The first three are evaluated by codegen; the last by
     "admin": {
       "cwd": "apps/admin",
       "serves": "staff",
-      "personas": ["manager"],
+      "virtualUsers": ["manager"],
       "native": { "identifier": "com.acme.admin", "platforms": ["desktop", "android"] }
     }
   }
@@ -525,7 +525,7 @@ Configure lint rules. The first three are evaluated by codegen; the last by
 | `deploy` | `boolean` | Whether Fabric deploys it |
 | `kind` | `"spa"` \| `"ssr"` \| `"static"` | How it renders. An `ssr` frontend cannot be bundled into a native app |
 | `dev` | `object` | `{ command, port, healthPath }` — how the dev runner starts it |
-| `serves` / `personas` | `string` / `string[]` | Who the app is for |
+| `serves` / `virtualUsers` | `string` / `string[]` | Who the app is for |
 | `serve` | `object` | Serve `dist` from the pikku server's own origin: `{ urlPrefix?, spaFallback? }` (defaults `/` and `true`). At most one frontend may set it |
 | `native` | `object` | Package it as a desktop or mobile app. Written by `pikku app native init` — see [Native Apps](/docs/deploy/native-apps) |
 
@@ -548,7 +548,7 @@ that job and proxies API calls back to pikku, which is what keeps HMR working.
 
 ### Output File Overrides
 
-Every generated file path is individually overridable at the top level of the config. By default they're all derived from `outDir` (e.g. `functionsFile`, `httpWiringsFile`, `schemaDirectory`, `bootstrapFile`, `personasWiringFile`, and several dozen more — one key per generated file listed in [Generated Files](/docs/pikku-cli/generated-files)). You rarely need these; the common exceptions are `authFile` (which lives in your source tree) and the `clientFiles` block above.
+Every generated file path is individually overridable at the top level of the config. By default they're all derived from `outDir` (e.g. `functionsFile`, `httpWiringsFile`, `schemaDirectory`, `bootstrapFile`, `virtualUsersWiringFile`, and several dozen more — one key per generated file listed in [Generated Files](/docs/pikku-cli/generated-files)). You rarely need these; the common exceptions are `authFile` (which lives in your source tree) and the `clientFiles` block above.
 
 ### Native Binary
 

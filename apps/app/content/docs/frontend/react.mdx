@@ -39,18 +39,19 @@ generated fetch client (`serverUrl`, auth hooks, and so on).
 | `usePikkuWorkflow(name)` | Running one named workflow — `.start` / `.run` / `.status` |
 | `usePikkuFeatureFlags()` / `useFeatureFlag(key)` | Reading the caller's feature flags |
 | `usePikkuAnalytics()` | Sending product-analytics events |
-| `useDevActors()` | The "Sign in as …" scenario-actor switcher in dev |
 
 For rendering, mutating or paginating data, use the generated React Query hooks
 instead — they add caching, deduplication and unmount handling that a manual
 effect does not.
 
-## Dev actors
+## Dev sign-in switcher
 
-`useDevActors()` implements the logic half of the dev actor switcher:
-`parseDevActors`, `parseDevActorSecrets` and `signInAsActor` back it, and
-`@pikku/mantine/dev` renders the control on top. It lets a local app sign in as a
-declared persona so you can drive the same scenarios the CLI runs, from the UI.
+A "Sign in as …" switcher lets a local app sign in as a declared virtual user, so
+you can drive the same scenarios the CLI runs, from the UI. The
+[`pikkuVirtualUser` plugin](/docs/middleware/better-auth#virtual-users-synthetic-test-users)
+serves it: `GET /sign-in/virtual-users` lists who it may offer, and
+`POST /sign-in/switch-virtual-user` signs in as one by `id`. Both routes sit under
+your auth base path.
 
 ## i18n
 

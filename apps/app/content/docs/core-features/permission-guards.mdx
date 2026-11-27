@@ -22,7 +22,9 @@ Use them in your function:
 ```typescript @snippet co-permission-on-func
 ```
 
-Each key is a separate permission group, and groups use **OR logic** - the function executes if *either* `auth` or `owner` passes. To require both checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
+Only the person who placed the order can cancel it. `requireOwnership` also rejects a request with no session, so it needs no separate sign-in check.
+
+Each key under `permissions` is a separate group, and groups use **OR logic**: the function executes if *any* group passes. Adding a "signed in" check beside `owner` would let any signed-in user cancel any order. To require several checks together, put them in an array under one key (see [Permission Logic and Execution](#permission-logic-and-execution)).
 
 ### Session-Only Checks with `pikkuAuth`
 
@@ -57,7 +59,7 @@ Use it in a function by listing it under `permissions`, as in the first example 
 
 ## Permission Groups
 
-You can compose multiple permissions. List as many as you need under `permissions`, each under its own key: for example `auth: requireAuth` next to `premium: requirePremium`, where the second permission looks up the user's record and checks an `isPremium` flag.
+You can compose multiple permissions. Each key under `permissions` is another way in: with `owner: requireOwnership` next to `teamMember: requireTeamMember`, either the owner or a team member can proceed. Don't add a requirement as a new key. If the owner must also have a premium plan, put both checks in one array: `premiumOwner: [requireOwnership, requirePremium]`.
 
 ## Complex Permissions
 
@@ -136,7 +138,7 @@ Keep your permissions in one `permissions.ts` file. A `requireAuth` that checks 
 
 Then import and use:
 
-Import the permissions where you define functions and use them by key. A resource update takes `permissions: { auth: requireAuth, owner: requireOwnership }`. A user deletion takes `scopes: ['admin:users:remove']` for the capability and `permissions: { teamMember: requireTeamMember }` for being on the owning team. Both run: scopes AND together first, then permissions OR across keys.
+Import the permissions where you define functions and use them by key. A resource update takes `permissions: { owner: requireOwnership }`. A user deletion takes `scopes: ['admin:users:remove']` for the capability and `permissions: { teamMember: requireTeamMember }` for being on the owning team. Both run: scopes AND together first, then permissions OR across keys.
 
 ## Permission Factories
 
@@ -153,7 +155,7 @@ Permission factories are useful when you have similar permission logic that vari
 
 **Keep permissions focused** - One check per permission:
 
-Keep each permission to a single responsibility: separate `requireAuth`, `requireOwnership` and `requireVerified` permissions, each registered under its own key, rather than one `requireEverything` that checks the session, a role and email verification at once. A role check in particular belongs in `scopes`, not in a permission.
+Keep each permission to a single responsibility: separate `requireOwnership` and `requireEmailVerified` permissions rather than one `requireEverything` that checks the session, a role and email verification at once. When both must pass, put them in one array. Separate keys mean either one is enough. A role check in particular belongs in `scopes`, not in a permission.
 
 **Optimize expensive checks** - Cache when possible:
 

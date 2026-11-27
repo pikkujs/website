@@ -1,45 +1,29 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useRouter } from '@tanstack/react-router';
+import Link from '@/components/site/Link';
 import useBaseUrl from '@/components/site/useBaseUrl';
 import { docBlocks, inlineSpans, originChip, originText, unfence } from './surface-docs';
 import { proseFor, stepsOf } from './surface-steps';
+import { guideFor } from './surface-guides';
+import { optionsOf, searchSurface, type Hit } from './surface-search';
 import type {
   SurfaceDoc,
   SurfaceEntryPoint,
   SurfaceEntryPointId,
   SurfaceLeaf,
-  SurfaceSymbol,
 } from './surface.types';
 import styles from './surface.module.css';
 
 /* ════════════════════════════════════════════════════════════════
-   The API surface, as the console shows it.
+   The API explorer: the entry-point switch, the six build steps as the
+   spine, one door in the middle and one export docked on the right.
 
-   The console's SurfacePage says why this page can exist at all:
-
-     "The public surface page. The doc and the measured usage are supplied
-      rather than fetched here, so the same page serves the website — which
-      has the doc for a released version and can measure nothing — and the
-      console, which has both."
-
-   So the model is ported (surface.types.ts, surface-steps.ts, surface-docs.ts
-   are near-verbatim) and the chrome is rebuilt: the console draws itself with
-   Mantine, whose CSS variables would fight this site's, and reads its copy
-   from a 4.6 MB Paraglide catalogue. What is kept is the shape — the
-   entry-point switch, the six build steps as the spine, a door document in the
-   middle, one export docked on the right.
-
-   What is deliberately different, because a website is not a console:
-     - search is global, not scoped to the open door. The console filters
-       inside a leaf because it has a separate command palette; here one input
-       does both, and someone who already knows the name should not have to
-       guess which door it is behind.
+     - search is global, not scoped to the open door, so someone who
+       already knows a name does not have to guess which door it is behind.
      - every selection writes the location hash, so any state is a link.
-     - there is no usage column. Nothing here can measure a project, and an
-       empty column would read as "nothing imports this".
 
-   This is the only place the surface is published. The generated markdown
-   reference that used to sit under docs/api-reference/ was a second copy of
-   the same JSON, and a second copy is a second thing to keep honest.
+   This is the only place the surface is published, and it is generated
+   data: scripts/generate-api-surface.mjs vendors it from @pikku/cli.
    ════════════════════════════════════════════════════════════════ */
 
 const ENTRY_LABEL: Record<SurfaceEntryPointId, string> = {
@@ -59,26 +43,40 @@ interface State {
   door: string | null;
   symbol: string | null;
   query: string;
+  /** A hash that does not read as a link into the explorer at all. */
+  badLink: string | null;
 }
 
-const readHash = (): Partial<State> => {
-  if (typeof window === 'undefined') return {};
-  const raw = window.location.hash.replace(/^#/, '');
-  if (!raw) return {};
-  const [path, encodedQuery] = raw.split('?q=');
-  const next: Partial<State> = {};
-  if (encodedQuery) {
+const HOME: State = { entry: 'app', door: null, symbol: null, query: '', badLink: null };
+
+/** The whole state a hash describes. Nothing is carried over from what was open. */
+const parseHash = (hash: string): State => {
+  const anchor = hash.replace(/^#/, '');
+  // The skip link is an anchor on the page, not a link into the explorer.
+  const raw = anchor === 'main' ? '' : anchor;
+  const at = raw.indexOf('?q=');
+  const path = at < 0 ? raw : raw.slice(0, at);
+  let query = '';
+  if (at >= 0) {
     try {
-      next.query = decodeURIComponent(encodedQuery);
+      query = decodeURIComponent(raw.slice(at + 3));
     } catch {
       /* a hand-edited hash is not worth a blank page */
     }
   }
   const parts = path.split('/').filter(Boolean);
-  if (parts[0] === 'app' || parts[0] === 'addon') next.entry = parts[0];
-  if (parts[1]) next.door = parts[1];
-  if (parts[2]) next.symbol = parts[2];
-  return next;
+  const [entry, door, symbol] = parts;
+  if (entry !== undefined && entry !== 'app' && entry !== 'addon') {
+    return { ...HOME, query, badLink: `#${raw}` };
+  }
+  if (parts.length > 3) return { ...HOME, query, badLink: `#${raw}` };
+  return {
+    entry: entry ?? 'app',
+    door: door ?? null,
+    symbol: symbol ?? null,
+    query,
+    badLink: null,
+  };
 };
 
 const hashFor = (state: State) => {
@@ -88,6 +86,19 @@ const hashFor = (state: State) => {
   return `#${parts.join('/')}${state.query ? `?q=${encodeURIComponent(state.query)}` : ''}`;
 };
 
+const keyOf = (hit: Hit) => `${hit.leaf.name}/${hit.symbol.name}`;
+
+const useMediaQuery = (query: string) =>
+  useSyncExternalStore(
+    (onChange) => {
+      const list = window.matchMedia(query);
+      list.addEventListener('change', onChange);
+      return () => list.removeEventListener('change', onChange);
+    },
+    () => window.matchMedia(query).matches,
+    () => false
+  );
+
 /* ── icons ─────────────────────────────────────────────────── */
 
 const Icon = ({ path, ...rest }: { path: string } & React.SVGProps<SVGSVGElement>) => (
@@ -96,7 +107,7 @@ const Icon = ({ path, ...rest }: { path: string } & React.SVGProps<SVGSVGElement
   </svg>
 );
 
-const MENU = 'M3 6h18M3 12h18M3 18h18';
+const CHEVRON = 'M6 9l6 6 6-6';
 const CLOSE = 'M6 6l12 12M18 6L6 18';
 
 /* Which door you came through reframes every leaf below it, so it is a
@@ -151,9 +162,9 @@ function Prose({ text }: { text: string }) {
 
 /* ── rows ──────────────────────────────────────────────────── */
 
-interface Hit {
-  symbol: SurfaceSymbol;
-  leaf: SurfaceLeaf;
+function StatusChip({ status }: { status?: number }) {
+  if (status === undefined) return null;
+  return <span className={`${styles.badge} ${styles.status}`}>HTTP {status}</span>;
 }
 
 function ExportRow({
@@ -168,11 +179,23 @@ function ExportRow({
   onSelect: (hit: Hit) => void;
 }) {
   const { symbol, leaf } = hit;
+  const summaryId = `surface-summary-${leaf.name}-${symbol.name}`;
+  const label = [
+    symbol.name,
+    symbol.kind,
+    symbol.status !== undefined && `HTTP ${symbol.status}`,
+    symbol.deprecated && 'deprecated',
+    `from ${leaf.specifier}`,
+  ]
+    .filter(Boolean)
+    .join(', ');
   return (
     <button
       type="button"
       className={styles.row}
-      data-sym={symbol.name}
+      data-key={keyOf(hit)}
+      aria-label={label}
+      aria-describedby={summaryId}
       aria-current={current || undefined}
       onClick={() => onSelect(hit)}
     >
@@ -180,18 +203,18 @@ function ExportRow({
         <span className={styles.rowTop}>
           <span className={styles.sym}>{symbol.name}</span>
           <span className={`${styles.badge} ${styles[symbol.kind] ?? ''}`}>{symbol.kind}</span>
+          <StatusChip status={symbol.status} />
           {symbol.deprecated && (
             <span className={`${styles.badge} ${styles.deprecated}`}>deprecated</span>
           )}
           {showDoor && <span className={styles.fromDoor}>{leaf.specifier}</span>}
         </span>
-        {symbol.summary ? (
-          <span className={styles.rowSummary}>
-            <Prose text={symbol.summary} />
-          </span>
-        ) : (
-          <span className={`${styles.rowSummary} ${styles.undocumented}`}>Not documented yet</span>
-        )}
+        <span
+          id={summaryId}
+          className={`${styles.rowSummary} ${symbol.summary ? '' : styles.undocumented}`}
+        >
+          {symbol.summary ? <Prose text={symbol.summary} /> : 'Not documented yet'}
+        </span>
         <span className={styles.rowImport}>
           import {'{'} {symbol.name} {'}'} from '{leaf.specifier}'
         </span>
@@ -201,9 +224,49 @@ function ExportRow({
   );
 }
 
+function CopyButton({ text }: { text: string }) {
+  const [outcome, setOutcome] = useState<'idle' | 'copied' | 'failed'>('idle');
+  useEffect(() => {
+    if (outcome === 'idle') return;
+    const timer = setTimeout(() => setOutcome('idle'), 2500);
+    return () => clearTimeout(timer);
+  }, [outcome]);
+
+  const copy = () => {
+    if (!navigator.clipboard) {
+      setOutcome('failed');
+      return;
+    }
+    navigator.clipboard.writeText(text).then(
+      () => setOutcome('copied'),
+      () => setOutcome('failed')
+    );
+  };
+
+  return (
+    <>
+      <button type="button" className={styles.copyBtn} onClick={copy}>
+        {outcome === 'copied' ? 'Copied' : outcome === 'failed' ? 'Copy failed' : 'Copy'}
+      </button>
+      <span role="status" className="sr-only">
+        {outcome === 'copied' && 'Import line copied'}
+        {outcome === 'failed' && 'Copy failed. Select the import line to copy it by hand.'}
+      </span>
+    </>
+  );
+}
+
 /* ── the detail, docked right ──────────────────────────────── */
 
-function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
+function Detail({
+  hit,
+  onClose,
+  closeRef,
+}: {
+  hit: Hit | null;
+  onClose: () => void;
+  closeRef: React.Ref<HTMLButtonElement>;
+}) {
   if (!hit) {
     return (
       <div className={styles.panelEmpty}>
@@ -230,16 +293,26 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
 
   const { symbol, leaf } = hit;
   const blocks = symbol.docs ? docBlocks(symbol.docs) : [];
+  const options = optionsOf(symbol.members ?? []);
+  const required = options.filter((option) => option.required).length;
+  const importLine = `import { ${symbol.name} } from '${leaf.specifier}'`;
 
   return (
     <>
       <div className={styles.panelHead}>
-        <span className={styles.sym}>{symbol.name}</span>
+        <h2 className={`${styles.sym} ${styles.panelTitle}`}>{symbol.name}</h2>
         <span className={`${styles.badge} ${styles[symbol.kind] ?? ''}`}>{symbol.kind}</span>
+        <StatusChip status={symbol.status} />
         {symbol.deprecated && (
           <span className={`${styles.badge} ${styles.deprecated}`}>deprecated</span>
         )}
-        <button type="button" className={styles.closeBtn} onClick={onClose} aria-label="Close detail">
+        <button
+          ref={closeRef}
+          type="button"
+          className={styles.closeBtn}
+          onClick={onClose}
+          aria-label="Close detail"
+        >
           <Icon path={CLOSE} />
         </button>
       </div>
@@ -275,10 +348,11 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
         )}
 
         <div>
-          <div className={styles.lab}>import it from</div>
-          <pre className={`${styles.code} ${styles.wrap}`}>
-            import {'{'} {symbol.name} {'}'} from '{leaf.specifier}'
-          </pre>
+          <div className={styles.labRow}>
+            <div className={styles.lab}>import it from</div>
+            <CopyButton key={keyOf(hit)} text={importLine} />
+          </div>
+          <pre className={`${styles.code} ${styles.wrap}`}>{importLine}</pre>
         </div>
 
         {symbol.examples && symbol.examples.length > 0 && (
@@ -294,16 +368,22 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
           </div>
         )}
 
-        {symbol.members && symbol.members.length > 0 && (
+        {options.length > 0 && (
           <div>
-            <div className={styles.lab}>{symbol.members.length} options</div>
+            <div className={styles.lab}>
+              {options.length} {options.length === 1 ? 'option' : 'options'}
+              {required > 0 && ` · ${required} required`}
+            </div>
             <div className={styles.members}>
-              {symbol.members.map((member) => (
-                <div key={member.line} className={styles.member}>
-                  <code>{member.line}</code>
-                  {member.doc && (
+              {options.map((option, index) => (
+                <div key={`${index}:${option.line}`} className={styles.member}>
+                  <code>
+                    {option.line}
+                    {option.required && <span className={styles.required}>required</span>}
+                  </code>
+                  {option.doc && (
                     <p>
-                      <Prose text={member.doc} />
+                      <Prose text={option.doc} />
                     </p>
                   )}
                 </div>
@@ -328,18 +408,27 @@ function Detail({ hit, onClose }: { hit: Hit | null; onClose: () => void }) {
 /* ── the explorer ──────────────────────────────────────────── */
 
 export default function SurfaceExplorer() {
+  const router = useRouter();
   const dataUrl = useBaseUrl('/api-surface.json');
   const [doc, setDoc] = useState<SurfaceDoc | null>(null);
   const [failed, setFailed] = useState(false);
-  const [state, setState] = useState<State>({
-    entry: 'app',
-    door: null,
-    symbol: null,
-    query: '',
-  });
+  const [state, setState] = useState<State>(() => parseHash(window.location.hash));
   const [navOpen, setNavOpen] = useState(false);
+  /** Below this the detail panel is a sheet over the list. */
+  const overlay = useMediaQuery('(max-width: 1180px)');
+  /** Below this the navigator is a drawer too. */
+  const phone = useMediaQuery('(max-width: 900px)');
+  const shellRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const doorBtnRef = useRef<HTMLButtonElement>(null);
+  /** How the next state change reaches history. */
+  const historyMode = useRef<'push' | 'replace'>('replace');
+  /** Where focus goes once the next selection has rendered. */
+  const focusNext = useRef<'row' | 'panel' | null>(null);
 
   /* The 300-odd KB never enters the page bundle — the shell ships empty and
      fills in, the same trade /openapis makes with its catalogue. */
@@ -361,60 +450,74 @@ export default function SurfaceExplorer() {
     };
   }, [dataUrl]);
 
-  /* The hash is read once on mount and then on every back/forward. */
-  useEffect(() => {
-    const sync = () => setState((prev) => ({ ...prev, ...readHash() }));
-    sync();
-    window.addEventListener('hashchange', sync);
-    return () => window.removeEventListener('hashchange', sync);
-  }, []);
-
-  useEffect(() => {
-    if (!doc) return;
-    const next = hashFor(state);
-    if (window.location.hash !== next) {
-      window.history.replaceState(null, '', next);
-    }
-  }, [doc, state]);
+  /* The URL is the source of truth whenever something else changes it: back,
+     forward, an in-page link or the site search. The router's history sees all
+     of them, including its own pushes, which fire no `hashchange`. */
+  useEffect(
+    () =>
+      router.history.subscribe(() => {
+        const { pathname, hash } = router.history.location;
+        // Leaving the page is not a change of what the explorer shows.
+        if (pathname.replace(/\/$/, '') !== '/api') return;
+        // The skip link is an anchor on the page, not a link into the explorer.
+        if (hash === '#main') return;
+        const next = parseHash(hash);
+        setState((prev) => (hashFor(prev) === hashFor(next) && !next.badLink ? prev : next));
+      }),
+    [router]
+  );
 
   const entry: SurfaceEntryPoint | null = useMemo(() => {
     if (!doc) return null;
     return doc.entryPoints.find((each) => each.id === state.entry) ?? doc.entryPoints[0];
   }, [doc, state.entry]);
 
-  const leaf: SurfaceLeaf | null = useMemo(() => {
-    if (!entry) return null;
-    // An untouched page is already reading rather than asking to be clicked:
-    // the first door of the first step is where the story starts.
-    return entry.leaves.find((each) => each.name === state.door) ?? entry.leaves[0];
-  }, [entry, state.door]);
+  const namedLeaf = entry?.leaves.find((each) => each.name === state.door) ?? null;
+
+  // An untouched page is already reading rather than asking to be clicked:
+  // the first door of the first step is where the story starts.
+  const leaf: SurfaceLeaf | null = namedLeaf ?? entry?.leaves[0] ?? null;
 
   const results: Hit[] | null = useMemo(() => {
-    if (!entry) return null;
-    const query = state.query.trim().toLowerCase();
-    if (!query) return null;
-    const out: Hit[] = [];
-    for (const each of entry.leaves) {
-      for (const symbol of each.symbols) {
-        if (
-          symbol.name.toLowerCase().includes(query) ||
-          (symbol.summary ?? '').toLowerCase().includes(query)
-        ) {
-          out.push({ symbol, leaf: each });
-        }
-      }
-    }
-    return out;
+    if (!entry || !state.query.trim()) return null;
+    return searchSurface(entry, state.query);
   }, [entry, state.query]);
 
+  /* The named door wins; a link naming the wrong door still finds the export. */
   const selected: Hit | null = useMemo(() => {
     if (!entry || !state.symbol) return null;
-    for (const each of entry.leaves) {
+    const named = entry.leaves.filter((each) => each.name === state.door);
+    for (const each of [...named, ...entry.leaves]) {
       const found = each.symbols.find((symbol) => symbol.name === state.symbol);
       if (found) return { symbol: found, leaf: each };
     }
     return null;
-  }, [entry, state.symbol]);
+  }, [entry, state.door, state.symbol]);
+  const selectedKey = selected ? keyOf(selected) : null;
+
+  const unknownLink = !entry
+    ? null
+    : state.badLink ??
+      ((state.symbol && !selected) || (state.door && !namedLeaf && !selected)
+        ? hashFor({ ...state, query: '' })
+        : null);
+
+  useEffect(() => {
+    if (!doc) return;
+    // The address always names the door the export is really behind.
+    if (selected && state.door !== selected.leaf.name) {
+      setState((prev) => ({ ...prev, door: selected.leaf.name }));
+      return;
+    }
+    // An unreadable link stays in the address bar, next to the note about it.
+    if (state.badLink) return;
+    const next = hashFor(state);
+    const mode = historyMode.current;
+    historyMode.current = 'replace';
+    const { pathname, search, hash } = router.history.location;
+    if (hash === next) return;
+    router.history[mode](`${pathname}${search}${next}`);
+  }, [doc, state, selected, router]);
 
   const rows: Hit[] = useMemo(() => {
     if (results) return results;
@@ -422,38 +525,60 @@ export default function SurfaceExplorer() {
     return leaf.symbols.map((symbol) => ({ symbol, leaf }));
   }, [results, leaf]);
 
-  const select = useCallback((hit: Hit | null) => {
+  const rowFor = useCallback(
+    (key: string) =>
+      docRef.current?.querySelector<HTMLElement>(`[data-key="${CSS.escape(key)}"]`) ?? null,
+    []
+  );
+
+  const select = useCallback((hit: Hit | null, focus: 'row' | 'panel' | null = null) => {
+    historyMode.current = 'push';
+    focusNext.current = focus;
     setState((prev) => ({
       ...prev,
+      door: hit ? hit.leaf.name : prev.door,
       symbol: hit ? hit.symbol.name : null,
-      // While searching, opening a result must not also move the navigator —
-      // the search is across doors, and the list under it would change shape.
-      door: hit && !prev.query ? hit.leaf.name : prev.door,
+      badLink: null,
     }));
   }, []);
 
-  const pickEntry = useCallback((id: SurfaceEntryPointId) => {
-    setState((prev) => ({ ...prev, entry: id, door: null, symbol: null }));
+  /* Picking an export by hand: on a narrow screen the detail covers the list,
+     so focus follows it there. */
+  const open = useCallback(
+    (hit: Hit) => select(hit, overlay ? 'panel' : null),
+    [select, overlay]
+  );
+
+  const closeNav = useCallback(() => {
     setNavOpen(false);
+    doorBtnRef.current?.focus();
   }, []);
 
-  const openLeaf = useCallback((door: string) => {
-    setState((prev) => ({ ...prev, door, symbol: null, query: '' }));
-    setNavOpen(false);
-    if (docRef.current) docRef.current.scrollTop = 0;
-  }, []);
+  const pickEntry = useCallback(
+    (id: SurfaceEntryPointId) => {
+      historyMode.current = 'push';
+      setState((prev) => ({ ...prev, entry: id, door: null, symbol: null, badLink: null }));
+      if (navOpen) closeNav();
+    },
+    [navOpen, closeNav]
+  );
 
-  /* `/` is taken: Docusaurus binds it to the Algolia box in the navbar. On
-     this page it belongs to the page's own search, so the claim is made in the
-     capture phase — which runs before any bubble-phase listener whatever the
-     registration order — and propagation stops there. Everywhere else on the
-     site `/` still opens Algolia. */
+  const openLeaf = useCallback(
+    (door: string) => {
+      historyMode.current = 'push';
+      setState((prev) => ({ ...prev, door, symbol: null, query: '', badLink: null }));
+      if (navOpen) closeNav();
+    },
+    [navOpen, closeNav]
+  );
+
+  /* `/` focuses this page's search. Typed into a field it is a slash, and
+     inside a dialog it belongs to the dialog. */
   useEffect(() => {
     const onKeyDownCapture = (event: KeyboardEvent) => {
       if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
       const target = event.target as HTMLElement | null;
-      // A `/` typed into any field is a slash, including Algolia's own box.
-      if (target?.closest('input, textarea, select, [contenteditable]')) return;
+      if (target?.closest('input, textarea, select, [contenteditable], [role="dialog"]')) return;
       event.preventDefault();
       event.stopPropagation();
       searchRef.current?.focus();
@@ -465,28 +590,33 @@ export default function SurfaceExplorer() {
   }, []);
 
   /* An app answers the keyboard: arrows to walk the list, Escape to back out
-     one level. */
+     one level. Only for keys pressed in the explorer or with nothing focused,
+     so the site's menus and dialogs keep their own. */
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const typing = event.target === searchRef.current;
+      if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement;
+      const onBody = target === document.body || target === document.documentElement;
+      if (!onBody && !shellRef.current?.contains(target)) return;
+      const typing = target === searchRef.current;
 
       if (event.key === 'Escape') {
-        if (typing && state.query) {
+        if (navOpen) {
+          closeNav();
+        } else if (typing && state.query) {
+          event.preventDefault();
           setState((prev) => ({ ...prev, query: '' }));
-          return;
-        }
-        if (state.symbol) {
+        } else if (state.symbol) {
           select(null);
-          return;
         }
-        setNavOpen(false);
         return;
       }
 
       if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
-      if (rows.length === 0) return;
+      const onRow = Boolean(target.closest('[data-key]'));
+      if (!(typing || onRow || onBody) || rows.length === 0) return;
       event.preventDefault();
-      const at = rows.findIndex((hit) => hit.symbol.name === state.symbol);
+      const at = rows.findIndex((hit) => keyOf(hit) === selectedKey);
       const next =
         event.key === 'ArrowDown'
           ? at < 0
@@ -495,29 +625,62 @@ export default function SurfaceExplorer() {
           : at < 0
             ? rows.length - 1
             : Math.max(at - 1, 0);
-      select(rows[next]);
+      if (next !== at) select(rows[next], onRow ? 'row' : null);
     };
 
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [rows, state.symbol, state.query, select]);
+  }, [rows, selectedKey, state.symbol, state.query, navOpen, select, closeNav]);
 
-  /* Keep the walked row in view — the arrow keys are useless past the fold. */
+  /* A different list starts at its top. Declared before the effect that
+     brings the selected row into view, which has the last word. */
   useEffect(() => {
-    if (!state.symbol || !docRef.current) return;
-    const row = docRef.current.querySelector(`[data-sym="${CSS.escape(state.symbol)}"]`);
-    if (row) row.scrollIntoView({ block: 'nearest' });
-  }, [state.symbol]);
+    if (docRef.current) docRef.current.scrollTop = 0;
+  }, [leaf?.name, state.entry, state.query]);
+
+  /* Runs again once the data arrives, because a deep link names a row before
+     there are any rows. */
+  const lastKey = useRef<string | null>(null);
+  useEffect(() => {
+    if (!doc) return;
+    const previous = lastKey.current;
+    lastKey.current = selectedKey;
+    if (panelRef.current) panelRef.current.scrollTop = 0;
+    const focus = focusNext.current;
+    focusNext.current = null;
+
+    if (selectedKey) {
+      const row = rowFor(selectedKey);
+      row?.scrollIntoView({ block: 'nearest' });
+      if (focus === 'row') row?.focus({ preventScroll: true });
+      if (focus === 'panel') closeRef.current?.focus({ preventScroll: true });
+      return;
+    }
+
+    // Closing the detail hands focus back to the row it was opened from.
+    const active = document.activeElement;
+    if (previous && (active === document.body || panelRef.current?.contains(active))) {
+      (rowFor(previous) ?? searchRef.current)?.focus({ preventScroll: true });
+    }
+  }, [doc, selectedKey, results, rowFor]);
+
+  useEffect(() => {
+    if (!navOpen) return;
+    const nav = navRef.current;
+    (nav?.querySelector<HTMLElement>('[aria-current]') ?? nav?.querySelector('button'))?.focus();
+  }, [navOpen]);
+
+  useEffect(() => {
+    if (!phone) setNavOpen(false);
+  }, [phone]);
 
   if (failed) {
     return (
       <div className={styles.shell}>
-        <div className={styles.loading}>
+        <div className={styles.loading} role="alert">
           <p>
-            The surface could not be loaded. It is generated by{' '}
-            <code>npm run sync-api-surface</code> — meanwhile{' '}
-            <code>npx pikku doc</code> prints the same exports for the version
-            you have installed.
+            The API reference didn’t load. Reload the page to try again, or read the{' '}
+            <Link to="/docs">docs</Link>.
           </p>
         </div>
       </div>
@@ -536,18 +699,31 @@ export default function SurfaceExplorer() {
 
   const groups = stepsOf(entry);
   const total = entry.leaves.reduce((count, each) => count + each.symbols.length, 0);
+  const allBehindBase = entry.leaves.every(
+    (each) =>
+      each.specifier === entry.specifierBase ||
+      each.specifier.startsWith(`${entry.specifierBase}/`)
+  );
+  const matchCount = results
+    ? `${results.length} ${results.length === 1 ? 'export matches' : 'exports match'} “${state.query}”`
+    : '';
+  const guide = leaf ? guideFor(entry.id, leaf) : null;
+  const sheetOpen = phone && Boolean(selected);
 
   return (
-    <div className={styles.shell} data-nav={navOpen ? 'open' : undefined}>
+    <div ref={shellRef} className={styles.shell} data-nav={navOpen ? 'open' : undefined}>
       <div className={styles.bar}>
         <button
+          ref={doorBtnRef}
           type="button"
-          className={styles.iconBtn}
-          aria-label="Show doors"
+          className={styles.doorBtn}
           aria-expanded={navOpen}
-          onClick={() => setNavOpen((open) => !open)}
+          aria-controls="surface-doors"
+          onClick={() => setNavOpen((isOpen) => !isOpen)}
         >
-          <Icon path={MENU} />
+          <span className={styles.doorBtnLabel}>Door</span>
+          <span className={styles.doorBtnName}>{results ? 'all' : leaf?.name}</span>
+          <Icon path={CHEVRON} />
         </button>
 
         <DoorSwitch doc={doc} current={entry.id} className={styles.barDoors} onPick={pickEntry} />
@@ -562,9 +738,16 @@ export default function SurfaceExplorer() {
             aria-label="Search every export"
             autoComplete="off"
             spellCheck={false}
-            onChange={(event) =>
-              setState((prev) => ({ ...prev, query: event.target.value, symbol: null }))
-            }
+            onChange={(event) => {
+              historyMode.current = 'replace';
+              const query = event.target.value;
+              setState((prev) => ({ ...prev, query, symbol: null, badLink: null }));
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' || event.nativeEvent.isComposing || !results?.[0]) return;
+              event.preventDefault();
+              open(results[0]);
+            }}
           />
           <span className={styles.slash} aria-hidden="true">
             /
@@ -574,20 +757,30 @@ export default function SurfaceExplorer() {
         <div className={styles.count}>
           {total} exports · {entry.leaves.length} doors · v{doc.version}
         </div>
+        <div role="status" aria-live="polite" className="sr-only">
+          {matchCount}
+        </div>
       </div>
 
       <div className={styles.panes}>
-        <nav className={styles.nav} aria-label="Doors">
+        <nav
+          ref={navRef}
+          id="surface-doors"
+          className={styles.nav}
+          aria-label="Doors"
+          inert={phone && !navOpen}
+        >
           <DoorSwitch doc={doc} current={entry.id} className={styles.navDoors} onPick={pickEntry} />
           {groups.map((group) => (
             <React.Fragment key={group.step}>
               <div className={styles.navStep}>{group.step}</div>
               {group.leaves.map((each) => (
                 <button
-                  key={each.specifier}
+                  key={each.name}
                   type="button"
                   className={styles.navRow}
-                  aria-current={(!state.query && leaf?.name === each.name) || undefined}
+                  aria-label={`${each.specifier}, ${each.symbols.length} ${each.symbols.length === 1 ? 'export' : 'exports'}`}
+                  aria-current={(!results && leaf?.name === each.name) || undefined}
                   onClick={() => openLeaf(each.name)}
                 >
                   <span className={styles.navName}>{each.specifier}</span>
@@ -598,28 +791,47 @@ export default function SurfaceExplorer() {
           ))}
         </nav>
 
-        <main className={styles.doc} ref={docRef}>
+        <div className={styles.doc} ref={docRef} inert={sheetOpen}>
+          {unknownLink && (
+            <p className={styles.notice} role="status">
+              Nothing in this release answers to <code>{unknownLink}</code>. Search for the name, or
+              pick a door.
+            </p>
+          )}
+
           {results ? (
             <div className={styles.docHead}>
               <div className={styles.step}>search</div>
-              <h1>
-                {results.length} {results.length === 1 ? 'export' : 'exports'} match “
-                {state.query}”
-              </h1>
-              <p>
-                Across every door behind <code>{entry.specifierBase}</code>.
-              </p>
+              <h2>{matchCount}</h2>
+              {allBehindBase && (
+                <p>
+                  Across every door behind <code>{entry.specifierBase}</code>.
+                </p>
+              )}
             </div>
           ) : (
             leaf && (
-              <div className={styles.docHead}>
-                <div className={styles.step}>{leaf.step}</div>
-                <h1>{leaf.specifier}</h1>
-                <p>{proseFor(leaf.step)}</p>
-                <p>
-                  <Prose text={leaf.summary} />
-                </p>
-              </div>
+              <>
+                {!state.door && !state.symbol && entry.summary && (
+                  <p className={styles.intro}>
+                    <Prose text={entry.summary} />
+                  </p>
+                )}
+                <div className={styles.docHead}>
+                  <div className={styles.step}>{leaf.step}</div>
+                  <h2>{leaf.specifier}</h2>
+                  <p>{proseFor(leaf.step)}</p>
+                  <p>
+                    <Prose text={leaf.summary} />
+                  </p>
+                  {guide && (
+                    <Link to={guide} className={styles.guide}>
+                      Read the guide<span className="sr-only"> for {leaf.specifier}</span>
+                      <span aria-hidden="true">→</span>
+                    </Link>
+                  )}
+                </div>
+              </>
             )
           )}
 
@@ -627,11 +839,11 @@ export default function SurfaceExplorer() {
             <div className={styles.rows}>
               {rows.map((hit) => (
                 <ExportRow
-                  key={`${hit.leaf.name}/${hit.symbol.name}`}
+                  key={keyOf(hit)}
                   hit={hit}
-                  current={state.symbol === hit.symbol.name}
+                  current={selectedKey === keyOf(hit)}
                   showDoor={Boolean(results)}
-                  onSelect={select}
+                  onSelect={open}
                 />
               ))}
             </div>
@@ -641,14 +853,16 @@ export default function SurfaceExplorer() {
               <code>Error</code>.
             </div>
           )}
-        </main>
+        </div>
 
         <aside
+          ref={panelRef}
           className={styles.panel}
           data-open={selected ? 'true' : undefined}
           aria-label="Export detail"
+          inert={overlay && !selected}
         >
-          <Detail hit={selected} onClose={() => select(null)} />
+          <Detail hit={selected} onClose={() => select(null)} closeRef={closeRef} />
         </aside>
       </div>
 
@@ -657,10 +871,7 @@ export default function SurfaceExplorer() {
         className={styles.scrim}
         aria-hidden="true"
         tabIndex={-1}
-        onClick={() => {
-          setNavOpen(false);
-          select(null);
-        }}
+        onClick={closeNav}
       />
     </div>
   );

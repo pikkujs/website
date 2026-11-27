@@ -6,8 +6,8 @@ import StudioHome from '@/components/StudioHome';
 export default function Home() {
   return (
     <Layout
-      title="Pikku: build every app, own every piece"
-      description="Pikku is an open-source TypeScript framework. Write your functions once and ship them as a web, mobile, desktop, CLI and MCP app, on the database, auth, queue and AI you choose."
+      title="Pikku: full-stack TypeScript framework"
+      description="Pikku is an open-source TypeScript framework: typed clients for web, mobile and desktop apps, and a backend with users, a database, queues, workflows, AI agents and MCP."
     >
       <PaperPage>
         <StudioHome />

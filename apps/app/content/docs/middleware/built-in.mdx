@@ -1,13 +1,13 @@
 ---
 sidebar_position: 5
 title: Built-in Middleware
-description: CORS, telemetry, and remote RPC auth shipped with @pikku/core
+description: CORS, telemetry, and mesh RPC auth shipped with @pikku/core
 ai: true
 ---
 
 # Built-in Middleware
 
-Beyond the auth middleware, Pikku ships a small set of general-purpose middleware: CORS handling, telemetry logging, and remote RPC authentication. `cors` is on your app's `#pikku/middleware` door alongside `addHTTPMiddleware`; the telemetry pair isn't re-exported, so it comes straight from `@pikku/core/middleware`.
+Beyond the auth middleware, Pikku ships a small set of general-purpose middleware: CORS handling, telemetry logging, and mesh RPC authentication. `cors` is on your app's `#pikku/middleware` door alongside `addHTTPMiddleware`; the telemetry pair isn't re-exported, so it comes straight from `@pikku/core/middleware`.
 
 Import `cors` and `addHTTPMiddleware` from `#pikku/middleware`, and `telemetryOuter` and `telemetryInner` from `@pikku/core/middleware`.
 
@@ -56,11 +56,11 @@ Two middleware that emit structured JSON log entries (via `services.logger`) wit
 
 Every entry carries the wire metadata (`traceId`, `wireType`, `wireId`) and is tagged `__pikku_telemetry: 'end'` with a `__pikku_layer` of `outer` or `inner`. Comparing the two durations tells you how much time middleware (auth, session lookup) costs per request. Both accept optional `{ environmentId, orgId }` to stamp entries in multi-tenant deployments.
 
-## Remote RPC auth
+## Mesh RPC auth
 
-`pikkuRemoteAuthMiddleware` protects the `/remote/rpc/*` endpoints used for [remote RPC calls](/docs/wiring/rpcs) between services. It verifies a JWT bearer token (audience `pikku-remote`), checks the token is scoped to the function being called, and decrypts the caller's session so it carries across service boundaries.
+`pikkuMeshAuthMiddleware` protects the `/mesh/rpc/*` endpoints used for [mesh RPC calls](/docs/wiring/rpcs) between services. It verifies a JWT bearer token (audience `pikku-mesh`), checks the token is scoped to the function being called, and decrypts the caller's session so it carries across service boundaries.
 
-It activates only when the `PIKKU_REMOTE_SECRET` secret is configured — without it, remote RPC endpoints reject all calls and everything else passes through untouched. The generated bootstrap wires this up for you when you use remote RPCs; you rarely register it by hand.
+It activates only when the `PIKKU_MESH_SECRET` secret is configured — without it, mesh RPC endpoints reject all calls and everything else passes through untouched. The generated [`meshRpc`](/docs/pikku-cli/configuration#meshrpc) route wires this up for you; you rarely register it by hand.
 
 ## Related
 

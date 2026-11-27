@@ -1,15 +1,9 @@
 import type { SurfaceEntryPoint, SurfaceLeaf, SurfaceStep } from './surface.types';
 
 /* ════════════════════════════════════════════════════════════════
-   Copied from packages/console/src/components/surface/surface-steps.ts.
-
-   The prose is the console's, word for word, because the order and the
-   sentences are what the page teaches — a second wording of the same six
-   steps would be a second product.
-
-   `isEntrypoint` is not here: static/api/surface.json is written with that
-   filter already applied (scripts/generate-api-surface.mjs), so the type and
-   interface exports never reach the client at all.
+   The six build steps the doors are grouped under, and what each one is for.
+   Type and interface exports are already filtered out of the data
+   (scripts/generate-api-surface.mjs).
    ════════════════════════════════════════════════════════════════ */
 
 export interface StepDefinition {
@@ -37,7 +31,7 @@ export const STEPS: StepDefinition[] = [
   {
     step: 'guard it',
     prose:
-      'Say who may call it. Sessions come from auth, scopes gate the call outside the permission pool, and neither lives inside the function body.',
+      'Say who may call it. Auth middleware makes the session before the function runs, scopes are checked separately from permissions, and none of it lives inside the function body.',
   },
   {
     step: 'orchestrate it',
